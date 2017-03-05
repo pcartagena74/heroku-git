@@ -1,0 +1,65 @@
+@CHARSET "ISO-8859-1";
+
+#nav {
+	width: 847px;
+	padding: 0px;
+	height: 50px;
+	border: 2px solid blue;
+	background-color: blue;
+}
+
+.overlay {
+    z-index: 100;
+    position: absolute;
+    color: white
+}
+
+.img {
+    width: 100%
+}
+
+#mainimage {
+	width: 100%;
+	padding: 0px;
+	height: 300px;
+	border: 2px solid black;
+        position: relative
+}
+
+#posttext {
+	width: 847px;
+	height: 100px;
+	border: 2px solid black;
+}
+
+#padding {
+	padding: 2px;
+}
+
+.mid_align {
+    vertical-align: middle;
+}
+
+.fa-tiny-circle {
+	font-size: 7px;
+}
+
+/* enable absolute positioning */
+.inner-addon { 
+    position: relative; 
+}
+
+/* style icon */
+.inner-addon .glyphicon {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+
+/* align icon */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
