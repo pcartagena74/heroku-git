@@ -1,4 +1,12 @@
 <?php
+/*
+$url = parse_url(getenv("JAWSDB_URL"));
+
+$host = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$database = substr($url["path"], 1);
+*/
 
 return [
 
@@ -41,13 +49,13 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', 'y0nkiij6humroewt.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'database' => env('DB_DATABASE', 'bl5hod18fm0zc1zh'),
+            'username' => env('DB_USERNAME', 'e619juyf1jq2heii'),
+            'password' => env('DB_PASSWORD', 'tp1dfn7xaaw3a8i4'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
             'prefix' => '',
             'strict' => true,
             'engine' => null,
