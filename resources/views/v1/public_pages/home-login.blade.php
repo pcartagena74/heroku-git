@@ -71,7 +71,7 @@
     </div>
 </div>
 
-<div class="container" style="padding-top: 1px;">
+<div class="container" style="padding-top: 20px;">
     <h4>mCentric was created with specific customization for organizations like Project Management
         Institute<sup>&reg;</sup> (PMI) chapters in mind.</h4>
     <h4>Whether your organization holds events, needs to coordinate content, or wants to measure member engagement,

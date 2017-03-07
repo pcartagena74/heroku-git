@@ -1,51 +1,63 @@
 @CHARSET "ISO-8859-1";
 
 #nav {
-	width: 847px;
-	padding: 0px;
-	height: 50px;
-	border: 2px solid blue;
-	background-color: blue;
+    width: 847px;
+    padding: 0px;
+    height: 50px;
+    border: 2px solid blue;
+    background-color: blue;
 }
 
 #top-content {
-	margin-top: 20px;
-	padding: 0;
-	width: 100%;
-	border: 1px solid black;
+    margin-top: 20px;
+    padding: 0;
+    width: 100%;
+    border: 1px solid black;
 }
+
 .overlay {
     z-index: 100;
     position: absolute;
-	left: 80px;
-	top: 360px;
+    left: 80px;
+    top: 360px;
     color: black
 }
 
-p{
-	text-align: justify;
-	text-justify: inter-word;
+#text {
+    color: black;
+    -webkit-text-stroke: 1px white;
 }
+
+h2 {
+    margin-left: 10px;
+}
+
+p {
+    text-align: justify;
+    text-justify: inter-word;
+    padding: 10px;
+}
+
 .img {
     width: 100%
 }
 
 #mainimage {
-	width: 100%;
-	padding: 0px;
-	height: 300px;
-	border: 2px solid black;
-        position: relative
+    width: 100%;
+    padding: 0px;
+    height: 300px;
+    border: 2px solid black;
+    position: relative
 }
 
 #posttext {
-	width: 847px;
-	height: 100px;
-	border: 2px solid black;
+    width: 847px;
+    height: 100px;
+    border: 2px solid black;
 }
 
 #padding {
-	padding: 2px;
+    padding: 2px;
 }
 
 .mid_align {
@@ -53,28 +65,38 @@ p{
 }
 
 .fa-tiny-circle {
-	font-size: 7px;
+    font-size: 7px;
 }
 
 /* enable absolute positioning */
-.inner-addon { 
-    position: relative; 
+.inner-addon {
+    position: relative;
 }
 
 /* style icon */
 .inner-addon .glyphicon {
-  position: absolute;
-  padding: 10px;
-  pointer-events: none;
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
 }
 
 /* align icon */
-.left-addon .glyphicon  { left:  0px;}
-.right-addon .glyphicon { right: 0px;}
+.left-addon .glyphicon {
+    left: 0px;
+}
+
+.right-addon .glyphicon {
+    right: 0px;
+}
 
 /* add padding  */
-.left-addon input  { padding-left:  30px; }
-.right-addon input { padding-right: 30px; }
+.left-addon input {
+    padding-left: 30px;
+}
+
+.right-addon input {
+    padding-right: 30px;
+}
 
 @import url(https://fonts.googleapis.com/css?family=Khula:700);
 /*
@@ -83,27 +105,29 @@ body {
 }
 */
 .hidden {
-	opacity:0;
+    opacity: 0;
 }
+
 .console-container {
 
-	font-family:Verdana;
-	font-size:3em;
-	text-align:left;
-	height:200px;
-	width:847px;
-	display:block;
-	position:absolute;
-	color:white;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
-	margin:auto;
+    font-family: Verdana;
+    font-size: 3em;
+    text-align: left;
+    height: 200px;
+    width: 847px;
+    display: block;
+    position: absolute;
+    color: white;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
+
 .console-underscore {
-	display:inline-block;
-	position:relative;
-	top:-0.14em;
-	left:10px;
+    display: inline-block;
+    position: relative;
+    top: -0.14em;
+    left: 10px;
 }
