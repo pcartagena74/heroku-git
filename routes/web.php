@@ -20,6 +20,9 @@ Route::post('/register/{event}/create', 'RegistrationController@store')->name('r
 
 Route::post('/login', 'SessionController@store');
 Route::get('/logout', 'SessionController@logout');
+Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
+Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
+
 
 // Individual Page Routes
 

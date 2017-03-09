@@ -29,4 +29,11 @@ class ForgotPasswordController extends Controller
     {
         $this->middleware('guest');
     }
+
+    public function showLinkRequestForm_inModal()
+    {
+        $message = view('v1.modals.email')->renderSections()['content'];
+        //json_encode(array("status" => "success", "message" => $message));
+        return json_encode(array("status" => "success", "message" => $message));
+    }
 }

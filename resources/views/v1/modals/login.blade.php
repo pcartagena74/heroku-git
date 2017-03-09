@@ -65,7 +65,7 @@
                                 Login
                             </button>
 
-                            <a class="btn btn-link" href="{{ route('password.request') }}">
+                            <a href="#reset_modal" class="btn btn-link" data-toggle="modal" data-dismiss="modal" data-target="#reset_modal">
                                 Forgot Your Password?
                             </a>
                         </div>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Person;
 use App\Location;
 use App\Registration;
+use Illuminate\Support\Facades\Auth;
 
 if(Auth::check()) {
     $person       = Person::find(auth()->user()->id);
@@ -51,8 +52,10 @@ foreach($array as $chap) {
         </div>
         <div class="col-md-3 col-sm-3 col-xs-12">
             @if(!Auth::check())
-                <button class='btn btn-primary btn-sm' id='loginButton' data-toggle="modal" data-target="#login_modal"><i class='fa fa-user'>&nbsp;</i> Have an account?
-                    Login</button>
+                <button class='btn btn-primary btn-sm' id='loginButton' data-toggle="modal" data-target="#login_modal">
+                    <i class='fa fa-user'>&nbsp;</i> Have an account?
+                    Login
+                </button>
             @endif
         </div>
     </div>
@@ -61,7 +64,10 @@ foreach($array as $chap) {
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
             @if(Session::has('alert-' . $msg))
                 <p>&nbsp;</p>
-                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close"
+                                                                                         data-dismiss="alert"
+                                                                                         aria-label="close">&times;</a>
+                </p>
             @endif
         @endforeach
     </div>
@@ -256,7 +262,8 @@ foreach($array as $chap) {
                 @if($i==1)
                     <td>No {!! Form::checkbox("canNetwork", '1', true, array('class' => 'flat js-switch')) !!}Yes</td>
                 @else
-                    <td>No {!! Form::checkbox("canNetwork_$i", '1', true, array('class' => 'flat js-switch')) !!}Yes</td>
+                    <td>No {!! Form::checkbox("canNetwork_$i", '1', true, array('class' => 'flat js-switch')) !!}Yes
+                    </td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::textarea("eventNotes", old("eventNotes"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
@@ -300,11 +307,11 @@ foreach($array as $chap) {
             var percent = $('#discount').text();
             var subtotal = 0;
 
-                    @for($i=1;$i<=$quantity; $i++)
-            var tc{{ $i }} = $('#tcost{{ $i }}').text();
-            var newval{{ $i }} = tc{{ $i }};
-            $('#final{{ $i }}').text(tc{{ $i }});
-            subtotal += newval{{ $i }} * 1;
+            @for($i=1;$i<=$quantity; $i++)
+                var tc{{ $i }} = $('#tcost{{ $i }}').text();
+                var newval{{ $i }} = tc{{ $i }};
+                $('#final{{ $i }}').text(tc{{ $i }});
+                subtotal += newval{{ $i }} * 1;
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -370,11 +377,43 @@ foreach($array as $chap) {
                     }
                 });
             }
-        };
+        }
+        ;
     </script>
 
+    @if(!Auth::check())
+    <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                async: true,
+                url: '/password/forgotmodal',
+                dataType: 'json',
+                success: function (data) {
+                    //alert("success");
+                    console.log(data);
+                    var result = eval(data);
+                    $('#forgot-modal-body').html(result.message);
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr);
+                    //alert("An AJAX error occured: " + status + "\nError: " + error);
+                }
+            });
+        });
+    </script>
+    @endif
 @endsection
 
 @section('modals')
-    @include('v1.modals.login')
+    @if(!Auth::check())
+        @include('v1.modals.login')
+        @include('v1.modals.forgot')
+    @endif
 @endsection
