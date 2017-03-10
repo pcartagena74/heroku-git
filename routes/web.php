@@ -10,6 +10,8 @@
 |
 */
 
+
+
 // Public Routes
 Route::get('/', 'SessionController@create')->name('main_page');
 Route::get('/events/{event}', 'EventController@show')->name('display_event');
@@ -22,6 +24,7 @@ Route::post('/login', 'SessionController@store');
 Route::get('/logout', 'SessionController@logout');
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
+
 
 
 // Individual Page Routes
