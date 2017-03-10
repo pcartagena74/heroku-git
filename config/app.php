@@ -120,7 +120,7 @@ return [
     |
     */
 
-    'log' => 'errorlog',
+    'log' => env('APP_LOG', 'errorlog'),
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
@@ -165,6 +165,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Kouz\Providers\AirbrakeServiceProvider::class,
 
         /*
          * Package Service Providers...
