@@ -33,6 +33,20 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
         'password', 'remember_token',
     ];
 
+    /**
+     * Provides the route for email/notifications to the user
+     * @return the email address/login for the user
+     */
+    public function routeNotificationForMail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne relationship with Person
+     *
+     */
+
     public function person() {
         return $this->hasOne(Person::class, 'personID');
     }
