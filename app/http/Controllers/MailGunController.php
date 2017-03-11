@@ -12,12 +12,12 @@ class MailGunController extends Controller
         $content = $request->input('content');
         $toaddr = $request->input('to');
 
-        Mail::send('v1.email_templates.basic', ['title' => $title, 'content' => $content], function ($message, $toaddr)
+        Mail::send('v1.email_templates.basic', ['title' => $title, 'content' => $content], function ($message)
         {
 
             $message->from('support@mcentric.org', 'mCentric Support');
 
-            $message->to($toaddr);
+            $message->to('register@fierce.net');
 
         });
 
