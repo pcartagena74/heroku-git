@@ -8,9 +8,11 @@
 
     $headers = ['Date', 'Event Type', 'Networking List'];
     $data = [];
+    $current_user = auth()->user()->id;
     foreach($attendance as $event) {
         $csrf = csrf_field();
-        $nlb = "<form id='netform' action='/include/show_network_attendees.php' method='post'>
+        //$nlb = "<form id='netform' action='/activity/$current_user' method='post'>
+        $nlb = "<form id='netform' action='#' method='get'>
 $csrf
 <input type='hidden' name='eventID' value='$event->eventID'>
 <input type='hidden' name='eventName' value='$event->eventName'>
@@ -26,6 +28,7 @@ $csrf
 @section('content')
 
     @include('v1.parts.start_content', ['header' => 'Chapter Event Attendance', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    Green bars indicate those events where you were registered to attend.  Red bars indicate those events where you did not register.
         <div id='canvas'></div>
     @include('v1.parts.end_content')
 
@@ -35,6 +38,10 @@ $csrf
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Networking List', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0, 'id' => 'Networking List'])
+    <p>Data above will be more complete as more data from MEG is uploaded.  I'm having event history ported over wherever there were attendees.</p>
+
+    <p>Button clicks to the left are temporarily disabled.  Clicking them in the future (i.e., in the next 2 weeks) will show the list of attendees for the event listed in this box.
+        Attendees will only show up if they authorized it.</p>
     @include('v1.parts.end_content')
 
 @endsection
@@ -66,6 +73,28 @@ $csrf
             hideHover: 'auto',
             resize: true
         });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        var setContentHeight = function () {
+            // reset height
+            $RIGHT_COL.css('min-height', $(window).height());
+
+            var bodyHeight = $BODY.outerHeight(),
+                footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+                leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+                contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+
+            // normalize content
+            contentHeight -= $NAV_MENU.height() + footerHeight;
+
+            $RIGHT_COL.css('min-height', contentHeight);
+        };
+
+        $SIDEBAR_MENU.find('a[href="/dashboard"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            setContentHeight();
+        }).parent().addClass('active');
     });
 </script>
 

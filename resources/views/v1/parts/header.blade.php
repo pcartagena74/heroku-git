@@ -1,10 +1,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="Integrated Member Management, Email Marketing, Event Registration, Surveys">
-    <meta name="author" content="Efcico Corporation">
+    <meta name="author" content="mCentric / Efcico Corporation">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta http-equiv="refresh" content="3605;url=https://www.mcentric.org/" />
     <link rel="icon" href="/images/mCentric.ico">
 
     <title>mCentric: Members, Marketing, Messaging &amp; More...</title>

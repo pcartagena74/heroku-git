@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Event;
 use App\OrgDiscount;
+use App\Person;
 
 class OrgDiscountController extends Controller
 {
@@ -60,6 +61,16 @@ class OrgDiscountController extends Controller
 
     public function update(Request $request, $id) {
         // responds to PATCH /blah/id
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $discount            = OrgDiscount::find($id);
+
+        if(request()->input('discountCODE' . $id)) {
+            $discount->discountCODE = request()->input('discountCODE' . $id);
+        } elseif(request()->input('percent' . $id)) {
+            $discount->percent = request()->input('percent' . $id);
+        }
+        $discount->updaterID = $this->currentPerson->personID;
+        $discount->save();
     }
 
     public function destroy($id) {

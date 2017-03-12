@@ -187,7 +187,7 @@ class EventController extends Controller
             $ed->save();
         }
 
-        return redirect('/events');
+        return redirect('/event-tickets/' . $event->eventID);
     }
 
     public function edit ($id) {
@@ -269,7 +269,7 @@ class EventController extends Controller
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
 
-        return redirect('/events');
+        return redirect('/event-tickets/' . $event->eventID);
     }
 
     public function destroy ($id) {

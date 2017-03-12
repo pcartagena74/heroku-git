@@ -98,10 +98,12 @@ $default = Org::find($event->orgID);
 
         </tbody>
     </table>
+    <br />
     <div class="col-md-4 col-sm-9 col-xs-12">
         <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
                 data-target="#ticket_modal">Add Tickets
         </button>
+        <a href="/events" class="btn btn-default">Return to Event Listing</a>
     </div>
     <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
     <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
@@ -322,6 +324,30 @@ $default = Org::find($event->orgID);
             });
 
             @endfor
+        </script>
+        <script>
+            $(document).ready(function() {
+                var setContentHeight = function () {
+                    // reset height
+                    $RIGHT_COL.css('min-height', $(window).height());
+
+                    var bodyHeight = $BODY.outerHeight(),
+                        footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+                        leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+                        contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+
+                    // normalize content
+                    contentHeight -= $NAV_MENU.height() + footerHeight;
+
+                    $RIGHT_COL.css('min-height', contentHeight);
+                };
+
+                $SIDEBAR_MENU.find('a[href="/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+                    setContentHeight();
+                }).parent().addClass('active');
+
+                $("#add").text('Manage Event Tickets');
+            });
         </script>
 
 @endsection

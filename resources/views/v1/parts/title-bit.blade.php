@@ -33,6 +33,9 @@ switch ($icon) {
     case 7:
         $itxt = "fa-star-o";
         break;
+    case 8:
+        $itxt = "fa-cog";
+        break;
 }
 ?>
 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">

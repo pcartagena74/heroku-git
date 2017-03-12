@@ -19,35 +19,35 @@ class PersonController extends Controller
         // responds to /blah; This is for member management page
         $this->currentPerson = Person::find(auth()->user()->id);
         $topBits             = [];
-        $total_people        = DB::table('Person')
-                                 ->join('org-Person', 'org-Person.personID', '=', 'Person.personID')
+        $total_people        = DB::table('person')
+                                 ->join('org-person', 'org-person.personID', '=', 'person.personID')
                                  ->where([
-                                     ['Person.personID', '!=', 1],
-                                     ['org-Person.orgID', '=', $this->currentPerson->defaultOrgID]
+                                     ['person.personID', '!=', 1],
+                                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
                                  ])->count();
         $individual          = 'Individual';
-        $individuals         = DB::table('Person')
-                                 ->join('org-Person', 'org-Person.personID', '=', 'Person.personID')
+        $individuals         = DB::table('person')
+                                 ->join('org-person', 'org-person.personID', '=', 'person.personID')
                                  ->where([
-                                     ['Person.personID', '!=', 1],
+                                     ['person.personID', '!=', 1],
                                      ['OrgStat2', '=', $individual],
-                                     ['org-Person.orgID', '=', $this->currentPerson->defaultOrgID]
+                                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
                                  ])->count();
         $student             = 'Student';
-        $students            = DB::table('Person')
-                                 ->join('org-Person', 'org-Person.personID', '=', 'Person.personID')
+        $students            = DB::table('person')
+                                 ->join('org-person', 'org-person.personID', '=', 'person.personID')
                                  ->where([
-                                     ['Person.personID', '!=', 1],
+                                     ['person.personID', '!=', 1],
                                      ['OrgStat2', '=', $student],
-                                     ['org-Person.orgID', '=', $this->currentPerson->defaultOrgID]
+                                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
                                  ])->count();
         $retiree             = 'Retiree';
-        $retirees            = DB::table('Person')
-                                 ->join('org-Person', 'org-Person.personID', '=', 'Person.personID')
+        $retirees            = DB::table('person')
+                                 ->join('org-person', 'org-person.personID', '=', 'person.personID')
                                  ->where([
-                                     ['Person.personID', '!=', 1],
+                                     ['person.personID', '!=', 1],
                                      ['OrgStat2', '=', $retiree],
-                                     ['org-Person.orgID', '=', $this->currentPerson->defaultOrgID]
+                                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
                                  ])->count();
 
         array_push($topBits, [3, 'Total People', $total_people, '', '']);
@@ -125,11 +125,18 @@ class PersonController extends Controller
         if($name == 'login'){
             $user = User::find($id);
             $user->login = $value;
+            $user->email = $value;
             $user->save();
+
+            $person = Person::find($id);
+            $person->login = $value;
+            $person->updaterID = auth()->user()->id;
+            $person->save();
 
         } else {
             $person = Person::find($id);
             $person->{$name} = $value;
+            $person->updaterID = auth()->user()->id;
             $person->save();
         }
     }

@@ -1,7 +1,7 @@
 <?php
 // include in all forms:   {{ csrf_field() }}
 ?>
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -28,28 +28,34 @@
 <body>
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
-        <div class="navbar-header col-md-6 col-sm-6 col-xs-12" style="vertical-align: top;;">
-            <a class="navbar-brand" href="#"><img style="height: 25px; vertical-align: top;"
-                                                  src="/images/mCentric_logo.png" alt="m|Centric"/></a>
+        <div class="navbar-header col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;;">
+            <a class="navbar-brand" href="#"><img style="height: 25px; vertical-align: top;" src="/images/mCentric_logo.png" alt="m|Centric"/></a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12">
+        <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12"
+             style="display:table-cell; vertical-align:top">
             <form class="navbar-form navbar-right" method="post" action="{{ url('/login') }}" id="login-form">
                 {{ csrf_field() }}
-                <div class="form-group">
-                    <input type="email" placeholder="Email" class="form-control input-sm" name="email" id="user_email"
+                <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                    @if ($errors->has('email'))
+                    <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
+                    @endif
+                    <input type="email" placeholder="Email Address" class="form-control input-sm" name="email" id="user_email"
                            value="{{ old('email') }}" required autofocus>
                 </div>
-                <div class="form-group">
-                    <input type="password" placeholder="Password" class="form-control input-sm" name="password"
-                           id="password" required>
+                <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                    @if ($errors->has('password'))
+                    <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
+                    @endif
+                    <input type="password" placeholder="Password" class="form-control input-sm" name="password" id="password" required>
                 </div>
                 <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">Login</button>
                 <div class="form-group">
                     <div class="col-md-1 col-md-offset-4">
                         <div class="checkbox">
                             <label style="color: white;">
-                                <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                                <nobr>Remember Me</nobr>
+                                <nobr><input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                                &nbsp; Remember Me</nobr><br />
+                                <a style="color: white;" href="/password/reset">Forgot Password?</a>
                             </label>
                         </div>
                     </div>

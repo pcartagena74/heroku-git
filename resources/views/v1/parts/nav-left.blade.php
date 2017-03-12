@@ -47,32 +47,30 @@ $currentOrg = $currentPerson->defaultOrg;
                             @endif
                             <li><a href="/dashboard">My Dashboard</a></li>
                             <li><a href="/profile/my">My Profile</a></li>
+                            <li><a href="#">Something New? <span class="label label-success pull-right">Tell me what...</span></a></li>
                         </ul>
                     </li>
 
                     @if (1)
                     <li><a><i class="fa fa-edit"></i>Organization Settings<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="/org_settings">Custom Field Labels</a></li>
-                            <li><a href="/empty.php">Event Settings</a></li>
-                            <li><a href="/empty.php">Empty...</a></li>
-                            <li><a href="#">Nothing...</a></li>
+                            <li><a href="/orgsettings">Custom Field Labels</a></li>
+                            <li><a href="/eventdefaults">Event Defaults</a></li>
                         </ul>
                     </li>
                     <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/members">Member Management</a></li>
-                            <li><a href="#">Nothing...</a></li>
-                            <li><a href="#">Nothing...</a></li>
-                            <li><a href="#">Nothing...</a></li>
+                            <li><a href="#">Merge Members <span class="label label-success pull-right">Coming Soon</span></a></li>
                         </ul>
                     </li>
                     <li><a><i class="fa fa-calendar"></i> Event Management<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/events">Manage Events</a></li>
                             <li><a href="/locations">Location Management</a></li>
-                            <li><a href="/event/create">Add Event</a></li>
-                            <li><a href="#">Nothing...</a></li>
+                            <li><a id="add" href="/event/create">Add Event</a></li>
+                            <li><a href="#">Role Provisioning <span class="label label-success pull-right">Next Week</span></a></li>
+                            <li><a href="#">New Report  <span class="label label-success pull-right">Just Define It</span></a></li>
                         </ul>
                     </li>
                     @endif

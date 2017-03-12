@@ -40,6 +40,9 @@ foreach($current_events as $event) {
         <input type="hidden" name="function" value="edit">
         <input id="mySubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" />
         </form>';
+
+
+    $edit_link_button = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
     $delete_button = Form::open(['url' => '/event/'. $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-xs">
             <i class="fa fa-trash"></i> Delete</button>
@@ -53,8 +56,8 @@ foreach($current_events as $event) {
             <input id="TicketSubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" /></form>';
 
     array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
-        $event->eventStartDateF . "  - <br>" . $event->eventEndDateF,
-        $active_button, $progress_bar, $edit_button . $delete_button . $ticket_button]);
+        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
+        $active_button, $progress_bar, $edit_link_button . $delete_button . $ticket_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
@@ -99,7 +102,7 @@ foreach($past_events as $event) {
             <input id="TicketSubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" /></form>';
 
     array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
-        $event->eventStartDateF . "  - <br>" . $event->eventEndDateF,
+        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $event->cnt, $ticket_button]);
 }
 

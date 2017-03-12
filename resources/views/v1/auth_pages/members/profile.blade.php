@@ -44,10 +44,10 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
         <tbody>
         <tr>
             <td style="text-align: left;"><a href="#" id="prefix" data-title="Enter prefix"> {{ $profile->prefix }} </a></td>
-            <td style="text-align: left;"><a data-toggle="tooltip" data-placement="top" title="You need to contact PMI to change first name."
+            <td style="text-align: left;"><a data-toggle="tooltip" title="You need to contact PMI to change first name."
                    id="firstName">{{ $profile->firstName }}</a></td>
             <td style="text-align: left;"><a href="#" id="midName" data-title="Enter middle name"><?php echo($profile->midName);?></a></td>
-            <td style="text-align: left;"><a data-toggle="tooltip" data-placement="top" title="You need to contact PMI to change last name."
+            <td style="text-align: left;"><a data-toggle="tooltip" title="You need to contact PMI to change last name."
                    id="lastName">{{ $profile->lastName }}</a></td>
             <td style="text-align: left;"><a href="#" id="suffix" data-title="Enter suffix">{{ $profile->suffix }}</a></td>
         </tr>
@@ -56,14 +56,16 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
             <th style="text-align: left;">Industry</th>
             <th style="text-align: left;">Company</th>
             <th style="text-align: left;">Title</th>
-            <th style="text-align: left;">Login</th>
+            <th style="text-align: left;">
+                <a data-toggle="tooltip" title="If you want your login to be a new email address, you'll have to first add it by clicking 'Add Email' below.">Login</a>
+            </th>
         </tr>
         <tr>
             <td style="text-align: left;"><a href="#" id="prefName" data-title="Enter preferred name">{{ $profile->prefName }}</a></td>
             <td style="text-align: left;"><a href="#" id="indName" data-title="Enter industry">{{ $profile->indName }}</a></td>
             <td style="text-align: left;"><a href="#" id="compName" data-title="Enter company name">{{ $profile->compName }}</a></td>
             <td style="text-align: left;"><a href="#" id="title" data-title="Enter title">{{ $profile->title }}</a></td>
-            <td style="text-align: left;"><a href="#" id="login" data-title="Enter login">{{ $profile->login }}</a></td>
+            <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a></td>
         </tr>
         </tbody>
     </table>
@@ -173,6 +175,11 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
     @include('v1.parts.start_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
     <table id="email_fields" class="table table-striped table-condensed">
+        <tr>
+            <th colspan="2">Type</th>
+            <th>Email</th>
+            <th>Primary?</th>
+        </tr>
         @foreach($emails as $email)
             <?php $em_cnt++; ?>
             <tr>
@@ -221,6 +228,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            $('[data-toggle="tooltip"]').tooltip({'placement': 'top'});
             //$.fn.editable.defaults.mode = 'inline';
             $.fn.editable.defaults.params = function (params) {
                 params._token = $("meta[name=token]").attr("content");
@@ -245,17 +253,17 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
             $('#midName').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
-                url: '{{ $profile_script_url }}',
+                url: '{{ $profile_script_url }}'
             });
             $('#suffix').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
-                url: '{{ $profile_script_url }}',
+                url: '{{ $profile_script_url }}'
             });
             $('#prefName').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
-                url: '{{ $profile_script_url }}',
+                url: '{{ $profile_script_url }}'
             });
 
             $('#indName').editable({
@@ -278,17 +286,22 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
             $('#compName').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
-                url: '{{ $profile_script_url }}',
+                url: '{{ $profile_script_url }}'
             });
             $('#title').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
-                url: '{{ $profile_script_url }}',
+                url: '{{ $profile_script_url }}'
             });
             $('#login').editable({
-                type: 'text',
+                type: 'select',
                 pk: {{ $profile->personID }},
                 url: '{{ $profile_script_url }}',
+                source: [
+                @foreach($emails as $email)
+                    {!! "{ value: '" . $email->emailADDR . "', text: '" . $email->emailADDR . "' }," !!}
+                @endforeach
+                ]
             });
 
             @for($j=1;$j<=$ad_cnt;$j++)
@@ -339,7 +352,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                 source: [
                     {value: '0', text: 'No'},
                     {value: '1', text: 'Yes'}
-                ],
+                ]
             });
             @endfor
         });

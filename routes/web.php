@@ -14,14 +14,14 @@
 
 // Public Routes
 Route::get('/', 'SessionController@create')->name('main_page');
+Route::get('/login', 'SessionController@create');
+Route::post('/login', 'SessionController@store');
 Route::get('/events/{event}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::get('/register/{event}', 'RegistrationController@showRegForm')->name('register_step1');
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
 
 
-Route::post('/login', 'SessionController@store');
-Route::get('/logout', 'SessionController@logout');
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
 
@@ -48,7 +48,7 @@ Route::get('/events', 'EventController@index')->name('manageEvents');
 //Route::post('/events', 'EventController@create')->name('add_edit_form');
 Route::get('/event/create', 'EventController@create')->name('add_edit_form');
 Route::post('/event/create', 'EventController@store')->name('save_event');
-Route::post('/event/{id}/edit', 'EventController@edit');
+Route::get('/event/{id}/edit', 'EventController@edit');
 Route::patch('/event/{id}', 'EventController@update')->name('event_update');
 Route::delete('/event/{id}', 'EventController@destroy');
 
@@ -72,8 +72,19 @@ Route::get('/locations/{id}', 'LocationController@show');
 
 //Route::get('/home', 'HomeController@index');
 
+// Organizational Routes
+// ---------------------
+// Settings
+Route::get('/orgsettings', 'OrgController@index');
+Route::get('/orgsettings/{id}', 'OrgController@show');
+Route::post('/orgsettings/{id}', 'OrgController@update');
+Route::get('/eventdefaults', 'OrgController@event_defaults');
+Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');
 
+// Member Routes
 Route::get('/members', 'PersonController@index')->name('manageMembers');
+
+
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
@@ -83,4 +94,5 @@ Route::get('/test', function() {
 });
 
 
+Route::get('/logout', 'SessionController@logout');
 Auth::routes();

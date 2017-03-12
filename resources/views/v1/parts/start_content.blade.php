@@ -15,7 +15,7 @@ if(isset($id)) {
 <div class="col-md-{{ $w1 }} col-xs-{{ $w2 }}">
     <div {!!  $id or '' !!}class="x_panel">
         <div class="x_title">
-            <h2>{{ $header }}<small>&nbsp;{{ $subheader }}</small></h2>
+            <h2>{!! $header !!}<small>&nbsp;{{ $subheader }}</small></h2>
 
             @if ($r1+$r2+$r3 > 0)
 

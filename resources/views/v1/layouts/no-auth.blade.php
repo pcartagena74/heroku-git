@@ -9,7 +9,7 @@
 @include('v1.parts.header')
 <body class="nav-md footer_fixed">
 <div class="container body col-md-12 col-sm-12 col-xs-12">
-    <div class="main_container">
+    <div class="main_container na">
 
     @yield('content')
 

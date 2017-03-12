@@ -8,7 +8,7 @@
 //$loc_headers  = ['#', 'Location Name', 'Street', 'Address Line #2', 'City', 'State', 'Zip', 'Admin'];
 $loc_headers  = ['#', 'Location Name', 'Street', 'Address Line #2', 'City', 'State', 'Zip'];
 //$hidecol['1'] = 1;
-count($locations) > 15 ? $location_scroll = 1 : $current_scroll = 0;
+count($locations) > 15 ? $location_scroll = 1 : $location_scroll = 0;
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -25,7 +25,6 @@ count($locations) > 15 ? $location_scroll = 1 : $current_scroll = 0;
 @section('scripts')
     @include('v1.parts.footer-datatable')
     <script>
-
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {

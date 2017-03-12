@@ -71,7 +71,7 @@ $orgLogoPath = DB::table('organization')
     @include('v1.parts.start_content', ['header' => 'Step One: Event Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-12">
-        {!! Form::text('eventName', old($event->eventName) ?: '', $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'required') ) !!}
+        {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'required') ) !!}
         <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
     </div>
 
@@ -195,21 +195,25 @@ $orgLogoPath = DB::table('organization')
 
     @include('v1.parts.start_content', ['header' => 'Step Five: Event Logo', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <div class="form-group col-md-12">
+    <div>
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-sm-4 col-md-4">
             {!! Form::label('contactDetails', 'Display Corporate Logo?', array('class' => 'control-label')) !!}
         </div>
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-sm-4 col-md-4">
             @if($event->eventID !== null && $event->showLogo != 1)
-                No {!! Form::checkbox('showLogo', '1', false, array('class' => 'flat js-switch')) !!} Yes
+                {!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!}
+                {!! Form::checkbox('showLogo', '1', false, array('class' => 'flat js-switch')) !!}
+                {!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}
             @else
-                No {!! Form::checkbox('showLogo', '1', true, array('class' => 'flat js-switch')) !!} Yes
+                {!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!}
+                {!! Form::checkbox('showLogo', '1', true, array('class' => 'flat js-switch')) !!}
+                {!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}
             @endif
         </div>
 
-        <div class="form-group col-md-6">
+        <div class="form-group col-sm-4 col-md-4">
             <img src="{{ $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo }}" alt=" Logo">
         </div>
 
@@ -218,7 +222,8 @@ $orgLogoPath = DB::table('organization')
     @include('v1.parts.end_content')
 
     <div class="col-md-12">
-        {!! Form::submit('Submit', array('class' => 'btn btn-primary')) !!}
+        {!! Form::submit('Submit & Review Tickets', array('class' => 'btn btn-primary')) !!}
+        <a href="/events" class="btn btn-default">Cancel</a>
     </div>
 
     {!! Form::close() !!}
@@ -284,6 +289,32 @@ $orgLogoPath = DB::table('organization')
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            var setContentHeight = function () {
+                // reset height
+                $RIGHT_COL.css('min-height', $(window).height());
+
+                var bodyHeight = $BODY.outerHeight(),
+                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+
+                // normalize content
+                contentHeight -= $NAV_MENU.height() + footerHeight;
+
+                $RIGHT_COL.css('min-height', contentHeight);
+            };
+
+            $SIDEBAR_MENU.find('a[href="/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+                setContentHeight();
+            }).parent().addClass('active');
+
+            @if($event->eventID !== null)
+            $("#add").text('Edit Event');
+            @endif
         });
     </script>
 

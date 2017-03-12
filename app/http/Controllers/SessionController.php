@@ -14,7 +14,7 @@ class SessionController extends \App\Http\Controllers\Controller {
     }
 
     public function store (Request $request) {
-        if (! auth()->attempt(request(['login', 'password']))) {
+        if (! auth()->attempt(request(['email', 'password']))) {
             return back();
         }
         return redirect('/dashboard');
