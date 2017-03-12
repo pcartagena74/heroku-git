@@ -35,7 +35,7 @@ foreach($array as $chap) {
 }
 
 ?>
-@extends('v1.layouts.no-auth')
+@extends('v1.layouts.no-auth2')
 
 @section('content')
 
