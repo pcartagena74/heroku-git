@@ -95,4 +95,5 @@ Route::get('/test', function() {
 
 
 Route::get('/logout', 'SessionController@logout');
-Auth::routes();
+
+#Auth::routes();
