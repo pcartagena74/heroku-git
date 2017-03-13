@@ -10,6 +10,7 @@ use App\Ticket;
 use App\Event;
 use App\Email;
 use Auth;
+use App\RegFinance;
 
 class RegistrationController extends Controller
 {
@@ -48,11 +49,16 @@ class RegistrationController extends Controller
         // LOOP if quantity > 1 and add new person records avoiding duplicates as possible
         // display registration_form2
 
-        $event = Event::find(request()->input('eventID'));
+        $event    = Event::find(request()->input('eventID'));
+        $resubmit = Registration::where('token', request()->input('_token'))->first();
         if(Auth::check()) {
             $this->currentPerson = Person::find(auth()->user()->id);
         }
+        if(count($resubmit) > 0) {
+            return redirect('/register2/' . $resubmit->regID);
+        }
 
+        dd(request()->all());
         $checkEmail = request()->input('login');
 
         $prefix        = request()->input('prefix');
@@ -71,6 +77,14 @@ class RegistrationController extends Controller
         $specialNeeds  = request()->input('specialNeeds');
         $eventNotes    = request()->input('eventNotes');
         $affiliation   = request()->input('affiliation');
+        $quantity      = request()->input('quantity');
+        $flatamt       = request()->input('flatamt');
+        $percent       = request()->input('percent');
+        $dCode         = request()->input('discount_code');
+        $ticketID      = request()->input('ticketID');
+
+        // put in some validation to ensure that nothing was tampered with
+        $total         = request()->input('total');
 
         $email = Email::where('emailADDR', $checkEmail)->first();
 
@@ -79,7 +93,7 @@ class RegistrationController extends Controller
             $person               = new Person;
             $person->prefix       = $prefix;
             $person->firstName    = $firstName;
-            $person->middleName   = $middleName;
+            $person->midName      = $middleName;
             $person->lastName     = $lastName;
             $person->suffix       = $suffix;
             $person->defaultOrgID = $event->orgID;
@@ -109,31 +123,16 @@ class RegistrationController extends Controller
             //flash("alert-warning", "You have an account that we've created for you. Please attempt to login and we'll send you a password to your email address.");
             //dd('No one logged in but main email is in DB');
             request()->session()->flash('alert-warning',
-            "You have an account that we've created for you. Please click the login button. 
+                "You have an account that we've created for you. Please click the login button. 
              If you haven't yet set a password, we'll send one to your email address.");
-            dd(route('login'));
             return back()->withInput();
-            /*
-            $person               = Person::find($email->personID);
-            $person->prefix       = $prefix;
-            $person->firstName    = $firstName;
-            $person->middleName   = $middleName;
-            $person->lastName     = $lastName;
-            $person->suffix       = $suffix;
-            $person->defaultOrgID = $event->orgID;
-            $person->prefName     = $prefName;
-            $person->compName     = $compName;
-            $person->indName      = $indName;
-            $person->title        = $title;
-            $person->save();
-            */
 
         } elseif(Auth::check() && ($email->personID == $this->currentPerson->personID)) {
             // the email entered belongs to the person logged in; ergo in DB
             $person         = $this->currentPerson;
             $person->prefix = $prefix;
             //$person->firstName    = $firstName;   // this doesn't get edited
-            $person->middleName = $middleName;
+            $person->midName = $middleName;
             //$person->lastName     = $lastName;    // this doesn't get edited
             $person->suffix       = $suffix;
             $person->defaultOrgID = $event->orgID;
@@ -150,7 +149,7 @@ class RegistrationController extends Controller
             $person         = Person::find($email->personID);
             $person->prefix = $prefix;
             //$person->firstName    = $firstName;   // this doesn't get edited
-            $person->middleName = $middleName;
+            $person->midName = $middleName;
             //$person->lastName     = $lastName;    // this doesn't get edited
             $person->suffix       = $suffix;
             $person->defaultOrgID = $event->orgID;
@@ -167,7 +166,7 @@ class RegistrationController extends Controller
             $person               = new Person;
             $person->prefix       = $prefix;
             $person->firstName    = $firstName;
-            $person->middleName   = $middleName;
+            $person->midName      = $middleName;
             $person->lastName     = $lastName;
             $person->suffix       = $suffix;
             $person->defaultOrgID = $event->orgID;
@@ -200,7 +199,7 @@ class RegistrationController extends Controller
         $reg->reportedIndustry = $indName;
         $reg->eventTopics      = $eventTopics;
         $reg->isFirstEvent     = request()->input('isFirstEvent') !== null ? 1 : 0;
-        $reg->cityState      = $cityState;
+        $reg->cityState        = $cityState;
         $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
         $reg->eventQuestion    = $eventQuestion;
         $reg->foodStuff        = $allergenInfo;
@@ -210,7 +209,25 @@ class RegistrationController extends Controller
         $reg->eventNotes       = $eventNotes;
         $reg->regStatus        = 'In Progress';
         $reg->registeredBy     = $regBy;
+        $reg->token            = request()->input('_token');
         $reg->save();
+
+        $rf            = new RegFinance;
+        $rf->creatorID = $this->currentPerson->personID;
+        $rf->updaterID = $this->currentPerson->personID;
+        $rf->personID  = $this->currentPerson->personID;
+        $rf->ticketID  = $ticketID;
+        $rf->seats     = $quantity;
+        $rf->cost      = $total;
+        $rf->discountCode = $dCode;
+        if($flatamt > 0){
+            $rf->discountAmt = $flatamt;
+        } else {
+            $rf->discountAmt = $flatamt;
+        }
+
+        // Everything is saved and updated and such, not display the data back for review
+        return redirect('/register2/' . $reg->regID);
     }
 
     public function edit ($id) {

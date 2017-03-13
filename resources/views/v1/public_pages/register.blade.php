@@ -81,6 +81,7 @@ foreach($array as $chap) {
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
     @for($i=1; $i<=$quantity; $i++)
+        {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
         <div class="clearfix"><p>&nbsp;</p></div>
         <table id="ticket_head" class="table table-striped">
             <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
@@ -91,6 +92,7 @@ foreach($array as $chap) {
                     <div class="col-md-3 col-sm-3 col-xs-12"></div>
                     @if($i==1)
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right; vertical-align: middle;">
+                            {!! Form::hidden('cost'.$i, Auth::check() ? $ticket->memberBasePrice : $ticket->nonmbrBasePrice, array('id' => 'cost'.$i)) !!}
                             {!! Form::text('discount_code', $discount_code ?: old('$discount_code'),
                                 array('id' => 'discount_code', 'size' => '25', 'class' => 'control-label', 'placeholder' => 'Enter discount code')) !!}
                         </div>
@@ -142,9 +144,11 @@ foreach($array as $chap) {
                     <td>{!! Form::select("prefix_$i", $prefix_array, old("prefix_$i"), array('class' => 'control-label')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::text("firstName", old("firstName"), array('class' => 'control-label', 'required')) !!}</td>
+                    <td>{!! Form::text("firstName", old("firstName"), array('class' => 'control-label',
+                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @else
-                    <td>{!! Form::text("firstName_$i", old("firstName_$i"), array('class' => 'control-label', 'required')) !!}</td>
+                    <td>{!! Form::text("firstName_$i", old("firstName_$i"), array('class' => 'control-label',
+                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("middleName", old("middleName"), array('class' => 'control-label')) !!}</td>
@@ -152,9 +156,11 @@ foreach($array as $chap) {
                     <td>{!! Form::text("middleName_$i", old("middleName_$i"), array('class' => 'control-label')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::text("lastName", old("lastName"), array('class' => 'control-label', 'required')) !!}</td>
+                    <td>{!! Form::text("lastName", old("lastName"), array('class' => 'control-label',
+                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @else
-                    <td>{!! Form::text("lastName_$i", old("lastName_$i"), array('class' => 'control-label', 'required')) !!}</td>
+                    <td>{!! Form::text("lastName_$i", old("lastName_$i"), array('class' => 'control-label',
+                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("suffix", old("suffix"), array('class' => 'control-label')) !!}</td>
@@ -287,7 +293,7 @@ foreach($array as $chap) {
 
     <div class="col-md-9 col-sm-9 col-xs-12"></div>
     <div class="col-md-3 col-sm-3 col-xs-12">
-        {!! Form::submit('Submit', array('class' => 'btn btn-primary')) !!}
+        {!! Form::submit('Next: Review & Payment', array('class' => 'btn btn-primary')) !!}
     </div>
     @include('v1.parts.end_content')
     {!! Form::close() !!}
@@ -309,9 +315,10 @@ foreach($array as $chap) {
 
             @for($i=1;$i<=$quantity; $i++)
                 var tc{{ $i }} = $('#tcost{{ $i }}').text();
-                var newval{{ $i }} = tc{{ $i }};
+                var newval{{ $i }} = tc{{ $i }} * 1.00;
                 $('#final{{ $i }}').text(tc{{ $i }});
-                subtotal += newval{{ $i }} * 1;
+                subtotal += newval{{ $i }} * 1.00;
+                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
