@@ -82,6 +82,7 @@ foreach($array as $chap) {
 
     @for($i=1; $i<=$quantity; $i++)
         {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
+        {!! Form::hidden('cost'.$i, Auth::check() ? $ticket->memberBasePrice : $ticket->nonmbrBasePrice, array('id' => 'cost'.$i)) !!}
         <div class="clearfix"><p>&nbsp;</p></div>
         <table id="ticket_head" class="table table-striped">
             <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
@@ -92,7 +93,6 @@ foreach($array as $chap) {
                     <div class="col-md-3 col-sm-3 col-xs-12"></div>
                     @if($i==1)
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right; vertical-align: middle;">
-                            {!! Form::hidden('cost'.$i, Auth::check() ? $ticket->memberBasePrice : $ticket->nonmbrBasePrice, array('id' => 'cost'.$i)) !!}
                             {!! Form::text('discount_code', $discount_code ?: old('$discount_code'),
                                 array('id' => 'discount_code', 'size' => '25', 'class' => 'control-label', 'placeholder' => 'Enter discount code')) !!}
                         </div>
@@ -147,8 +147,7 @@ foreach($array as $chap) {
                     <td>{!! Form::text("firstName", old("firstName"), array('class' => 'control-label',
                     Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @else
-                    <td>{!! Form::text("firstName_$i", old("firstName_$i"), array('class' => 'control-label',
-                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
+                    <td>{!! Form::text("firstName_$i", old("firstName_$i"), array('class' => 'control-label', 'required')) !!}</td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("middleName", old("middleName"), array('class' => 'control-label')) !!}</td>
@@ -159,8 +158,7 @@ foreach($array as $chap) {
                     <td>{!! Form::text("lastName", old("lastName"), array('class' => 'control-label',
                     Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @else
-                    <td>{!! Form::text("lastName_$i", old("lastName_$i"), array('class' => 'control-label',
-                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
+                    <td>{!! Form::text("lastName_$i", old("lastName_$i"), array('class' => 'control-label', 'required')) !!}</td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("suffix", old("suffix"), array('class' => 'control-label')) !!}</td>
@@ -212,9 +210,9 @@ foreach($array as $chap) {
             </tr>
             <tr>
                 @if($i==1)
-                    <td>{!! Form::select("allergenInfo", $allergen_array, old("allergenInfo"), array('class' => 'control-label', 'multiple' => 'multiple')) !!}</td>
+                    <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo"), array('class' => 'control-label', 'multiple' => 'multiple')) !!}</td>
                 @else
-                    <td>{!! Form::select("allergenInfo_$i", $allergen_array, old("allergenInfo_$i"), array('class' => 'control-label', 'multiple' => 'multiple')) !!}</td>
+                    <td>{!! Form::select('allergenInfo_$i[]', $allergen_array, old("allergenInfo_$i"), array('class' => 'control-label', 'multiple' => 'multiple')) !!}</td>
                 @endif
                 @if($i==1)
                     <td>No {!! Form::checkbox("isFirstEvent", '1', false, array('class' => 'flat js-switch')) !!}Yes
@@ -261,9 +259,9 @@ foreach($array as $chap) {
                     <td>{!! Form::text("specialNeeds_$i", old("specialNeeds_$i"), array('class' => 'control-label')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::select("affiliation", $affiliation_array, old("affiliation") ?: reset($affiliation_array), array('class' => 'control-label', 'multiple' => 'multiple', 'required')) !!}</td>
+                    <td>{!! Form::select('affiliation[]', $affiliation_array, old("affiliation") ?: reset($affiliation_array), array('class' => 'control-label', 'multiple' => 'multiple', 'required')) !!}</td>
                 @else
-                    <td>{!! Form::select("affiliation_$i", $affiliation_array, old("affiliation_$i") ?: reset($affiliation_array), array('class' => 'control-label', 'multiple' => 'multiple', 'required')) !!}</td>
+                    <td>{!! Form::select('affiliation'."_$i".'[]', $affiliation_array, old("affiliation_$i") ?: reset($affiliation_array), array('class' => 'control-label', 'multiple' => 'multiple', 'required')) !!}</td>
                 @endif
                 @if($i==1)
                     <td>No {!! Form::checkbox("canNetwork", '1', true, array('class' => 'flat js-switch')) !!}Yes</td>

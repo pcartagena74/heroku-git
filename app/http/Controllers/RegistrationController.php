@@ -82,9 +82,13 @@ class RegistrationController extends Controller
         $percent       = request()->input('percent');
         $dCode         = request()->input('discount_code');
         $ticketID      = request()->input('ticketID');
+        $subtotal      = request()->input('sub1');
+        $origcost      = request()->input('cost1');
 
         // put in some validation to ensure that nothing was tampered with
-        $total         = request()->input('total');
+        $total = request()->input('total');
+
+        $subcheck = $subtotal;
 
         $email = Email::where('emailADDR', $checkEmail)->first();
 
@@ -210,21 +214,174 @@ class RegistrationController extends Controller
         $reg->regStatus        = 'In Progress';
         $reg->registeredBy     = $regBy;
         $reg->token            = request()->input('_token');
+        $reg->subtotal         = $subtotal;
+        $reg->origcost         = $origcost;
         $reg->save();
 
-        $rf            = new RegFinance;
-        $rf->creatorID = $this->currentPerson->personID;
-        $rf->updaterID = $this->currentPerson->personID;
-        $rf->personID  = $this->currentPerson->personID;
-        $rf->ticketID  = $ticketID;
-        $rf->seats     = $quantity;
-        $rf->cost      = $total;
+        // ----------------------------------------------------------
+
+        for($i = 2; $i <= $quantity; $i++) {
+
+            $prefix        = request()->input('prefix' . "_$i");
+            $firstName     = request()->input('firstName' . "_$i");
+            $middleName    = request()->input('middleName' . "_$i");
+            $lastName      = request()->input('lastName' . "_$i");
+            $suffix        = request()->input('suffix' . "_$i");
+            $prefName      = request()->input('prefName' . "_$i");
+            $compName      = request()->input('compName' . "_$i");
+            $indName       = request()->input('indName' . "_$i");
+            $title         = request()->input('title' . "_$i");
+            $eventQuestion = request()->input('eventQuestion' . "_$i");
+            $allergenInfo  = request()->input('allergenInfo' . "_$i");
+            $eventTopics   = request()->input('eventTopics' . "_$i");
+            $cityState     = request()->input('cityState' . "_$i");
+            $specialNeeds  = request()->input('specialNeeds' . "_$i");
+            $eventNotes    = request()->input('eventNotes' . "_$i");
+            $affiliation   = request()->input('affiliation' . "_$i");
+            $checkEmail    = request()->input('login' . "_$i");
+            $subtotal      = request()->input('sub' . "_$i");
+            $origcost      = request()->input('cost' . "_$i");
+            $email         = Email::where('emailADDR', $checkEmail)->first();
+
+            $subcheck += $subtotal;
+
+            if(!Auth::check() && $email === null) {
+                // Not logged in and email is not in database; must create
+                $person               = new Person;
+                $person->prefix       = $prefix;
+                $person->firstName    = $firstName;
+                $person->midName      = $middleName;
+                $person->lastName     = $lastName;
+                $person->suffix       = $suffix;
+                $person->defaultOrgID = $event->orgID;
+                $person->prefName     = $prefName;
+                $person->compName     = $compName;
+                $person->indName      = $indName;
+                $person->title        = $title;
+                $person->save();
+
+                $op           = new OrgPerson;
+                $op->orgID    = $event->orgID;
+                $op->personID = $person->personID;
+                $op->save();
+
+                $email            = new Email;
+                $email->personID  = $person->personID;
+                $email->emailADDR = $checkEmail;
+                $email->isPrimary = 1;
+                $email->save();
+
+                $regBy = $person->firstName . " " . $person->lastName;
+
+            } elseif(Auth::check() && ($email->personID == $this->currentPerson->personID)) {
+                // the email entered belongs to the person logged in; ergo in DB
+                // addresses #2 - whatever should NOT be the same as the first
+                $person               = $this->currentPerson;
+                $person->prefix       = $prefix;
+                $person->firstName    = $firstName;   // this doesn't get edited
+                $person->midName      = $middleName;
+                $person->lastName     = $lastName;    // this doesn't get edited
+                $person->suffix       = $suffix;
+                $person->defaultOrgID = $event->orgID;
+                $person->prefName     = $prefName;
+                $person->compName     = $compName;
+                $person->indName      = $indName;
+                $person->title        = $title;
+                $person->save();
+
+                $regBy = $person->firstName . " " . $person->lastName;
+
+            } elseif(Auth::check() && ($email->personID != $this->currentPerson->personID)) {
+                // someone logged in is registering someone else in the DB (usually CAMI)
+                $person               = Person::find($email->personID);
+                $person->prefix       = $prefix;
+                $person->firstName    = $firstName;   // this doesn't get edited
+                $person->midName      = $middleName;
+                $person->lastName     = $lastName;    // this doesn't get edited
+                $person->suffix       = $suffix;
+                $person->defaultOrgID = $event->orgID;
+                $person->prefName     = $prefName;
+                $person->compName     = $compName;
+                $person->indName      = $indName;
+                $person->title        = $title;
+                $person->save();
+
+                $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+
+            } else {
+                // someone logged in is registering for someone else NOT in the DB
+                $person               = new Person;
+                $person->prefix       = $prefix;
+                $person->firstName    = $firstName;
+                $person->midName      = $middleName;
+                $person->lastName     = $lastName;
+                $person->suffix       = $suffix;
+                $person->defaultOrgID = $event->orgID;
+                $person->prefName     = $prefName;
+                $person->compName     = $compName;
+                $person->indName      = $indName;
+                $person->title        = $title;
+                $person->creatorID    = $this->currentPerson->personID;
+                $person->updaterID    = $this->currentPerson->personID;
+                $person->save();
+
+                $op           = new OrgPerson;
+                $op->orgID    = $event->orgID;
+                $op->personID = $person->personID;
+                $op->save();
+
+                $email            = new Email;
+                $email->personID  = $person->personID;
+                $email->emailADDR = $checkEmail;
+                $email->isPrimary = 1;
+                $email->save();
+
+                $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+            }
+
+            $reg                   = new Registration;
+            $reg->eventID          = $event->eventID;
+            $reg->ticketID         = request()->input('ticketID');
+            $reg->personID         = $person->personID;
+            $reg->reportedIndustry = $indName;
+            $reg->eventTopics      = $eventTopics;
+            $reg->isFirstEvent     = request()->input('isFirstEvent') !== null ? 1 : 0;
+            $reg->cityState        = $cityState;
+            $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
+            $reg->eventQuestion    = $eventQuestion;
+            $reg->foodStuff        = $allergenInfo;
+            $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
+            $reg->specialNeeds     = $specialNeeds;
+            $reg->affiliation      = $affiliation;
+            $reg->eventNotes       = $eventNotes;
+            $reg->regStatus        = 'In Progress';
+            $reg->registeredBy     = $regBy;
+            $reg->token            = request()->input('_token');
+            $reg->subtotal         = $subtotal;
+            $reg->origcost         = $origcost;
+            $reg->save();
+        }
+
+        // ----------------------------------------------------------
+
+        $rf               = new RegFinance;
+        $rf->regID        = $reg->regID;
+        $rf->creatorID    = $this->currentPerson->personID;
+        $rf->updaterID    = $this->currentPerson->personID;
+        $rf->personID     = $this->currentPerson->personID;
+        $rf->ticketID     = $ticketID;
+        $rf->eventID      = $event->eventID;
+        $rf->seats        = $quantity;
+        $rf->cost         = $total;
         $rf->discountCode = $dCode;
-        if($flatamt > 0){
+        if($flatamt > 0) {
             $rf->discountAmt = $flatamt;
         } else {
-            $rf->discountAmt = $flatamt;
+            $rf->discountAmt = $total - $subcheck;
         }
+        Auth::check() ? $rf->creatorID = auth()->user()->id : $rf->creatorID = 1;
+        Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->creatorID = 1;
+        $rf->save();
 
         // Everything is saved and updated and such, not display the data back for review
         return redirect('/register2/' . $reg->regID);

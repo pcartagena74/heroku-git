@@ -53,7 +53,7 @@ return [
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'bl5hod18fm0zc1zh'),
             'username' => env('DB_USERNAME', 'e619juyf1jq2heii'),
-            'password' => env('DB_PASSWORD', 'tp1dfn7xaaw3a8i4'),
+            'password' => env('DB_PASSWORD', 'zbyws0unxg81wuyd'),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
