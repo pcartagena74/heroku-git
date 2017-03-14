@@ -3,5 +3,6 @@ RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ index.php [L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
