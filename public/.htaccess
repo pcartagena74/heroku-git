@@ -3,11 +3,7 @@
 #Normal way (in case you need to deploy to NON-heroku)
 #RewriteCond %{HTTPS} !=on
 
-
-<IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews
-    </IfModule>
+Options +FollowSymLinks
 
     RewriteEngine On
 
@@ -29,4 +25,3 @@ RewriteCond %{HTTP:X-Forwarded-Proto} !https
 
 #If neither above conditions are met, redirect to https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IfModule>
