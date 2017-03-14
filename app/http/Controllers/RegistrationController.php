@@ -53,6 +53,7 @@ class RegistrationController extends Controller
         $resubmit = Registration::where('token', request()->input('_token'))->first();
         if(Auth::check()) {
             $this->currentPerson = Person::find(auth()->user()->id);
+            $this->currentPerson->load('orgperson');
         }
         if(count($resubmit) > 0) {
             return redirect('/register2/' . $resubmit->regID);
@@ -119,6 +120,7 @@ class RegistrationController extends Controller
             $email->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
+            $regMem = 'Non-Member';
 
         } elseif(!Auth::check() && $email !== null) {
             // Not logged in and email is in the database;
@@ -147,6 +149,11 @@ class RegistrationController extends Controller
             $person->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
+            if($person->orgperson->OrgStat1 === null) {
+                $regMem = 'Non-Member';
+            } else {
+                $regMem = 'Member';
+            }
 
         } elseif(Auth::check() && ($email->personID != $this->currentPerson->personID)) {
             // someone logged in is registering for someone else in the DB (usually CAMI)
@@ -164,6 +171,11 @@ class RegistrationController extends Controller
             $person->save();
 
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+            if($person->orgperson->OrgStat1 === null) {
+                $regMem = 'Non-Member';
+            } else {
+                $regMem = 'Member';
+            }
 
         } else {
             // someone logged in is registering for someone else NOT in the DB
@@ -194,6 +206,7 @@ class RegistrationController extends Controller
             $email->save();
 
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+            $regMem = 'Non-Member';
         }
 
         $reg                   = new Registration;
@@ -216,6 +229,7 @@ class RegistrationController extends Controller
         $reg->token            = request()->input('_token');
         $reg->subtotal         = $subtotal;
         $reg->origcost         = $origcost;
+        $reg->membership       = $regMem;
         $reg->save();
 
         // ----------------------------------------------------------
@@ -272,6 +286,7 @@ class RegistrationController extends Controller
                 $email->save();
 
                 $regBy = $person->firstName . " " . $person->lastName;
+                $regMem = 'Non-Member';
 
             } elseif(Auth::check() && ($email->personID == $this->currentPerson->personID)) {
                 // the email entered belongs to the person logged in; ergo in DB
@@ -290,6 +305,11 @@ class RegistrationController extends Controller
                 $person->save();
 
                 $regBy = $person->firstName . " " . $person->lastName;
+                if($person->orgperson->OrgStat1 === null) {
+                    $regMem = 'Non-Member';
+                } else {
+                    $regMem = 'Member';
+                }
 
             } elseif(Auth::check() && ($email->personID != $this->currentPerson->personID)) {
                 // someone logged in is registering someone else in the DB (usually CAMI)
@@ -307,6 +327,11 @@ class RegistrationController extends Controller
                 $person->save();
 
                 $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+                if($person->orgperson->OrgStat1 === null) {
+                    $regMem = 'Non-Member';
+                } else {
+                    $regMem = 'Member';
+                }
 
             } else {
                 // someone logged in is registering for someone else NOT in the DB
@@ -337,6 +362,7 @@ class RegistrationController extends Controller
                 $email->save();
 
                 $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+                $regMem = 'Non-Member';
             }
 
             $reg                   = new Registration;
@@ -359,6 +385,7 @@ class RegistrationController extends Controller
             $reg->token            = request()->input('_token');
             $reg->subtotal         = $subtotal;
             $reg->origcost         = $origcost;
+            $reg->membership       = $regMem;
             $reg->save();
         }
 

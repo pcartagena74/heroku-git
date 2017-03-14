@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Registration;
 use App\Event;
 use App\Ticket;
+use App\RegFinance;
 
 class RegFinanceController extends Controller
 {

@@ -68,7 +68,7 @@ $orgLogoPath = DB::table('organization')
     @else
         {!! Form::open(array('url' => '/event/create')) !!}
     @endif
-    @include('v1.parts.start_content', ['header' => 'Step One: Event Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-12">
         {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'required') ) !!}
@@ -97,7 +97,7 @@ $orgLogoPath = DB::table('organization')
 
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Step Two: Event Date &amp; Time', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Event Date &amp; Time', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-5">
         {!! Form::text('eventStartDate', old($eventStartDate), $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventStartDate') ) !!}
@@ -118,7 +118,7 @@ $orgLogoPath = DB::table('organization')
 
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Step Three: Event Location', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Event Location', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group">
         <div class="col-md-8">
@@ -158,7 +158,7 @@ $orgLogoPath = DB::table('organization')
 
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Step Four: Contact Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Contact Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-12">
         <div class="form-group col-md-3">
@@ -193,7 +193,7 @@ $orgLogoPath = DB::table('organization')
     </div>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Step Five: Event Logo', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Event Logo', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div>
 

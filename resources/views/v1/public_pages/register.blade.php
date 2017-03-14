@@ -240,14 +240,19 @@ foreach($array as $chap) {
             </tr>
 
             <tr>
+                <th style="width:20%;">Dietary/Other Comments</th>
                 <th style="width:20%;">List any questions for the speaker(s).</th>
                 <th style="width:20%;">List any special arrangements you may need.</th>
                 <th style="width:20%;">Please select your chapter affiliation(s).<sup>*</sup></th>
                 <th style="width:20%;">Do you want to be added to a participant roster?</th>
-                <th style="width:20%;">Comments/Notes</th>
             </tr>
 
             <tr>
+                @if($i==1)
+                    <td>{!! Form::textarea("eventNotes", old("eventNotes"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
+                @else
+                    <td>{!! Form::textarea("eventNotes_$i", old("eventNotes_$i"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
+                @endif
                 @if($i==1)
                     <td>{!! Form::textarea("eventQuestion", old("eventQuestion"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
                 @else
@@ -268,11 +273,6 @@ foreach($array as $chap) {
                 @else
                     <td>No {!! Form::checkbox("canNetwork_$i", '1', true, array('class' => 'flat js-switch')) !!}Yes
                     </td>
-                @endif
-                @if($i==1)
-                    <td>{!! Form::textarea("eventNotes", old("eventNotes"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
-                @else
-                    <td>{!! Form::textarea("eventNotes_$i", old("eventNotes_$i"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
                 @endif
             </tr>
         </table>

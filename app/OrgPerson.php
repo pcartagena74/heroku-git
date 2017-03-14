@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OrgPerson extends Model
 {
     use SoftDeletes;
+    protected $primaryKey = 'personID';
 
     public $incrementing = false;
     protected $dates = [
