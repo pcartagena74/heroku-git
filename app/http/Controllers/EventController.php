@@ -149,6 +149,7 @@ class EventController extends Controller
         $event->contactEmail     = request()->input('contactEmail');
         $event->contactDetails   = request()->input('contactDetails');
         $event->showLogo         = request()->input('showLogo');
+        $event->hasFood          = request()->input('hasFood');
         /*
          *  Add these later:
          *  image1
@@ -258,6 +259,11 @@ class EventController extends Controller
         $event->contactEmail     = request()->input('contactEmail');
         $event->contactDetails   = request()->input('contactDetails');
         $event->showLogo         = request()->input('showLogo');
+        if(request()->input('hasFood')){
+            $event->hasFood = 1;
+        } else {
+            $event->hasFood = 0;
+        }
         /*
          *  Add these later:
          *  image1

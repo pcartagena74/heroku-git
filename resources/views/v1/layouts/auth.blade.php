@@ -6,6 +6,7 @@
 // footer_fixed
 ?>
 @include('v1.parts.header')
+</head>
 <body class="nav-md footer_fixed">
 <div class="container body">
     <div class="main_container">

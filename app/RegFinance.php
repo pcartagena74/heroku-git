@@ -8,6 +8,7 @@ class RegFinance extends Model
     // The table
     protected $table = 'reg-finance';
     protected $primaryKey = 'regID';
+    const UPDATED_AT = 'cancelDate';
     protected $dates = ['createDate', 'cancelDate'];
 
     public function event() {

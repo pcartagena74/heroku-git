@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment: Registration form
+ * Comment: Registration form for events that do not have foot... (Roundtables)
  * Created: 2/25/2017
  */
 use Illuminate\Support\Facades\DB;
@@ -23,9 +23,6 @@ $prefix_array = ['' => 'Prefix'] + $prefixes->pluck('prefix', 'prefix')->toArray
 
 $industries     = DB::table('industries')->select('industryName', 'industryName')->get();
 $industry_array = ['' => 'Select Industry'] + $industries->pluck('industryName', 'industryName')->toArray();
-
-$allergens      = DB::table('allergens')->select('allergen', 'allergen')->get();
-$allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
 $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
 $array    = explode(',', $chapters->nearbyChapters);
@@ -62,7 +59,8 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
         <div class="col-md-3 col-sm-3 col-xs-12">
             @if(!Auth::check())
                 <button class='btn btn-primary btn-sm' id='loginButton' data-toggle="modal" data-target="#login_modal">
-                    <i class='fa fa-user'>&nbsp;</i> Have an account? Login
+                    <i class='fa fa-user'>&nbsp;</i> Have an account?
+                    Login
                 </button>
             @endif
         </div>
@@ -72,8 +70,9 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
             @if(Session::has('alert-' . $msg))
                 <p>&nbsp;</p>
-                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close"
+                                                                                         data-dismiss="alert"
+                                                                                         aria-label="close">&times;</a>
                 </p>
             @endif
         @endforeach
@@ -115,9 +114,17 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
             <tr>
                 <td style="width: 11%"><b>Ticket Cost:</b> <i class="fa fa-dollar"></i> <span id="tcost{{ $i }}">
                         @if(Auth::check())
-                                {{ $earlymbr }}
+                                @if(Auth::check())
+                                    {{ $earlymbr }}
+                                @else
+                                    {{ $earlynon }}
+                                @endif
                         @else
-                                {{ $earlynon }}
+                            @if($event->earlyBirdEndDate && (time() - strtotime($event->earlyBirdEndDate) < 0))
+                                {{ $ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent) }}
+                            @else
+                                {{ $ticket->nonmbrBasePrice }}
+                            @endif
                         @endif
                         </span></td>
                 <td colspan="2" style="width: 22%; text-align: right; vertical-align: middle;"><b>Discount Applied:</b>
@@ -201,32 +208,32 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
             </tr>
 
             <tr>
-                <td style="width:20%;"><b>Please select any dietary requirements.</b><br><small>We'll do our best to accomodate you.</small></td>
                 <th style="width:20%;">Is this your first event?</th>
                 <th style="width:20%;">What future event topics would interest you?</th>
-                <th style="width:20%;">From what city and state will you be commuting?</th>
                 <th style="width:20%;">Do you authorize PMI MassBay to submit your PDUs for you?</th>
+                <td colspan="2" rowspan="4">
+                    <div width="100%">
+                        <img src="/images/roundtable.jpg" width="100%"/>
+                    </div>
+                </td>
             </tr>
             <tr>
                 @if($i==1)
-                    <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo"), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                    <td>
+                        <div class="container row col-sm-3">
+                            <div class="col-sm-1">No</div>
+                            <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent", '1', false, array('class' => 'flat js-switch')) !!} </div>
+                            <div class="col-sm-1">Yes</div>
+                        </div>
+                    </td>
                 @else
-                    <td>{!! Form::select('allergenInfo_$i[]', $allergen_array, old("allergenInfo_$i"), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
-                @endif
-                @if($i==1)
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent", '1', false, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
-                @else
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
+                    <td>
+                        <div class="container row col-sm-3">
+                            <div class="col-sm-1">No</div>
+                            <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
+                            <div class="col-sm-1">Yes</div>
+                        </div>
+                    </td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("eventTopics", old("eventTopics"), array('class' => 'form-control')) !!}</td>
@@ -234,60 +241,37 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                     <td>{!! Form::text("eventTopics_$i", old("eventTopics_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::text("cityState", old("cityState"), array('class' => 'form-control')) !!}</td>
+                    <td>
+                        <div class="container row col-sm-3">
+                            <div class="col-sm-1">No</div>
+                            <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', true, array('class' => 'flat js-switch')) !!} </div>
+                            <div class="col-sm-1">Yes</div>
+                        </div>
+                    </td>
                 @else
-                    <td>{!! Form::text("cityState_$i", old("cityState_$i"), array('class' => 'form-control')) !!}</td>
-                @endif
-                @if($i==1)
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', true, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
-                @else
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU_$i", '1', true, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
+                    <td>
+                        <div class="container row col-sm-3">
+                            <div class="col-sm-1">No</div>
+                            <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU_$i", '1', true, array('class' => 'flat js-switch')) !!} </div>
+                            <div class="col-sm-1">Yes</div>
+                        </div>
+                    </td>
                 @endif
             </tr>
 
             <tr>
-                <th style="width:20%;">Dietary/Other Comments</th>
                 <th style="width:20%;">List any questions for the speaker(s).</th>
-                <td style="width:20%;"><b>List any special arrangements you may need.</b> <small>We'll do our best to accomodate you.</small></td>
-                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b><br><small>Ctrl-Click to select > 1 choice.</small></td>
+                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b><br>
+                    <small>Ctrl-Click to select > 1 choice.</small>
+                </td>
                 <th style="width:20%;">Do you want to be added to a participant roster?</th>
             </tr>
 
             <tr>
                 @if($i==1)
-                    <td>{!! Form::textarea("eventNotes", old("eventNotes"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
-                @else
-                    <td>{!! Form::textarea("eventNotes_$i", old("eventNotes_$i"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
-                @endif
-                @if($i==1)
                     <td>{!! Form::textarea("eventQuestion", old("eventQuestion"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
                 @else
                     <td>{!! Form::textarea("eventTopics_$i", old("eventTopics_$i"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
-                @endif
-                @if($i==1)
-                    <td>
-                        <div class="form-group col-md-12">
-                        {!! Form::text("specialNeeds", old("specialNeeds"), array('class' => 'form-control has-feedback-left')) !!}
-                            <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
-                        </div>
-                    </td>
-                @else
-                    <td>
-                        <div class="form-group col-md-12">
-                        <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
-                        {!! Form::text("specialNeeds_$i", old("specialNeeds_$i"), array('class' => 'form-control')) !!}
-                        </div>
-                    </td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::select('affiliation[]', $affiliation_array, old("affiliation") ?: reset($affiliation_array), array('class' => 'form-control', 'multiple' => 'multiple', 'required')) !!}</td>
@@ -295,19 +279,21 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                     <td>{!! Form::select('affiliation'."_$i".'[]', $affiliation_array, old("affiliation_$i") ?: reset($affiliation_array), array('class' => 'form-control', 'multiple' => 'multiple', 'required')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td><div class="container row col-sm-3">
+                    <td>
+                        <div class="container row col-sm-3">
                             <div class="col-sm-1">No</div>
                             <div class="col-sm-2">{!! Form::checkbox("canNetwork", '1', true, array('class' => 'flat js-switch')) !!}</div>
                             <div class="col-sm-1">Yes</div>
                         </div>
                     </td>
                 @else
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("canNetwork_$i", '1', true, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
+                    <td>
+                        <div class="container row col-sm-3">
+                            <div class="col-sm-1">No</div>
+                            <div class="col-sm-2"> {!! Form::checkbox("canNetwork_$i", '1', true, array('class' => 'flat js-switch')) !!} </div>
+                            <div class="col-sm-1">Yes</div>
+                        </div>
+                    </td>
                 @endif
             </tr>
         </table>
@@ -334,7 +320,6 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
 
 
 @section('scripts')
-    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
         $.ajaxSetup({
             headers: {
@@ -347,12 +332,12 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
             var percent = $('#discount').text();
             var subtotal = 0;
 
-            @for($i=1;$i<=$quantity; $i++)
-                var tc{{ $i }} = $('#tcost{{ $i }}').text();
-                var newval{{ $i }} = tc{{ $i }} * 1.00;
-                $('#final{{ $i }}').text(tc{{ $i }});
-                subtotal += newval{{ $i }} * 1.00;
-                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                    @for($i=1;$i<=$quantity; $i++)
+            var tc{{ $i }} = $('#tcost{{ $i }}').text();
+            var newval{{ $i }} = tc{{ $i }} * 1.00;
+            $('#final{{ $i }}').text(tc{{ $i }});
+            subtotal += newval{{ $i }} * 1.00;
+            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -422,6 +407,34 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
         ;
     </script>
 
+    @if(!Auth::check())
+        <script>
+            $(document).ready(function () {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    async: true,
+                    url: '/password/forgotmodal',
+                    dataType: 'json',
+                    success: function (data) {
+                        //alert("success");
+                        console.log(data);
+                        var result = eval(data);
+                        $('#forgot-modal-body').html(result.message);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr);
+                        //alert("An AJAX error occured: " + status + "\nError: " + error);
+                    }
+                });
+            });
+        </script>
+    @endif
 @endsection
 
 @section('modals')

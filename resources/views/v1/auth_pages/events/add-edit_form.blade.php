@@ -9,16 +9,16 @@ use App\Event;
 
 $dateFormat = 'm/d/Y h:i A';
 
-if(isset($event)){
+if(isset($event)) {
     $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
-    $eventEndDate = date($dateFormat, strtotime($event->eventEndDate));
+    $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
 } else {
-    $event = new Event;
-    $exLoc = new Location;
+    $event          = new Event;
+    $exLoc          = new Location;
     $eventStartDate = date('Y-m-d', strtotime("now"));
-    $eventEndDate = date('Y-m-d', strtotime("now"));
+    $eventEndDate   = date('Y-m-d', strtotime("now"));
 }
-$topBits    = '';
+$topBits = '';
 
 $cats = DB::table('event-category')
           ->select('catID', 'catTXT')
@@ -40,8 +40,8 @@ $tz = DB::table('timezone')->select('zoneName', 'zoneOffset')->get();
 $timezones = $tz->pluck('zoneName', 'zoneOffset');
 
 $defaults = DB::table('organization')
-               ->select('orgZone', 'orgCategory', 'orgName', 'eventEmail')
-               ->where('orgID', $current_person->defaultOrgID)->first();
+              ->select('orgZone', 'orgCategory', 'orgName', 'eventEmail')
+              ->where('orgID', $current_person->defaultOrgID)->first();
 
 $locations = DB::table('event-location')
                ->where(
@@ -73,6 +73,23 @@ $orgLogoPath = DB::table('organization')
     <div class="form-group col-md-12">
         {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'required') ) !!}
         <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+    </div>
+
+    <div class="container row col-sm-12">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            {!! Form::label('hasFood', 'Will food be served?', array('class' => 'control-label', 'style'=>'color:red;',
+            'data-toggle'=>'tooltip', 'title'=>'Events with food have different questions asked of attendees.')) !!}
+        </div>
+        @if($event->eventID !== null && $event->hasFood != 1)
+            <div class="col-sm-1"> {!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!} </div>
+            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', false, array('class' => 'flat js-switch')) !!}</div>
+            <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
+        @else
+            <div class="col-sm-1">{!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!}</div>
+            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', true, array('class' => 'flat js-switch')) !!}</div>
+            <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
+        @endif
     </div>
 
     <div class="form-group col-md-12">
@@ -197,20 +214,22 @@ $orgLogoPath = DB::table('organization')
 
     <div>
 
-        <div class="form-group col-sm-4 col-md-4">
-            {!! Form::label('contactDetails', 'Display Corporate Logo?', array('class' => 'control-label')) !!}
+        <div class="form-group col-sm-3 col-md-3">
+            {!! Form::label('contactDetails', 'Display Logo?', array('class' => 'control-label')) !!}
         </div>
 
-        <div class="form-group col-sm-4 col-md-4">
-            @if($event->eventID !== null && $event->showLogo != 1)
-                {!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!}
-                {!! Form::checkbox('showLogo', '1', false, array('class' => 'flat js-switch')) !!}
-                {!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}
-            @else
-                {!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!}
-                {!! Form::checkbox('showLogo', '1', true, array('class' => 'flat js-switch')) !!}
-                {!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}
-            @endif
+        <div class="form-group col-sm-5 col-md-5">
+            <div class="container row col-sm-12">
+                @if($event->eventID !== null && $event->showLogo != 1)
+                    <div class="col-sm-2"> {!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!} </div>
+                    <div class="col-sm-3">{!! Form::checkbox('showLogo', '1', false, array('class' => 'flat js-switch')) !!}</div>
+                    <div class="col-sm-1">{!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}</div>
+                @else
+                    <div class="col-sm-2">{!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!}</div>
+                    <div class="col-sm-3">{!! Form::checkbox('showLogo', '1', true, array('class' => 'flat js-switch')) !!}</div>
+                    <div class="col-sm-1">{!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}</div>
+                @endif
+            </div>
         </div>
 
         <div class="form-group col-sm-4 col-md-4">
@@ -235,8 +254,6 @@ $orgLogoPath = DB::table('organization')
         <script>
             $(document).ready(function () {
                 $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
-            });
-            $(document).ready(function () {
                 $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
             });
         </script>
@@ -244,6 +261,19 @@ $orgLogoPath = DB::table('organization')
 
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventStartDate', 'time' => 'true', 'single' => 'true'])
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventEndDate', 'time' => 'true', 'single' => 'true'])
+    <script>
+        $(document).ready(function () {
+            // We'll help out users by populating the end date/time based on the start, but only once so we don't annoy.
+            var fired;
+            fired = 0;
+            $('#eventStartDate').on('change', function() {
+                if(!fired){
+                    $('#eventEndDate').val($('#eventStartDate').val());
+                    fired = 1;
+                }
+            });
+        });
+    </script>
 
     <script>
         $('form').submit(function () {
@@ -292,7 +322,7 @@ $orgLogoPath = DB::table('organization')
         });
     </script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());

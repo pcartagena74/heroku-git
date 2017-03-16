@@ -28,7 +28,11 @@ class RegistrationController extends Controller
         $quantity      = request()->input('quantity');
         $discount_code = request()->input('discount_code');
         $event         = Event::find($ticket->eventID);
-        return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
+        if($event->hasFood) {
+            return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
+        } else {
+            return view('v1.public_pages.register-no-food', compact('ticket', 'event', 'quantity', 'discount_code'));
+        }
     }
 
     public function show ($id) {
@@ -39,6 +43,10 @@ class RegistrationController extends Controller
         // responds to /blah/create and shows add/edit form
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function store (Request $request) {
         // responds to POST to /blah and creates, adds, stores the event
         // check if someone logged in
@@ -58,8 +66,7 @@ class RegistrationController extends Controller
         if(count($resubmit) > 0) {
             return redirect('/register2/' . $resubmit->regID);
         }
-
-        dd(request()->all());
+//dd(request()->all());
         $checkEmail = request()->input('login');
 
         $prefix        = request()->input('prefix');
@@ -72,11 +79,7 @@ class RegistrationController extends Controller
         $indName       = request()->input('indName');
         $title         = request()->input('title');
         $eventQuestion = request()->input('eventQuestion');
-        $allergenInfo  = request()->input('allergenInfo');
         $eventTopics   = request()->input('eventTopics');
-        $cityState     = request()->input('cityState');
-        $specialNeeds  = request()->input('specialNeeds');
-        $eventNotes    = request()->input('eventNotes');
         $affiliation   = request()->input('affiliation');
         $quantity      = request()->input('quantity');
         $flatamt       = request()->input('flatamt');
@@ -85,6 +88,12 @@ class RegistrationController extends Controller
         $ticketID      = request()->input('ticketID');
         $subtotal      = request()->input('sub1');
         $origcost      = request()->input('cost1');
+        if($event->hasFood) {
+            $specialNeeds = request()->input('specialNeeds');
+            $eventNotes   = request()->input('eventNotes');
+            $allergenInfo = request()->input('allergenInfo');
+            $cityState    = request()->input('cityState');
+        }
 
         // put in some validation to ensure that nothing was tampered with
         $total = request()->input('total');
@@ -106,6 +115,10 @@ class RegistrationController extends Controller
             $person->compName     = $compName;
             $person->indName      = $indName;
             $person->title        = $title;
+            if($event->hasFood) {
+                $person->allergenInfo = implode(" ", $allergenInfo);
+            }
+            $person->affiliation = implode(" ", $affiliation);
             $person->save();
 
             $op           = new OrgPerson;
@@ -119,7 +132,7 @@ class RegistrationController extends Controller
             $email->isPrimary = 1;
             $email->save();
 
-            $regBy = $person->firstName . " " . $person->lastName;
+            $regBy  = $person->firstName . " " . $person->lastName;
             $regMem = 'Non-Member';
 
         } elseif(!Auth::check() && $email !== null) {
@@ -146,6 +159,10 @@ class RegistrationController extends Controller
             $person->compName     = $compName;
             $person->indName      = $indName;
             $person->title        = $title;
+            if($event->hasFood) {
+                $person->allergenInfo = implode(" ", $allergenInfo);
+            }
+            $person->affiliation = implode(" ", $affiliation);
             $person->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
@@ -168,6 +185,10 @@ class RegistrationController extends Controller
             $person->compName     = $compName;
             $person->indName      = $indName;
             $person->title        = $title;
+            if($event->hasFood) {
+                $person->allergenInfo = implode(" ", $allergenInfo);
+            }
+            $person->affiliation = implode(" ", $affiliation);
             $person->save();
 
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
@@ -190,8 +211,12 @@ class RegistrationController extends Controller
             $person->compName     = $compName;
             $person->indName      = $indName;
             $person->title        = $title;
-            $person->creatorID    = $this->currentPerson->personID;
-            $person->updaterID    = $this->currentPerson->personID;
+            if($event->hasFood) {
+                $person->allergenInfo = implode(" ", $allergenInfo);
+            }
+            $person->affiliation = implode(" ", $affiliation);
+            $person->creatorID   = $this->currentPerson->personID;
+            $person->updaterID   = $this->currentPerson->personID;
             $person->save();
 
             $op           = new OrgPerson;
@@ -205,7 +230,7 @@ class RegistrationController extends Controller
             $email->isPrimary = 1;
             $email->save();
 
-            $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+            $regBy  = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
             $regMem = 'Non-Member';
         }
 
@@ -216,20 +241,22 @@ class RegistrationController extends Controller
         $reg->reportedIndustry = $indName;
         $reg->eventTopics      = $eventTopics;
         $reg->isFirstEvent     = request()->input('isFirstEvent') !== null ? 1 : 0;
-        $reg->cityState        = $cityState;
         $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
         $reg->eventQuestion    = $eventQuestion;
-        $reg->foodStuff        = $allergenInfo;
         $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
-        $reg->specialNeeds     = $specialNeeds;
-        $reg->affiliation      = $affiliation;
-        $reg->eventNotes       = $eventNotes;
+        $reg->affiliation = implode(" ", $affiliation);
         $reg->regStatus        = 'In Progress';
         $reg->registeredBy     = $regBy;
         $reg->token            = request()->input('_token');
         $reg->subtotal         = $subtotal;
         $reg->origcost         = $origcost;
         $reg->membership       = $regMem;
+        if($event->hasFood) {
+            $reg->specialNeeds = $specialNeeds;
+            $reg->allergenInfo = implode(" ", $allergenInfo);
+            $reg->cityState    = $cityState;
+            $reg->eventNotes   = $eventNotes;
+        }
         $reg->save();
 
         // ----------------------------------------------------------
@@ -246,16 +273,18 @@ class RegistrationController extends Controller
             $indName       = request()->input('indName' . "_$i");
             $title         = request()->input('title' . "_$i");
             $eventQuestion = request()->input('eventQuestion' . "_$i");
-            $allergenInfo  = request()->input('allergenInfo' . "_$i");
             $eventTopics   = request()->input('eventTopics' . "_$i");
-            $cityState     = request()->input('cityState' . "_$i");
-            $specialNeeds  = request()->input('specialNeeds' . "_$i");
-            $eventNotes    = request()->input('eventNotes' . "_$i");
-            $affiliation   = request()->input('affiliation' . "_$i");
             $checkEmail    = request()->input('login' . "_$i");
             $subtotal      = request()->input('sub' . "_$i");
             $origcost      = request()->input('cost' . "_$i");
             $email         = Email::where('emailADDR', $checkEmail)->first();
+
+            if($event->hasFood) {
+                $specialNeeds = request()->input('specialNeeds');
+                $eventNotes   = request()->input('eventNotes');
+                $allergenInfo = request()->input('allergenInfo');
+                $cityState    = request()->input('cityState');
+            }
 
             $subcheck += $subtotal;
 
@@ -272,6 +301,10 @@ class RegistrationController extends Controller
                 $person->compName     = $compName;
                 $person->indName      = $indName;
                 $person->title        = $title;
+                if($event->hasFood) {
+                    $person->allergenInfo = implode(" ", $allergenInfo);
+                }
+                $person->affiliation = implode(" ", $affiliation);
                 $person->save();
 
                 $op           = new OrgPerson;
@@ -285,7 +318,7 @@ class RegistrationController extends Controller
                 $email->isPrimary = 1;
                 $email->save();
 
-                $regBy = $person->firstName . " " . $person->lastName;
+                $regBy  = $person->firstName . " " . $person->lastName;
                 $regMem = 'Non-Member';
 
             } elseif(Auth::check() && ($email->personID == $this->currentPerson->personID)) {
@@ -302,6 +335,10 @@ class RegistrationController extends Controller
                 $person->compName     = $compName;
                 $person->indName      = $indName;
                 $person->title        = $title;
+                if($event->hasFood) {
+                    $person->allergenInfo = implode(" ", $allergenInfo);
+                }
+                $person->affiliation = implode(" ", $affiliation);
                 $person->save();
 
                 $regBy = $person->firstName . " " . $person->lastName;
@@ -324,6 +361,10 @@ class RegistrationController extends Controller
                 $person->compName     = $compName;
                 $person->indName      = $indName;
                 $person->title        = $title;
+                if($event->hasFood) {
+                    $person->allergenInfo = implode(" ", $allergenInfo);
+                }
+                $person->affiliation = implode(" ", $affiliation);
                 $person->save();
 
                 $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
@@ -346,8 +387,12 @@ class RegistrationController extends Controller
                 $person->compName     = $compName;
                 $person->indName      = $indName;
                 $person->title        = $title;
-                $person->creatorID    = $this->currentPerson->personID;
-                $person->updaterID    = $this->currentPerson->personID;
+                if($event->hasFood) {
+                    $person->allergenInfo = implode(" ", $allergenInfo);
+                }
+                $person->affiliation = implode(" ", $affiliation);
+                $person->creatorID   = $this->currentPerson->personID;
+                $person->updaterID   = $this->currentPerson->personID;
                 $person->save();
 
                 $op           = new OrgPerson;
@@ -361,7 +406,7 @@ class RegistrationController extends Controller
                 $email->isPrimary = 1;
                 $email->save();
 
-                $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+                $regBy  = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
                 $regMem = 'Non-Member';
             }
 
@@ -372,20 +417,22 @@ class RegistrationController extends Controller
             $reg->reportedIndustry = $indName;
             $reg->eventTopics      = $eventTopics;
             $reg->isFirstEvent     = request()->input('isFirstEvent') !== null ? 1 : 0;
-            $reg->cityState        = $cityState;
             $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
             $reg->eventQuestion    = $eventQuestion;
-            $reg->foodStuff        = $allergenInfo;
             $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
-            $reg->specialNeeds     = $specialNeeds;
-            $reg->affiliation      = $affiliation;
-            $reg->eventNotes       = $eventNotes;
+            $reg->affiliation = implode(" ", $affiliation);
             $reg->regStatus        = 'In Progress';
             $reg->registeredBy     = $regBy;
             $reg->token            = request()->input('_token');
             $reg->subtotal         = $subtotal;
             $reg->origcost         = $origcost;
             $reg->membership       = $regMem;
+            if($event->hasFood) {
+                $reg->cityState    = $cityState;
+                $reg->allergenInfo = implode(" ", $allergenInfo);
+                $reg->specialNeeds = $specialNeeds;
+                $reg->eventNotes   = $eventNotes;
+            }
             $reg->save();
         }
 
@@ -401,6 +448,7 @@ class RegistrationController extends Controller
         $rf->seats        = $quantity;
         $rf->cost         = $total;
         $rf->discountCode = $dCode;
+        $rf->token        = request()->input('_token');
         if($flatamt > 0) {
             $rf->discountAmt = $flatamt;
         } else {

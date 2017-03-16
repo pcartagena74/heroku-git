@@ -1,4 +1,4 @@
-@extends('v1.layouts.no-auth')
+@extends('v1.layouts.no-auth-forms')
 
 @section('content')
 <div class="container">

@@ -34,4 +34,3 @@
     <link href="/css/morris.css" rel="stylesheet">
     <link href="/css/mmmm.css" rel="stylesheet">
     <link href="//cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/css/custom.min.css" rel="stylesheet">
-</head>

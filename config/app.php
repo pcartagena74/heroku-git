@@ -210,7 +210,7 @@ return [
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
         'Event' => Illuminate\Support\Facades\Event::class,
         'File' => Illuminate\Support\Facades\File::class,
-	'Form' => Collective\Html\FormFacade::class,
+	    'Form' => Collective\Html\FormFacade::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
         'Html' => Collective\Html\HtmlFacade::class,

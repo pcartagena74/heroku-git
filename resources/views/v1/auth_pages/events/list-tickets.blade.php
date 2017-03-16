@@ -13,6 +13,7 @@ use App\Person;
 $tc = 0; $bc = 0;  $bi = 0;
 
 $default = Org::find($event->orgID);
+
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -98,7 +99,7 @@ $default = Org::find($event->orgID);
 
         </tbody>
     </table>
-    <br />
+    <br/>
     <div class="col-md-4 col-sm-9 col-xs-12">
         <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
                 data-target="#ticket_modal">Add Tickets
@@ -151,7 +152,8 @@ $default = Org::find($event->orgID);
                            data-title="When should ticket sales end for this event?"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
                     <td><a href="#" id="earlyBirdEndDate{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                           data-template="MMM DD YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
+                           data-url="{{ "/ticket/" . $ticket->ticketID }}"
+                           data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
                            data-viewformat="MMM D, YYYY h:mm A"
                            data-title="When should Early Bird pricing end for this event?"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
@@ -192,14 +194,23 @@ $default = Org::find($event->orgID);
                     <tr>
                         <td></td>
                         <td><a id="eventID-{{ $tktIDs[$bi]=$tkt->ticketID }}" name="eventID-{{ $tkt->ticketID }}"
-                               data-pk="{{ $ticket->ticketID }}" data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
+                               data-pk="{{ $ticket->ticketID }}" url="/bundle/{{ $event->eventID }}" data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
                         <td colspan="5">{{ $tkt->ticketLabel }}</td>
                     </tr>
-                    @endforeach
-                    @endforeach
+                @endforeach
+            @endforeach
 
             </tbody>
         </table>
+        <br/>
+        <div class="col-md-4 col-sm-9 col-xs-12">
+            <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
+                    data-target="#ticket_modal">Add Tickets
+            </button>
+            <a href="/events" class="btn btn-default">Return to Event Listing</a>
+        </div>
+        <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
+        <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
 
         @include('v1.parts.end_content')
         @endif
@@ -227,7 +238,7 @@ $default = Org::find($event->orgID);
                         minuteStep: 15
                     }
                 });
-                $('#earlyBirdEndDate{{ $i }}').editable({
+                $("#earlyBirdEndDate{!!  $i !!}").editable({
                     type: 'combodate',
                     combodate: {
                         minYear: '{{ date("Y") }}',
@@ -259,12 +270,12 @@ $default = Org::find($event->orgID);
                         maxYear: '{{ date("Y")+3 }}',
                         minuteStep: 15
                     },
-                    error: function(xhr, ajaxOptions, e) {
-                        alert(xhr.status);
-                        alert(e);
+                    error: function (xhr, ajaxOptions, e) {
+                        //alert(xhr.status);
+                        //alert(e);
                     },
-                    success: function(data) {
-                        alert(data);
+                    success: function (data) {
+                        //alert(data);
                     }
                 });
                 $('#earlyBirdPercent{{ $i }}').editable({type: 'text'});
@@ -312,21 +323,20 @@ $default = Org::find($event->orgID);
         </script>
 
         @for($i=1; $i=0; $i++)
-            @include('v1.parts.footer-daterangepicker', ['fieldname' => 'availabilityEndDate'. $i, 'time' => 'true', 'single' => 'true'])
+        @include('v1.parts.footer-daterangepicker', ['fieldname' => 'availabilityEndDate'. $i, 'time' => 'true', 'single' => 'true'])
         @endfor
 
         <script>
             @for ($i = 1; $i <= $bi; $i++)
                 $('#eventID-{{ $tktIDs[$i] }}').editable({
-                type: 'select',
-                url: {!! "'". "/bundle/$event->eventID". "'" !!},
-                source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}]
-            });
+                    type: 'select',
+                    source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}]
+                });
 
             @endfor
         </script>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 var setContentHeight = function () {
                     // reset height
                     $RIGHT_COL.css('min-height', $(window).height());
@@ -350,27 +360,27 @@ $default = Org::find($event->orgID);
             });
         </script>
 
-@endsection
+        @endsection
 
-@section('modals')
+        @section('modals')
 
-    <div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ticket_label">Add Additional Tickets</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body form-group">
-                    <form id="ticket_form" name="tickets" method="post" action="/tickets/create">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="eventID" value="{{ $event->eventID }}">
-                        <table id="new_tickets" class="table table-striped table-bordered">
-                            @for($n=1;$n<=5;$n++)
-                                <tr id="tkt{{ $n }}_row"<?php if($n>1) echo(' style="display: none;"'); ?>>
+        <div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ticket_label">Add Additional Tickets</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body form-group">
+                        <form id="ticket_form" name="tickets" method="post" action="/tickets/create">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="eventID" value="{{ $event->eventID }}">
+                            <table id="new_tickets" class="table table-striped table-bordered">
+                                @for($n=1;$n<=5;$n++)
+                                <tr id="tkt{{ $n }}_row"<?php if($n > 1) echo(' style="display: none;"'); ?>>
                                     <td class="col-md-4 col-md-offset-4">
                                         <label class="control-label">Ticket Name</label>
                                         <input id='ticketLabel-{{ $n }}' name='ticketLabel-{{ $n }}' type='text'
@@ -409,7 +419,8 @@ $default = Org::find($event->orgID);
                                         <div class="input-group">
                                             <span class="input-group-addon" id="basic_cal2"><i
                                                         class="fa fa-percent"></i></span>
-                                            <input type="text" id="earlyBirdPercent-{{ $n }}" value="{{ $default->earlyBirdPercent }}"
+                                            <input type="text" id="earlyBirdPercent-{{ $n }}"
+                                                   value="{{ $default->earlyBirdPercent }}"
                                                    name="earlyBirdPercent-{{ $n }}" class="form-control input-sm"
                                                    placeholder=""></div>
                                     </td>
@@ -418,9 +429,9 @@ $default = Org::find($event->orgID);
                                         <div class="input-group">
                                             <span class="input-group-addon" id="basic_dollar{{ $n }}">$</span>
                                             <input name='memberBasePrice-{{ $n }}'
-                                                   id='memberBasePrice-<?php echo($n); ?>' type='text' value='0.00'
+                                                   id='memberBasePrice-{{ $n }}' type='text' value='0.00'
                                                    class='form-control input-sm'
-                                                   aria-describedby="basic_dollar<?php echo($n); ?>">
+                                                   aria-describedby="basic_dollar{{ $n }}">
                                         </div>
                                         <br/>
                                         <label>Non-Member Price</label>
@@ -433,26 +444,27 @@ $default = Org::find($event->orgID);
                                         </div>
                                     </td>
                                 </tr>
-                            @endfor
+                                @endfor
 
-                        </table>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
-                        </div>
-                        <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
-                            <button type="button" style="display: none" id="delete_row" class="btn btn-sm btn-danger">
-                                Delete
-                            </button>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                    <button type="submit" id="tkt_submit" class="btn btn-sm btn-success">Save Ticket</button>
-                    </form>
-                </div>
+                            </table>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
+                                <button type="button" style="display: none" id="delete_row"
+                                        class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="submit" id="tkt_submit" class="btn btn-sm btn-success">Save Ticket</button>
+                        </form>
+                    </div>
 
+                </div>
             </div>
         </div>
-    </div>
 
 @endsection

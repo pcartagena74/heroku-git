@@ -95,7 +95,7 @@
         <div class="col-md-4 column_text">
             <h2>Mailings</h2>
             <p>With better segmentation capability and targeting, use mCentric's integrated email capabilities to
-                execute specific campaigns or maintain contact with your constituents. </p>
+                execute specific campaigns and maintain contact with your constituents. </p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4 column_text">

@@ -16,13 +16,13 @@ class RegFinanceController extends Controller
 
     public function show ($id) {
         // responds to GET /blah/id
-        $reg    = Registration::find($id);
-        $event  = Event::find($reg->eventID);
-        $ticket = Ticket::find($reg->ticketID);
+        $rf     = RegFinance::find($id);
+        $event  = Event::find($rf->eventID);
+        $ticket = Ticket::find($rf->ticketID);
 
-        dd($reg);
+        dd($rf);
 
-        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code'));
+        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'reg', 'rf'));
     }
 
     public function create () {

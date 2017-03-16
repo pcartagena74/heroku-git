@@ -12,8 +12,15 @@ $category = DB::table('event-category')->where([
 //$string = $event->eventStartDate->format('n/j/Y g:i A');
 //dd($string);
 
+// -----------------
+// Early Bird-ism
+// 1. Get today's date
+// 2. Compare to early bird dates per ticket
+// 3. Calculate new price and display
+
+$today = Carbon\Carbon::now();
 ?>
-@extends('v1.layouts.no-auth2')
+@extends('v1.layouts.no-auth')
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -78,19 +85,50 @@ $category = DB::table('event-category')->where([
                                     @endforeach
                                 </ul>
                             </td>
-                            <td><i class="fa fa-dollar"></i> {{ $bundle->memberBasePrice }}</td>
-                            <td><i class="fa fa-dollar"></i> {{ $bundle->nonmbrBasePrice }}</td>
+                            <td><i class="fa fa-dollar"></i>
+                                @if(!($bundle->earlyBirdEndDate === null) && $bundle->earlyBirdEndDate->diffInSeconds($today)>0)
+                                    <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike><br>
+                                    <i class="fa fa-dollar"></i>
+                                    {{ number_format($bundle->memberBasePrice - ( $bundle->memberBasePrice * $bundle->earlyBirdPercent / 100), 2, '.', ',') }}
+                                @else
+                                    {{ number_format($bundle->memberBasePrice, 2, '.', ',') }}
+                                @endif
+                            </td>
+                            <td><i class="fa fa-dollar"></i>
+                                @if(!($bundle->earlyBirdEndDate === null) && $bundle->earlyBirdEndDate->diffInSeconds($today)>0)
+                                    <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike><br>
+                                    <i class="fa fa-dollar"></i>
+                                    {{ number_format($bundle->nonmbrBasePrice - ( $bundle->nonmbrBasePrice * $bundle->earlyBirdPercent / 100), 2, '.', ',') }}
+                                @else
+                                    {{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}
+                                @endif
+                            </td>
                             <td>{{ $bundle->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                         </tr>
                     @endforeach
                     @foreach($tickets as $ticket)
                         <tr>
-                            <td style="text-align: center;"><input type="radio" name="ticketID"
-                                                                   value="{{ $ticket->ticketID }}">
-                            </td>
+                            <td style="text-align: center;"><input type="radio" name="ticketID" value="{{ $ticket->ticketID }}"></td>
                             <td>{{ $ticket->ticketLabel }}</td>
-                            <td><i class="fa fa-dollar"></i> {{ $ticket->memberBasePrice }}</td>
-                            <td><i class="fa fa-dollar"></i> {{ $ticket->nonmbrBasePrice }}</td>
+                            <td><i class="fa fa-dollar"></i>
+                                @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                                    <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike><br>
+                                    <i class="fa fa-dollar"></i>
+                                    {{ number_format($ticket->memberBasePrice - ( $ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',') }}
+                                @else
+                                    {{ number_format($ticket->memberBasePrice, 2, '.', ',') }}
+                                @endif
+                            </td>
+                            <td>
+                                <i class="fa fa-dollar"></i>
+                                @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                                    <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike><br>
+                                    <i class="fa fa-dollar"></i>
+                                    {{ number_format($ticket->nonmbrBasePrice - ( $ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',') }}
+                                @else
+                                    {{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}
+                                @endif
+                            </td>
                             <td>{{ $ticket->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                         </tr>
                     @endforeach
@@ -136,15 +174,7 @@ $category = DB::table('event-category')->where([
     @endif
 
     @include('v1.parts.end_content')
-<?php
-/*
- // This is a quick test form to bypass AJAX for quick testing.
-    <form action="/discount/6" method="post">
-        {{ csrf_field() }}
-        <input type="text" name="discount_code" value="Volunteer"><input type="submit" value="Submit">
-    </form>
-*/
-?>
+
     @include('v1.parts.start_content', ['header' => 'Date &amp; Time', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <table class="table" style="border: none;">
@@ -189,10 +219,8 @@ $category = DB::table('event-category')->where([
         {!! $event->eventInfo !!}
         <p>Add Event Tags</p>
         @include('v1.parts.end_content')
-        @endif
-        </div>
-        </div>
-        </div>
+    @endif
+    @include('v1.parts.end_content')
 
 @endsection
 
