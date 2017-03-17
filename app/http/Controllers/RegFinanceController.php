@@ -7,6 +7,7 @@ use App\Registration;
 use App\Event;
 use App\Ticket;
 use App\RegFinance;
+use App\Location;
 
 class RegFinanceController extends Controller
 {
@@ -16,13 +17,14 @@ class RegFinanceController extends Controller
 
     public function show ($id) {
         // responds to GET /blah/id
-        $rf     = RegFinance::find($id);
-        $event  = Event::find($rf->eventID);
-        $ticket = Ticket::find($rf->ticketID);
+        $rf            = RegFinance::find($id);
+        $event         = Event::find($rf->eventID);
+        $ticket        = Ticket::find($rf->ticketID);
+        $loc           = Location::find($event->locationID);
+        $quantity      = $rf->seats;
+        $discount_code = $rf->discountCode;
 
-        dd($rf);
-
-        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'reg', 'rf'));
+        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf'));
     }
 
     public function create () {

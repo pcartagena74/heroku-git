@@ -116,9 +116,9 @@ class RegistrationController extends Controller
             $person->indName      = $indName;
             $person->title        = $title;
             if($event->hasFood) {
-                $person->allergenInfo = implode(" ", $allergenInfo);
+                $person->allergenInfo = implode(",", $allergenInfo);
             }
-            $person->affiliation = implode(" ", $affiliation);
+            $person->affiliation = implode(",", $affiliation);
             $person->save();
 
             $op           = new OrgPerson;
@@ -160,9 +160,9 @@ class RegistrationController extends Controller
             $person->indName      = $indName;
             $person->title        = $title;
             if($event->hasFood) {
-                $person->allergenInfo = implode(" ", $allergenInfo);
+                $person->allergenInfo = implode(",", $allergenInfo);
             }
-            $person->affiliation = implode(" ", $affiliation);
+            $person->affiliation = implode(",", $affiliation);
             $person->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
@@ -186,9 +186,9 @@ class RegistrationController extends Controller
             $person->indName      = $indName;
             $person->title        = $title;
             if($event->hasFood) {
-                $person->allergenInfo = implode(" ", $allergenInfo);
+                $person->allergenInfo = implode(",", $allergenInfo);
             }
-            $person->affiliation = implode(" ", $affiliation);
+            $person->affiliation = implode(",", $affiliation);
             $person->save();
 
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
@@ -212,9 +212,9 @@ class RegistrationController extends Controller
             $person->indName      = $indName;
             $person->title        = $title;
             if($event->hasFood) {
-                $person->allergenInfo = implode(" ", $allergenInfo);
+                $person->allergenInfo = implode(",", $allergenInfo);
             }
-            $person->affiliation = implode(" ", $affiliation);
+            $person->affiliation = implode(",", $affiliation);
             $person->creatorID   = $this->currentPerson->personID;
             $person->updaterID   = $this->currentPerson->personID;
             $person->save();
@@ -244,7 +244,7 @@ class RegistrationController extends Controller
         $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
         $reg->eventQuestion    = $eventQuestion;
         $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
-        $reg->affiliation = implode(" ", $affiliation);
+        $reg->affiliation = implode(",", $affiliation);
         $reg->regStatus        = 'In Progress';
         $reg->registeredBy     = $regBy;
         $reg->token            = request()->input('_token');
@@ -253,7 +253,7 @@ class RegistrationController extends Controller
         $reg->membership       = $regMem;
         if($event->hasFood) {
             $reg->specialNeeds = $specialNeeds;
-            $reg->allergenInfo = implode(" ", $allergenInfo);
+            $reg->allergenInfo = implode(",", $allergenInfo);
             $reg->cityState    = $cityState;
             $reg->eventNotes   = $eventNotes;
         }
@@ -275,8 +275,8 @@ class RegistrationController extends Controller
             $eventQuestion = request()->input('eventQuestion' . "_$i");
             $eventTopics   = request()->input('eventTopics' . "_$i");
             $checkEmail    = request()->input('login' . "_$i");
-            $subtotal      = request()->input('sub' . "_$i");
-            $origcost      = request()->input('cost' . "_$i");
+            $subtotal      = request()->input('sub' . $i);
+            $origcost      = request()->input('cost' . $i);
             $email         = Email::where('emailADDR', $checkEmail)->first();
 
             if($event->hasFood) {
@@ -302,9 +302,9 @@ class RegistrationController extends Controller
                 $person->indName      = $indName;
                 $person->title        = $title;
                 if($event->hasFood) {
-                    $person->allergenInfo = implode(" ", $allergenInfo);
+                    $person->allergenInfo = implode(",", $allergenInfo);
                 }
-                $person->affiliation = implode(" ", $affiliation);
+                $person->affiliation = implode(",", $affiliation);
                 $person->save();
 
                 $op           = new OrgPerson;
@@ -336,9 +336,9 @@ class RegistrationController extends Controller
                 $person->indName      = $indName;
                 $person->title        = $title;
                 if($event->hasFood) {
-                    $person->allergenInfo = implode(" ", $allergenInfo);
+                    $person->allergenInfo = implode(",", $allergenInfo);
                 }
-                $person->affiliation = implode(" ", $affiliation);
+                $person->affiliation = implode(",", $affiliation);
                 $person->save();
 
                 $regBy = $person->firstName . " " . $person->lastName;
@@ -362,9 +362,9 @@ class RegistrationController extends Controller
                 $person->indName      = $indName;
                 $person->title        = $title;
                 if($event->hasFood) {
-                    $person->allergenInfo = implode(" ", $allergenInfo);
+                    $person->allergenInfo = implode(",", $allergenInfo);
                 }
-                $person->affiliation = implode(" ", $affiliation);
+                $person->affiliation = implode(",", $affiliation);
                 $person->save();
 
                 $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
@@ -388,9 +388,9 @@ class RegistrationController extends Controller
                 $person->indName      = $indName;
                 $person->title        = $title;
                 if($event->hasFood) {
-                    $person->allergenInfo = implode(" ", $allergenInfo);
+                    $person->allergenInfo = implode(",", $allergenInfo);
                 }
-                $person->affiliation = implode(" ", $affiliation);
+                $person->affiliation = implode(",", $affiliation);
                 $person->creatorID   = $this->currentPerson->personID;
                 $person->updaterID   = $this->currentPerson->personID;
                 $person->save();
@@ -420,7 +420,7 @@ class RegistrationController extends Controller
             $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
             $reg->eventQuestion    = $eventQuestion;
             $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
-            $reg->affiliation = implode(" ", $affiliation);
+            $reg->affiliation = implode(",", $affiliation);
             $reg->regStatus        = 'In Progress';
             $reg->registeredBy     = $regBy;
             $reg->token            = request()->input('_token');
@@ -429,7 +429,7 @@ class RegistrationController extends Controller
             $reg->membership       = $regMem;
             if($event->hasFood) {
                 $reg->cityState    = $cityState;
-                $reg->allergenInfo = implode(" ", $allergenInfo);
+                $reg->allergenInfo = implode(",", $allergenInfo);
                 $reg->specialNeeds = $specialNeeds;
                 $reg->eventNotes   = $eventNotes;
             }
