@@ -3,7 +3,6 @@
  * Comment: a Login Modal that will submit silently
  * Created: 3/3/2017
  */
-$url = Request::url();
 ?>
 
 <div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="login_label" aria-hidden="true">
@@ -19,7 +18,6 @@ $url = Request::url();
 
                 <form class="form-horizontal" role="form" method="POST" action="{{ route('login') }}">
                     {{ csrf_field() }}
-                    {!! Form::hidden('origin_url', $url, array('id' => 'eventID')) !!}
                     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                         <label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
