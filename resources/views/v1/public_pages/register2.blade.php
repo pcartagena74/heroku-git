@@ -116,6 +116,35 @@ $today = Carbon\Carbon::now();
                             </p>
                         </td>
                         <td colspan="2" style="text-align: left;">
+                            @if($reg->isFirstEvent)
+                                <b>First Event?</b> {{ $reg->isFirstEvent }}<br />
+                            @endif
+
+                            <b>Add to Roster:</b> {{ $reg->canNetwork }}<br />
+                            <b><a data-toggle="tooltip" title="Do you authorize PMI to submit your PDUs?">PDU Submission :</a></b> {{ $reg->isAuthPDU }}<br />
+                            @if($reg->eventQuestion)
+                                <p><b>Speaker Questions:</b> {{ $reg->eventQuestion }}</p>
+                            @endif
+
+                            @if($reg->eventTopics)
+                                <p><b>Future Topics:</b><br /> {{ $reg->eventTopics }}</p>
+                            @endif
+
+                            @if($reg->cityState)
+                                <p><b>Commuting From:</b> {{ $reg->cityState }}</p>
+                            @endif
+
+                            @if($reg->specialNeeds)
+                                    <b>Special Needs:</b> {{ $reg->specialNeeds }}<br />
+                            @endif
+
+                            @if($reg->allergenInfo)
+                                <b>Dietary Info:</b> {{ $reg->allergenInfo }}<br />
+                                {{ $reg->eventNotes }}
+                            @elseif($reg->eventNotes)
+                                <b>Other Comments/Notes:</b> {{ $reg->eventNotes }}
+                            @endif
+
                         </td>
                     </tr>
                 </table>

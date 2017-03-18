@@ -95,6 +95,12 @@ class RegistrationController extends Controller
             $cityState    = request()->input('cityState');
         }
 
+        foreach($allergenInfo as $ai){
+            if($ai == 'Other: Leave Note'){
+                $ai = 'Other';
+            }
+        }
+
         // put in some validation to ensure that nothing was tampered with
         $total = request()->input('total');
 
@@ -284,6 +290,12 @@ class RegistrationController extends Controller
                 $eventNotes   = request()->input('eventNotes');
                 $allergenInfo = request()->input('allergenInfo');
                 $cityState    = request()->input('cityState');
+            }
+
+            foreach($allergenInfo as $ai){
+                if($ai == 'Other: Leave Note'){
+                    $ai = 'Other';
+                }
             }
 
             $subcheck += $subtotal;
