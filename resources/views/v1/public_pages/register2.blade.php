@@ -12,6 +12,8 @@ $today = Carbon\Carbon::now();
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    <div>
+
     <div class="row">
         <div class="col-md-1 col-sm-1 col-xs-1" style="text-align:center;">
             <h1 class="fa fa-5x fa-calendar"></h1>
@@ -81,8 +83,8 @@ $today = Carbon\Carbon::now();
                         </td>
                     </tr>
                     <tr>
-                        <th colspan="2" style="text-align: left;">Attendee Info</th>
-                        <th colspan="2" style="text-align: left;">Event-Specific Info</th>
+                        <th colspan="2" style="width: 50%; text-align: left;">Attendee Info</th>
+                        <th colspan="2" style="width: 50%; text-align: left;">Event-Specific Info</th>
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: left;">
@@ -107,13 +109,12 @@ $today = Carbon\Carbon::now();
                                 {{ $person->title }}
                             @endif
                             @if($person->indName)
-                                in the {{ $person->indName }} industry
+                                in the {{ $person->indName }} industry <br />
                             @endif
-                            <p>
+
                             @if($person->affiliation)
-                                Affiliated with: {{ $person->affiliation }}
+                            <br />Affiliated with: {{ $person->affiliation }}
                             @endif
-                            </p>
                         </td>
                         <td colspan="2" style="text-align: left;">
                             @if($reg->isFirstEvent)
@@ -131,7 +132,7 @@ $today = Carbon\Carbon::now();
                             @endif
 
                             @if($reg->cityState)
-                                <p><b>Commuting From:</b> {{ $reg->cityState }}</p>
+                                <br /><b>Commuting From:</b> {{ $reg->cityState }}</br>
                             @endif
 
                             @if($reg->specialNeeds)
@@ -151,9 +152,23 @@ $today = Carbon\Carbon::now();
             </div>
 
         </div>
-
-
     @endfor
+
+    <div class="row">
+        <div class="col-md-1 col-sm-1 col-xs-1" style="text-align:center;">
+            <h1 class="fa fa-5x fa-dollar"></h1>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-11 col-sm-offset-5 col-md-offset-4">
+            <table class="table table-condensed table-bordered">
+                <tr> <th style="color:darkgreen;">Total</th> </tr>
+                <tr> <th><i class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</th> </tr>
+            </table>
+        </div>
+    </div>
+    </div>
+    <div>
+        <img src="/images/meeting.jpg" width="100%" height="100%">
+    </div>
     @include('v1.parts.end_content')
 @endsection
 

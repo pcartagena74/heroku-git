@@ -26,7 +26,9 @@ Route::get('/register2/{id}', 'RegFinanceController@show');
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
 
-
+Route::get('/policies', function(){
+    return view('v1.public_pages.policies');
+});
 
 // Individual Page Routes
 

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Integrated Member Management, Email Marketing, Event Registration, Surveys">
     <meta name="author" content="Efcico Corporation">
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="/favicon.ico">
 
     <title>m|Centric</title>
 
@@ -21,8 +21,8 @@
     <link href="/css/mmmm.css" rel="stylesheet">
     <script src="/js/ie-emulation-modes-warning.js"></script>
     <!--[if lt IE 9]>
-    <script src="js/html5shiv.min.js"></script>
-    <script src="js/respond.min.js"></script>
+    <script src="/js/html5shiv.min.js"></script>
+    <script src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>

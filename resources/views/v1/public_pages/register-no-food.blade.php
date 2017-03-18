@@ -46,6 +46,10 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
 @section('content')
 
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @if($errors->any())
+        <h4>{{$errors->first()}}</h4>
+    @endif
+
     <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-12">
             {{ $event->eventStartDate->format('n/j/Y g:i A') }} - {{ $event->eventEndDate->format('n/j/Y g:i A') }}<br>

@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Ticket;
 use App\Event;
 use App\Email;
-use Auth;
 use App\RegFinance;
 
 class RegistrationController extends Controller
@@ -283,13 +282,12 @@ class RegistrationController extends Controller
             $checkEmail    = request()->input('login' . "_$i");
             $subtotal      = request()->input('sub' . $i);
             $origcost      = request()->input('cost' . $i);
-            $email         = Email::where('emailADDR', $checkEmail)->first();
 
             if($event->hasFood) {
-                $specialNeeds = request()->input('specialNeeds');
-                $eventNotes   = request()->input('eventNotes');
-                $allergenInfo = request()->input('allergenInfo');
-                $cityState    = request()->input('cityState');
+                $specialNeeds = request()->input('specialNeeds'."_$i");
+                $eventNotes   = request()->input('eventNotes'."_$i");
+                $allergenInfo = request()->input('allergenInfo'."_$i");
+                $cityState    = request()->input('cityState'."_$i");
             }
 
             foreach($allergenInfo as $ai){
@@ -449,29 +447,32 @@ class RegistrationController extends Controller
         }
 
         // ----------------------------------------------------------
-
-        $rf               = new RegFinance;
-        $rf->regID        = $reg->regID;
-        $rf->creatorID    = $this->currentPerson->personID;
-        $rf->updaterID    = $this->currentPerson->personID;
-        $rf->personID     = $this->currentPerson->personID;
-        $rf->ticketID     = $ticketID;
-        $rf->eventID      = $event->eventID;
-        $rf->seats        = $quantity;
-        $rf->cost         = $total;
-        $rf->discountCode = $dCode;
-        $rf->token        = request()->input('_token');
-        if($flatamt > 0) {
-            $rf->discountAmt = $flatamt;
+        if($subtotal != $total) {
+            return Redirect::back()->withErrors(['msg', "Something funky happened with the math.  Don't hack the form!"]);
         } else {
-            $rf->discountAmt = $total - $subcheck;
-        }
-        Auth::check() ? $rf->creatorID = auth()->user()->id : $rf->creatorID = 1;
-        Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->creatorID = 1;
-        $rf->save();
+            $rf               = new RegFinance;
+            $rf->regID        = $reg->regID;
+            $rf->creatorID    = $this->currentPerson->personID;
+            $rf->updaterID    = $this->currentPerson->personID;
+            $rf->personID     = $this->currentPerson->personID;
+            $rf->ticketID     = $ticketID;
+            $rf->eventID      = $event->eventID;
+            $rf->seats        = $quantity;
+            $rf->cost         = $total;
+            $rf->discountCode = $dCode;
+            $rf->token        = request()->input('_token');
+            if($flatamt > 0) {
+                $rf->discountAmt = $flatamt;
+            } else {
+                $rf->discountAmt = $total - $subcheck;
+            }
+            Auth::check() ? $rf->creatorID = auth()->user()->id : $rf->creatorID = 1;
+            Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->creatorID = 1;
+            $rf->save();
 
-        // Everything is saved and updated and such, not display the data back for review
-        return redirect('/register2/' . $reg->regID);
+            // Everything is saved and updated and such, not display the data back for review
+            return redirect('/register2/' . $reg->regID);
+        }
     }
 
     public function edit ($id) {
