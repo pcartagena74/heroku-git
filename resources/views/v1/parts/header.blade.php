@@ -5,7 +5,7 @@
     <meta name="description" content="Integrated Member Management, Email Marketing, Event Registration, Surveys">
     <meta name="author" content="mCentric / Efcico Corporation">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <meta http-equiv="refresh" content="3605;url=https://www.mcentric.org/" />
+    <meta http-equiv="refresh" content="3605;url={{ env('APP_URL') . "/logout" }}" />
     <link rel="icon" href="/images/mCentric.ico">
 
     <title>mCentric: Members, Marketing, Messaging &amp; More...</title>
