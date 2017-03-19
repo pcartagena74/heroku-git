@@ -22,6 +22,23 @@ $default = Org::find($event->orgID);
 
     @include('v1.parts.start_content', ['header' => 'Tickets for "' . $event->eventName . '"', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
+    Defaults for this event only:
+    <table class="table table-bordered table-striped table-condensed">
+        <tr>
+            <th style="text-align: left;">Early Bird End Date</th>
+            <th style="text-align: left;">Early Bird Percent Discount</th>
+        </tr>
+        <tr>
+            <td style="text-align: left;"><a id="earlyBirdDate" data-value="{{ $event->earlyBirdDate }}"
+                                             data-url="/eventajax/{{ $event->eventID }}"
+                                             data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
+                                             data-viewformat="MMM D, YYYY h:mm A"
+                                             data-pk="{{ $event->eventID }}"></a></td>
+            <td style="text-align: left;"><a id="earlyDiscount" data-value="{{ $event->earlyDiscount }}"
+                                             data-url="/eventajax/{{ $event->eventID }}"
+                                             data-pk="{{ $event->eventID }}"></a></td>
+        </tr>
+    </table>
     <p>If you need to create a "bundle" ticket, do so after adding all other non-bundle tickets.</p>
 
     <table id="ticket_table" class="table table-striped dataTable">
@@ -194,11 +211,12 @@ $default = Org::find($event->orgID);
                     <tr>
                         <td></td>
                         <td><a id="eventID-{{ $tktIDs[$bi]=$tkt->ticketID }}" name="eventID-{{ $tkt->ticketID }}"
-                               data-pk="{{ $ticket->ticketID }}" url="/bundle/{{ $event->eventID }}" data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
+                               data-pk="{{ $ticket->ticketID }}" url="/bundle/{{ $event->eventID }}"
+                               data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
                         <td colspan="5">{{ $tkt->ticketLabel }}</td>
                     </tr>
-                @endforeach
-            @endforeach
+                    @endforeach
+                    @endforeach
 
             </tbody>
         </table>
@@ -227,6 +245,17 @@ $default = Org::find($event->orgID);
                 });
                 $.fn.editable.defaults.mode = 'popup';
 
+            $("#earlyBirdDate").editable({
+                type: 'combodate',
+                placement: 'right',
+                combodate: {
+                    minYear: '{{ date("Y") }}',
+                    maxYear: '{{ date("Y")+3 }}',
+                    minuteStep: 15
+                }
+            });
+            $("#earlyDiscount").editable({type: 'text'});
+
             @for ($i = 1; $i <= $tc; $i++)
 
                 $("#ticketLabel{{ $i }}").editable({type: 'text'});
@@ -238,7 +267,7 @@ $default = Org::find($event->orgID);
                         minuteStep: 15
                     }
                 });
-                $("#earlyBirdEndDate{!!  $i !!}").editable({
+                $("#earlyBirdEndDate{!! $i !!}").editable({
                     type: 'combodate',
                     combodate: {
                         minYear: '{{ date("Y") }}',
@@ -254,7 +283,7 @@ $default = Org::find($event->orgID);
 
                 @for ($i = $tc + 1; $i <= $tc + $bc; $i++)
 
-                $('#ticketLabel{{ $i }}').editable({type: 'text'});
+                    $('#ticketLabel{{ $i }}').editable({type: 'text'});
                 $('#availabilityEndDate{{ $i }}').editable({
                     type: 'combodate',
                     combodate: {
@@ -332,7 +361,6 @@ $default = Org::find($event->orgID);
                     type: 'select',
                     source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}]
                 });
-
             @endfor
         </script>
         <script>
@@ -411,7 +439,7 @@ $default = Org::find($event->orgID);
                                         <div class="input-group">
                                             <span class="input-group-addon" id="basic_cal2"><i
                                                         class="fa fa-calendar"></i></span>
-                                            <input type="text" id="earlyBirdEndDate-{{ $n }}"
+                                            <input type="text" id="earlyBirdEndDate-{{ $n }}" value="{{ $event->earlyBirdDate }}"
                                                    name="earlyBirdEndDate-{{ $n }}" class="form-control input-sm"
                                                    placeholder=""></div>
                                         <br/>

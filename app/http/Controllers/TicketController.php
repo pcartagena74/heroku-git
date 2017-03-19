@@ -106,7 +106,7 @@ class TicketController extends Controller
         $name              = substr(request()->input('name'), 0, -1);
         $value             = request()->input('value');
 
-        if($name == 'availabilityEndDate' or $name == 'earlyBirdEndDate' and $name !== null) {
+        if($name == 'availabilityEndDate' or $name == 'earlyBirdEndDate' and $value !== null) {
             $date = date("Y-m-d H:i:s", strtotime(trim($value)));
             $value = $date;
         }

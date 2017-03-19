@@ -46,9 +46,11 @@ Route::post('/email/{id}', 'EmailController@update');
 Route::post('/emails/create', 'EmailController@store');
 Route::post('/email/{id}/delete', 'EmailController@destroy');
 
+
 // Event & Ticket Routes
 Route::get('/events', 'EventController@index')->name('manageEvents');
-//Route::post('/events', 'EventController@create')->name('add_edit_form');
+Route::post('/activate/{id}', 'EventController@activate');
+Route::post('/eventajax/{id}', 'EventController@ajax_update');
 Route::get('/event/create', 'EventController@create')->name('add_edit_form');
 Route::post('/event/create', 'EventController@store')->name('save_event');
 Route::get('/event/{id}/edit', 'EventController@edit');

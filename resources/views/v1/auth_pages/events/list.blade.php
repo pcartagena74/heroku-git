@@ -7,21 +7,22 @@
  *
  */
 
-$current_headers = ['#', 'Event Name', 'Event Type', 'Event Dates', 'Event Status', 'Attendee Count', 'Event Management'];
+$current_headers =
+    ['#', 'Event Name', 'Event Type', 'Event Dates', 'Event Status', 'Attendee Count', 'Event Management'];
 $current_data    = [];
 
 foreach($current_events as $event) {
     $csrf = csrf_field();
 
-    $active_button = '<button type="button" class="btn ';
+    $active_button = '<button onclick="javascript:activate(' . $event->eventID . ')" class="btn ';
     if($event->isActive) {
-        $active_button .= "btn-success";
+        $active_button .= "btn-success btn-sm";
     } else {
-        $active_button .= "btn-cancel";
+        $active_button .= "btn-cancel btn-xs";
     }
-    $active_button .= ' btn-xs">';
+    $active_button .= '">';
     if($event->isActive) {
-        $active_button .= "Active";
+        $active_button .= "<b>Active</b>";
     } else {
         $active_button .= "Inactive";
     }
@@ -31,10 +32,10 @@ foreach($current_events as $event) {
         <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="' . $event->cnt . '"></div>
         </div><small>' . $event->cnt . ' attendees</small>';
 
-    $editURL = '/event/' . $event->eventID . '/edit';
+    $editURL    = '/event/' . $event->eventID . '/edit';
     $displayURL = '/events/' . $event->eventID;
 
-    $edit_button   = "<form method='post' action='$editURL'>" .
+    $edit_button = "<form method='post' action='$editURL'>" .
         $csrf . '
         <label for="mySubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit</label>
         <input type="hidden" name="eventID" value="' . $event->eventID . '">
@@ -43,11 +44,15 @@ foreach($current_events as $event) {
         </form>';
 
 
-    $edit_link_button = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
-    $display_link_button = "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-calendar'></i> Show Event</a>";
-    $delete_button = Form::open(['url' => '/event/'. $event->eventID, 'method' => 'DELETE']) .
-        '<button class="btn btn-danger btn-xs">
-            <i class="fa fa-trash"></i> Delete</button>
+    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
+    $display_link_button =
+        "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-calendar'></i> Show Event</a>";
+    $delete_button       = Form::open(['url' => '/event/' . $event->eventID, 'method' => 'DELETE']) .
+        '<button class="btn btn-danger btn-xs"';
+    if($event->isActive) {
+        $delete_button .= ' disabled';
+    }
+    $delete_button .= '><i class="fa fa-trash"></i> Delete</button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
 
     $ticket_button = '<form method="post" action="/event-tickets/' . $event->eventID . '">' . $csrf .
@@ -143,6 +148,13 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 @section('scripts')
     @include('v1.parts.footer-datatable')
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <script>
         $('[data-toggle=confirmation]').confirmation();
     </script>
     <script>
@@ -150,7 +162,29 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
             });
-            $('#datatable-fixed-header').DataTable().search( '' ).draw();
+            $('#datatable-fixed-header').DataTable().search('').draw();
         });
+    </script>
+    <script>
+        function activate(eventID) {
+            $.ajax({
+                type: 'POST',
+                cache: false,
+                async: true,
+                url: '/activate/' + eventID,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    var result = eval(data);
+                    window.location="/events";
+                },
+                error: function (data) {
+                    console.log(data);
+                    var result = eval(data);
+                    //$('#status_msg').html(result.message).fadeIn(0);
+                }
+            });
+        }
+        ;
     </script>
 @endsection

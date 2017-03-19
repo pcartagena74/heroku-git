@@ -11,6 +11,7 @@ ini_set('max_execution_time', 0);
  */
 
 use App\OrgDiscount;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -104,6 +105,7 @@ class EventController extends Controller
         // responds to POST to /events and creates, adds, stores the event
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = new Event;
+
         if(request()->input('locationID') != '') {
             $location = Location::find(request()->input('locationID'));
             $locName  = request()->input('locName');
@@ -158,18 +160,21 @@ class EventController extends Controller
          *  refund Note
          *  event tags
          */
-        $event->creatorID = $this->currentPerson->personID;
-        $event->updaterID = $this->currentPerson->personID;
+        $label                = Org::find($this->currentPerson->defaultOrgID)
+                                   ->select('defaultTicketLabel', 'earlyBirdPercent')->first();
+        $event->earlyDiscount = $label->earlyBirdPercent;
+        $event->earlyBirdDate = Carbon::now();
+        $event->creatorID     = $this->currentPerson->personID;
+        $event->updaterID     = $this->currentPerson->personID;
         $event->save();
 
         // Create a stub for the default ticket for the event
-        $label                    = Org::find($this->currentPerson->defaultOrgID)
-                                       ->select('defaultTicketLabel', 'earlyBirdPercent')->first();
         $tkt                      = new Ticket;
         $tkt->ticketLabel         = $label->defaultTicketLabel;
         $tkt->availabilityEndDate = $event->eventStartDate;
         $tkt->eventID             = $event->eventID;
         $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate    = Carbon::now();
         $tkt->save();
 
         $orgDiscounts = OrgDiscount::where([
@@ -178,13 +183,13 @@ class EventController extends Controller
         ])->get();
 
         foreach($orgDiscounts as $od) {
-            $ed = new EventDiscount;
-            $ed->orgID = $od->orgID;
-            $ed->eventID = $event->eventID;
+            $ed               = new EventDiscount;
+            $ed->orgID        = $od->orgID;
+            $ed->eventID      = $event->eventID;
             $ed->discountCODE = $od->discountCODE;
-            $ed->percent = $od->percent;
-            $ed->creatorID = $this->currentPerson->personID;
-            $ed->updaterID = $this->currentPerson->personID;
+            $ed->percent      = $od->percent;
+            $ed->creatorID    = $this->currentPerson->personID;
+            $ed->updaterID    = $this->currentPerson->personID;
             $ed->save();
         }
 
@@ -259,7 +264,7 @@ class EventController extends Controller
         $event->contactEmail     = request()->input('contactEmail');
         $event->contactDetails   = request()->input('contactDetails');
         $event->showLogo         = request()->input('showLogo');
-        if(request()->input('hasFood')){
+        if(request()->input('hasFood')) {
             $event->hasFood = 1;
         } else {
             $event->hasFood = 0;
@@ -280,7 +285,7 @@ class EventController extends Controller
 
     public function destroy ($id) {
         // responds to DELETE /events/id
-        $event = Event::find($id);
+        $event         = Event::find($id);
         $registrations = DB::table('event-registration')->where('eventID', $event->eventID)->count();
 
         if($registrations == 0) {
@@ -289,5 +294,36 @@ class EventController extends Controller
             // Do something?
         }
         return redirect('/events');
+    }
+
+    public function activate ($id) {
+        $event = Event::find($id);
+        if($event->isActive == 1) {
+            $event->isActive = 0;
+        } else {
+            $event->isActive = 1;
+        }
+        $event->updaterID = auth()->user()->id;
+        $event->save();
+
+        return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
+    }
+
+    public function ajax_update(Request $request, $id){
+        $event              = Event::find($id);
+        $this->currentPerson = Person::find(auth()->user()->id);
+
+        // shaving off number at the end to match fieldname
+        $name              = request()->input('name');
+        $value             = request()->input('value');
+
+        if($name == 'availabilityEndDate' or $name == 'earlyBirdDate' and $value !== null) {
+            $date = date("Y-m-d H:i:s", strtotime(trim($value)));
+            $value = $date;
+        }
+
+        $event->{$name}   = $value;
+        $event->updaterID = $this->currentPerson->personID;
+        $event->save();
     }
 }
