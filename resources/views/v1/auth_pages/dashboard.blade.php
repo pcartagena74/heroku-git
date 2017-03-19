@@ -16,7 +16,7 @@
 $csrf
 <input type='hidden' name='eventID' value='$event->eventID'>
 <input type='hidden' name='eventName' value='$event->eventName'>
-<button type='submit' id='network' class='btn btn-success btn-xs btn'>View Networking List</button>
+<button type='submit' disabled id='network' class='btn btn-success btn-xs btn'>View Networking List</button>
 </form>";
         array_push($data, [$event->eventStartDate, $event->eventName, $nlb]);
     }
