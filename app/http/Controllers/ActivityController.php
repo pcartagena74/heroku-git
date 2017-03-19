@@ -19,7 +19,7 @@ class ActivityController extends Controller
                            FROM `org-event` oe
                            JOIN `org-event_types` oet on oe.eventTypeID=oet.etID and oet.orgID=?
                            JOIN `event-registration` er on er.eventID = oe.eventID 
-                           WHERE (er.regStatus='Active' or er.regStatus='In Progress') AND personID=?
+                           WHERE (er.regStatus='Active' or er.regStatus='In Progress') AND personID=? AND oe.deleted_at is NULL
                            ORDER BY oe.eventStartDate DESC";
 
         $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, 
@@ -27,7 +27,7 @@ class ActivityController extends Controller
                     FROM `org-event` oe
                     LEFT JOIN `event-registration` er on er.eventID=oe.eventID
                     JOIN `org-event_types` et on et.etID = oe.eventTypeID and et.orgID=?  
-                    WHERE et.etID in (1, 9) and oe.isDeleted = 0
+                    WHERE et.etID in (1, 9) and oe.isDeleted = 0 AND oe.deleted_at is NULL
                     GROUP BY eventID
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";
