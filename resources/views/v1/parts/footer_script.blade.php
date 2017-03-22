@@ -31,5 +31,6 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
 <script src="/js/jquery.smartWizard.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/js/custom.min.js"></script>
 
