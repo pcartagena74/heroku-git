@@ -36,7 +36,19 @@ $today = Carbon\Carbon::now();
                 </div>
                 <div class="col-md-2 col-sm-2">
                     <p></p>
-                    <button class="btn btn-success btn-sm">Submit Payment</button>
+                    <form action="/complete_registration/{{ $rf->regID }}" method="POST">
+                        {{ csrf_field() }}
+                        <script
+                                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                data-key="{{ env('STRIPE_KEY') }}"
+                                data-amount="{{ $rf->cost*100 }}"
+                                data-label="Pay ${{ number_format($rf->cost, 2, '.', ',') }}"
+                                data-name="{{ $event->org->orgName }} (mCentric)"
+                                data-description="Event Registration"
+                                data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
+                                data-locale="auto">
+                        </script>
+                    </form>
                 </div>
             </div>
 

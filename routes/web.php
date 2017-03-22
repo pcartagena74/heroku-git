@@ -16,11 +16,14 @@
 Route::get('/', 'SessionController@create')->name('main_page');
 Route::get('/login', 'SessionController@create');
 Route::post('/login', 'SessionController@store');
+
+// Public Event-related Routes
 Route::get('/events/{event}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::get('/register/{event}', 'RegistrationController@showRegForm')->name('register_step1');
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
-Route::get('/register2/{id}', 'RegFinanceController@show');
+Route::get('/confirm_registration/{id}', 'RegFinanceController@show');
+Route::post('/complete_registration/{id}', 'RegFinanceController@update');
 
 
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');

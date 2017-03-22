@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Registration;
+use App\User;
 use App\Event;
 use App\Ticket;
 use App\RegFinance;
@@ -24,6 +24,8 @@ class RegFinanceController extends Controller
         $quantity      = $rf->seats;
         $discount_code = $rf->discountCode;
 
+        // prep for stripe-related stuff since the next step is billing for non-$0
+
         return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf'));
     }
 
@@ -42,6 +44,7 @@ class RegFinanceController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
+        dd(request()->all());
     }
 
     public function destroy ($id) {
