@@ -10,10 +10,11 @@
         "google/recaptcha": "~1.1",
         "guzzlehttp/guzzle": "^6.2",
         "kouz/laravel-airbrake": "^0.2.0",
+        "laravel/cashier": "~7.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4.0",
-        "laravel/cashier": "~7.0"
+        "zizaco/entrust": "^1.7"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

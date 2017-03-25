@@ -22,7 +22,7 @@ $today = Carbon\Carbon::now();
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
                     <h1 class="fa fa-5x fa-calendar"></h1>
                 </div>
-                <div class="col-md-8 col-sm-8">
+                <div class="col-md-7 col-sm-7">
                     <h2><b>{{ $event->eventName }}</b></h2>
                     <div style="margin-left: 10px;">
                         {{ $event->eventStartDate->format('n/j/Y g:i A') }}
@@ -34,20 +34,29 @@ $today = Carbon\Carbon::now();
                     </div>
                     <br/>
                 </div>
-                <div class="col-md-2 col-sm-2">
+                <div class="col-md-3 col-sm-3">
                     <p></p>
+
+                    @if($rf->cost > 0)
                     <form action="/complete_registration/{{ $rf->regID }}" method="POST">
                         {{ csrf_field() }}
                         <script
                                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                 data-key="{{ env('STRIPE_KEY') }}"
                                 data-amount="{{ $rf->cost*100 }}"
-                                data-label="Pay ${{ number_format($rf->cost, 2, '.', ',') }}"
+                                data-label="Pay Now by Credit Card"
+                                data-email="{{ $person->login }}"
                                 data-name="{{ $event->org->orgName }} (mCentric)"
                                 data-description="Event Registration"
+                                data-zip-code="true"
                                 data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
                                 data-locale="auto">
                         </script>
+                    </form>
+                    @endif
+                    <form action="/complete_registration/{{ $rf->regID }}" method="POST">
+                        {{ csrf_field() }}
+                    <button type="submit" class="btn btn-success btn-sm">&nbsp;<b>Pay by Cash/Check at Door</b></button>
                     </form>
                 </div>
             </div>
@@ -180,7 +189,7 @@ $today = Carbon\Carbon::now();
                     <h1 class="fa fa-5x fa-dollar"></h1>
                 </div>
                 <div class="col-md-3 col-sm-3 col-sm-offset-7 col-md-offset-7">
-                    <table class="table table-striped jambo_table">
+                    <table class="table table-striped table-condensed jambo_table">
                         <thead>
                         <tr>
                             <th style="text-align: center;">Total</th>

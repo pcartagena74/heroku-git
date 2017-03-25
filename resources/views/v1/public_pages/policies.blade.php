@@ -92,18 +92,18 @@
 
                     <li><b>User Information Collection</b><br/>
                         mCentric is provided with information from our clients on their members in order to simplify
-                        their users' interaction with our site.
-                        mCentric also collects, or facilitates the collection, of additional information in conjunction
-                        with the purchase of any client services.
+                        their users' interaction with our site. mCentric may collect and/or facilitate the collection,
+                        of additional information in conjunction with the purchase of any client services.  <br />
+                        No personal financial data of any kind is stored in mCentric's database and as such, cannot
+                        be subject to compromise.
                     </li>
                     <br/>
 
                     <li><b>Disclosure of Personal Information</b><br/>
                         mCentric facilitates the sending of billing information to our third party payment processor,
-                        Paypal. No other information is disclosed
-                        to any other party for any reason, except where required by law. mCentric will adhere to any
-                        local, state, and federal laws that
-                        require providing your information.
+                        Stripe.com. No other information is disclosed to any other party for any reason, except where
+                        required by law. mCentric will adhere to any local, state, and federal laws that require
+                        providing your information.
                     </li>
                     <br/>
 
