@@ -2,7 +2,7 @@
     {{-- Header --}}
     @slot('header')
         @component('mail::header', ['url' => config('app.url')])
-            {{ // config('app.name') }}
+            {{--  config('app.name') --}}
             <img src="/images/mCentric_logo_blue.png">
         @endcomponent
     @endslot

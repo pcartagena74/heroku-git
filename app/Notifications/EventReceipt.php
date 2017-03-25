@@ -54,8 +54,7 @@ class EventReceipt extends Notification
             ->line("Event Host: $event->contactOrg")
             ->line("Date/Time: $event->eventStartDate->format('n/j/Y g:i A')")
             ->line("Location: $event->contactOrg")
-            ->line("For more information about this event, visit <a href='#'>the
-            event page</a> or contact your <a href='mailto:$event->contactEmail'>event organizer</a>.");
+            ->line("For more information about this event, visit <a href='#'>the event page</a> or contact your <a href='mailto:$event->contactEmail'>event organizer</a>.");
     }
 
     /**
