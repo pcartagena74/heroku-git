@@ -10,6 +10,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use App\Event;
 use App\Org;
 use App\Person;
+use App\Location;
 
 class EventReceipt extends Notification
 {
@@ -46,6 +47,7 @@ class EventReceipt extends Notification
         $event  = Event::find($this->rf->eventID);
         $org    = Org::find($event->orgID);
         $person = Person::find($this->rf->personID);
+        $loc    = Location::find($event->locationID);
 
         return (new MailMessage)
             ->subject('Event Registration')
@@ -53,8 +55,8 @@ class EventReceipt extends Notification
             //  ->action('Notification Action', url('/'))
             ->line("Event Host: $event->contactOrg")
             ->line("Date/Time: $event->eventStartDate->format('n/j/Y g:i A')")
-            ->line("Location: $event->contactOrg")
-            ->line("For more information about this event, visit <a href='#'>the event page</a> or contact your <a href='mailto:$event->contactEmail'>event organizer</a>.");
+            ->line("Location: $loc->locName")
+            ->line("For more information about this event, visit <a href='https://www.mCentric.org/events/$event->eventID'>the event page</a> or contact your <a href='mailto:$event->contactEmail'>event organizer</a>.");
     }
 
     /**
