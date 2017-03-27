@@ -53,7 +53,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         </ul>
                     </li>
 
-                    @if(Entrust::ability('', 'settings-management', $options))
+                    @if(Entrust::ability($currentOrg->orgName, 'settings-management', $options))
                     <li><a><i class="fa fa-edit"></i>Organization Settings<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/orgsettings">Custom Field Labels</a></li>
@@ -61,7 +61,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         </ul>
                     </li>
                     @endif
-                    @if(Entrust::ability('', 'member-management', $options))
+                    @if(Entrust::ability($currentOrg->orgName, 'member-management', $options))
                     <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/members">Member Management</a></li>

@@ -31,5 +31,7 @@
             </div>
         </div>
     </div>
+
+    {{-- add links to ical, etc. --}}
     @include('v1.parts.end_content')
 @endsection
