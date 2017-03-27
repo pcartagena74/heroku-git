@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Notifications\EventReceipt;
+//use App\Notifications\EventReceipt;
+use App\Mail\EventReceipt;
+use Illuminate\Support\Facades\Mail;
 use App\Registration;
 use Illuminate\Http\Request;
 use App\Org;
@@ -107,7 +109,8 @@ class RegFinanceController extends Controller
         // update $rf record and each $reg record status
 
         // email the user who paid
-        $user->notify(new EventReceipt($rf));
+        //$user->notify(new EventReceipt($rf));
+        Mail::to($user->login)->send(new EventReceipt($rf));
         return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
     }
 

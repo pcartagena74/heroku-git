@@ -8,27 +8,100 @@
 @extends('v1.layouts.no-auth')
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'o' => '2', 'w1' => '8', 'w2' => '8', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <div class="whole">
+    @include('v1.parts.start_content', ['header' => "Registration Receipt", 'subheader' => '', 'o' => '2', 'w1' => '8', 'w2' => '8', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-        <div class="myrow col-md-12 col-sm-12">
-            <div class="col-md-2 col-sm-2" style="text-align:center;">
-                <h1 class="fa fa-5x fa-calendar"></h1>
+    <div class="myrow col-md-12 col-sm-12">
+        <div class="col-md-2 col-sm-2" style="text-align:center;">
+            <h1 class="fa fa-5x fa-calendar"></h1>
+        </div>
+        <div class="col-md-7 col-sm-7">
+            <h2><b>{{ $event->eventName }}</b></h2>
+            <div style="margin-left: 10px;">
+                {{ $event->eventStartDate->format('n/j/Y g:i A') }}
+                - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
+                <br>
+                {{ $loc->locName }}<br>
+                {{ $loc->addr1 }} <i class="fa fa-circle fa-tiny-circle"></i> {{ $loc->city }}
+                , {{ $loc->state }} {{ $loc->zip }}
             </div>
-            <div class="col-md-7 col-sm-7">
-                <h2><b>{{ $event->eventName }}</b></h2>
-                <div style="margin-left: 10px;">
-                    {{ $event->eventStartDate->format('n/j/Y g:i A') }}
-                    - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
-                    <br>
-                    {{ $loc->locName }}<br>
-                    {{ $loc->addr1 }} <i class="fa fa-circle fa-tiny-circle"></i> {{ $loc->city }}
-                    , {{ $loc->state }} {{ $loc->zip }}
-                </div>
-                <br/>
-            </div>
-            <div class="col-md-3 col-sm-3">
-            </div>
+            <br/>
+        </div>
+        <div class="col-md-3 col-sm-3">
+        </div>
+    </div>
+    <div class="myrow col-md-12 col-sm-12">
+        <div class="col-md-2 col-sm-2" style="text-align:center;">
+            <h1 class="fa fa-5x fa-dollar"></h1>
+        </div>
+        <div class="col-md-7 col-sm-7">
+            @if($rf->seats > 1)
+                <table class="table table-condensed jambo_table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="text-align: left;">Ticket</th>
+                        <th style="text-align: left;">Original Cost</th>
+                        <th style="text-align: left;">Discounts</th>
+                        <th style="text-align: left;">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    @for($i=$rf->regID-1;$i<=$rf->regID;$i++)
+                        <?php
+                        $reg = \App\Registration::find($i); $tcount++;
+                        $person = \App\Person::find($reg->personID);
+                        $tkt = \App\Ticket::find($reg->ticketID);
+                        ?>
+                        <tr>
+                            <td style="text-align: left;">$tkt->ticketLabel</td>
+                            <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                                @if($reg->membership == 'Member')
+                                    {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
+                                @else
+                                    {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
+                                @endif
+                            </td>
+                            @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                                @if($rf->discountCode)
+                                    <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
+                                @else
+                                    <td style="text-align: left;">Early Bird</td>
+                                @endif
+                            @else
+                                @if($rf->discountCode)
+                                    <td style="text-align: left;">{{ $rf->discountCode }}</td>
+                                @else
+                                    <td style="text-align: left;"> --</td>
+                                @endif
+                            @endif
+                            <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                                {{ number_format($reg->subtotal, 2, ".", ",") }}
+                            </td>
+                        </tr>
+
+                    @endfor
+                    <tr>
+                        <td colspan="3" style="text-align: left;"></td>
+                        <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                            {{ $rf->cost }}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            @else
+                <ul>
+                    <li><b>Ticket:</b> {{ $rf->ticket->ticketLabel }}</li>
+                    <li><b>Total Cost:</b> {{ $rf->cost }}</li>
+                </ul>
+            @endif
+            <table class="table borderless">
+                <tr>
+                    <td style="text-align: center;"><img src="/images/outlook.jpg" width="100" /></td>
+                    <td style="text-align: center;"><img src="/images/google.jpg" width="100" /></td>
+                    <td style="text-align: center;"><img src="/images/yahoo.jpg" width="100" /></td>
+                    <td style="text-align: center;"><img src="/images/ical.jpg" width="100" /></td>
+                </tr>
+            </table>
         </div>
     </div>
 
