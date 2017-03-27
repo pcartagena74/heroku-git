@@ -55,6 +55,7 @@ class RegFinanceController extends Controller
         $event = Event::find($rf->eventID);
         $org   = Org::find($event->orgID);
         $user  = User::find($rf->personID);
+        $loc   = Location::find($event->locationID);
 
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
