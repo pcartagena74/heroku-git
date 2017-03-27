@@ -107,6 +107,7 @@ class RegFinanceController extends Controller
 
         // email the user who paid
         $user->notify(new EventReceipt($rf));
+        return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
     }
 
     public function destroy ($id) {

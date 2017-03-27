@@ -16,6 +16,8 @@
 
 $currentPerson = App\Person::find(auth()->user()->id);
 $currentOrg = $currentPerson->defaultOrg;
+
+$options = array('validate_all' => true); // , 'return_type' => 'both');
 ?>
 <div class="col-md-3 left_col menu_fixed">
     <div class="left_col scroll-view">
@@ -51,25 +53,29 @@ $currentOrg = $currentPerson->defaultOrg;
                         </ul>
                     </li>
 
-                    @if (1)
+                    @if(Entrust::ability('', 'settings-management', $options))
                     <li><a><i class="fa fa-edit"></i>Organization Settings<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/orgsettings">Custom Field Labels</a></li>
                             <li><a href="/eventdefaults">Event Defaults</a></li>
                         </ul>
                     </li>
+                    @endif
+                    @if(Entrust::ability('', 'member-management', $options))
                     <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/members">Member Management</a></li>
                             <li><a href="#">Merge Members <span class="label label-success pull-right">Coming Soon</span></a></li>
+                            <li><a href="#">Role Provisioning <span class="label label-success pull-right">Next Week</span></a></li>
                         </ul>
                     </li>
+                    @endif
+                    @if(Entrust::ability($currentOrg->orgName, "event-management", $options))
                     <li><a><i class="fa fa-calendar"></i> Event Management<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/events">Manage Events</a></li>
                             <li><a href="/locations">Location Management</a></li>
                             <li><a id="add" href="/event/create">Add Event</a></li>
-                            <li><a href="#">Role Provisioning <span class="label label-success pull-right">Next Week</span></a></li>
                             <li><a href="#">New Report  <span class="label label-success pull-right">Just Define It</span></a></li>
                         </ul>
                     </li>

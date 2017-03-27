@@ -25,7 +25,7 @@
     <script src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
-<body>
+<body onload="load()">
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;;">
@@ -113,7 +113,11 @@
         <p>&copy; 2017 mCentric </p>
     </footer>
 </div> <!-- /container -->
-
+<script type="text/javascript">
+    function load() {
+        setTimeout("window.open('http://YourPage.com', '_self');", 900000);
+    }
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"><\/script>')</script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

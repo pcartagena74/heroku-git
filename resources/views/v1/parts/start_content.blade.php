@@ -12,7 +12,11 @@ if(isset($id)) {
 }
 
 ?>
-<div class="col-md-{{ $w1 }} col-xs-{{ $w2 }}">
+<div class="col-md-{{ $w1 }} col-xs-{{ $w2 }}
+        @if(isset($o))
+        col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
+        @endif
+        ">
     <div {!!  $id or '' !!}class="x_panel">
         <div class="x_title">
             <h3>{!! $header !!}<small>&nbsp;{{ $subheader }}</small></h3>

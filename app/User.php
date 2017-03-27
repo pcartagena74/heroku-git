@@ -7,12 +7,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 use Laravel\Cashier\Billable;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanResetPassword
 {
     use Billable;
     use Notifiable;
     use ValidatesRequests;
+    use EntrustUserTrait;
 
     protected $dates = ['createDate', 'updateDate', 'trial_ends_at', 'subscription_ends_at'];
 

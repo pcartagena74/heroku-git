@@ -10,8 +10,6 @@
 |
 */
 
-
-
 // Public Routes
 Route::get('/', 'SessionController@create')->name('main_page');
 Route::get('/login', 'SessionController@create');
