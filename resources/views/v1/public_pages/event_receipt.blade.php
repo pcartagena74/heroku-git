@@ -3,6 +3,7 @@
  * Comment: Event Receipt
  * Created: 3/26/2017
  */
+    $today = Carbon\Carbon::now();
 ?>
 
 @extends('v1.layouts.no-auth')
@@ -48,7 +49,7 @@
 
                     @for($i=$rf->regID-1;$i<=$rf->regID;$i++)
                         <?php
-                        $reg = \App\Registration::find($i); $tcount++;
+                        $reg = \App\Registration::find($i);
                         $person = \App\Person::find($reg->personID);
                         $tkt = \App\Ticket::find($reg->ticketID);
                         ?>
@@ -56,12 +57,12 @@
                             <td style="text-align: left;">$tkt->ticketLabel</td>
                             <td style="text-align: left;"><i class="fa fa-dollar"></i>
                                 @if($reg->membership == 'Member')
-                                    {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
+                                    {{ number_format($tkt->memberBasePrice, 2, ".", ",") }}
                                 @else
-                                    {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
+                                    {{ number_format($tkt->nonmbrBasePrice, 2, ".", ",") }}
                                 @endif
                             </td>
-                            @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                            @if(!($tkt->earlyBirdEndDate === null) && $tkt->earlyBirdEndDate->diffInSeconds($today)>0)
                                 @if($rf->discountCode)
                                     <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
                                 @else
