@@ -59,13 +59,13 @@
                         <tr>
                             <td style="text-align: left;">{!! $person->firstName . " " . $person->lastName !!}</td>
                             <td style="text-align: left;">{!! $tkt->ticketLabel !!}</td>
-                            <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                            <td style="text-align: left;"><nobr><i class="fa fa-dollar"></i>
                                 @if($reg->membership == 'Member')
                                     {{ number_format($tkt->memberBasePrice, 2, ".", ",") }}
                                 @else
                                     {{ number_format($tkt->nonmbrBasePrice, 2, ".", ",") }}
                                 @endif
-                            </td>
+                            </nobr></td>
                             @if(!($tkt->earlyBirdEndDate === null) && $tkt->earlyBirdEndDate->diffInSeconds($today)>0)
                                 @if($rf->discountCode)
                                     <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
@@ -79,17 +79,17 @@
                                     <td style="text-align: left;"> --</td>
                                 @endif
                             @endif
-                            <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                            <td style="text-align: left;"><nobr><i class="fa fa-dollar"></i>
                                 {{ number_format($reg->subtotal, 2, ".", ",") }}
-                            </td>
+                            </nobr></td>
                         </tr>
 
                     @endfor
                     <tr>
                         <td colspan="4" style="text-align: left;"></td>
-                        <td style="text-align: left;"><i class="fa fa-dollar"></i>
-                            {{ $rf->cost }}
-                        </td>
+                        <td style="text-align: left;"><nobr><i class="fa fa-dollar"></i>
+                            {{ number_format($rf->cost, 2, ".", ",") }}
+                            </nobr></td>
                     </tr>
                     </tbody>
                 </table>
