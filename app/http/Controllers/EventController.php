@@ -115,6 +115,7 @@ class EventController extends Controller
                 $event->locationID = $location->locID;
             } else {
                 $loc            = new Location;
+                $loc->orgID     = $this->currentPerson->defaultOrgID;
                 $loc->locName   = request()->input('locName');
                 $loc->addr1     = request()->input('addr1');
                 $loc->addr2     = request()->input('addr2');
@@ -128,6 +129,7 @@ class EventController extends Controller
             }
         } else {
             $loc            = new Location;
+            $loc->orgID     = $this->currentPerson->defaultOrgID;
             $loc->locName   = request()->input('locName');
             $loc->addr1     = request()->input('addr1');
             $loc->addr2     = request()->input('addr2');
