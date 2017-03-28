@@ -134,7 +134,7 @@ class RegistrationController extends Controller
             $user->login = $checkEmail;
             $user->email = $checkEmail;
             $user->save();
-            $user->login();
+            Auth::loginUsingId($user->id);
 
 
             $op           = new OrgPerson;
