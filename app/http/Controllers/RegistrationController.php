@@ -93,11 +93,11 @@ class RegistrationController extends Controller
             $eventNotes   = request()->input('eventNotes');
             $allergenInfo = request()->input('allergenInfo');
             $cityState    = request()->input('cityState');
-        }
 
-        foreach($allergenInfo as $ai){
-            if($ai == 'Other: Leave Note'){
-                $ai = 'Other';
+            foreach($allergenInfo as $ai) {
+                if($ai == 'Other: Leave Note') {
+                    $ai = 'Other';
+                }
             }
         }
 
@@ -250,7 +250,7 @@ class RegistrationController extends Controller
         $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
         $reg->eventQuestion    = $eventQuestion;
         $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
-        $reg->affiliation = implode(",", $affiliation);
+        $reg->affiliation      = implode(",", $affiliation);
         $reg->regStatus        = 'In Progress';
         $reg->registeredBy     = $regBy;
         $reg->token            = request()->input('_token');
@@ -285,15 +285,15 @@ class RegistrationController extends Controller
             $origcost      = request()->input('cost' . $i);
 
             if($event->hasFood) {
-                $specialNeeds = request()->input('specialNeeds'."_$i");
-                $eventNotes   = request()->input('eventNotes'."_$i");
-                $allergenInfo = request()->input('allergenInfo'."_$i");
-                $cityState    = request()->input('cityState'."_$i");
-            }
+                $specialNeeds = request()->input('specialNeeds' . "_$i");
+                $eventNotes   = request()->input('eventNotes' . "_$i");
+                $allergenInfo = request()->input('allergenInfo' . "_$i");
+                $cityState    = request()->input('cityState' . "_$i");
 
-            foreach($allergenInfo as $ai){
-                if($ai == 'Other: Leave Note'){
-                    $ai = 'Other';
+                foreach($allergenInfo as $ai) {
+                    if($ai == 'Other: Leave Note') {
+                        $ai = 'Other';
+                    }
                 }
             }
 
@@ -431,7 +431,7 @@ class RegistrationController extends Controller
             $reg->isAuthPDU        = request()->input('isAuthPDU') !== null ? 1 : 0;
             $reg->eventQuestion    = $eventQuestion;
             $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
-            $reg->affiliation = implode(",", $affiliation);
+            $reg->affiliation      = implode(",", $affiliation);
             $reg->regStatus        = 'In Progress';
             $reg->registeredBy     = $regBy;
             $reg->token            = request()->input('_token');
