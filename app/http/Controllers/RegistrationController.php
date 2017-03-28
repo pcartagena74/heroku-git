@@ -66,7 +66,7 @@ class RegistrationController extends Controller
         if(count($resubmit) > 0) {
             return redirect('/register2/' . $resubmit->regID);
         }
-dd(request()->all());
+//dd(request()->all());
         $checkEmail = request()->input('login');
 
         $prefix        = request()->input('prefix');
