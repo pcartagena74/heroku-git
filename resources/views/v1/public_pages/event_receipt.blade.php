@@ -102,10 +102,10 @@
             @endif
             <table class="table borderless">
                 <tr>
-                    <td style="text-align: center;"><img src="/images/outlook.jpg" height="55" /></td>
-                    <td style="text-align: center;"><img src="/images/google.jpg" height="45" /></td>
-                    <td style="text-align: center;"><img src="/images/yahoo.jpg" height="45" /></td>
-                    <td style="text-align: center;"><img src="/images/ical.jpg" height="45" /></td>
+                    <td style="text-align: center;"><img src="{{ $message->embed('/images/outlook.jpg') }}" height="55" /></td>
+                    <td style="text-align: center;"><img src="{{ $message->embed('/images/google.jpg') }}" height="45" /></td>
+                    <td style="text-align: center;"><img src="{{ $message->embed('/images/yahoo.jpg') }}" height="45" /></td>
+                    <td style="text-align: center;"><img src="{{ $message->embed('/images/ical.jpg') }}" height="45" /></td>
                 </tr>
             </table>
         </div>
