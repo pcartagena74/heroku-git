@@ -462,7 +462,7 @@ class RegistrationController extends Controller
             $rf->save();
 
             // Everything is saved and updated and such, not display the data back for review
-            return redirect('/register2/' . $reg->regID);
+            return redirect('/confirm_registration/' . $reg->regID);
         }
     }
 
