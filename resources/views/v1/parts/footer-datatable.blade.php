@@ -10,6 +10,7 @@
 <script>
 
     $(document).ready(function() {
+//        $.fn.dataTable.moment( 'MM/DD/YYYY hh:mm a' );
         $('#datatable-fixed-header').DataTable({
             fixedHeader: true
         });

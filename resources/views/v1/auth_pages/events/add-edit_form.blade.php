@@ -50,7 +50,7 @@ $locations = DB::table('event-location')
                        ['isDeleted', 0]
                    ])->orderBy('locName', 'asc')->get();
 
-$loc_list = ['' => 'Existing Location'] + Location::pluck('locName', 'locID')->toArray();
+$loc_list = ['' => 'Existing Location'] + Location::orderBy('locName')->pluck('locName', 'locID')->toArray();
 
 $orgLogoPath = DB::table('organization')
                  ->select('orgPath', 'orgLogo')
