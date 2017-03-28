@@ -20,7 +20,7 @@ Route::get('/events/{event}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::get('/register/{event}', 'RegistrationController@showRegForm')->name('register_step1');
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
-Route::get('/confirm_registration/{id}', 'RegFinanceController@show');
+Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');
 
 

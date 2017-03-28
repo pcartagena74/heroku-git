@@ -64,7 +64,7 @@ class RegistrationController extends Controller
             $this->currentPerson->load('orgperson');
         }
         if(count($resubmit) > 0) {
-            return redirect('/register2/' . $resubmit->regID);
+            return redirect('/confirm_registration/' . $resubmit->regID);
         }
 //dd(request()->all());
         $checkEmail = request()->input('login');
@@ -93,7 +93,7 @@ class RegistrationController extends Controller
             $eventNotes   = request()->input('eventNotes');
             $allergenInfo = request()->input('allergenInfo');
             $cityState    = request()->input('cityState');
-            $allergenInfo = implode(",", request()->input('allergenInfo'));
+            //$allergenInfo = implode(",", request()->input('allergenInfo'));
         }
 
         // put in some validation to ensure that nothing was tampered with
