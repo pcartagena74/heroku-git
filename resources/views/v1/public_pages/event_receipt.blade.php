@@ -86,7 +86,7 @@
 
                     @endfor
                     <tr>
-                        <td colspan="3" style="text-align: left;"></td>
+                        <td colspan="4" style="text-align: left;"></td>
                         <td style="text-align: left;"><i class="fa fa-dollar"></i>
                             {{ $rf->cost }}
                         </td>
