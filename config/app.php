@@ -142,6 +142,7 @@ return [
          */
 
 	    Collective\Html\HtmlServiceProvider::class,
+        \Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
         'Fideloper\Proxy\TrustedProxyServiceProvider',
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
