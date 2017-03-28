@@ -11,6 +11,7 @@ use App\Event;
 use App\Email;
 use App\RegFinance;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class RegistrationController extends Controller
 {
