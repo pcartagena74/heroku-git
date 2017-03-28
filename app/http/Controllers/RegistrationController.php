@@ -119,6 +119,7 @@ class RegistrationController extends Controller
             $person->compName     = $compName;
             $person->indName      = $indName;
             $person->title        = $title;
+            $person->login        = $checkEmail;
             if($event->hasFood) {
                 $person->allergenInfo = implode(",", $allergenInfo);
             }
