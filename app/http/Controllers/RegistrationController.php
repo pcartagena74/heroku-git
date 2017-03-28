@@ -136,6 +136,7 @@ class RegistrationController extends Controller
             $user->save();
             Auth::loginUsingId($user->id);
 
+            $this->currentPerson = $person;
 
             $op           = new OrgPerson;
             $op->orgID    = $event->orgID;
