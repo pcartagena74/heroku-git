@@ -10,6 +10,7 @@ use App\Ticket;
 use App\Event;
 use App\Email;
 use App\RegFinance;
+use Illuminate\Support\Facades\Auth;
 
 class RegistrationController extends Controller
 {
