@@ -95,7 +95,7 @@
                 </table>
             @else
                 <ul>
-                    <li><b>Ticket:</b> {{ $tkt->ticketLabel }}</li>
+                    <li><b>Ticket:</b> {{ $ticketLabel }}</li>
                     <li><b>Total Cost:</b> {{ $rf->cost }}</li>
                 </ul>
             @endif

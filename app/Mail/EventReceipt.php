@@ -44,6 +44,9 @@ class EventReceipt extends Mailable
         $orgName = $this->org->orgName;
         return $this
             ->subject("$orgName Event Registration Confirmation")
-            ->view('v1.public_pages.event_receipt');
+            ->view('v1.public_pages.event_receipt')
+            ->with([
+                'ticketLabel' => $this->tkt->ticketLabel,
+            ]);
     }
 }
