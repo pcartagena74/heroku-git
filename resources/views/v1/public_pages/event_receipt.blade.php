@@ -6,6 +6,7 @@
     $today = Carbon\Carbon::now();
 
     // $rf, $loc, $event, $org
+        $ticketLabel = $rf->registration->ticket->ticketLabel;
 ?>
 
 @extends('v1.layouts.no-auth')
