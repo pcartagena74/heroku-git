@@ -213,9 +213,9 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
             </tr>
             <tr>
                 @if($i==1)
-                    <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo"), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                    <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
                 @else
-                    <td>{!! Form::select('allergenInfo_$i[]', $allergen_array, old("allergenInfo_$i"), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                    <td>{!! Form::select('allergenInfo_$i[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
                 @endif
                 @if($i==1)
                         <td><div class="container row col-sm-3">

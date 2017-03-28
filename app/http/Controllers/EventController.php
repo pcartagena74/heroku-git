@@ -103,6 +103,7 @@ class EventController extends Controller
 
     public function store (Request $request) {
         // responds to POST to /events and creates, adds, stores the event
+        $today = Carbon\Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = new Event;
 
@@ -177,20 +178,22 @@ class EventController extends Controller
         $tkt->earlyBirdEndDate    = Carbon::now();
         $tkt->save();
 
-        $orgDiscounts = OrgDiscount::where([
-            ['orgID', $this->currentPerson->defaultOrgID],
-            ['discountCODE', "<>", '']
-        ])->get();
+        if($event->eventStartDate > $today) {
+            $orgDiscounts = OrgDiscount::where([
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['discountCODE', "<>", '']
+            ])->get();
 
-        foreach($orgDiscounts as $od) {
-            $ed               = new EventDiscount;
-            $ed->orgID        = $od->orgID;
-            $ed->eventID      = $event->eventID;
-            $ed->discountCODE = $od->discountCODE;
-            $ed->percent      = $od->percent;
-            $ed->creatorID    = $this->currentPerson->personID;
-            $ed->updaterID    = $this->currentPerson->personID;
-            $ed->save();
+            foreach($orgDiscounts as $od) {
+                $ed               = new EventDiscount;
+                $ed->orgID        = $od->orgID;
+                $ed->eventID      = $event->eventID;
+                $ed->discountCODE = $od->discountCODE;
+                $ed->percent      = $od->percent;
+                $ed->creatorID    = $this->currentPerson->personID;
+                $ed->updaterID    = $this->currentPerson->personID;
+                $ed->save();
+            }
         }
 
         return redirect('/event-tickets/' . $event->eventID);
@@ -309,16 +312,16 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
-    public function ajax_update(Request $request, $id){
-        $event              = Event::find($id);
+    public function ajax_update (Request $request, $id) {
+        $event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 
         // shaving off number at the end to match fieldname
-        $name              = request()->input('name');
-        $value             = request()->input('value');
+        $name  = request()->input('name');
+        $value = request()->input('value');
 
         if($name == 'availabilityEndDate' or $name == 'earlyBirdDate' and $value !== null) {
-            $date = date("Y-m-d H:i:s", strtotime(trim($value)));
+            $date  = date("Y-m-d H:i:s", strtotime(trim($value)));
             $value = $date;
         }
 

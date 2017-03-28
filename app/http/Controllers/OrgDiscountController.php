@@ -61,13 +61,18 @@ class OrgDiscountController extends Controller
 
     public function update(Request $request, $id) {
         // responds to PATCH /blah/id
+        $name = request()->input('name');
+        $value = request()->input('value');
         $this->currentPerson = Person::find(auth()->user()->id);
         $discount            = OrgDiscount::find($id);
 
-        if(request()->input('discountCODE' . $id)) {
-            $discount->discountCODE = request()->input('discountCODE' . $id);
-        } elseif(request()->input('percent' . $id)) {
-            $discount->percent = request()->input('percent' . $id);
+        if($name == 'discountCODE' . $id){
+            $discount->discountCODE = $value;
+        } elseif($name == 'percent' . $id){
+            $discount->percent = $value;
+        } else {
+            // something unexpected occurred
+            dd(request()->all());
         }
         $discount->updaterID = $this->currentPerson->personID;
         $discount->save();
