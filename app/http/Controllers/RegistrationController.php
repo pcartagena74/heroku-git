@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Person;
 use App\OrgPerson;
 use App\Registration;
+use App\User;
 use Illuminate\Http\Request;
 use App\Ticket;
 use App\Event;
@@ -125,6 +126,16 @@ class RegistrationController extends Controller
             }
             $person->affiliation = implode(",", $affiliation);
             $person->save();
+
+            // Need to create a user record with new personID
+
+            $user = new User();
+            $user->id = $person->personID;
+            $user->login = $checkEmail;
+            $user->email = $checkEmail;
+            $user->save();
+            $user->login();
+
 
             $op           = new OrgPerson;
             $op->orgID    = $event->orgID;
