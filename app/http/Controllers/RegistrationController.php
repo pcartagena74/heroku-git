@@ -66,7 +66,7 @@ class RegistrationController extends Controller
         if(count($resubmit) > 0) {
             return redirect('/register2/' . $resubmit->regID);
         }
-//dd(request()->all());
+dd(request()->all());
         $checkEmail = request()->input('login');
 
         $prefix        = request()->input('prefix');
@@ -93,12 +93,7 @@ class RegistrationController extends Controller
             $eventNotes   = request()->input('eventNotes');
             $allergenInfo = request()->input('allergenInfo');
             $cityState    = request()->input('cityState');
-
-            foreach($allergenInfo as $ai) {
-                if($ai == 'Other: Leave Note') {
-                    $ai = 'Other';
-                }
-            }
+            $allergenInfo = implode(",", request()->input('allergenInfo'));
         }
 
         // put in some validation to ensure that nothing was tampered with
@@ -287,14 +282,8 @@ class RegistrationController extends Controller
             if($event->hasFood) {
                 $specialNeeds = request()->input('specialNeeds' . "_$i");
                 $eventNotes   = request()->input('eventNotes' . "_$i");
-                $allergenInfo = request()->input('allergenInfo' . "_$i");
+                $allergenInfo = implode(",", request()->input('allergenInfo' . "_$i"));
                 $cityState    = request()->input('cityState' . "_$i");
-
-                foreach($allergenInfo as $ai) {
-                    if($ai == 'Other: Leave Note') {
-                        $ai = 'Other';
-                    }
-                }
             }
 
             $subcheck += $subtotal;
