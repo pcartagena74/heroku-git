@@ -103,7 +103,7 @@ class EventController extends Controller
 
     public function store (Request $request) {
         // responds to POST to /events and creates, adds, stores the event
-        $today = Carbon::now();
+        $today               = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = new Event;
 
@@ -155,6 +155,11 @@ class EventController extends Controller
         $event->contactDetails   = request()->input('contactDetails');
         $event->showLogo         = request()->input('showLogo');
         $event->hasFood          = request()->input('hasFood');
+        if(request()->input('hasFood')) {
+            $event->hasFood = 1;
+        } else {
+            $event->hasFood = 0;
+        }
         /*
          *  Add these later:
          *  image1
@@ -181,10 +186,8 @@ class EventController extends Controller
         $tkt->save();
 
         if($event->eventStartDate > $today) {
-            $orgDiscounts = OrgDiscount::where([
-                ['orgID', $this->currentPerson->defaultOrgID],
-                ['discountCODE', "<>", '']
-            ])->get();
+            $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
+                ['discountCODE', "<>", '']])->get();
 
             foreach($orgDiscounts as $od) {
                 $ed               = new EventDiscount;
@@ -201,7 +204,8 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function edit ($id) {
+    public
+    function edit ($id) {
         // responds to GET /events/id/edit and shows the add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson = Person::find(auth()->user()->id);
@@ -211,7 +215,8 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
     }
 
-    public function update (Request $request, $id) {
+    public
+    function update (Request $request, $id) {
         // responds to PATCH /events/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = Event::find($id);
@@ -288,7 +293,8 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function destroy ($id) {
+    public
+    function destroy ($id) {
         // responds to DELETE /events/id
         $event         = Event::find($id);
         $registrations = DB::table('event-registration')->where('eventID', $event->eventID)->count();
@@ -301,7 +307,8 @@ class EventController extends Controller
         return redirect('/events');
     }
 
-    public function activate ($id) {
+    public
+    function activate ($id) {
         $event = Event::find($id);
         if($event->isActive == 1) {
             $event->isActive = 0;
@@ -314,7 +321,8 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
-    public function ajax_update (Request $request, $id) {
+    public
+    function ajax_update (Request $request, $id) {
         $event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 

@@ -48,7 +48,7 @@ $locations = DB::table('event-location')
                    [
                        ['orgID', $current_person->defaultOrgID],
                        ['isDeleted', 0]
-                   ])->get();
+                   ])->orderBy('locName', 'asc')->get();
 
 $loc_list = ['' => 'Existing Location'] + Location::pluck('locName', 'locID')->toArray();
 
