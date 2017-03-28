@@ -64,6 +64,8 @@ class RegistrationController extends Controller
             $this->currentPerson = Person::find(auth()->user()->id);
             $this->currentPerson->load('orgperson');
         }
+
+        // This is a quick check to pass through without saving another record if the _token is already in the db
         if(count($resubmit) > 0) {
             return redirect('/confirm_registration/' . $resubmit->regID);
         }
@@ -461,7 +463,7 @@ class RegistrationController extends Controller
             Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->creatorID = 1;
             $rf->save();
 
-            // Everything is saved and updated and such, not display the data back for review
+            // Everything is saved and updated and such, now display the data back for review
             return redirect('/confirm_registration/' . $reg->regID);
         }
     }
