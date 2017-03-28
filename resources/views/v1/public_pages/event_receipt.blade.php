@@ -54,19 +54,19 @@
                         <?php
                         $reg = \App\Registration::find($i);
                         $person = \App\Person::find($reg->personID);
-                        $tkt = \App\Ticket::find($reg->ticketID);
+                        $ticket = \App\Ticket::find($reg->ticketID);
                         ?>
                         <tr>
                             <td style="text-align: left;">{!! $person->firstName . " " . $person->lastName !!}</td>
-                            <td style="text-align: left;">{!! $tkt->ticketLabel !!}</td>
+                            <td style="text-align: left;">{!! $ticket->ticketLabel !!}</td>
                             <td style="text-align: left;"><nobr><i class="fa fa-dollar"></i>
                                 @if($reg->membership == 'Member')
-                                    {{ number_format($tkt->memberBasePrice, 2, ".", ",") }}
+                                    {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                 @else
-                                    {{ number_format($tkt->nonmbrBasePrice, 2, ".", ",") }}
+                                    {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
                                 @endif
                             </nobr></td>
-                            @if(!($tkt->earlyBirdEndDate === null) && $tkt->earlyBirdEndDate->diffInSeconds($today)>0)
+                            @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
                                 @if($rf->discountCode)
                                     <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
                                 @else
