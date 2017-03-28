@@ -103,7 +103,7 @@ class EventController extends Controller
 
     public function store (Request $request) {
         // responds to POST to /events and creates, adds, stores the event
-        $today = Carbon\Carbon::now();
+        $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = new Event;
 
