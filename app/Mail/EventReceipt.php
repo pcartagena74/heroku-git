@@ -41,8 +41,9 @@ class EventReceipt extends Mailable
      * @return $this
      */
     public function build () {
+        $orgName = $this->org->orgName;
         return $this
-            ->subject("$this->org->orgName Event Registration Confirmation")
+            ->subject("$orgName Event Registration Confirmation")
             ->view('v1.public_pages.event_receipt');
     }
 }
