@@ -4,6 +4,8 @@
  * Created: 3/26/2017
  */
     $today = Carbon\Carbon::now();
+
+    // $rf, $loc, $event, $org
 ?>
 
 @extends('v1.layouts.no-auth')
@@ -39,6 +41,7 @@
                 <table class="table table-condensed jambo_table table-striped">
                     <thead>
                     <tr>
+                        <th style="text-align: left;">Attendee</th>
                         <th style="text-align: left;">Ticket</th>
                         <th style="text-align: left;">Original Cost</th>
                         <th style="text-align: left;">Discounts</th>
@@ -54,7 +57,7 @@
                         $tkt = \App\Ticket::find($reg->ticketID);
                         ?>
                         <tr>
-                            <td style="text-align: left;">$tkt->ticketLabel</td>
+                            <td style="text-align: left;">{!! $tkt->ticketLabel !!}</td>
                             <td style="text-align: left;"><i class="fa fa-dollar"></i>
                                 @if($reg->membership == 'Member')
                                     {{ number_format($tkt->memberBasePrice, 2, ".", ",") }}
@@ -91,16 +94,16 @@
                 </table>
             @else
                 <ul>
-                    <li><b>Ticket:</b> {{ $rf->ticket->ticketLabel }}</li>
+                    <li><b>Ticket:</b> {{ $tkt->ticketLabel }}</li>
                     <li><b>Total Cost:</b> {{ $rf->cost }}</li>
                 </ul>
             @endif
             <table class="table borderless">
                 <tr>
-                    <td style="text-align: center;"><img src="/images/outlook.jpg" width="100" /></td>
-                    <td style="text-align: center;"><img src="/images/google.jpg" width="100" /></td>
-                    <td style="text-align: center;"><img src="/images/yahoo.jpg" width="100" /></td>
-                    <td style="text-align: center;"><img src="/images/ical.jpg" width="100" /></td>
+                    <td style="text-align: center;"><img src="/images/outlook.jpg" height="55" /></td>
+                    <td style="text-align: center;"><img src="/images/google.jpg" height="45" /></td>
+                    <td style="text-align: center;"><img src="/images/yahoo.jpg" height="45" /></td>
+                    <td style="text-align: center;"><img src="/images/ical.jpg" height="45" /></td>
                 </tr>
             </table>
         </div>

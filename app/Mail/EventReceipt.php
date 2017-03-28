@@ -6,6 +6,7 @@ use App\Event;
 use App\Location;
 use App\Org;
 use App\RegFinance;
+use App\Ticket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -19,6 +20,7 @@ class EventReceipt extends Mailable
     public $event;
     public $org;
     public $loc;
+    public $tkt;
 
     /**
      * Create a new message instance.
@@ -30,6 +32,7 @@ class EventReceipt extends Mailable
         $this->event = Event::find($this->rf->eventID);
         $this->org = Org::find($this->event->orgID);
         $this->loc = Location::find($this->event->locationID);
+        $this->tkt = Ticket::find($this->rf->ticketID);
     }
 
     /**
