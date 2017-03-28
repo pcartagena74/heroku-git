@@ -57,6 +57,7 @@
                         $tkt = \App\Ticket::find($reg->ticketID);
                         ?>
                         <tr>
+                            <td style="text-align: left;">{!! $person->firstName . " " . $person->lastName !!}</td>
                             <td style="text-align: left;">{!! $tkt->ticketLabel !!}</td>
                             <td style="text-align: left;"><i class="fa fa-dollar"></i>
                                 @if($reg->membership == 'Member')
