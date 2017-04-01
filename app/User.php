@@ -16,7 +16,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     use ValidatesRequests;
     use EntrustUserTrait;
 
-    protected $dates = ['createDate', 'updateDate', 'trial_ends_at', 'subscription_ends_at'];
+    protected $dates = ['createDate', 'updateDate', 'trial_ends_at', 'subscription_ends_at', 'last_login'];
 
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';

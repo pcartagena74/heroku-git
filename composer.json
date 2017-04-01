@@ -15,6 +15,7 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4.0",
+        "spatie/laravel-activitylog": "^1.12",
         "zizaco/entrust": "dev-laravel-5"
     },
     "require-dev": {

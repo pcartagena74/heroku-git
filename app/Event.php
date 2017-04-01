@@ -2,14 +2,20 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Event extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
+
     // The table
     protected $table = 'org-event';
     protected $primaryKey = 'eventID';
     protected $dates = ['createDate', 'updateDate', 'eventStartDate', 'eventEndDate', 'deleted_at'];
+
+    protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'shortURL', 'hasTracks'];
+    protected static $ignoreChangedAttributes = ['createDate'];
 
     public function tickets() {
         return $this->hasMany(Ticket::class, 'ticketID');

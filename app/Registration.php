@@ -2,9 +2,14 @@
 
 namespace App;
 
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Registration extends Model
 {
+    use LogsActivity;
+    protected static $logAttributes = ['regStatus'];
+    protected static $ignoreChangedAttributes = ['createDate'];
+
     // The table
     protected $table = 'event-registration';
     protected $primaryKey = 'regID';

@@ -106,6 +106,7 @@ class EventController extends Controller
         $today               = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = new Event;
+        $label               = Org::find($this->currentPerson->defaultOrgID);
 
         if(request()->input('locationID') != '') {
             $location = Location::find(request()->input('locationID'));
@@ -141,6 +142,7 @@ class EventController extends Controller
             $loc->save();
             $event->locationID = $loc->locID;
         }
+
         $event->orgID            = $this->currentPerson->defaultOrgID;
         $event->eventName        = request()->input('eventName');
         $event->eventDescription = request()->input('eventDescription');
@@ -168,12 +170,11 @@ class EventController extends Controller
          *  refund Note
          *  event tags
          */
-        $label                = Org::find($this->currentPerson->defaultOrgID)
-                                   ->select('defaultTicketLabel', 'earlyBirdPercent')->first();
         $event->earlyDiscount = $label->earlyBirdPercent;
         $event->earlyBirdDate = Carbon::now();
         $event->creatorID     = $this->currentPerson->personID;
         $event->updaterID     = $this->currentPerson->personID;
+
         $event->save();
 
         // Create a stub for the default ticket for the event
@@ -204,8 +205,7 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public
-    function edit ($id) {
+    public function edit ($id) {
         // responds to GET /events/id/edit and shows the add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson = Person::find(auth()->user()->id);
@@ -215,8 +215,7 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
     }
 
-    public
-    function update (Request $request, $id) {
+    public function update (Request $request, $id) {
         // responds to PATCH /events/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = Event::find($id);
@@ -293,8 +292,7 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public
-    function destroy ($id) {
+    public function destroy ($id) {
         // responds to DELETE /events/id
         $event         = Event::find($id);
         $registrations = DB::table('event-registration')->where('eventID', $event->eventID)->count();
@@ -307,8 +305,7 @@ class EventController extends Controller
         return redirect('/events');
     }
 
-    public
-    function activate ($id) {
+    public function activate ($id) {
         $event = Event::find($id);
         if($event->isActive == 1) {
             $event->isActive = 0;
@@ -321,16 +318,16 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
-    public
-    function ajax_update (Request $request, $id) {
+    public function ajax_update (Request $request, $id) {
+        // this function is just for the quick update of the Early Bird End Date
+        // and Percent Discount associated with the eventID $id
         $event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        // shaving off number at the end to match fieldname
         $name  = request()->input('name');
         $value = request()->input('value');
 
-        if($name == 'availabilityEndDate' or $name == 'earlyBirdDate' and $value !== null) {
+        if($name == 'earlyBirdDate' and $value !== null) {
             $date  = date("Y-m-d H:i:s", strtotime(trim($value)));
             $value = $date;
         }
@@ -338,5 +335,19 @@ class EventController extends Controller
         $event->{$name}   = $value;
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
+
+        // now, either the date or percent changed, so update all event tickets
+        // MUST figure out why this isn't working...
+        $tickets = Ticket::where('eventID', $event->id)->get();
+        foreach($tickets as $ticket){
+            if($name == 'earlyBirdDate' and $value !== null){
+                $ticket->earlyBirdEndDate = $value;
+            } elseif($name == 'earlyDiscount'){
+                $ticket->earlyBirdPercent = $value;
+            }
+            $ticket->updaterID = $this->currentPerson->personID;
+            $ticket->save();
+        }
+        return redirect('/event-tickets/' . $event->eventID);
     }
 }

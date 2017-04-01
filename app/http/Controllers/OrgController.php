@@ -67,6 +67,7 @@ class OrgController extends Controller
         $name = request()->input('name');
         $value = request()->input('value');
 
+        // Add logic to change Role information if orgName changes
         $org = Org::find($id);
         $org->{$name} = $value;
         $org->updaterID = auth()->user()->id;

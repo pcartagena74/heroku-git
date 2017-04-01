@@ -2,9 +2,11 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class OrgPerson extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
     protected $primaryKey = 'personID';
 
@@ -24,6 +26,9 @@ class OrgPerson extends Model
         'RelDate9',
         'RelDate10'
     ];
+
+    protected static $logAttributes = ['OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4'];
+    protected static $ignoreChangedAttributes = ['createDate'];
 
     // The table
     protected $table = 'org-person';

@@ -2,10 +2,16 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Ticket extends Model
 {
     use SoftDeletes;
+    use LogsActivity;
+
+    protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
+        'isaBundle', 'ticketLabel'];
+    protected static $ignoreChangedAttributes = ['createDate'];
     // The table
     protected $table = 'event-tickets';
     protected $primaryKey = 'ticketID';

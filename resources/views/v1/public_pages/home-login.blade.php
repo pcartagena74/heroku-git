@@ -115,7 +115,7 @@
 </div> <!-- /container -->
 <script type="text/javascript">
     function load() {
-        setTimeout("window.open('https://www.mCentric.org', '_self');", 900000);
+        setTimeout("window.open('{{ env('APP_URL') }}', '_self');", 900000);
     }
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

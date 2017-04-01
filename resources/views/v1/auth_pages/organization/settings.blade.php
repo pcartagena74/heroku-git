@@ -42,11 +42,13 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: left;">Website URL</th>
+                    <th colspan="1" style="text-align: left;">Credit Label</th>
                     <th colspan="2" style="text-align: left;">Twitter Handle</th>
                     <th></th>
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align: left;"><a href="#" id="orgURL" data-value="{{ $org->orgURL }}"></a></td>
+                    <td colspan="1" style="text-align: left;"><a href="#" id="creditLabel" data-value="{{ $org->creditLabel }}"></a></td>
                     <td colspan="2" style="text-align: left;"><a href="#" id="orgHandle" data-value="{{ $org->orgHandle }}"></a></td>
                     <td></td>
                 </tr>
@@ -151,6 +153,11 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
                 pk:  {{ $org->orgID }},
             });
             $('#orgURL').editable({
+                type: 'text',
+                url: '/orgsettings/' + {{ $org->orgID }},
+                pk:  {{ $org->orgID }},
+            });
+            $('#creditLabel').editable({
                 type: 'text',
                 url: '/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
