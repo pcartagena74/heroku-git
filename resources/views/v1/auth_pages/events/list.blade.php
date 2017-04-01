@@ -43,6 +43,8 @@ foreach($current_events as $event) {
         <input id="mySubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" />
         </form>';
 
+// if(Entrust::ability($currentOrg->orgName, "event-management", $options))
+// introduce twitter button; administration, etc.
 
     $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
     $display_link_button =
