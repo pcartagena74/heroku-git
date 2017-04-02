@@ -168,6 +168,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Spatie\Activitylog\ActivitylogServiceProvider::class,
+        Spatie\LinkChecker\LinkCheckerServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*

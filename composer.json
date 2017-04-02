@@ -17,6 +17,7 @@
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4.0",
         "spatie/laravel-activitylog": "^1.12",
+        "spatie/laravel-link-checker": "^2.0",
         "zizaco/entrust": "dev-laravel-5"
     },
     "require-dev": {

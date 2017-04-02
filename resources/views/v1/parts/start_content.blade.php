@@ -1,8 +1,9 @@
 <?php
 /**
- * Comment: This starts all content boxes with a title (and small text) above an <hr>
+
+* Comment: This starts all content boxes with a title (and small text) above an <hr>
  * Created: 2/2/2017
- *
+*
  * $header, $subheader, $w1, $w2, $r1, $r2, $r3 [optional $id]
  *
  */
@@ -10,7 +11,6 @@
 if(isset($id)) {
     $id = "id='$id' ";
 }
-
 ?>
 <div class="col-md-{{ $w1 }} col-xs-{{ $w2 }}
         @if(isset($o))
@@ -19,7 +19,7 @@ if(isset($id)) {
         ">
     <div {!!  $id or '' !!}class="x_panel">
         <div class="x_title">
-            <h3>{!! $header !!}<small>&nbsp;{{ $subheader }}</small></h3>
+            <h2>{!! $header !!}<small>&nbsp;{{ $subheader }}</small></h2>
 
             @if ($r1+$r2+$r3 > 0)
 

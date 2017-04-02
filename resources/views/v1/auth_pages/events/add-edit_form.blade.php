@@ -112,6 +112,31 @@ $orgLogoPath = DB::table('organization')
         {!! Form::textarea('eventInfo', old('$event->eventInfo'), array('class'=>'form-control rich')) !!}
     </div>
 
+        <div class="col-sm-4">
+            {!! Form::label('hasTracks', 'Does this event have tracks?', array('class' => 'control-label', 'style'=>'color:red;',
+            'data-toggle'=>'tooltip', 'title'=>'Events with tracks require session setup.')) !!}
+        </div>
+        @if($event->eventID !== null && $event->hasTracks > 0)
+            <div class="col-sm-1"> {!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!} </div>
+            <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', true,
+            array('class' => 'flat js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
+            <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
+        @else
+            <div class="col-sm-1">{!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!}</div>
+            <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', false,
+            array('class' => 'flat js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
+            <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
+        @endif
+            <div id="trackInput"
+                 @if($event->hasTracks == 0)
+                 style="display:none;"
+                 @endif
+                 class="col-sm-4">
+                {!! Form::text('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
+                array('class'=>'form-control has-feedback-left', 'placeholder'=>'Tracks') ) !!}
+            </div>
+
+
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Event Date &amp; Time', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -272,6 +297,12 @@ $orgLogoPath = DB::table('organization')
                     fired = 1;
                 }
             });
+            $('#hasTracksCheck').on('change', function(){
+                $("#trackInput").toggle();
+            });
+            function toggleShow() {
+                $("#trackInput").toggle();
+            }
         });
     </script>
 
