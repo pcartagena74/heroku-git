@@ -12,7 +12,7 @@ class Event extends Model
     // The table
     protected $table = 'org-event';
     protected $primaryKey = 'eventID';
-    protected $dates = ['createDate', 'updateDate', 'eventStartDate', 'eventEndDate', 'deleted_at'];
+    protected $dates = ['createDate', 'updateDate', 'eventStartDate', 'eventEndDate', 'deleted_at', 'earlyBirdDate'];
 
     protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'shortURL', 'hasTracks'];
     protected static $ignoreChangedAttributes = ['createDate'];

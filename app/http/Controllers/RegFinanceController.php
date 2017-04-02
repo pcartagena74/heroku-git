@@ -15,6 +15,7 @@ use App\Ticket;
 use App\RegFinance;
 use App\Location;
 use Stripe\Stripe;
+use Illuminate\Support\Facades\DB;
 
 class RegFinanceController extends Controller
 {
@@ -32,9 +33,13 @@ class RegFinanceController extends Controller
         $discount_code = $rf->discountCode;
         $person        = Person::find($rf->personID);
 
+        $prefixes   = DB::table('prefixes')->get();
+        $industries = DB::table('industries')->get();
+
         // prep for stripe-related stuff since the next step is billing for non-$0
 
-        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf', 'person'));
+        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code',
+            'loc', 'rf', 'person', 'prefixes', 'industries'));
     }
 
     public function create () {

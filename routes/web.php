@@ -16,10 +16,10 @@ Route::get('/login', 'SessionController@create');
 Route::post('/login', 'SessionController@store');
 
 // Public Event-related Routes
-Route::get('/events/{eventID}', 'EventController@show')->name('display_event');
-Route::post('/discount/{eventID}', 'EventDiscountController@showDiscount')->name('check_discount');
-Route::get('/register/{ticketID}', 'RegistrationController@showRegForm')->name('register_step1');
-Route::post('/register/{eventID}/create', 'RegistrationController@store')->name('register_step2');
+Route::get('/events/{event}', 'EventController@show')->name('display_event');
+Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
+Route::get('/register/{ticket}', 'RegistrationController@showRegForm')->name('register_step1');
+Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');
 
@@ -50,13 +50,13 @@ Route::post('/email/{id}/delete', 'EmailController@destroy');
 
 // Event & Ticket Routes
 Route::get('/events', 'EventController@index')->name('manageEvents');
-Route::post('/activate/{id}', 'EventController@activate');
-Route::post('/eventajax/{id}', 'EventController@ajax_update');
+Route::post('/activate/{event}', 'EventController@activate');
+Route::post('/eventajax/{event}', 'EventController@ajax_update');
 Route::get('/event/create', 'EventController@create')->name('add_edit_form');
 Route::post('/event/create', 'EventController@store')->name('save_event');
-Route::get('/event/{id}/edit', 'EventController@edit');
-Route::patch('/event/{id}', 'EventController@update')->name('event_update');
-Route::delete('/event/{id}', 'EventController@destroy');
+Route::get('/event/{event}/edit', 'EventController@edit');
+Route::patch('/event/{event}', 'EventController@update')->name('event_update');
+Route::delete('/event/{event}', 'EventController@destroy');
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', 'BundleController@update');

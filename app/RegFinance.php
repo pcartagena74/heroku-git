@@ -13,7 +13,7 @@ class RegFinance extends Model
     const UPDATED_AT = 'cancelDate';
     protected $dates = ['createDate', 'cancelDate'];
 
-    protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
+    //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
     public function event() {

@@ -67,9 +67,9 @@ $today = Carbon\Carbon::now();
                                 //                                                    AND bt.ticketID = et.ticketID
                                 //                                                WHERE et.eventID=$event->eventID and isaBundle=0";
                                 $b_tkts = DB::table('event-tickets')
-                                            ->leftJoin('bundle-ticket', function($join) {
-                                                $join->on('bundle-ticket.bundleID', '=', 'event-tickets.ticketID')
-                                                    ->where('bundle-ticket.ticketID', '=', 'event-tickets.ticketID');
+                                            ->join('bundle-ticket', function($join) use($bundle){
+                                                $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
+                                                    ->where('bundle-ticket.bundleID', '=', $bundle->ticketID);
                                                 })->where([
                                                 ['event-tickets.eventID', $event->eventID],
                                                 ['event-tickets.isaBundle', 0],
@@ -157,9 +157,7 @@ $today = Carbon\Carbon::now();
             <div class="col-md-6 col-sm-6 col-xs-12" id="status_msg"></div>
             <div class="col-md-12 col-sm-12 col-xs-12"
                  style="text-align: right; vertical-align: top;">
-                <img alt="Visa Logo" src="/images/visa.png"><img alt="MasterCard Logo"
-                                                                 src="/images/mastercard.png"><img
-                        alt="Paypal Logo" src="/images/paypal.png">
+                <img alt="Visa Logo" src="/images/visa.png"><img alt="MasterCard Logo" src="/images/mastercard.png">
                 <button type="submit" class="btn btn-success btn-sm" id="purchase"
                         style="height: 32px;"><b>Purchase Ticket(s)</b></button>
             </div>

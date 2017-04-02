@@ -6,6 +6,7 @@
 ?>
 <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.13/sorting/datetime-moment.js"></script>
 
 <script>
 

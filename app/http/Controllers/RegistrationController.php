@@ -58,7 +58,7 @@ class RegistrationController extends Controller
         // record registration_form1 answers
         // LOOP if quantity > 1 and add new person records avoiding duplicates as possible
         // display registration_form2
-
+//dd(request()->all());
         $event    = Event::find(request()->input('eventID'));
         $resubmit = Registration::where('token', request()->input('_token'))->first();
         if(Auth::check()) {
@@ -101,6 +101,8 @@ class RegistrationController extends Controller
         }
 
         // put in some validation to ensure that nothing was tampered with
+        // check $percent against whatever it should be based on submitted $dCode
+
         $total = request()->input('total');
 
         $subcheck = $subtotal;
@@ -155,8 +157,6 @@ class RegistrationController extends Controller
         } elseif(!Auth::check() && $email !== null) {
             // Not logged in and email is in the database;
             // Should force a login -- return to form with input saved.
-            //dd($affiliation);
-            //flash("alert-warning", "You have an account that we've created for you. Please attempt to login and we'll send you a password to your email address.");
             //dd('No one logged in but main email is in DB');
             request()->session()->flash('alert-warning',
                 "You have an account that we've created for you. Please click the login button. 
@@ -453,8 +453,10 @@ class RegistrationController extends Controller
         }
 
         // ----------------------------------------------------------
-        if($subtotal != $total) {
-            return Redirect::back()->withErrors(['msg', "Something funky happened with the math.  Don't hack the form!"]);
+        if($subcheck != $total) {
+            request()->session()->flash('alert-warning', "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total");
+            return Redirect::back()->withErrors();
+//                ['warning' => "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total"]);
         } else {
             $rf               = new RegFinance;
             $rf->regID        = $reg->regID;

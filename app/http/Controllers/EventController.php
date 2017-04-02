@@ -63,8 +63,9 @@ class EventController extends Controller
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
     }
 
-    public function show ($id) {
+    public function show (Event $event) {
         // responds to GET /events/id
+        //$event     = Event::find($id);
         if(auth()->guest()) {
             $current_person = 0;
         } else {
@@ -72,7 +73,6 @@ class EventController extends Controller
             $current_person      = $this->currentPerson;
         }
 
-        $event     = Event::find($id);
         $event_loc = Location::where('locID', $event->locationID)->first();
         $org_stuff = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
         $bundles   =
@@ -205,20 +205,20 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function edit ($id) {
+    public function edit (Event $event) {
         // responds to GET /events/id/edit and shows the add/edit form
+        //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson = Person::find(auth()->user()->id);
-        $event               = Event::find($id);
         $exLoc               = Location::find($event->locationID);
         $page_title          = 'Edit Event';
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
     }
 
-    public function update (Request $request, $id) {
+    public function update (Request $request, Event $event) {
         // responds to PATCH /events/id
+        // $event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
-        $event               = Event::find($id);
         $input_loc           = request()->input('locationID');
         // check to see if form loc == saved loc
         // if so, grab location item and save data.
@@ -292,9 +292,9 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function destroy ($id) {
+    public function destroy (Event $event) {
         // responds to DELETE /events/id
-        $event         = Event::find($id);
+        // $event         = Event::find($id);
         $registrations = DB::table('event-registration')->where('eventID', $event->eventID)->count();
 
         if($registrations == 0) {
@@ -305,8 +305,8 @@ class EventController extends Controller
         return redirect('/events');
     }
 
-    public function activate ($id) {
-        $event = Event::find($id);
+    public function activate (Event $event) {
+        // $event = Event::find($id);
         if($event->isActive == 1) {
             $event->isActive = 0;
         } else {
@@ -318,10 +318,10 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
-    public function ajax_update (Request $request, $id) {
+    public function ajax_update (Request $request, Event $event) {
         // this function is just for the quick update of the Early Bird End Date
-        // and Percent Discount associated with the eventID $id
-        $event               = Event::find($id);
+        // and Percent Discount associated with the eventID $id from /event-tickets/{id}
+        //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 
         $name  = request()->input('name');
@@ -338,7 +338,7 @@ class EventController extends Controller
 
         // now, either the date or percent changed, so update all event tickets
         // MUST figure out why this isn't working...
-        $tickets = Ticket::where('eventID', $event->id)->get();
+        $tickets = Ticket::where('eventID', $event->eventID)->get();
         foreach($tickets as $ticket){
             if($name == 'earlyBirdDate' and $value !== null){
                 $ticket->earlyBirdEndDate = $value;

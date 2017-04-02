@@ -22,8 +22,7 @@ $default = Org::find($event->orgID);
 
     @include('v1.parts.start_content', ['header' => 'Tickets for "' . $event->eventName . '"', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <p>Defaults for this event only.  <br />
-    <b style="color:red;">Note: </b>changing these will affect all associated tickets shown below.</p>
+    <p>Defaults for this event only. <b style="color:red;">Note: </b>changing either of these will affect all associated tickets shown below.</p>
     <div class="col-sm-8 col-md-8">
         <table class="table table-bordered table-striped table-condensed">
             <tr>
@@ -216,11 +215,12 @@ $default = Org::find($event->orgID);
                 $b_tkts = DB::select($sql);
                 ?>
                 @foreach($b_tkts as $tkt)
-                    <?php $bi++; // $tkt->ticketID ?>
+                    <?php $bi++; $bid[$bi] = $ticket->ticketID; // $tkt->ticketID ?>
                     <tr>
                         <td></td>
-                        <td><a id="eventID-{{ $tktIDs[$bi]=$tkt->ticketID }}" name="eventID-{{ $tkt->ticketID }}"
-                               data-pk="{{ $ticket->ticketID }}" url="/bundle/{{ $event->eventID }}"
+                        <td><a id="eventID-{{ $ticket->ticketID }}-{{ $tktIDs[$bi]=$tkt->ticketID }}"
+                               name="eventID-{{ $ticket->ticketID }}-{{ $tkt->ticketID }}"
+                               data-pk="{{ $ticket->ticketID }}"
                                data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
                         <td colspan="5">{{ $tkt->ticketLabel }}</td>
                     </tr>
@@ -366,9 +366,18 @@ $default = Org::find($event->orgID);
 
         <script>
             @for ($i = 1; $i <= $bi; $i++)
-                $('#eventID-{{ $tktIDs[$i] }}').editable({
+                $('#eventID-{{ $bid[$i] }}-{{ $tktIDs[$i] }}').editable({
                     type: 'select',
-                    source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}]
+                    source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}],
+                    url: '{{ '/bundle/' . $event->eventID }}',
+                    error: function (xhr, ajaxOptions, e) {
+                        console.log(xhr);
+                        console.log(ajaxOptions);
+                        console.log(e);
+                    },
+                    success: function (data) {
+                        console.log(data);
+                    }
                 });
             @endfor
         </script>

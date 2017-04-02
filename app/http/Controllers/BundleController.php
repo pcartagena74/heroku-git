@@ -8,6 +8,7 @@ use App\Event;
 use App\Ticket;
 use App\Person;
 use App\Registration;
+use Illuminate\Support\Facades\Log;
 
 class BundleController extends Controller
 {
@@ -15,34 +16,38 @@ class BundleController extends Controller
         $this->middleware('auth');
     }
 
-    public function index() {
+    public function index () {
         // responds to /blah
     }
 
-    public function show($id) {
+    public function show ($id) {
         // responds to GET /blah/id
     }
 
-    public function create() {
+    public function create () {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request) {
+    public function store (Request $request) {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function edit($id) {
+    public function edit ($id) {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update(Request $request, $id) {
+    public function update (Request $request, $id) {
         // responds to PATCH /blah/id
+        Log::info("Showing ajax input called on eventID: $id " . print_r(request()->all(), true));
         $eventID = $id;
 
+        // $name is passed as eventID-{bundleID]-{ticketID} so it needs to be split
         $name = request()->input('name');
-        list($field, $ticketID) = array_pad(explode("-", $name, 2), 2, null);
-        $value = request()->input('value');
+        list($field1, $field2, $ticketID) = array_pad(explode("-", $name, 3), 3, null);
+
+        $value    = request()->input('value');
+        // pk is the bundleID.  Yes. Redundance above done for editable_jQ_uniqueness
         $bundleID = request()->input('pk');
 
         // The ticketID is no longer part of the bundle
@@ -56,12 +61,13 @@ class BundleController extends Controller
             $cp = $this->currentPerson = Person::find(auth()->user()->id);
             DB::table('bundle-ticket')->insert(
                 ['bundleID' => $bundleID, 'eventID' => $eventID, 'ticketID' => $ticketID,
-                'creatorID' => $cp->personID, 'updaterID' => $cp->personID]
-        );
+                    'creatorID' => $cp->personID, 'updaterID' => $cp->personID]
+            );
         }
+        return json_encode(array('status' => 'success', 'message' => print_r(request()->all(), true)));
     }
 
-    public function destroy($id) {
+    public function destroy ($id) {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $ticket              = Ticket::Find($id);

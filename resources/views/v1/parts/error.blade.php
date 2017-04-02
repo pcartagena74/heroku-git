@@ -5,12 +5,9 @@
  */
 ?>
 <div class="form-group">
-    <ul class="form-control">
-
-        @foreach($errors->all() as $error)
-
-            <li class="form-control-item">{!! $error !!}</li>
-        @endforeach
-
-    </ul>
+    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </p>
+    @endforeach
 </div>

@@ -43,6 +43,7 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
     $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
 }
+var_dump(Session::all());
 ?>
 @extends('v1.layouts.no-auth')
 
@@ -50,7 +51,9 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
 
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @if($errors->any())
-        <h4>{{$errors->first()}}</h4>
+        @foreach($errors as $error)
+        <h4>{{$error}}</h4>
+        @endforeach
     @endif
 
     <div class="row">
@@ -75,7 +78,6 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
     <div class="flash-message">
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
             @if(Session::has('alert-' . $msg))
-                <p>&nbsp;</p>
                 <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </p>
@@ -375,6 +377,7 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                     newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
                 $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
                 subtotal += newval{{ $i }} * 1.00;
+                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
                 @endfor
 
                 $('#total').text(subtotal.toFixed(2));
