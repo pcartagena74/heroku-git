@@ -74,8 +74,9 @@ class RegFinanceController extends Controller
 
         if($rf->confirmation != 'Processed') {
 
-            // if > $0, payment details were given and we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
-            if($rf->cost > 0) {
+            // if cost > $0 AND payment details were given ($stripeToken isset),
+            // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
+            if($rf->cost > 0 && isset($stripeToken)) {
                 $stripeEmail     = $request->input('stripeEmail');
                 $stripeToken     = $request->input('stripeToken');
                 $stripeTokenType = $request->input('stripeTokenType');
@@ -101,9 +102,14 @@ class RegFinanceController extends Controller
                 $rf->status  = 'Processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
+
+            } elseif($rf->cost > 0) {
+                // cost > 0 and the 'Pay at Door' button was pressed
+                $rf->status  = 'Payment Pending';
+                $rf->pmtType = 'At Door';
             } else {
                 $rf->status  = 'Processed';
-                $rf->pmtType = 'At Door';
+                $rf->pmtType = 'No Charge';
             }
 
             $discountAmt = 0;
