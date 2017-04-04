@@ -34,6 +34,7 @@ foreach($current_events as $event) {
 
     $editURL    = '/event/' . $event->eventID . '/edit';
     $displayURL = '/events/' . $event->eventID;
+    $eventDiscountURL = '/eventdiscount/' . $event->eventID;
 
     $edit_button = "<form method='post' action='$editURL'>" .
         $csrf . '
@@ -49,6 +50,8 @@ foreach($current_events as $event) {
     $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
     $display_link_button =
         "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-calendar'></i> Show Event</a>";
+    $eventDiscount_button =
+       "<a href='$eventDiscountURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Event Discounts</a>";
     $delete_button       = Form::open(['url' => '/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-xs"';
     if($event->isActive) {
@@ -66,7 +69,7 @@ foreach($current_events as $event) {
 
     array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $active_button, $progress_bar, $edit_link_button . $display_link_button . $delete_button . $ticket_button]);
+        $active_button, $progress_bar, $edit_link_button . $display_link_button . $eventDiscount_button . $delete_button . $ticket_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
@@ -76,32 +79,6 @@ $past_data    = [];
 
 foreach($past_events as $event) {
     $csrf = csrf_field();
-
-    /*
-     * Not needed for past events
-     *
-    $edit_button   = '<form method="post" action="event_add-edit.php">' .
-        $csrf . '
-        <label for="mySubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit</label>
-        <input type="hidden" name="eventID" value="' . $event->eventID . '">
-        <input type="hidden" name="function" value="edit">
-        <input id="mySubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" />
-        </form>';
-    $delete_button = '<form method="post" action="include/add-edit-delete_event.php">' .
-        $csrf .
-        '<button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                data-btn-ok-label="Continue" data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                data-btn-ok-class="btn-success"
-                data-btn-cancel-label="Stop!" data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                data-btn-cancel-class="btn-danger"
-                data-title="Are you sure?" data-content="This cannot be undone.">
-            <i class="fa fa-trash"></i> Delete</button>
-            <input type="hidden" name="eventID" value="' . $event->eventID . '">
-            <input type="hidden" name="function" value="delete">
-            <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
-     *
-     *
-     */
 
     $ticket_button = '<form method="post" action="/event-tickets/' . $event->eventID . '">' . $csrf .
         '<label for="TicketSubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Tickets</label>
@@ -186,7 +163,6 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
                     //$('#status_msg').html(result.message).fadeIn(0);
                 }
             });
-        }
-        ;
+        };
     </script>
 @endsection

@@ -12,9 +12,15 @@ use Illuminate\Support\Facades\Auth;
 if(Auth::check()) {
     $person       = Person::find(auth()->user()->id);
     $registration = new Registration;
+    if($person->orgperson->OrgStat1){
+        $isMember = 1;
+    } else {
+        $isMember = 0;
+    }
 } else {
     $person       = new Person;
     $registration = new Registration;
+    $isMember = 0;
 }
 $loc = Location::find($event->locationID);
 
@@ -43,7 +49,7 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
     $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
 }
-var_dump(Session::all());
+//var_dump(Session::all());
 ?>
 @extends('v1.layouts.no-auth')
 
@@ -95,11 +101,11 @@ var_dump(Session::all());
 
     @for($i=1; $i<=$quantity; $i++)
         {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
-        {!! Form::hidden('cost'.$i, Auth::check() ? $earlymbr : $earlynon, array('id' => 'cost'.$i)) !!}
+        {!! Form::hidden('cost'.$i, $isMember ? $earlymbr : $earlynon, array('id' => 'cost'.$i)) !!}
         <div class="clearfix"><p>&nbsp;</p></div>
         <table id="ticket_head" class="table table-striped">
             <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
-                <span id="ticket_type{{ $i }}">#{{ $i }} @if(Auth::check()) MEMBER @else NON-MEMBER @endif
+                <span id="ticket_type{{ $i }}">#{{ $i }} @if($isMember) MEMBER @else NON-MEMBER @endif
                     TICKET: </span> {{ $ticket->ticketLabel }} </th>
             <th colspan="3" style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
                 <div class="col-md-12 col-sm-12 col-xs-12">
@@ -120,7 +126,7 @@ var_dump(Session::all());
             </tr>
             <tr>
                 <td style="width: 11%"><b>Ticket Cost:</b> <i class="fa fa-dollar"></i> <span id="tcost{{ $i }}">
-                        @if(Auth::check())
+                        @if($isMember)
                                 {{ $earlymbr }}
                         @else
                                 {{ $earlynon }}
@@ -150,7 +156,7 @@ var_dump(Session::all());
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("firstName", old("firstName"), array('class' => 'form-control',
-                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
+                    $isMember ? 'disabled' : '', 'required')) !!}</td>
                 @else
                     <td>{!! Form::text("firstName_$i", old("firstName_$i"), array('class' => 'form-control', 'required')) !!}</td>
                 @endif
@@ -161,7 +167,7 @@ var_dump(Session::all());
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("lastName", old("lastName"), array('class' => 'form-control',
-                    Auth::check() ? 'disabled' : '', 'required')) !!}</td>
+                    $isMember ? 'disabled' : '', 'required')) !!}</td>
                 @else
                     <td>{!! Form::text("lastName_$i", old("lastName_$i"), array('class' => 'form-control', 'required')) !!}</td>
                 @endif
@@ -217,7 +223,7 @@ var_dump(Session::all());
                 @if($i==1)
                     <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
                 @else
-                    <td>{!! Form::select('allergenInfo_$i[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                    <td>{!! Form::select('allergenInfo_'.$i.'[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
                 @endif
                 @if($i==1)
                         <td><div class="container row col-sm-3">
@@ -350,14 +356,17 @@ var_dump(Session::all());
     </script>
     <script>
         $(document).ready(function () {
+
             var percent = $('#discount').text();
+            var flatAmt = $('#flatdisc').text();
             var subtotal = 0;
 
             @for($i=1;$i<=$quantity; $i++)
-                var tc{{ $i }} = $('#tcost{{ $i }}').text();
-                var newval{{ $i }} = tc{{ $i }} * 1.00;
+                var tc{{ $i }} = $('#tcost{{ $i }}').text() * 1;
+                var newval{{ $i }} = tc{{ $i }} * 1;
                 $('#final{{ $i }}').text(tc{{ $i }});
-                subtotal += newval{{ $i }} * 1.00;
+                subtotal += newval{{ $i }} * 1;
+                //newval{{ $i }} = $.trim( newval{{ $i }} );
                 $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
@@ -368,24 +377,6 @@ var_dump(Session::all());
                 validateCode({{ $event->eventID }});
             }
 
-            $('#discount').bind("DOMSubtreeModified", function () {
-                percent = $('#discount').text();
-                $('#i_percent').val(percent);
-                subtotal = 0;
-
-                @for($i=1;$i<=$quantity; $i++)
-                    newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
-                $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
-                subtotal += newval{{ $i }} * 1.00;
-                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
-                @endfor
-
-                $('#total').text(subtotal.toFixed(2));
-                $('#i_total').val(subtotal.toFixed(2));
-            });
-        });
-    </script>
-    <script>
         $('#btn-apply').on('click', function (e) {
             e.preventDefault();
             validateCode({{ $event->eventID }});
@@ -417,6 +408,37 @@ var_dump(Session::all());
                         var result = eval(data);
                         $('.status_msg').html(result.message).fadeIn(0);
                         $('#discount').text(result.percent);
+                        $('#flatdisc').text(result.flatAmt);
+
+                        percent = $('#discount').text();
+                        flatAmt = $('#flatdisc').text();
+                        $('#i_percent').val(percent);
+                        $('#i_flatamt').val(flatAmt);
+                        subtotal = 0;
+
+                        if(percent>0) {
+                            @for($i=1;$i<=$quantity; $i++)
+                                newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
+                            $('#final{{ $i }}').val(newval{{ $i }}.toFixed(2));
+                            subtotal += newval{{ $i }} * 1.00;
+                            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                            @endfor
+                        } else {
+                            newval{{ 1 }} = ((tc{{ 1 }} * 1) - (flatAmt * 1));
+                            $('#final{{ 1 }}').text(newval{{ 1 }}.toFixed(2));
+                            subtotal += newval{{ 1 }} * 1;
+                            $("#sub{{ 1 }}").val(newval{{ 1 }}.toFixed(2));
+
+                            @for($i=2;$i<=$quantity; $i++)
+                                newval{{ $i }} = tc{{ $i }} * 1;
+                            $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                            subtotal += newval{{ $i }} * 1;
+                            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                            @endfor
+                        }
+
+                        $('#total').text(subtotal.toFixed(2));
+                        $('#i_total').val(subtotal.toFixed(2));
                     },
                     error: function (data) {
                         console.log(data);
@@ -425,8 +447,8 @@ var_dump(Session::all());
                     }
                 });
             }
-        }
-        ;
+        };
+    });
     </script>
 
 @endsection

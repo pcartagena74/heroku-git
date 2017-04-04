@@ -119,7 +119,12 @@ class PersonController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
+
         $name = request()->input('name');
+        if(strpos($name, '-')){
+            // if passed from the registration receipt, the $name will have a dash
+            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+        }
         $value = request()->input('value');
 
         if($name == 'login'){

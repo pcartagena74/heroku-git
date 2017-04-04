@@ -62,7 +62,12 @@ class RegFinanceController extends Controller
         $event = Event::find($rf->eventID);
         $org   = Org::find($event->orgID);
         $user  = User::find($rf->personID);
+        $person = Person::find($rf->personID);
         $loc   = Location::find($event->locationID);
+        $quantity      = $rf->seats;
+        $discount_code = $rf->discountCode;
+        $ticket        = Ticket::find($rf->ticketID);
+        $this->currentPerson = Person::find(auth()->user()->id);
 
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
@@ -95,20 +100,35 @@ class RegFinanceController extends Controller
 
                 $rf->status  = 'Processed';
                 $rf->pmtType = $stripeTokenType;
+                $rf->pmtRecd = 1;
             } else {
                 $rf->status  = 'Processed';
                 $rf->pmtType = 'At Door';
             }
 
+            $discountAmt = 0;
             $end = $rf->seats - 1;
             for($i = $id - $end; $i <= $id; $i++) {
                 $reg            = Registration::find($i);
                 $reg->regStatus = 'Processed';
                 // No one is actually, necessarily, logged in...
                 //$reg->updaterID = auth()->user()->id;
+                $discountAmt+= ($reg->origcost - $reg->subtotal);
                 $reg->save();
             }
-            $rf->confirmation = 'Processed';
+            // Confirmation code is:  personID-regFinance->regID/seats
+            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID."/" .$rf->seats;
+
+            // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
+            $rf->ccFee = number_format(($rf->cost * .029)+.30, 2, '.', ',');
+
+            // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00
+            $rf->handleFee = number_format(($rf->cost * .029)+.30, 2, '.', ',');
+            if($rf->handleFee > 4){
+                $rf->handleFee = number_format(4, 2, '.', ',');
+            }
+            $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', ',');
+            $rf->discountAmt = number_format($discountAmt, 2, '.', ',');
             $rf->save();
         }
         // update $rf record and each $reg record status
@@ -116,7 +136,9 @@ class RegFinanceController extends Controller
         // email the user who paid
         //$user->notify(new EventReceipt($rf));
         Mail::to($user->login)->send(new EventReceipt($rf));
-        return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
+        //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
+        return view('v1.public_pages.event_receipt', compact('ticket', 'event', 'quantity', 'discount_code',
+            'loc', 'rf', 'person', 'prefixes', 'industries'));
     }
 
     public function destroy ($id) {

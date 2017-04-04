@@ -22,7 +22,7 @@ Route::get('/register/{ticket}', 'RegistrationController@showRegForm')->name('re
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');
-
+Route::post('/reg_verify/{reg}', 'RegistrationController@update');
 
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
@@ -57,6 +57,9 @@ Route::post('/event/create', 'EventController@store')->name('save_event');
 Route::get('/event/{event}/edit', 'EventController@edit');
 Route::patch('/event/{event}', 'EventController@update')->name('event_update');
 Route::delete('/event/{event}', 'EventController@destroy');
+Route::get('/eventdiscount/{event}', 'EventDiscountController@show');
+Route::post('/eventdiscount', 'EventDiscountController@store');
+Route::delete('/eventdiscount/{id}/delete', 'EventDiscountController@destroy');
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', 'BundleController@update');
@@ -66,6 +69,7 @@ Route::post('/tickets/create', 'TicketController@store');
 Route::delete('/ticket/{id}/delete', 'TicketController@destroy')->name('delete_ticket');
 Route::get('/event-tickets/{id}', 'TicketController@show');
 Route::post('/event-tickets/{id}', 'TicketController@show');
+
 
 // Location Routes
 Route::get('/locations', 'LocationController@index');

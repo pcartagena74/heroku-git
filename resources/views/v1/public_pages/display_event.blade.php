@@ -35,7 +35,9 @@ $today = Carbon\Carbon::now();
 
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
 
-                <h2>Tickets</h2>
+                @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->diffInSeconds($today)>0)
+                    <h2> <span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
+                @endif
                 <table id="datatable" class="table table-striped jambo_table">
                     <thead>
                     <tr>

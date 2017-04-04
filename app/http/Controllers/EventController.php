@@ -294,14 +294,8 @@ class EventController extends Controller
 
     public function destroy (Event $event) {
         // responds to DELETE /events/id
-        // $event         = Event::find($id);
-        $registrations = DB::table('event-registration')->where('eventID', $event->eventID)->count();
 
-        if($registrations == 0) {
-            $event->delete();
-        } else {
-            // Do something?
-        }
+        $event->delete();
         return redirect('/events');
     }
 
