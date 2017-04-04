@@ -75,15 +75,15 @@ class RegistrationController extends Controller
 //dd(request()->all());
         $checkEmail = request()->input('login');
 
-        $prefix        = request()->input('prefix');
-        $firstName     = request()->input('firstName');
-        $middleName    = request()->input('middleName');
-        $lastName      = request()->input('lastName');
-        $suffix        = request()->input('suffix');
-        $prefName      = request()->input('prefName');
-        $compName      = request()->input('compName');
-        $indName       = request()->input('indName');
-        $title         = request()->input('title');
+        $prefix        = ucwords(request()->input('prefix'));
+        $firstName     = ucwords(request()->input('firstName'));
+        $middleName    = ucwords(request()->input('middleName'));
+        $lastName      = ucwords(request()->input('lastName'));
+        $suffix        = ucwords(request()->input('suffix'));
+        $prefName      = ucwords(request()->input('prefName'));
+        $compName      = ucwords(request()->input('compName'));
+        $indName       = ucwords(request()->input('indName'));
+        $title         = ucwords(request()->input('title'));
         $eventQuestion = request()->input('eventQuestion');
         $eventTopics   = request()->input('eventTopics');
         $affiliation   = request()->input('affiliation');
@@ -285,15 +285,15 @@ class RegistrationController extends Controller
 
         for($i = 2; $i <= $quantity; $i++) {
 
-            $prefix        = request()->input('prefix' . "_$i");
-            $firstName     = request()->input('firstName' . "_$i");
-            $middleName    = request()->input('middleName' . "_$i");
-            $lastName      = request()->input('lastName' . "_$i");
-            $suffix        = request()->input('suffix' . "_$i");
-            $prefName      = request()->input('prefName' . "_$i");
-            $compName      = request()->input('compName' . "_$i");
-            $indName       = request()->input('indName' . "_$i");
-            $title         = request()->input('title' . "_$i");
+            $prefix        = ucwords(request()->input('prefix' . "_$i"));
+            $firstName     = ucwords(request()->input('firstName' . "_$i"));
+            $middleName    = ucwords(request()->input('middleName' . "_$i"));
+            $lastName      = ucwords(request()->input('lastName' . "_$i"));
+            $suffix        = ucwords(request()->input('suffix' . "_$i"));
+            $prefName      = ucwords(request()->input('prefName' . "_$i"));
+            $compName      = ucwords(request()->input('compName' . "_$i"));
+            $indName       = ucwords(request()->input('indName' . "_$i"));
+            $title         = ucwords(request()->input('title' . "_$i"));
             $eventQuestion = request()->input('eventQuestion' . "_$i");
             $eventTopics   = request()->input('eventTopics' . "_$i");
             $checkEmail    = request()->input('login' . "_$i");
@@ -311,8 +311,10 @@ class RegistrationController extends Controller
 
             $email = Email::where('emailADDR', $checkEmail)->first();
 
-            if(!Auth::check() && $email === null) {
-                // Not logged in and email is not in database; must create
+           // Someone IS going to be logged in; the first person
+
+            if(Auth::check() && $email === null) {
+                // Someone logged in and email is not in database; must create
                 $person               = new Person;
                 $person->prefix       = $prefix;
                 $person->firstName    = $firstName;
@@ -324,6 +326,7 @@ class RegistrationController extends Controller
                 $person->compName     = $compName;
                 $person->indName      = $indName;
                 $person->title        = $title;
+                $person->login        = $checkEmail;
                 if($event->hasFood) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
                 }
@@ -334,6 +337,16 @@ class RegistrationController extends Controller
                 $op->orgID    = $event->orgID;
                 $op->personID = $person->personID;
                 $op->save();
+
+                // Need to create a user record with new personID
+
+                $user        = new User();
+                $user->id    = $person->personID;
+                $user->login = $checkEmail;
+                $user->email = $checkEmail;
+                $user->save();
+
+                // need to send a notification to the new user re: password setting
 
                 $email            = new Email;
                 $email->personID  = $person->personID;
@@ -398,7 +411,8 @@ class RegistrationController extends Controller
                 $person->save();
 
             } else {
-                // someone logged in is registering for someone else NOT in the DB
+                // this is a rehash of the first option
+               /*
                 $person               = new Person;
                 $person->prefix       = $prefix;
                 $person->firstName    = $firstName;
@@ -431,6 +445,8 @@ class RegistrationController extends Controller
 
                 $regBy  = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
                 $regMem = 'Non-Member';
+               */
+               dd("shouldn't have gotten here");
             }
 
             $reg                   = new Registration;
