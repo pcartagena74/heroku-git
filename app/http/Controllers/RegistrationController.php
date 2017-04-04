@@ -513,6 +513,14 @@ class RegistrationController extends Controller
 
     public function update (Request $request, Registration $reg) {
         // responds to PATCH /blah/id
+        // This is the person record of the registration
+        $person = Person::find($reg->personID);
+
+        if(auth()->check()){
+            $updater = auth()->user()->id;
+        } else {
+            $updater = 1;
+        }
 
         $name = request()->input('name');
         if(strpos($name, '-')) {
@@ -521,13 +529,21 @@ class RegistrationController extends Controller
         }
         $value = request()->input('value');
 
+        // Because allergenInfo and Industry are reported in registrations and saved to the profile...
+        if($name == 'allergenInfo' && $value !== null){
+            $value = implode(",", (array)$value);
+            $person->allergenInfo = $value;
+            $person->updaterID = $updater;
+            $person->save;
+        } elseif($name == 'indName'){
+            $person->indName = $value;
+            $person->updaterID = $updater;
+            $person->save;
+        }
+
         //$person            = Person::find($reg->personID);
         $reg->{$name} = $value;
-        if(auth()->check()){
-            $reg->updaterID = auth()->user()->id;
-        } else {
-            $reg->updaterID = 1;
-        }
+        $reg->updaterID = $updater;
         $reg->save();
     }
 

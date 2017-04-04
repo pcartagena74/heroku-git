@@ -78,7 +78,7 @@ foreach($array as $chap) {
 
             @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
                 <?php
-                $reg = \App\Registration::find($rf->regID); $tcount++;
+                $reg = \App\Registration::find($i); $tcount++;
                 $person = \App\Person::find($reg->personID);
                 $ticket = \App\Ticket::find($reg->ticketID);
                 ?>
@@ -366,7 +366,7 @@ foreach($array as $chap) {
             });
 
             $("#compName-{{ $i }}").editable({type: 'text'});
-            $("#title-{{ $i }}").editable({type: 'text'});
+            $("#title-{{ $i }}").editable({type: 'text', emptytext: 'Title'});
             $("#login-{{ $i }}").editable({type: 'text'});
 
             $('#affiliation-{{ $i }}').editable({
