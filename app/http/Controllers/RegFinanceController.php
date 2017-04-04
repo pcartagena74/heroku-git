@@ -129,12 +129,12 @@ class RegFinanceController extends Controller
             $rf->ccFee = number_format(($rf->cost * .029)+.30, 2, '.', ',');
 
             // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00
-            $rf->handleFee = number_format(($rf->cost * .029)+.30, 2, '.', ',');
+            $rf->handleFee = number_format(($rf->cost * .029)+.30, 2, '.', '');
             if($rf->handleFee > 4){
-                $rf->handleFee = number_format(4, 2, '.', ',');
+                $rf->handleFee = number_format(4, 2, '.', '');
             }
-            $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', ',');
-            $rf->discountAmt = number_format($discountAmt, 2, '.', ',');
+            $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
+            $rf->discountAmt = number_format($discountAmt, 2, '.', '');
             $rf->save();
         }
         // update $rf record and each $reg record status
