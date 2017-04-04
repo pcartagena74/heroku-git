@@ -410,8 +410,8 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                         $('#discount').text(result.percent);
                         $('#flatdisc').text(result.flatAmt);
 
-                        percent = $('#discount').text();
-                        flatAmt = $('#flatdisc').text();
+                        percent = result.percent;
+                        flatAmt = result.flatAmt;
                         $('#i_percent').val(percent);
                         $('#i_flatamt').val(flatAmt);
                         subtotal = 0;
@@ -419,7 +419,7 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                         if(percent>0) {
                             @for($i=1;$i<=$quantity; $i++)
                                 newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
-                            $('#final{{ $i }}').val(newval{{ $i }}.toFixed(2));
+                            $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
                             subtotal += newval{{ $i }} * 1.00;
                             $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
                             @endfor
