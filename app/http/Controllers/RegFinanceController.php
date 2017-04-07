@@ -32,13 +32,14 @@ class RegFinanceController extends Controller
         $quantity      = $rf->seats;
         $discount_code = $rf->discountCode;
         $person        = Person::find($rf->personID);
+        $org           = Org::find($event->orgID);
 
         $prefixes   = DB::table('prefixes')->get();
         $industries = DB::table('industries')->get();
 
         // prep for stripe-related stuff since the next step is billing for non-$0
 
-        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code',
+        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
             'loc', 'rf', 'person', 'prefixes', 'industries'));
     }
 
@@ -125,16 +126,22 @@ class RegFinanceController extends Controller
             // Confirmation code is:  personID-regFinance->regID/seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID."/" .$rf->seats;
 
-            // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
-            $rf->ccFee = number_format(($rf->cost * .029)+.30, 2, '.', ',');
+            // Need to set fees IF the cost > $0
+           if($rf->cost > 0) {
+               // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
+               $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
 
-            // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00
-            $rf->handleFee = number_format(($rf->cost * .029)+.30, 2, '.', '');
-            if($rf->handleFee > 4){
-                $rf->handleFee = number_format(4, 2, '.', '');
-            }
-            $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
-            $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+               // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00 for orgID 10, else $5
+               $rf->handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
+               if($rf->handleFee > 4 && $org->orgID == 10) {
+                   $rf->handleFee = number_format(4, 2, '.', '');
+               } elseif($rf->handleFee > 5) {
+                   $rf->handleFee = number_format(5, 2, '.', '');
+               }
+               $rf->orgAmt      = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
+               $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+           }
+           // fees above are already $0 unless changed so save.
             $rf->save();
         }
         // update $rf record and each $reg record status
