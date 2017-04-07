@@ -23,15 +23,19 @@ foreach($array as $chap) {
     $i++;
     $affiliation_array[$i] = $chap;
 }
+
+// must use $etype->etName to get the text embedded here
 $etype = DB::table('org-event_types')->where('etID', $event->eventTypeID)->select('etName')->first();
 
-$est = $event->eventStartDate->toIso8601String();
-$est = $event->eventStartDate->format('Ymd\THis');
+// Find out how to embed the correct TZ in front of this since not using UTC
+$est = $event->eventStartDate->format('Ymd\THis'); // $event->eventTimeZone;
+$eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
 
 $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
 
-$yahoo_url = "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype->etName&ST=$est$event->eventTimeZone&DUR=$dur&URL=&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
-
+$event_url = "For details, visit: " . env('APP_URL') . "/events/$event->eventID";
+$yahoo_url = "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype->etName&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
+$google_url = "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype->etName&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
 
 ?>
 @extends('v1.layouts.no-auth')
