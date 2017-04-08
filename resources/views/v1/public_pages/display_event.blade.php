@@ -36,7 +36,14 @@ $today = Carbon\Carbon::now();
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
 
                 @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->diffInSeconds($today)>0)
-                    <h2> <span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
+                    <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
+                    <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">
+                        <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
+                    </div>
+                    <div class="col-md-5 col-sm-5 col-xs-5">
+                        <img src="/images/earlybird.jpg" style="float:right; width:75px;">
+                    </div>
+                    </div>
                 @endif
                 <table id="datatable" class="table table-striped jambo_table">
                     <thead>
@@ -69,13 +76,13 @@ $today = Carbon\Carbon::now();
                                 //                                                    AND bt.ticketID = et.ticketID
                                 //                                                WHERE et.eventID=$event->eventID and isaBundle=0";
                                 $b_tkts = DB::table('event-tickets')
-                                            ->join('bundle-ticket', function($join) use($bundle){
+                                            ->join('bundle-ticket', function($join) use ($bundle) {
                                                 $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
-                                                    ->where('bundle-ticket.bundleID', '=', $bundle->ticketID);
-                                                })->where([
-                                                ['event-tickets.eventID', $event->eventID],
-                                                ['event-tickets.isaBundle', 0],
-                                            ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID')->get();
+                                                     ->where('bundle-ticket.bundleID', '=', $bundle->ticketID);
+                                            })->where([
+                                        ['event-tickets.eventID', $event->eventID],
+                                        ['event-tickets.isaBundle', 0],
+                                    ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID')->get();
                                 // $b_tkts = DB::select($sql);
                                 ?>
                                 <ul>
@@ -89,7 +96,8 @@ $today = Carbon\Carbon::now();
                             </td>
                             <td><i class="fa fa-dollar"></i>
                                 @if(!($bundle->earlyBirdEndDate === null) && $bundle->earlyBirdEndDate->diffInSeconds($today)>0)
-                                    <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike><br>
+                                    <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike>
+                                    <br>
                                     <i class="fa fa-dollar"></i>
                                     {{ number_format($bundle->memberBasePrice - ( $bundle->memberBasePrice * $bundle->earlyBirdPercent / 100), 2, '.', ',') }}
                                 @else
@@ -98,7 +106,8 @@ $today = Carbon\Carbon::now();
                             </td>
                             <td><i class="fa fa-dollar"></i>
                                 @if(!($bundle->earlyBirdEndDate === null) && $bundle->earlyBirdEndDate->diffInSeconds($today)>0)
-                                    <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike><br>
+                                    <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike>
+                                    <br>
                                     <i class="fa fa-dollar"></i>
                                     {{ number_format($bundle->nonmbrBasePrice - ( $bundle->nonmbrBasePrice * $bundle->earlyBirdPercent / 100), 2, '.', ',') }}
                                 @else
@@ -110,11 +119,13 @@ $today = Carbon\Carbon::now();
                     @endforeach
                     @foreach($tickets as $ticket)
                         <tr>
-                            <td style="text-align: center;"><input type="radio" name="ticketID" value="{{ $ticket->ticketID }}"></td>
+                            <td style="text-align: center;"><input type="radio" name="ticketID"
+                                                                   value="{{ $ticket->ticketID }}"></td>
                             <td>{{ $ticket->ticketLabel }}</td>
                             <td><i class="fa fa-dollar"></i>
                                 @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
-                                    <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike><br>
+                                    <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike>
+                                    <br>
                                     <i class="fa fa-dollar"></i>
                                     {{ number_format($ticket->memberBasePrice - ( $ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',') }}
                                 @else
@@ -124,7 +135,8 @@ $today = Carbon\Carbon::now();
                             <td>
                                 <i class="fa fa-dollar"></i>
                                 @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
-                                    <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike><br>
+                                    <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike>
+                                    <br>
                                     <i class="fa fa-dollar"></i>
                                     {{ number_format($ticket->nonmbrBasePrice - ( $ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',') }}
                                 @else
@@ -248,7 +260,7 @@ $today = Carbon\Carbon::now();
                     type: 'POST',
                     cache: false,
                     async: true,
-                    url: '/discount/'+eventID,
+                    url: '/discount/' + eventID,
                     dataType: 'json',
                     data: {
                         event_id: eventID,
@@ -270,7 +282,8 @@ $today = Carbon\Carbon::now();
                     }
                 });
             }
-        };
+        }
+        ;
     </script>
 
 @endsection
