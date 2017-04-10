@@ -14,7 +14,7 @@ class Event extends Model
     protected $primaryKey = 'eventID';
     protected $dates = ['createDate', 'updateDate', 'eventStartDate', 'eventEndDate', 'deleted_at', 'earlyBirdDate'];
 
-    protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'shortURL', 'hasTracks'];
+    protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'slug', 'hasTracks'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
     public function tickets() {

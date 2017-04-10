@@ -10,17 +10,18 @@ ini_set('max_execution_time', 0);
 
  */
 
-use App\OrgDiscount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Event;
-use App\Person;
+use App\EventDiscount;
 use App\Location;
 use App\Org;
+use App\OrgDiscount;
+use App\Person;
 use App\Ticket;
-use App\EventDiscount;
+use App\Track;
 
 class EventController extends Controller
 {
@@ -157,6 +158,8 @@ class EventController extends Controller
         $event->contactDetails   = request()->input('contactDetails');
         $event->showLogo         = request()->input('showLogo');
         $event->hasFood          = request()->input('hasFood');
+        $event->slug             = request()->input('slug');
+
         if(request()->input('hasFood')) {
             $event->hasFood = 1;
         } else {
@@ -166,10 +169,23 @@ class EventController extends Controller
          *  Add these later:
          *  image1
          *  image2
-         *  shortURL
          *  refund Note
          *  event tags
          */
+
+        if(request()->input('hasTracksCheck') == 1) {
+            $numTracks        = request()->input('hasTracks');
+            $event->hasTracks = $numTracks;
+            $count            = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
+            for($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
+                $track            = new Track;
+                $track->trackName = "Track" . $i;
+                $track->eventID   = $event->eventID;
+                $track->save();
+            }
+        } else {
+            $event->hasTracks = 0;
+        }
         $event->earlyDiscount = $label->earlyBirdPercent;
         $event->earlyBirdDate = Carbon::now();
         $event->creatorID     = $this->currentPerson->personID;
@@ -213,6 +229,18 @@ class EventController extends Controller
         $exLoc               = Location::find($event->locationID);
         $page_title          = 'Edit Event';
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
+    }
+
+    public function checkSlugUniqueness (Request $request, Event $event) {
+        $slug = request()->input('slug');
+        if(Event::whereSlug($slug)->where('eventID', '!=', $event->eventID)->exists()){
+            $message = $slug . ' is <b style="color:red;">NOT</b> available';
+        } elseif(Event::whereSlug($slug)->exists()) {
+            $message = $slug . ' is available';
+        } else {
+            $message = $slug . ' is available';
+        }
+        return json_encode(array('status' => 'success', 'message' => $message));
     }
 
     public function update (Request $request, Event $event) {
@@ -278,14 +306,27 @@ class EventController extends Controller
         } else {
             $event->hasFood = 0;
         }
+        $event->slug             = request()->input('slug');
         /*
          *  Add these later:
          *  image1
          *  image2
-         *  shortURL
          *  refund Note
          *  event tags
          */
+        if(request()->input('hasTracksCheck') == 1) {
+            $numTracks        = request()->input('hasTracks');
+            $event->hasTracks = $numTracks;
+            $count            = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
+            for($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
+                $track            = new Track;
+                $track->trackName = 'Track' . $i;
+                $track->eventID   = $event->eventID;
+                $track->save();
+            }
+        } else {
+            $event->hasTracks = 0;
+        }
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
 
@@ -333,10 +374,10 @@ class EventController extends Controller
         // now, either the date or percent changed, so update all event tickets
         // MUST figure out why this isn't working...
         $tickets = Ticket::where('eventID', $event->eventID)->get();
-        foreach($tickets as $ticket){
-            if($name == 'earlyBirdDate' and $value !== null){
+        foreach($tickets as $ticket) {
+            if($name == 'earlyBirdDate' and $value !== null) {
                 $ticket->earlyBirdEndDate = $value;
-            } elseif($name == 'earlyDiscount'){
+            } elseif($name == 'earlyDiscount') {
                 $ticket->earlyBirdPercent = $value;
             }
             $ticket->updaterID = $this->currentPerson->personID;

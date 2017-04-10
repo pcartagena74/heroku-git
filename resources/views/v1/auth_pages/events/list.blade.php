@@ -35,6 +35,7 @@ foreach($current_events as $event) {
     $editURL    = '/event/' . $event->eventID . '/edit';
     $displayURL = '/events/' . $event->eventID;
     $eventDiscountURL = '/eventdiscount/' . $event->eventID;
+    $trackURL = '/tracks/' . $event->eventID;
 
     $edit_button = "<form method='post' action='$editURL'>" .
         $csrf . '
@@ -48,6 +49,7 @@ foreach($current_events as $event) {
 // introduce twitter button; administration, etc.
 
     $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
+    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Edit Tracks</a>";
     $display_link_button =
         "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-calendar'></i> Show Event</a>";
     $eventDiscount_button =
@@ -69,7 +71,7 @@ foreach($current_events as $event) {
 
     array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $active_button, $progress_bar, $edit_link_button . $display_link_button . $eventDiscount_button . $delete_button . $ticket_button]);
+        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button . $delete_button . $track_link_button . $ticket_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;

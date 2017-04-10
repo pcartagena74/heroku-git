@@ -91,7 +91,18 @@ $orgLogoPath = DB::table('organization')
             <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
         @endif
     </div>
-
+    <p>&nbsp;</p>
+    <div class="form-group col-md-3">
+        {!! Form::label('slug', 'Vanity Name*', array('class' => 'control-label')) !!}
+    </div>
+    <div class="form-group col-md-3">
+        {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control', 'required', 'id' => 'slug') ) !!}
+    </div>
+    <div class="form-group col-md-3">
+        <a class="btn btn-primary btn-xs" id="validateSlug"><i class="">Validate Availability</i></a>
+    </div>
+    <div class="form-group col-md-3" id="slug_feedback">
+    </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', 'Description*', array('class' => 'control-label')) !!}
         {!! Form::textarea('eventDescription', old('$event->eventDescription'), array('class'=>'form-control rich')) !!}
@@ -112,8 +123,8 @@ $orgLogoPath = DB::table('organization')
         {!! Form::textarea('eventInfo', old('$event->eventInfo'), array('class'=>'form-control rich')) !!}
     </div>
 
-        <div class="col-sm-4">
-            {!! Form::label('hasTracks', 'Does this event have tracks?', array('class' => 'control-label', 'style'=>'color:red;',
+        <div class="col-sm-5">
+            {!! Form::label('hasTracks', 'Does this event have tracks? If so, how many?', array('class' => 'control-label', 'style'=>'color:red;',
             'data-toggle'=>'tooltip', 'title'=>'Events with tracks require session setup.')) !!}
         </div>
         @if($event->eventID !== null && $event->hasTracks > 0)
@@ -287,6 +298,14 @@ $orgLogoPath = DB::table('organization')
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventStartDate', 'time' => 'true', 'single' => 'true'])
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventEndDate', 'time' => 'true', 'single' => 'true'])
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        function toggleShow() {
+            $("#trackInput").toggle();
+        }
         $(document).ready(function () {
             // We'll help out users by populating the end date/time based on the start, but only once so we don't annoy.
             var fired;
@@ -300,9 +319,6 @@ $orgLogoPath = DB::table('organization')
             $('#hasTracksCheck').on('change', function(){
                 $("#trackInput").toggle();
             });
-            function toggleShow() {
-                $("#trackInput").toggle();
-            }
         });
     </script>
 
@@ -348,6 +364,43 @@ $orgLogoPath = DB::table('organization')
                             }
                         }
                     });
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#validateSlug').click(function () {
+                var selection = $('#slug').val();
+                if (selection != '') {
+                    var theurl = "/eventslug/" + {{ $event->eventID }};
+                    $.ajax({
+                        method: 'post',
+                        url: theurl,
+                        data: {
+                            eventID: '{{ $event->eventID }}',
+                            slug:   selection
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            $('#slug_feedback').html(data.message);
+                            console.log(data);
+                        },
+                        error: function (data) {
+                            alert('error?  url: ' + theurl);
+                            console.log(data);
+                        },
+                        statusCode: {
+                            500: function () {
+                                //
+                            },
+                            422: function (data) {
+                                //
+                            }
+                        }
+                    });
+                } else {
+                    $('#slug_feedback').text('Please enter a vanity URL.')
                 }
             });
         });
