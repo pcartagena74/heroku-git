@@ -115,8 +115,8 @@
 </div> <!-- /container -->
 <script type="text/javascript">
     function load() {
-        // reload every 10 minutes to prevent token timeout
-        setTimeout("window.open('{{ env('APP_URL') }}', '_self');", 600000);
+        // reload every 15 minutes to prevent token timeout
+        setTimeout("window.open('{{ env('APP_URL') }}', '_self');", 900000);
     }
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
