@@ -64,9 +64,12 @@ class EventController extends Controller
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
     }
 
-    public function show (Event $event) {
+    public function show ($param) {
         // responds to GET /events/id
-        //$event     = Event::find($id);
+        // $param is either an ID or slug
+        $event     = Event::where('eventID', $param)
+                          ->orWhere('slug', $param)
+                          ->firstOrFail();
         if(auth()->guest()) {
             $current_person = 0;
         } else {

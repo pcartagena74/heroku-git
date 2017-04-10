@@ -33,7 +33,7 @@ foreach($current_events as $event) {
         </div><small>' . $event->cnt . ' attendees</small>';
 
     $editURL    = '/event/' . $event->eventID . '/edit';
-    $displayURL = '/events/' . $event->eventID;
+    $displayURL = '/events/' . $event->slug;
     $eventDiscountURL = '/eventdiscount/' . $event->eventID;
     $trackURL = '/tracks/' . $event->eventID;
 
