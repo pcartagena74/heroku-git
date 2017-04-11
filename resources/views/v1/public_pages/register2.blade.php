@@ -110,7 +110,7 @@ foreach($array as $chap) {
                                     @endif
                                 </td>
 
-                                @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                                @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     @if($rf->discountCode)
                                         <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
                                     @else

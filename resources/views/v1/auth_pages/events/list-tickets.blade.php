@@ -261,9 +261,17 @@ $default = Org::find($event->orgID);
                         minYear: '{{ date("Y") }}',
                         maxYear: '{{ date("Y")+3 }}',
                         minuteStep: 15
+                    },
+                    success: function(){
+                        window.location = '{{ env('APP_URL') . "/event-tickets/" . $event->eventID }}';
                     }
                 });
-                $("#earlyDiscount").editable({type: 'text'});
+                $("#earlyDiscount").editable({
+                    type: 'text',
+                    success: function(){
+                        window.location = '{{ env('APP_URL') . "/event-tickets/" . $event->eventID }}';
+                    }
+                });
 
             @for ($i = 1; $i <= $tc; $i++)
 

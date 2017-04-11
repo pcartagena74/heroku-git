@@ -35,13 +35,13 @@ $today = Carbon\Carbon::now();
 
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
 
-                @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->diffInSeconds($today)>0)
+                @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->gt($today))
                     <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
+                        <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
+                            <img src="/images/earlybird.jpg" style="float:right; width:75px;">
+                        </div>
                     <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">
                         <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
-                    </div>
-                    <div class="col-md-5 col-sm-5 col-xs-5">
-                        <img src="/images/earlybird.jpg" style="float:right; width:75px;">
                     </div>
                     </div>
                 @endif
@@ -95,7 +95,7 @@ $today = Carbon\Carbon::now();
                                 </ul>
                             </td>
                             <td><i class="fa fa-dollar"></i>
-                                @if(!($bundle->earlyBirdEndDate === null) && $bundle->earlyBirdEndDate->diffInSeconds($today)>0)
+                                @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike>
                                     <br>
                                     <i class="fa fa-dollar"></i>
@@ -105,7 +105,7 @@ $today = Carbon\Carbon::now();
                                 @endif
                             </td>
                             <td><i class="fa fa-dollar"></i>
-                                @if(!($bundle->earlyBirdEndDate === null) && $bundle->earlyBirdEndDate->diffInSeconds($today)>0)
+                                @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike>
                                     <br>
                                     <i class="fa fa-dollar"></i>
@@ -123,7 +123,7 @@ $today = Carbon\Carbon::now();
                                                                    value="{{ $ticket->ticketID }}"></td>
                             <td>{{ $ticket->ticketLabel }}</td>
                             <td><i class="fa fa-dollar"></i>
-                                @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                                @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike>
                                     <br>
                                     <i class="fa fa-dollar"></i>
@@ -134,7 +134,7 @@ $today = Carbon\Carbon::now();
                             </td>
                             <td>
                                 <i class="fa fa-dollar"></i>
-                                @if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0)
+                                @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike>
                                     <br>
                                     <i class="fa fa-dollar"></i>
