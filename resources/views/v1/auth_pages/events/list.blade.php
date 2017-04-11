@@ -33,6 +33,7 @@ foreach($current_events as $event) {
         </div><small>' . $event->cnt . ' attendees</small>';
 
     $editURL    = '/event/' . $event->eventID . '/edit';
+
     $displayURL = '/events/' . $event->slug;
     $eventDiscountURL = '/eventdiscount/' . $event->eventID;
     $trackURL = '/tracks/' . $event->eventID;
@@ -50,6 +51,9 @@ foreach($current_events as $event) {
 
     $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
     $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Edit Tracks</a>";
+    if($event->hasTracks == 0){
+        $track_link_button = '';
+    }
     $display_link_button =
         "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-calendar'></i> Show Event</a>";
     $eventDiscount_button =

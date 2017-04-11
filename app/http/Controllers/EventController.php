@@ -36,7 +36,7 @@ class EventController extends Controller
 
         $current_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%c/%d/%Y %l:%i %p') AS eventStartDateF,
                         date_format(e.eventEndDate, '%c/%d/%Y %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
-                        count(er.ticketID) AS 'cnt', et.etName
+                        count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                     FROM `org-event` e
                     LEFT JOIN `event-registration` er ON er.eventID=e.eventID
                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
@@ -47,7 +47,7 @@ class EventController extends Controller
 
         $past_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%c/%d/%Y %l:%i %p') AS eventStartDateF,
                     date_format(e.eventEndDate, '%c/%d/%Y %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
-                    count(er.ticketID) AS 'cnt', et.etName
+                    count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                  FROM `org-event` e
                  LEFT JOIN `event-registration` er ON er.eventID=e.eventID
                  LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID

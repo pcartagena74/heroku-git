@@ -76,8 +76,6 @@ Route::post('/event-tickets/{id}', 'TicketController@show');
 // Location Routes
 Route::get('/locations', 'LocationController@index');
 Route::post('/location/update', 'LocationController@update');
-//Route::get('/location/update', 'LocationController@update');
-//Route::post('/locations/{id}', 'LocationController@show');
 Route::get('/locations/{id}', 'LocationController@show');
 
 // Route::patch('/events/{event}', 'EventController@edit');
