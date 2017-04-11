@@ -9,4 +9,3 @@ Homestead.yaml
 .env
 .env.example
 composer.phar
-composer.lock
