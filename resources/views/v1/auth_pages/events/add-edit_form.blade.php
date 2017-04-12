@@ -103,6 +103,9 @@ $orgLogoPath = DB::table('organization')
     </div>
     <div class="form-group col-md-3" id="slug_feedback">
     </div>
+    <div class="form-group col-md-11 col-md-offset-1">
+        <b>URL will be:  https://www.mCentric.org/events/<span style="color:red;">custom_url</span></b>
+    </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', 'Description*', array('class' => 'control-label')) !!}
         {!! Form::textarea('eventDescription', old('$event->eventDescription'), array('class'=>'form-control rich')) !!}
