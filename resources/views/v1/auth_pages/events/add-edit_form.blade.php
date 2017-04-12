@@ -93,7 +93,7 @@ $orgLogoPath = DB::table('organization')
     </div>
     <p>&nbsp;</p>
     <div class="form-group col-md-3">
-        {!! Form::label('slug', 'Vanity Name*', array('class' => 'control-label')) !!}
+        {!! Form::label('slug', 'Custom URL*', array('class' => 'control-label')) !!}
     </div>
     <div class="form-group col-md-3">
         {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control', 'required', 'id' => 'slug') ) !!}
@@ -400,7 +400,7 @@ $orgLogoPath = DB::table('organization')
                         }
                     });
                 } else {
-                    $('#slug_feedback').text('Please enter a vanity URL.')
+                    $('#slug_feedback').text('Please enter a custom URL.')
                 }
             });
         });
