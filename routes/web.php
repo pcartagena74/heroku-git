@@ -60,8 +60,12 @@ Route::delete('/event/{event}', 'EventController@destroy');
 Route::get('/eventdiscount/{event}', 'EventDiscountController@show');
 Route::post('/eventdiscount', 'EventDiscountController@store');
 Route::delete('/eventdiscount/{id}/delete', 'EventDiscountController@destroy');
+Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');
 Route::get('/tracks/{event}', 'TrackController@show');
-Route::post('/eventslug/{event}', 'EventController@checkSlugUniqueness');
+Route::post('/track/{track}', 'TrackController@update');
+Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');
+Route::post('/session/{event}', 'TrackController@sessionUpdate');
+
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', 'BundleController@update');

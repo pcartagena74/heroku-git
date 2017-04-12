@@ -376,7 +376,7 @@ $orgLogoPath = DB::table('organization')
             $('#validateSlug').click(function () {
                 var selection = $('#slug').val();
                 if (selection != '') {
-                    var theurl = "/eventslug/" + {{ $event->eventID }};
+                    var theurl = "/eventslug/" + {{ $event->eventID or 0 }};
                     $.ajax({
                         method: 'post',
                         url: theurl,

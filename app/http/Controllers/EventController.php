@@ -234,14 +234,24 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
     }
 
-    public function checkSlugUniqueness (Request $request, Event $event) {
+    public function checkSlugUniqueness (Request $request, $id) {
         $slug = request()->input('slug');
-        if(Event::whereSlug($slug)->where('eventID', '!=', $event->eventID)->exists()){
-            $message = $slug . ' is <b style="color:red;">NOT</b> available';
-        } elseif(Event::whereSlug($slug)->exists()) {
-            $message = $slug . ' is available';
+        if($id == 0){
+            if(Event::whereSlug($slug)->exists()){
+                $message = $slug . ' is <b style="color:red;">NOT</b> available';
+            } elseif(Event::whereSlug($slug)->exists()) {
+                $message = $slug . ' is available';
+            } else {
+                $message = $slug . ' is available';
+            }
         } else {
-            $message = $slug . ' is available';
+            if(Event::whereSlug($slug)->where('eventID', '!=', $event->eventID)->exists()){
+                $message = $slug . ' is <b style="color:red;">NOT</b> available';
+            } elseif(Event::whereSlug($slug)->exists()) {
+                $message = $slug . ' is available';
+            } else {
+                $message = $slug . ' is available';
+            }
         }
         return json_encode(array('status' => 'success', 'message' => $message));
     }
