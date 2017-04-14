@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\DB;
 
 class RegFinanceController extends Controller
 {
+    public function __construct () {
+        $this->middleware('auth');
+    }
+
     public function index () {
         // responds to /blah
     }
@@ -58,7 +62,7 @@ class RegFinanceController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
-        //dd(request()->all());
+        
         $rf    = RegFinance::find($id);
         $event = Event::find($rf->eventID);
         $org   = Org::find($event->orgID);
@@ -69,6 +73,7 @@ class RegFinanceController extends Controller
         $discount_code = $rf->discountCode;
         $ticket        = Ticket::find($rf->ticketID);
         $this->currentPerson = Person::find(auth()->user()->id);
+        dd($event);
 
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
