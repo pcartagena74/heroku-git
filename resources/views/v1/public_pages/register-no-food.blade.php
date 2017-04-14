@@ -33,7 +33,7 @@ foreach($array as $chap) {
 
 // Determine if Early Bird Pricing should be in effect
 $today = Carbon\Carbon::now();
-if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSeconds($today)>0){
+if((!$ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->gt($today)){
     $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
 } else {
@@ -324,6 +324,7 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
 
 
 @section('scripts')
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
         $.ajaxSetup({
             headers: {
@@ -333,15 +334,17 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
     </script>
     <script>
         $(document).ready(function () {
+
             var percent = $('#discount').text();
+            var flatAmt = $('#flatdisc').text();
             var subtotal = 0;
 
-                    @for($i=1;$i<=$quantity; $i++)
-            var tc{{ $i }} = $('#tcost{{ $i }}').text();
-            var newval{{ $i }} = tc{{ $i }} * 1.00;
-            $('#final{{ $i }}').text(tc{{ $i }});
-            subtotal += newval{{ $i }} * 1.00;
-            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+            @for($i=1;$i<=$quantity; $i++)
+                var tc{{ $i }} = $('#tcost{{ $i }}').text() * 1;
+                var newval{{ $i }} = tc{{ $i }} * 1;
+                $('#final{{ $i }}').text(tc{{ $i }});
+                subtotal += newval{{ $i }} * 1;
+                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -351,64 +354,81 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                 validateCode({{ $event->eventID }});
             }
 
-            $('#discount').bind("DOMSubtreeModified", function () {
-                percent = $('#discount').text();
-                $('#i_percent').val(percent);
-                subtotal = 0;
-
-                @for($i=1;$i<=$quantity; $i++)
-                    newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
-                $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
-                subtotal += newval{{ $i }} * 1.00;
-                @endfor
-
-                $('#total').text(subtotal.toFixed(2));
-                $('#i_total').val(subtotal.toFixed(2));
+            $('#btn-apply').on('click', function (e) {
+                e.preventDefault();
+                validateCode({{ $event->eventID }});
             });
-        });
-    </script>
-    <script>
-        $('#btn-apply').on('click', function (e) {
-            e.preventDefault();
-            validateCode({{ $event->eventID }});
-        });
 
-        function validateCode(eventID) {
-            var codeValue = $("#discount_code").val();
-            if (FieldIsEmpty(codeValue)) {
-                var message = '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>Enter a discount code.</span>';
-                $('.status_msg').html(message).fadeIn(500).fadeOut(3000);
+            function validateCode(eventID) {
+                var codeValue = $("#discount_code").val();
+                if (FieldIsEmpty(codeValue)) {
+                    var message = '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>Enter a discount code.</span>';
+                    $('.status_msg').html(message).fadeIn(500).fadeOut(3000);
 
-            } else {
-                $.ajax({
-                    type: 'POST',
-                    cache: false,
-                    async: true,
-                    url: '/discount/' + eventID,
-                    dataType: 'json',
-                    data: {
-                        event_id: eventID,
-                        discount_code: codeValue
-                    },
-                    beforeSend: function () {
-                        $('.status_msg').html('');
-                        $('.status_msg').fadeIn(0);
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        var result = eval(data);
-                        $('.status_msg').html(result.message).fadeIn(0);
-                        $('#discount').text(result.percent);
-                    },
-                    error: function (data) {
-                        console.log(data);
-                        var result = eval(data);
-                        $('.status_msg').html(result.message).fadeIn(0);
-                    }
-                });
-            }
-        }
-        ;
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        async: true,
+                        url: '/discount/' + eventID,
+                        dataType: 'json',
+                        data: {
+                            event_id: eventID,
+                            discount_code: codeValue
+                        },
+                        beforeSend: function () {
+                            $('.status_msg').html('');
+                            $('.status_msg').fadeIn(0);
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            var result = eval(data);
+                            $('.status_msg').html(result.message).fadeIn(0);
+                            $('#discount').text(result.percent);
+                            $('#flatdisc').text(result.flatAmt);
+
+                            percent = result.percent;
+                            flatAmt = result.flatAmt;
+                            $('#i_percent').val(percent);
+                            $('#i_flatamt').val(flatAmt);
+                            subtotal = 0;
+
+                            if(percent>0) {
+                                @for($i=1;$i<=$quantity; $i++)
+                                    newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
+                                $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                                subtotal += newval{{ $i }} * 1.00;
+                                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                                @endfor
+                            } else {
+                                newval{{ 1 }} = ((tc{{ 1 }} * 1) - (flatAmt * 1));
+                                if(newval1 < 0) newval1 = 0;
+                                    $('#final{{ 1 }}').text(newval{{ 1 }}.toFixed(2));
+                                    subtotal += newval{{ 1 }} * 1;
+                                    $("#sub{{ 1 }}").val(newval{{ 1 }}.toFixed(2));
+
+                                @for($i=2;$i<=$quantity; $i++)
+                                    newval{{ $i }} = tc{{ $i }} * 1;
+                                    if(newval{{ $i }} < 0) newval{{ $i }} = 0;
+                                    $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                                    subtotal += newval{{ $i }} * 1;
+                                    $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                                @endfor
+                            }
+
+                            $('#total').text(subtotal.toFixed(2));
+                            $('#i_total').val(subtotal.toFixed(2));
+                        },
+                        error: function (data) {
+                            console.log(data);
+                            var result = eval(data);
+                            $('.status_msg').html(result.message).fadeIn(0);
+                            bootbox("error");
+                        }
+                    });
+                }
+            };
+        });
     </script>
 
     @if(!Auth::check())

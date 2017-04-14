@@ -46,7 +46,8 @@ class EventDiscountController extends Controller
         $event     = Event::find($eventID);
         $discounts = EventDiscount::where([
             ['discountCode', $code],
-            ['orgID', $event->orgID]
+            ['orgID', $event->orgID],
+            ['eventID', $event->eventID]
         ])->count();
 
         $discount = EventDiscount::where([
@@ -66,7 +67,7 @@ class EventDiscountController extends Controller
         } else {
             $message =
                 '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code . "'</span>";
-            return json_encode(array('status' => 'error', 'message' => $message));
+            return json_encode(array('status' => 'error', 'message' => $message, 'percent' => 0, 'flatAmt' => 0));
         }
     }
 

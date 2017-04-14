@@ -67,9 +67,10 @@ class EventController extends Controller
     public function show ($param) {
         // responds to GET /events/id
         // $param is either an ID or slug
-        $event     = Event::where('eventID', $param)
-                          ->orWhere('slug', $param)
+        $event     = Event::where('eventID', '=', $param)
+                          ->orWhere('slug', '=', $param)
                           ->firstOrFail();
+
         if(auth()->guest()) {
             $current_person = 0;
         } else {

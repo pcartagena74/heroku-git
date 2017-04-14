@@ -366,7 +366,6 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                 var newval{{ $i }} = tc{{ $i }} * 1;
                 $('#final{{ $i }}').text(tc{{ $i }});
                 subtotal += newval{{ $i }} * 1;
-                //newval{{ $i }} = $.trim( newval{{ $i }} );
                 $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
@@ -425,15 +424,17 @@ if(!($ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->diffInSec
                             @endfor
                         } else {
                             newval{{ 1 }} = ((tc{{ 1 }} * 1) - (flatAmt * 1));
+                            if(newval1 < 0) newval1 = 0;
                             $('#final{{ 1 }}').text(newval{{ 1 }}.toFixed(2));
                             subtotal += newval{{ 1 }} * 1;
                             $("#sub{{ 1 }}").val(newval{{ 1 }}.toFixed(2));
 
                             @for($i=2;$i<=$quantity; $i++)
                                 newval{{ $i }} = tc{{ $i }} * 1;
-                            $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
-                            subtotal += newval{{ $i }} * 1;
-                            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                                if(newval{{ $i }} < 0) newval{{ $i }} = 0;
+                                $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                                subtotal += newval{{ $i }} * 1;
+                                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
                             @endfor
                         }
 
