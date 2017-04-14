@@ -62,7 +62,7 @@ class RegFinanceController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
-        
+
         $rf    = RegFinance::find($id);
         $event = Event::find($rf->eventID);
         $org   = Org::find($event->orgID);
@@ -73,7 +73,7 @@ class RegFinanceController extends Controller
         $discount_code = $rf->discountCode;
         $ticket        = Ticket::find($rf->ticketID);
         $this->currentPerson = Person::find(auth()->user()->id);
-        dd($event);
+
 
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
@@ -156,7 +156,7 @@ class RegFinanceController extends Controller
         Mail::to($user->login)->send(new EventReceipt($rf));
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
         return view('v1.public_pages.event_receipt', compact('ticket', 'event', 'quantity', 'discount_code',
-            'loc', 'rf', 'person', 'prefixes', 'industries'));
+            'loc', 'rf', 'person', 'prefixes', 'industries', 'org'));
     }
 
     public function destroy ($id) {
