@@ -13,6 +13,7 @@ ini_set('max_execution_time', 0);
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Event;
 use App\EventDiscount;
@@ -22,6 +23,7 @@ use App\OrgDiscount;
 use App\Person;
 use App\Ticket;
 use App\Track;
+use App\ics_calendar;
 
 class EventController extends Controller
 {
@@ -222,6 +224,12 @@ class EventController extends Controller
             }
         }
 
+        // Make the event_{id}.ics file if it doesn't exist
+        $event_filename = 'event_' . $event->eventID . '.ics';
+        $ical = new ics_calendar($event);
+        $contents = $ical->get();
+        Storage::disk('events')->put($event_filename, $contents);
+
         return redirect('/event-tickets/' . $event->eventID);
     }
 
@@ -343,6 +351,12 @@ class EventController extends Controller
         }
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
+
+        // Make the event_{id}.ics file if it doesn't exist
+        $event_filename = 'event_' . $event->eventID . '.ics';
+        $ical = new ics_calendar($event);
+        $contents = $ical->get();
+        Storage::disk('events')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
     }

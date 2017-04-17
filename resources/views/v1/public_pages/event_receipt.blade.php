@@ -33,9 +33,10 @@ $eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
 
 $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
 
-$event_url = "For details, visit: " . env('APP_URL') . "/events/$event->eventID";
+$event_url = "For details, visit: " . env('APP_URL') . "/events/$event->slug";
 $yahoo_url = "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype->etName&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
 $google_url = "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype->etName&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
+$event_filename = 'event_' . $event->eventID . '.ics';
 
 ?>
 @extends('v1.layouts.no-auth')
@@ -234,13 +235,13 @@ $google_url = "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->
 @endsection
 
 
-@if(0)
+@if(1)
     <table class="table borderless">
         <tr>
-            <td style="text-align: center;"><img src="/images/outlook.jpg" height="55" /></td>
-            <td style="text-align: center;"><img src="/images/google.jpg" height="45" /></td>
-            <td style="text-align: center;"><img src="/images/yahoo.jpg" height="45" /></td>
-            <td style="text-align: center;"><img src="/images/ical.jpg" height="45" /></td>
+            <td style="text-align: center;"><a target="_new" href="{{ env('APP_URL') . Storage::url($event_filename) }}"><img src="/images/outlook.jpg" height="55" /></a></td>
+            <td style="text-align: center;"><a target="_new" href="{{ $google_url }}"><img src="/images/google.jpg" height="45" /></a></td>
+            <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}"><img src="/images/yahoo.jpg" height="45" /></a></td>
+            <td style="text-align: center;"><a target="_new" href="{{ env('APP_URL') . Storage::url($event_filename) }}"><img src="/images/ical.jpg" height="45" /></a></td>
         </tr>
     </table>
 @endif
