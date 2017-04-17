@@ -227,6 +227,18 @@ $event_filename = 'event_' . $event->eventID . '.ics';
                     </table>
                 </div>
             </div>
+
+            @if(1)
+                <table class="table borderless">
+                    <tr>
+                        <td style="text-align: center;"><a target="_new" href="{{ env('APP_URL') . "/public/storage/events/" . $event_filename }}"><img src="/images/outlook.jpg" height="55" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $google_url }}"><img src="/images/google.jpg" height="45" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}"><img src="/images/yahoo.jpg" height="45" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ env('APP_URL') . Storage::url($event_filename) }}"><img src="/images/ical.jpg" height="45" /></a></td>
+                    </tr>
+                </table>
+            @endif
+
         </div>
     </div>
 
@@ -235,13 +247,3 @@ $event_filename = 'event_' . $event->eventID . '.ics';
 @endsection
 
 
-@if(1)
-    <table class="table borderless">
-        <tr>
-            <td style="text-align: center;"><a target="_new" href="{{ env('APP_URL') . Storage::url($event_filename) }}"><img src="/images/outlook.jpg" height="55" /></a></td>
-            <td style="text-align: center;"><a target="_new" href="{{ $google_url }}"><img src="/images/google.jpg" height="45" /></a></td>
-            <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}"><img src="/images/yahoo.jpg" height="45" /></a></td>
-            <td style="text-align: center;"><a target="_new" href="{{ env('APP_URL') . Storage::url($event_filename) }}"><img src="/images/ical.jpg" height="45" /></a></td>
-        </tr>
-    </table>
-@endif

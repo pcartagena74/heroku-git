@@ -51,6 +51,7 @@ return [
         'events' => [
             'driver' => 'local',
             'root' => storage_path('events'),
+            'visibility' => 'public',
         ],
 
         'avatars' => [
