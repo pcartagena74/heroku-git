@@ -36,9 +36,9 @@ Route::get('/storage/events/{filename}', function($filename){
         return Response::make("File does not exist.", 404);
     } else {
         $returnFile = File::get($filePath);
-        $type = File::mimeType($path);
+        $type = File::mimeType($filePath);
 
-        $response = Response::make($file, 200);
+        $response = Response::make($filePath, 200);
         $response->header("Content-Type", $type);
         return $response;
     }
