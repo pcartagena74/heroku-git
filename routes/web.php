@@ -14,9 +14,12 @@
 Route::get('/', 'SessionController@create')->name('main_page');
 Route::get('/login', 'SessionController@create');
 Route::post('/login', 'SessionController@store');
+Route::get('/policies', function(){
+    return view('v1.public_pages.policies');
+});
 
 // Public Event-related Routes
-Route::get('/events/{event}', 'EventController@show')->name('display_event');
+Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::get('/register/{ticket}', 'RegistrationController@showRegForm')->name('register_step1');
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
@@ -27,8 +30,18 @@ Route::post('/reg_verify/{reg}', 'RegistrationController@update');
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
 
-Route::get('/policies', function(){
-    return view('v1.public_pages.policies');
+Route::get('/storage/events/{filename}', function($filename){
+    $filePath = storage_path('/app/public/events/').$filename;
+    if(! File::exists($filePath)){
+        return Response::make("File does not exist.", 404);
+    } else {
+        $returnFile = File::get($filePath);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+        return $response;
+    }
 });
 
 // Individual Page Routes

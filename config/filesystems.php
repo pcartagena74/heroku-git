@@ -50,13 +50,13 @@ return [
 
         'events' => [
             'driver' => 'local',
-            'root' => storage_path('events'),
+            'root' => storage_path('app/public/events'),
             'visibility' => 'public',
         ],
 
         'avatars' => [
             'driver' => 'local',
-            'root' => storage_path('avatars'),
+            'root' => storage_path('app/public/avatars'),
         ],
 
         'public' => [
