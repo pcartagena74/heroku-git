@@ -48,12 +48,6 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'events' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/events'),
-            'visibility' => 'public',
-        ],
-
         'avatars' => [
             'driver' => 'local',
             'root' => storage_path('app/public/avatars'),
@@ -66,7 +60,7 @@ return [
             'visibility' => 'public',
         ],
 
-        's3' => [
+        'events' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),
             'secret' => env('AWS_SECRET'),

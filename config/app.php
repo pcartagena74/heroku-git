@@ -143,9 +143,11 @@ return [
          * Laravel Framework Service Providers...
          */
 
+        #'Aws\Laravel\AwsServiceProvider',
 	    Collective\Html\HtmlServiceProvider::class,
         \Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
         'Fideloper\Proxy\TrustedProxyServiceProvider',
+        'GrahamCampbell\Flysystem\FlysystemServiceProvider',
         Kouz\Providers\AirbrakeServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -206,6 +208,7 @@ return [
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
+       # 'AWS' => 'Aws\Laravel\AwsFacade',
         'Blade' => Illuminate\Support\Facades\Blade::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
         'Bus' => Illuminate\Support\Facades\Bus::class,
@@ -218,6 +221,7 @@ return [
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Event' => Illuminate\Support\Facades\Event::class,
         'File' => Illuminate\Support\Facades\File::class,
+        'Flysystem' => 'GrahamCampbell\Flysystem\Facades\Flysystem',
 	    'Form' => Collective\Html\FormFacade::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
