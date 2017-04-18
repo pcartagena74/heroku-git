@@ -44,6 +44,13 @@ Route::get('/storage/events/{filename}', function($filename){
     }
 });
 
+Route::get('/storage/{filename}', function($filename){
+    //$filePath = storage_path('/app/public/events/').$filename;
+    $filePath = Storage::disk('events')->url($filename);
+    dd($filePath);
+    return redirect($filePath);
+});
+
 // Individual Page Routes
 
 // Dashboard

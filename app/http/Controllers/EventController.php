@@ -13,7 +13,8 @@ ini_set('max_execution_time', 0);
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+//use Illuminate\Support\Facades\Storage;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
 
 use App\Event;
 use App\EventDiscount;
@@ -228,7 +229,8 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        Storage::disk('events')->put($event_filename, $contents);
+        //Storage::disk('events')->put($event_filename, $contents);
+        Flysystem::connection('awss3')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
     }
@@ -356,7 +358,8 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        Storage::disk('events')->put($event_filename, $contents);
+        // Storage::disk('events')->put($event_filename, $contents);
+        Flysystem::connection('awss3')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
     }
