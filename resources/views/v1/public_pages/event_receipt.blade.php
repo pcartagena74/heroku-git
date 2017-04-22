@@ -38,6 +38,9 @@ $yahoo_url = "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org
 $google_url = "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype->etName&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
 $event_filename = 'event_' . $event->eventID . '.ics';
 
+$s3fs = Flysystem::connection('awss3');
+$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET'), env('AWS_SECRET'));
+
 ?>
 @extends('v1.layouts.no-auth')
 
@@ -231,10 +234,10 @@ $event_filename = 'event_' . $event->eventID . '.ics';
             @if(1)
                 <table class="table borderless">
                     <tr>
-                        <td style="text-align: center;"><a target="_new" href="{{ Storage::disk('events')->url($event_filename) }}"><img src="/images/outlook.jpg" height="55" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $ics . $event_filename }}"><img src="/images/outlook.jpg" height="55" /></a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $google_url }}"><img src="/images/google.jpg" height="45" /></a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}"><img src="/images/yahoo.jpg" height="45" /></a></td>
-                        <td style="text-align: center;"><a target="_new" href="{{ Storage::disk('events')->url($event_filename) }}"><img src="/images/ical.jpg" height="45" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $ics . $event_filename }}"><img src="/images/ical.jpg" height="45" /></a></td>
                     </tr>
                 </table>
             @endif

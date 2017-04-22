@@ -229,7 +229,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $('[data-toggle="tooltip"]').tooltip({'placement': 'top'});
+            $('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
             //$.fn.editable.defaults.mode = 'inline';
             $.fn.editable.defaults.params = function (params) {
                 params._token = $("meta[name=token]").attr("content");
