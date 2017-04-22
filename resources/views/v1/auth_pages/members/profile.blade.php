@@ -43,12 +43,22 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
         </thead>
         <tbody>
         <tr>
-            <td style="text-align: left;"><a href="#" id="prefix" data-title="Enter prefix"> {{ $profile->prefix }} </a></td>
-            <td style="text-align: left;"><a data-toggle="tooltip" title="You need to contact PMI to change first name."
-                   id="firstName">{{ $profile->firstName }}</a></td>
+            <td style="text-align: left;"><a href="#" id="prefix" data-title="Enter prefix">{{ $profile->prefix }}</a></td>
+            <td style="text-align: left;">
+                @if($profile->OrgStat1)
+                    <a data-toggle="tooltip" title="You need to contact PMI to change first name." id="firstName">
+                @else
+                    <a href="#" id="firstName" data-title="Enter first name">
+                @endif
+                    {{ $profile->firstName }}</a></td>
             <td style="text-align: left;"><a href="#" id="midName" data-title="Enter middle name"><?php echo($profile->midName);?></a></td>
-            <td style="text-align: left;"><a data-toggle="tooltip" title="You need to contact PMI to change last name."
-                   id="lastName">{{ $profile->lastName }}</a></td>
+            <td style="text-align: left;">
+                @if($profile->OrgStat1)
+                    <a data-toggle="tooltip" title="You need to contact PMI to change last name." id="lastName">
+                @else
+                    <a href="#" id="firstName" data-title="Enter first name">
+                @endif
+                    {{ $profile->lastName }}</a></td>
             <td style="text-align: left;"><a href="#" id="suffix" data-title="Enter suffix">{{ $profile->suffix }}</a></td>
         </tr>
         <tr>
@@ -71,7 +81,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
     </table>
     @include('v1.parts.end_content')
 
-    @if($profile->ODN1)
+    @if(isset($profile->ODN1))
 
         @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -154,7 +164,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
         <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
         @include('v1.parts.end_content')
 
-    @if($profile->OSN1)
+    @if(isset($profile->OSN1))
 
         @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -229,8 +239,8 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
-            //$.fn.editable.defaults.mode = 'inline';
+            $('[data-toggle="tooltip"]').tooltip({'placement': 'top'});
+            $.fn.editable.defaults.mode = 'inline';
             $.fn.editable.defaults.params = function (params) {
                 params._token = $("meta[name=token]").attr("content");
                 return params;
