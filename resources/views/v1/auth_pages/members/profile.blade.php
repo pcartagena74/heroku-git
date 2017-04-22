@@ -88,6 +88,8 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
 
         @include('v1.parts.end_content')
 
+    @endif
+
         @include('v1.parts.start_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
         <table id="address_fields" class="table table-striped table-condensed">
@@ -152,8 +154,6 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
         <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
         @include('v1.parts.end_content')
 
-    @endif
-
     @if($profile->OSN1)
 
         @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
@@ -179,7 +179,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
         <tr>
             <th colspan="2">Type</th>
             <th>Email</th>
-            <th><a data-toggle="tooltip" title="The primary address is the only one we'll use to contact you.">Primary?</th>
+            <th><a data-toggle="tooltip" title="The primary address is the only one we'll use to contact you.">Primary?</a></th>
         </tr>
         @foreach($emails as $email)
             <?php $em_cnt++; ?>
