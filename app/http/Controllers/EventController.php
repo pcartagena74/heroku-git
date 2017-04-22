@@ -2,20 +2,10 @@
 namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
-/*
-
-    public function __construct() {
-        $this->middleware('auth');
-    }
-
- */
-
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-//use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
-
 use App\Event;
 use App\EventDiscount;
 use App\Location;
@@ -43,7 +33,7 @@ class EventController extends Controller
                     FROM `org-event` e
                     LEFT JOIN `event-registration` er ON er.eventID=e.eventID
                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
-                    WHERE e.orgID = (SELECT orgID FROM `org-person` op WHERE op.personID=?)
+                    WHERE e.orgID = ?
                         AND eventStartDate >= NOW() AND e.deleted_at is null
                     GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                     ORDER BY e.eventStartDate ASC";
@@ -54,15 +44,15 @@ class EventController extends Controller
                  FROM `org-event` e
                  LEFT JOIN `event-registration` er ON er.eventID=e.eventID
                  LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
-                 WHERE e.orgID = (SELECT orgID FROM `org-person` op WHERE op.personID=?)
+                 WHERE e.orgID = ?
                     AND eventStartDate < NOW() AND e.deleted_at is null
                  GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                  ORDER BY e.eventStartDate ASC";
 
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
-        $current_events = DB::select($current_sql, [$this->currentPerson->personID]);
+        $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
 
-        $past_events = DB::select($past_sql, [$this->currentPerson->personID]);
+        $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
 
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
     }
@@ -229,7 +219,6 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        //Storage::disk('events')->put($event_filename, $contents);
         Flysystem::connection('awss3')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
@@ -358,7 +347,6 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        // Storage::disk('events')->put($event_filename, $contents);
         Flysystem::connection('awss3')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
