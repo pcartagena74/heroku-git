@@ -261,11 +261,25 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
+            @if(!isset($profile->OrgStat1))
+            $('#firstName').editable({
+                type: 'text',
+                pk: {{ $profile->personID }},
+                url: '{{ $profile_script_url }}'
+            });
+            @endif
             $('#midName').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
                 url: '{{ $profile_script_url }}'
             });
+            @if(!isset($profile->OrgStat1))
+            $('#lastName').editable({
+                type: 'text',
+                pk: {{ $profile->personID }},
+                url: '{{ $profile_script_url }}'
+            });
+            @endif
             $('#suffix').editable({
                 type: 'text',
                 pk: {{ $profile->personID }},
