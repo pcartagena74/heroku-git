@@ -39,7 +39,14 @@ $google_url = "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->
 $event_filename = 'event_' . $event->eventID . '.ics';
 
 $s3fs = Flysystem::connection('awss3');
-$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET'), env('AWS_SECRET'));
+$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET'), $event_filename);
+
+/* Links to share
+http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=https://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
+http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect_uri=https://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link=https://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message=I+am+going+to+this+event.
+http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru.com%2Fevents%2FAPR2017CM%2Fcode%2CY0YFBmUErN%2Ftype%2Cl%2F&title=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&summary=I+am+going+to+this+event&source=MyEventGuru
+an email url to a form
+*/
 
 ?>
 @extends('v1.layouts.no-auth')
@@ -234,10 +241,10 @@ $ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET'), env('AW
             @if(1)
                 <table class="table borderless">
                     <tr>
-                        <td style="text-align: center;"><a target="_new" href="{{ $ics . $event_filename }}"><img src="/images/outlook.jpg" height="55" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $ics }}"><img src="/images/outlook.jpg" height="55" /></a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $google_url }}"><img src="/images/google.jpg" height="45" /></a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}"><img src="/images/yahoo.jpg" height="45" /></a></td>
-                        <td style="text-align: center;"><a target="_new" href="{{ $ics . $event_filename }}"><img src="/images/ical.jpg" height="45" /></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $ics }}"><img src="/images/ical.jpg" height="45" /></a></td>
                     </tr>
                 </table>
             @endif
