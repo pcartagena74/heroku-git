@@ -14,6 +14,9 @@ class ActivityController extends Controller
 
     public function index() {
         // responds to /blah
+        $currentPerson = Person::find(auth()->user()->id);
+        dd($currentPerson);
+
         $attendance_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate, 
                               date_format(oe.eventEndDate, '%c/%d/%Y') AS eventEndDate
                            FROM `org-event` oe
@@ -32,7 +35,6 @@ class ActivityController extends Controller
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";
 
-        $currentPerson = Person::find(auth()->user()->id);
         $attendance = DB::select($attendance_sql, [$currentPerson->defaultOrgID, $currentPerson->personID]);
         $bar = DB::select($bar_sql, [$currentPerson->personID, $currentPerson->defaultOrgID]);
 
