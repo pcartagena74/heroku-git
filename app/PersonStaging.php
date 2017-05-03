@@ -4,7 +4,7 @@ namespace App;
 
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Person extends Model
+class PersonStaging extends Model
 {
     use LogsActivity;
 
