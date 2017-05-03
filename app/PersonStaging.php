@@ -9,7 +9,7 @@ class Person extends Model
     use LogsActivity;
 
     // The table
-    protected $table = 'person';
+    protected $table = 'person-staging';
     protected $primaryKey = 'personID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
 

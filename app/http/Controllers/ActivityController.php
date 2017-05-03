@@ -32,7 +32,6 @@ class ActivityController extends Controller
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";
 
-
         $currentPerson = Person::find(auth()->user()->id);
         $attendance = DB::select($attendance_sql, [$currentPerson->defaultOrgID, $currentPerson->personID]);
         $bar = DB::select($bar_sql, [$currentPerson->personID, $currentPerson->defaultOrgID]);

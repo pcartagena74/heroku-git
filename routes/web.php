@@ -31,23 +31,7 @@ Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_i
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
 
 Route::get('/storage/events/{filename}', function($filename){
-    $filePath = storage_path('/app/public/events/').$filename;
-    if(! File::exists($filePath)){
-        return Response::make("File does not exist.", 404);
-    } else {
-        $returnFile = File::get($filePath);
-        $type = File::mimeType($filePath);
-
-        $response = Response::make($filePath, 200);
-        $response->header("Content-Type", $type);
-        return $response;
-    }
-});
-
-Route::get('/storage/{filename}', function($filename){
-    //$filePath = storage_path('/app/public/events/').$filename;
-    $filePath = Storage::disk('events')->url($filename);
-    dd($filePath);
+    $filePath = Flysystem::connection('awss3')->get($filename);
     return redirect($filePath);
 });
 
@@ -84,7 +68,10 @@ Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');
 Route::get('/tracks/{event}', 'TrackController@show');
 Route::post('/track/{track}', 'TrackController@update');
 Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');
-Route::post('/session/{event}', 'TrackController@sessionUpdate');
+Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');
+Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');
+Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
+Route::delete('/session/{es}', 'EventSessionController@destroy');
 
 
 // Ticket & Bundle Routes
@@ -114,6 +101,9 @@ Route::get('/orgsettings/{id}', 'OrgController@show');
 Route::post('/orgsettings/{id}', 'OrgController@update');
 Route::get('/eventdefaults', 'OrgController@event_defaults');
 Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');
+
+Route::get('/load_data', 'UploadController@index');
+Route::post('/load_data', 'UploadController@store');
 
 // Member Routes
 Route::get('/members', 'PersonController@index')->name('manageMembers');

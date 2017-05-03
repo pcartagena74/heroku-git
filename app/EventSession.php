@@ -11,7 +11,9 @@ class EventSession extends Model
 
     protected $table = 'event-sessions';
     protected $primaryKey = 'sessionID';
-    protected $dates = ['createDate', 'updateDate', 'deleted_at'];
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
+    protected $dates = ['start', 'end', 'createDate', 'updateDate', 'deleted_at'];
 
     public function track() {
         return $this->belongsTo(Track::class, 'trackID');

@@ -219,7 +219,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        Flysystem::connection('awss3')->put($event_filename, $contents);
+        Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         return redirect('/event-tickets/' . $event->eventID);
     }
@@ -347,7 +347,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        Flysystem::connection('awss3')->put($event_filename, $contents);
+        Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         return redirect('/event-tickets/' . $event->eventID);
     }

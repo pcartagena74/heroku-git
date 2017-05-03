@@ -50,7 +50,7 @@ foreach($current_events as $event) {
 // introduce twitter button; administration, etc.
 
     $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
-    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Edit Tracks</a>";
+    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Setup Tracks & Sessions</a>";
     if($event->hasTracks == 0){
         $track_link_button = '';
     }

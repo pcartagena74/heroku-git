@@ -58,6 +58,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         <ul class="nav child_menu">
                             <li><a href="/orgsettings">Custom Field Labels</a></li>
                             <li><a href="/eventdefaults">Event Defaults</a></li>
+                            <li><a href="/load_data">Upload Data</a></li>
                         </ul>
                     </li>
                     @endif

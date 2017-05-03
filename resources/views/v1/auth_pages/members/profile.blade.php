@@ -56,7 +56,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                 @if($profile->OrgStat1)
                     <a data-toggle="tooltip" title="You need to contact PMI to change last name." id="lastName">
                 @else
-                    <a href="#" id="firstName" data-title="Enter first name">
+                    <a href="#" id="lastName" data-title="Enter last name">
                 @endif
                     {{ $profile->lastName }}</a></td>
             <td style="text-align: left;"><a href="#" id="suffix" data-title="Enter suffix">{{ $profile->suffix }}</a></td>
@@ -67,7 +67,8 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
             <th style="text-align: left;">Company</th>
             <th style="text-align: left;">Title</th>
             <th style="text-align: left;">
-                <a data-toggle="tooltip" title="If you want your login to be a new email address, you'll have to first add it by clicking 'Add Email' below.">Login</a>
+                <a data-toggle="tooltip" title="If you want your login to be a new email address,
+                you'll have to first add it by clicking 'Add Email' below.">Login</a>
             </th>
         </tr>
         <tr>

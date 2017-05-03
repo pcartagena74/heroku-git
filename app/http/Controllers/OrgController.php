@@ -10,6 +10,10 @@ use App\OrgDiscount;
 
 class OrgController extends Controller
 {
+    public function __construct () {
+        $this->middleware('auth');
+    }
+
     public function index() {
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
