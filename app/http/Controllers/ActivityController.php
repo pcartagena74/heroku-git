@@ -15,6 +15,7 @@ class ActivityController extends Controller
     public function index() {
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
+        dd($this->currentPerson);
 
         $attendance_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate, 
                               date_format(oe.eventEndDate, '%c/%d/%Y') AS eventEndDate
