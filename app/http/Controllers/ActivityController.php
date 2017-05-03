@@ -14,7 +14,7 @@ class ActivityController extends Controller
 
     public function index() {
         // responds to /blah
-        $currentPerson = Person::find(auth()->user()->id);
+        $this->currentPerson = Person::find(auth()->user()->id);
 
         $attendance_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate, 
                               date_format(oe.eventEndDate, '%c/%d/%Y') AS eventEndDate
@@ -34,8 +34,8 @@ class ActivityController extends Controller
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";
 
-        $attendance = DB::select($attendance_sql, [$currentPerson->defaultOrgID, $currentPerson->personID]);
-        $bar = DB::select($bar_sql, [$currentPerson->personID, $currentPerson->defaultOrgID]);
+        $attendance = DB::select($attendance_sql, [$this->currentPerson->defaultOrgID, $this->currentPerson->personID]);
+        $bar = DB::select($bar_sql, [$this->currentPerson->personID, $this->currentPerson->defaultOrgID]);
 
         $datastring = "";  $myevents[] = null;
         foreach ($bar as $bar_row) {
