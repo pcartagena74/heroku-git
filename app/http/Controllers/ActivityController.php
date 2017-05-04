@@ -8,22 +8,36 @@ use App\Person;
 
 class ActivityController extends Controller
 {
-    public function __construct() {
+    public function __construct () {
         $this->middleware('auth');
     }
 
-    public function index() {
+    public function index () {
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
-        dd($this->currentPerson);
 
-        $attendance_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate, 
+        /*
+        $original_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate,
                               date_format(oe.eventEndDate, '%c/%d/%Y') AS eventEndDate
                            FROM `org-event` oe
                            JOIN `org-event_types` oet on oe.eventTypeID=oet.etID and oet.orgID=?
                            JOIN `event-registration` er on er.eventID = oe.eventID 
                            WHERE (er.regStatus='Active' or er.regStatus='In Progress') AND personID=? AND oe.deleted_at is NULL
                            ORDER BY oe.eventStartDate DESC";
+        */
+        $attendance = DB::table('org-event')
+                ->join('org-event_types', function($join) {
+                    $join->on('org-event_types.etID', '=', 'org-event.eventTypeID');
+                    $join->on('org-event_types.orgID', '=', 'org-event.eventTypeID')->where('org-event.orgID','=',$this->currentPerson->defaultOrgID);
+                })->join('event-registration', 'event-registration.eventID', '=', 'org-event.eventID')
+                ->where('event-registration.personID', '=', auth()->user()->id)
+                ->where(function($w) {
+                    $w->where('event-registration.regStatus', '=', 'Active')
+                      ->orWhere('event-registration.regStatus', '=', 'In Progress');
+                })
+                ->select('org-event.eventID', 'eventName', 'etName', 'eventStartDate', 'eventEndDate')
+                ->orderBy('org-event.eventStartDate')->get();
+        //dd($attendance);
 
         $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, 
                         (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=?) as 'attended'
@@ -35,16 +49,18 @@ class ActivityController extends Controller
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";
 
-        $attendance = DB::select($attendance_sql, [$this->currentPerson->defaultOrgID, $this->currentPerson->personID]);
-        $bar = DB::select($bar_sql, [$this->currentPerson->personID, $this->currentPerson->defaultOrgID]);
+        // $attendance = DB::select($attendance_sql, [$this->currentPerson->defaultOrgID, $this->currentPerson->personID]);
+        $bar        = DB::select($bar_sql, [$this->currentPerson->personID, $this->currentPerson->defaultOrgID]);
 
-        $datastring = "";  $myevents[] = null;
-        foreach ($bar as $bar_row) {
+
+        $datastring = "";
+        $myevents[] = null;
+        foreach($bar as $bar_row) {
             $label  = $bar_row->startDate;
             $attend = $bar_row->cnt;
             $there  = $bar_row->attended;
 
-            if($there==1) {
+            if($there == 1) {
                 array_push($myevents, $label);
             }
             $datastring .= "{ ChMtg: '" . $label . "', Attendees: " . $attend . "},";
@@ -61,29 +77,29 @@ class ActivityController extends Controller
         return view('v1.auth_pages.dashboard', compact('attendance', 'datastring', 'output', 'topBits'));
     }
 
-    public function show($id) {
+    public function show ($id) {
         // responds to GET /blah/id
 
     }
 
-    public function create() {
+    public function create () {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request) {
+    public function store (Request $request) {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function edit($id) {
+    public function edit ($id) {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update(Request $request, $id) {
+    public function update (Request $request, $id) {
         // responds to PATCH /blah/id
     }
 
-    public function destroy($id) {
+    public function destroy ($id) {
         // responds to DELETE /blah/id
     }
 }
