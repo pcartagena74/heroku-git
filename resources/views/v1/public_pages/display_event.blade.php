@@ -161,6 +161,7 @@ $today = Carbon\Carbon::now();
                 </table>
             </div>
 
+            <div class="col-md-12 col-sm-12 col-xs-12" id="status_msg"></div>
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="col-md-9 col-sm-9 col-xs-12" style="text-align: right"><input
                             id="discount_code" name="discount_code" type="text"
@@ -168,15 +169,14 @@ $today = Carbon\Carbon::now();
                 <div class="col-md-3 col-sm-3 col-xs-12"><a class="btn btn-xs btn-primary"
                                                             id="btn-validate">Validate</a></div>
             </div>
-            <div class="col-md-6 col-sm-6 col-xs-12" id="status_msg"></div>
-            <div class="col-md-12 col-sm-12 col-xs-12"
-                 style="text-align: right; vertical-align: top;">
-                <img alt="Visa Logo" src="/images/visa.png"><img alt="MasterCard Logo" src="/images/mastercard.png">
+            <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
+                <img alt="Visa Logo" src="/images/visa.png"><img alt="MasterCard Logo"
+                                                                 src="/images/mastercard.png">
                 <button type="submit" class="btn btn-success btn-sm" id="purchase"
                         style="height: 32px;"><b>Purchase Ticket(s)</b></button>
             </div>
-        </div>
     </form>
+    &nbsp;<br />
     <SUP style="color: red">*</SUP> Member pricing is applied automatically when you are 1)
     logged in and 2) have a PMI ID associated with your account.<br/>
     <SUP style='color: red'>**</SUP>Bundles include multiple tickets so you do not have to
@@ -191,12 +191,12 @@ $today = Carbon\Carbon::now();
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <table class="table" style="border: none;">
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"> From:</td>
-                <td style="border: none;">{{ $event->eventStartDate->format('n/j/Y g:i A') }}</td>
+                <td style="text-align: right; border: none;"><h3>From:</h3></td>
+                <td style="border: none;"><h3>{{ $event->eventStartDate->format('n/j/Y g:i A') }}</h3></td>
             </tr>
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"> To:</td>
-                <td style="border: none;">{{ $event->eventEndDate->format('n/j/Y g:i A') }}</td>
+                <td style="text-align: right; border: none;"><h3>To:</h3></td>
+                <td style="border: none;"><h3>{{ $event->eventEndDate->format('n/j/Y g:i A') }}</h3></td>
             </tr>
         </table>
     </div>

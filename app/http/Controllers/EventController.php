@@ -60,9 +60,9 @@ class EventController extends Controller
     public function show ($param) {
         // responds to GET /events/id
         // $param is either an ID or slug
-        $event     = Event::where('eventID', '=', $param)
-                          ->orWhere('slug', '=', $param)
-                          ->firstOrFail();
+        $event = Event::where('eventID', '=', $param)
+                      ->orWhere('slug', '=', $param)
+                      ->firstOrFail();
 
         if(auth()->guest()) {
             $current_person = 0;
@@ -87,7 +87,14 @@ class EventController extends Controller
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
 
-        return view('v1.public_pages.display_event', compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff'));
+        if($event->hasTracks > 0) {
+            $tracks = Track::where('eventID', $event->eventID)->get();
+            return view('v1.public_pages.display_event_w_sessions',
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff', 'tracks'));
+        } else {
+            return view('v1.public_pages.display_event',
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff'));
+        }
     }
 
     public function create () {
@@ -217,8 +224,8 @@ class EventController extends Controller
 
         // Make the event_{id}.ics file if it doesn't exist
         $event_filename = 'event_' . $event->eventID . '.ics';
-        $ical = new ics_calendar($event);
-        $contents = $ical->get();
+        $ical           = new ics_calendar($event);
+        $contents       = $ical->get();
         Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         return redirect('/event-tickets/' . $event->eventID);
@@ -236,8 +243,8 @@ class EventController extends Controller
 
     public function checkSlugUniqueness (Request $request, $id) {
         $slug = request()->input('slug');
-        if($id == 0){
-            if(Event::whereSlug($slug)->exists()){
+        if($id == 0) {
+            if(Event::whereSlug($slug)->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
             } elseif(Event::whereSlug($slug)->exists()) {
                 $message = $slug . ' is available';
@@ -245,7 +252,7 @@ class EventController extends Controller
                 $message = $slug . ' is available';
             }
         } else {
-            if(Event::whereSlug($slug)->where('eventID', '!=', $event->eventID)->exists()){
+            if(Event::whereSlug($slug)->where('eventID', '!=', $event->eventID)->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
             } elseif(Event::whereSlug($slug)->exists()) {
                 $message = $slug . ' is available';
@@ -319,7 +326,7 @@ class EventController extends Controller
         } else {
             $event->hasFood = 0;
         }
-        $event->slug             = request()->input('slug');
+        $event->slug = request()->input('slug');
         /*
          *  Add these later:
          *  image1
@@ -345,8 +352,8 @@ class EventController extends Controller
 
         // Make the event_{id}.ics file if it doesn't exist
         $event_filename = 'event_' . $event->eventID . '.ics';
-        $ical = new ics_calendar($event);
-        $contents = $ical->get();
+        $ical           = new ics_calendar($event);
+        $contents       = $ical->get();
         Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         return redirect('/event-tickets/' . $event->eventID);

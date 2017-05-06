@@ -4,12 +4,21 @@
  * Created: 4/29/2017
  */
 $topBits = '';
+if(isset($blah)){
+    $count = $blah;
+} else {
+    $count = 0;
+}
 
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
     @include('v1.parts.start_content', ['header' => 'Data Upload', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+
+    @if($count > 0)
+        <p>Prior upload of {{ $count }} records, successful.</p>
+    @endif
 
     Upload data by browsing to file and clicking the Upload button.<p>
 
