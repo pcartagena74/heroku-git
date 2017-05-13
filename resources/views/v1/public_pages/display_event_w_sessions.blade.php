@@ -25,16 +25,45 @@ $today = Carbon\Carbon::now();
 
 if($event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
+    $width   = (integer)85 / $event->hasTracks;
+    $mw      = (integer)90 / $event->hasTracks;
 } else {
     $columns = $event->hasTracks * 3;
+    $width   = (integer)80 / $event->hasTracks;
+    $mw      = (integer)85 / $event->hasTracks;
 }
 
+if(!$event->isSymmetric) {
+    $mda = array('days' => $event->confDays, 'sym' => $event->isSymmetric, 'tracks' => count($tracks));
+    for($d = 1; $d <= $event->confDays; $d++) {
+        $t          = 0;
+        ${'d' . $d} = array();
+        foreach($tracks as $track) {
+            $t++;
+            ${'t' . $t} = array();
+            for($x = 1; $x <= 5; $x++) {
+                $es = EventSession::where([
+                    ['trackID', '=', $track->trackID],
+                    ['order', '=', $x],
+                    ['confDay', '=', $d]
+                ])->first();
+                if($es !== null) {
+                    ${'t' . $t} = array_add(${'t' . $t}, $x, $es);
+                }
+            }
+            ${'d' . $d} = array_add(${'d' . $d}, 't' . $t, ${'t' . $t});
+        }
+        $mda = array_add($mda, 'd' . $d, ${'d' . $d});
+    }
+}
+
+//dd($mda);
 ?>
 @extends('v1.layouts.no-auth')
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     {!! Form::open(['url' => "/register/".$event->eventID, 'method' => 'post', 'id' => 'start_registration']) !!}
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
@@ -257,34 +286,47 @@ if($event->isSymmetric) {
                                                             <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                         </td>
                                                     @endif
-                                                    <td colspan="2" style="text-align:left; max-width: 30%;">
+                                                    <td colspan="2" style="text-align:left; min-width:150px;
+                                                            width: {{ $width }}%; max-width: {{ $mw }}%;">
                                                         <b>{{ $s->sessionName }}</b>
+                                                    </td>
+                                                @else
+
+                                                @endif
+                                            @endforeach
+                                        </tr>
+
+
+                                        <tr>
+                                            @foreach($tracks as $track)
+                                                <?php
+                                                $s = EventSession::where([
+                                                    ['trackID', $track->trackID],
+                                                    ['eventID', $event->eventID],
+                                                    ['confDay', $i],
+                                                    ['order', $x]
+                                                ])->first();
+                                                ?>
+                                                @if($s !== null)
+                                                    <td colspan="2" style="text-align:left;">
+                                                        <b>Session Speaker(s)</b><br/>
+                                                        {{ $s->sessionSpeakers or "tbd" }}
                                                     </td>
                                                 @endif
                                             @endforeach
                                         </tr>
 
-                                        @if($s !== null)
-
-                                            <tr>
-                                                @foreach($tracks as $track)
-                                                    <td colspan="2" style="text-align:left;">
-                                                        <b>Session Speaker(s)</b><br/>
-                                                        {{ $s->sessionSpeakers or "tbd" }}
-                                                    </td>
-                                                @endforeach
-                                            </tr>
-
-                                            <tr>
-                                                @foreach($tracks as $track)
-                                                    <?php
-                                                    $s = EventSession::where([
-                                                        ['trackID', $track->trackID],
-                                                        ['eventID', $event->eventID],
-                                                        ['confDay', $i],
-                                                        ['order', $x]
-                                                    ])->first();
-                                                    ?>
+                                        <tr>
+                                            @foreach($tracks as $track)
+                                                <?php
+                                                $s = EventSession::where([
+                                                    ['trackID', $track->trackID],
+                                                    ['eventID', $event->eventID],
+                                                    ['confDay', $i],
+                                                    ['order', $x]
+                                                ])->first();
+                                                ?>
+                                                @if($s !== null)
                                                     <td style="text-align:left;">
                                                         <b>{{ $s->creditAmt }}
                                                             {{ $s->creditArea }}
@@ -295,18 +337,28 @@ if($event->isSymmetric) {
                                                     <td style="text-align:left;">
                                                         <b> Attendee Limit: </b> {{ $s->maxAttendees }}
                                                     </td>
-                                                @endforeach
-                                            </tr>
+                                                @endif
+                                            @endforeach
+                                        </tr>
 
-                                            <tr>
-                                                @foreach($tracks as $track)
+                                        <tr>
+                                            @foreach($tracks as $track)
+                                                <?php
+                                                $s = EventSession::where([
+                                                    ['trackID', $track->trackID],
+                                                    ['eventID', $event->eventID],
+                                                    ['confDay', $i],
+                                                    ['order', $x]
+                                                ])->first();
+                                                ?>
+                                                @if($s !== null)
                                                     <td colspan="2" style="text-align:left;">
                                                         <b>Abstract</b><br/>
-                                                        {{ $s->sessionAbstract }}
+                                                        {!! $s->sessionAbstract !!}
                                                     </td>
-                                                @endforeach
-                                            </tr>
-                                        @endif
+                                                @endif
+                                            @endforeach
+                                        </tr>
                                     @endfor
                                 @endfor
                                 </tbody>
@@ -320,7 +372,7 @@ if($event->isSymmetric) {
     {!! Form::close() !!}
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Date &amp; Time', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Date &amp; Time', 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <table class="table" style="border: none;">
             <tr style="border: none;">
@@ -335,7 +387,7 @@ if($event->isSymmetric) {
     </div>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Location', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Location', 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div id="map_canvas" class="col-md-12 col-sm-12 col-xs-12" style="padding:15px;">
             <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="0" scrolling="no"
@@ -352,7 +404,7 @@ if($event->isSymmetric) {
 
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Organizer Information', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Organizer Information', 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <p><img src="{{ $org_stuff->orgPath }}/{{ $org_stuff->orgLogo }}"></p>
     {{ $event->contactOrg }}<br>
     {{ $event->contactEmail }}<br>

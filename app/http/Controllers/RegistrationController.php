@@ -37,8 +37,21 @@ class RegistrationController extends Controller
         }
     }
 
-    public function show ($id) {
-        // responds to GET /blah/id
+    public function show ($param) {
+        $event = Event::where('eventID', '=', $param)
+                      ->orWhere('slug', '=', $param)
+                      ->firstOrFail();
+
+        $regs = Registration::where('eventID', '=', $event->eventID)->get();
+
+        $tkts = Ticket::where([
+            ['eventID', '=', $event->eventID],
+            ['isaBundle', '=', 0]
+        ])->get();
+
+        $refs = RegFinance::where('eventID', '=', $event->eventID)->get();
+
+        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs'));
     }
 
     public function create () {

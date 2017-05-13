@@ -174,6 +174,7 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Spatie\Activitylog\ActivitylogServiceProvider::class,
         Spatie\LinkChecker\LinkCheckerServiceProvider::class,
+        Spatie\Referer\RefererServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*

@@ -16,14 +16,18 @@ class EventSessionController extends Controller
     public function destroy (EventSession $es) {
         $event = Event::find($es->eventID);
 
-        $sessions = EventSession::where([
-            ['order', $es->order],
-            ['confDay', '=', $es->confDay],
-            ['eventID', $event->eventID],
-        ])->get();
+        if($event->isSymmetric){
+            $sessions = EventSession::where([
+                ['order', $es->order],
+                ['confDay', '=', $es->confDay],
+                ['eventID', $event->eventID],
+            ])->get();
 
-        foreach($sessions as $os) {
-            $os->delete();
+            foreach($sessions as $os) {
+                $os->delete();
+            }
+        } else {
+            $es->delete();
         }
 
         return redirect('/tracks/' . $event->eventID);

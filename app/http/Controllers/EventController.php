@@ -14,7 +14,10 @@ use App\OrgDiscount;
 use App\Person;
 use App\Ticket;
 use App\Track;
-use App\ics_calendar;
+use App\ReferLink;
+use App\Other\ics_calendar;
+use Spatie\Referer\Referer;
+
 
 class EventController extends Controller
 {
@@ -69,6 +72,17 @@ class EventController extends Controller
         } else {
             $this->currentPerson = Person::find(auth()->user()->id);
             $current_person      = $this->currentPerson;
+        }
+
+        //$referer = Referer::get();
+        $referer = app(Referer::class)->get();
+
+        if($referer){
+            $r = new ReferLink;
+            $r->objectType = 'eventID';
+            $r->objectID = $event->eventID;
+            $r->refererText = $referer;
+            $r->save();
         }
 
         $event_loc = Location::where('locID', $event->locationID)->first();
@@ -354,7 +368,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
-        Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('awss3')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
     }

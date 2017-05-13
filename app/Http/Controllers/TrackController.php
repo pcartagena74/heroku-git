@@ -110,7 +110,8 @@ class TrackController extends Controller
             $s->updaterID = auth()->user()->id;
             $s->save();
         }
-        return json_encode(array('status' => 'success', 'message' => 'Did something...' . $event->isSymmetric, 'blah' => $name, 'val' => $value, 's' => $s));
+        return json_encode(array('status' => 'success', 'message' => 'Did something...' . $event->isSymmetric,
+            'pk' => request()->input('pk'), 'blah' => $name, 'val' => $value, 's' => $s));
     }
 
     public function updateSymmetry (Request $request, Event $event) {

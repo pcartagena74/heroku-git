@@ -4,7 +4,7 @@
  * Created: 4/16/2017
  */
 
-namespace App;
+namespace App\Other;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +30,7 @@ class ics_calendar
     private $org;
     private $o_string;
 
-    public function __construct (Event $event) {
+    public function __construct (\App\Event $event) {
         $etype             = DB::table('org-event_types')
                                ->where('etID', $event->eventTypeID)
                                ->select('etName')

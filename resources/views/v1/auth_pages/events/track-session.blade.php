@@ -10,8 +10,12 @@ $topBits = '';
 
 if($event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
+    $width   = (integer) 85/$event->hasTracks;
+    $mw   = (integer) 90/$event->hasTracks;
 } else {
     $columns = $event->hasTracks * 3;
+    $width   = (integer) 80/$event->hasTracks;
+    $mw   = (integer) 85/$event->hasTracks;
 }
 
 $tickets = Ticket::where([
@@ -89,12 +93,12 @@ $tickets = Ticket::where([
 
                 @for($i=1;$i<=$event->confDays;$i++)
                     <tr>
-                        <?php
+<?php
                         $x = EventSession::where([
                             ['confDay', '=', $i],
                             ['eventID', '=', $event->eventID]
                         ])->first();
-                        ?>
+?>
                         <th style="text-align:center; color: white; background-color: #2a3f54;" colspan="{{ $columns }}">Day {{ $i }} Sessions using Ticket:
                             <a style="color:yellow;" id="ticketLabel-{{ $i}}"
                                data-pk="{{ $track->trackID }}"
@@ -106,18 +110,17 @@ $tickets = Ticket::where([
                     @for($x=1;$x<=5;$x++)
                         <tr>
                             @foreach($tracks as $track)
-                                <?php
+<?php
                                 $s = EventSession::where([
                                     ['trackID', $track->trackID],
                                     ['eventID', $event->eventID],
                                     ['confDay', $i],
                                     ['order', $x]
                                 ])->first();
-                                ?>
+?>
                                 @if($s !== null)
                                     @if($tracks->first() == $track || !$event->isSymmetric)
                                         <td rowspan="4" style="text-align:left;">
-
                                             <nobr>
                                                 <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                    data-url="/eventsession/{{ $s->eventID }}"
@@ -137,7 +140,7 @@ $tickets = Ticket::where([
                                             @endif
                                         </td>
                                     @endif
-                                    <td colspan="2" style="text-align:left; max-width: 30%;">
+                                    <td colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
                                         <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                style="color: #2a3f54;" class="control-label">Session Title</label><br/>
                                         <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
@@ -145,14 +148,22 @@ $tickets = Ticket::where([
                                            data-url="/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->sessionName }}"></a>
                                     </td>
+                                @else
                                 @endif
                             @endforeach
                         </tr>
 
-                        @if($s !== null)
-
-                            <tr>
+                        <tr>
                                 @foreach($tracks as $track)
+<?php
+                                    $s = EventSession::where([
+                                        ['trackID', $track->trackID],
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $i],
+                                        ['order', $x]
+                                    ])->first();
+?>
+    @if($s !== null)
                                     <td colspan="2" style="text-align:left;">
                                         <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                style="color: #2a3f54;" class="control-label">Session Speaker(s)</label><br/>
@@ -161,19 +172,21 @@ $tickets = Ticket::where([
                                            data-url="/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->sessionSpeakers }}"></a>
                                     </td>
+    @endif
                                 @endforeach
                             </tr>
 
                             <tr>
                                 @foreach($tracks as $track)
-                                    <?php
+<?php
                                     $s = EventSession::where([
                                         ['trackID', $track->trackID],
                                         ['eventID', $event->eventID],
                                         ['confDay', $i],
                                         ['order', $x]
                                     ])->first();
-                                    ?>
+?>
+    @if($s !== null)
                                     <td style="text-align:left;">
                                         <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                style="color: #2a3f54;" class="control-label">{{ $s->creditAmt }}</label>
@@ -195,11 +208,21 @@ $tickets = Ticket::where([
                                            data-url="/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->maxAttendees }}"></a>
                                     </td>
+    @endif
                                 @endforeach
                             </tr>
 
                             <tr>
                                 @foreach($tracks as $track)
+<?php
+                                    $s = EventSession::where([
+                                        ['trackID', $track->trackID],
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $i],
+                                        ['order', $x]
+                                    ])->first();
+?>
+    @if($s !== null)
                                     <td colspan="2" style="text-align:left;">
                                         <label for="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                style="color: #2a3f54;" class="control-label">Abstract</label><br/>
@@ -208,10 +231,9 @@ $tickets = Ticket::where([
                                            data-url="/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->sessionAbstract }}"></a>
                                     </td>
+    @endif
                                 @endforeach
                             </tr>
-
-                        @endif
                     @endfor
                 @endfor
 
@@ -275,12 +297,13 @@ $tickets = Ticket::where([
 
             @endfor
 
-            <?php
-                        $sessions = EventSession::where('eventID', $event->eventID)->orderBy('trackID', 'order')->get()
-            ?>
-                        @foreach($sessions as $s)
+<?php
+            $sessions = EventSession::where('eventID', $event->eventID)->orderBy('trackID', 'order')->get()
+?>
+            @foreach($sessions as $s)
+            @if($s->deleted_at === null)
 
-                        $("#start-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
+            $("#start-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
                 type: 'combodate',
                 template: 'MMM DD YYYY h:mm A',
                 format: 'YYYY-MM-DD HH:mm:ss',
@@ -314,7 +337,13 @@ $tickets = Ticket::where([
 
             $("#maxAttendees-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
 
-            $("#sessionSpeakers-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
+            $("#sessionSpeakers-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
+                type: 'text',
+                success: function (data) {
+                    //window.location = '{{ env('APP_URL') . "/tracks/" . $event->eventID }}';
+                    console.log(data);
+                }
+            });
 
             $("#creditArea-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
                 type: 'select',
@@ -333,6 +362,8 @@ $tickets = Ticket::where([
                 }
             });
             $("#sessionAbstract-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'textarea'});
+
+            @endif
             @endforeach
         });
     </script>
@@ -361,7 +392,6 @@ $tickets = Ticket::where([
         });
     </script>
 @endsection
-
 
 @section('modal')
 @endsection

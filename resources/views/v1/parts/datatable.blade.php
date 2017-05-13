@@ -14,7 +14,7 @@ $scroll == 0 ? $id = 'generic_table' : $id = 'datatable-fixed-header';
 $th_count = 0; $tb_count = 0;
 ?>
 <div>
-    <table id="{{ $id }}" class="table table-striped table-bordered table-condensed">
+    <table id="{{ $id }}" class="table table-striped table-bordered table-condensed table-responsive">
         <thead>
         <tr>
             @foreach ($headers as $header)
@@ -22,7 +22,7 @@ $th_count = 0; $tb_count = 0;
                 @if(isset($hidecol[$th_count]))
                     <th style="display:none;">{{ $header }}</th>
                 @else
-                    <th style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%;">{{ $header }}</th>
+                        <th style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%; width: {{ (integer) 100/count($headers) }}%;">{{ $header }}</th>
                 @endif
 
             @endforeach
