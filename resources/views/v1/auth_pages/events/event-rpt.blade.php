@@ -33,7 +33,6 @@ if(count($reg_rows) >= 15) {
 } else {
     $scroll = 0;
 }
-
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 

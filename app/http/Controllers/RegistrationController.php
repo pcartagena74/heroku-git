@@ -516,7 +516,7 @@ class RegistrationController extends Controller
                 $rf->discountAmt = $total - $subcheck;
             }
             Auth::check() ? $rf->creatorID = auth()->user()->id : $rf->creatorID = 1;
-            Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->creatorID = 1;
+            Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->updaterID = 1;
             $rf->save();
 
             // Everything is saved and updated and such, now display the data back for review
