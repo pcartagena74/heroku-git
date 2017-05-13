@@ -92,6 +92,9 @@ $past_headers = ['#', 'Event Name', 'Event Type', 'Event Dates', 'Attendee Count
 $past_data    = [];
 
 foreach($past_events as $event) {
+    $rptURL = '/eventreport/' . $event->slug;
+    $tktURL = '/event-tickets/'. $event->eventID;
+
     $ticket_button =
         "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
     $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";

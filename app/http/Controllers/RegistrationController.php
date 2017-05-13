@@ -42,14 +42,18 @@ class RegistrationController extends Controller
                       ->orWhere('slug', '=', $param)
                       ->firstOrFail();
 
-        $regs = Registration::where('eventID', '=', $event->eventID)->get();
+        $regs = Registration::where('eventID', '=', $event->eventID)
+            ->where(function ($q) {
+                $q->where('regStatus', '=', 'Active')
+                  ->orWhere('regStatus', '=', 'Processed');
+            })->get();
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isaBundle', '=', 0]
         ])->get();
 
-        $refs = RegFinance::where('eventID', '=', $event->eventID)->get();
+        $refs = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('cancelDate')->get();
 
         return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs'));
     }
