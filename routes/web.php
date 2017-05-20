@@ -72,6 +72,8 @@ Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');
 Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
+Route::get('/eventreport/{slug}', 'RegistrationController@show');
+Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 
 
 // Ticket & Bundle Routes

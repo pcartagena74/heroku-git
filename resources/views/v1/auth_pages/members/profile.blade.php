@@ -82,24 +82,22 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
     </table>
     @include('v1.parts.end_content')
 
-    @if(isset($profile->ODN1))
-
-        @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
         <table id='date_fields' class='table table-striped table-condensed'>
             @for($i=1;$i<=10;$i++)
                 @if(isset($profile->{'ODN'.$i}))
                     <tr>
                         <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
-                        <td style="text-align: left;">{{ $profile->{'RelDate'.$i} }}</td>
+                        <td style="text-align: left;">{{ $profile->{'RelDate'.$i} or '' }}</td>
                     </tr>
+                @elseif($i == 1)
+                    If this is empty, you do not have a PMI ID on file.
                 @endif
             @endfor
         </table>
 
-        @include('v1.parts.end_content')
-
-    @endif
+    @include('v1.parts.end_content')
 
         @include('v1.parts.start_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 

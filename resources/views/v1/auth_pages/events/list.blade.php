@@ -35,47 +35,57 @@ foreach($current_events as $event) {
     $editURL    = '/event/' . $event->eventID . '/edit';
 
     $displayURL = '/events/' . $event->slug;
+    $tktURL = '/event-tickets/'. $event->eventID;
     $eventDiscountURL = '/eventdiscount/' . $event->eventID;
     $trackURL = '/tracks/' . $event->eventID;
+    $rptURL = '/eventreport/' . $event->slug;
+    $copyURL = '/eventcopy/' . $event->slug;
 
+    /*
     $edit_button = "<form method='post' action='$editURL'>" .
         $csrf . '
-        <label for="mySubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit</label>
+        <label for="mySubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit Event</label>
         <input type="hidden" name="eventID" value="' . $event->eventID . '">
         <input type="hidden" name="function" value="edit">
         <input id="mySubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" />
         </form>';
+    */
 
 // if(Entrust::ability($currentOrg->orgName, "event-management", $options))
 // introduce twitter button; administration, etc.
 
-    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit</a>";
-    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Setup Tracks & Sessions</a>";
+    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit Event</a>";
+    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Tracks & Sessions</a>";
     if($event->hasTracks == 0){
         $track_link_button = '';
     }
+    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
     $display_link_button =
-        "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-calendar'></i> Show Event</a>";
+        "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> Preview</a>";
     $eventDiscount_button =
        "<a href='$eventDiscountURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Event Discounts</a>";
     $delete_button       = Form::open(['url' => '/event/' . $event->eventID, 'method' => 'DELETE']) .
-        '<button class="btn btn-danger btn-xs"';
-    if($event->isActive) {
-        $delete_button .= ' disabled';
-    }
-    $delete_button .= '><i class="fa fa-trash"></i> Delete</button>
+        '<button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
+    if($event->isActive) {
+        $delete_button = '';
+    }
 
+    $ticket_button =
+        "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
+/*
     $ticket_button = '<form method="post" action="/event-tickets/' . $event->eventID . '">' . $csrf .
         '<label for="TicketSubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Tickets</label>
             <input type="hidden" name="eventID" value="' . $event->eventID . '">
             <input type="hidden" name="eventName" value="' . $event->eventID . '">
             <input type="hidden" name="function" value="ticket">
             <input id="TicketSubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" /></form>';
-
+*/
     array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button . $delete_button . $track_link_button . $ticket_button]);
+        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
+        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $delete_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
@@ -84,18 +94,19 @@ $past_headers = ['#', 'Event Name', 'Event Type', 'Event Dates', 'Attendee Count
 $past_data    = [];
 
 foreach($past_events as $event) {
-    $csrf = csrf_field();
+    $rptURL = '/eventreport/' . $event->slug;
+    $tktURL = '/event-tickets/'. $event->eventID;
+    $copyURL = '/eventcopy/' . $event->slug;
 
-    $ticket_button = '<form method="post" action="/event-tickets/' . $event->eventID . '">' . $csrf .
-        '<label for="TicketSubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Tickets</label>
-            <input type="hidden" name="eventID" value="' . $event->eventID . '">
-            <input type="hidden" name="eventName" value="' . $event->eventID . '">
-            <input type="hidden" name="function" value="ticket">
-            <input id="TicketSubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" /></form>';
+
+    $ticket_button =
+        "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
+    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
 
     array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $event->cnt, $ticket_button]);
+        $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
 }
 
 count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;

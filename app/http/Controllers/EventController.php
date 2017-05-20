@@ -14,7 +14,10 @@ use App\OrgDiscount;
 use App\Person;
 use App\Ticket;
 use App\Track;
-use App\ics_calendar;
+use App\ReferLink;
+use App\Other\ics_calendar;
+use Spatie\Referer\Referer;
+
 
 class EventController extends Controller
 {
@@ -25,36 +28,102 @@ class EventController extends Controller
     public function index () {
         // responds to /events
 
-        $topBits = '';
-
-        $current_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%c/%d/%Y %l:%i %p') AS eventStartDateF,
-                        date_format(e.eventEndDate, '%c/%d/%Y %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
-                        count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
-                    FROM `org-event` e
-                    LEFT JOIN `event-registration` er ON er.eventID=e.eventID
-                    LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
-                    WHERE e.orgID = ?
-                        AND eventStartDate >= NOW() AND e.deleted_at is null
-                    GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
-                    ORDER BY e.eventStartDate ASC";
-
-        $past_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%c/%d/%Y %l:%i %p') AS eventStartDateF,
-                    date_format(e.eventEndDate, '%c/%d/%Y %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
-                    count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
-                 FROM `org-event` e
-                 LEFT JOIN `event-registration` er ON er.eventID=e.eventID
-                 LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
-                 WHERE e.orgID = ?
-                    AND eventStartDate < NOW() AND e.deleted_at is null
-                 GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
-                 ORDER BY e.eventStartDate ASC";
-
+        $topBits        = '';
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
+
+        $current_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF,
+                               date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
+                               count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
+                        FROM `org-event` e
+                        LEFT JOIN `event-registration` er ON er.eventID=e.eventID
+                        LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
+                        WHERE e.orgID = ?
+                            AND eventStartDate >= NOW() AND e.deleted_at is null
+                        GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
+                        ORDER BY e.eventStartDate ASC";
+
+        /*
+        $c = DB::table('org-event as oe')
+               ->leftJoin('event-registration as er', 'er.eventID', '=', 'oe.eventID')
+               ->leftJoin('org-event_types as et', 'et.etID', '=', 'oe.eventTypeID')
+               ->where('et.orgID', '=', 'oe.orgID')
+               ->where([
+                   ['oe.orgID', '=', $this->currentPerson->defaultOrgID],
+                   ['oe.eventStartDate', '>=', 'NOW()']
+               ])
+            ->groupBy('oe.eventID', 'oe.eventName', 'oe.eventStartDate', 'oe.eventEndDate', 'oe.isActive', 'oe.slug', 'oe.hasTracks')
+            ->orderBy('oe.eventStartDate')
+               ->select(DB::raw('oe.eventID, oe.eventName, oe.eventStartDate, oe.eventEndDate, oe.isActive,
+                                 count(er.ticketID) as cnt, et.etName, oe.slug, oe.hasTracks'))
+               ->get();
+
+        */
+
+        $past_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF,
+                            date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
+                            count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
+                     FROM `org-event` e
+                     LEFT JOIN `event-registration` er ON er.eventID=e.eventID
+                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
+                     WHERE e.orgID = ?
+                        AND eventStartDate < NOW() AND e.deleted_at is null
+                     GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
+                     ORDER BY e.eventStartDate DESC";
+
         $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
 
         $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
 
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
+    }
+
+    public function event_copy ($param) {
+        $event = Event::where('eventID', '=', $param)
+                      ->orWhere('slug', '=', $param)
+                      ->firstOrFail();
+
+        $e           = $event->replicate();
+        $e->slug     = 'temporary_slug_placeholder';
+        $e->isActive = 0;
+        $e->save();
+        $e->slug = $e->eventID;
+        $e->save();
+
+        $event = $e;
+
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $current_person      = $this->currentPerson = Person::find(auth()->user()->id);
+        $exLoc               = Location::find($event->locationID);
+        $page_title          = 'Edit Copied Event';
+
+        // Create a stub for the default ticket for the event
+        $label                    = Org::find($this->currentPerson->defaultOrgID);
+        $tkt                      = new Ticket;
+        $tkt->ticketLabel         = $label->defaultTicketLabel;
+        $tkt->availabilityEndDate = $event->eventStartDate;
+        $tkt->eventID             = $event->eventID;
+        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate    = Carbon::now();
+        $tkt->save();
+
+        $today = Carbon::now();
+
+        if($event->eventStartDate > $today) {
+            $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
+                ['discountCODE', "<>", '']])->get();
+
+            foreach($orgDiscounts as $od) {
+                $ed               = new EventDiscount;
+                $ed->orgID        = $od->orgID;
+                $ed->eventID      = $event->eventID;
+                $ed->discountCODE = $od->discountCODE;
+                $ed->percent      = $od->percent;
+                $ed->creatorID    = $this->currentPerson->personID;
+                $ed->updaterID    = $this->currentPerson->personID;
+                $ed->save();
+            }
+        }
+        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
     }
 
     public function show ($param) {
@@ -69,6 +138,17 @@ class EventController extends Controller
         } else {
             $this->currentPerson = Person::find(auth()->user()->id);
             $current_person      = $this->currentPerson;
+        }
+
+        //$referer = Referer::get();
+        $referer = app(Referer::class)->get();
+
+        if($referer) {
+            $r              = new ReferLink;
+            $r->objectType  = 'eventID';
+            $r->objectID    = $event->eventID;
+            $r->refererText = $referer;
+            $r->save();
         }
 
         $event_loc = Location::where('locID', $event->locationID)->first();
@@ -354,7 +434,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
-        Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('awss3')->put($event_filename, $contents);
 
         return redirect('/event-tickets/' . $event->eventID);
     }

@@ -22,7 +22,8 @@ $default = Org::find($event->orgID);
 
     @include('v1.parts.start_content', ['header' => 'Tickets for "' . $event->eventName . '"', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <p>Defaults for this event only. <b style="color:red;">Note: </b>changing either of these will affect all associated tickets shown below.</p>
+    <p>Defaults for this event only. <b style="color:red;">Note: </b>changing either of these will affect all associated
+        tickets shown below.</p>
     <div class="col-sm-8 col-md-8">
         <table class="table table-bordered table-striped table-condensed">
             <tr>
@@ -45,8 +46,8 @@ $default = Org::find($event->orgID);
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>
-    If you need to create a "bundle" ticket, do so after adding all other non-bundle tickets.<br/>
-    <b style="color:red;">Note:</b> Creating additional tickets is typically only necessary for PD Day Events.
+        If you need to create a "bundle" ticket, do so after adding all other non-bundle tickets.<br/>
+        <b style="color:red;">Note:</b> Creating additional tickets is typically only necessary for PD Day Events.
     </p>
 
     <table id="ticket_table" class="table table-striped dataTable">
@@ -125,14 +126,17 @@ $default = Org::find($event->orgID);
         </tbody>
     </table>
     <br/>
-    <div class="col-md-4 col-sm-9 col-xs-12">
+    <div class="col-md-4 col-sm-6 col-xs-12">
         <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
                 data-target="#ticket_modal">Add Tickets
         </button>
         <a href="/events" class="btn btn-default">Return to Event Listing</a>
     </div>
-    <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
-    <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
+    <div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
+        @if($event->hasTracks > 0)
+            <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">Edit Tracks &amp; Sessions</a>
+        @endif
+    </div>
     @include('v1.parts.end_content')
 
     @if(count($bundles)>0)
@@ -224,20 +228,24 @@ $default = Org::find($event->orgID);
                                data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
                         <td colspan="5">{{ $tkt->ticketLabel }}</td>
                     </tr>
-                @endforeach
-            @endforeach
+                    @endforeach
+                    @endforeach
 
             </tbody>
         </table>
         <br/>
-        <div class="col-md-4 col-sm-9 col-xs-12">
+        <div class="col-md-4 col-sm-6 col-xs-12">
             <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
                     data-target="#ticket_modal">Add Tickets
             </button>
             <a href="/events" class="btn btn-default">Return to Event Listing</a>
+
         </div>
-        <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
-        <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
+        <div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
+            @if($event->hasTracks > 0)
+            <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">Edit Tracks &amp; Sessions</a>
+            @endif
+        </div>
 
         @include('v1.parts.end_content')
         @endif
@@ -262,14 +270,18 @@ $default = Org::find($event->orgID);
                         maxYear: '{{ date("Y")+3 }}',
                         minuteStep: 15
                     },
-                    success: function(){
-                        window.location = '{{ env('APP_URL') . "/event-tickets/" . $event->eventID }}';
+                    success: function () {
+                        window.location = '{{ env('
+                        APP_URL
+                        ') . "/event-tickets/" . $event->eventID }}';
                     }
                 });
                 $("#earlyDiscount").editable({
                     type: 'text',
-                    success: function(){
-                        window.location = '{{ env('APP_URL') . "/event-tickets/" . $event->eventID }}';
+                    success: function () {
+                        window.location = '{{ env('
+                        APP_URL
+                        ') . "/event-tickets/" . $event->eventID }}';
                     }
                 });
 
@@ -377,7 +389,7 @@ $default = Org::find($event->orgID);
                 $('#eventID-{{ $bid[$i] }}-{{ $tktIDs[$i] }}').editable({
                     type: 'select',
                     source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}],
-                    url: '{{ '/bundle/' . $event->eventID }}',
+                    url: '{{ ' / bundle / ' . $event->eventID }}',
                     error: function (xhr, ajaxOptions, e) {
                         console.log(xhr);
                         console.log(ajaxOptions);
