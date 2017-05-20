@@ -25,7 +25,7 @@ foreach($regs as $r) {
     //$t = Ticket::find($r->ticketID);
     //$f = RegFinance::where('regID', '=', $r->regID)->orWhere('token', '=', $r->token)->first();
     if($r->regfinance !== null){
-        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->regfinance->discountCode, $r->createDate->format('Y/m/d'),
             $r->regfinance->confirmation, '<i class="fa fa-dollar"></i>' . $r->regfinance->cost]);
     }
 }

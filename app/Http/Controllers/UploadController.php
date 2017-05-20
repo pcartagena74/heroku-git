@@ -627,7 +627,7 @@ class UploadController extends Controller
                                     $p->updaterID    = $this->currentPerson->personID;
                                     $p->save();
 
-                                    if($p->firstName != $first || $p->lastName != $last || $p - compName !== $coName) {
+                                    if($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                         $ps               = new PersonStaging;
                                         $ps->prefix       = $prefix;
                                         $ps->firstName    = $first;
