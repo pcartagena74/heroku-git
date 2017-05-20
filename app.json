@@ -1,0 +1,98 @@
+{
+  "name": "heroku-git",
+  "scripts": {
+  },
+  "env": {
+    "APP_DEBUG": {
+      "required": true
+    },
+    "APP_ENV": {
+      "required": true
+    },
+    "APP_KEY": {
+      "required": true
+    },
+    "APP_LOG_LEVEL": {
+      "required": true
+    },
+    "APP_URL": {
+      "required": true
+    },
+    "AWS_BUCKET": {
+      "required": true
+    },
+    "AWS_KEY": {
+      "required": true
+    },
+    "AWS_REGION": {
+      "required": true
+    },
+    "AWS_SECRET": {
+      "required": true
+    },
+    "DB_DATABASE": {
+      "required": true
+    },
+    "DB_HOST": {
+      "required": true
+    },
+    "DB_PASSWORD": {
+      "required": true
+    },
+    "DB_USERNAME": {
+      "required": true
+    },
+    "JAWSDB_URL": {
+      "required": true
+    },
+    "MAIL_FROM_ADDRESS": {
+      "required": true
+    },
+    "MAIL_FROM_NAME": {
+      "required": true
+    },
+    "MAIL_PASSWORD": {
+      "required": true
+    },
+    "MAIL_USERNAME": {
+      "required": true
+    },
+    "MAILGUN_API_KEY": {
+      "required": true
+    },
+    "MAILGUN_DOMAIN": {
+      "required": true
+    },
+    "MAILGUN_PUBLIC_KEY": {
+      "required": true
+    },
+    "MAILGUN_SMTP_LOGIN": {
+      "required": true
+    },
+    "MAILGUN_SMTP_PASSWORD": {
+      "required": true
+    },
+    "MAILGUN_SMTP_PORT": {
+      "required": true
+    },
+    "MAILGUN_SMTP_SERVER": {
+      "required": true
+    },
+    "STRIPE_KEY": {
+      "required": true
+    },
+    "STRIPE_SECRET": {
+      "required": true
+    }
+  },
+  "formation": {
+  },
+  "addons": [
+    "jawsdb"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/php"
+    }
+  ]
+}
