@@ -55,7 +55,7 @@ class RegistrationController extends Controller
         ])->get();
 
         $discPie = DB::table('reg-finance')
-                     ->select(DB::raw('discountCode, count(*) as cnt, sum(orgAmt) as orgAmt,
+                     ->select(DB::raw('discountCode, sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
                      ->where('eventID', '=', $event->eventID)
@@ -68,7 +68,7 @@ class RegistrationController extends Controller
         }
 
         $total = DB::table('reg-finance')
-                     ->select(DB::raw('"discountCode", count(*) as cnt, sum(orgAmt) as orgAmt,
+                     ->select(DB::raw('"discountCode", sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
                      ->where('eventID', '=', $event->eventID)->first();

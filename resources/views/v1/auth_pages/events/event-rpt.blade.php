@@ -17,7 +17,7 @@ foreach($tkts as $t) {
     array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
 }
 
-$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Register Date', 'Confirmation', 'Cost'];
+$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Confirmation', 'Cost'];
 $reg_rows    = [];
 
 foreach($regs as $r) {
@@ -25,7 +25,7 @@ foreach($regs as $r) {
     //$t = Ticket::find($r->ticketID);
     //$f = RegFinance::where('regID', '=', $r->regID)->orWhere('token', '=', $r->token)->first();
     if($r->regfinance !== null){
-        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->createDate->format('Y/m/d'),
+        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
             $r->regfinance->confirmation, '<i class="fa fa-dollar"></i>' . $r->regfinance->cost]);
     }
 }
@@ -108,7 +108,7 @@ foreach($discPie as $d) {
     @if($scroll)
         @include('v1.parts.footer-datatable')
     @endif
-    @if(count($rows)> 15 || count($reg_rows)>15)
+    @if(count($rows) > 15 || count($reg_rows) > 15)
     <script>
         $(document).ready(function () {
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
