@@ -24,8 +24,10 @@ foreach($regs as $r) {
     $p = Person::find($r->personID);
     //$t = Ticket::find($r->ticketID);
     //$f = RegFinance::where('regID', '=', $r->regID)->orWhere('token', '=', $r->token)->first();
-    array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->createDate->format('Y/m/d'),
-        $r->regfinance->confirmation, '<i class="fa fa-dollar"></i>' . $r->regfinance->cost]);
+    if($r->regfinance !== null){
+        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->createDate->format('Y/m/d'),
+            $r->regfinance->confirmation, '<i class="fa fa-dollar"></i>' . $r->regfinance->cost]);
+    }
 }
 
 if(count($reg_rows) >= 15) {
@@ -34,7 +36,7 @@ if(count($reg_rows) >= 15) {
     $scroll = 0;
 }
 
-$disc_headers = ['Code', 'Count', 'Cost', 'CC Fee', 'mCentric Fee', 'Net'];
+$disc_headers = ['Code', 'Count', 'Cost', 'CC Fee', 'Handle Fee', 'Net'];
 $disc_rows    = [];
 
 foreach($discPie as $d) {
@@ -45,7 +47,6 @@ foreach($discPie as $d) {
         '<i class="fa fa-dollar"></i> ' . number_format($d->orgAmt, 2, '.', ',')
     ]);
 }
-
 
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -107,6 +108,7 @@ foreach($discPie as $d) {
     @if($scroll)
         @include('v1.parts.footer-datatable')
     @endif
+    @if(count($rows)> 15 || count($reg_rows)>15)
     <script>
         $(document).ready(function () {
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -115,30 +117,8 @@ foreach($discPie as $d) {
             $('#datatable-fixed-header').DataTable().search('').draw();
         });
     </script>
-    <script>
-        $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
+    @endif
 
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
-
-            $SIDEBAR_MENU.find('a[href="/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
-
-            $("#add").text('Event Reporting');
-        });
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
     <script>
         var ctx = document.getElementById("discPie").getContext('2d');
@@ -170,12 +150,12 @@ foreach($discPie as $d) {
             data: {
                 labels: [
                     @foreach($discPie as $d)
-                            @if($d->discountCode == '' or $d->discountCode == ' ')
-                        'N/A',
-                    @elseif($d->discountCode == 'Total')
-                            @else
-                        '{{ $d->discountCode }}',
-                    @endif
+                        @if($d->discountCode == '' or $d->discountCode == ' ')
+                            'N/A',
+                        @elseif($d->discountCode == 'Total')
+                        @else
+                            '{{ $d->discountCode }}',
+                        @endif
                     @endforeach
                 ],
                 datasets: [{
@@ -191,10 +171,10 @@ foreach($discPie as $d) {
 
                     data: [
                         @foreach($discPie as $d)
-                        @if($d->discountCode == 'Total')
-                        @else
-                        {{ $d->cnt }},
-                        @endif
+                            @if($d->discountCode == 'Total')
+                            @else
+                                {{ $d->cnt }},
+                            @endif
                         @endforeach
                     ]
                 }]
@@ -225,6 +205,30 @@ foreach($discPie as $d) {
             }
         });
         document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
+    </script>
+    <script>
+        $(document).ready(function () {
+            var setContentHeight = function () {
+                // reset height
+                $RIGHT_COL.css('min-height', $(window).height());
+
+                var bodyHeight = $BODY.outerHeight(),
+                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+
+                // normalize content
+                contentHeight -= $NAV_MENU.height() + footerHeight;
+
+                $RIGHT_COL.css('min-height', contentHeight);
+            };
+
+            $SIDEBAR_MENU.find('a[href="/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+                setContentHeight();
+            }).parent().addClass('active');
+
+            $("#add").text('Event Reporting');
+        });
     </script>
 @endsection
 

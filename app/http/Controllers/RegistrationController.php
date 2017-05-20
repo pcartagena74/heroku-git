@@ -55,20 +55,20 @@ class RegistrationController extends Controller
         ])->get();
 
         $discPie = DB::table('reg-finance')
-                     ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(orgAmt) as orgAmt,
+                     ->select(DB::raw('discountCode, count(*) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
                      ->where('eventID', '=', $event->eventID)
                      ->groupBy('discountCode')->get();
 
         foreach($discPie as $d){
-            if($d->discountCode == ''){
+            if($d->discountCode == '' || $d->discountCode === null){
                 $d->discountCode = 'N/A';
             }
         }
 
         $total = DB::table('reg-finance')
-                     ->select(DB::raw('"discountCode", count(discountCode) as cnt, sum(orgAmt) as orgAmt,
+                     ->select(DB::raw('"discountCode", count(*) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
                      ->where('eventID', '=', $event->eventID)->first();
