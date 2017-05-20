@@ -72,7 +72,7 @@ $orgLogoPath = DB::table('organization')
 
     <div class="form-group col-md-12">
         {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'required') ) !!}
-        <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+        <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
     </div>
 
     <div class="container row col-sm-12">
@@ -92,6 +92,7 @@ $orgLogoPath = DB::table('organization')
         @endif
     </div>
     <p>&nbsp;</p>
+
     <div class="form-group col-md-3">
         {!! Form::label('slug', 'Custom URL*', array('class' => 'control-label')) !!}
     </div>
@@ -301,11 +302,14 @@ $orgLogoPath = DB::table('organization')
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventStartDate', 'time' => 'true', 'single' => 'true'])
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventEndDate', 'time' => 'true', 'single' => 'true'])
     <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         });
+
         function toggleShow() {
             $("#trackInput").toggle();
         }
@@ -343,7 +347,7 @@ $orgLogoPath = DB::table('organization')
                 if (selection != '') {
                     var theurl = "/locations/" + selection;
                     $.ajax({
-                        method: 'get',
+                        method: 'post',
                         url: theurl,
                         dataType: "json",
                         success: function (data) {

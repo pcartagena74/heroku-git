@@ -332,7 +332,7 @@ class EventController extends Controller
                 $message = $slug . ' is available';
             }
         } else {
-            if(Event::whereSlug($slug)->where('eventID', '!=', $event->eventID)->exists()) {
+            if(Event::whereSlug($slug)->where('eventID', '!=', $id)->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
             } elseif(Event::whereSlug($slug)->exists()) {
                 $message = $slug . ' is available';
