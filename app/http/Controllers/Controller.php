@@ -13,5 +13,6 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     protected $currentPerson = null;
+    protected $counter = 0;
 
 }

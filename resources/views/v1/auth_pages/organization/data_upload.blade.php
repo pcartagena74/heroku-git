@@ -28,7 +28,6 @@ if(isset($blah)){
 
             <label for="filename">File name to import:</label>
             <input size='50' type='file' name='filename'>
-            <input type='submit' name='submit' value='Upload'><br/>
 
         </div>
 
@@ -50,6 +49,9 @@ if(isset($blah)){
 
             </select>
 
+        </div>
+        <div class="col-sm-9 col-xs-9">
+            <input type='submit' name='submit' value='Upload'><br/>
         </div>
     </form>
 

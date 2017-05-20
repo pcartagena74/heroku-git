@@ -39,6 +39,7 @@ foreach($current_events as $event) {
     $eventDiscountURL = '/eventdiscount/' . $event->eventID;
     $trackURL = '/tracks/' . $event->eventID;
     $rptURL = '/eventreport/' . $event->slug;
+    $copyURL = '/eventcopy/' . $event->slug;
 
     /*
     $edit_button = "<form method='post' action='$editURL'>" .
@@ -59,6 +60,7 @@ foreach($current_events as $event) {
         $track_link_button = '';
     }
     $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
     $display_link_button =
         "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> Preview</a>";
     $eventDiscount_button =
@@ -83,7 +85,7 @@ foreach($current_events as $event) {
     array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
-        $rpt_link_button . $track_link_button . $ticket_button . $delete_button]);
+        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $delete_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
@@ -94,14 +96,17 @@ $past_data    = [];
 foreach($past_events as $event) {
     $rptURL = '/eventreport/' . $event->slug;
     $tktURL = '/event-tickets/'. $event->eventID;
+    $copyURL = '/eventcopy/' . $event->slug;
+
 
     $ticket_button =
         "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
     $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
 
     array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $event->cnt, $ticket_button . $rpt_link_button]);
+        $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
 }
 
 count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;

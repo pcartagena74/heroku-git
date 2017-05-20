@@ -13,6 +13,7 @@ use App\Email;
 use App\RegFinance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
 {
@@ -43,19 +44,42 @@ class RegistrationController extends Controller
                       ->firstOrFail();
 
         $regs = Registration::where('eventID', '=', $event->eventID)
-            ->where(function ($q) {
-                $q->where('regStatus', '=', 'Active')
-                  ->orWhere('regStatus', '=', 'Processed');
-            })->get();
+                            ->where(function($q) {
+                                $q->where('regStatus', '=', 'Active')
+                                  ->orWhere('regStatus', '=', 'Processed');
+                            })->with('regfinance', 'ticket')->get();
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isaBundle', '=', 0]
         ])->get();
 
+        $discPie = DB::table('reg-finance')
+                     ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(orgAmt) as orgAmt,
+                                       sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
+                                       sum(ccFee) as ccFee, sum(cost) as cost'))
+                     ->where('eventID', '=', $event->eventID)
+                     ->groupBy('discountCode')->get();
+
+        foreach($discPie as $d){
+            if($d->discountCode == ''){
+                $d->discountCode = 'N/A';
+            }
+        }
+
+        $total = DB::table('reg-finance')
+                     ->select(DB::raw('"discountCode", count(discountCode) as cnt, sum(orgAmt) as orgAmt,
+                                       sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
+                                       sum(ccFee) as ccFee, sum(cost) as cost'))
+                     ->where('eventID', '=', $event->eventID)->first();
+
+        $total->discountCode = 'Total';
+
+        $discPie->put(count($discPie), $total);
+
         $refs = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('cancelDate')->get();
 
-        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs'));
+        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs', 'discPie'));
     }
 
     public function create () {
@@ -78,7 +102,7 @@ class RegistrationController extends Controller
 
         $event    = Event::find(request()->input('eventID'));
         $resubmit = Registration::where('token', request()->input('_token'))->first();
-        $quantity      = request()->input('quantity');
+        $quantity = request()->input('quantity');
         if(Auth::check()) {
             $this->currentPerson = Person::find(auth()->user()->id);
             $this->currentPerson->load('orgperson');
@@ -154,7 +178,7 @@ class RegistrationController extends Controller
             $user->login = $checkEmail;
             $user->email = $checkEmail;
             $user->save();
-             Auth::loginUsingId($user->id);
+            Auth::loginUsingId($user->id);
             // send email notification with password setting stuff
 
             $this->currentPerson = $person;
@@ -184,7 +208,7 @@ class RegistrationController extends Controller
 
         } elseif(Auth::check() && ($email->personID == $this->currentPerson->personID)) {
             // the email entered belongs to the person logged in; ergo in DB
-            $person         = $this->currentPerson;
+            $person = $this->currentPerson;
             if($person->orgperson->OrgStat1 === null) {
                 $regMem = 'Non-Member';
             } else {
@@ -192,20 +216,38 @@ class RegistrationController extends Controller
             }
             $person->prefix = $prefix;
             // only non-members can edit first & last name
-            if($regMem == 'Non-Member') $person->firstName    = $firstName;
-            if($middleName) $person->midName = $middleName;
+            if($regMem == 'Non-Member') {
+                $person->firstName = $firstName;
+            }
+            if($middleName) {
+                $person->midName = $middleName;
+            }
             // only non-members can edit first & last name
-            if($regMem == 'Non-Member') $person->lastName     = $lastName;
-            if($suffix) $person->suffix       = $suffix;
+            if($regMem == 'Non-Member') {
+                $person->lastName = $lastName;
+            }
+            if($suffix) {
+                $person->suffix = $suffix;
+            }
             $person->defaultOrgID = $event->orgID;
             $person->prefName     = $prefName;
-            if($compName) $person->compName     = $compName;
-            if($indName) $person->indName      = $indName;
-            if($title) $person->title        = $title;
-            if($event->hasFood) {
-                if($allergenInfo) $person->allergenInfo = implode(",", (array)$allergenInfo);
+            if($compName) {
+                $person->compName = $compName;
             }
-            if($affiliation) $person->affiliation = implode(",", $affiliation);
+            if($indName) {
+                $person->indName = $indName;
+            }
+            if($title) {
+                $person->title = $title;
+            }
+            if($event->hasFood) {
+                if($allergenInfo) {
+                    $person->allergenInfo = implode(",", (array)$allergenInfo);
+                }
+            }
+            if($affiliation) {
+                $person->affiliation = implode(",", $affiliation);
+            }
             $person->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
@@ -213,7 +255,7 @@ class RegistrationController extends Controller
 
         } elseif(Auth::check() && ($email->personID != $this->currentPerson->personID)) {
             // someone logged in is registering for someone else in the DB (usually CAMI)
-            $person         = Person::find($email->personID);
+            $person = Person::find($email->personID);
             if($person->orgperson->OrgStat1 === null) {
                 $regMem = 'Non-Member';
             } else {
@@ -221,20 +263,38 @@ class RegistrationController extends Controller
             }
             $person->prefix = $prefix;
             // only non-members can edit first & last name
-            if($regMem == 'Non-Member') $person->firstName    = $firstName;
-            if($middleName) $person->midName = $middleName;
+            if($regMem == 'Non-Member') {
+                $person->firstName = $firstName;
+            }
+            if($middleName) {
+                $person->midName = $middleName;
+            }
             // only non-members can edit first & last name
-            if($regMem == 'Non-Member') $person->lastName     = $lastName;
-            if($suffix) $person->suffix       = $suffix;
+            if($regMem == 'Non-Member') {
+                $person->lastName = $lastName;
+            }
+            if($suffix) {
+                $person->suffix = $suffix;
+            }
             $person->defaultOrgID = $event->orgID;
             $person->prefName     = $prefName;
-            if($compName) $person->compName     = $compName;
-            if($indName) $person->indName      = $indName;
-            if($title) $person->title        = $title;
-            if($event->hasFood) {
-                if($allergenInfo) $person->allergenInfo = implode(",", (array)$allergenInfo);
+            if($compName) {
+                $person->compName = $compName;
             }
-            if($affiliation) $person->affiliation = implode(",", $affiliation);
+            if($indName) {
+                $person->indName = $indName;
+            }
+            if($title) {
+                $person->title = $title;
+            }
+            if($event->hasFood) {
+                if($allergenInfo) {
+                    $person->allergenInfo = implode(",", (array)$allergenInfo);
+                }
+            }
+            if($affiliation) {
+                $person->affiliation = implode(",", $affiliation);
+            }
             $person->save();
 
         } else {
@@ -328,7 +388,7 @@ class RegistrationController extends Controller
 
             $email = Email::where('emailADDR', $checkEmail)->first();
 
-           // Someone IS going to be logged in; the first person
+            // Someone IS going to be logged in; the first person
 
             if(Auth::check() && $email === null) {
                 // Someone logged in and email is not in database; must create
@@ -377,7 +437,7 @@ class RegistrationController extends Controller
             } elseif(Auth::check() && ($email->personID == $this->currentPerson->personID)) {
                 // the email entered belongs to the person logged in; ergo in DB
                 // addresses #2 - whatever should NOT be the same as the first
-                $person               = $this->currentPerson;
+                $person = $this->currentPerson;
                 if($person->orgperson->OrgStat1 === null) {
                     $regMem = 'Non-Member';
                 } else {
@@ -385,25 +445,43 @@ class RegistrationController extends Controller
                 }
                 $person->prefix = $prefix;
                 // only non-members can edit first & last name
-                if($regMem == 'Non-Member') $person->firstName    = $firstName;
-                if($middleName) $person->midName = $middleName;
+                if($regMem == 'Non-Member') {
+                    $person->firstName = $firstName;
+                }
+                if($middleName) {
+                    $person->midName = $middleName;
+                }
                 // only non-members can edit first & last name
-                if($regMem == 'Non-Member') $person->lastName     = $lastName;
-                if($suffix) $person->suffix       = $suffix;
+                if($regMem == 'Non-Member') {
+                    $person->lastName = $lastName;
+                }
+                if($suffix) {
+                    $person->suffix = $suffix;
+                }
                 $person->defaultOrgID = $event->orgID;
                 $person->prefName     = $prefName;
-                if($compName) $person->compName     = $compName;
-                if($indName) $person->indName      = $indName;
-                if($title) $person->title        = $title;
-                if($event->hasFood) {
-                    if($allergenInfo) $person->allergenInfo = implode(",", (array)$allergenInfo);
+                if($compName) {
+                    $person->compName = $compName;
                 }
-                if($affiliation) $person->affiliation = implode(",", $affiliation);
+                if($indName) {
+                    $person->indName = $indName;
+                }
+                if($title) {
+                    $person->title = $title;
+                }
+                if($event->hasFood) {
+                    if($allergenInfo) {
+                        $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    }
+                }
+                if($affiliation) {
+                    $person->affiliation = implode(",", $affiliation);
+                }
                 $person->save();
 
             } elseif(Auth::check() && ($email->personID != $this->currentPerson->personID)) {
                 // someone logged in is registering someone else in the DB (usually CAMI)
-                $person               = Person::find($email->personID);
+                $person = Person::find($email->personID);
                 if($person->orgperson->OrgStat1 === null) {
                     $regMem = 'Non-Member';
                 } else {
@@ -411,59 +489,77 @@ class RegistrationController extends Controller
                 }
                 $person->prefix = $prefix;
                 // only non-members can edit first & last name
-                if($regMem == 'Non-Member') $person->firstName    = $firstName;
-                if($middleName) $person->midName = $middleName;
+                if($regMem == 'Non-Member') {
+                    $person->firstName = $firstName;
+                }
+                if($middleName) {
+                    $person->midName = $middleName;
+                }
                 // only non-members can edit first & last name
-                if($regMem == 'Non-Member') $person->lastName     = $lastName;
-                if($suffix) $person->suffix       = $suffix;
+                if($regMem == 'Non-Member') {
+                    $person->lastName = $lastName;
+                }
+                if($suffix) {
+                    $person->suffix = $suffix;
+                }
                 $person->defaultOrgID = $event->orgID;
                 $person->prefName     = $prefName;
-                if($compName) $person->compName     = $compName;
-                if($indName) $person->indName      = $indName;
-                if($title) $person->title        = $title;
-                if($event->hasFood) {
-                    if($allergenInfo) $person->allergenInfo = implode(",", (array)$allergenInfo);
+                if($compName) {
+                    $person->compName = $compName;
                 }
-                if($affiliation) $person->affiliation = implode(",", $affiliation);
+                if($indName) {
+                    $person->indName = $indName;
+                }
+                if($title) {
+                    $person->title = $title;
+                }
+                if($event->hasFood) {
+                    if($allergenInfo) {
+                        $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    }
+                }
+                if($affiliation) {
+                    $person->affiliation = implode(",", $affiliation);
+                }
                 $person->save();
 
             } else {
                 // this is a rehash of the first option
-               /*
-                $person               = new Person;
-                $person->prefix       = $prefix;
-                $person->firstName    = $firstName;
-                $person->midName      = $middleName;
-                $person->lastName     = $lastName;
-                $person->suffix       = $suffix;
-                $person->defaultOrgID = $event->orgID;
-                $person->prefName     = $prefName;
-                $person->compName     = $compName;
-                $person->indName      = $indName;
-                $person->title        = $title;
-                if($event->hasFood) {
-                    $person->allergenInfo = implode(",", (array)$allergenInfo);
-                }
-                $person->affiliation = implode(",", $affiliation);
-                $person->creatorID   = $this->currentPerson->personID;
-                $person->updaterID   = $this->currentPerson->personID;
-                $person->save();
+                /*
+                 $person               = new Person;
+                 $person->prefix       = $prefix;
+                 $person->firstName    = $firstName;
+                 $person->midName      = $middleName;
+                 $person->lastName     = $lastName;
+                 $person->suffix       = $suffix;
+                 $person->defaultOrgID = $event->orgID;
+                 $person->prefName     = $prefName;
+                 $person->compName     = $compName;
+                 $person->indName      = $indName;
+                 $person->title        = $title;
+                 if($event->hasFood) {
+                     $person->allergenInfo = implode(",", (array)$allergenInfo);
+                 }
+                 $person->affiliation = implode(",", $affiliation);
+                 $person->creatorID   = $this->currentPerson->personID;
+                 $person->updaterID   = $this->currentPerson->personID;
+                 $person->save();
 
-                $op           = new OrgPerson;
-                $op->orgID    = $event->orgID;
-                $op->personID = $person->personID;
-                $op->save();
+                 $op           = new OrgPerson;
+                 $op->orgID    = $event->orgID;
+                 $op->personID = $person->personID;
+                 $op->save();
 
-                $email            = new Email;
-                $email->personID  = $person->personID;
-                $email->emailADDR = $checkEmail;
-                $email->isPrimary = 1;
-                $email->save();
+                 $email            = new Email;
+                 $email->personID  = $person->personID;
+                 $email->emailADDR = $checkEmail;
+                 $email->isPrimary = 1;
+                 $email->save();
 
-                $regBy  = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
-                $regMem = 'Non-Member';
-               */
-               dd("shouldn't have gotten here");
+                 $regBy  = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+                 $regMem = 'Non-Member';
+                */
+                dd("shouldn't have gotten here");
             }
 
             $reg                   = new Registration;
@@ -533,7 +629,7 @@ class RegistrationController extends Controller
         // This is the person record of the registration
         $person = Person::find($reg->personID);
 
-        if(auth()->check()){
+        if(auth()->check()) {
             $updater = auth()->user()->id;
         } else {
             $updater = 1;
@@ -547,19 +643,19 @@ class RegistrationController extends Controller
         $value = request()->input('value');
 
         // Because allergenInfo and Industry are reported in registrations and saved to the profile...
-        if($name == 'allergenInfo' && $value !== null){
-            $value = implode(",", (array)$value);
+        if($name == 'allergenInfo' && $value !== null) {
+            $value                = implode(",", (array)$value);
             $person->allergenInfo = $value;
-            $person->updaterID = $updater;
+            $person->updaterID    = $updater;
             $person->save;
-        } elseif($name == 'indName'){
-            $person->indName = $value;
+        } elseif($name == 'indName') {
+            $person->indName   = $value;
             $person->updaterID = $updater;
             $person->save;
         }
 
         //$person            = Person::find($reg->personID);
-        $reg->{$name} = $value;
+        $reg->{$name}   = $value;
         $reg->updaterID = $updater;
         $reg->save();
     }
