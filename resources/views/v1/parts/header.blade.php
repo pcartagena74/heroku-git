@@ -5,7 +5,11 @@
     <meta name="description" content="Integrated Member Management, Email Marketing, Event Registration, Surveys">
     <meta name="author" content="mCentric / Efcico Corporation">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <meta http-equiv="refresh" content="3600;url={{ env('APP_URL') . "/logout" }}" />
+    @if(Auth::user())
+        @if(!auth()->user()->remember_token)
+            <meta http-equiv="refresh" content="3600;url={{ env('APP_URL') . "/logout" }}" />
+        @endif
+    @endif
     <link rel="icon" href="/images/mCentric.ico">
 
     <title>mCentric: Members, Marketing, Messaging &amp; More...</title>
@@ -17,6 +21,7 @@
       <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
     <link href="/css/nprogress.css" rel="stylesheet">

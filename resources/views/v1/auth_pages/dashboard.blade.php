@@ -6,19 +6,22 @@
  * @param   $attendance     structured array with last 14 event dates, attendee count and whether attended
  */
 
+use Carbon\Carbon;
+
     $headers = ['Date', 'Event Type', 'Networking List'];
     $data = [];
     $current_user = auth()->user()->id;
     foreach($attendance as $event) {
+        $dt = Carbon::parse($event->eventStartDate);
         $csrf = csrf_field();
         //$nlb = "<form id='netform' action='/activity/$current_user' method='post'>
         $nlb = "<form id='netform' action='#' method='get'>
-$csrf
-<input type='hidden' name='eventID' value='$event->eventID'>
-<input type='hidden' name='eventName' value='$event->eventName'>
-<button type='submit' disabled id='network' class='btn btn-success btn-xs btn'>View Networking List</button>
-</form>";
-        array_push($data, [$event->eventStartDate, $event->eventName, $nlb]);
+                $csrf
+                <input type='hidden' name='eventID' value='$event->eventID'>
+                <input type='hidden' name='eventName' value='$event->eventName'>
+                <button type='submit' disabled id='network' class='btn btn-success btn-xs btn'>View Networking List</button>
+                </form>";
+        array_push($data, [$dt->toFormattedDateString(), $event->eventName, $nlb]);
     }
     count($data) > 15 ? $scroll = 1 : $scroll = 0;
 
@@ -28,7 +31,7 @@ $csrf
 @section('content')
 
     @include('v1.parts.start_content', ['header' => 'Chapter Event Attendance', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-    Green bars indicate those events where you were registered to attend.  Red bars indicate those events where you did not register.
+    Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.
         <div id='canvas'></div>
     @include('v1.parts.end_content')
 

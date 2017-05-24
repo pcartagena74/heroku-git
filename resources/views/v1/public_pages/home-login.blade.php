@@ -96,6 +96,7 @@
             <h2>Mailings</h2>
             <p>With better segmentation capability and targeting, use mCentric's integrated email capabilities to
                 execute specific campaigns and maintain contact with your constituents. </p>
+            <p>Why should maintaining lists of members be so difficult?</p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4 column_text">
