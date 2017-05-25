@@ -135,6 +135,9 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
     return redirect()->back();
 }]);
 
+Route::get('/blank', ['middleware' => 'auth', function(){
+    return view('v1.auth_pages.page-tmp');
+}]);
 
 Route::get('/logout', 'SessionController@logout');
 

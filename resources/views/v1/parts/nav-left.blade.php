@@ -15,7 +15,7 @@
 //$org_count = $_SESSION['org_count'];
 
 $currentPerson = App\Person::find(auth()->user()->id);
-$currentOrg = $currentPerson->defaultOrg;
+$currentOrg    = $currentPerson->defaultOrg;
 
 $options = array('validate_all' => true); // , 'return_type' => 'both');
 ?>
@@ -45,41 +45,50 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                     <li><a><i class="fa fa-home"></i> My Settings <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             @if (0)
-                            <li><a href="/orgs">My Organizations</a></li>
+                                <li><a href="/orgs">My Organizations</a></li>
                             @endif
                             <li><a href="/dashboard">My Dashboard</a></li>
                             <li><a href="/profile/my">My Profile</a></li>
-                            <li><a href="#">Something New? <span class="label label-success pull-right">Tell me what...</span></a></li>
+                            <li><a href="#">Something New? <span
+                                            class="label label-success pull-right">Tell me what...</span></a></li>
                         </ul>
                     </li>
 
-                    @if(Entrust::ability($currentOrg->orgName, 'settings-management', $options))
-                    <li><a><i class="fa fa-edit"></i>Organization Settings<span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                            <li><a href="/orgsettings">Custom Field Labels</a></li>
-                            <li><a href="/eventdefaults">Event Defaults</a></li>
-                            <li><a href="/load_data">Upload Data</a></li>
-                        </ul>
-                    </li>
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
+                        || Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-edit"></i>Organization Settings<span
+                                        class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="/orgsettings">Custom Field Labels</a></li>
+                                <li><a href="/eventdefaults">Event Defaults</a></li>
+                                <li><a href="/load_data">Upload Data</a></li>
+                            </ul>
+                        </li>
                     @endif
-                    @if(Entrust::ability($currentOrg->orgName, 'member-management', $options))
-                    <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                            <li><a href="/members">Member Management</a></li>
-                            <li><a href="#">Merge Members <span class="label label-success pull-right">Coming Soon</span></a></li>
-                            <li><a href="#">Role Provisioning <span class="label label-success pull-right">Next Week</span></a></li>
-                        </ul>
-                    </li>
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('member-management'))
+                        || Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="/members">Member Management</a></li>
+                                <li><a href="#">Merge Members <span
+                                                class="label label-success pull-right">Coming Soon</span></a></li>
+                                <li><a href="#">Role Provisioning <span
+                                                class="label label-success pull-right">Next Week</span></a></li>
+                            </ul>
+                        </li>
                     @endif
-                    @if(Entrust::ability($currentOrg->orgName, "event-management", $options))
-                    <li><a><i class="fa fa-calendar"></i> Event Management<span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                            <li><a href="/events">Manage Events</a></li>
-                            <li><a href="/locations">Location Management</a></li>
-                            <li><a id="add" href="/event/create">Add Event</a></li>
-                            <li><a href="#">New Report  <span class="label label-success pull-right">Just Define It</span></a></li>
-                        </ul>
-                    </li>
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+                        || Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-calendar"></i> Event Management<span
+                                        class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="/events">Manage Events</a></li>
+                                <li><a href="/locations">Location Management</a></li>
+                                <li><a id="add" href="/event/create">Add Event</a></li>
+                                <li><a href="#">New Report <span
+                                                class="label label-success pull-right">Just Define It</span></a></li>
+                            </ul>
+                        </li>
                     @endif
                 </ul>
             </div>
