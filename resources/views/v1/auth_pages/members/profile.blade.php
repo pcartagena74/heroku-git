@@ -181,7 +181,7 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
         @include('v1.parts.end_content')
     @endif
 
-    @include('v1.parts.start_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
     These email addresses are those that you may have used to register for an event.  <p>
 
     <table id="email_fields" class="table table-striped table-condensed">
