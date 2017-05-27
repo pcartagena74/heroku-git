@@ -22,7 +22,7 @@ $th_count = 0; $tb_count = 0;
                 @if(isset($hidecol[$th_count]))
                     <th style="display:none;">{{ $header }}</th>
                 @else
-                        <th style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%; width: {{ (integer) 100/count($headers) }}%;">{{ $header }}</th>
+                        <th style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%; width: {{ number_format(100/count($headers), 0, '', '') }}%;">{{ $header }}</th>
                 @endif
 
             @endforeach

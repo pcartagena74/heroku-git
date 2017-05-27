@@ -17,7 +17,7 @@ use App\User;
 use App\Phone;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 
 class UploadController extends Controller
@@ -52,6 +52,12 @@ class UploadController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $what                = request()->input('data_type');
         $filename            = $_FILES['filename']['tmp_name'];
+        $eventID = request()->input('eventID');
+
+        if($what == 'evtdata' && ($eventID === null || $eventID == 'Select an event...')){
+            // go back with message
+            return Redirect::back()->with('alert-warning', 'You must select an event.');
+        }
 
         switch ($what) {
             case 'mbrdata':
@@ -714,6 +720,7 @@ class UploadController extends Controller
                         $r->regStatus = $status;
                         $r->referalText = $hear;
                         $r->registeredBy = $regBy;
+                        $r->discountCode = $disCode;
                         $r->origcost = number_format($cost, 2, '.', '');
                         $r->subtotal = number_format($cost, 2, '.', '');
                         if(preg_match('/Non/', $tktTxt)){
