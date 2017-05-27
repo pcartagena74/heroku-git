@@ -27,12 +27,12 @@ if(isset($blah)){
         <div class="col-sm-6 col-xs-6">
 
             <label for="filename">File name to import:</label>
-            <input size='50' type='file' name='filename'>
+            <input size='50' type='file' name='filename' required>
 
         </div>
 
         <div class="col-sm-7 col-xs-7">
-            <select id="dt" name='data_type'>
+            <select id="dt" name='data_type' required>
                 <option value='mbrdata'>Member Data</option>
                 <option value='evtdata'>Event Data</option>
             </select><br/>
@@ -40,7 +40,7 @@ if(isset($blah)){
 
         <div class="col-sm-8 col-xs-8">
             <select id="evt" name='eventID' style='display:none;'>
-                <option>Select an event...</option>
+                <option value="">Select an event...</option>
                 @foreach($events as $event)
                     <option value="{{ $event->eventID }}">{{ $event->eventID }}
                         : {{ $event->eventStartDate->format('n/Y') }}
@@ -66,8 +66,12 @@ if(isset($blah)){
         $(location).ready(function () {
             $('#dt').on('change', function () {
                 var dt = $('#dt').val();
-                if (dt === 'evtdata') {
+                if (dt == 'evtdata') {
                     $('#evt').show();
+                    $('#evt').required = true;
+                } else {
+                    $('#evt').hide();
+                    $('#evt').required = false;
                 }
             });
         });
