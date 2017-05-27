@@ -13,6 +13,7 @@
         @include('v1.parts.nav-left')
         @include('v1.parts.nav-top')
         <div class="right_col" role="main">
+            @include('v1.parts.error')
             @if($topBits)
                 <div class="row tile_count">
                     @foreach($topBits as $tdata)
