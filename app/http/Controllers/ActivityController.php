@@ -13,9 +13,8 @@ class ActivityController extends Controller
     }
 
     public function index () {
-        // responds to /blah
+        // responds to /blah:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
-
         /*
         $original_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate,
                               date_format(oe.eventEndDate, '%c/%d/%Y') AS eventEndDate
@@ -25,26 +24,25 @@ class ActivityController extends Controller
                            WHERE (er.regStatus='Active' or er.regStatus='In Progress') AND personID=? AND oe.deleted_at is NULL
                            ORDER BY oe.eventStartDate DESC";
         */
-        $attendance = DB::table('org-event')
-                ->join('org-event_types', function($join) {
-                    $join->on('org-event_types.etID', '=', 'org-event.eventTypeID');
-                    $join->on('org-event_types.orgID', '=', 'org-event.eventTypeID')->where('org-event.orgID','=',$this->currentPerson->defaultOrgID);
-                })->join('event-registration', 'event-registration.eventID', '=', 'org-event.eventID')
-                ->where('event-registration.personID', '=', auth()->user()->id)
+        $attendance = DB::table('org-event as oe')
+                ->join('org-event_types as oet', function($join) {
+                    $join->on('oet.etID', '=', 'oe.eventTypeID');
+                    $join->on('oet.orgID', '=', 'oe.orgID')->where('oe.orgID','=',$this->currentPerson->defaultOrgID);
+                })->join('event-registration as er', 'er.eventID', '=', 'oe.eventID')
+                ->where('er.personID', '=', auth()->user()->id)
                 ->where(function($w) {
-                    $w->where('event-registration.regStatus', '=', 'Active')
-                      ->orWhere('event-registration.regStatus', '=', 'In Progress');
+                    $w->where('er.regStatus', '=', 'Active')
+                      ->orWhere('er.regStatus', '=', 'In Progress');
                 })
-                ->select('org-event.eventID', 'eventName', 'etName', 'eventStartDate', 'eventEndDate')
-                ->orderBy('org-event.eventStartDate')->get();
-        //dd($attendance);
+                ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'eventStartDate', 'oe.eventEndDate')
+                ->orderBy('oe.eventStartDate', 'DESC')->get();
 
         $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, 
                         (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=?) as 'attended'
                     FROM `org-event` oe
                     LEFT JOIN `event-registration` er on er.eventID=oe.eventID
-                    JOIN `org-event_types` et on et.etID = oe.eventTypeID and et.orgID=?  
-                    WHERE et.etID in (1, 9) and oe.isDeleted = 0 AND oe.deleted_at is NULL
+                    JOIN `org-event_types` et on et.etID = oe.eventTypeID AND et.orgID=? AND oe.eventTypeID in (1, 9)
+                    WHERE oe.isDeleted = 0 AND oe.deleted_at is NULL
                     GROUP BY eventID
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";

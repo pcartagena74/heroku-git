@@ -51,6 +51,7 @@ if(isset($blah)){
 
         </div>
         <div class="col-sm-9 col-xs-9">
+            <br />
             <input type='submit' name='submit' value='Upload'><br/>
         </div>
     </form>

@@ -477,7 +477,7 @@ class UploadController extends Controller
                                         $canPDU = 0;
                                     }
                                     break;
-                                case (preg_match("/question(s)*/i", $k)):
+                                case (preg_match("/[question(s)*|challenges]/i", $k)):
                                     $questions = $row[$k];
                                     break;
                                 case (preg_match("/(allergy)|(dietary)/i", $k)):
@@ -486,7 +486,7 @@ class UploadController extends Controller
                                 case (preg_match("/industry/i", $k)):
                                     $indName = $row[$k];
                                     break;
-                                case (preg_match("/(networking.list)|(networking.handout)/i", $k)):
+                                case (preg_match("/(networking.list)|(networking.handout)|(registration.list)/i", $k)):
                                     $canNtwk = $row[$k];
                                     if($canNtwk === null) {
                                         $canNtwk = 0;
@@ -500,18 +500,25 @@ class UploadController extends Controller
                                 case (preg_match("/special/i", $k)):
                                     $specialNeeds = $row[$k];
                                     break;
+                                case (preg_match("/hear/i", $k)):
+                                    $hear = $row[$k];
+                                    break;
                                 default:
                                     echo("Encountered an unknown column: '" . $k . "'<br>");
                                     break;
                             }
                         }
                         if(!isset($canNtwk)){ $canNtwk = 0; }
+                        if(!isset($allergy)){ $allergy = 0; }
+                        if(!isset($pmiID)){ $pmiID = null; }
                         if(!isset($canPDU)){ $canPDU = 0; }
                         if(!isset($firstEvent)){ $firstEvent = 0; }
                         if(!isset($firstEvent)){ $firstEvent = 0; }
                         if(!isset($pmtRecd)){ $pmtRecd = 0; }
                         if(!isset($specialNeeds)){ $specialNeeds = null; }
+                        if(!isset($coName)){ $coName = null; }
                         if(!isset($indName)){ $indName = null; }
+                        if(!isset($hear)){ $hear = null; }
                         if(!isset($questions)){ $questions = null; }
                         if(!isset($commute)){ $commute = null; }
                         if(!isset($topics)){ $topics = null; }
@@ -705,6 +712,7 @@ class UploadController extends Controller
                         $r->specialNeeds = $specialNeeds;
                         $r->affiliation = 'PMI MassBay';
                         $r->regStatus = $status;
+                        $r->referalText = $hear;
                         $r->registeredBy = $regBy;
                         $r->origcost = number_format($cost, 2, '.', '');
                         $r->subtotal = number_format($cost, 2, '.', '');

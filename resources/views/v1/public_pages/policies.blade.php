@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment: Privacy and Return Policy page (requirement for Braintree/Paypal
+ * Comment: Privacy and Return Policy page
  * Created: 3/18/2017
  */
 ?>
@@ -166,9 +166,9 @@
                 <h2>mCentric's Refund Policy</h2>
                 <ol>
                     <li><b>mCentric Client Services</b><br/>
-                        mCentric offers the use of its site to clients for a monthly fee. mCentric may also provide the
-                        payment processing for events that clients may wish to hold. The fees associated with these
-                        transactions are not refundable.<br/>
+                        mCentric offers the use of its site to clients for a recurring monthly or annual fee.<br />
+                        mCentric may also provide payment processing for events that clients may wish to hold.<br />
+                        Fees associated with processed transactions are not refundable.<p>
                         Clients that wish to terminate the use of mCentric's services may do so in writing via the
                         mCentric support interface.
                     </li>
@@ -176,8 +176,8 @@
 
                     <li><b>mCentric Client Event Registrations</b>
                         mCentric will honor the refund policy for individual event refunds based on the refund policy
-                        set forth by the client. The client continues to be responsible for any fees associated with the
-                        canceled registration.
+                        set forth by the client. The client continues to be responsible for any fees associated with
+                        canceled registrations.
                     </li>
                     <br/>
                 </ol>

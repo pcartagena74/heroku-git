@@ -8,6 +8,7 @@
 <html lang="en">
 @include('v1.parts.header')
 <script src='https://www.google.com/recaptcha/api.js'></script>
+@yield('header')
 </head>
 <body class="nav-md footer_fixed">
 <div class="container body col-md-12 col-sm-12 col-xs-12">
