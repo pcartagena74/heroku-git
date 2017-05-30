@@ -78,6 +78,7 @@ class EventController extends Controller
     }
 
     public function event_copy ($param) {
+        $today = Carbon::now();
         $event = Event::where('eventID', '=', $param)
                       ->orWhere('slug', '=', $param)
                       ->firstOrFail();
@@ -85,6 +86,8 @@ class EventController extends Controller
         $e           = $event->replicate();
         $e->slug     = 'temporary_slug_placeholder';
         $e->isActive = 0;
+        $e->eventStartDate = $today;
+        $e->eventEndDate = $today;
         $e->save();
         $e->slug = $e->eventID;
         $e->save();
@@ -105,8 +108,6 @@ class EventController extends Controller
         $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
         $tkt->earlyBirdEndDate    = Carbon::now();
         $tkt->save();
-
-        $today = Carbon::now();
 
         if($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
@@ -360,7 +361,7 @@ class EventController extends Controller
             $loc->zip       = request()->input('zip');
             $loc->updaterID = $this->currentPerson->personID;
             $loc->save();
-            // if not and also not empty, grap location and save data
+            // if not and also not empty, grab location and save data
         } elseif($input_loc != $event->locationID && !empty($input_loc)) {
             $loc            = Location::find(request()->input('locationID'));
             $loc->locName   = request()->input('locName');
@@ -430,11 +431,14 @@ class EventController extends Controller
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
 
-        // Make the event_{id}.ics file if it doesn't exist
+        // Make and overwrite the event_{id}.ics file
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
         Flysystem::connection('awss3')->put($event_filename, $contents);
+
+        // Think about whether ticket modification should be done here.
+        // Maybe catch the auto-created tickets when events are copied
 
         return redirect('/event-tickets/' . $event->eventID);
     }

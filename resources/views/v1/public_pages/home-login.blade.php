@@ -29,7 +29,7 @@
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;;">
-            <a class="navbar-brand" href="#"><img style="height: 25px; vertical-align: top;" src="/images/mCentric_logo.png" alt="m|Centric"/></a>
+            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;" src="/images/mCentric_logo.png" alt="m|Centric"/></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12"
              style="display:table-cell; vertical-align:top">
@@ -89,22 +89,21 @@
                 members based on the traits that are evident in your data allow for better targeting of your
                 campaigns.</p>
             <p>Need to see the list of members that are expiring this month?  Next month?</p>
-            <p></p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-default" href="/details#marketing" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4 column_text">
             <h2>Mailings</h2>
             <p>With better segmentation capability and targeting, use mCentric's integrated email capabilities to
                 execute specific campaigns and maintain contact with your constituents. </p>
             <p>Why should maintaining lists of members be so difficult?</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-default" href="/details#mailings" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4 column_text">
             <h2>Meetings</h2>
             <p>Need to advertise meetings or events regardless of entrance fees? mCentric can help you setup, advertise
                 your events, and sell tickets to your events. </p><p>If you're holding a no-fee event and still need these
                 services, mCentric will do this for you for no additional charge.</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-default" href="/details#meetings" role="button">View details &raquo;</a></p>
         </div>
     </div>
 
