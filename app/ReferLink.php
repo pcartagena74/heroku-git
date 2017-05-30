@@ -9,5 +9,6 @@ class ReferLink extends Model
     protected $table = 'referer_stats';
     protected $primaryKey = 'refID';
     const CREATED_AT = 'createDate';
-    protected $dates = ['createDate'];
+    const UPDATED_AT = 'updateDate';
+    protected $dates = ['createDate', 'updateDate'];
 }
