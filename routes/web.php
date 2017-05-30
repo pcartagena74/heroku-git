@@ -17,6 +17,9 @@ Route::post('/login', 'SessionController@store');
 Route::get('/policies', function(){
     return view('v1.public_pages.policies');
 });
+Route::get('/details', function(){
+    return view('v1.public_pages.details');
+});
 
 // Public Event-related Routes
 Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');

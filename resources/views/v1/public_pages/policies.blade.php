@@ -4,56 +4,9 @@
  * Created: 3/18/2017
  */
 ?>
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Integrated Member Management, Email Marketing, Event Registration, Surveys">
-    <meta name="author" content="Efcico Corporation">
-    <link rel="icon" href="/favicon.ico">
+@extends('v1.layouts.no-auth_no-nav')
 
-    <title>m|Centric</title>
-
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-    <link href="/css/jumbotron.css" rel="stylesheet">
-    <link href="/css/mmmm.css" rel="stylesheet">
-    <script src="/js/ie-emulation-modes-warning.js"></script>
-    <!--[if lt IE 9]>
-    <script src="/js/html5shiv.min.js"></script>
-    <script src="/js/respond.min.js"></script>
-    <![endif]-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="//cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
-</head>
-<body>
-<nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;;">
-            <a class="navbar-brand" href="#">
-                <img style="height: 25px; vertical-align: top;" src="/images/mCentric_logo.png" alt="m|Centric"/></a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12"
-             style="display:table-cell; vertical-align:top">
-        </div><!--/.navbar-collapse -->
-        <div class="col-md-12 col-sm-12 col-xs-12 navbar-inverse"><span id="err"></span></div>
-    </div>
-</nav>
-
-<div class="top_content">
-    <div class="mainimage">
-        <img src="/images/main.jpg" alt="" style="height: 350px; width:100%;"/>
-        <div class="overlay">
-            <div class='console-container'><span id='text'></span>
-                <div class='console-underscore' id='console'>&#95;</div>
-            </div>
-        </div>
-    </div>
-</div>
+@section('content')
 
 <div class="col-md-offset-1 col-sm-offset-1 col-md-10 col-sm-10 col-xs-10" style="padding-top: 20px;">
     <div class="container">
@@ -72,12 +25,10 @@
                     <br/>
                     <ul>
                         <li><b>Client:</b> mCentric clients are the chapters, associations, or other organizations who
-                            sign up with mCentric
-                            to facilitate the management of their member events and data.
+                            sign up with mCentric to facilitate the management of their member events and data.
                         </li>
                         <li><b>User:</b> mCentric users include any individual associated with a client who needs to
-                            register for any mCentric-facilitated
-                            service a client may be offering to its members.
+                            register for any mCentric-facilitated service a client may be offering to its members.
                         </li>
                     </ul>
                     <br/>
@@ -247,7 +198,9 @@
         </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
     // function([string1, string2],target id,[color1,color2])
     consoleText(['Marketing', 'Mailings', 'Meetings', 'Integrated Membership Management'], 'text', ['black', 'black', 'black']);
@@ -259,23 +212,23 @@
         var letterCount = 1;
         var x = 1;
         var waiting = false;
-        var target = document.getElementById(id)
-        target.setAttribute('style', 'color:' + colors[0])
+        var target = document.getElementById(id);
+        target.setAttribute('style', 'color:' + colors[0]);
         window.setInterval(function () {
 
             if (letterCount === 0 && waiting === false) {
                 waiting = true;
-                target.innerHTML = words[0].substring(0, letterCount)
+                target.innerHTML = words[0].substring(0, letterCount);
                 window.setTimeout(function () {
                     var usedColor = colors.shift();
                     colors.push(usedColor);
                     var usedWord = words.shift();
                     words.push(usedWord);
                     x = 1;
-                    target.setAttribute('style', 'color:' + colors[0])
+                    target.setAttribute('style', 'color:' + colors[0]);
                     letterCount += x;
                     waiting = false;
-                }, 1500)
+                }, 1500);
             } else if (letterCount === words[0].length + 1 && waiting === false) {
                 waiting = true;
                 window.setTimeout(function () {
@@ -288,22 +241,21 @@
                     target.innerHTML = '';
                     letterCount = 0;
                 } else {
-                    target.innerHTML = words[0].substring(0, letterCount)
+                    target.innerHTML = words[0].substring(0, letterCount);
                     letterCount += x;
                 }
             }
-        }, 60)
+        }, 60);
         window.setInterval(function () {
             if (visible === true) {
-                con.className = 'console-underscore hidden'
+                con.className = 'console-underscore hidden';
                 visible = false;
 
             } else {
-                con.className = 'console-underscore'
+                con.className = 'console-underscore';
                 visible = true;
             }
-        }, 2000)
+        }, 2000);
     }
 </script>
-</body>
-</html>
+@endsection
