@@ -4,6 +4,11 @@
  * Created: 3/12/2017
  */
 
+use App\EventSession;
+use App\Ticket;
+use App\Registration;
+use App\Person;
+
 $tcount = 0;
 $today = Carbon\Carbon::now();
 $string = '';
@@ -20,12 +25,23 @@ foreach($array as $chap) {
     $affiliation_array[$i] = $chap;
 }
 
+if($event->isSymmetric) {
+    $columns = ($event->hasTracks * 2) + 1;
+    $width   = number_format(85 / $event->hasTracks, 0, '', '');
+    $mw      = number_format(90 / $event->hasTracks, 0, '', '');
+} else {
+    $columns = $event->hasTracks * 3;
+    $width   = number_format(80 / $event->hasTracks, 0, '', '');
+    $mw      = number_format(85 / $event->hasTracks, 0, '', '');
+}
+
 ?>
 @extends('v1.layouts.no-auth')
 
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    {!! Form::open(['url' => "/complete_registration/".$rf->regID, 'method' => 'post', 'id' => 'complete_registration']) !!}
     <div class="whole">
 
         <div style="float: right;" class="col-md-5 col-sm-5">
@@ -33,10 +49,11 @@ foreach($array as $chap) {
         </div>
         <div class="left col-md-7 col-sm-7">
             <div class="myrow col-md-12 col-sm-12">
+
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
                     <h1 class="fa fa-5x fa-calendar"></h1>
                 </div>
-                <div class="col-md-7 col-sm-7">
+                <div class="col-md-6 col-sm-6">
                     <h2><b>{{ $event->eventName }}</b></h2>
                     <div style="margin-left: 10px;">
                         {{ $event->eventStartDate->format('n/j/Y g:i A') }}
@@ -48,39 +65,34 @@ foreach($array as $chap) {
                     </div>
                     <br/>
                 </div>
-                <div class="col-md-3 col-sm-3">
+                <div class="col-md-4 col-sm-4" style="text-align: right;">
                     <p></p>
 
                     @if($rf->cost > 0)
-                        <form action="/complete_registration/{{ $rf->regID }}" method="POST">
-                            {{ csrf_field() }}
-                            <script
-                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                    data-key="{{ env('STRIPE_KEY') }}"
-                                    data-amount="{{ $rf->cost*100 }}"
-                                    data-label="Pay Now by Credit Card"
-                                    data-email="{{ $person->login }}"
-                                    data-name="{{ $event->org->orgName }} (mCentric)"
-                                    data-description="Event Registration"
-                                    data-zip-code="true"
-                                    data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
-                                    data-locale="auto">
-                            </script>
-                        </form>
+                        <script
+                                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                data-key="{{ env('STRIPE_KEY') }}"
+                                data-amount="{{ $rf->cost*100 }}"
+                                data-label="Pay Now by Credit Card"
+                                data-email="{{ $person->login }}"
+                                data-name="{{ $event->org->orgName }} (mCentric)"
+                                data-description="Event Registration"
+                                data-zip-code="true"
+                                data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
+                                data-locale="auto">
+                        </script>
                     @endif
-                    <form action="/complete_registration/{{ $rf->regID }}" method="POST">
-                        {{ csrf_field() }}
-                            <button type="submit" class="btn btn-success btn-sm">&nbsp;<b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
-                        </button>
-                    </form>
+                    <button type="submit" class="btn btn-success btn-sm">&nbsp;
+                        <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
+                    </button>
                 </div>
             </div>
 
             @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
                 <?php
-                $reg = \App\Registration::find($i); $tcount++;
-                $person = \App\Person::find($reg->personID);
-                $ticket = \App\Ticket::find($reg->ticketID);
+                $reg = Registration::find($i); $tcount++;
+                $person = Person::find($reg->personID);
+                $ticket = Ticket::find($reg->ticketID);
                 ?>
 
                 <div class="myrow col-md-12 col-sm-12">
@@ -88,11 +100,13 @@ foreach($array as $chap) {
                         <h1 class="fa fa-5x fa-user"></h1>
                     </div>
                     <div class="col-md-10 col-sm-10">
-                        <table class="table table-bordered table-condensed table-striped">
+                        <table class="table table-bordered table-condensed table-striped jambo_table">
+                            <thead>
                             <tr>
                                 <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
                                     #{{ $tcount }}</th>
                             </tr>
+                            </thead>
                             <tr>
                                 <th style="text-align: left; color:darkgreen;">Ticket</th>
                                 <th style="text-align: left; color:darkgreen;">Original Cost</th>
@@ -135,11 +149,13 @@ foreach($array as $chap) {
                                 <td colspan="2" style="text-align: left;">
                                     @if($person->prefix)
                                         <a id="prefix-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                           data-value="{{ $person->prefix }}" data-url="/profile/{{ $person->personID }}"></a>
+                                           data-value="{{ $person->prefix }}"
+                                           data-url="/profile/{{ $person->personID }}"></a>
                                     @endif
                                     @if($reg->membership == 'Non-Member')
-                                    <a id="firstName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                       data-value="{{ $person->firstName }}" data-url="/profile/{{ $person->personID }}"></a>
+                                        <a id="firstName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                           data-value="{{ $person->firstName }}"
+                                           data-url="/profile/{{ $person->personID }}"></a>
                                     @else
                                         {{ $person->firstName }}
                                     @endif
@@ -154,17 +170,21 @@ foreach($array as $chap) {
                                            data-url="/profile/{{ $person->personID }}"></a>
                                     @endif
                                     @if($reg->membership == 'Non-Member')
-                                    <a id="lastName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                       data-value="{{ $person->lastName }}" data-url="/profile/{{ $person->personID }}"></a>
+                                        <a id="lastName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                           data-value="{{ $person->lastName }}"
+                                           data-url="/profile/{{ $person->personID }}"></a>
                                     @else
                                         {{ $person->lastName }}
                                     @endif
                                     @if($person->suffix)
                                         <a id="suffix-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                           data-value="{{ $person->suffix }}" data-url="/profile/{{ $person->personID }}"></a>
+                                           data-value="{{ $person->suffix }}"
+                                           data-url="/profile/{{ $person->personID }}"></a>
                                     @endif
                                     <nobr>[ <a id="login-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                               data-value="{{ $person->login }}" data-url="/profile/{{ $person->personID }}"></a> ]</nobr>
+                                               data-value="{{ $person->login }}"
+                                               data-url="/profile/{{ $person->personID }}"></a> ]
+                                    </nobr>
                                     <br/>
                                     @if($person->compName)
                                         @if($person->title)
@@ -220,14 +240,16 @@ foreach($array as $chap) {
                                         <p><b>Speaker Questions:</b> <a id="eventQuestion-{{ $tcount }}"
                                                                         data-pk="{{ $reg->regID }}"
                                                                         data-value="{{ $reg->eventQuestion }}"
-                                                                        data-url="/reg_verify/{{ $reg->regID }}"></a></p>
+                                                                        data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                        </p>
                                     @endif
 
                                     @if($reg->eventTopics)
                                         <p><b>Future Topics:</b><br/> <a id="eventTopics-{{ $tcount }}"
                                                                          data-pk="{{ $reg->regID }}"
                                                                          data-value="{{ $reg->eventTopics }}"
-                                                                         data-url="/reg_verify/{{ $reg->regID }}"></a></p>
+                                                                         data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                        </p>
                                     @endif
 
                                     @if($reg->cityState)
@@ -250,9 +272,9 @@ foreach($array as $chap) {
                                                                 data-value="{{ $reg->allergenInfo }}"
                                                                 data-url="/reg_verify/{{ $reg->regID }}"></a><br/>
                                         @if($reg->eventNotes)
-                                        <a id="eventNotes-{{ $tcount }}" data-pk="{{ $reg->regID }}"
-                                           data-value="{{ $reg->eventNotes }}"
-                                           data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                            <a id="eventNotes-{{ $tcount }}" data-pk="{{ $reg->regID }}"
+                                               data-value="{{ $reg->eventNotes }}"
+                                               data-url="/reg_verify/{{ $reg->regID }}"></a>
                                         @endif
                                     @elseif($reg->eventNotes)
                                         <b>Other Comments/Notes:</b> <a id="eventNotes-{{ $tcount }}"
@@ -264,22 +286,159 @@ foreach($array as $chap) {
                                 </td>
                             </tr>
                         </table>
+
+                        {!! Form::hidden('needSessionPick', $needSessionPick) !!}
+                        @if($event->hasTracks > 0 && $needSessionPick == 1)
+                            <table class="table table-bordered jambo_table table-striped">
+                                <thead>
+                                <tr>
+                                    <th colspan="{{ $columns }}" style="text-align: left;">
+                                        Track Selection
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    @foreach($tracks as $track)
+                                        @if($tracks->first() == $track || !$event->isSymmetric)
+                                            <th style="text-align:left;">Session Times</th>
+                                        @endif
+                                        <th colspan="2" style="text-align:center;"> {{ $track->trackName }} </th>
+                                    @endforeach
+                                </tr>
+                                @for($j=1;$j<=$event->confDays;$j++)
+<?php
+                                    $z = EventSession::where([
+                                        ['confDay', '=', $j],
+                                        ['eventID', '=', $event->eventID]
+                                    ])->first();
+                                    $y = Ticket::find($z->ticketID);
+?>
+                                    @if($tickets->contains('ticketID', $z->ticketID))
+                                        <tr>
+                                            <th style="text-align:center; color: yellow; background-color: #2a3f54;"
+                                                colspan="{{ $columns }}">Day {{ $j }}:
+                                                {{ $y->ticketLabel  }}
+                                            </th>
+                                        </tr>
+                                        @for($x=1;$x<=5;$x++)
+<?php
+                                            // Check to see if there are any events for $x (this row)
+                                            $s = EventSession::where([
+                                                ['eventID', $event->eventID],
+                                                ['confDay', $j],
+                                                ['order', $x]
+                                            ])->first();
+
+                                            // As long as there are any sessions, the row will be displayed
+?>
+                                            @if($s !== null)
+                                            <tr>
+                                                @foreach($tracks as $track)
+<?php
+                                                    $s = EventSession::where([
+                                                        ['trackID', $track->trackID],
+                                                        ['eventID', $event->eventID],
+                                                        ['confDay', $j],
+                                                        ['order', $x]
+                                                    ])->first();
+
+                                                    if($s !== null){
+                                                        $mySess = $s->sessionID;
+                                                    }
+?>
+                                                    @if($s !== null)
+                                                        @if($tracks->first() == $track || !$event->isSymmetric)
+
+                                                            <td rowspan="1" style="text-align:left;">
+                                                                <nobr> {{ $s->start->format('g:i A') }} </nobr>
+                                                                &dash;
+                                                                <nobr> {{ $s->end->format('g:i A') }} </nobr>
+                                                            </td>
+                                                        @else
+
+                                                        @endif
+                                                        <td colspan="2" style="text-align:left; min-width:150px;
+                                                                width: {{ $width }}%; max-width: {{ $mw }}%;">
+                                                            <b>{{ $s->sessionName }}</b><br/>
+
+                                                            {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                                $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+
+                                                            {{--  Need to connect to 'sess-'.$j.'-'.$x-1 and 'sess-'.$j.'-'.$x
+                                                                  and have jquery set it to clicked and vice versa;
+                                                                  if selection moves from x or x-1, it unselects the other
+                                                                  if selection moves onto 1, it moves onto the other --}}
+                                                        </td>
+                                                    @else
+                                                        @if($tracks->first() == $track || !$event->isSymmetric)
+                                                            <td colspan="3" style="text-align:left;">
+                                                        @else
+                                                            <td colspan="2" style="text-align:left;">
+                                                        @endif
+<?php
+                                                                $t = EventSession::where([
+                                                                    ['trackID', $track->trackID],
+                                                                    ['eventID', $event->eventID],
+                                                                    ['confDay', $j],
+                                                                    ['order', $x-1]
+                                                                ])->first();
+
+                                                                if($t !== null){
+                                                                    $myTess = $t->sessionID;
+                                                                }
+?>
+                                                                {!! Form::radio('sess-'. $j . '-'.$x, '', false,
+                                                                    $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
+                                                                <script>
+                                                                $(document).ready(function () {
+                                                                    $("input:radio[name='{{ 'sess-'. $j . '-'.$x }}']").on('change', function(){
+                                                                        console.log("{{ 'sess-'. $j . '-'.$x .'-x' }}  changed.");
+                                                                        if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")){
+                                                                            $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
+                                                                        } else {
+                                                                            {{--
+                                                                            $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').attr('checked', 'unchecked');
+                                                                            --}}
+                                                                            $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').removeAttr('checked');
+                                                                        }
+                                                                    });
+                                                                    $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) }}']").on('change', function(){
+                                                                        console.log("{{ 'sess-'.$j.'-'.($x-1) . '-' . $myTess }}  changed.");
+                                                                        if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")){
+                                                                            $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
+                                                                        } else {
+                                                                            {{--
+                                                                            $('#{{ 'sess-'. $j . '-'.($x-1) .'-x' }}').attr('checked', 'unchecked');
+                                                                            --}}
+                                                                            $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').removeAttr('checked');
+                                                                        }
+                                                                    });
+                                                                });
+                                                                </script>
+                                                            </td>
+                                                    @endif
+                                                @endforeach
+                                                </tr>
+                                            @endif
+
+                                        @endfor
+                                    @endif  {{-- if included ticket --}}
+                                @endfor  {{-- this closes confDays loop --}}
+
+                                </table>
+
+                        @endif  {{-- closes hasTracks loop --}}
+                        </div>
                     </div>
 
-                </div>
+                @endfor  {{-- closes $rf loop --}}
 
-            @endfor
-
-            <div class="myrow col-md-12 col-sm-12">
-                <div class="col-md-2 col-sm-2" style="text-align:center;">
-                    <h1 class="fa fa-5x fa-dollar"></h1>
-                </div>
-                <div class="col-md-7 col-sm-7">
-                    <p></p>
-
-                    @if($rf->cost > 0)
-                        <form action="/complete_registration/{{ $rf->regID }}" method="POST">
-                            {{ csrf_field() }}
+                <div class="myrow col-md-12 col-sm-12" style="display: table-row; vertical-align: top;">
+                    <div class="col-md-2 col-sm-2" style="display: table-cell; text-align:center;">
+                        <h1 class="fa fa-5x fa-dollar"></h1>
+                    </div>
+                    <div class="col-md-7 col-sm-7" style="display: table-cell;">
+                        @if($rf->cost > 0)
                             <script
                                     src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                     data-key="{{ env('STRIPE_KEY') }}"
@@ -292,31 +451,30 @@ foreach($array as $chap) {
                                     data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
                                     data-locale="auto">
                             </script>
-                        </form>
-                    @endif
-                    <form action="/complete_registration/{{ $rf->regID }}" method="POST">
-                        {{ csrf_field() }}
-                        <button type="submit" class="btn btn-success btn-sm">&nbsp;<b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
+                            <br />
+                        @endif
+                        <button type="submit" class="btn btn-success btn-sm">&nbsp;
+                            <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
                         </button>
-                    </form>
-                </div>
-                <div class="col-md-3 col-sm-3">
-                    <table class="table table-striped table-condensed jambo_table">
-                        <thead>
-                        <tr>
-                            <th style="text-align: center;">Total</th>
-                        </tr>
-                        </thead>
-                        <tr>
-                            <td style="text-align: center;"><b><i
-                                            class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
-                            </td>
-                        </tr>
-                    </table>
+                    </div>
+                    <div class="col-md-3 col-sm-3">
+                        <table class="table table-striped table-condensed jambo_table">
+                            <thead>
+                            <tr>
+                                <th style="text-align: center;">Total</th>
+                            </tr>
+                            </thead>
+                            <tr>
+                                <td style="text-align: center;"><b><i
+                                                class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        {!! Form::close() !!}
     @include('v1.parts.end_content')
 @endsection
 

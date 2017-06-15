@@ -186,9 +186,9 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
 
     <table id="email_fields" class="table table-striped table-condensed">
         <tr>
-            <th colspan="2">Type</th>
-            <th>Email</th>
-            <th><a data-toggle="tooltip" title="The primary address is the only one we'll use to contact you.">Primary?</a></th>
+Email::            <th style="text-align:center;" colspan="2">Type</th>
+            <th style="text-align:left;">Email</th>
+            <th style="text-align:left;"><a data-toggle="tooltip" title="The primary address is the only one we'll use to contact you. It is also the email address selected above.">Primary?</a></th>
         </tr>
         @foreach($emails as $email)
             <?php $em_cnt++; ?>
@@ -213,8 +213,17 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                        data-title="Enter email type" data-value="{{ $email->emailTYPE }}"></a></td>
                 <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}" data-pk="{{ $email->emailID }}" data-url="{{ $emailURL . $email->emailID }}"
                        data-title="Enter address 1">{{ $email->emailADDR }}</a></td>
-                <td style="text-align: left;"><a href="#" id="isPrimary{{ $em_cnt }}" data-pk="{{ $email->emailID }}" data-url="{{ $emailURL . $email->emailID }}"
-                       data-value="{{ $email->isPrimary }}" data-title=""></a></td>
+                <td style="text-align: left;">@if($email->isPrimary) Yes
+                                @else
+                                    No
+                                @endif
+<?php
+/*
+                    <a href="#" id="isPrimary{{ $em_cnt }}" data-pk="{{ $email->emailID }}" data-url="{{ $emailURL . $email->emailID }}"
+                       data-value="{{ $email->isPrimary }}" data-title=""></a>
+*/
+?>
+                </td>
             </tr>
         @endforeach
     </table>
@@ -225,6 +234,8 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
     </div>
     <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
     <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
     @include('v1.parts.end_content')
 
 @endsection
@@ -371,6 +382,8 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                 ]
             });
             $('#emailADDR{{ $j }}').editable({type: 'text'});
+<?php
+/*
             $('#isPrimary{{ $j }}').editable({
                 type: 'select',
                 source: [
@@ -378,6 +391,8 @@ $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state"
                     {value: '1', text: 'Yes'}
                 ]
             });
+*/
+?>
             @endfor
         });
     </script>

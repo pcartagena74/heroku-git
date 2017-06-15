@@ -10,12 +10,12 @@ $topBits = '';
 
 if($event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
-    $width   = (integer) 85/$event->hasTracks;
-    $mw   = (integer) 90/$event->hasTracks;
+    $width   = (integer)85 / $event->hasTracks;
+    $mw      = (integer)90 / $event->hasTracks;
 } else {
     $columns = $event->hasTracks * 3;
-    $width   = (integer) 80/$event->hasTracks;
-    $mw   = (integer) 85/$event->hasTracks;
+    $width   = (integer)80 / $event->hasTracks;
+    $mw      = (integer)85 / $event->hasTracks;
 }
 
 $tickets = Ticket::where([
@@ -91,15 +91,18 @@ $tickets = Ticket::where([
                 </thead>
                 <tbody>
 
+                {{-- For each day of the conference... --}}
                 @for($i=1;$i<=$event->confDays;$i++)
                     <tr>
 <?php
+                        // Getting any session from that day to grab the Ticket Name
                         $x = EventSession::where([
                             ['confDay', '=', $i],
                             ['eventID', '=', $event->eventID]
                         ])->first();
 ?>
-                        <th style="text-align:center; color: white; background-color: #2a3f54;" colspan="{{ $columns }}">Day {{ $i }} Sessions using Ticket:
+                        <th style="text-align:center; color: white; background-color: #2a3f54;"
+                            colspan="{{ $columns }}">Day {{ $i }} Sessions using Ticket:
                             <a style="color:yellow;" id="ticketLabel-{{ $i}}"
                                data-pk="{{ $track->trackID }}"
                                data-url="/trackticket/{{ $i }}"
@@ -107,7 +110,182 @@ $tickets = Ticket::where([
                         </th>
                     </tr>
 
+                    {{-- For each of the potential sessions (in a track)... --}}
                     @for($x=1;$x<=5;$x++)
+<?php
+                                // Check to see if there are any events for $x (this row)
+                                $s = EventSession::where([
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $i],
+                                    ['order', $x]
+                                ])->first();
+
+                                // As long as there are any sessions, if this is the first track, or if non symmetric, show the times
+?>
+                                @if($s !== null)
+                                    <tr>
+                                    @foreach($tracks as $track)
+                                        {{-- For each of the tracks... --}}
+                                        @if($tracks->first() == $track || !$event->isSymmetric)
+<?php
+                                            $s = EventSession::where([
+                                                ['trackID', $track->trackID],
+                                                ['eventID', $event->eventID],
+                                                ['confDay', $i],
+                                                ['order', $x]
+                                            ])->first();
+
+                                            // If this particular session exists...
+                                            // ...give the option to delete it from DB if  the sessionName is null
+?>
+                                            <td rowspan="4" style="text-align:left;">
+                                                @if($s !== null)
+                                                    <nobr>
+                                                        <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                           data-url="/eventsession/{{ $s->eventID }}"
+                                                           data-pk="{{ $s->sessionID }}" data-value="{{ $s->start }}"></a>
+                                                    </nobr>
+                                                    &dash;
+                                                    <nobr>
+                                                        <a id="end-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                           data-url="/eventsession/{{ $s->eventID }}"
+                                                           data-pk="{{ $s->sessionID }}" data-value="{{ $s->end }}"></a>
+                                                    </nobr>
+                                                    <br/>
+                                                    @if($s !== null)
+                                                        @if($s->sessionName === null)
+                                                            {!! Form::open(array('url' => "/session/".$s->sessionID, 'method' => 'delete')) !!}
+                                                            <button type="submit" class="btn btn-danger btn-xs"><i
+                                                                    class="fa fa-trash"></i></button>
+                                                            {!! Form::close() !!}
+                                                        @endif
+                                                    @endif
+                                                @else
+                                                    &nbsp;
+                                                @endif
+                                            </td>
+                                        @endif
+                                        <td colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
+                                            @if($s !== null)
+                                                <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                       style="color: #2a3f54;" class="control-label">Session Title</label><br/>
+                                                <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                   data-pk="{{ $s->sessionID }}"
+                                                   data-url="/eventsession/{{ $event->eventID }}"
+                                                   data-value="{{ $s->sessionName }}"></a>
+                                            @else
+                                                &nbsp;
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                </tr>
+                                @else
+                                    &nbsp;
+                                @endif
+{{-- @endfor --}}
+
+<?php
+                                // Check to see if there are any events for $x (this row)
+                                $s = EventSession::where([
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $i],
+                                    ['order', $x]
+                                ])->first();
+
+                                // As long as there are any sessions, the row will be displayed
+?>
+                        @if($s !== null)
+                        <tr>
+                            @foreach($tracks as $track)
+
+<?php
+                                $s = EventSession::where([
+                                    ['trackID', $track->trackID],
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $i],
+                                    ['order', $x]
+                                ])->first();
+?>
+                                <td colspan="2" style="text-align:left;">
+                                @if($s !== null)
+                                        <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               style="color: #2a3f54;" class="control-label">Session
+                                            Speaker(s)</label><br/>
+                                        <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                           data-pk="{{ $s->sessionID }}"
+                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-value="{{ $s->sessionSpeakers }}"></a>
+                                @else
+                                    &nbsp;
+                                @endif
+                                </td>
+                            @endforeach
+                        </tr>
+                        @endif
+
+<?php
+                        // Check to see if there are any events for $x (this row)
+                        $s = EventSession::where([
+                            ['eventID', $event->eventID],
+                            ['confDay', $i],
+                            ['order', $x]
+                        ])->first();
+
+                        // As long as there are any sessions, the row will be displayed
+?>
+                        @if($s !== null)
+                        <tr>
+                            @foreach($tracks as $track)
+                                <?php
+                                $s = EventSession::where([
+                                    ['trackID', $track->trackID],
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $i],
+                                    ['order', $x]
+                                ])->first();
+                                ?>
+                                @if($s !== null)
+                                    <td style="text-align:left;">
+                                        <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               style="color: #2a3f54;" class="control-label">{{ $s->creditAmt }}</label>
+                                        <a id="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                           data-pk="{{ $s->sessionID }}"
+                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-value="{{ $s->creditArea }}"></a>
+                                        <label style="color: #2a3f54;"
+                                               for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
+                                            {{ $s->event->org->creditLabel }}<?php if($s->creditAmt > 1) {
+                                                echo('s');
+                                            } ?>
+                                        </label>
+                                    </td>
+                                    <td style="text-align:left;">
+                                        <label style="color: #2a3f54;"
+                                               for="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
+                                            Attendee Limit: </label>
+                                        <a id="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                           data-pk="{{ $s->sessionID }}"
+                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-value="{{ $s->maxAttendees }}"></a>
+                                    </td>
+                                @else
+                                    <td colspan="2"> &nbsp; </td>
+                                @endif
+                            @endforeach
+                        </tr>
+                        @endif
+
+<?php
+                        // Check to see if there are any events for $x (this row)
+                        $s = EventSession::where([
+                            ['eventID', $event->eventID],
+                            ['confDay', $i],
+                            ['order', $x]
+                        ])->first();
+
+                        // As long as there are any sessions, the row will be displayed
+?>
+                        @if($s !== null)
                         <tr>
                             @foreach($tracks as $track)
 <?php
@@ -118,124 +296,26 @@ $tickets = Ticket::where([
                                     ['order', $x]
                                 ])->first();
 ?>
+                                <td colspan="2" style="text-align:left;">
                                 @if($s !== null)
-                                    @if($tracks->first() == $track || !$event->isSymmetric)
-                                        <td rowspan="4" style="text-align:left;">
-                                            <nobr>
-                                                <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                   data-url="/eventsession/{{ $s->eventID }}"
-                                                   data-pk="{{ $s->sessionID }}" data-value="{{ $s->start }}"></a>
-                                            </nobr>
-                                            &dash;
-                                            <nobr>
-                                                <a id="end-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                   data-url="/eventsession/{{ $s->eventID }}"
-                                                   data-pk="{{ $s->sessionID }}" data-value="{{ $s->end }}"></a></nobr>
-                                            <br/>
-                                            @if($s->sessionName === null)
-                                                {!! Form::open(array('url' => "/session/".$s->sessionID, 'method' => 'delete')) !!}
-                                                <button type="submit" class="btn btn-danger btn-xs"><i
-                                                            class="fa fa-trash"></i></button>
-                                                {!! Form::close() !!}
-                                            @endif
-                                        </td>
-                                    @endif
-                                    <td colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                        <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">Session Title</label><br/>
-                                        <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->sessionName }}"></a>
-                                    </td>
-                                @else
-                                @endif
-                            @endforeach
-                        </tr>
-
-                        <tr>
-                                @foreach($tracks as $track)
-<?php
-                                    $s = EventSession::where([
-                                        ['trackID', $track->trackID],
-                                        ['eventID', $event->eventID],
-                                        ['confDay', $i],
-                                        ['order', $x]
-                                    ])->first();
-?>
-    @if($s !== null)
-                                    <td colspan="2" style="text-align:left;">
-                                        <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">Session Speaker(s)</label><br/>
-                                        <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->sessionSpeakers }}"></a>
-                                    </td>
-    @endif
-                                @endforeach
-                            </tr>
-
-                            <tr>
-                                @foreach($tracks as $track)
-<?php
-                                    $s = EventSession::where([
-                                        ['trackID', $track->trackID],
-                                        ['eventID', $event->eventID],
-                                        ['confDay', $i],
-                                        ['order', $x]
-                                    ])->first();
-?>
-    @if($s !== null)
-                                    <td style="text-align:left;">
-                                        <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">{{ $s->creditAmt }}</label>
-                                        <a id="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->creditArea }}"></a>
-                                        <label style="color: #2a3f54;" for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
-                                            {{ $s->event->org->creditLabel }}<?php if($s->creditAmt > 1) {
-                                                echo('s');
-                                            } ?>
-                                        </label>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <label style="color: #2a3f54;" for="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
-                                        Attendee Limit: </label>
-                                        <a id="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->maxAttendees }}"></a>
-                                    </td>
-    @endif
-                                @endforeach
-                            </tr>
-
-                            <tr>
-                                @foreach($tracks as $track)
-<?php
-                                    $s = EventSession::where([
-                                        ['trackID', $track->trackID],
-                                        ['eventID', $event->eventID],
-                                        ['confDay', $i],
-                                        ['order', $x]
-                                    ])->first();
-?>
-    @if($s !== null)
-                                    <td colspan="2" style="text-align:left;">
                                         <label for="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                style="color: #2a3f54;" class="control-label">Abstract</label><br/>
                                         <a id="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
                                            data-url="/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->sessionAbstract }}"></a>
-                                    </td>
-    @endif
-                                @endforeach
-                            </tr>
+                                @else
+                                    &nbsp;
+                                @endif
+                                </td>
+                            @endforeach
+                        </tr>
+                        @endif
+
                     @endfor
+                    {{-- this closes the x=1to5 loop --}}
                 @endfor
+                {{-- this closes the confDays loop --}}
 
                 </tbody>
             </table>

@@ -7,6 +7,8 @@
 use App\Person;
 use App\Ticket;
 use App\RegFinance;
+use App\EventSession;
+use App\RegSession;
 
 $topBits = ''; // there should be topBits for this
 
@@ -46,6 +48,16 @@ foreach($discPie as $d) {
         '<i class="fa fa-dollar"></i> ' . number_format($d->handleFee, 2, '.', ','),
         '<i class="fa fa-dollar"></i> ' . number_format($d->orgAmt, 2, '.', ',')
     ]);
+}
+
+if($event->isSymmetric) {
+    $columns = ($event->hasTracks * 2) + 1;
+    $width   = (integer)85 / $event->hasTracks;
+    $mw      = (integer)90 / $event->hasTracks;
+} else {
+    $columns = $event->hasTracks * 3;
+    $width   = (integer)80 / $event->hasTracks;
+    $mw      = (integer)85 / $event->hasTracks;
 }
 
 ?>
@@ -93,6 +105,113 @@ foreach($discPie as $d) {
 
             @if($event->hasTracks)
                 <div class="tab-pane fade" id="tab_content3" aria-labelledby="sessions-tab">
+                    <br />
+
+                    <table class="table table-bordered jambo_table table-striped">
+                        <thead>
+                        <tr>
+                            <th colspan="{{ $columns }}" style="text-align: left;">
+                                Track Selection
+                            </th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            @foreach($tracks as $track)
+                                @if($tracks->first() == $track || !$event->isSymmetric)
+                                    <th style="text-align:left;">Session Times</th>
+                                @endif
+                                <th colspan="2" style="text-align:center;"> {{ $track->trackName }} </th>
+                            @endforeach
+                        </tr>
+                        @for($j=1;$j<=$event->confDays;$j++)
+                            <?php
+                            $z = EventSession::where([
+                                ['confDay', '=', $j],
+                                ['eventID', '=', $event->eventID]
+                            ])->first();
+                            $y = Ticket::find($z->ticketID);
+                            ?>
+
+                                <tr>
+                                    <th style="text-align:center; color: yellow; background-color: #2a3f54;"
+                                        colspan="{{ $columns }}">Day {{ $j }}:
+                                        {{ $y->ticketLabel  }}
+                                    </th>
+                                </tr>
+                                @for($x=1;$x<=5;$x++)
+<?php
+                                    // Check to see if there are any events for $x (this row)
+                                    $s = EventSession::where([
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $j],
+                                        ['order', $x]
+                                    ])->first();
+
+                                    // As long as there are any sessions, the row will be displayed
+?>
+                                    @if($s !== null)
+                                        <tr>
+                                            @foreach($tracks as $track)
+<?php
+                                                $s = EventSession::where([
+                                                    ['trackID', $track->trackID],
+                                                    ['eventID', $event->eventID],
+                                                    ['confDay', $j],
+                                                    ['order', $x]
+                                                ])->first();
+?>
+                                                @if($s !== null)
+                                                    @if($tracks->first() == $track || !$event->isSymmetric)
+
+                                                        <td rowspan="1" style="text-align:left;">
+                                                            <nobr> {{ $s->start->format('g:i A') }} </nobr>
+                                                            &dash;
+                                                            <nobr> {{ $s->end->format('g:i A') }} </nobr>
+                                                        </td>
+                                                    @else
+
+                                                    @endif
+                                                    <td colspan="2" style="text-align:left; min-width:150px;
+                                                            width: {{ $width }}%; max-width: {{ $mw }}%;">
+<?php
+                                                        // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
+                                                            $sRegs = RegSession::where([
+                                                                ['sessionID', $s->sessionID],
+                                                                ['eventID', $event->eventID]
+                                                            ])->count();
+                                                            /*
+                                                            $sRegs = DB::table('reg-session as rs')
+                                                                ->where([
+                                                                    ['sessionID', $s->sessionID],
+                                                                    ['rs.eventID', $event->eventID]
+                                                                ])
+                                                                ->join('event-registration as er', 'er.regID', '=', 'rs.regID')
+                                                                ->select(DB::raw('er.discountCode, count(*) as total'))
+                                                                ->groupBy('er.discountCode')
+                                                                ->get();
+                                                            */
+?>
+                                                        {{ $sRegs }}
+                                                    </td>
+                                                @else
+                                                    @if($tracks->first() == $track || !$event->isSymmetric)
+                                                        <td colspan="3" style="text-align:left;">
+                                                    @else
+                                                        <td colspan="2" style="text-align:left;">
+                                                            @endif
+                                                        </td>
+                                                    @endif
+                                                    @endforeach
+                                        </tr>
+                                    @endif
+
+                                @endfor
+
+                        @endfor  {{-- this closes confDays loop --}}
+
+                    </table>
+
+
                 </div>
             @endif
 

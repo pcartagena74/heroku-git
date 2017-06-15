@@ -33,6 +33,9 @@ if($event->isSymmetric) {
     $mw      = (integer)85 / $event->hasTracks;
 }
 
+// This is a rejiggering of the order by which tracks/sessions could be displayed.
+// I don't think I ever made use of it.
+//
 if(!$event->isSymmetric) {
     $mda = array('days' => $event->confDays, 'sym' => $event->isSymmetric, 'tracks' => count($tracks));
     for($d = 1; $d <= $event->confDays; $d++) {
@@ -118,7 +121,7 @@ if(!$event->isSymmetric) {
                                     </td>
                                     <td>
                                         {{ $bundle->ticketLabel }}<SUP style='color: red'>**</SUP>
-                                        <?php
+<?php
                                         $b_tkts = DB::table('event-tickets')
                                                     ->join('bundle-ticket', function($join) use ($bundle) {
                                                         $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
@@ -128,7 +131,7 @@ if(!$event->isSymmetric) {
                                                 ['event-tickets.isaBundle', 0],
                                             ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID')->get();
                                         // $b_tkts = DB::select($sql);
-                                        ?>
+?>
                                         <ul>
                                             @foreach($b_tkts as $tkt)
                                                 <li>
@@ -243,6 +246,7 @@ if(!$event->isSymmetric) {
                                 <thead>
                                 <tr>
                                     @foreach($tracks as $track)
+
                                         @if($tracks->first() == $track || !$event->isSymmetric)
                                             <th style="text-align:left;">Session Times</th>
                                         @endif
@@ -254,13 +258,13 @@ if(!$event->isSymmetric) {
 
                                 @for($i=1;$i<=$event->confDays;$i++)
                                     <tr>
-                                        <?php
-                                        $x = EventSession::where([
+<?php
+                                        $z = EventSession::where([
                                             ['confDay', '=', $i],
                                             ['eventID', '=', $event->eventID]
                                         ])->first();
-                                        $y = Ticket::find($x->ticketID);
-                                        ?>
+                                        $y = Ticket::find($z->ticketID);
+?>
                                         <th style="text-align:center; color: yellow; background-color: #2a3f54;"
                                             colspan="{{ $columns }}">Day {{ $i }}:
                                             {{ $y->ticketLabel  }}
@@ -268,16 +272,27 @@ if(!$event->isSymmetric) {
                                     </tr>
 
                                     @for($x=1;$x<=5;$x++)
-                                        <tr>
+<?php
+                                        // Check to see if there are any events for $x (this row)
+                                        $s = EventSession::where([
+                                            ['eventID', $event->eventID],
+                                            ['confDay', $i],
+                                            ['order', $x]
+                                        ])->first();
+
+                                        // As long as there are any sessions, the row will be displayed
+?>
+                                        @if($s !== null)
+                                            <tr>
                                             @foreach($tracks as $track)
-                                                <?php
+<?php
                                                 $s = EventSession::where([
                                                     ['trackID', $track->trackID],
                                                     ['eventID', $event->eventID],
                                                     ['confDay', $i],
                                                     ['order', $x]
                                                 ])->first();
-                                                ?>
+?>
                                                 @if($s !== null)
                                                     @if($tracks->first() == $track || !$event->isSymmetric)
                                                         <td rowspan="4" style="text-align:left;">
@@ -285,47 +300,72 @@ if(!$event->isSymmetric) {
                                                             &dash;
                                                             <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                         </td>
+                                                        <td colspan="2" style="text-align:left; min-width:150px;
+                                                                width: {{ $width }}%; max-width: {{ $mw }}%;">
+                                                            <b>{{ $s->sessionName }}</b>
+                                                        </td>
                                                     @endif
-                                                    <td colspan="2" style="text-align:left; min-width:150px;
-                                                            width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                                        <b>{{ $s->sessionName }}</b>
-                                                    </td>
                                                 @else
-
+                                                    <td rowspan="4" colspan="{{ $columns }}" style="text-align:left;">&nbsp;</td>
                                                 @endif
                                             @endforeach
-                                        </tr>
+                                            </tr>
+                                        @endif
 
+<?php
+                                        // Check to see if there are any events for $x (this row)
+                                        $s = EventSession::where([
+                                            ['eventID', $event->eventID],
+                                            ['confDay', $i],
+                                            ['order', $x]
+                                        ])->first();
 
+                                        // As long as there are any sessions, the row will be displayed
+?>
+                                        @if($s !== null)
                                         <tr>
                                             @foreach($tracks as $track)
-                                                <?php
+<?php
                                                 $s = EventSession::where([
                                                     ['trackID', $track->trackID],
                                                     ['eventID', $event->eventID],
                                                     ['confDay', $i],
                                                     ['order', $x]
                                                 ])->first();
-                                                ?>
+?>
                                                 @if($s !== null)
                                                     <td colspan="2" style="text-align:left;">
                                                         <b>Session Speaker(s)</b><br/>
                                                         {{ $s->sessionSpeakers or "tbd" }}
                                                     </td>
+                                                @else
+                                                    &nbsp;
                                                 @endif
                                             @endforeach
                                         </tr>
+                                        @endif
 
+<?php
+                                        // Check to see if there are any events for $x (this row)
+                                        $s = EventSession::where([
+                                            ['eventID', $event->eventID],
+                                            ['confDay', $i],
+                                            ['order', $x]
+                                        ])->first();
+
+                                        // As long as there are any sessions, the row will be displayed
+?>
+                                        @if($s !== null)
                                         <tr>
                                             @foreach($tracks as $track)
-                                                <?php
+<?php
                                                 $s = EventSession::where([
                                                     ['trackID', $track->trackID],
                                                     ['eventID', $event->eventID],
                                                     ['confDay', $i],
                                                     ['order', $x]
                                                 ])->first();
-                                                ?>
+?>
                                                 @if($s !== null)
                                                     <td style="text-align:left;">
                                                         <b>{{ $s->creditAmt }}
@@ -337,28 +377,44 @@ if(!$event->isSymmetric) {
                                                     <td style="text-align:left;">
                                                         <b> Attendee Limit: </b> {{ $s->maxAttendees }}
                                                     </td>
+                                                @else
+
                                                 @endif
                                             @endforeach
                                         </tr>
+                                        @endif
 
+<?php
+                                        // Check to see if there are any events for $x (this row)
+                                        $s = EventSession::where([
+                                            ['eventID', $event->eventID],
+                                            ['confDay', $i],
+                                            ['order', $x]
+                                        ])->first();
+
+                                        // As long as there are any sessions, the row will be displayed
+?>
+                                        @if($s !== null)
                                         <tr>
                                             @foreach($tracks as $track)
-                                                <?php
+<?php
                                                 $s = EventSession::where([
                                                     ['trackID', $track->trackID],
                                                     ['eventID', $event->eventID],
                                                     ['confDay', $i],
                                                     ['order', $x]
                                                 ])->first();
-                                                ?>
+?>
                                                 @if($s !== null)
                                                     <td colspan="2" style="text-align:left;">
                                                         <b>Abstract</b><br/>
                                                         {!! $s->sessionAbstract !!}
                                                     </td>
+                                                @else
                                                 @endif
                                             @endforeach
                                         </tr>
+                                        @endif
                                     @endfor
                                 @endfor
                                 </tbody>

@@ -87,7 +87,44 @@ class PersonController extends Controller
                 JOIN `organization` o on op.orgID=o.orgID
                 WHERE p.personID = $id";
 
-        $profile = DB::select($sql); $profile = $profile[0];  $topBits = '';
+        /*
+        $profile = DB::table('person as p')->where('p.personID', '=', $id)
+                     ->join('users as u', 'u.id', '=', 'p.personID')
+                     ->join('org-person as op', 'op.personID', '=', 'p.personID')->where('op.orgID', '=', 'p.defaultOrgID')
+                     ->join('organization as o', 'o.orgID', '=', 'op.orgID')
+                     ->select(DB::raw("prefix, firstName, midName, lastName, suffix, prefName, u.login, title, compName, indName,
+                OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
+                date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
+                    date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6,
+                    date_format(RelDate7, '%c/%e/%Y') as RelDate7, date_format(RelDate8, '%c/%e/%Y') as RelDate8, date_format(RelDate9, '%c/%e/%Y') as RelDate9,
+                    date_format(RelDate10, '%c/%e/%Y') as RelDate10,
+                    OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10,
+                    ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, p.personID"))->first();
+        */
+
+        $profile = DB::table('person as p')->where('p.personID', '=', $id)
+            ->join('users as u', 'u.id', '=', 'p.personID')
+            ->join('org-person as op', function($join) {
+                $join->on('op.personID', '=', 'p.personID');
+                $join->on('op.orgID', '=', 'p.defaultOrgID');
+            })
+            ->join('organization as o', 'o.orgID', '=', 'p.defaultOrgID')
+            ->select(DB::raw("prefix, firstName, midName, lastName, suffix, prefName, u.login, title, compName, indName,
+                OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
+                date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
+                    date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
+                    date_format(RelDate7, '%c/%e/%Y') as RelDate7, date_format(RelDate8, '%c/%e/%Y') as RelDate8, date_format(RelDate9, '%c/%e/%Y') as RelDate9, 
+                    date_format(RelDate10, '%c/%e/%Y') as RelDate10,
+                    OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10, 
+                    ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, p.personID"))->first();
+
+
+
+        //$profile = Person::find($id)->with('orgperson', 'defaultorg')->first();
+        //dd($profile);
+
+        //$profile = DB::select($sql); $profile = $profile[0];
+        $topBits = '';
 
         $prefixes = DB::table('prefixes')->get();
 
@@ -98,7 +135,7 @@ class PersonController extends Controller
         $addresses = Address::where('personID', $id)->select('addrID', 'addrTYPE', 'addr1', 'addr2', 'city', 'state', 'zip', 'cntryID')->get();
         $countries = DB::table('countries')->select('cntryID', 'cntryName')->get();
 
-        $emails = Email::where('personID', $id)->select('emailID', 'emailTYPE', 'emailADDR', 'isPrimary')->get();
+        $emails = Email::where('personID', $id)->select('emailID', 'emailTYPE', 'emailADDR', 'isPrimary')->orderBy('isPrimary', 'DESC')->get();
 
         return view('v1.auth_pages.members.profile',
         compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries'));
@@ -128,7 +165,14 @@ class PersonController extends Controller
         $value = request()->input('value');
 
         if($name == 'login'){
+
+            // when changing login we need to:
+            // 1. update user->login, user->email, and person->login with the new value
+            // 2. change the Email::isPrimary field on the old and new primary email (the one where email will be sent)
+            // 3. trigger a notification to be sent to the old email address
+
             $user = User::find($id);
+            $orig_email = $user->login;
             $user->login = $value;
             $user->email = $value;
             $user->save();
@@ -137,6 +181,15 @@ class PersonController extends Controller
             $person->login = $value;
             $person->updaterID = auth()->user()->id;
             $person->save();
+
+            $orig = Email::where('emailADDR', '=', $orig_email)->first();
+            $orig->isPrimary = 0;
+            $orig->save();
+
+            $new_email = $value;
+            $new = Email::where('emailADDR', '=', $new_email)->first();
+            $new->isPrimary = 1;
+            $new->save();
 
         } else {
             $person = Person::find($id);
