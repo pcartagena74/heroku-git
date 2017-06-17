@@ -24,7 +24,7 @@ Route::get('/details', function(){
 // Public Event-related Routes
 Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
-Route::get('/register/{ticket}', 'RegistrationController@showRegForm')->name('register_step1');
+Route::post('/register/{ticket}', 'RegistrationController@showRegForm')->name('register_step1');
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');

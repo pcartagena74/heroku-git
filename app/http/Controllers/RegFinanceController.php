@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 //use App\Notifications\EventReceipt;
+use App\EventSession;
 use App\Mail\EventReceipt;
 use Illuminate\Support\Facades\Mail;
 use App\Registration;
@@ -16,6 +17,9 @@ use App\RegFinance;
 use App\Location;
 use Stripe\Stripe;
 use Illuminate\Support\Facades\DB;
+use App\Track;
+use App\Bundle;
+use App\RegSession;
 
 class RegFinanceController extends Controller
 {
@@ -29,9 +33,42 @@ class RegFinanceController extends Controller
 
     public function show ($id) {
         // responds to GET /blah/id
-        $rf            = RegFinance::find($id);
-        $event         = Event::find($rf->eventID);
-        $ticket        = Ticket::find($rf->ticketID);
+        $needSessionPick = 0;
+        $rf              = RegFinance::find($id);
+        $event           = Event::find($rf->eventID);
+        if($event->hasTracks > 0) {
+            $tracks = Track::where('eventID', $event->eventID)->get();
+        } else {
+            $tracks = null;
+        }
+
+        $ticket = Ticket::find($rf->ticketID);
+        if($ticket->isaBundle) {
+            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                             ->where([
+                                 ['bt.bundleID', '=', $ticket->ticketID],
+                                 ['event-tickets.eventID', '=', $event->eventID]
+                             ])
+                             ->get();
+            $s       = EventSession::where('eventID', '=', $event->eventID)
+                                   ->select(DB::raw('distinct ticketID'))
+                                   ->get();
+            foreach($s as $t) {
+                if($tickets->contains('ticketID', $t->ticketID)) {
+                    $needSessionPick = 1;
+                    break;
+                }
+            }
+        } else {
+            $tickets = null;
+            $s       = EventSession::where([
+                ['eventID', '=', $event->eventID],
+                ['ticketID', '=', '$ticket->ticketID']
+            ])->get();
+            if($s !== null) {
+                $needSessionPick = 1;
+            }
+        }
         $loc           = Location::find($event->locationID);
         $quantity      = $rf->seats;
         $discount_code = $rf->discountCode;
@@ -44,7 +81,7 @@ class RegFinanceController extends Controller
         // prep for stripe-related stuff since the next step is billing for non-$0
 
         return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
-            'loc', 'rf', 'person', 'prefixes', 'industries'));
+            'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
     }
 
     public function create () {
@@ -63,17 +100,28 @@ class RegFinanceController extends Controller
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
 
-        $rf    = RegFinance::find($id);
-        $event = Event::find($rf->eventID);
-        $org   = Org::find($event->orgID);
-        $user  = User::find($rf->personID);
-        $person = Person::find($rf->personID);
-        $loc   = Location::find($event->locationID);
-        $quantity      = $rf->seats;
-        $discount_code = $rf->discountCode;
-        $ticket        = Ticket::find($rf->ticketID);
+        $rf                  = RegFinance::find($id);
+        $event               = Event::find($rf->eventID);
+        $org                 = Org::find($event->orgID);
+        $user                = User::find($rf->personID);
+        $person              = Person::find($rf->personID);
+        $loc                 = Location::find($event->locationID);
+        $quantity            = $rf->seats;
+        $discount_code       = $rf->discountCode;
+        $ticket              = Ticket::find($rf->ticketID);
         $this->currentPerson = Person::find(auth()->user()->id);
+        $needSessionPick     = $request->input('needSessionPick');
 
+        if($needSessionPick) {
+            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                             ->where([
+                                 ['bt.bundleID', '=', $ticket->ticketID],
+                                 ['event-tickets.eventID', '=', $event->eventID]
+                             ])
+                             ->get();
+        } else {
+            $tickets = null;
+        }
 
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
@@ -119,44 +167,97 @@ class RegFinanceController extends Controller
             }
 
             $discountAmt = 0;
-            $end = $rf->seats - 1;
+            $end         = $rf->seats - 1;
             for($i = $id - $end; $i <= $id; $i++) {
                 $reg            = Registration::find($i);
                 $reg->regStatus = 'Processed';
                 // No one is actually, necessarily, logged in...
                 //$reg->updaterID = auth()->user()->id;
-                $discountAmt+= ($reg->origcost - $reg->subtotal);
+                $discountAmt += ($reg->origcost - $reg->subtotal);
                 $reg->save();
             }
             // Confirmation code is:  personID-regFinance->regID/seats
-            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID."/" .$rf->seats;
+            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "/" . $rf->seats;
 
             // Need to set fees IF the cost > $0
-           if($rf->cost > 0) {
-               // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
-               $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
+            if($rf->cost > 0) {
+                // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
+                $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
 
-               // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00 for orgID 10, else $5
-               $rf->handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
-               if($rf->handleFee > 4 && $org->orgID == 10) {
-                   $rf->handleFee = number_format(4, 2, '.', '');
-               } elseif($rf->handleFee > 5) {
-                   $rf->handleFee = number_format(5, 2, '.', '');
-               }
-               $rf->orgAmt      = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
-               $rf->discountAmt = number_format($discountAmt, 2, '.', '');
-           }
-           // fees above are already $0 unless changed so save.
+                // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00 for orgID 10, else $5
+                $rf->handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
+                if($rf->handleFee > 5) {
+                    $rf->handleFee = number_format(5, 2, '.', '');
+                }
+                $rf->orgAmt      = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
+                $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+            }
+            // fees above are already $0 unless changed so save.
             $rf->save();
         }
         // update $rf record and each $reg record status
 
+        // Record the Session Selections (if any AND if not already written)
+        $written = RegSession::where([
+            ['regID', '=', $rf->regID],
+            ['eventID', '=', $event->eventID],
+            ['creatorID', '=', $this->currentPerson->personID]
+        ])->first();
+
+        if($needSessionPick && !$written) {
+            // inserted code below into this loop to be able to process for each registered person
+            // need $reg->personID to save into RegSession record.
+            for($i = $id - $end; $i <= $id; $i++) {
+                $reg = Registration::find($i);
+
+                for($j = 1; $j <= $event->confDays; $j++) {
+                    $z = EventSession::where([
+                        ['confDay', '=', $j],
+                        ['eventID', '=', $event->eventID]
+                    ])->first();
+                    $y = Ticket::find($z->ticketID);
+
+                    for($x = 1; $x <= 5; $x++) {
+                        if(request()->input('sess-' . $j . '-' . $x)) {
+                            // if this is set, the value is the session that was chosen.
+                            // Create the RegSession record
+
+                            $es            = new RegSession;
+                            $es->regID     = $rf->regID;
+                            $es->personID  = $reg->personID;
+                            $es->eventID   = $event->eventID;
+                            $es->confDay   = $j;
+                            $es->sessionID = request()->input('sess-' . $j . '-' . $x);
+                            $es->creatorID = auth()->user()->id;
+                            $es->updaterID = auth()->user()->id;
+                            $es->save();
+                        }
+                    }
+                }
+            }
+
+        } else {
+            // No session selection data to record;
+        }
+
+        // Update ticket purchase on all bundle ticket members by $rf->seat
+        if($ticket->isaBundle) {
+            foreach($tickets as $t) {
+                $t->regCount += $rf->seats;
+                $t->save();
+            }
+        } else {
+            $ticket->regCount += $rf->seats;
+            $ticket->save();
+        }
+
         // email the user who paid
         //$user->notify(new EventReceipt($rf));
-        Mail::to($user->login)->send(new EventReceipt($rf));
+        $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code',
+            'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
+        Mail::to($user->login)->send(new EventReceipt($rf, $x));
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
-        return view('v1.public_pages.event_receipt', compact('ticket', 'event', 'quantity', 'discount_code',
-            'loc', 'rf', 'person', 'prefixes', 'industries', 'org'));
+        return view('v1.public_pages.event_receipt', $x);
     }
 
     public function destroy ($id) {

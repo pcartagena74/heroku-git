@@ -11,6 +11,7 @@ use App\Ticket;
 use App\Event;
 use App\Email;
 use App\RegFinance;
+use App\Track;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,7 @@ class RegistrationController extends Controller
     }
 
     public function show ($param) {
+
         $event = Event::where('eventID', '=', $param)
                       ->orWhere('slug', '=', $param)
                       ->firstOrFail();
@@ -79,7 +81,12 @@ class RegistrationController extends Controller
 
         $refs = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('cancelDate')->get();
 
-        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs', 'discPie'));
+        if($event->hasTracks){
+            $tracks = Track::where('eventID', $event->eventID)->get();
+            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs', 'discPie', 'tracks'));
+        } else {
+            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs', 'discPie'));
+        }
     }
 
     public function create () {
@@ -561,7 +568,9 @@ class RegistrationController extends Controller
                 */
                 dd("shouldn't have gotten here");
             }
-
+            if($dCode === null || $dCode = " "){
+                $dCode = 'N/A';
+            }
             $reg                   = new Registration;
             $reg->eventID          = $event->eventID;
             $reg->ticketID         = request()->input('ticketID');
@@ -575,6 +584,7 @@ class RegistrationController extends Controller
             $reg->affiliation      = implode(",", $affiliation);
             $reg->regStatus        = 'In Progress';
             $reg->registeredBy     = $regBy;
+            $reg->discountCode     = $dCode;
             $reg->token            = request()->input('_token');
             $reg->subtotal         = $subtotal;
             $reg->origcost         = $origcost;
@@ -595,6 +605,9 @@ class RegistrationController extends Controller
             return Redirect::back()->withErrors();
 //                ['warning' => "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total"]);
         } else {
+            if($dCode === null || $dCode = " "){
+                $dCode = 'N/A';
+            }
             $rf               = new RegFinance;
             $rf->regID        = $reg->regID;
             $rf->creatorID    = $this->currentPerson->personID;

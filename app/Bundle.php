@@ -16,15 +16,11 @@ class Bundle extends Model
     protected static $logAttributes = ['ticketID', 'bundleID'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function tickets() {
-        return $this->hasMany(Ticket::class, 'ticketID');
-    }
-
     public function event() {
         return $this->belongsTo(Event::class, 'eventID', 'ticketID');
     }
 
     public function ticket() {
-        return $this->belongsTo(Ticket::class, 'ticketID');
+        return $this->hasOne(Ticket::class, 'ticketID', 'ticketID');
     }
 }
