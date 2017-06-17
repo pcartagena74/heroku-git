@@ -84,6 +84,7 @@ if(!$event->isSymmetric) {
 
             <div id="tab-content" class="tab-content">
                 <div class="tab-pane active" id="tab_content1" aria-labelledby="ticketing-tab">
+                    <br />
 
                     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
 
@@ -375,7 +376,7 @@ if(!$event->isSymmetric) {
                                                             } ?></b>
                                                     </td>
                                                     <td style="text-align:left;">
-                                                        <b> Attendee Limit: </b> {{ $s->maxAttendees }}
+                                                        <b> Attendee Limit: </b> {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
                                                     </td>
                                                 @else
 
@@ -433,11 +434,25 @@ if(!$event->isSymmetric) {
         <table class="table" style="border: none;">
             <tr style="border: none;">
                 <td style="text-align: right; border: none;"><h3>From:</h3></td>
-                <td style="border: none;"><h3>{{ $event->eventStartDate->format('n/j/Y g:i A') }}</h3></td>
+                <td style="border: none;">
+                    <nobr>
+                        <h3>{{ $event->eventStartDate->format('n/j/Y') }}</h3>
+                    </nobr>
+                    <nobr>
+                        <h3>{{ $event->eventStartDate->format('g:i A') }}</h3>
+                    </nobr>
+                </td>
             </tr>
             <tr style="border: none;">
                 <td style="text-align: right; border: none;"><h3>To:</h3></td>
-                <td style="border: none;"><h3>{{ $event->eventEndDate->format('n/j/Y g:i A') }}</h3></td>
+                <td style="border: none;">
+                    <nobr>
+                        <h3>{{ $event->eventEndDate->format('n/j/Y') }}</h3>
+                    </nobr>
+                    <nobr>
+                        <h3>{{ $event->eventEndDate->format('g:i A') }}</h3>
+                    </nobr>
+                </td>
             </tr>
         </table>
     </div>

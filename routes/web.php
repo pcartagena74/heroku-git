@@ -12,8 +12,13 @@
 
 // Public Routes
 Route::get('/', 'SessionController@create')->name('main_page');
+
+//Route::get('/login', 'SessionController@create');
+//Route::post('/login', 'SessionController@store');
+
 Route::get('/login', 'SessionController@create');
-Route::post('/login', 'SessionController@store');
+Route::post('/login', 'Auth\LoginController@login')->name('login');
+
 Route::get('/policies', function(){
     return view('v1.public_pages.policies');
 });
@@ -24,7 +29,7 @@ Route::get('/details', function(){
 // Public Event-related Routes
 Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
-Route::post('/register/{ticket}', 'RegistrationController@showRegForm')->name('register_step1');
+Route::post('/register/{event}', 'RegistrationController@showRegForm')->name('register_step1');
 Route::post('/register/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');
