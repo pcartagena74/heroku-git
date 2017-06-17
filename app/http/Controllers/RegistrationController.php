@@ -26,12 +26,13 @@ class RegistrationController extends Controller
         // responds to /blah
     }
 
-    public function showRegForm (Request $request, $id) {
+    public function showRegForm (Request $request, Event $event) {
         // Registering for an event from /event/{id}
         $ticket        = Ticket::find(request()->input('ticketID'));
         $quantity      = request()->input('quantity');
         $discount_code = request()->input('discount_code');
         $event         = Event::find($ticket->eventID);
+
         if($event->hasFood) {
             return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
         } else {

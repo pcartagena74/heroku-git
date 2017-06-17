@@ -192,11 +192,26 @@ $today = Carbon\Carbon::now();
         <table class="table" style="border: none;">
             <tr style="border: none;">
                 <td style="text-align: right; border: none;"><h3>From:</h3></td>
-                <td style="border: none;"><h3>{{ $event->eventStartDate->format('n/j/Y g:i A') }}</h3></td>
+                <td style="border: none;">
+                    <nobr>
+                        <h3>{{ $event->eventStartDate->format('n/j/Y') }}</h3>
+                    </nobr>
+                    <nobr>
+                        <h3>{{ $event->eventStartDate->format('g:i A') }}</h3>
+                    </nobr>
+                </td>
             </tr>
             <tr style="border: none;">
                 <td style="text-align: right; border: none;"><h3>To:</h3></td>
-                <td style="border: none;"><h3>{{ $event->eventEndDate->format('n/j/Y g:i A') }}</h3></td>
+                <td style="border: none;">
+                    <nobr>
+                        <h3>{{ $event->eventEndDate->format('n/j/Y') }}</h3>
+                    </nobr>
+                    <nobr>
+                        <h3>{{ $event->eventEndDate->format('g:i A') }}</h3>
+                    </nobr>
+                </td>
+
             </tr>
         </table>
     </div>

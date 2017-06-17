@@ -143,9 +143,25 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
         <table class="table table-striped">
             <tr>
                 <th style="width:20%;">Prefix</th>
-                <th style="width:20%;">First Name<sup>*</sup></th>
+                <th style="width:20%;">
+                    @if($i == 1 && $isMember)
+                        <a data-toggle="tooltip" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
+                    @endif
+                        First Name<sup>*</sup>
+                    @if($i == 1 && $isMember)
+                        </a>
+                    @endif
+                </th>
                 <th style="width:20%;">Middle Name</th>
-                <th style="width:20%;">Last Name<sup>*</sup></th>
+                <th style="width:20%;">
+                    @if($i == 1 && $isMember)
+                        <a data-toggle="tooltip" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
+                            @endif
+                            Last Name<sup>*</sup>
+                            @if($i == 1 && $isMember)
+                        </a>
+                    @endif
+                </th>
                 <th style="width:20%;">Suffix</th>
             </tr>
             <tr>
@@ -182,7 +198,15 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                 <th style="width:20%;">Industry</th>
                 <th style="width:20%;">Company</th>
                 <th style="width:20%;">Title</th>
-                <th style="width:20%;">Email Address<sup>*</sup></th>
+                <th style="width:20%;">
+                    @if($i == 1 && Auth::check())
+                    <a data-toggle="tooltip" title="Changing your email address can only be done via your profile page." id="emailchange">
+                    @endif
+                        Email Address<sup>*</sup>
+                    @if($i == 1 && Auth::check())
+                    </a>
+                    @endif
+                </th>
             </tr>
             <tr>
                 @if($i==1)
@@ -206,7 +230,7 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                     <td>{!! Form::text("title_$i", old("title_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::email("login", old("login"), array('class' => 'form-control', 'required')) !!}</td>
+                    <td>{!! Form::email("login", old("login"), array('class' => 'form-control', Auth::check() ? 'disabled' : '', 'required')) !!}</td>
                 @else
                     <td>{!! Form::email("login_$i", old("login_$i"), array('class' => 'form-control', 'required')) !!}</td>
                 @endif
