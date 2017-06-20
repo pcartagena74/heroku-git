@@ -19,20 +19,38 @@ use Illuminate\Support\Facades\DB;
 class RegistrationController extends Controller
 {
     public function __construct () {
-        $this->middleware('auth', ['except' => ['showRegForm', 'store', 'update']]);
+        $this->middleware('auth', ['except' => ['showRegForm', 'store', 'update', 'processRegForm']]);
     }
 
     public function index () {
         // responds to /blah
     }
 
-    public function showRegForm (Request $request, Event $event) {
-        // Registering for an event from /event/{id}
+    public function processRegForm (Request $request, Event $event) {
+        // Initiating registration for an event from /event/{id}
+        $ticket        = Ticket::find(request()->input('ticketID'));
+        $quantity      = request()->input('quantity');
+        $discount_code = request()->input('discount_code');
+
+        if($discount_code === null){
+            $discount_code = '';
+        } else {
+            $discount_code = "/".$discount_code;
+        }
+
+        // Finish the route variables needed here and add the route
+        return redirect("/regstep2/$event->eventID/$ticket->ticketID/$quantity" . $discount_code);
+    }
+
+    public function showRegForm (Event $event, Ticket $ticket, $quantity, $discount_code = null) {
+    //    public function showRegForm (Request $request, Event $event) {
+    // Registering for an event from /register/{tkt}/{q}/{dCode?}
+        /*
         $ticket        = Ticket::find(request()->input('ticketID'));
         $quantity      = request()->input('quantity');
         $discount_code = request()->input('discount_code');
         $event         = Event::find($ticket->eventID);
-
+        */
         if($event->hasFood) {
             return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
         } else {
@@ -98,7 +116,7 @@ class RegistrationController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store (Request $request) {
+    public function store (Request $request, Event $event) {
         // responds to POST to /blah and creates, adds, stores the event
         // check if someone logged in
         // if so, get person record and update
@@ -108,7 +126,7 @@ class RegistrationController extends Controller
         // LOOP if quantity > 1 and add new person records avoiding duplicates as possible
         // display registration_form2
 
-        $event    = Event::find(request()->input('eventID'));
+        //$event    = Event::find(request()->input('eventID'));
         $resubmit = Registration::where('token', request()->input('_token'))->first();
         $quantity = request()->input('quantity');
         if(Auth::check()) {
@@ -116,7 +134,6 @@ class RegistrationController extends Controller
             $this->currentPerson->load('orgperson');
         }
 
-//dd(request()->all());
         // This is a quick check to pass through without saving another record if the _token is already in the db
         if(count($resubmit) == $quantity) {
             return redirect('/confirm_registration/' . $resubmit->regID);

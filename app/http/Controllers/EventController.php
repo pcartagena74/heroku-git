@@ -128,7 +128,7 @@ class EventController extends Controller
     }
 
     public function show ($param) {
-        // responds to GET /events/id
+        // responds to GET /events/{param}
         // $param is either an ID or slug
         $event = Event::where('eventID', '=', $param)
                       ->orWhere('slug', '=', $param)

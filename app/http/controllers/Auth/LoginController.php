@@ -47,11 +47,7 @@ class LoginController extends Controller
     }
 
     public function login(Request $request) {
-/*
-        if (! auth()->attempt(request(['email', 'password']))) {
-            return back()->withInput();
-        }
-*/
+
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -66,7 +62,11 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
-
+/*
+        if (! auth()->attempt(request(['email', 'password']))) {
+            return back();
+        }
+*/
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
@@ -75,6 +75,19 @@ class LoginController extends Controller
         return $this->sendFailedLoginResponse($request);
     }
 
+    protected function sendFailedLoginResponse(Request $request) {
+        $errors = [$this->username() => trans('auth.failed')];
+
+        if ($request->expectsJson()) {
+            return response()->json($errors, 422);
+        }
+
+        //return redirect('/login')
+        return back()
+            ->withInput($request->only($this->username(), 'remember'))
+            ->with('modal_error', 1)
+            ->withErrors($errors);
+    }
     /*
     protected function authenticated(Request $request, $user)
     {

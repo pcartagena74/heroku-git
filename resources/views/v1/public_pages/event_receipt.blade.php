@@ -249,6 +249,7 @@ an email url to a form
                                     <?php
                                     $rs = RegSession::where([
                                         ['confDay', '=', $j],
+                                        ['regID', '=', $reg->regID],
                                         ['personID', '=', $reg->personID],
                                         ['eventID', '=', $event->eventID]
                                     ])->orderBy('id')->get();
@@ -319,7 +320,7 @@ an email url to a form
                 <table class="table borderless">
                     <tr>
                         <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
-                                <h1 style="color: gold;" class="fa fa-4x fa-calendar"></h1></a></td>
+                                <h2 style="color: gold;" class="fa fa-4x fa-calendar"></h2></a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $google_url }}">
                                 <span class="fa fa-stack fa-lg fa-2x">
                                 <h1 style="color: red;" class="fa fa-4x fa-square fa-stack-2x"></h1>
@@ -334,8 +335,8 @@ an email url to a form
                             </a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
                                 <span class="fa fa-stack fa-lg fa-2x">
-                                <h1 style="color: red;" class="fa fa-3x fa-calendar-o fa-stack-2x"></h1>
-                                    <center><h2 class="fa-stack-1x"><b style="color: black; margin-top:1.25em;">ICS</b></h2></center>
+                                <h2 style="color: red;" class="fa fa-3x fa-calendar-o fa-stack-2x"></h2>
+                                <h2 class="fa-stack-1x" style="text-align: center; color: black; margin-top:1em;">ICS</h2>
                                 </span>
                             </a></td>
                     </tr>
