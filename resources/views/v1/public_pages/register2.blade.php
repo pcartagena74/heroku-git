@@ -41,7 +41,7 @@ if($event->isSymmetric) {
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    {!! Form::open(['url' => "/complete_registration/".$rf->regID, 'method' => 'post', 'id' => 'complete_registration']) !!}
+    {!! Form::open(['url' => '/complete_registration/'.$rf->regID, 'method' => 'post', 'id' => 'complete_registration']) !!}
     <div class="whole">
 
         <div style="float: right;" class="col-md-5 col-sm-5">
@@ -69,6 +69,7 @@ if($event->isSymmetric) {
                     <p></p>
 
                     @if($rf->cost > 0)
+                        {!! Form::open(array('url' => '/complete_registration/'. $rf->regID , 'method' => 'post')) !!}
                         <script
                                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                 data-key="{{ env('STRIPE_KEY') }}"
@@ -81,10 +82,13 @@ if($event->isSymmetric) {
                                 data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
                                 data-locale="auto">
                         </script>
+                        {!! Form::close() !!}
                     @endif
+                    {!! Form::open(array('url' => '/complete_registration/'. $rf->regID, 'method' => 'post')) !!}
                     <button type="submit" class="btn btn-success btn-sm">&nbsp;
                         <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
                     </button>
+                    {!! Form::close() !!}
                 </div>
             </div>
 
@@ -288,6 +292,7 @@ if($event->isSymmetric) {
                         </table>
 
                         {!! Form::hidden('needSessionPick', $needSessionPick) !!}
+
                         @if($event->hasTracks > 0 && $needSessionPick == 1)
                             <table class="table table-bordered jambo_table table-striped">
                                 <thead>
@@ -312,6 +317,7 @@ if($event->isSymmetric) {
                                         ['eventID', '=', $event->eventID]
                                     ])->first();
                                     $y = Ticket::find($z->ticketID);
+
 ?>
                                     @if($tickets->contains('ticketID', $z->ticketID))
                                         <tr>
@@ -439,6 +445,7 @@ if($event->isSymmetric) {
                     </div>
                     <div class="col-md-7 col-sm-7" style="display: table-cell;">
                         @if($rf->cost > 0)
+                            {!! Form::open(array('url' => '/complete_registration/'. $rf->regID, 'method' => 'post')) !!}
                             <script
                                     src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                     data-key="{{ env('STRIPE_KEY') }}"
@@ -451,11 +458,14 @@ if($event->isSymmetric) {
                                     data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
                                     data-locale="auto">
                             </script>
+                            {!! Form::close() !!}
                             <br />
                         @endif
+                            {!! Form::open(array('url' => '/complete_registration/'. $rf->regID, 'method' => 'post')) !!}
                         <button type="submit" class="btn btn-success btn-sm">&nbsp;
                             <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
                         </button>
+                            {!! Form::close() !!}
                     </div>
                     <div class="col-md-3 col-sm-3">
                         <table class="table table-striped table-condensed jambo_table">

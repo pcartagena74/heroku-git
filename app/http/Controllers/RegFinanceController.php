@@ -60,15 +60,17 @@ class RegFinanceController extends Controller
                 }
             }
         } else {
-            $tickets = null;
+            $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
             $s       = EventSession::where([
                 ['eventID', '=', $event->eventID],
                 ['ticketID', '=', '$ticket->ticketID']
-            ])->get();
+            ])->first();
+
             if($s !== null) {
                 $needSessionPick = 1;
             }
         }
+
         $loc           = Location::find($event->locationID);
         $quantity      = $rf->seats;
         $discount_code = $rf->discountCode;

@@ -230,7 +230,7 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                     <td>{!! Form::text("title_$i", old("title_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::email("login", old("login"), array('class' => 'form-control', Auth::check() ? 'disabled' : '', 'required')) !!}</td>
+                    <td>{!! Form::email("login", old("login"), array('class' => 'form-control', Auth::check() ? 'onfocus="blur();"' : '', 'required')) !!}</td>
                 @else
                     <td>{!! Form::email("login_$i", old("login_$i"), array('class' => 'form-control', 'required')) !!}</td>
                 @endif
@@ -370,6 +370,13 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
 
 
 @section('scripts')
+    @if(!empty(Session::get('modal_error')) && !Auth::check() && Session::get('modal_error') == 1)
+        <script>
+            $(document).ready(function () {
+                $('#login_modal').modal('show');
+            });
+        </script>
+    @endif
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
         $.ajaxSetup({

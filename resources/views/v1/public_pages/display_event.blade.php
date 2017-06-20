@@ -26,7 +26,7 @@ $today = Carbon\Carbon::now();
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <form method="get" action="/register/{{ $event->eventID }}" id="start_registration" role="form">
+    <form method="post" action="/regstep1/{{ $event->eventID }}" id="start_registration" role="form">
         {{ csrf_field() }}
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
