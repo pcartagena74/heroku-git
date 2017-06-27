@@ -26,20 +26,18 @@ Route::get('/details', function(){
     return view('v1.public_pages.details');
 });
 
+Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
+Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
+
 // Public Event-related Routes
 Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
-
-// Added: needs testing...
 Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
 Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');
-
-Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
-Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
 
 Route::get('/storage/events/{filename}', function($filename){
     $filePath = Flysystem::connection('awss3')->get($filename);
@@ -48,7 +46,7 @@ Route::get('/storage/events/{filename}', function($filename){
 
 // Individual Page Routes
 
-// Dashboard
+// Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
 Route::get('/home', 'ActivityController@index')->name('home');
 
@@ -65,8 +63,8 @@ Route::post('/email/{id}/delete', 'EmailController@destroy');
 
 // Event & Ticket Routes
 Route::get('/events', 'EventController@index')->name('manageEvents');
-Route::post('/activate/{event}', 'EventController@activate');
-Route::post('/eventajax/{event}', 'EventController@ajax_update');
+Route::post('/activate/{event}', 'EventController@activate');                   // Ajax
+Route::post('/eventajax/{event}', 'EventController@ajax_update');               // Ajax
 Route::get('/event/create', 'EventController@create')->name('add_edit_form');
 Route::post('/event/create', 'EventController@store')->name('save_event');
 Route::get('/event/{event}/edit', 'EventController@edit');
@@ -75,12 +73,12 @@ Route::delete('/event/{event}', 'EventController@destroy');
 Route::get('/eventdiscount/{event}', 'EventDiscountController@show');
 Route::post('/eventdiscount', 'EventDiscountController@store');
 Route::delete('/eventdiscount/{id}/delete', 'EventDiscountController@destroy');
-Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');
+Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');          // Ajax
 Route::get('/tracks/{event}', 'TrackController@show');
-Route::post('/track/{track}', 'TrackController@update');
-Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');
+Route::post('/track/{track}', 'TrackController@update');                        // Ajax
+Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');            // Ajax
 Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');
-Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');
+Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');        // Ajax
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
@@ -88,9 +86,9 @@ Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 
 
 // Ticket & Bundle Routes
-Route::post('/bundle/{id}', 'BundleController@update');
+Route::post('/bundle/{id}', 'BundleController@update');                         // Ajax
 Route::delete('/bundle/{id}/delete', 'BundleController@destroy')->name('delete_bundle');
-Route::post('/ticket/{id}', 'TicketController@update');
+Route::post('/ticket/{id}', 'TicketController@update');                         // Ajax
 Route::post('/tickets/create', 'TicketController@store');
 Route::delete('/ticket/{id}/delete', 'TicketController@destroy')->name('delete_ticket');
 Route::get('/event-tickets/{id}', 'TicketController@show');
@@ -99,21 +97,18 @@ Route::post('/event-tickets/{id}', 'TicketController@show');
 
 // Location Routes
 Route::get('/locations', 'LocationController@index');
-Route::post('/location/update', 'LocationController@update');
+Route::post('/location/update', 'LocationController@update');                   // Ajax
 Route::get('/locations/{id}', 'LocationController@show');
 
-// Route::patch('/events/{event}', 'EventController@edit');
-
-//Route::get('/home', 'HomeController@index');
 
 // Organizational Routes
 // ---------------------
 // Settings
 Route::get('/orgsettings', 'OrgController@index');
 Route::get('/orgsettings/{id}', 'OrgController@show');
-Route::post('/orgsettings/{id}', 'OrgController@update');
+Route::post('/orgsettings/{id}', 'OrgController@update');                       // Ajax
 Route::get('/eventdefaults', 'OrgController@event_defaults');
-Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');
+Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');              // Ajax
 
 Route::get('/load_data', 'UploadController@index');
 Route::post('/load_data', 'UploadController@store');
@@ -130,7 +125,7 @@ Route::get('/test', function() {
     return view('v1.auth_pages.welcome', compact('events'));
 });
 
-Route::get('/twitter/{id}', 'TwitterController@show');
+Route::get('/twitter/{event}', 'TwitterController@show');
 
 Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http\Request $request) {
     foreach ($request->all() as $input_key => $input_val) {

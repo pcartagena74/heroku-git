@@ -10,15 +10,15 @@ use App\Tweet;
 class TwitterController extends Controller
 {
     public function __construct () {
-        //$this->middleware('auth');
+        //$this->middleware('guest');
     }
 
     public function index () {
     }
 
-    public function show ($id) {
+    public function show (Event $event) {
         // responds to GET /blah/id
-        $event = Event::find($id);
+        // $event = Event::find($id);
         if (Auth::check()) {
             $tweets = Tweet::orderBy('created_at','desc')->paginate(5);
         } else {

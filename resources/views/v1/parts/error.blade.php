@@ -2,6 +2,10 @@
 /**
  * Comment: A default error display bit
  * Created: 2/20/2017
+ *
+ * This is the one I use most.  Usage in code is as follows:
+ * Session::flash('alert-$X', 'The message to display...');
+ *
  */
 ?>
 <div class="form-group">

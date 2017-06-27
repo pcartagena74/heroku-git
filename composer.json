@@ -25,6 +25,7 @@
         "spatie/laravel-activitylog": "^1.12",
         "spatie/laravel-link-checker": "^2.0",
         "spatie/laravel-referer": "^1.2",
+        "stripe/stripe-php": "^4.13",
         "zizaco/entrust": "dev-laravel-5"
     },
     "require-dev": {

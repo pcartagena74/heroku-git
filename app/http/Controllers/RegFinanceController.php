@@ -43,6 +43,7 @@ class RegFinanceController extends Controller
         }
 
         $ticket = Ticket::find($rf->ticketID);
+
         if($ticket->isaBundle) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
                              ->where([
@@ -101,7 +102,7 @@ class RegFinanceController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
-
+//dd(request()->all());
         $rf                  = RegFinance::find($id);
         $event               = Event::find($rf->eventID);
         $org                 = Org::find($event->orgID);

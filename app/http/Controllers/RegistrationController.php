@@ -130,8 +130,8 @@ class RegistrationController extends Controller
         $resubmit = Registration::where('token', request()->input('_token'))->first();
         $quantity = request()->input('quantity');
         if(Auth::check()) {
-            $this->currentPerson = Person::find(auth()->user()->id);
-            $this->currentPerson->load('orgperson');
+            $this->currentPerson = Person::find(auth()->user()->id)->load('orgperson');
+            //$this->currentPerson->load('orgperson');
         }
 
         // This is a quick check to pass through without saving another record if the _token is already in the db
