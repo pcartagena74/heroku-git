@@ -347,7 +347,7 @@ $orgLogoPath = DB::table('organization')
                 if (selection != '') {
                     var theurl = "/locations/" + selection;
                     $.ajax({
-                        method: 'post',
+                        method: 'get',
                         url: theurl,
                         dataType: "json",
                         success: function (data) {

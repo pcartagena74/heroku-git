@@ -50,11 +50,11 @@ foreach($discPie as $d) {
     ]);
 }
 
-if($event->isSymmetric) {
+if($event->hasTracks && $event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
     $width   = (integer)85 / $event->hasTracks;
     $mw      = (integer)90 / $event->hasTracks;
-} else {
+} elseif($event->hasTracks) {
     $columns = $event->hasTracks * 3;
     $width   = (integer)80 / $event->hasTracks;
     $mw      = (integer)85 / $event->hasTracks;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0af193764319e8c1ee6aee0801c04ed",
+    "content-hash": "500f32a7b43932358e87df869716624f",
     "packages": [
         {
             "name": "airbrake/phpbrake",
