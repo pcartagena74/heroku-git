@@ -96,6 +96,7 @@ an email url to a form
                         {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
+                    <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }} <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}
                 </div>
                 <div class="col-md-3 col-sm-3">
                 </div>
@@ -172,7 +173,7 @@ an email url to a form
                                     @if($person->suffix)
                                         {{ $person->suffix }}
                                     @endif
-                                    <nobr>[ {{ $person->login }}" ]</nobr>
+                                    <nobr>[ {{ $person->login }} ]</nobr>
                                     <br/>
                                     @if($person->compName)
                                         @if($person->title)

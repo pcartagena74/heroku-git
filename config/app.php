@@ -144,7 +144,7 @@ return [
          */
 
         #'Aws\Laravel\AwsServiceProvider',
-        Barryvdh\DomPDF\ServiceProvider::class,
+        Barryvdh\Snappy\ServiceProvider::class,
 	    Collective\Html\HtmlServiceProvider::class,
         \Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
         'Fideloper\Proxy\TrustedProxyServiceProvider',
@@ -236,7 +236,7 @@ return [
         'Mail' => Illuminate\Support\Facades\Mail::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
-        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
@@ -246,6 +246,7 @@ return [
         'Route' => Illuminate\Support\Facades\Route::class,
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Session' => Illuminate\Support\Facades\Session::class,
+        'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
         'Storage' => Illuminate\Support\Facades\Storage::class,
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,

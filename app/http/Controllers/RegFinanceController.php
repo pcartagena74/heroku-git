@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+ini_set('max_execution_time', 300);
+
 //use App\Notifications\EventReceipt;
 use App\EventSession;
 use App\Mail\EventReceipt;
@@ -20,11 +22,13 @@ use Illuminate\Support\Facades\DB;
 use App\Track;
 use App\Bundle;
 use App\RegSession;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class RegFinanceController extends Controller
 {
     public function __construct () {
         $this->middleware('auth');
+        //$this->middleware('tidy')->only('update');
     }
 
     public function index () {
@@ -258,7 +262,10 @@ class RegFinanceController extends Controller
         //$user->notify(new EventReceipt($rf));
         $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code',
             'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
-        Mail::to($user->login)->send(new EventReceipt($rf, $x));
+        $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+
+        return $pdf->download('invoice.pdf');
+        //Mail::to($user->login)->send(new EventReceipt($rf, $x));
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
         return view('v1.public_pages.event_receipt', $x);
     }
