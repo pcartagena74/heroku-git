@@ -14,7 +14,7 @@ class RegFinance extends Model
     protected $dates = ['createDate', 'cancelDate'];
 
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
-    protected static $ignoreChangedAttributes = ['createDate'];
+    protected static $ignoreChangedAttributes = ['createDate', 'cancelDate'];
 
     public function event() {
         return $this->belongsTo(Event::class, 'eventID');

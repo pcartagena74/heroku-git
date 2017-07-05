@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => 's3_receipts',
 
     /*
     |--------------------------------------------------------------------------
@@ -60,12 +60,21 @@ return [
             'visibility' => 'public',
         ],
 
+        's3_receipts' => [
+            'driver' => 's3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET2'),
+            'visibility' => 'public',
+        ],
+
         'events' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),
             'secret' => env('AWS_SECRET'),
             'region' => env('AWS_REGION'),
-            'bucket' => env('AWS_BUCKET'),
+            'bucket' => env('AWS_BUCKET1'),
             'visibility' => 'public',
         ],
 

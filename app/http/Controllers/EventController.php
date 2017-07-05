@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem\AdapterInterface;
 use App\Event;
 use App\EventDiscount;
 use App\Location;
@@ -17,7 +18,6 @@ use App\Track;
 use App\ReferLink;
 use App\Other\ics_calendar;
 use Spatie\Referer\Referer;
-use League\Flysystem\AdapterInterface;
 
 
 class EventController extends Controller
