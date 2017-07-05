@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => 's3_receipts',
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,26 @@ return [
             'driver' => 'awss3',
             'key' => env('AWS_KEY'),
             'secret' => env('AWS_SECRET'),
-            'bucket' => env('AWS_BUCKET'),
+            'bucket' => env('AWS_BUCKET1'),
+            'region' => env('AWS_REGION'),
+            'version' => 'latest',
+            'visibility' => 'public',
+            // 'bucket_endpoint' => false,
+            // 'calculate_md5'   => true,
+            // 'scheme'          => 'https',
+            // 'endpoint'        => 'your-url',
+            // 'prefix'          => 'your-prefix',
+            // 'visibility'      => 'public',
+            // 'pirate'          => false,
+            // 'eventable'       => true,
+            // 'cache'           => 'foo'
+        ],
+
+        's3_receipts' => [
+            'driver' => 'awss3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'bucket' => env('AWS_BUCKET2'),
             'region' => env('AWS_REGION'),
             'version' => 'latest',
             'visibility' => 'public',

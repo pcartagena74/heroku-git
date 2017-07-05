@@ -15,4 +15,5 @@
         <meta http-equiv="refresh" content="3600;url={{ env('APP_URL') . "/logout" }}" />
     @endif
 @endif
-<link rel="icon" href="/images/mCentric.ico">
+<link rel="icon" href="{{ env('APP_URL') }}/images/mCentric.ico">
+<base href="{{ env('APP_URL') }}">

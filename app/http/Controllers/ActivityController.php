@@ -37,7 +37,7 @@ class ActivityController extends Controller
                 ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'eventStartDate', 'oe.eventEndDate')
                 ->orderBy('oe.eventStartDate', 'DESC')->get();
 
-        $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, 
+        $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, et.etName as 'label',
                         (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=?) as 'attended'
                     FROM `org-event` oe
                     LEFT JOIN `event-registration` er on er.eventID=oe.eventID
@@ -54,7 +54,7 @@ class ActivityController extends Controller
         $datastring = "";
         $myevents[] = null;
         foreach($bar as $bar_row) {
-            $label  = $bar_row->startDate;
+            $label  = $bar_row->startDate . " " . $bar_row->label;
             $attend = $bar_row->cnt;
             $there  = $bar_row->attended;
 
@@ -67,7 +67,9 @@ class ActivityController extends Controller
 
         $output_string = "";
         foreach($myevents as $single) {
-            $output_string .= " row.label == '" . $single . "' ||";
+            if($single !== null){
+                $output_string .= " row.label == '" . $single . "' ||";
+            }
         }
         $output = substr($output_string, 0, -3);
 

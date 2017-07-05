@@ -59,9 +59,9 @@ $client = new S3Client([
     'version' => 'latest',
 ]);
 
-$adapter = new AwsS3Adapter($client, env('AWS_BUCKET'));
+$adapter = new AwsS3Adapter($client, env('AWS_BUCKET1'));
 $s3fs = new Filesystem($adapter);
-$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET'), $event_filename);
+$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET1'), $event_filename);
 
 /* Links to share
 http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=https://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
@@ -71,14 +71,14 @@ an email url to a form
 */
 
 ?>
-@extends('v1.layouts.no-auth')
+@extends('v1.layouts.no-auth_simple')
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Receipt: $ticketLabel", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="whole">
 
         <div style="float: right;" class="col-md-5 col-sm-5">
-            <img style="opacity: .25;" src="/images/meeting.jpg" width="100%" height="90%">
+            <img style="opacity: .25;" src="{{ env('APP_URL') }}/images/meeting.jpg" width="100%" height="90%">
         </div>
         <div class="left col-md-7 col-sm-7">
             <div class="myrow col-md-12 col-sm-12">
@@ -103,11 +103,11 @@ an email url to a form
             </div>
 
             @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
-                <?php
+<?php
                 $reg = Registration::find($i); $tcount++;
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
-                ?>
+?>
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
@@ -247,21 +247,21 @@ an email url to a form
                                     <th style="text-align:left;"> Selected Session</th>
                                 </tr>
                                 @for($j=1;$j<=$event->confDays;$j++)
-                                    <?php
+<?php
                                     $rs = RegSession::where([
                                         ['confDay', '=', $j],
                                         ['regID', '=', $reg->regID],
                                         ['personID', '=', $reg->personID],
                                         ['eventID', '=', $event->eventID]
                                     ])->orderBy('id')->get();
-                                    ?>
+?>
 
                                     @foreach($rs as $z)
                                         @if($rs->first() == $z)
-                                            <?php
+<?php
                                             $s = EventSession::find($z->sessionID);
                                             $y = Ticket::find($s->ticketID);
-                                            ?>
+?>
                                             <tr>
                                                 <th style="text-align:center; color: yellow; background-color: #2a3f54;"
                                                     colspan="2">Day {{ $j }}:
@@ -269,9 +269,9 @@ an email url to a form
                                                 </th>
                                             </tr>
                                         @endif
-                                        <?php
+<?php
                                         $s = EventSession::with('track')->where('sessionID', $z->sessionID)->first();
-                                        ?>
+?>
                                         <tr>
                                             <td rowspan="1" style="text-align:left; width:33%;">
                                                 <nobr> {{ $s->start->format('g:i A') }} </nobr>
@@ -317,7 +317,7 @@ an email url to a form
                 </div>
             </div>
 
-            @if(1)
+            @if(0)
                 <table class="table borderless">
                     <tr>
                         <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
@@ -342,6 +342,32 @@ an email url to a form
                             </a></td>
                     </tr>
                 </table>
+            @else
+                <table class="table borderless">
+                    <tr valign="middle">
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $ics }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/outlook.jpg">
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $google_url }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/google.jpg">
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $yahoo_url }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/yahoo.jpg">
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $ics }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/ical.jpg">
+                            </a>
+                        </td>
+
+                    </tr>
+                </table>
             @endif
 
         </div>
@@ -350,5 +376,4 @@ an email url to a form
     {{-- add links to ical, etc. --}}
     @include('v1.parts.end_content')
 @endsection
-
 

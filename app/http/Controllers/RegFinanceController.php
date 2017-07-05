@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-ini_set('max_execution_time', 300);
-
 //use App\Notifications\EventReceipt;
 use App\EventSession;
 use App\Mail\EventReceipt;
@@ -23,6 +21,9 @@ use App\Track;
 use App\Bundle;
 use App\RegSession;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem\AdapterInterface;
+use Illuminate\Support\Facades\Storage;
 
 class RegFinanceController extends Controller
 {
@@ -184,7 +185,7 @@ class RegFinanceController extends Controller
                 $reg->save();
             }
             // Confirmation code is:  personID-regFinance->regID/seats
-            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "/" . $rf->seats;
+            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
 
             // Need to set fees IF the cost > $0
             if($rf->cost > 0) {
@@ -259,14 +260,24 @@ class RegFinanceController extends Controller
         }
 
         // email the user who paid
-        //$user->notify(new EventReceipt($rf));
+        // $user->notify(new EventReceipt($rf));
         $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code',
             'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
-        $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
 
-        return $pdf->download('invoice.pdf');
+        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $pdf = PDF::loadView('v1.public_pages.event_receipt', $x)
+            ->setOption('disable-javascript', false);
+            //->save($receipt_filename);
+
+//dd($pdf->output());
+        //Storage::put($receipt_filename, $pdf->output());
+        //Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+
+
+        //return $pdf->download('invoice.pdf');
         //Mail::to($user->login)->send(new EventReceipt($rf, $x));
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
+
         return view('v1.public_pages.event_receipt', $x);
     }
 
