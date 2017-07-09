@@ -33,11 +33,19 @@ Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkReque
 Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
+
+// No-Longer-Public Event-Registration Routes
 Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
 Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::post('/complete_registration/{id}', 'RegFinanceController@update');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');
+
+
+Route::get('/rs/{session}', 'RegSessionController@show');
+Route::post('/rs/{session}/edit', 'RegSessionController@update');
+Route::get('/rs_survey/{rs}', 'RegSessionController@show_session_survey');
+Route::post('/rs_survey', 'RegSessionController@store');
 
 Route::get('/storage/events/{filename}', function($filename){
     $filePath = Flysystem::connection('awss3')->get($filename);

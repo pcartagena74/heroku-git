@@ -24,6 +24,9 @@ use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use League\Flysystem\AdapterInterface;
 use Illuminate\Support\Facades\Storage;
+use Aws\S3\S3Client;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use League\Flysystem\Filesystem;
 
 class RegFinanceController extends Controller
 {
@@ -202,6 +205,18 @@ class RegFinanceController extends Controller
             }
             // fees above are already $0 unless changed so save.
             $rf->save();
+
+            // Update ticket purchase on all bundle ticket members by $rf->seat
+            if($ticket->isaBundle) {
+                foreach($tickets as $t) {
+                    $t->regCount += $rf->seats;
+                    $t->save();
+                }
+            } else {
+                $ticket->regCount += $rf->seats;
+                $ticket->save();
+            }
+
         }
         // update $rf record and each $reg record status
 
@@ -248,17 +263,6 @@ class RegFinanceController extends Controller
             // No session selection data to record;
         }
 
-        // Update ticket purchase on all bundle ticket members by $rf->seat
-        if($ticket->isaBundle) {
-            foreach($tickets as $t) {
-                $t->regCount += $rf->seats;
-                $t->save();
-            }
-        } else {
-            $ticket->regCount += $rf->seats;
-            $ticket->save();
-        }
-
         // email the user who paid
         // $user->notify(new EventReceipt($rf));
         $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code',
@@ -266,16 +270,28 @@ class RegFinanceController extends Controller
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $pdf = PDF::loadView('v1.public_pages.event_receipt', $x)
-            ->setOption('disable-javascript', false);
+            ->setOption('disable-javascript', false)
+            ->setOption('encoding', 'utf-8');
             //->save($receipt_filename);
 
-//dd($pdf->output());
         //Storage::put($receipt_filename, $pdf->output());
-        //Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
+        $client = new S3Client([
+            'credentials' => [
+                'key'    => env('AWS_KEY'),
+                'secret' => env('AWS_SECRET')
+            ],
+            'region' => env('AWS_REGION'),
+            'version' => 'latest',
+        ]);
+
+        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+        $s3fs = new Filesystem($adapter);
+        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
         //return $pdf->download('invoice.pdf');
-        //Mail::to($user->login)->send(new EventReceipt($rf, $x));
+        Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
         return view('v1.public_pages.event_receipt', $x);
