@@ -79,7 +79,10 @@ class RegistrationController extends Controller
                      ->select(DB::raw('discountCode, sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
-                     ->where('eventID', '=', $event->eventID)
+                     ->where([
+                         ['eventID', '=', $event->eventID],
+                         ['status', '!=', 'pending']
+                        ])
                      ->groupBy('discountCode')->get();
 
         foreach($discPie as $d){
@@ -92,7 +95,10 @@ class RegistrationController extends Controller
                      ->select(DB::raw('"discountCode", sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
-                     ->where('eventID', '=', $event->eventID)->first();
+                     ->where([
+                        ['eventID', '=', $event->eventID],
+                        ['status', '!=', 'pending']
+                     ])->first();
 
         $total->discountCode = 'Total';
 

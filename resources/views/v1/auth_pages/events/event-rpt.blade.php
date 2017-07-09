@@ -19,7 +19,7 @@ foreach($tkts as $t) {
     array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
 }
 
-$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Confirmation', 'Cost'];
+$reg_headers = ['First Name', 'Last Name', 'Ticket', 'PMT Type', 'Code', 'Register Date', 'Confirmation', 'Cost'];
 $reg_rows    = [];
 
 foreach($regs as $r) {
@@ -27,7 +27,7 @@ foreach($regs as $r) {
     //$t = Ticket::find($r->ticketID);
     //$f = RegFinance::where('regID', '=', $r->regID)->orWhere('token', '=', $r->token)->first();
     if($r->regfinance !== null){
-        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->regfinance->discountCode, $r->createDate->format('Y/m/d'),
+        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->regfinance->pmtType, $r->regfinance->discountCode, $r->createDate->format('Y/m/d'),
             $r->regfinance->confirmation, '<i class="fa fa-dollar"></i>' . $r->regfinance->cost]);
     }
 }
