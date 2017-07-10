@@ -117,7 +117,10 @@ an email url to a form
                         <table class="table table-bordered table-condensed table-striped">
                             <tr>
                                 <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
-                                    #{{ $tcount }}</th>
+                                    #{{ $tcount }}
+
+                                    <span style="float: right;">Registration ID#: {{ $reg->regID }}</span>
+                                </th>
                             </tr>
                             <tr>
                                 <th style="text-align: left; color:darkgreen;">Ticket</th>

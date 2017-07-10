@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Org;
+use App\Registration;
 use App\RSSurvey;
 use Illuminate\Http\Request;
 use App\RegSession;
@@ -27,6 +28,70 @@ class RegSessionController extends Controller
         $org   = Org::find($event->orgID);
 
         return view('v1.public_pages.attend_session', compact('session', 'event', 'track', 'org'));
+    }
+
+    public function volunteer_checkin ($param, $s = null) {
+        // Called with /checkin/{event}
+        // Given an event's sessionID, display a form for a person to enter their $regID
+        $event = Event::where('eventID', '=', $param)
+                      ->orWhere('slug', '=', $param)
+                      ->firstOrFail();
+
+        if($s === null){
+            $session = EventSession::find($event->mainSession);
+        } else {
+            $session = EventSession::find($s);
+        }
+
+        if($event->hasTracks > 0) {
+            $track = Track::where([
+                ['eventID', '=', $event->eventID],
+                ['trackID', '!=', 0]
+            ])->get();
+        } elseif($session->trackID == 0) {
+            $track = Track::find($session->trackID);
+        } else {
+            $track = 0;
+        }
+        $org = Org::find($event->orgID);
+
+        return view('v1.auth_pages.events.checkin_attendee', compact('session', 'event', 'track', 'org'));
+    }
+
+    public function process_checkin (Request $request) {
+//dd(request()->all());
+        // Called as /process_checkin post;  Need to:
+        // 1. check if hasTracks > 0 and give options and buttons to re-trigger
+        // 2. display the regID request
+
+        $regID = request()->input('regID');
+        $sessionID = request()->input('sessionID');
+        $reg = Registration::find($regID);
+        $event = Event::find($reg->eventID);
+        $org = Org::find($event->orgID);
+        $session = EventSession::find($event->mainSession);
+        $person = Person::find($reg->personID);
+        if($event->hasTracks > 0) {
+            $track = Track::where([
+                ['eventID', '=', $event->eventID],
+                ['trackID', '!=', 0]
+            ])->get();
+        } elseif($session->trackID == 0) {
+            $track = Track::find($session->trackID);
+        } else {
+            $track = 0;
+        }
+
+        $rs              = RegSession::where([
+            ['regID', '=', $regID],
+            ['eventID', '=', request()->input('eventID')],
+            ['sessionID', '=', $sessionID]
+        ])->first();
+        $rs->hasAttended = 1;
+        $rs->save();
+
+        request()->session()->flash('alert-success', $person->firstName . " " . $person->lastName . " was successfully registered.");
+        return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));
     }
 
     public function update (Request $request, EventSession $session) {
@@ -58,11 +123,11 @@ class RegSessionController extends Controller
     public function store (Request $request) {
         // Response from /rs_survey post
 
-        $wants = request()->input('wantsContact');
+        $wants    = request()->input('wantsContact');
         $personID = request()->input('personID');
 
         $person = Person::find($personID);
-        if($person->prefName){
+        if($person->prefName) {
             $name = $person->prefName;
         } else {
             $name = $person->firstName;
@@ -90,7 +155,7 @@ class RegSessionController extends Controller
             ['sessionID', '=', request()->input('sessionID')]
         ])->get();
 
-        if(!$already_saved){
+        if(!$already_saved) {
             $survey->save();
         }
 
