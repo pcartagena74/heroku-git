@@ -10,6 +10,7 @@
 @include('v1.parts.header_simple_no-auth')
 </head>
 <body class="nav-md footer_fixed">
+@include('v1.parts.error')
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;">

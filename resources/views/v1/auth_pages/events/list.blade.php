@@ -40,6 +40,7 @@ foreach($current_events as $event) {
     $trackURL = '/tracks/' . $event->eventID;
     $rptURL = '/eventreport/' . $event->slug;
     $copyURL = '/eventcopy/' . $event->slug;
+    $checkinURL = '/checkin/' . $event->slug;
 
     /*
     $edit_button = "<form method='post' action='$editURL'>" .
@@ -74,6 +75,7 @@ foreach($current_events as $event) {
 
     $ticket_button =
         "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
+    $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-xs'><i class='fa fa-check-square-o'></i> Check-in Attendees</a>";
 /*
     $ticket_button = '<form method="post" action="/event-tickets/' . $event->eventID . '">' . $csrf .
         '<label for="TicketSubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Tickets</label>
@@ -85,7 +87,7 @@ foreach($current_events as $event) {
     array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
         "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
-        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $delete_button]);
+        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $checkin_button . $delete_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;

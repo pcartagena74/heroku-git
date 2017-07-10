@@ -18,6 +18,7 @@ use App\Track;
 use App\ReferLink;
 use App\Other\ics_calendar;
 use Spatie\Referer\Referer;
+use App\EventSession;
 
 
 class EventController extends Controller
@@ -36,7 +37,7 @@ class EventController extends Controller
                                date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
                                count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                         FROM `org-event` e
-                        LEFT JOIN `event-registration` er ON er.eventID=e.eventID
+                        LEFT JOIN `event-registration` er ON er.eventID=e.eventID AND er.regStatus != 'In Progress'
                         LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
                         WHERE e.orgID = ?
                             AND eventStartDate >= NOW() AND e.deleted_at is null
@@ -279,6 +280,22 @@ class EventController extends Controller
 
         $event->save();
 
+        $mainSession = new EventSession;
+        $mainSession->trackID = 0;
+        $mainSession->eventID = $event->eventID;
+        $mainSession->sessionName = 'Default Session';
+        $mainSession->confDay = 0;
+        $mainSession->start = $event->eventStartDate;
+        $mainSession->end = $event->eventEndDate;
+        $mainSession->order = 0;
+        $mainSession->creatorID = $this->currentPerson->personID;
+        $mainSession->updaterID = $this->currentPerson->personID;
+        $mainSession->save();
+
+        $event->mainSession = $mainSession->sessionID;
+        $event->updaterID = $this->currentPerson->personID;
+        $event->save();
+
         // Create a stub for the default ticket for the event
         $tkt                      = new Ticket;
         $tkt->ticketLabel         = $label->defaultTicketLabel;
@@ -430,6 +447,23 @@ class EventController extends Controller
             $event->hasTracks = 0;
         }
         $event->updaterID = $this->currentPerson->personID;
+
+        if($event->mainSession === null){
+            $mainSession = new EventSession;
+            $mainSession->trackID = 0;
+            $mainSession->eventID = $event->eventID;
+            $mainSession->sessionName = 'Default Session';
+            $mainSession->confDay = 0;
+            $mainSession->start = $event->eventStartDate;
+            $mainSession->end = $event->eventEndDate;
+            $mainSession->order = 0;
+            $mainSession->creatorID = $this->currentPerson->personID;
+            $mainSession->updaterID = $this->currentPerson->personID;
+            $mainSession->save();
+
+            $event->mainSession = $mainSession->sessionID;
+            $event->updaterID = $this->currentPerson->personID;
+        }
         $event->save();
 
         // Make and overwrite the event_{id}.ics file
