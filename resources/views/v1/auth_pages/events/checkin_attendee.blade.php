@@ -33,16 +33,24 @@ use App\EventSession;
         </div>
 
         @for($i=1;$i<=$event->confDays;$i++)
-            <div class="col-sm-12 col-xs-12">
+            <div class="form-group col-sm-12 col-xs-12">
                 <div style="background-color:#2a3f54; color:yellow;"
                      class="col-sm-{{ 2 * count($track) }} col-xs-{{ 2 * count($track) }}">
                     Day {{ $i }} Sessions
                 </div>
             </div>
+
             @for($x=1;$x<=5;$x++)
-                <div class="col-sm-12 col-xs-12">
+<?php
+                $s = EventSession::where([
+                    ['eventID', $event->eventID],
+                    ['confDay', $i],
+                    ['order', $x]
+                ])->first();
+?>
+                @if($s !== null)
+                <div class="form-group col-sm-12 col-xs-12">
                     @foreach($track as $t)
-                        <div class="col-sm-2 col-xs-2">
 <?php
                             $s = EventSession::where([
                                 ['trackID', $t->trackID],
@@ -52,14 +60,16 @@ use App\EventSession;
                             ])->first();
 ?>
                             @if($s !== null)
+                            <div class="col-sm-2 col-xs-2">
                                 <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
                                    style="white-space: normal;" class="btn btn-primary btn-sm">
                                     {{ $s->sessionName }}
                                 </a>
+                            </div>
                             @endif
-                        </div>
                     @endforeach
                 </div>
+                @endif
             @endfor
         @endfor
 
