@@ -66,11 +66,13 @@ class RegSessionController extends Controller
 
         $regID = request()->input('regID');
         $sessionID = request()->input('sessionID');
+        $eventID = request()->input('eventID');
         $reg = Registration::find($regID);
-        $event = Event::find($reg->eventID);
+        $event = Event::find($eventID);
         $org = Org::find($event->orgID);
         $session = EventSession::find($event->mainSession);
         $person = Person::find($reg->personID);
+
         if($event->hasTracks > 0) {
             $track = Track::where([
                 ['eventID', '=', $event->eventID],
@@ -91,7 +93,14 @@ class RegSessionController extends Controller
         $rs->save();
 
         request()->session()->flash('alert-success', $person->firstName . " " . $person->lastName . " was successfully registered.");
-        return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));
+        //return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));
+
+        if(request()->input('return')){
+            return redirect ('/checkin/' . $eventID . '/' . $sessionID);
+        } else {
+            return redirect ('/checkin/' . $eventID);
+        }
+
     }
 
     public function update (Request $request, EventSession $session) {
