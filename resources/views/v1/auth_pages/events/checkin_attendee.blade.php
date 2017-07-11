@@ -76,7 +76,8 @@ use App\EventSession;
             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
         </div>
         <div class="form-group col-md-12 col-xs-12">
-            {!! Form::submit('Submit Session Attendance', array('class' => 'btn btn-primary')) !!}
+            {!! Form::submit('Submit & Return to Session List', array('class' => 'btn btn-primary', 'name' => 'list', 'value' => '1')) !!}
+            {!! Form::submit('Submit & Register Another', array('class' => 'btn btn-success', 'name' => 'return', 'value' => '1')) !!}
         </div>
         {!! Form::close() !!}
     @endif
