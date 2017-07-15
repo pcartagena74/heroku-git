@@ -35,7 +35,7 @@ Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
 
 // Public Session-related Routes
-Route::get('/rs/{session}', 'RegSessionController@show');
+Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
 Route::post('/rs/{session}/edit', 'RegSessionController@update');
 Route::get('/rs_survey/{rs}', 'RegSessionController@show_session_survey');
 Route::post('/rs_survey', 'RegSessionController@store');
@@ -48,8 +48,9 @@ Route::post('/process_checkin', 'RegSessionController@process_checkin');
 Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
 Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
-Route::post('/complete_registration/{id}', 'RegFinanceController@update');
+Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');
+Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
 
 
 Route::get('/storage/events/{filename}', function($filename){
@@ -62,6 +63,9 @@ Route::get('/storage/events/{filename}', function($filename){
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
 Route::get('/home', 'ActivityController@index')->name('home');
+Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
+Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
+Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 
 // My Profile / Member Editing
 Route::get('/profile/{id}', 'PersonController@show')->name('showMemberProfile');

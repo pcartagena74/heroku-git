@@ -96,7 +96,11 @@ an email url to a form
                         {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
-                    <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }} <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}
+                    <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
+                    <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}
+                    @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                        <h1>Balance Due at Event</h1>
+                    @endif
                 </div>
                 <div class="col-md-3 col-sm-3">
                 </div>
@@ -278,7 +282,7 @@ an email url to a form
                                         <tr>
                                             <td rowspan="1" style="text-align:left; width:33%;">
                                                 <nobr> {{ $s->start->format('g:i A') }} </nobr>
-                                                &dash;
+                                                -
                                                 <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                             </td>
                                             <td colspan="1" style="text-align:left; min-width:150px; width: 67%;">

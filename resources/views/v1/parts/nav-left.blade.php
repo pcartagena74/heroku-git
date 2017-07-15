@@ -48,6 +48,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="/orgs">My Organizations</a></li>
                             @endif
                             <li><a href="/dashboard">My Dashboard</a></li>
+                            <li><a href="/upcoming">My Future Events</a></li>
                             <li><a href="/profile/my">My Profile</a></li>
                             <li><a href="#">Something New? <span
                                             class="label label-success pull-right">Tell me what...</span></a></li>

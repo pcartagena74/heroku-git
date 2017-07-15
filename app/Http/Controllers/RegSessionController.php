@@ -11,6 +11,7 @@ use App\EventSession;
 use App\Event;
 use App\Track;
 use App\Person;
+use App\Ticket;
 
 class RegSessionController extends Controller
 {
@@ -37,7 +38,7 @@ class RegSessionController extends Controller
                       ->orWhere('slug', '=', $param)
                       ->firstOrFail();
 
-        if($s === null){
+        if($s === null) {
             $session = EventSession::find($event->mainSession);
         } else {
             $session = EventSession::find($s);
@@ -64,14 +65,14 @@ class RegSessionController extends Controller
         // 1. check if hasTracks > 0 and give options and buttons to re-trigger
         // 2. display the regID request
 
-        $regID = request()->input('regID');
+        $regID     = request()->input('regID');
         $sessionID = request()->input('sessionID');
-        $eventID = request()->input('eventID');
-        $reg = Registration::find($regID);
-        $event = Event::find($eventID);
-        $org = Org::find($event->orgID);
-        $session = EventSession::find($event->mainSession);
-        $person = Person::find($reg->personID);
+        $eventID   = request()->input('eventID');
+        $reg       = Registration::find($regID);
+        $event     = Event::find($eventID);
+        $org       = Org::find($event->orgID);
+        $session   = EventSession::find($event->mainSession);
+        $person    = Person::find($reg->personID);
 
         if($event->hasTracks > 0) {
             $track = Track::where([
@@ -95,18 +96,62 @@ class RegSessionController extends Controller
         request()->session()->flash('alert-success', $person->firstName . " " . $person->lastName . " was successfully registered.");
         //return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));
 
-        if(request()->input('return')){
-            return redirect ('/checkin/' . $eventID . '/' . $sessionID);
+        if(request()->input('return')) {
+            return redirect('/checkin/' . $eventID . '/' . $sessionID);
         } else {
-            return redirect ('/checkin/' . $eventID);
+            return redirect('/checkin/' . $eventID);
+        }
+    }
+
+    public function update_sessions (Request $request, Registration $reg) {
+        // Update or create session records, set a display message, and re-display list
+        $event = Event::find($reg->eventID);
+        $verb = 'saved';
+
+        // Check if there are any sessions already saved, and delete.
+        $rs = RegSession::where([
+            ['eventID', '=', $reg->eventID],
+            ['regID', '=', $reg->regID]
+        ])->get();
+
+        if(count($rs)>0){
+            $verb = 'updated';
+            foreach($rs as $s){
+                $s->delete();
+            }
         }
 
+        for($j = 1; $j <= $event->confDays; $j++) {
+            $z = EventSession::where([
+                ['confDay', '=', $j],
+                ['eventID', '=', $event->eventID]
+            ])->first();
+            $y = Ticket::find($z->ticketID);
+
+            for($x = 1; $x <= 5; $x++) {
+                if(request()->input('sess-' . $j . '-' . $x)) {
+                    // if this is set, the value is the session that was chosen.
+
+                    $rs            = new RegSession;
+                    $rs->regID     = $reg->regID;
+                    $rs->personID  = $reg->personID;
+                    $rs->eventID   = $event->eventID;
+                    $rs->confDay   = $j;
+                    $rs->sessionID = request()->input('sess-' . $j . '-' . $x);
+                    $rs->creatorID = auth()->user()->id;
+                    $rs->save();
+                }
+            }
+        }
+
+        request()->session()->flash('alert-success', "Your session choices for " . $reg->regID . " were " . $verb . ".");
+        return redirect('/upcoming');
     }
 
     public function update (Request $request, EventSession $session) {
         // 1) Receive the check-in with $regID
         // 2) Update the RegSession instance, and
-        // 3) Return EITHER the same form or the individual survey
+        // 3) Return the individual survey
 
         $regID = request()->input('regID');
 

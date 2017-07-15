@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Person;
 use App\OrgPerson;
 use App\Registration;
+use App\RegSession;
 use App\User;
 use Illuminate\Http\Request;
 use App\Ticket;
@@ -15,6 +16,8 @@ use App\Track;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Stripe\Stripe;
+use App\EventSession;
 
 class RegistrationController extends Controller
 {
@@ -142,7 +145,7 @@ class RegistrationController extends Controller
 
         // This is a quick check to pass through without saving another record if the _token is already in the db
         if(count($resubmit) == $quantity) {
-            return redirect('/confirm_registration/' . $resubmit->regID);
+            //return redirect('/confirm_registration/' . $resubmit->regID);
         }
 //dd(request()->all());
         $checkEmail = request()->input('login');
@@ -697,7 +700,114 @@ class RegistrationController extends Controller
         $reg->save();
     }
 
-    public function destroy ($id) {
-        // responds to DELETE /blah/id
+    public function destroy (Registration $reg, RegFinance $rf) {
+        // responds to DELETE /cancel_registration/{reg}/{rf}
+        // 1. Takes $reg->regID and $rf->regID
+        // 2. Determine if this is a full or partial refund (if at all)
+        // 3. Decrement registration count on ticket(s), sessions as needed
+
+        $needSessionPick = 0;
+        $verb = 'canceled';
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+
+        if($reg->regStatus == 'pending'){
+            $reg->delete();
+        } elseif($reg->subtotal > 0 && $rf->stripeChargeID){
+            // There's a refund that needs to occur with Stripe
+            if($reg->subtotal == $rf->cost){
+                // This is a total refund
+                try {
+                    \Stripe\Refund::create(array(
+                        "charge" => $rf->stripeChargeID,
+                    ));
+                    $reg->regStatus = 'Refunded';
+                    $rf->status = 'Refunded';
+                    $rf->save();
+                    $reg->save();
+                } catch(Exception $e){
+                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ');
+                }
+                $rf->delete();
+                $reg->delete();
+            } else {
+                // This is a partial refund, so send the amount
+                try {
+                    \Stripe\Refund::create(array(
+                        "charge" => $rf->stripeChargeID,
+                        "amount" => $reg->subtotal * 100,
+                    ));
+                    $reg->regStatus = 'Refunded';
+                    $rf->status = 'Partially Refunded';
+                    $verb = 'refunded';
+                    $rf->save();
+                    $reg->save();
+                } catch(\Exception $e){
+                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ');
+                }
+                $reg->delete();
+            }
+        } elseif($rf->seats > 1) {
+            $reg->regStatus = 'Canceled';
+            $rf->status = 'Partially Canceled';
+            $rf->seats = $rf->seats - 1;
+            $rf->save();
+            $reg->save();
+            $reg->delete();
+            $verb = 'canceled';
+        } else {
+            $reg->regStatus = 'Canceled';
+            $rf->status = 'Canceled';
+            $rf->save();
+            $reg->save();
+            $reg->delete();
+            $rf->delete();
+            $verb = 'canceled';
+        }
+
+        // Now, decrement registration counts where required
+        $ticket = Ticket::find($reg->ticketID);
+
+        // Check the tickets associated with this registration and see if there are sessions
+        if($ticket->isaBundle) {
+            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                             ->where([
+                                 ['bt.bundleID', '=', $ticket->ticketID],
+                                 ['event-tickets.eventID', '=', $reg->eventID]
+                             ])
+                             ->get();
+            $s       = EventSession::where('eventID', '=', $reg->eventID)
+                                   ->select(DB::raw('distinct ticketID'))
+                                   ->get();
+            foreach($s as $t) {
+                if($tickets->contains('ticketID', $t->ticketID)) {
+                    $needSessionPick = 1;
+                    break;
+                }
+            }
+        } else {
+            $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
+            $s       = EventSession::where([
+                ['eventID', '=', $reg->eventID],
+                ['ticketID', '=', '$ticket->ticketID']
+            ])->first();
+
+            if($s !== null) {
+                $needSessionPick = 1;
+            }
+        }
+
+        // Decrementing the tickets
+        foreach($tickets as $t){
+            $t->regCount = $t->regCount - 1;
+        }
+
+        $sessions = RegSession::where('regID', '=', $reg->regID)->get();
+        foreach($sessions as $s){
+            $s->delete();
+        }
+        request()->session()->flash('alert-success', 'The registration with id ' . $reg->regID . ' has been ' . $verb);
+        return redirect('/upcoming');
     }
 }

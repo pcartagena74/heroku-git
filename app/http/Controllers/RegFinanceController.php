@@ -95,6 +95,57 @@ class RegFinanceController extends Controller
             'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
     }
 
+    public function show_receipt(RegFinance $rf){
+        $event = Event::find($rf->eventID);
+        $ticket = Ticket::find($rf->ticketID);
+        $quantity = $rf->seats;
+        $discount_code = $rf->discountCode;
+        $org = Org::find($event->orgID);
+        $loc = Location::find($event->locationID);
+
+        if($ticket->isaBundle) {
+            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                             ->where([
+                                 ['bt.bundleID', '=', $ticket->ticketID],
+                                 ['event-tickets.eventID', '=', $event->eventID]
+                             ])
+                             ->get();
+            $s       = EventSession::where('eventID', '=', $event->eventID)
+                                   ->select(DB::raw('distinct ticketID'))
+                                   ->get();
+            foreach($s as $t) {
+                if($tickets->contains('ticketID', $t->ticketID)) {
+                    $needSessionPick = 1;
+                    break;
+                }
+            }
+        } else {
+            $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
+            $s       = EventSession::where([
+                ['eventID', '=', $event->eventID],
+                ['ticketID', '=', '$ticket->ticketID']
+            ])->first();
+
+            if($s !== null) {
+                $needSessionPick = 1;
+            }
+        }
+
+        if($needSessionPick) {
+            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                             ->where([
+                                 ['bt.bundleID', '=', $ticket->ticketID],
+                                 ['event-tickets.eventID', '=', $event->eventID]
+                             ])
+                             ->get();
+        } else {
+            $tickets = null;
+        }
+
+        $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf', 'person', 'org', 'tickets');
+        return view('v1.public_pages.event_receipt', $x);
+    }
+
     public function create () {
         // responds to /blah/create and shows add/edit form
     }
@@ -109,8 +160,9 @@ class RegFinanceController extends Controller
     }
 
     public function update (Request $request, $id) {
-        // responds to PATCH /blah/id
+        // responds to PATCH /complete_registration/{id}
 //dd(request()->all());
+
         $rf                  = RegFinance::find($id);
         $event               = Event::find($rf->eventID);
         $org                 = Org::find($event->orgID);
@@ -122,6 +174,7 @@ class RegFinanceController extends Controller
         $ticket              = Ticket::find($rf->ticketID);
         $this->currentPerson = Person::find(auth()->user()->id);
         $needSessionPick     = $request->input('needSessionPick');
+        $stripeToken     = $request->input('stripeToken');
 
         if($needSessionPick) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
@@ -137,13 +190,12 @@ class RegFinanceController extends Controller
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
 
-        if($rf->confirmation != 'Processed') {
+        if($rf->status != 'Processed') {
 
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if($rf->cost > 0 && isset($stripeToken)) {
                 $stripeEmail     = $request->input('stripeEmail');
-                $stripeToken     = $request->input('stripeToken');
                 $stripeTokenType = $request->input('stripeTokenType');
                 Stripe::setApiKey(env('STRIPE_SECRET'));
 
@@ -153,6 +205,7 @@ class RegFinanceController extends Controller
                         'email' => $user->email,
                         'source' => $stripeToken,
                     ));
+                    $user->stripeEmail = $customer->email;
                     $user->stripe_id = $customer->id;
                     $user->save();
                 }
@@ -163,7 +216,7 @@ class RegFinanceController extends Controller
                     'description' => "$org->orgName Event Registration: $event->eventName",
                     'customer' => $user->stripe_id,
                 ));
-
+                $rf->stripeChargeID = $charge->id;
                 $rf->status  = 'Processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
@@ -173,6 +226,7 @@ class RegFinanceController extends Controller
                 $rf->status  = 'Payment Pending';
                 $rf->pmtType = 'At Door';
             } else {
+                $rf->pmtRecd = 1;
                 $rf->status  = 'Processed';
                 $rf->pmtType = 'No Charge';
             }
