@@ -8,6 +8,7 @@
  *
  */
 ?>
+<style> .error {color:red;} </style>
 <div class="form-group">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
         @if(Session::has('alert-'.$msg))

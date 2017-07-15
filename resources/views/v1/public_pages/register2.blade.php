@@ -41,7 +41,7 @@ if($event->isSymmetric) {
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    {!! Form::open(['url' => '/complete_registration/'.$rf->regID, 'method' => 'post', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    {!! Form::open(['url' => '/complete_registration/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
 
     <div class="whole">
 
@@ -370,7 +370,7 @@ if($event->isSymmetric) {
                                                                 <td colspan="3" style="text-align:left;">
                                                             @else
                                                                 <td colspan="2" style="text-align:left;">
-                                                                    @endif
+                                                            @endif
 <?php
                                                                     $t = EventSession::where([
                                                                         ['trackID', $track->trackID],
@@ -388,7 +388,6 @@ if($event->isSymmetric) {
                                                                     <script>
                                                                         $(document).ready(function () {
                                                                             $("input:radio[name='{{ 'sess-'. $j . '-'.$x }}']").on('change', function () {
-                                                                                console.log("{{ 'sess-'. $j . '-'.$x .'-x' }}  changed.");
                                                                                 if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {
                                                                                     $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
                                                                                 } else {
@@ -396,7 +395,6 @@ if($event->isSymmetric) {
                                                                                 }
                                                                             });
                                                                             $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) }}']").on('change', function () {
-                                                                                console.log("{{ 'sess-'.$j.'-'.($x-1) . '-' . $myTess }}  changed.");
                                                                                 if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")) {
                                                                                     $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
                                                                                 } else {
@@ -485,6 +483,11 @@ if($event->isSymmetric) {
                 image: 'https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png',
                 locale: 'auto',
                 token: function (token) {
+                    for (var key in token) {
+                        if (token.hasOwnProperty(key)) {
+                            console.log(key + " -> " + token[key]);
+                        }
+                    }
                     input1 = $("<input>")
                         .attr("type", "hidden")
                         .attr("name", "stripeToken").val(token.id);
@@ -495,6 +498,11 @@ if($event->isSymmetric) {
                         .attr("name", "stripeEmail").val(token.email);
                     $('#complete_registration').append($(input2));
 
+                    input3 = $("<input>")
+                        .attr("type", "hidden")
+                        .attr("name", "stripeTokenType").val(token.type);
+                    $('#complete_registration').append($(input3));
+
                     $('#complete_registration').submit();
                 }
             });
@@ -502,7 +510,6 @@ if($event->isSymmetric) {
             $('#card1').on('click', function (e) {
                 // Open Checkout with further options:
                 e.preventDefault();
-                console.log('card button pressed...');
                 $('#complete_registration').validate();
                 if( $('#complete_registration').valid() ){
                     handler.open({
@@ -512,15 +519,12 @@ if($event->isSymmetric) {
                         email: "{{ $person->login }}",
                         amount: {{ $rf->cost*100 }}
                     });
-                    console.log('handler opened....');
                 }
-                console.log(handler);
             });
 
             $('#card2').on('click', function (e) {
                 // Open Checkout with further options:
                 e.preventDefault();
-                console.log('card button pressed...');
                 $('#complete_registration').validate();
                 if( $('#complete_registration').valid() ){
                     handler.open({
@@ -530,9 +534,7 @@ if($event->isSymmetric) {
                         email: "{{ $person->login }}",
                         amount: {{ $rf->cost*100 }}
                     });
-                    console.log('handler opened....');
                 }
-                console.log(handler);
             });
 
             // Close Checkout on page navigation:

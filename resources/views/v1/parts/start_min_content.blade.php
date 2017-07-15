@@ -1,9 +1,9 @@
 <?php
 /**
-
-* Comment: This starts all content boxes with a title (and small text) above an <hr>
- * Created: 2/2/2017
-*
+ * Comment: This starts all content boxes with a title (and floated-right text) above an <hr>
+ *          Starts with content area minimized
+ * Created: 7/11/2017
+ *
  * $header, $subheader, $w1, $w2, $r1, $r2, $r3 [optional $id]
  *
  */
@@ -17,9 +17,9 @@ if(isset($id)) {
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
         @endif
         ">
-    <div {!!  $id or '' !!}class="x_panel">
+    <div {!!  $id or '' !!}class="x_panel collapsed">
         <div class="x_title">
-            <h2>{!! $header !!}<small>&nbsp;{!! $subheader !!}</small></h2>
+            <h2>{!! $header !!}</h2>
 
             @if ($r1+$r2+$r3 > 0)
 
@@ -46,6 +46,7 @@ if(isset($id)) {
 
                 </ul>
             @endif
+            <h2 style="float:right;">{!! $subheader !!} &nbsp; &nbsp; </h2>
 
             <div class="clearfix"></div>
         </div>

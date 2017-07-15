@@ -2,11 +2,11 @@
 
 namespace App;
 
-use Spatie\Activitylog\Traits\LogsActivity;
+// use Spatie\Activitylog\Traits\LogsActivity;
 
 class RegSession extends Model
 {
-    use LogsActivity;
+    // use LogsActivity;
     // The table
     protected $table = 'reg-session';
     protected $primaryKey = 'id';
