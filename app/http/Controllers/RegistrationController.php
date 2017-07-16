@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Org;
 use App\Person;
 use App\OrgPerson;
 use App\Registration;
@@ -708,9 +709,10 @@ class RegistrationController extends Controller
 
         $needSessionPick = 0;
         $verb = 'canceled';
+        $event = Event::find($reg->eventID);
+        $org = Org::find($event->orgID);
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
-
 
         if($reg->regStatus == 'pending'){
             $reg->delete();
@@ -727,7 +729,7 @@ class RegistrationController extends Controller
                     $rf->save();
                     $reg->save();
                 } catch(Exception $e){
-                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ');
+                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
                 $rf->delete();
                 $reg->delete();
@@ -744,7 +746,7 @@ class RegistrationController extends Controller
                     $rf->save();
                     $reg->save();
                 } catch(\Exception $e){
-                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ');
+                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
                 $reg->delete();
             }
@@ -764,6 +766,11 @@ class RegistrationController extends Controller
             $reg->delete();
             $rf->delete();
             $verb = 'canceled';
+        }
+
+        // Set a warning message to call the organization if there was an issue.
+        if($reg->subtotal > 0 && $rf->stripeChargeID === null) {
+            request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
         }
 
         // Now, decrement registration counts where required

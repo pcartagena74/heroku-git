@@ -87,19 +87,19 @@ if($reg->regID == 8674){
                 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
 
 @if($event->hasTracks > 0)
-    <div class="col-sm-12 form-group" style="text-align: left; color: yellow; background-color: #2a3f54;">
+    <div class="col-sm-12 well-sm" style="text-align: left; color: yellow; background-color: #2a3f54;">
         Track Selection
     </div>
 
-    <div class="col-sm-12 form-group">
+    <div class="col-sm-12">
         @foreach($tracks as $track)
             @if($tracks->first() == $track || !$event->isSymmetric)
                 <div class="col-sm-1" style="text-align: left;">
-                    Session Times
+                    <b>Session Times</b>
                 </div>
             @endif
             <div class="col-sm-3" style="text-align: left;">
-                {{ $track->trackName }}
+                <b>{{ $track->trackName }}</b>
             </div>
         @endforeach
     </div>
@@ -115,9 +115,10 @@ if($reg->regID == 8674){
 ?>
         @if($tickets->contains('ticketID', $z->ticketID))
             <div class="col-sm-12">&nbsp;<br /></div>
-            <div class="col-sm-12 form-group" style="text-align:center; color: yellow; background-color: #2a3f54;">
+            <div class="col-sm-12 well-sm" style="text-align:center; color: yellow; background-color: #2a3f54;">
                 Day {{ $j }}: {{ $y->ticketLabel  }}
             </div>
+            <div class="col-sm-12">&nbsp;<br /></div>
 
             @for($x=1;$x<=5;$x++)
 <?php

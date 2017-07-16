@@ -13,29 +13,41 @@ class Person extends Model
     protected $primaryKey = 'personID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
 
-    protected static $logAttributes = ['prefName', 'login', 'defaultOrgID', 'title',
+    protected static $logAttributes = ['login', 'defaultOrgID', 'title',
         'compName', 'indName', 'allergenInfo', 'affiliation'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
     protected $hidden = [ 'remember_token' ];
 
     public function emails () {
-        return $this->hasMany(Email::class, 'emailID');
+        return $this->hasMany(Email::class, 'personID', 'personID');
     }
 
     public function addresses () {
-        return $this->hasMany(Address::class, 'addrID');
+        return $this->hasMany(Address::class, 'personID', 'personID');
     }
 
     public function orgperson () {
-        return $this->belongsTo(OrgPerson::class, 'personID');
+        return $this->belongsTo(OrgPerson::class, 'personID', 'personID');
     }
 
     public function user () {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, 'id', 'personID');
     }
 
     public function defaultOrg () {
         return $this->hasOne(Org::class, 'orgID', 'defaultOrgID');
+    }
+
+    public function showDisplayName(){
+        if($this->prefName){
+            return $this->prefName;
+        } else {
+            return $this->firstName;
+        }
+    }
+
+    public function showFullName(){
+        return $this->firstName . " " . $this->lastName;
     }
 }
