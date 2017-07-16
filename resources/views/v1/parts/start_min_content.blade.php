@@ -26,7 +26,7 @@ if(isset($id)) {
                 <ul class="nav navbar-right panel_toolbox">
 
                     @if ($r1==1)
-                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li><a class="collapse-link"><i class="fa fa-chevron-down"></i></a></li>
                     @endif
 
                     @if ($r2==1)

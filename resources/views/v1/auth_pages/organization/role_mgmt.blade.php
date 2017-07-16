@@ -3,8 +3,6 @@
  * Comment:
  * Created: 2/9/2017
  */
-
-$topBits = '';  // remove this if this was set in the controller
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
