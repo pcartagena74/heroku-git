@@ -85,7 +85,8 @@ class RegistrationController extends Controller
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
                      ->where([
                          ['eventID', '=', $event->eventID],
-                         ['status', '!=', 'pending']
+                         ['status', '!=', 'pending'],
+                         ['deleted_at', '!=', null]
                         ])
                      ->groupBy('discountCode')->get();
 

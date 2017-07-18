@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Org;
+use App\Permission;
+use App\Person;
+use App\Role;
 use Illuminate\Http\Request;
 use App\Event;
 use App\EventDiscount;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -12,32 +17,59 @@ class RoleController extends Controller
         $this->middleware('auth');
     }
 
-    public function index() {
-        // responds to /blah
+    public function index () {
+        // responds to GET /role_mgmt
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $org                 = Org::find($this->currentPerson->defaultOrgID);
+        $roles               = Role::where([
+            ['orgID', '=', $org->orgID],
+            ['name', '!=', $org->orgName]
+        ])
+                                   ->whereNotIn('id', [8, 9])
+                                   ->with('permissions')
+                                   ->get();
+
+        $permissions = Permission::all();
+
+        $persons = Person::join('org-person as op', 'op.personID', '=', 'person.personID')
+                         ->with('roles')
+                         ->where([
+                             ['person.personID', '!=', 1],
+                             ['op.orgID', '=', $org->orgID],
+                         ])
+                         ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
+                         ->get();
+
+        return view('v1.auth_pages.organization.role_mgmt', compact('org', 'roles', 'permissions', 'persons'));
     }
 
-    public function show($id) {
+    public function show ($id) {
         // responds to GET /blah/id
     }
 
-    public function create() {
+    public function create () {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request) {
+    public function store (Request $request) {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function edit($id) {
+    public function edit ($id) {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update(Request $request, $id) {
-        // responds to PATCH /blah/id
+    public function update (Request $request, Person $person, Role $role) {
+        // responds to POST /role/{person}/{id}
+        $person->roles()->toggle($role->id);
+
+        $message =
+            '<div class="well bg-blue"> The role "' . $role->display_name . '" was toggled for ' . $person->showFullName() . "</div>";
+        return json_encode(array('status' => 'success', 'message' => $message));
     }
 
-    public function destroy($id) {
+    public function destroy ($id) {
         // responds to DELETE /blah/id
     }
 }

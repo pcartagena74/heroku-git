@@ -63,6 +63,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="/orgsettings">Custom Field Labels</a></li>
                                 <li><a href="/eventdefaults">Event Defaults</a></li>
                                 <li><a href="/load_data">Upload Data</a></li>
+                                <li><a href="/role_mgmt">Roles & Permissions</a></li>
                             </ul>
                         </li>
                     @endif
@@ -86,6 +87,18 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="/events">Manage Events</a></li>
                                 <li><a href="/locations">Location Management</a></li>
                                 <li><a id="add" href="/event/create">Add Event</a></li>
+                                <li><a href="#">New Report <span
+                                                class="label label-success pull-right">Just Define It</span></a></li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('speaker-management'))
+    || Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-microphone"></i> Speaker Management<span
+                                        class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="/speakers">Manage Speakers</a></li>
                                 <li><a href="#">New Report <span
                                                 class="label label-success pull-right">Just Define It</span></a></li>
                             </ul>

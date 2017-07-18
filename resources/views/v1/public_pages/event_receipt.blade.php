@@ -99,7 +99,7 @@ an email url to a form
                     <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
                     <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
-                        <h1>Balance Due at Event</h1>
+                        <h1 style="color:red;">Balance Due at Event</h1>
                     @endif
                 </div>
                 <div class="col-md-3 col-sm-3">
@@ -123,7 +123,7 @@ an email url to a form
                                 <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
                                     #{{ $tcount }}
 
-                                    <span style="float: right;">Registration ID#: {{ $reg->regID }}</span>
+                                    <span style="float: right;">Registration ID#: <span style="color:red;">{{ $reg->regID }}</span></span>
                                 </th>
                             </tr>
                             <tr>

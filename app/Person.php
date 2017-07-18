@@ -19,6 +19,10 @@ class Person extends Model
 
     protected $hidden = [ 'remember_token' ];
 
+    public function roles () {
+        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id');
+    }
+
     public function emails () {
         return $this->hasMany(Email::class, 'personID', 'personID');
     }

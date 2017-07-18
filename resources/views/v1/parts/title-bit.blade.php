@@ -38,10 +38,10 @@ switch ($icon) {
         break;
 }
 ?>
-<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-    <span class="count_top"><i class="fa {{ $itxt }}">&nbsp;</i>{{ $label }}</span>
-    <div class="count green">{{ $number }}</div>
+<div class="col-md-2 col-sm-2 col-xs-3 tile_stats_count">
+    <span style="text-align: center;" class="animated flipInY count_top"><i class="fa {{ $itxt }}">&nbsp;</i>{{ $label }}</span>
+    <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
     @if($ctext <> "")
-        <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>{{ $ctext }}</i>{{ $rtext }}</span>
+        <span style="text-align: center;" class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>{{ $ctext }}</i>{{ $rtext }}</span>
     @endif
 </div>

@@ -16,7 +16,7 @@ class PersonController extends Controller
     }
 
     public function index () {
-        // responds to /blah; This is for member management page
+        // responds to GET /members; This is for member management page
         $this->currentPerson = Person::find(auth()->user()->id);
         $topBits             = [];
         $total_people        = DB::table('person')
@@ -68,7 +68,7 @@ class PersonController extends Controller
     }
 
     public function show ($id) {
-        // responds to GET /blah/id
+        // responds to GET /profile/{id}
         $this->currentPerson = Person::find(auth()->user()->id);
         if($id=='my') {
             $id = $this->currentPerson->personID;
