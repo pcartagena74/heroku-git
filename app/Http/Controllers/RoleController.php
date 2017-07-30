@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Event;
 use App\EventDiscount;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class RoleController extends Controller
 {
@@ -25,13 +26,15 @@ class RoleController extends Controller
             ['orgID', '=', $org->orgID],
             ['name', '!=', $org->orgName]
         ])
-                                   ->whereNotIn('id', [8, 9])
+                                   ->whereNotIn('id', [0])
                                    ->with('permissions')
                                    ->get();
 
         $permissions = Permission::all();
 
-        $persons = Person::join('org-person as op', 'op.personID', '=', 'person.personID')
+        $persons = Cache::get('all_people', function() {
+            $org = Org::find($this->currentPerson->defaultOrgID);
+            return Person::join('org-person as op', 'op.personID', '=', 'person.personID')
                          ->with('roles')
                          ->where([
                              ['person.personID', '!=', 1],
@@ -39,6 +42,7 @@ class RoleController extends Controller
                          ])
                          ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
                          ->get();
+        });
 
         return view('v1.auth_pages.organization.role_mgmt', compact('org', 'roles', 'permissions', 'persons'));
     }

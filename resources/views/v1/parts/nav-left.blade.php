@@ -28,7 +28,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
 
         <div class="profile"><!-- img_2 -->
             <div class="profile_pic">
-                <img src="/images/{{ $GLOBALS{'user_pic'} or 'user.png' }}" alt="..." class="img-circle profile_img">
+                <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" class="img-circle profile_img">
             </div>
             <div class="profile_info">
                 <span>Welcome,</span>
@@ -44,14 +44,15 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                 <ul class="nav side-menu">
                     <li><a><i class="fa fa-home"></i> My Settings <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
+{{--
+        The piece about multiple organizations would go here...
+--}}
                             @if (0)
                                 <li><a href="/orgs">My Organizations</a></li>
                             @endif
                             <li><a href="/dashboard">My Dashboard</a></li>
                             <li><a href="/upcoming">My Future Events</a></li>
                             <li><a href="/profile/my">My Profile</a></li>
-                            <li><a href="#">Something New? <span
-                                            class="label label-success pull-right">Tell me what...</span></a></li>
                         </ul>
                     </li>
 
@@ -71,11 +72,11 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         || Entrust::hasRole('Development'))
                         <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="/members">Member Management</a></li>
-                                <li><a href="#">Merge Members <span
+                                <li><a href="/members" id="mem">Member Management</a></li>
+                                <li><a href="/merge/p">Merge Members <span
+                                                class="label label-success pull-right">New</span></a></li>
+                                <li><a href="#">Something New... <span
                                                 class="label label-success pull-right">Coming Soon</span></a></li>
-                                <li><a href="#">Role Provisioning <span
-                                                class="label label-success pull-right">Next Week</span></a></li>
                             </ul>
                         </li>
                     @endif
@@ -109,13 +110,13 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
         </div>
 
         <div class="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Settings">
+            <a data-toggle="tooltip" data-placement="top" title="Coming Soon: Settings">
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
             </a>
-            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+            <a data-toggle="tooltip" data-placement="top" title="Coming Soon: FullScreen">
                 <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
             </a>
-            <a data-toggle="tooltip" data-placement="top" title="Lock">
+            <a data-toggle="tooltip" data-placement="top" title="Coming Soon: Lock">
                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
             </a>
             <a href="/logout" data-toggle="tooltip" data-placement="top" title="Logout">

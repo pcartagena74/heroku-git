@@ -25,10 +25,10 @@ foreach($mbr_list as $mbr) {
     }
 
     $mbr->cnt = $profile_form . $activity_form;
-    // fullName, OrgStat1, OrgStat2, compName, title, indName, 'RelDate4'
+    // fullName, OrgStat1, OrgStat2, compName, title, indName, 'RelDate4' (now named 'Expire') - 7/20/17
 }
+$data = collect($mbr_list);
 
-//dd($members);
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -36,7 +36,7 @@ foreach($mbr_list as $mbr) {
 
     @include('v1.parts.start_content', ['header' => 'Member List', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-    @include('v1.parts.datatable', ['headers' => $headers, 'data' => $mbr_list, 'scroll' => $scroll])
+    @include('v1.parts.datatable', ['headers' => $headers, 'data' => $data->toArray(), 'scroll' => $scroll])
 
     @include('v1.parts.end_content')
 

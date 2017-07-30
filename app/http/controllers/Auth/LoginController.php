@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -88,12 +89,5 @@ class LoginController extends Controller
             ->with('modal_error', 1)
             ->withErrors($errors);
     }
-    /*
-    protected function authenticated(Request $request, $user)
-    {
-        activity()
-            ->performedOn($user)
-            ->log('Login @ ' . Carbon::now());
-    }
-    */
+
 }

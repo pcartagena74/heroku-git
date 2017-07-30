@@ -31,17 +31,17 @@ $headers = ['Last Name', 'First Name', 'Email', 'PMI ID'];
             </div>
 
             @foreach($roles as $r)
-<?php
+                <?php
                 if($counter++ % 2) {
                     $bg = "bg-info";
                 } else {
                     $bg = "";
                 }
-?>
+                ?>
                 <div class="col-sm-12">
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->name }}</div>
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->display_name }}</div>
-                    <div class="col-sm-6 well-sm {{ $bg }}">{{ $r->description }} <br />
+                    <div class="col-sm-6 well-sm {{ $bg }}">{{ $r->description }} <br/>
                         Permissions:
                     </div>
                     {{--
@@ -118,154 +118,174 @@ $headers = ['Last Name', 'First Name', 'Email', 'PMI ID'];
             </thead>
             <tbody>
             @foreach ($persons as $p)
-<?php
+                <?php
 
                 if($p->roles->contains('id', 1)) {
                     $board_color = 'btn-lpurple';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Board Role" ';
                 } else {
                     $board_color = 'btn-purple';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Board Role" ';
                 }
 
                 $board =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '1)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-users"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '1)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-users"></i></a>';
 
                 if($p->roles->contains('id', 2)) {
                     $board_color = 'btn-lred';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Speaker Role" ';
                 } else {
                     $board_color = 'btn-red';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Speaker Role" ';
                 }
                 $speaker =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '2)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-microphone"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '2)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-microphone"></i></a>';
 
                 if($p->roles->contains('id', 3)) {
                     $board_color = 'btn-ldeep-purple';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Events Role" ';
                 } else {
                     $board_color = 'btn-deep-purple';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Events Role" ';
                 }
                 $event =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '3)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-calendar"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '3)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-calendar"></i></a>';
 
                 if($p->roles->contains('id', 4)) {
                     $board_color = 'btn-lblue';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Volunteer Role" ';
                 } else {
                     $board_color = 'btn-blue';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Volunteer Role" ';
                 }
                 $volunteer =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '4)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-thumbs-o-up"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '4)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-thumbs-o-up"></i></a>';
 
                 if($p->roles->contains('id', 6)) {
                     $board_color = 'btn-lcyan';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Speaker-Volunteer Role" ';
                 } else {
                     $board_color = 'btn-cyan';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Speaker-Volunteer Role" ';
                 }
                 $spkvol =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '6)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-microphone-slash"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '6)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-microphone-slash"></i></a>';
 
                 if($p->roles->contains('id', 7)) {
                     $board_color = 'btn-lteal';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove RoundTable-Volunteer Role" ';
                 } else {
                     $board_color = 'btn-teal';
+                    $tooltip     = 'data-toggle="tooltip" title="Add RoundTable-Volunteer Role" ';
                 }
                 $rtvol =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '7)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-circle-o"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '7)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-circle-o"></i></a>';
 
                 if($p->roles->contains('id', 8)) {
                     $board_color = 'btn-lgreen';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Admin Role" ';
                 } else {
                     $board_color = 'btn-green';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Admin Role" ';
                 }
                 $admin =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '8)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-dashboard"></i></button>';
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '8)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-dashboard"></i></a>';
 
                 if($p->roles->contains('id', 9)) {
                     $board_color = 'btn-lamber';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Developer Role" ';
                 } else {
                     $board_color = 'btn-amber';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Developer Role" ';
                 }
                 $dev =
-                    '<button onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-file-archive-o"></i></button>';
-?>
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-file-archive-o"></i></a>';
+
+                if($p->roles->contains('id', 11)) {
+                    $board_color = 'btn-llime';
+                    $tooltip     = 'data-toggle="tooltip" title="Remove Marketing Role" ';
+                } else {
+                    $board_color = 'btn-lime';
+                    $tooltip     = 'data-toggle="tooltip" title="Add Marketing Role" ';
+                }
+                $mktg =
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
+                    . '<i class="fa fa-bar-chart"></i></a>';
+                ?>
                 <tr>
                     <td style="vertical-align: top; text-align: left;">{!! $p->lastName !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->firstName !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->login !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->OrgStat1 !!}</td>
                     <td style="vertical-align: top; text-align: left;">
-                        {!! $board !!} {!! $speaker !!} {!! $event !!} {!! $volunteer !!}
-                        {!! $spkvol !!} {!! $rtvol !!}
-    @if((Entrust::hasRole('Admin')))
-                            {!! $admin !!} {!! $dev !!}
-    @endif
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
+                        {!! $board !!}
+                        {!! $mktg !!}
+                        {!! $event !!}
+                        {!! $rtvol !!}
+                        {!! $spkvol !!}
+                        {!! $volunteer !!}
+                        {!! $speaker !!}
+                        @if((Entrust::hasRole('Admin')))
+                            {!! $admin !!}
+                        @endif
+                        @if((Entrust::hasRole('Developer')))
+                            {!! $dev !!}
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
 
-        @include('v1.parts.end_content')
+    @include('v1.parts.end_content')
 
-        @include('v1.parts.end_content')
+    @include('v1.parts.end_content')
 
 
-    @endsection
+@endsection
 
-    @section('scripts')
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-            $('.collapsed').css('height', 'auto');
-            $('.collapsed').find('.x_content').css('display', 'none');
-            {{--
-                    $('.collapsed').find('i').toggleClass('fa-chevron-up fa-chevron-down');
-            --}}
-        </script>
-        @include('v1.parts.footer-datatable')
-        <script>
+@section('scripts')
+    @include('v1.parts.footer-datatable')
+    <script>
+        $('.collapsed').css('height', 'auto');
+        $('.collapsed').find('.x_content').css('display', 'none');
+        $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        </script>
-        <script>
-            $('[data-toggle=confirmation]').confirmation();
-        </script>
-        <script>
-            $(document).ready(function () {
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                    $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
-                });
-                $('#datatable-fixed-header').DataTable().search('').draw();
+            $('#datatable-fixed-header').DataTable();
+        });
+
+        function activate(personID, id) {
+            $.ajax({
+                type: 'POST',
+                cache: false,
+                async: true,
+                url: '/role/' + personID + '/' + id,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    var result = eval(data);
+                    $('#role_mgmt_status').html(data.message);
+                    // window.location="/role_mgmt";
+                },
+                error: function (data) {
+                    console.log(data);
+                    var result = eval(data);
+                    //$('#status_msg').html(result.message).fadeIn(0);
+                }
             });
-        </script>
-        <script>
-            function activate(personID, id) {
-                $.ajax({
-                    type: 'POST',
-                    cache: false,
-                    async: true,
-                    url: '/role/' + personID + '/' + id,
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log(data);
-                        var result = eval(data);
-                        $('#role_mgmt_status').html(data.message);
-                        // window.location="/role_mgmt";
-                    },
-                    error: function (data) {
-                        console.log(data);
-                        var result = eval(data);
-                        //$('#status_msg').html(result.message).fadeIn(0);
-                    }
-                });
-            };
-        </script>
-    @endsection
+        };
+    </script>
+@endsection

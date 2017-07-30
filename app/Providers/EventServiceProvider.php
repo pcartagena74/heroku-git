@@ -16,8 +16,11 @@ class EventServiceProvider extends ServiceProvider
         'Illuminate\Auth\Events\Login' => [
             'App\Listeners\LogSuccessfulLogin',
         ],
-        /*
 
+        \SocialiteProviders\Manager\SocialiteWasCalled::class => [
+            'SocialiteProviders\LinkedIn\LinkedInExtendSocialite@handle',
+        ]
+        /*
         'Illuminate\Auth\Events\Registered' => [
         'App\Listeners\LogRegisteredUser',
     ],
@@ -49,8 +52,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
+    public function boot () {
         parent::boot();
 
 

@@ -40,6 +40,10 @@ Route::get('/', 'SessionController@create')->name('main_page');
 Route::get('/login', 'SessionController@create');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 
+Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
+Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
+
+
 Route::get('/policies', function(){
     return view('v1.public_pages.policies');
 });
@@ -91,6 +95,9 @@ Route::post('/address/{id}/delete', 'AddressController@destroy');
 Route::post('/email/{id}', 'EmailController@update');
 Route::post('/emails/create', 'EmailController@store');
 Route::post('/email/{id}/delete', 'EmailController@destroy');
+Route::post('/phone/{id}', 'PhoneController@update');
+Route::post('/phones/create', 'PhoneController@store');
+Route::post('/phone/{id}/delete', 'PhoneController@destroy');
 
 
 // Organizational Routes
@@ -111,7 +118,16 @@ Route::post('/role/{person}/{role}', 'RoleController@update');                  
 // Member Routes
 // ---------------------
 Route::get('/members', 'PersonController@index')->name('manageMembers');
+Route::get('/merge/{model_code}/{id1?}/{id2?}', 'MergeController@show')->name('showMergeModel');
+//Route::get('/find', 'MergeController@find')->name('search');
+Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete');
+Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
+Route::post('/execute_merge', 'MergeController@store')->name('step2');
 
+// Speaker Routes
+// ---------------------
+Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
+//Route::get('/speakers2', 'SpeakerController@index2')->name('manageSpeakers2');
 
 // Event Routes
 // ---------------------
