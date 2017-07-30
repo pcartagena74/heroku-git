@@ -10,6 +10,27 @@
 |
 */
 
+/*  This is to debug by seeing eloquent --> sql
+
+\Event::listen('Illuminate\Database\Events\QueryExecuted', function ($query) {
+    var_dump($query->sql);
+    var_dump($query->bindings);
+    var_dump($query->time);
+});
+*/
+
+/*
+Route::get('/linkedin1', 'SocialController@linkedin_login');
+
+Route::get('/linkedin2', function()
+{
+    $data = Session::get('data');
+    //return View::make('user')->with('data', $data);
+    $topBits = '';
+    return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
+});
+*/
+
 // Public Routes
 Route::get('/', 'SessionController@create')->name('main_page');
 
@@ -18,6 +39,10 @@ Route::get('/', 'SessionController@create')->name('main_page');
 
 Route::get('/login', 'SessionController@create');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
+
+Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
+Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
+
 
 Route::get('/policies', function(){
     return view('v1.public_pages.policies');
@@ -44,13 +69,6 @@ Route::get('/checkin/{event}/{session?}', 'RegSessionController@volunteer_checki
 Route::post('/process_checkin', 'RegSessionController@process_checkin');
 
 
-// No-Longer-Public Event-Registration Routes
-Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
-Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
-Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
-Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
-Route::post('/reg_verify/{reg}', 'RegistrationController@update');
-Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
 
 
 Route::get('/storage/events/{filename}', function($filename){
@@ -59,7 +77,7 @@ Route::get('/storage/events/{filename}', function($filename){
 });
 
 // Individual Page Routes
-
+// ---------------------
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
 Route::get('/home', 'ActivityController@index')->name('home');
@@ -68,6 +86,7 @@ Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->n
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 
 // My Profile / Member Editing
+// ---------------------
 Route::get('/profile/{id}', 'PersonController@show')->name('showMemberProfile');
 Route::post('/profile/{id}', 'PersonController@update');
 Route::post('/address/{id}', 'AddressController@update');
@@ -76,7 +95,49 @@ Route::post('/address/{id}/delete', 'AddressController@destroy');
 Route::post('/email/{id}', 'EmailController@update');
 Route::post('/emails/create', 'EmailController@store');
 Route::post('/email/{id}/delete', 'EmailController@destroy');
+Route::post('/phone/{id}', 'PhoneController@update');
+Route::post('/phones/create', 'PhoneController@store');
+Route::post('/phone/{id}/delete', 'PhoneController@destroy');
 
+
+// Organizational Routes
+// ---------------------
+// Settings
+Route::get('/orgsettings', 'OrgController@index');
+Route::get('/orgsettings/{id}', 'OrgController@show');
+Route::post('/orgsettings/{id}', 'OrgController@update');                       // Ajax
+Route::get('/eventdefaults', 'OrgController@event_defaults');
+Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');              // Ajax
+
+Route::get('/load_data', 'UploadController@index');
+Route::post('/load_data', 'UploadController@store');
+
+Route::get('/role_mgmt', 'RoleController@index');
+Route::post('/role/{person}/{role}', 'RoleController@update');                  // Ajax
+
+// Member Routes
+// ---------------------
+Route::get('/members', 'PersonController@index')->name('manageMembers');
+Route::get('/merge/{model_code}/{id1?}/{id2?}', 'MergeController@show')->name('showMergeModel');
+//Route::get('/find', 'MergeController@find')->name('search');
+Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete');
+Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
+Route::post('/execute_merge', 'MergeController@store')->name('step2');
+
+// Speaker Routes
+// ---------------------
+Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
+//Route::get('/speakers2', 'SpeakerController@index2')->name('manageSpeakers2');
+
+// Event Routes
+// ---------------------
+// No-Longer-Public Event-Registration Routes
+Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
+Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
+Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
+Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
+Route::post('/reg_verify/{reg}', 'RegistrationController@update');
+Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
 
 // Event & Ticket Routes
 Route::get('/events', 'EventController@index')->name('manageEvents');
@@ -117,21 +178,6 @@ Route::get('/locations', 'LocationController@index');
 Route::post('/location/update', 'LocationController@update');                   // Ajax
 Route::get('/locations/{id}', 'LocationController@show');
 
-
-// Organizational Routes
-// ---------------------
-// Settings
-Route::get('/orgsettings', 'OrgController@index');
-Route::get('/orgsettings/{id}', 'OrgController@show');
-Route::post('/orgsettings/{id}', 'OrgController@update');                       // Ajax
-Route::get('/eventdefaults', 'OrgController@event_defaults');
-Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');              // Ajax
-
-Route::get('/load_data', 'UploadController@index');
-Route::post('/load_data', 'UploadController@store');
-
-// Member Routes
-Route::get('/members', 'PersonController@index')->name('manageMembers');
 
 
 // ----------------------------------------------------------------------------------

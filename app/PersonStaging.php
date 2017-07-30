@@ -2,20 +2,19 @@
 
 namespace App;
 
-use Spatie\Activitylog\Traits\LogsActivity;
+//use Spatie\Activitylog\Traits\LogsActivity;
 
 class PersonStaging extends Model
 {
-    use LogsActivity;
+    //use LogsActivity;
 
     // The table
     protected $table = 'person-staging';
     protected $primaryKey = 'personID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
 
-    protected static $logAttributes = ['prefName', 'login', 'defaultOrgID', 'title',
-        'compName', 'indName', 'allergenInfo', 'affiliation'];
-    protected static $ignoreChangedAttributes = ['createDate'];
+    //protected static $logAttributes = ['prefName', 'login', 'defaultOrgID', 'title', 'compName', 'indName', 'allergenInfo', 'affiliation'];
+    //protected static $ignoreChangedAttributes = ['createDate'];
 
     protected $hidden = [ 'remember_token' ];
 

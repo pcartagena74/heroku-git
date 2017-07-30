@@ -31,6 +31,9 @@
     </div>
 </div>
 @include('v1.parts.footer_script')
+<script>
+    $("[data-toggle=tooltip]").tooltip();
+</script>
 @yield('scripts')
 @yield('modals')
 </body>

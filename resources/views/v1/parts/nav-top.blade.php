@@ -19,16 +19,20 @@ $currentPerson = App\Person::find(auth()->user()->id);
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a href="#" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="/images/{{ $GLOBALS{'user_pic'} or 'user.png' }}" alt="">
+                        <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar">
                         {{ $currentPerson->prefName or $currentPerson->firstName }}
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
                         <li><a href="/profile/my"> Profile</a></li>
                         <li>
-                            <a href="javascript:;">
-                                <span class="badge bg-red pull-right">50%</span>
-                                <span>Settings</span>
+                            <a href="/profile/linkedin">
+                                @if($currentPerson->avatarURL !== null)
+                                    <span class="badge bg-success pull-right">&nbsp;</span>
+                                @else
+                                <span class="badge bg-red pull-right">&nbsp;</span>
+                                @endif
+                                <span>Connect Linked In</span>
                             </a>
                         </li>
                         <li><a href="javascript:;">Help</a></li>

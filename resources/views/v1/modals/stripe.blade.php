@@ -2,8 +2,12 @@
 /**
  * Comment: A pop-up to collect user charge card info and send to stripe
  * Created: 3/20/2017
+ *
+ * This does not appear to be used.  Commented it all out on 7/18.  If no errors, will delete.
+ *
  */
 
+/*
 Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
 // Token is created using Stripe.js or Checkout!
@@ -23,3 +27,4 @@ $charge = \Stripe\Charge::create(array(
 var stripe = Stripe(env('STRIPE_KEY'));
 var elements = stripe.elements();
 </script>
+*/

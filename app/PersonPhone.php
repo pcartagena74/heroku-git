@@ -3,8 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Person;
 
-class Phone extends Model
+class PersonPhone extends Model
 {
     protected $table = 'person-phone';
     protected $primaryKey = 'phoneID';
@@ -13,6 +14,6 @@ class Phone extends Model
     protected $dates = ['createDate', 'updateDate'];
 
     public function person() {
-        return $this->belongsTo(Person::class, 'personID');
+        return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 }
