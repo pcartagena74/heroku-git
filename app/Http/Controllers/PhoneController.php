@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Person;
-use App\PersonPhone;
+use App\Phone;
 
 class PhoneController extends Controller
 {
@@ -25,7 +25,7 @@ class PhoneController extends Controller
 
             if(!empty($ad1)) {
                 // check to see if this is the database already (someone else's phone)
-                if($inDB = PersonPhone::where('phoneNumber', $ad1)->first()) {
+                if($inDB = Phone::where('phoneNumber', $ad1)->first()) {
                     // check that the phone in the database actually belongs to the personID getting edited
                     if($inDB->personID == request()->input('personID')) {
                         $inDB->updaterID = $this->currentPerson->personID;
@@ -34,7 +34,7 @@ class PhoneController extends Controller
                         // something if the personIDs do not match
                     }
                 } else {
-                    $newAddr              = new PersonPhone;
+                    $newAddr              = new Phone;
                     $newAddr->personID    = request()->input('personID');
                     $newAddr->phoneType   = $type;
                     $newAddr->phoneNumber = $ad1;
@@ -53,7 +53,7 @@ class PhoneController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
-        $email          = PersonPhone::find($id);
+        $email          = Phone::find($id);
         $name           = request()->input('name');
         $value          = request()->input('value');
         $name           = substr($name, 0, -1);
@@ -65,7 +65,7 @@ class PhoneController extends Controller
         // responds to DELETE /blah/id
         $personID = request()->input('personID');
         $this->currentPerson = Person::find(auth()->user()->id);
-        $email               = PersonPhone::find($id);
+        $email               = Phone::find($id);
         $email->updaterID    = $this->currentPerson->personID;
         $email->save();
         $email->delete();

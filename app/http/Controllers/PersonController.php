@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\OrgPerson;
 use App\PersonSocialite;
-use App\PersonPhone;
+use App\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Address;
@@ -173,7 +173,7 @@ class PersonController extends Controller
             Email::where('personID', $id)->select('emailID', 'emailTYPE', 'emailADDR', 'isPrimary')->orderBy('isPrimary', 'DESC')->get();
 
         $phones =
-            PersonPhone::where('personID', $id)->select('phoneID', 'phoneType','phoneNumber')->get();
+            Phone::where('personID', $id)->select('phoneID', 'phoneType','phoneNumber')->get();
 
         return view('v1.auth_pages.members.profile',
             compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails',

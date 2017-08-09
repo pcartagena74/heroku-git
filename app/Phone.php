@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Person;
 
-class PersonPhone extends Model
+class Phone extends Model
 {
     protected $table = 'person-phone';
     protected $primaryKey = 'phoneID';
