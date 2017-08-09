@@ -86,9 +86,12 @@ class RegistrationController extends Controller
                      ->where([
                          ['eventID', '=', $event->eventID],
                          ['status', '!=', 'pending'],
-                         ['deleted_at', '!=', null]
+                         ['status', '!=', 'Cancelled'],
+                         ['status', '!=', 'Canceled'],
+//                         ['deleted_at', 'is', null]
                         ])
-                     ->groupBy('discountCode')->get();
+                     ->groupBy('discountCode')
+                     ->orderBy('cnt', 'desc')->get();
 
         foreach($discPie as $d){
             if($d->discountCode == '' || $d->discountCode === null){

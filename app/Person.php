@@ -36,6 +36,10 @@ class Person extends Model
         return $this->hasMany(Email::class, 'personID', 'personID');
     }
 
+    public function phones () {
+        return $this->hasMany(Phone::class, 'personID', 'personID');
+    }
+
     public function addresses () {
         return $this->hasMany(Address::class, 'personID', 'personID');
     }

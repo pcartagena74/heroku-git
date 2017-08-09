@@ -90,6 +90,8 @@ class EventController extends Controller
         $e->isActive = 0;
         $e->eventStartDate = $today;
         $e->eventEndDate = $today;
+        // this is here until we decide to copy EVERYTHING associated with a PD Day event
+        $e->hasTracks = 0;
         $e->save();
         $e->slug = $e->eventID;
         $e->save();

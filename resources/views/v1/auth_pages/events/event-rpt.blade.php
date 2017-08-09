@@ -285,7 +285,17 @@ if($event->hasTracks && $event->isSymmetric) {
                         "#9b59b6",
                         "#f1c40f",
                         "#e74c3c",
-                        "#34495e"
+                        "#34495e",
+                        "#b7ad6c",
+                        "#CCFDFF",
+                        "#ccffde",
+                        "#d7ccff",
+                        "#ffccf3",
+                        "#ffcccc",
+                        "#ff9651",
+                        "#ff0000",
+                        "#00ff00",
+                        "#0000ff"
                     ],
 
                     data: [
