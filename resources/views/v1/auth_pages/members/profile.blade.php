@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 $currentPerson = App\Person::find(auth()->user()->id);
 $string = '';
-$profile_script_url = "/profile/$profile->personID";
-$addrURL = "/address/";
-$emailURL = "/email/";
-$phoneURL = "/phone/";
+$profile_script_url = env('APP_URL')."/profile/$profile->personID";
+$addrURL = env('APP_URL')."/address/";
+$emailURL = env('APP_URL')."/email/";
+$phoneURL = env('APP_URL')."/phone/";
 $ad_cnt = 0;  $em_cnt = 0; $ph_cnt = 0;
 
 if($profile->personID == $currentPerson->personID) {

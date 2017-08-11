@@ -24,7 +24,7 @@
     <br>
     Please rate the speaker/presentation in the following categories.
     <p>&nbsp;</p>
-    {!! Form::open((['url' => '/rs_survey', 'method' => 'post', 'id' => 'session_survey', 'data-toggle' => 'validator'])) !!}
+    {!! Form::open((['url' => env('APP_URL').'/rs_survey', 'method' => 'post', 'id' => 'session_survey', 'data-toggle' => 'validator'])) !!}
 
     {!! Form::hidden('eventID', $event->eventID) !!}
     {!! Form::hidden('orgID', $org->orgID) !!}

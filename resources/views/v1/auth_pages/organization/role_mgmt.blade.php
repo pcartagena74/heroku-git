@@ -272,7 +272,7 @@ $headers = ['Last Name', 'First Name', 'Email', 'PMI ID'];
                 type: 'POST',
                 cache: false,
                 async: true,
-                url: '/role/' + personID + '/' + id,
+                url: '{{ env('APP_URL') }}/role/' + personID + '/' + id,
                 dataType: 'json',
                 success: function (data) {
                     console.log(data);

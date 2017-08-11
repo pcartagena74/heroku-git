@@ -46,7 +46,7 @@ $tickets = Ticket::where([
         </ol>
     </div>
     <div class="col-sm-3">
-        {!! Form::open(array('url' => '/tracksymmetry/'.$event->eventID, 'method' => 'post')) !!}
+        {!! Form::open(array('url' => env('APP_URL').'/tracksymmetry/'.$event->eventID, 'method' => 'post')) !!}
         {!! Form::label('isSymmetric', 'Are the session times standard (the same) for all tracks?', array('class' => 'control-label',
         'data-toggle'=>'tooltip', 'title'=>'If most sessions are, say yes for now.  You can change this later (after setting up the similar sessions) to adjust the times of individual differences.')) !!}
         @if($event->isSymmetric !== null && $event->isSymmetric != 1)
@@ -64,7 +64,7 @@ $tickets = Ticket::where([
         {!! Form::label('confDays', 'How many days of sessions require planning for this event?', array('class' => 'control-label')) !!}
         <div class="col-sm-12 col-md-12 col-xs-12">
             <b><a style="color:red;" id="confDays" data-pk="{{ $event->eventID }}"
-                  data-url="/eventDays/{{ $event->eventID }}" data-value="{{ $event->confDays }}"></a></b>
+                  data-url="{{ env('APP_URL') }}/eventDays/{{ $event->eventID }}" data-value="{{ $event->confDays }}"></a></b>
         </div>
     </div>
 
@@ -83,7 +83,7 @@ $tickets = Ticket::where([
                         <th colspan="2" style="text-align:center;">
                             <a id="trackName{{ $track->trackID }}"
                                data-pk="{{ $track->trackID }}"
-                               data-url="/track/{{ $track->trackID }}"
+                               data-url="{{ env('APP_URL') }}/track/{{ $track->trackID }}"
                                data-value="{{ $track->trackName }}"></a>
                         </th>
                     @endforeach
@@ -105,7 +105,7 @@ $tickets = Ticket::where([
                             colspan="{{ $columns }}">Day {{ $i }} Sessions using Ticket:
                             <a style="color:yellow;" id="ticketLabel-{{ $i}}"
                                data-pk="{{ $track->trackID }}"
-                               data-url="/trackticket/{{ $i }}"
+                               data-url="{{ env('APP_URL') }}/trackticket/{{ $i }}"
                                data-value="{{ $x->ticketID  }}"></a>
                         </th>
                     </tr>
@@ -142,19 +142,19 @@ $tickets = Ticket::where([
                                                 @if($s !== null)
                                                     <nobr>
                                                         <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                           data-url="/eventsession/{{ $s->eventID }}"
+                                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
                                                            data-pk="{{ $s->sessionID }}" data-value="{{ $s->start }}"></a>
                                                     </nobr>
                                                     &dash;
                                                     <nobr>
                                                         <a id="end-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                           data-url="/eventsession/{{ $s->eventID }}"
+                                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
                                                            data-pk="{{ $s->sessionID }}" data-value="{{ $s->end }}"></a>
                                                     </nobr>
                                                     <br/>
                                                     @if($s !== null)
                                                         @if($s->sessionName === null)
-                                                            {!! Form::open(array('url' => "/session/".$s->sessionID, 'method' => 'delete')) !!}
+                                                            {!! Form::open(array('url' => env('APP_URL')."/session/".$s->sessionID, 'method' => 'delete')) !!}
                                                             <button type="submit" class="btn btn-danger btn-xs"><i
                                                                     class="fa fa-trash"></i></button>
                                                             {!! Form::close() !!}
@@ -171,7 +171,7 @@ $tickets = Ticket::where([
                                                        style="color: #2a3f54;" class="control-label">Session Title</label><br/>
                                                 <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                    data-pk="{{ $s->sessionID }}"
-                                                   data-url="/eventsession/{{ $event->eventID }}"
+                                                   data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                                    data-value="{{ $s->sessionName }}"></a>
                                             @else
                                                 &nbsp;
@@ -213,7 +213,7 @@ $tickets = Ticket::where([
                                             Speaker(s)</label><br/>
                                         <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->sessionSpeakers }}"></a>
                                 @else
                                     &nbsp;
@@ -250,7 +250,7 @@ $tickets = Ticket::where([
                                                style="color: #2a3f54;" class="control-label">{{ $s->creditAmt }}</label>
                                         <a id="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->creditArea }}"></a>
                                         <label style="color: #2a3f54;"
                                                for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
@@ -265,7 +265,7 @@ $tickets = Ticket::where([
                                             Attendee Limit: </label>
                                         <a id="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->maxAttendees }}"></a>
                                     </td>
                                 @else
@@ -302,7 +302,7 @@ $tickets = Ticket::where([
                                                style="color: #2a3f54;" class="control-label">Abstract</label><br/>
                                         <a id="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
-                                           data-url="/eventsession/{{ $event->eventID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->sessionAbstract }}"></a>
                                 @else
                                     &nbsp;

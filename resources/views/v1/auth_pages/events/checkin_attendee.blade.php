@@ -74,7 +74,7 @@ use App\EventSession;
         @endfor
 
     @else
-        {!! Form::open((['url' => '/process_checkin', 'method' => 'post', 'id' => 'session_registration', 'data-toggle' => 'validator'])) !!}
+        {!! Form::open((['url' => env('APP_URL').'/process_checkin', 'method' => 'post', 'id' => 'session_registration', 'data-toggle' => 'validator'])) !!}
         {!! Form::hidden('eventID', $event->eventID) !!}
         {!! Form::hidden('orgID', $org->orgID) !!}
         {!! Form::hidden('sessionID', $session->sessionID) !!}
