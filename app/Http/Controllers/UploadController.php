@@ -78,11 +78,13 @@ class UploadController extends Controller
                                 // if found, get $person, $org-person, $email, $address, $phone records and update, else create
 
                                 $op     = OrgPerson::where('OrgStat1', '=', (integer)$row->pmi_id)->first();
-                                $emchk1 = Email::where('emailADDR', '=', $row->primary_email)->first();
+                                $em1  = trim(strtolower($row->primary_email));
+                                $em2  = trim(strtolower($row->alternate_email));
+                                $emchk1 = Email::where('emailADDR', '=', $em1)->first();
                                 if($emchk1 !== null) {
                                     $emchk1 = $emchk1->emailADDR;
                                 }
-                                $emchk2 = Email::where('emailADDR', '=', $row->alternate_email)->first();
+                                $emchk2 = Email::where('emailADDR', '=', $em2)->first();
                                 if($emchk2 !== null) {
                                     $emchk2 = $emchk2->emailADDR;
                                 }
@@ -90,8 +92,6 @@ class UploadController extends Controller
                                     ['firstName', '=', $row->first_name],
                                     ['lastName', '=', $row->last_name]
                                 ])->first();
-                                $em1  = trim(strtolower($row->primary_email));
-                                $em2  = trim(strtolower($row->alternate_email));
 
                                 if($op === null && $emchk1 === null && $emchk2 === null && $pchk === null) {
                                     // PMI ID, emails, first/last name are not found so person is completely new; create all records
@@ -108,7 +108,7 @@ class UploadController extends Controller
                                     $p->creatorID    = auth()->user()->id;
                                     $p->defaultOrgID = $this->currentPerson->defaultOrgID;
 
-                                    if($em1 !== null && $em1 != "" && $em1 != " ") {
+                                    if($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1 && $em1 != $emchk2) {
                                         $p->login = $em1;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -124,7 +124,7 @@ class UploadController extends Controller
                                         $e->updaterID = auth()->user()->id;
                                         $e->save();
 
-                                    } elseif($em2 !== null && $em2 != '' && $em2 != ' ') {
+                                    } elseif($em2 !== null && $em2 != '' && $em2 != ' ' && $em2 != $emchk2 && $em2 != $emchk1) {
                                         $p->login = $em2;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -327,6 +327,8 @@ class UploadController extends Controller
                                         $addr->zip = $z;
                                         if(trim(ucwords($row->country)) == 'United States') {
                                             $addr->cntryID = 228;
+                                        } elseif(trim(ucwords($row->country)) == 'Canada') {
+                                            $addr->cntryID = 36;
                                         }
                                         $addr->creatorID = auth()->user()->id;
                                         $addr->updaterID = auth()->user()->id;
@@ -374,8 +376,6 @@ class UploadController extends Controller
                         Excel::load($filename, function($reader) {
                             $results = $reader->get();
 
-                            $this->counter++;
-                            $create_user = 0;
                             $eventID = request()->input('eventID');
                             $tktID   = Ticket::where('eventID', '=', $eventID)->first();
                             if($tktID === null) {
@@ -394,6 +394,8 @@ class UploadController extends Controller
                             $rows          = $results->toArray();
 
                             foreach($rows as $row) {
+                                $this->counter++;
+                                $create_user = 0;
                                 foreach(array_keys($row) as $k) {
                                     switch (1) {
                                         case preg_match('/attended/i', $k):
@@ -969,7 +971,7 @@ class UploadController extends Controller
             $what = 'Event registration records';
         }
 
-        request()->session()->flash('alert-success', "$what were successfully loaded.(" . $this->counter . ")" );
+        request()->session()->flash('alert-success', "$what were successfully loaded. (" . $this->counter . ")" );
         $events = Event::where([
             ['orgID', '=', $this->currentPerson->defaultOrgID]
         ])->get();

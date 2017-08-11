@@ -20,7 +20,7 @@
     <b>Session: {{ $session->sessionName }}</b>
 
     <p>&nbsp;</p>
-    {!! Form::open((['url' => '/rs/' . $session->sessionID . '/edit', 'method' => 'post', 'id' => 'session_registration', 'data-toggle' => 'validator'])) !!}
+    {!! Form::open((['url' => env('APP_URL').'/rs/' . $session->sessionID . '/edit', 'method' => 'post', 'id' => 'session_registration', 'data-toggle' => 'validator'])) !!}
 
     {!! Form::hidden('eventID', $event->eventID) !!}
     {!! Form::hidden('orgID', $org->orgID) !!}

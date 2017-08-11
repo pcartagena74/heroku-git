@@ -422,7 +422,7 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                     type: 'POST',
                     cache: false,
                     async: true,
-                    url: '/discount/' + eventID,
+                    url: '{{ env('APP_URL') }}/discount/' + eventID,
                     dataType: 'json',
                     data: {
                         event_id: eventID,

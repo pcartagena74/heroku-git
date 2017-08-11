@@ -22,7 +22,7 @@ if(isset($blah)){
 
     Upload data by browsing to file and clicking the Upload button.<p>
 
-    <form enctype='multipart/form-data' action='/load_data' method='post'>
+    <form enctype='multipart/form-data' action='{{ env('APP_URL') }}/load_data' method='post'>
         {{ csrf_field() }}
         <div class="col-sm-6 col-xs-6">
 

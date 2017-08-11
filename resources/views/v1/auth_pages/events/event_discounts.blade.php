@@ -40,7 +40,7 @@ $topBits = '';
         <tbody>
         @foreach($discount_codes as $dCode)
             <tr>
-                <td style="text-align: left;"> {!! Form::open(['url'=>'/eventdiscount/'.$dCode->discountID.'/delete','method'=>'DELETE','id'=>"formConfirm-$dCode->discountID",
+                <td style="text-align: left;"> {!! Form::open(['url'=>env('APP_URL').'/eventdiscount/'.$dCode->discountID.'/delete','method'=>'DELETE','id'=>"formConfirm-$dCode->discountID",
         'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
                     <input type="hidden" name="pk" value="{{ $dCode->discountID }}">
                     <input type="hidden" name="function" value="delete">
@@ -49,17 +49,17 @@ $topBits = '';
                     </button> {!! Form::close() !!} </td>
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="discountCODE{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->discountCODE }}" data-url="/eventdiscounts/{{ $dCode->discountID }}"
+                       data-value="{{ $dCode->discountCODE }}" data-url="{{ env('APP_URL') }}/eventdiscounts/{{ $dCode->discountID }}"
                        data-type="text" data-placement="top"></a>
                 </td>
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="percent{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->percent }}" data-url="/eventdiscounts/{{ $dCode->discountID }}"
+                       data-value="{{ $dCode->percent }}" data-url="{{ env('APP_URL') }}/eventdiscounts/{{ $dCode->discountID }}"
                        data-type="text" data-placement="top"></a> <i class="fa fa-percent"></i>
                 </td>
                 <td style="text-align: left;"><i class="fa fa-dollar"></i>
                     <a data-pk="{{ $dCode->discountID }}" id="flatAmt{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->flatAmt }}" data-url="/eventdiscounts/{{ $dCode->discountID }}"
+                       data-value="{{ $dCode->flatAmt }}" data-url="{{ env('APP_URL') }}/eventdiscounts/{{ $dCode->discountID }}"
                        data-type="text" data-placement="top"></a>
                 </td>
             </tr>

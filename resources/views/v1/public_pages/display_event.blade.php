@@ -275,7 +275,7 @@ $today = Carbon\Carbon::now();
                     type: 'POST',
                     cache: false,
                     async: true,
-                    url: '/discount/' + eventID,
+                    url: '{{ env('APP_URL') }}/discount/' + eventID,
                     dataType: 'json',
                     data: {
                         event_id: eventID,

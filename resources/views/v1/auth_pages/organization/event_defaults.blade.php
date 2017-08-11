@@ -77,12 +77,12 @@ $topBits = '';
                 <td style="text-align: left;">{{ $dCode->discountID }}</td>
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="discountCODE{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->discountCODE }}" data-url="/orgdiscounts/{{ $dCode->discountID }}"
+                       data-value="{{ $dCode->discountCODE }}" data-url="{{ env('APP_URL') }}/orgdiscounts/{{ $dCode->discountID }}"
                        data-type="text" data-placement="top"></a>
                 </td>
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="percent{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->percent }}" data-url="/orgdiscounts/{{ $dCode->discountID }}"
+                       data-value="{{ $dCode->percent }}" data-url="{{ env('APP_URL') }}/orgdiscounts/{{ $dCode->discountID }}"
                        data-type="text" data-placement="top"></a>
                 </td>
             </tr>
@@ -121,12 +121,12 @@ $topBits = '';
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '/orgsettings/' + {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }}
             });
 
             $('#orgZone').editable({
                 type: 'select',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
                 source: [
                     @foreach($tz as $zone)
@@ -137,7 +137,7 @@ $topBits = '';
             $('#orgCategory').editable({
                 type: 'select',
                 pk:  {{ $org->orgID }},
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 source: [
                     @foreach($cats as $category)
                     {!! "{ value: '" . $category->catID . "', text: '" . $category->catTXT . "' }," !!}
@@ -149,20 +149,20 @@ $topBits = '';
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '/orgsettings/' + {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }}
             });
 
             $('#eventEmail').editable({
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '/orgsettings/' + {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }}
             });
 
             $("#nearbyChapters").editable({
                 pk:  {{ $org->orgID }},
                 placement: 'top',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 select2: {
                     tags: ["None of the above"],
                     multiple: true

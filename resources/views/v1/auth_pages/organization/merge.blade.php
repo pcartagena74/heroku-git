@@ -77,7 +77,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
     @include('v1.parts.start_content', ['header' => 'Record Merging', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
     @if($collection && !isset($model1))
-        {!! Form::open(array('url' => "/merge/". $letter, 'method' => 'post')) !!}
+        {!! Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) !!}
         <div id="custom-template" class="form-group col-sm-12">
             {!! Form::label('model1', 'Type the name, email or PMI ID of the record that should survive.') !!}<br/>
             {!! Form::text('model1', null, array('id' => 'model', 'class' => 'form-control typeahead input-sm')) !!}
@@ -92,7 +92,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
             <div class="col-sm-6">
         @endif
                 @if($model2 !== null)
-                    {!! Form::open(array('url' => '/execute_merge', 'method' => 'post')) !!}
+                    {!! Form::open(array('url' => env('APP_URL').'/execute_merge', 'method' => 'post')) !!}
                     {!! Form::hidden('model1', $model1->personID, array('id' => 'model1')) !!}
                     {!! Form::hidden('model2', $model2->personID, array('id' => 'model2')) !!}
                     {!! Form::hidden('letter', $letter, array('id' => 'letter')) !!}
@@ -207,7 +207,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                     @else
                         <div class="col-sm-6">
                             @if($collection && !isset($model2))
-                                {!! Form::open(array('url' => "/merge/". $letter, 'method' => 'post')) !!}
+                                {!! Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) !!}
                                 <div id="custom-template" class="form-group col-sm-12">
                                     {!! Form::label('model2', 'Type the name, email, or PMI ID associated with any duplicate record.') !!}
                                     <br/>

@@ -36,7 +36,7 @@ count($locations) > 15 ? $location_scroll = 1 : $location_scroll = 0;
                 editButton: false,
                 deleteButton: true,
                 eventType: 'click',
-                url: '/location/update',
+                url: '{{ env('APP_URL') }}/location/update',
                 columns: {
                     identifier: [0, 'locID'],
                     editable: [[1, 'locName'], [2, 'addr1'], [3, 'addr2'], [4, 'city'], [5, 'state'], [6, 'zip']]

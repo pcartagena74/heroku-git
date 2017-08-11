@@ -377,7 +377,7 @@ if((!$ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->gt($today
                         type: 'POST',
                         cache: false,
                         async: true,
-                        url: '/discount/' + eventID,
+                        url: '{{ env('APP_URL') }}{{ env('APP_URL') }}/discount/' + eventID,
                         dataType: 'json',
                         data: {
                             event_id: eventID,
@@ -450,7 +450,7 @@ if((!$ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->gt($today
                     type: 'GET',
                     cache: false,
                     async: true,
-                    url: '/password/forgotmodal',
+                    url: '{{ env('APP_URL') }}/password/forgotmodal',
                     dataType: 'json',
                     success: function (data) {
                         //alert("success");

@@ -108,63 +108,63 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 title: "Edit Org Name.  This cannot be blank."
             });
 
             $('#orgAddr1').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgAddr2').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgCity').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgState').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgZip').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgPhone').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgFax').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgEmail').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgURL').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#creditLabel').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
             $('#orgHandle').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
 
@@ -172,7 +172,7 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
             @for($i=1; $i<=10; $i++)
                 $('#OSN{{ $i }}').editable({
                     type: 'text',
-                    url: '/orgsettings/' + {{ $org->orgID }},
+                    url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                     pk: {{ $org->orgID }}
             });
             @endfor
@@ -180,7 +180,7 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
             @for($i=1; $i<=10; $i++)
                 $('#ODN{{ $i }}').editable({
                 type: 'text',
-                url: '/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk: {{ $org->orgID }}
             });
             @endfor

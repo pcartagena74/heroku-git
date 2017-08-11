@@ -66,7 +66,7 @@ foreach($current_events as $event) {
         "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> Preview</a>";
     $eventDiscount_button =
        "<a href='$eventDiscountURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Event Discounts</a>";
-    $delete_button       = Form::open(['url' => '/event/' . $event->eventID, 'method' => 'DELETE']) .
+    $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
     if($event->isActive) {
@@ -169,7 +169,7 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
                 type: 'POST',
                 cache: false,
                 async: true,
-                url: '/activate/' + eventID,
+                url: '{{ env('APP_URL') }}/activate/' + eventID,
                 dataType: 'json',
                 success: function (data) {
                     console.log(data);

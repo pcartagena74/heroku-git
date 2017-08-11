@@ -41,7 +41,7 @@ if($event->isSymmetric) {
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    {!! Form::open(['url' => '/complete_registration/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    {!! Form::open(['url' => env('APP_URL').'/complete_registration/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
 
     <div class="whole">
 
@@ -144,58 +144,58 @@ if($event->isSymmetric) {
                                     @if($person->prefix)
                                         <a id="prefix-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->prefix }}"
-                                           data-url="/profile/{{ $person->personID }}"></a>
+                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
                                     @if($reg->membership == 'Non-Member')
                                         <a id="firstName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->firstName }}"
-                                           data-url="/profile/{{ $person->personID }}"></a>
+                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @else
                                         {{ $person->firstName }}
                                     @endif
                                     @if($person->prefName)
                                         (<a id="prefName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                             data-value="{{ $person->prefName }}"
-                                            data-url="/profile/{{ $person->personID }}"></a>)
+                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>)
                                     @endif
                                     @if($person->midName)
                                         <a id="midName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->midName }}"
-                                           data-url="/profile/{{ $person->personID }}"></a>
+                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
                                     @if($reg->membership == 'Non-Member')
                                         <a id="lastName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->lastName }}"
-                                           data-url="/profile/{{ $person->personID }}"></a>
+                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @else
                                         {{ $person->lastName }}
                                     @endif
                                     @if($person->suffix)
                                         <a id="suffix-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->suffix }}"
-                                           data-url="/profile/{{ $person->personID }}"></a>
+                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
                                     <nobr>[ <a id="login-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                data-value="{{ $person->login }}"
-                                               data-url="/profile/{{ $person->personID }}"></a> ]
+                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> ]
                                     </nobr>
                                     <br/>
                                     @if($person->compName)
                                         @if($person->title)
                                             <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                data-value="{{ $person->title }}"
-                                               data-url="/profile/{{ $person->personID }}"></a>
+                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                         @else
                                             Employed
                                         @endif
                                         at <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                               data-value="{{ $person->compName }}"
-                                              data-url="/profile/{{ $person->personID }}"></a>
+                                              data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @else
                                         @if($person->title !== null)
                                             <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                data-value="{{ $person->title }}"
-                                               data-url="/profile/{{ $person->personID }}"></a>
+                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                         @elseif($person->indName !== null)
                                             Employed
                                         @endif
@@ -203,14 +203,14 @@ if($event->isSymmetric) {
                                     @if($person->indName !== null)
                                         in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                   data-value="{{ $person->indName }}"
-                                                  data-url="/profile/{{ $person->personID }}"></a> industry <br/>
+                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> industry <br/>
                                     @endif
 
                                     @if($person->affiliation)
                                         <br/>Affiliated with: <a id="affiliation-{{ $tcount }}"
                                                                  data-pk="{{ $person->personID }}"
                                                                  data-value="{{ $person->affiliation }}"
-                                                                 data-url="/profile/{{ $person->personID }}"></a>
+                                                                 data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
                                 </td>
                                 <td colspan="2" style="text-align: left;">
@@ -218,23 +218,23 @@ if($event->isSymmetric) {
                                         <b>First Event?</b> <a id="firstEvent-{{ $tcount }}"
                                                                data-pk="{{ $reg->regID }}"
                                                                data-value="{{ $reg->isFirstEvent }}"
-                                                               data-url="/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                               data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @endif
 
                                     <b>Add to Roster:</b> <a id="canNetwork-{{ $tcount }}"
                                                              data-pk="{{ $reg->regID }}"
                                                              data-value="{{ $reg->canNetwork }}"
-                                                             data-url="/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                             data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     <b><a data-toggle="tooltip" title="Do you authorize PMI to submit your PDUs?">PDU
                                             Submission :</a></b> <a id="isAuthPDU-{{ $tcount }}"
                                                                     data-pk="{{ $reg->regID }}"
                                                                     data-value="{{ $reg->isAuthPDU }}"
-                                                                    data-url="/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @if($reg->eventQuestion)
                                         <p><b>Speaker Questions:</b> <a id="eventQuestion-{{ $tcount }}"
                                                                         data-pk="{{ $reg->regID }}"
                                                                         data-value="{{ $reg->eventQuestion }}"
-                                                                        data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                         </p>
                                     @endif
 
@@ -242,7 +242,7 @@ if($event->isSymmetric) {
                                         <p><b>Future Topics:</b><br/> <a id="eventTopics-{{ $tcount }}"
                                                                          data-pk="{{ $reg->regID }}"
                                                                          data-value="{{ $reg->eventTopics }}"
-                                                                         data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                         </p>
                                     @endif
 
@@ -250,31 +250,31 @@ if($event->isSymmetric) {
                                         <br/><b>Commuting From:</b> <a id="cityState-{{ $tcount }}"
                                                                        data-pk="{{ $reg->regID }}"
                                                                        data-value="{{ $reg->cityState }}"
-                                                                       data-url="/reg_verify/{{ $reg->regID }}"></a></br>
+                                                                       data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a></br>
                                     @endif
 
                                     @if($reg->specialNeeds)
                                         <b>Special Needs:</b> <a id="specialNeeds-{{ $tcount }}"
                                                                  data-pk="{{ $reg->regID }}"
                                                                  data-value="{{ $reg->specialNeeds }}"
-                                                                 data-url="/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                 data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @endif
 
                                     @if($reg->allergenInfo)
                                         <b>Dietary Info:</b> <a id="allergenInfo-{{ $tcount }}"
                                                                 data-pk="{{ $reg->regID }}"
                                                                 data-value="{{ $reg->allergenInfo }}"
-                                                                data-url="/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                         @if($reg->eventNotes)
                                             <a id="eventNotes-{{ $tcount }}" data-pk="{{ $reg->regID }}"
                                                data-value="{{ $reg->eventNotes }}"
-                                               data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                               data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                         @endif
                                     @elseif($reg->eventNotes)
                                         <b>Other Comments/Notes:</b> <a id="eventNotes-{{ $tcount }}"
                                                                         data-pk="{{ $reg->regID }}"
                                                                         data-value="{{ $reg->eventNotes }}"
-                                                                        data-url="/reg_verify/{{ $reg->regID }}"></a>
+                                                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                     @endif
 
                                 </td>
