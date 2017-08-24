@@ -23,7 +23,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
     <div class="left_col scroll-view">
 
         <div class="navbar nav_title" style="border: 0;">
-            <a href="/dashboard" class="site_title"><span>{{ $currentOrg->orgName }}</span></a>
+            <a href="{{ env('APP_URL') }}/dashboard" class="site_title"><span>{{ $currentOrg->orgName }}</span></a>
         </div>
 
         <div class="profile"><!-- img_2 -->
@@ -48,11 +48,11 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
         The piece about multiple organizations would go here...
 --}}
                             @if (0)
-                                <li><a href="/orgs">My Organizations</a></li>
+                                <li><a href="{{ env('APP_URL') }}/orgs">My Organizations</a></li>
                             @endif
-                            <li><a href="/dashboard">My Dashboard</a></li>
-                            <li><a href="/upcoming">My Future Events</a></li>
-                            <li><a href="/profile/my">My Profile</a></li>
+                            <li><a href="{{ env('APP_URL') }}/dashboard">My Dashboard</a></li>
+                            <li><a href="{{ env('APP_URL') }}/upcoming">My Future Events</a></li>
+                            <li><a href="{{ env('APP_URL') }}/profile/my">My Profile</a></li>
                         </ul>
                     </li>
 
@@ -61,10 +61,10 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         <li><a><i class="fa fa-edit"></i>Organization Settings<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="/orgsettings">Custom Field Labels</a></li>
-                                <li><a href="/eventdefaults">Event Defaults</a></li>
-                                <li><a href="/load_data">Upload Data</a></li>
-                                <li><a href="/role_mgmt">Roles & Permissions</a></li>
+                                <li><a href="{{ env('APP_URL') }}/orgsettings">Custom Field Labels</a></li>
+                                <li><a href="{{ env('APP_URL') }}/eventdefaults">Event Defaults</a></li>
+                                <li><a href="{{ env('APP_URL') }}/load_data">Upload Data</a></li>
+                                <li><a href="{{ env('APP_URL') }}/role_mgmt">Roles & Permissions</a></li>
                             </ul>
                         </li>
                     @endif
@@ -72,10 +72,10 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         || Entrust::hasRole('Development'))
                         <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="/members" id="mem">Member Management</a></li>
-                                <li><a href="/merge/p">Merge Members <span
+                                <li><a href="{{ env('APP_URL') }}/members" id="mem">Member Management</a></li>
+                                <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
                                                 class="label label-success pull-right">New</span></a></li>
-                                <li><a href="#">Something New... <span
+                                <li><a href="{{ env('APP_URL') }}#">Something New... <span
                                                 class="label label-success pull-right">Coming Soon</span></a></li>
                             </ul>
                         </li>
@@ -85,11 +85,10 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         <li><a><i class="fa fa-calendar"></i> Event Management<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="/events">Manage Events</a></li>
-                                <li><a href="/locations">Location Management</a></li>
-                                <li><a id="add" href="/event/create">Add Event</a></li>
-                                <li><a href="#">New Report <span
-                                                class="label label-success pull-right">Just Define It</span></a></li>
+                                <li><a href="{{ env('APP_URL') }}/events">Manage Events</a></li>
+                                <li><a href="{{ env('APP_URL') }}/locations">Location Management</a></li>
+                                <li><a id="add" href="{{ env('APP_URL') }}/event/create">Add Event</a></li>
+                                <li><a id="grp" href="{{ env('APP_URL') }}/group">Group Registration</a></li>
                             </ul>
                         </li>
                     @endif
@@ -99,8 +98,8 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         <li><a><i class="fa fa-microphone"></i> Speaker Management<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="/speakers">Manage Speakers</a></li>
-                                <li><a href="#">New Report <span
+                                <li><a href="{{ env('APP_URL') }}/speakers">Manage Speakers</a></li>
+                                <li><a href="{{ env('APP_URL') }}#">New Report <span
                                                 class="label label-success pull-right">Just Define It</span></a></li>
                             </ul>
                         </li>
@@ -119,7 +118,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
             <a data-toggle="tooltip" data-placement="top" title="Coming Soon: Lock">
                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
             </a>
-            <a href="/logout" data-toggle="tooltip" data-placement="top" title="Logout">
+            <a href="{{ env('APP_URL') }}/logout" data-toggle="tooltip" data-placement="top" title="Logout">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
             </a>
         </div>

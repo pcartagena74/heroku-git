@@ -14,65 +14,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
-    <style type="text/css">
-        .bs-example {
-            font-family: sans-serif;
-            position: relative;
-            margin: 100px;
-        }
-
-        .typeahead, .tt-query, .tt-hint {
-            border: 2px solid #CCCCCC;
-            border-radius: 8px;
-            font-size: 22px; /* Set input font size */
-            height: 30px;
-            line-height: 30px;
-            outline: medium none;
-            padding: 8px 12px;
-            width: 396px;
-        }
-
-        .typeahead {
-            background-color: #FFFFFF;
-        }
-
-        .typeahead:focus {
-            border: 2px solid #0097CF;
-        }
-
-        .tt-query {
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-        }
-
-        .tt-hint {
-            color: #999999;
-        }
-
-        .tt-menu {
-            background-color: #FFFFFF;
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 12px;
-            padding: 8px 0;
-            width: 422px;
-        }
-
-        .tt-suggestion {
-            font-size: 22px; /* Set suggestion dropdown font size */
-            padding: 3px 20px;
-        }
-
-        .tt-suggestion:hover {
-            cursor: pointer;
-            background-color: #0097CF;
-            color: #FFFFFF;
-        }
-
-        .tt-suggestion p {
-            margin: 0;
-        }
-    </style>
+@include('v1.parts.typeahead')
 
     @include('v1.parts.start_content', ['header' => 'Record Merging', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -224,13 +166,13 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
 
                 @include('v1.parts.end_content')
 
-                @endsection
+@endsection
 
-                @section('scripts')
-                    {{--
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
-                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-                    --}}
+@section('scripts')
+{{--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+--}}
                     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
 <?php
 if($model1){

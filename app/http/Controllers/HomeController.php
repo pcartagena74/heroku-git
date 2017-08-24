@@ -23,6 +23,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return redirect()->action('ActivityController@index');
+        return view('v1.public_pages.home-login');
     }
 }

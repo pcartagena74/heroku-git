@@ -32,13 +32,10 @@ Route::get('/linkedin2', function()
 */
 
 // Public Routes
-Route::get('/', 'SessionController@create')->name('main_page');
+Route::get('/', 'HomeController@index')->name('home');
 
-//Route::get('/login', 'SessionController@create');
-//Route::post('/login', 'SessionController@store');
-
-Route::get('/login', 'SessionController@create');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
@@ -80,7 +77,7 @@ Route::get('/storage/events/{filename}', function($filename){
 // ---------------------
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
-Route::get('/home', 'ActivityController@index')->name('home');
+Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
@@ -162,6 +159,14 @@ Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
 Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 
+// Group Registration
+Route::get('/group/{event?}', 'EventController@showGroup');
+Route::post('/getperson', 'MergeController@getperson');                         // Ajax
+Route::post('/group-reg1', 'EventController@group_reg1');
+Route::get('/groupreg/{rf}', 'RegFinanceController@edit')->name('group_reg1');
+Route::patch('/group_reg2/{rf}', 'RegFinanceController@group_reg2');
+Route::get('/show_group_receipt/{rf}', 'RegFinanceController@show_group_receipt');
+
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', 'BundleController@update');                         // Ajax
@@ -207,7 +212,5 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
 Route::get('/blank', ['middleware' => 'auth', function(){
     return view('v1.auth_pages.page-tmp');
 }]);
-
-Route::get('/logout', 'SessionController@logout');
 
 Auth::routes();
