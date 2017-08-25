@@ -36,10 +36,10 @@ class RegistrationController extends Controller
         $quantity      = request()->input('quantity');
         $discount_code = request()->input('discount_code');
 
-        if($discount_code === null){
+        if($discount_code === null) {
             $discount_code = '';
         } else {
-            $discount_code = "/".$discount_code;
+            $discount_code = "/" . $discount_code;
         }
 
         // Finish the route variables needed here and add the route
@@ -47,8 +47,8 @@ class RegistrationController extends Controller
     }
 
     public function showRegForm (Event $event, Ticket $ticket, $quantity, $discount_code = null) {
-    //    public function showRegForm (Request $request, Event $event) {
-    // Registering for an event from /register/{tkt}/{q}/{dCode?}
+        //    public function showRegForm (Request $request, Event $event) {
+        // Registering for an event from /register/{tkt}/{q}/{dCode?}
         /*
         $ticket        = Ticket::find(request()->input('ticketID'));
         $quantity      = request()->input('quantity');
@@ -86,27 +86,33 @@ class RegistrationController extends Controller
                      ->where([
                          ['eventID', '=', $event->eventID],
                          ['status', '!=', 'pending'],
+                         ['status', '!=', 'In Progress'],
                          ['status', '!=', 'Cancelled'],
-                         ['status', '!=', 'Canceled'],
-//                         ['deleted_at', 'is', null]
-                        ])
+                         ['status', '!=', 'Canceled']
+                     ])
+                     ->whereNull('deleted_at')
                      ->groupBy('discountCode')
                      ->orderBy('cnt', 'desc')->get();
 
-        foreach($discPie as $d){
-            if($d->discountCode == '' || $d->discountCode === null){
+        foreach($discPie as $d) {
+            if($d->discountCode == '' || $d->discountCode === null) {
                 $d->discountCode = 'N/A';
             }
         }
 
         $total = DB::table('reg-finance')
-                     ->select(DB::raw('"discountCode", sum(seats) as cnt, sum(orgAmt) as orgAmt,
+                   ->select(DB::raw('"discountCode", sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
                                        sum(ccFee) as ccFee, sum(cost) as cost'))
-                     ->where([
-                        ['eventID', '=', $event->eventID],
-                        ['status', '!=', 'pending']
-                     ])->first();
+                   ->where([
+                       ['eventID', '=', $event->eventID],
+                       ['status', '!=', 'pending'],
+                       ['status', '!=', 'In Progress'],
+                       ['status', '!=', 'Cancelled'],
+                       ['status', '!=', 'Canceled']
+                   ])
+                   ->whereNull('deleted_at')
+                   ->first();
 
         $total->discountCode = 'Total';
 
@@ -114,7 +120,7 @@ class RegistrationController extends Controller
 
         $refs = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('cancelDate')->get();
 
-        if($event->hasTracks){
+        if($event->hasTracks) {
             $tracks = Track::where('eventID', $event->eventID)->get();
             return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'tkts', 'refs', 'discPie', 'tracks'));
         } else {
@@ -600,7 +606,7 @@ class RegistrationController extends Controller
                 */
                 dd("shouldn't have gotten here");
             }
-            if($dCode === null || $dCode = " "){
+            if($dCode === null || $dCode = " ") {
                 $dCode = 'N/A';
             }
             $reg                   = new Registration;
@@ -637,7 +643,7 @@ class RegistrationController extends Controller
             return Redirect::back()->withErrors();
 //                ['warning' => "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total"]);
         } else {
-            if($dCode === null || $dCode = " "){
+            if($dCode === null || $dCode = " ") {
                 $dCode = 'N/A';
             }
             $rf               = new RegFinance;
@@ -712,27 +718,27 @@ class RegistrationController extends Controller
         // 3. Decrement registration count on ticket(s), sessions as needed
 
         $needSessionPick = 0;
-        $verb = 'canceled';
-        $event = Event::find($reg->eventID);
-        $org = Org::find($event->orgID);
+        $verb            = 'canceled';
+        $event           = Event::find($reg->eventID);
+        $org             = Org::find($event->orgID);
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        if($reg->regStatus == 'pending'){
+        if($reg->regStatus == 'pending') {
             $reg->delete();
-        } elseif($reg->subtotal > 0 && $rf->stripeChargeID){
+        } elseif($reg->subtotal > 0 && $rf->stripeChargeID) {
             // There's a refund that needs to occur with Stripe
-            if($reg->subtotal == $rf->cost){
+            if($reg->subtotal == $rf->cost) {
                 // This is a total refund
                 try {
                     \Stripe\Refund::create(array(
                         "charge" => $rf->stripeChargeID,
                     ));
                     $reg->regStatus = 'Refunded';
-                    $rf->status = 'Refunded';
+                    $rf->status     = 'Refunded';
                     $rf->save();
                     $reg->save();
-                } catch(Exception $e){
+                } catch(Exception $e) {
                     request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
                 $rf->delete();
@@ -745,26 +751,26 @@ class RegistrationController extends Controller
                         "amount" => $reg->subtotal * 100,
                     ));
                     $reg->regStatus = 'Refunded';
-                    $rf->status = 'Partially Refunded';
-                    $verb = 'refunded';
+                    $rf->status     = 'Partially Refunded';
+                    $verb           = 'refunded';
                     $rf->save();
                     $reg->save();
-                } catch(\Exception $e){
+                } catch(\Exception $e) {
                     request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
                 $reg->delete();
             }
         } elseif($rf->seats > 1) {
             $reg->regStatus = 'Canceled';
-            $rf->status = 'Partially Canceled';
-            $rf->seats = $rf->seats - 1;
+            $rf->status     = 'Partially Canceled';
+            $rf->seats      = $rf->seats - 1;
             $rf->save();
             $reg->save();
             $reg->delete();
             $verb = 'canceled';
         } else {
             $reg->regStatus = 'Canceled';
-            $rf->status = 'Canceled';
+            $rf->status     = 'Canceled';
             $rf->save();
             $reg->save();
             $reg->delete();
@@ -810,12 +816,12 @@ class RegistrationController extends Controller
         }
 
         // Decrementing the tickets
-        foreach($tickets as $t){
+        foreach($tickets as $t) {
             $t->regCount = $t->regCount - 1;
         }
 
         $sessions = RegSession::where('regID', '=', $reg->regID)->get();
-        foreach($sessions as $s){
+        foreach($sessions as $s) {
             $s->delete();
         }
         request()->session()->flash('alert-success', 'The registration with id ' . $reg->regID . ' has been ' . $verb);

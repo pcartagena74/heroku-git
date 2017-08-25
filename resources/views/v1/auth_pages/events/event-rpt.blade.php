@@ -13,23 +13,19 @@ use App\RegSession;
 $topBits = ''; // there should be topBits for this
 
 $headers = ['Ticket', 'Attendance Limit', 'Registrations', 'Wait List'];
-$rows    = [];
+$rows = [];
 
 foreach($tkts as $t) {
     array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
 }
 
-$reg_headers = ['First Name', 'Last Name', 'Ticket', 'PMT Type', 'Code', 'Register Date', 'Confirmation', 'Cost'];
-$reg_rows    = [];
+$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost'];
+$reg_rows = [];
 
 foreach($regs as $r) {
     $p = Person::find($r->personID);
-    //$t = Ticket::find($r->ticketID);
-    //$f = RegFinance::where('regID', '=', $r->regID)->orWhere('token', '=', $r->token)->first();
-    if($r->regfinance !== null){
-        array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->regfinance->pmtType, $r->regfinance->discountCode, $r->createDate->format('Y/m/d'),
-            $r->regfinance->confirmation, '<i class="fa fa-dollar"></i>' . $r->regfinance->cost]);
-    }
+    array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+        '<i class="fa fa-dollar"></i>' . $r->subtotal]);
 }
 
 if(count($reg_rows) >= 15) {
@@ -39,7 +35,7 @@ if(count($reg_rows) >= 15) {
 }
 
 $disc_headers = ['Code', 'Count', 'Cost', 'CC Fee', 'Handle Fee', 'Net'];
-$disc_rows    = [];
+$disc_rows = [];
 
 foreach($discPie as $d) {
     array_push($disc_rows, [$d->discountCode, $d->cnt,
@@ -99,13 +95,13 @@ if($event->hasTracks && $event->isSymmetric) {
 
             </div>
             <div class="tab-pane fade" id="tab_content2" aria-labelledby="finances-tab">
-                &nbsp;<br />
+                &nbsp;<br/>
                 @include('v1.parts.datatable', ['headers' => $disc_headers, 'data' => $disc_rows, 'scroll' => 0])
             </div>
 
             @if($event->hasTracks)
                 <div class="tab-pane fade" id="tab_content3" aria-labelledby="sessions-tab">
-                    <br />
+                    <br/>
 
                     <table class="table table-bordered jambo_table table-striped">
                         <thead>
@@ -124,88 +120,95 @@ if($event->hasTracks && $event->isSymmetric) {
                             @endforeach
                         </tr>
                         @for($j=1;$j<=$event->confDays;$j++)
-                            <?php
+<?php
                             $z = EventSession::where([
                                 ['confDay', '=', $j],
                                 ['eventID', '=', $event->eventID]
                             ])->first();
                             $y = Ticket::find($z->ticketID);
-                            ?>
-
-                                <tr>
-                                    <th style="text-align:center; color: yellow; background-color: #2a3f54;"
-                                        colspan="{{ $columns }}">Day {{ $j }}:
-                                        {{ $y->ticketLabel  }}
-                                    </th>
-                                </tr>
-                                @for($x=1;$x<=5;$x++)
-<?php
-                                    // Check to see if there are any events for $x (this row)
-                                    $s = EventSession::where([
-                                        ['eventID', $event->eventID],
-                                        ['confDay', $j],
-                                        ['order', $x]
-                                    ])->first();
-
-                                    // As long as there are any sessions, the row will be displayed
 ?>
-                                    @if($s !== null)
-                                        <tr>
-                                            @foreach($tracks as $track)
-<?php
-                                                $s = EventSession::where([
-                                                    ['trackID', $track->trackID],
-                                                    ['eventID', $event->eventID],
-                                                    ['confDay', $j],
-                                                    ['order', $x]
-                                                ])->first();
-?>
-                                                @if($s !== null)
-                                                    @if($tracks->first() == $track || !$event->isSymmetric)
 
-                                                        <td rowspan="1" style="text-align:left;">
-                                                            <nobr> {{ $s->start->format('g:i A') }} </nobr>
-                                                            &dash;
-                                                            <nobr> {{ $s->end->format('g:i A') }} </nobr>
-                                                        </td>
-                                                    @else
-
-                                                    @endif
-                                                    <td colspan="2" style="text-align:left; min-width:150px;
-                                                            width: {{ $width }}%; max-width: {{ $mw }}%;">
+                            <tr>
+                                <th style="text-align:center; color: yellow; background-color: #2a3f54;"
+                                    colspan="{{ $columns }}">Day {{ $j }}:
+                                    {{ $y->ticketLabel  }}
+                                </th>
+                            </tr>
+                            @for($x=1;$x<=5;$x++)
 <?php
-                                                        // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
-                                                            $sRegs = RegSession::where([
-                                                                ['sessionID', $s->sessionID],
-                                                                ['eventID', $event->eventID]
-                                                            ])->count();
-                                                            /*
-                                                            $sRegs = DB::table('reg-session as rs')
-                                                                ->where([
-                                                                    ['sessionID', $s->sessionID],
-                                                                    ['rs.eventID', $event->eventID]
-                                                                ])
-                                                                ->join('event-registration as er', 'er.regID', '=', 'rs.regID')
-                                                                ->select(DB::raw('er.discountCode, count(*) as total'))
-                                                                ->groupBy('er.discountCode')
-                                                                ->get();
-                                                            */
+                                // Check to see if there are any events for $x (this row)
+                                $s = EventSession::where([
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $j],
+                                    ['order', $x]
+                                ])->first();
+
+                                // As long as there are any sessions, the row will be displayed
 ?>
-                                                        {{ $sRegs }}
+                                @if($s !== null)
+                                    <tr>
+                                        @foreach($tracks as $track)
+<?php
+                                            $s = EventSession::where([
+                                                ['trackID', $track->trackID],
+                                                ['eventID', $event->eventID],
+                                                ['confDay', $j],
+                                                ['order', $x]
+                                            ])->first();
+?>
+                                            @if($s !== null)
+                                                @if($tracks->first() == $track || !$event->isSymmetric)
+
+                                                    <td rowspan="1" style="text-align:left;">
+                                                        <nobr> {{ $s->start->format('g:i A') }} </nobr>
+                                                        &dash;
+                                                        <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                     </td>
                                                 @else
-                                                    @if($tracks->first() == $track || !$event->isSymmetric)
-                                                        <td colspan="3" style="text-align:left;">
-                                                    @else
-                                                        <td colspan="2" style="text-align:left;">
-                                                            @endif
-                                                        </td>
-                                                    @endif
-                                                    @endforeach
-                                        </tr>
-                                    @endif
 
-                                @endfor
+                                                @endif
+                                                <td colspan="2" style="text-align:left; min-width:150px;
+                                                        width: {{ $width }}%; max-width: {{ $mw }}%;">
+<?php
+                                                    // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
+                                                    $sRegs =
+                                                        RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
+                                                                  ->where([
+                                                                      ['sessionID', $s->sessionID],
+                                                                      ['er.eventID', $event->eventID]
+                                                                  ])->select(DB::raw('er.discountCode, count(*) as cnt'))
+                                                                  ->groupBy('er.discountCode')->get();
+                                                    /*
+                                                    $sRegs = DB::table('reg-session as rs')
+                                                        ->where([
+                                                            ['sessionID', $s->sessionID],
+                                                            ['rs.eventID', $event->eventID]
+                                                        ])
+                                                        ->join('event-registration as er', 'er.regID', '=', 'rs.regID')
+                                                        ->select(DB::raw('er.discountCode, count(*) as total'))
+                                                        ->groupBy('er.discountCode')
+                                                        ->get();
+                                                    */
+?>
+                                                    <ul>
+                                                    @foreach($sRegs as $sr)
+                                                        <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
+                                                    @endforeach
+                                                    </ul>
+                                                </td>
+                                            @else
+                                                @if($tracks->first() == $track || !$event->isSymmetric)
+                                                    <td colspan="3" style="text-align:left;">
+                                                @else
+                                                    <td colspan="2" style="text-align:left;">
+                                                        @endif
+                                                    </td>
+                                                @endif
+                                                @endforeach
+                                    </tr>
+                                @endif
+
+                            @endfor
 
                         @endfor  {{-- this closes confDays loop --}}
 
@@ -228,14 +231,14 @@ if($event->hasTracks && $event->isSymmetric) {
         @include('v1.parts.footer-datatable')
     @endif
     @if(count($rows) > 15 || count($reg_rows) > 15)
-    <script>
-        $(document).ready(function () {
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
+        <script>
+            $(document).ready(function () {
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
+                });
+                $('#datatable-fixed-header').DataTable().search('').draw();
             });
-            $('#datatable-fixed-header').DataTable().search('').draw();
-        });
-    </script>
+        </script>
     @endif
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
@@ -254,7 +257,7 @@ if($event->hasTracks && $event->isSymmetric) {
                 for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
                     text.push('<li>');
                     text.push('<span style="background-color:' + chart.data.datasets[0].backgroundColor[i]
-                                + '">' + chart.data.datasets[0].data[i] + '</span>');
+                        + '">' + chart.data.datasets[0].data[i] + '</span>');
                     if (chart.data.labels[i]) {
                         text.push(chart.data.labels[i]);
                     }
@@ -269,12 +272,12 @@ if($event->hasTracks && $event->isSymmetric) {
             data: {
                 labels: [
                     @foreach($discPie as $d)
-                        @if($d->discountCode == '' or $d->discountCode == ' ')
-                            'N/A',
-                        @elseif($d->discountCode == 'Total')
-                        @else
-                            '{{ $d->discountCode }}',
-                        @endif
+                            @if($d->discountCode == '' or $d->discountCode == ' ')
+                        'N/A',
+                    @elseif($d->discountCode == 'Total')
+                            @else
+                        '{{ $d->discountCode }}',
+                    @endif
                     @endforeach
                 ],
                 datasets: [{
@@ -300,10 +303,10 @@ if($event->hasTracks && $event->isSymmetric) {
 
                     data: [
                         @foreach($discPie as $d)
-                            @if($d->discountCode == 'Total')
-                            @else
-                                {{ $d->cnt }},
-                            @endif
+                        @if($d->discountCode == 'Total')
+                        @else
+                        {{ $d->cnt }},
+                        @endif
                         @endforeach
                     ]
                 }]
@@ -352,7 +355,7 @@ if($event->hasTracks && $event->isSymmetric) {
                 $RIGHT_COL.css('min-height', contentHeight);
             };
 
-            $SIDEBAR_MENU.find('a[href="/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                 setContentHeight();
             }).parent().addClass('active');
 

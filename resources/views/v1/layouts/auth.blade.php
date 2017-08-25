@@ -4,6 +4,9 @@
  * Created: 2/2/2017
  */
 // footer_fixed
+if(!isset($topBits)){
+    $topBits = '';
+}
 ?>
 @include('v1.parts.header')
 </head>

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
+use InvalidArgumentException;
 
 class Handler extends ExceptionHandler
 {
@@ -47,7 +48,12 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof TokenMismatchException) {
 
-            return redirect(route('login'))->with('message', 'Session expired. Please refresh and try again');
+            return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
+        }
+        if ($exception instanceof InvalidArgumentException) {
+            if(env('APP_ENV') == 'local'){
+                dd(get_defined_vars());
+            }
         }
 
         return parent::render($request, $exception);

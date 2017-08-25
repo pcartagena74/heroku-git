@@ -130,9 +130,30 @@ class MergeController extends Controller
         return redirect($string);
     }
 
+    /*
+     * Just like getmodel, for the group-registration page
+     * @param: string
+     */
+    public function getperson (Request $request){
+        $string = request()->input('string');
+        list($personID, $field) = array_pad(explode("-", $string, 2), 2, null);
+        $person = Person::with('orgperson')
+            ->where('personID', $personID)
+            ->first();
+        return json_encode(array('status' => 'success',
+            'personID' => $person->personID,
+            'firstName' => $person->firstName,
+            'lastName' => $person->lastName,
+            'login' => $person->login,
+            'OrgStat1' => $person->orgperson->OrgStat1,
+        ));
+    }
+
+    /*
     public function find (Request $request) {
         return Person::search($request->get('q'))->with('emails', 'orgperson')->get();
     }
+    */
 
     /*
      * store function

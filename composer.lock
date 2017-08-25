@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7dc898c40d69aec7cc3e44ba5e0e3b47",
+    "content-hash": "3271c0caa458840533073cf0076eff30",
     "packages": [
         {
             "name": "airbrake/phpbrake",
@@ -5857,6 +5857,48 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2017-06-15T12:58:50+00:00"
+        },
+        {
+            "name": "tightenco/mailthief",
+            "version": "v0.3.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tightenco/mailthief.git",
+                "reference": "95ea6bfc5892d324a10f7d488619ba6f93069ffe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tightenco/mailthief/zipball/95ea6bfc5892d324a10f7d488619ba6f93069ffe",
+                "reference": "95ea6bfc5892d324a10f7d488619ba6f93069ffe",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/mail": "^5.0",
+                "illuminate/view": "^5.0"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.1",
+                "mockery/mockery": "^0.9.5",
+                "phpunit/phpunit": "^5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MailThief\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adam Wathan",
+                    "email": "adam.wathan@gmail.com"
+                }
+            ],
+            "description": "A fake Mailer for Laravel applications that takes the pain out of testing mail.",
+            "time": "2017-08-01T21:26:25+00:00"
         },
         {
             "name": "webmozart/assert",

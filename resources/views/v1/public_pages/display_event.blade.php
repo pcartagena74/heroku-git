@@ -297,8 +297,7 @@ $today = Carbon\Carbon::now();
                     }
                 });
             }
-        }
-        ;
+        };
     </script>
 
 @endsection

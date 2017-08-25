@@ -90,4 +90,11 @@ class LoginController extends Controller
             ->withErrors($errors);
     }
 
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+        $request->session()->invalidate();
+        return redirect(env('APP_URL').'/');
+    }
+
 }

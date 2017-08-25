@@ -2,6 +2,11 @@
 namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
+use App\Email;
+use App\OrgPerson;
+use App\RegFinance;
+use App\Registration;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -103,6 +108,9 @@ class EventController extends Controller
         $exLoc               = Location::find($event->locationID);
         $page_title          = 'Edit Copied Event';
 
+        /*
+         * Commented out because the store function creates the ticket stub
+         # and mainSession for initial event
         // Create a stub for the default ticket for the event
         $label                    = Org::find($this->currentPerson->defaultOrgID);
         $tkt                      = new Ticket;
@@ -112,6 +120,25 @@ class EventController extends Controller
         $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
         $tkt->earlyBirdEndDate    = Carbon::now();
         $tkt->save();
+
+        // Create a mainSession for the default ticket for the event
+        $mainSession = new EventSession;
+        $mainSession->trackID = 0;
+        $mainSession->eventID = $event->eventID;
+        $mainSession->ticketID = $tkt->ticketID;
+        $mainSession->sessionName = 'Default Session';
+        $mainSession->confDay = 0;
+        $mainSession->start = $event->eventStartDate;
+        $mainSession->end = $event->eventEndDate;
+        $mainSession->order = 0;
+        $mainSession->creatorID = $this->currentPerson->personID;
+        $mainSession->updaterID = $this->currentPerson->personID;
+        $mainSession->save();
+
+        $event->mainSession = $mainSession->sessionID;
+        $event->updaterID = $this->currentPerson->personID;
+        $event->save();
+        */
 
         if($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
@@ -282,9 +309,20 @@ class EventController extends Controller
 
         $event->save();
 
+        // Create a stub for the default ticket for the event
+        $tkt                      = new Ticket;
+        $tkt->ticketLabel         = $label->defaultTicketLabel;
+        $tkt->availabilityEndDate = $event->eventStartDate;
+        $tkt->eventID             = $event->eventID;
+        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate    = Carbon::now();
+        $tkt->save();
+
+        // Create a mainSession for the default ticket for the event
         $mainSession = new EventSession;
         $mainSession->trackID = 0;
         $mainSession->eventID = $event->eventID;
+        $mainSession->ticketID = $tkt->ticketID;
         $mainSession->sessionName = 'Default Session';
         $mainSession->confDay = 0;
         $mainSession->start = $event->eventStartDate;
@@ -297,15 +335,6 @@ class EventController extends Controller
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
-
-        // Create a stub for the default ticket for the event
-        $tkt                      = new Ticket;
-        $tkt->ticketLabel         = $label->defaultTicketLabel;
-        $tkt->availabilityEndDate = $event->eventStartDate;
-        $tkt->eventID             = $event->eventID;
-        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
-        $tkt->earlyBirdEndDate    = Carbon::now();
-        $tkt->save();
 
         if($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
@@ -532,4 +561,197 @@ class EventController extends Controller
         }
         return redirect('/event-tickets/' . $event->eventID);
     }
+
+    public function showGroup($event = null){
+        $title = "Group Registration";
+        $today = Carbon::now();
+        $this->currentPerson = Person::find(auth()->user()->id);
+
+        if(!isset($event)){
+            $e = Event::where([
+                ['orgID', '=', $this->currentPerson->defaultOrgID],
+                ['eventStartDate', '>=', $today->subDays(10)]
+            ])
+                      ->select('eventID', 'eventName')
+                      ->limit(2)
+                      ->get();
+
+            $a = $e->pluck('eventName', 'eventID');
+            $b = array(0 => 'Select Event');
+            $c = $a->toArray();
+            $events = $b + $c;
+            return view('v1.auth_pages.events.group-registration', compact('title', 'event', 'events'));
+        } else {
+            $event = Event::find($event);
+            $title = $title . ": $event->eventName";
+            $t = Ticket::where('eventID', '=', $event->eventID)->get();
+            $a = $t->pluck('ticketLabel', 'ticketID');
+            $b = array(0 => 'Select Ticket');
+            $c = $a->toArray();
+            $tickets = $b + $c;
+
+            $a = EventDiscount::where('eventID', '=', $event->eventID)->get();
+            $b = array(0 => 'Select');
+            $c = $a->pluck('discountCODE', 'discountCODE');
+            $d = $c->toArray();
+
+            $discounts = $b + $d;
+
+            return view('v1.auth_pages.events.group-registration', compact('title', 'event', 'tickets', 'discounts'));
+        }
+
+        //return view('v1.auth_pages.events.group-registration', compact('event'));
+    }
+
+    public function group_reg1(Request $request){
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $seats = 0; $total_cost = 0; $total_orig = 0; $total_handle = 0;
+        $today = Carbon::now();
+
+        //dd(request()->all());
+        for($i=1; $i<=15; $i++){
+            $personID = request()->input('person-'.$i);
+            $firstName = request()->input('firstName-'.$i);
+            $lastName = request()->input('lastName-'.$i);
+            $email = request()->input('email-'.$i);
+            $pmiid = request()->input('pmiid-'.$i);
+            $ticketID = request()->input('ticketID-'.$i);
+            $code = request()->input('code-'.$i);
+
+            if($personID === null && $firstName !== null){
+                // Perform a quick search to determine if this is a resubmit
+
+                $e = Email::where('emailADDR', $email)->first();
+                if($e){
+                    $p = Person::find($e->personID);
+                } else {
+                    // create requisite records: person, orgperson
+                    $p = new Person;
+                    $p->firstName = $firstName;
+                    $p->lastName = $lastName;
+                    $p->defaultOrgID = $this->currentPerson->defaultOrgID;
+                    $p->login = $email;
+                    $p->creatorID = $this->currentPerson->personID;
+                    $p->save();
+
+                    $u = new User;
+                    $u->id = $p->personID;
+                    $u->login = $email;
+                    $u->email = $email;
+                    $u->save();
+
+                    $op = new OrgPerson;
+                    $op->personID = $p->personID;
+                    $op->orgID = $p->defaultOrgID;
+                    $op->OrgStat1 = $pmiid;
+                    $op->save();
+
+                    $e = new Email;
+                    $e->personID = $p->personID;
+                    $e->emailADDR = $email;
+                    $e->save();
+                }
+            } else {
+                // get the person record from $personID
+                $p = Person::find($personID);
+            }
+
+            // Create a registration record for each attendee
+            $eventID = request()->input('eventID');
+
+            $handle = 0;
+            if($p){
+                // Setup variables for valid attendee
+                if($code === null){ $code = 'N/A';}
+                $t = Ticket::find($ticketID);
+                // tr: ticket remember
+                $tr = $t->ticketID;
+                // cr: code remember
+                $cr = $code;
+                $seats++;
+
+                $reg = new Registration;
+                $reg->eventID = $eventID;
+                $reg->ticketID = $ticketID;
+                $reg->personID = $p->personID;
+                if($p->allergenInfo){
+                    $reg->allergenInfo = $p->allergenInfo;
+                }
+                $reg->registeredBy = $this->currentPerson->showFullName();
+                $reg->discountCode = $code;
+                if($pmiid){
+                    $reg->membership = "Member";
+                } else {
+                    $reg->membership = "Non-Member";
+                }
+                $reg->token = request()->input('_token');
+                $reg->creatorID = $this->currentPerson->personID;
+                if($p->affiliation){
+                    $reg->affiliation = $p->affiliation;
+                }
+                $reg->canNetwork = 1;
+                if($pmiid){
+                    $reg->isAuthPDU = 1;
+                } else {
+                    $reg->isAuthPDU = 0;
+                }
+                // origcost
+                // subtotal
+                if($t->earlyBirdEndDate !== null && $today->lte($t->earlyBirdEndDate)){
+                    // Use earlybird discount pricing as base
+                    if($reg->membership == 'Member'){
+                        $reg->origcost = $t->memberBasePrice;
+                        $reg->subtotal = $t->memberBasePrice - ($t->memberBasePrice * $t->earlyBirdPercent);
+                    } else {
+                        $reg->origcost = $t->nonmbrBasePrice;
+                        $reg->subtotal = $t->nonmbrBasePrice - ($t->nonmbrBasePrice * $t->earlyBirdPercent);
+                    }
+                } else {
+                    // Use non-discount pricing
+                    if($reg->membership == 'Member'){
+                        $reg->origcost = $t->memberBasePrice;
+                        $reg->subtotal = $t->memberBasePrice;
+                    } else {
+                        $reg->origcost = $t->nonmbrBasePrice;
+                        $reg->subtotal = $t->nonmbrBasePrice;
+                    }
+                }
+                if($code){
+                    $dCode = EventDiscount::where([
+                        ['eventID', $eventID],
+                        ['discountCODE', $code]
+                    ])->first();
+                    if($dCode->percent > 0){
+                        $reg->subtotal = $reg->subtotal - ($reg->subtotal * $dCode->percent/100);
+                    } else {
+                        $reg->subtotal = $reg->subtotal - $dCode->flatAmt;
+                    }
+                }
+                $reg->regStatus = 'In Progress';
+                $reg->save();
+                $total_orig = $total_orig + $reg->origcost;
+                $total_cost = $total_cost + $reg->subtotal;
+                $handle = $reg->subtotal * 0.029;
+                if($handle > 5){$handle = 5;}
+                $total_handle = $total_handle + $handle;
+                $reg_save = $reg->regID;
+            }
+        }
+        // Create a regfinance record for all of the attendees
+        // Show a group receipt
+        $rf = new RegFinance;
+        $rf->regID = $reg_save;
+        $rf->eventID = $eventID;
+        $rf->ticketID = $tr;
+        $rf->discountCode = $cr;
+        $rf->seats = $seats;
+        $rf->personID = $this->currentPerson->personID;
+        $rf->cost = $total_cost;
+        $rf->status = 'In Progress';
+        $rf->handleFee = $total_handle;
+        $rf->token = request()->input('_token');
+        $rf->save();
+        return redirect('/groupreg/'.$reg_save);
+    }
+
 }

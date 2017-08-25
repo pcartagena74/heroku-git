@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 //use App\Notifications\EventReceipt;
 use App\EventSession;
-use App\Mail\EventReceipt;
+use App\Mail\GroupEventReceipt;
 use Illuminate\Support\Facades\Mail;
 use App\Registration;
 use Illuminate\Http\Request;
@@ -155,8 +155,14 @@ class RegFinanceController extends Controller
         dd(request()->all());
     }
 
-    public function edit ($id) {
-        // responds to GET /blah/id/edit and shows the add/edit form
+    public function edit (RegFinance $rf) {
+        // responds to GET /groupreg/reg and shows the add/edit form
+        $quantity = $rf->seats;
+        $event = Event::find($rf->eventID);
+        $org = Org::find($event->orgID);
+        $loc = Location::find($event->locationID);
+
+        return view('v1.auth_pages.events.group_reg1', compact('event', 'quantity', 'org', 'loc', 'rf'));
     }
 
     public function update (Request $request, $id) {
@@ -249,10 +255,12 @@ class RegFinanceController extends Controller
                 // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
                 $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
 
-                // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $4.00 for orgID 10, else $5
+                // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $5.00 for orgID 10, else $5
                 $rf->handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
                 if($rf->handleFee > 5) {
-                    $rf->handleFee = number_format(5, 2, '.', '');
+                    $rf->handleFee = number_format(5 * $rf->seats, 2, '.', '');
+                } else {
+                    $rf->handleFee = number_format($rf->handleFee * $rf->seats, 2, '.', '');
                 }
                 $rf->orgAmt      = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
                 $rf->discountAmt = number_format($discountAmt, 2, '.', '');
@@ -349,6 +357,148 @@ class RegFinanceController extends Controller
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
         return view('v1.public_pages.event_receipt', $x);
+    }
+
+    public function group_reg2(Request $request, RegFinance $rf){
+        // responds to PATCH /group_reg2/{rf}
+
+        $event               = Event::find($rf->eventID);
+        $org                 = Org::find($event->orgID);
+        $user                = User::find($rf->personID);
+        $person              = Person::find($rf->personID);
+        $loc                 = Location::find($event->locationID);
+        $quantity            = $rf->seats;
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $stripeToken         = $request->input('stripeToken');
+        $total_handle = 0;
+
+        // user can hit "at door" or "credit" buttons.
+        // if the cost is $0, the pay button won't show on the form
+
+        if($rf->status != 'Processed') {
+            // if cost > $0 AND payment details were given ($stripeToken isset),
+            // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
+            if($rf->cost > 0 && isset($stripeToken)) {
+                $stripeEmail     = $request->input('stripeEmail');
+                $stripeTokenType = $request->input('stripeTokenType');
+                Stripe::setApiKey(env('STRIPE_SECRET'));
+
+                // Check if a customer id exists, and retrieve or create
+                if(!$user->stripe_id) {
+                    $customer        = \Stripe\Customer::create(array(
+                        'email' => $user->email,
+                        'source' => $stripeToken,
+                    ));
+                    $user->stripeEmail = $customer->email;
+                    $user->stripe_id = $customer->id;
+                    $user->save();
+                }
+
+                $charge = \Stripe\Charge::create(array(
+                    'amount' => $rf->cost * 100,
+                    'currency' => 'usd',
+                    'description' => "$org->orgName Group Registration: $event->eventName",
+                    'customer' => $user->stripe_id,
+                ));
+                $rf->stripeChargeID = $charge->id;
+                $rf->status  = 'Processed';
+                $rf->pmtType = $stripeTokenType;
+                $rf->pmtRecd = 1;
+
+            } elseif($rf->cost > 0) {
+                // cost > 0 and the 'Pay at Door' button was pressed
+                $rf->status  = 'Payment Pending';
+                $rf->pmtType = 'At Door';
+            } else {
+                $rf->pmtRecd = 1;
+                $rf->status  = 'Processed';
+                $rf->pmtType = 'No Charge';
+            }
+
+            $discountAmt = 0;
+            $end         = $rf->seats - 1;
+            // update $rf record and each $reg record status
+            for($i = $rf->regID - $end; $i <= $rf->regID; $i++) {
+                $reg            = Registration::find($i);
+                $reg->regStatus = 'Processed';
+                // No one is actually, necessarily, logged in...
+                //$reg->updaterID = auth()->user()->id;
+                $discountAmt += ($reg->origcost - $reg->subtotal);
+                $reg->save();
+
+                // Update ticket purchase on all bundle ticket members by $rf->seat
+                $ticket = Ticket::find($reg->ticketID);
+                if($ticket->isaBundle) {
+                    $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                                     ->where([
+                                         ['bt.bundleID', '=', $ticket->ticketID],
+                                         ['event-tickets.eventID', '=', $event->eventID]
+                                     ])
+                                     ->get();
+                    foreach($tickets as $t) {
+                        $t->regCount++;
+                        $t->save();
+                    }
+                } else {
+                    $ticket->regCount++;
+                    $ticket->save();
+                }
+                if($reg->subtotal > 0){
+                    // mCentric Handle fee = 2.9% of $rf->cost + $0.30
+                    $handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
+                    // capped at $5.00
+                    if($handleFee > 5){ $handleFee = number_format(5, 2, '.', ''); }
+                    $total_handle += $handleFee;
+                }
+            }
+            // Confirmation code is:  personID-regFinance->regID/seats
+            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
+
+            // Need to set fees IF the cost > $0
+            if($rf->cost > 0) {
+                // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
+                $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
+
+                // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $5.00
+                $rf->handleFee = $total_handle;
+                $rf->orgAmt      = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
+                $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+            }
+            // fees above are already $0 unless changed so save.
+            $rf->save();
+        }
+
+        // email the user who paid
+        // $user->notify(new EventReceipt($rf));
+        $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
+
+        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $pdf = PDF::loadView('v1.auth_pages.events.group_receipt', $x)
+                  ->setOption('disable-javascript', false)
+                  ->setOption('javascript-delay', 20)
+                  ->setOption('encoding', 'utf-8');
+        //->save($receipt_filename);
+
+        //Storage::put($receipt_filename, $pdf->output());
+        Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+
+        $client = new S3Client([
+            'credentials' => [
+                'key'    => env('AWS_KEY'),
+                'secret' => env('AWS_SECRET')
+            ],
+            'region' => env('AWS_REGION'),
+            'version' => 'latest',
+        ]);
+
+        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+        $s3fs = new Filesystem($adapter);
+        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+
+        // Mail will need to INSTEAD go to each of the persons attached to Registration records
+        Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+
+        return view('v1.auth_pages.events.group_receipt', $x);
     }
 
     public function destroy ($id) {
