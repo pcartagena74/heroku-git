@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
+use App\Email;
 use App\OrgPerson;
 use App\RegFinance;
 use App\Registration;
@@ -618,27 +619,38 @@ class EventController extends Controller
             $code = request()->input('code-'.$i);
 
             if($personID === null && $firstName !== null){
-                // create requisite records: person, orgperson
-                $p = new Person;
-                $p->firstName = $firstName;
-                $p->lastName = $lastName;
-                $p->defaultOrgID = $this->currentPerson->defaultOrgID;
-                $p->login = $email;
-                $p->creatorID = $this->currentPerson->personID;
-                $p->save();
+                // Perform a quick search to determine if this is a resubmit
 
-                $u = new User;
-                $u->id = $p->personID;
-                $u->login = $email;
-                $u->email = $email;
-                $u->save();
+                $e = Email::where('emailADDR', $email)->first();
+                if($e){
+                    $p = Person::find($e->personID);
+                } else {
+                    // create requisite records: person, orgperson
+                    $p = new Person;
+                    $p->firstName = $firstName;
+                    $p->lastName = $lastName;
+                    $p->defaultOrgID = $this->currentPerson->defaultOrgID;
+                    $p->login = $email;
+                    $p->creatorID = $this->currentPerson->personID;
+                    $p->save();
 
-                $op = new OrgPerson;
-                $op->personID = $p->personID;
-                $op->orgID = $p->defaultOrgID;
-                $op->OrgStat1 = $pmiid;
-                $op->save();
+                    $u = new User;
+                    $u->id = $p->personID;
+                    $u->login = $email;
+                    $u->email = $email;
+                    $u->save();
 
+                    $op = new OrgPerson;
+                    $op->personID = $p->personID;
+                    $op->orgID = $p->defaultOrgID;
+                    $op->OrgStat1 = $pmiid;
+                    $op->save();
+
+                    $e = new Email;
+                    $e->personID = $p->personID;
+                    $e->emailADDR = $email;
+                    $e->save();
+                }
             } else {
                 // get the person record from $personID
                 $p = Person::find($personID);
@@ -722,12 +734,13 @@ class EventController extends Controller
                 $handle = $reg->subtotal * 0.029;
                 if($handle > 5){$handle = 5;}
                 $total_handle = $total_handle + $handle;
+                $reg_save = $reg->regID;
             }
         }
         // Create a regfinance record for all of the attendees
         // Show a group receipt
         $rf = new RegFinance;
-        $rf->regID = $reg->regID;
+        $rf->regID = $reg_save;
         $rf->eventID = $eventID;
         $rf->ticketID = $tr;
         $rf->discountCode = $cr;
@@ -738,7 +751,7 @@ class EventController extends Controller
         $rf->handleFee = $total_handle;
         $rf->token = request()->input('_token');
         $rf->save();
-        return redirect('/groupreg/'.$rf->regID);
+        return redirect('/groupreg/'.$reg_save);
     }
 
 }
