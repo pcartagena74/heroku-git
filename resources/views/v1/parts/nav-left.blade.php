@@ -53,6 +53,9 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                             <li><a href="{{ env('APP_URL') }}/dashboard">My Dashboard</a></li>
                             <li><a href="{{ env('APP_URL') }}/upcoming">My Future Events</a></li>
                             <li><a href="{{ env('APP_URL') }}/profile/my">My Profile</a></li>
+                            @if(Entrust::hasRole('Development'))
+                            <li><a href="{{ env('APP_URL') }}/become">Become</a></li>
+                            @endif
                         </ul>
                     </li>
 

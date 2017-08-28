@@ -30,7 +30,7 @@ class Registration extends Model
     }
 
     public function regfinance() {
-        return $this->hasOne(RegFinance::class, 'regID', 'regID');
+        return $this->hasOne(RegFinance::class, 'token', 'token');
     }
 
     public function regsession() {

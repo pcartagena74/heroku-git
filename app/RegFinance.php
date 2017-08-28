@@ -31,6 +31,6 @@ class RegFinance extends Model
     }
 
     public function registration() {
-        return $this->hasOne(Registration::class, 'regID', 'regID');
+        return $this->hasMany(Registration::class, 'token', 'token');
     }
 }

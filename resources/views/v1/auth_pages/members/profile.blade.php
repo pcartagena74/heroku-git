@@ -8,16 +8,16 @@ use Illuminate\Support\Facades\DB;
 
 $currentPerson = App\Person::find(auth()->user()->id);
 $string = '';
-$profile_script_url = env('APP_URL')."/profile/$profile->personID";
-$addrURL = env('APP_URL')."/address/";
-$emailURL = env('APP_URL')."/email/";
-$phoneURL = env('APP_URL')."/phone/";
+$profile_script_url = env('APP_URL') . "/profile/$profile->personID";
+$addrURL = env('APP_URL') . "/address/";
+$emailURL = env('APP_URL') . "/email/";
+$phoneURL = env('APP_URL') . "/phone/";
 $ad_cnt = 0;  $em_cnt = 0; $ph_cnt = 0;
 
 if($profile->personID == $currentPerson->personID) {
     $display = "My";
 } else {
-    $display = '<b style="color:red;">'.$profile->firstName . " " . $profile->lastName . "'s</b>";
+    $display = '<b style="color:red;">' . $profile->firstName . " " . $profile->lastName . "'s</b>";
 }
 
 $address_type = DB::select("select addrType as 'text', addrType as 'value' from `address-type`");
@@ -30,282 +30,328 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
-
-    @include('v1.parts.start_content', ['header' => $display . ' Profile Information', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-
-    <table id="profile_fields" class="table table-striped table-condensed">
-        <thead>
-        <tr>
-            <th style="width: 20%; text-align: left;">Prefix</th>
-            <th style="width: 20%; text-align: left;">First Name</th>
-            <th style="width: 20%; text-align: left;">Middle Name</th>
-            <th style="width: 20%; text-align: left;">Last Name</th>
-            <th style="width: 20%; text-align: left;">Suffix</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="text-align: left;"><a href="#" id="prefix" data-title="Enter prefix">{{ $profile->prefix }}</a>
-            </td>
-            <td style="text-align: left;">
-                @if($profile->OrgStat2)
-                    <a data-toggle="tooltip" title="You need to contact PMI to change first name." id="firstName">
-                        @else
-                            <a href="#" id="firstName" data-title="Enter first name">
-                                @endif
-                                {{ $profile->firstName }}</a></td>
-            <td style="text-align: left;"><a href="#" id="midName"
-                                             data-title="Enter middle name"><?php echo($profile->midName);?></a></td>
-            <td style="text-align: left;">
-                @if($profile->OrgStat2)
-                    <a data-toggle="tooltip" title="You need to contact PMI to change last name." id="lastName">
-                        @else
-                            <a href="#" id="lastName" data-title="Enter last name">
-                                @endif
-                                {{ $profile->lastName }}</a></td>
-            <td style="text-align: left;"><a href="#" id="suffix" data-title="Enter suffix">{{ $profile->suffix }}</a>
-            </td>
-        </tr>
-        <tr>
-            <th style="text-align: left;">Preferred Name</th>
-            <th style="text-align: left;">Industry</th>
-            <th style="text-align: left;">Company</th>
-            <th style="text-align: left;">Title</th>
-            <th style="text-align: left;">
-                <a data-toggle="tooltip" title="If you want your login to be a new email address,
-                you'll have to first add it by clicking 'Add Email' below.">Login</a>
-            </th>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><a href="#" id="prefName"
-                                             data-title="Enter preferred name">{{ $profile->prefName }}</a></td>
-            <td style="text-align: left;"><a href="#" id="indName"
-                                             data-title="Enter industry">{{ $profile->indName }}</a></td>
-            <td style="text-align: left;"><a href="#" id="compName"
-                                             data-title="Enter company name">{{ $profile->compName }}</a></td>
-            <td style="text-align: left;"><a href="#" id="title" data-title="Enter title">{{ $profile->title }}</a></td>
-            <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a></td>
-        </tr>
-        </tbody>
-    </table>
-    @include('v1.parts.end_content')
-
-    @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-
-    <table id='date_fields' class='table table-striped table-condensed'>
-        @for($i=1;$i<=10;$i++)
-            @if(isset($profile->{'ODN'.$i}))
-                <tr>
-                    <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
-                    <td style="text-align: left;">{{ $profile->{'RelDate'.$i} or '' }}</td>
-                </tr>
-            @elseif($i == 1)
-                If this is empty, you do not have a PMI ID on file.
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
+            <li class="active"><a href="#tab_content1" id="profile-tab" data-toggle="tab"
+                                  aria-expanded="true"><b>Profile Information</b></a></li>
+            <li class=""><a href="#tab_content2" id="password-tab" data-toggle="tab"
+                            aria-expanded="false"><b>Password Management</b></a></li>
+            @if(Entrust::hasRole('Speaker'))
+                <li class=""><a href="#tab_content3" id="other-tab" data-toggle="tab"
+                                aria-expanded="false"><b>Third Thing</b></a></li>
             @endif
-        @endfor
-    </table>
+        </ul>
 
-    @include('v1.parts.end_content')
-    @include('v1.parts.start_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+        <div id="tab-content" class="tab-content">
+            <div class="tab-pane active" id="tab_content1" aria-labelledby="profile-tab">
+                &nbsp;<br/>
 
-    @if(count($addresses) == 0)
-        There are no addresses associated with this profile.
-    @endif
-    <table id="address_fields" class="table table-striped table-condensed">
-        <thead>
-        <tr>
-            <th></th>
-            <th style="width: 10%">Type</th>
-            <th style="width: 20%">Address 1</th>
-            <th style="width: 20%">Address 2</th>
-            <th style="width: 20%">City</th>
-            <th style="width: 10%">State</th>
-            <th style="width: 10%">Zip</th>
-            <th style="width: 10%">Country</th>
-        </tr>
-        </thead>
-        <tbody>
+                @include('v1.parts.start_content', ['header' => $display . ' Profile Information', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-        @foreach($addresses as $address)
-            <?php $ad_cnt++; ?>
-            <tr>
-                <td>
-                    <form method="post" action="{{ "/address/" . $address->addrID . "/delete" }}">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                data-btn-ok-label="Continue"
-                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                data-btn-ok-class="btn-success btn-sm"
-                                data-btn-cancel-label="Stop!"
-                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                data-btn-cancel-class="btn-danger btn-sm"
-                                data-title="Are you sure?" data-content="This cannot be undone.">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </form>
-                </td>
-                <td><a href="#" id="addrTYPE{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-title="Enter address type"
-                       data-value="{{ $address->addrTYPE }}">{{ $address->addrTYPE }}</a></td>
-                <td><a href="#" id="addr1{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-title="Enter address 1" data-value="{{ $address->addr1 }}"></a></td>
-                <td><a href="#" id="addr2{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-title="Enter address 2" data-value="{{ $address->addr2 }}"></a></td>
-                <td><a href="#" id="city{{ $ad_cnt }}" data-pk="{{ $address->addrID }}" data-title="Enter city"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-value="{{ $address->city }}"></a></td>
-                <td><a href="#" id="state{{ $ad_cnt }}" data-pk="{{ $address->addrID }}" data-title="Enter state"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-value="{{ $address->state }}"></a></td>
-                <td><a href="#" id="zip{{ $ad_cnt }}" data-pk="{{ $address->addrID }}" data-title="Enter zip code"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-value="{{ $address->zip }}"></a></td>
-                <td><a href="#" id="cntryID{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                       data-url="{{ $addrURL . $address->addrID }}"
-                       data-title="Enter country" data-value="{{ $address->cntryID }}"></a></td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-    <div class="col-md-4 col-sm-9 col-xs-12">
-        <button type="button" id="add_address" class="btn btn-sm btn-success"
-                data-toggle="modal" data-target="#address_modal">Add Address
-        </button>
-    </div>
-    <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
-    <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
-    @include('v1.parts.end_content')
-
-    @if(isset($profile->OSN1))
-
-        @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-
-        <table id='date_fields' class='table table-striped table-condensed'>
-            @for($i=1;$i<=10;$i++)
-                @if(isset($profile->{'OSN'.$i}))
+                <table id="profile_fields" class="table table-striped table-condensed">
+                    <thead>
                     <tr>
-                        <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
-                        <td style="text-align: left;">{{ $profile->{'OrgStat'.$i} }}</td>
+                        <th style="width: 20%; text-align: left;">Prefix</th>
+                        <th style="width: 20%; text-align: left;">First Name</th>
+                        <th style="width: 20%; text-align: left;">Middle Name</th>
+                        <th style="width: 20%; text-align: left;">Last Name</th>
+                        <th style="width: 20%; text-align: left;">Suffix</th>
                     </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="text-align: left;"><a href="#" id="prefix"
+                                                         data-title="Enter prefix">{{ $profile->prefix }}</a>
+                        </td>
+                        <td style="text-align: left;">
+                            @if($profile->OrgStat2)
+                                <a data-toggle="tooltip" title="You need to contact PMI to change first name."
+                                   id="firstName">
+                                    @else
+                                        <a href="#" id="firstName" data-title="Enter first name">
+                                            @endif
+                                            {{ $profile->firstName }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="midName"
+                                                         data-title="Enter middle name"><?php echo($profile->midName);?></a>
+                        </td>
+                        <td style="text-align: left;">
+                            @if($profile->OrgStat2)
+                                <a data-toggle="tooltip" title="You need to contact PMI to change last name."
+                                   id="lastName">
+                                    @else
+                                        <a href="#" id="lastName" data-title="Enter last name">
+                                            @endif
+                                            {{ $profile->lastName }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="suffix"
+                                                         data-title="Enter suffix">{{ $profile->suffix }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">Preferred Name</th>
+                        <th style="text-align: left;">Industry</th>
+                        <th style="text-align: left;">Company</th>
+                        <th style="text-align: left;">Title</th>
+                        <th style="text-align: left;">
+                            <a data-toggle="tooltip" title="If you want your login to be a new email address,
+                you'll have to first add it by clicking 'Add Email' below.">Login</a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;"><a href="#" id="prefName"
+                                                         data-title="Enter preferred name">{{ $profile->prefName }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="indName"
+                                                         data-title="Enter industry">{{ $profile->indName }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="compName"
+                                                         data-title="Enter company name">{{ $profile->compName }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="title"
+                                                         data-title="Enter title">{{ $profile->title }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                @include('v1.parts.end_content')
+
+                @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+
+                <table id='date_fields' class='table table-striped table-condensed'>
+                    @for($i=1;$i<=10;$i++)
+                        @if(isset($profile->{'ODN'.$i}))
+                            <tr>
+                                <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
+                                <td style="text-align: left;">{{ $profile->{'RelDate'.$i} or '' }}</td>
+                            </tr>
+                        @elseif($i == 1)
+                            If this is empty, you do not have a PMI ID on file.
+                        @endif
+                    @endfor
+                </table>
+
+                @include('v1.parts.end_content')
+                @include('v1.parts.start_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+
+                @if(count($addresses) == 0)
+                    There are no addresses associated with this profile.
                 @endif
-            @endfor
-        </table>
+                <table id="address_fields" class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th style="width: 10%">Type</th>
+                        <th style="width: 20%">Address 1</th>
+                        <th style="width: 20%">Address 2</th>
+                        <th style="width: 20%">City</th>
+                        <th style="width: 10%">State</th>
+                        <th style="width: 10%">Zip</th>
+                        <th style="width: 10%">Country</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-        @include('v1.parts.end_content')
-    @endif
+                    @foreach($addresses as $address)
+                        <?php $ad_cnt++; ?>
+                        <tr>
+                            <td>
+                                <form method="post" action="{{ "/address/" . $address->addrID . "/delete" }}">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                    <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                            data-btn-ok-label="Continue"
+                                            data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                            data-btn-ok-class="btn-success btn-sm"
+                                            data-btn-cancel-label="Stop!"
+                                            data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                            data-btn-cancel-class="btn-danger btn-sm"
+                                            data-title="Are you sure?" data-content="This cannot be undone.">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td><a href="#" id="addrTYPE{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-title="Enter address type"
+                                   data-value="{{ $address->addrTYPE }}">{{ $address->addrTYPE }}</a></td>
+                            <td><a href="#" id="addr1{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-title="Enter address 1" data-value="{{ $address->addr1 }}"></a></td>
+                            <td><a href="#" id="addr2{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-title="Enter address 2" data-value="{{ $address->addr2 }}"></a></td>
+                            <td><a href="#" id="city{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-title="Enter city"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-value="{{ $address->city }}"></a></td>
+                            <td><a href="#" id="state{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-title="Enter state"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-value="{{ $address->state }}"></a></td>
+                            <td><a href="#" id="zip{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-title="Enter zip code"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-value="{{ $address->zip }}"></a></td>
+                            <td><a href="#" id="cntryID{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                   data-url="{{ $addrURL . $address->addrID }}"
+                                   data-title="Enter country" data-value="{{ $address->cntryID }}"></a></td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                <div class="col-md-4 col-sm-9 col-xs-12">
+                    <button type="button" id="add_address" class="btn btn-sm btn-success"
+                            data-toggle="modal" data-target="#address_modal">Add Address
+                    </button>
+                </div>
+                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
+                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
+                @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-    @if(count($emails) == 0)
-        There are no emails associated with this profile.
-    @else
-        These email addresses are those that you may have used to register for an event.  <p>
-    @endif
+                @if(isset($profile->OSN1))
 
-    <table id="email_fields" class="table table-striped table-condensed">
-        <tr>
-            <th style="text-align:center;" colspan="2">Type</th>
-            <th style="text-align:left;">Email</th>
-            <th style="text-align:left;"><a data-toggle="tooltip"
-                                            title="The primary address is the only one we'll use to contact you. It is also the email address selected above.">Primary?</a>
-            </th>
-        </tr>
-        @foreach($emails as $email)
-            <?php $em_cnt++; ?>
-            <tr>
-                <td style="text-align: left;">
-                    <form method="post" action="{{ "/email/" . $email->emailID . "/delete" }}">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                data-btn-ok-label="Continue"
-                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                data-btn-ok-class="btn-success btn-sm"
-                                data-btn-cancel-label="Stop!"
-                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                data-btn-cancel-class="btn-danger btn-sm"
-                                data-title="Are you sure?" data-content="This cannot be undone.">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </form>
-                </td>
-                <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}" data-pk="{{ $email->emailID }}"
-                                                 data-url="{{ $emailURL . $email->emailID }}"
-                                                 data-title="Enter email type" data-value="{{ $email->emailTYPE }}"></a>
-                </td>
-                <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}" data-pk="{{ $email->emailID }}"
-                                                 data-url="{{ $emailURL . $email->emailID }}"
-                                                 data-title="Enter address 1">{{ $email->emailADDR }}</a></td>
-                <td style="text-align: left;">@if($email->isPrimary) Yes
-                    @else
-                        No
-                    @endif
+                    @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                </td>
-            </tr>
-        @endforeach
-    </table>
-    <div class="col-md-4 col-sm-9 col-xs-12">
-        <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
-                data-target="#email_modal">Add Email
-        </button>
-    </div>
-    <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
-    <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    @include('v1.parts.end_content')
+                    <table id='date_fields' class='table table-striped table-condensed'>
+                        @for($i=1;$i<=10;$i++)
+                            @if(isset($profile->{'OSN'.$i}))
+                                <tr>
+                                    <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
+                                    <td style="text-align: left;">{{ $profile->{'OrgStat'.$i} }}</td>
+                                </tr>
+                            @endif
+                        @endfor
+                    </table>
 
-        @include('v1.parts.start_content', ['header' => 'Phone Numbers', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    @include('v1.parts.end_content')
+                @endif
 
-    @if(count($phones) == 0)
-        There are no phone numbers associated with this profile.
-    @endif
+                @include('v1.parts.start_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @if(count($emails) == 0)
+                    There are no emails associated with this profile.
+                @else
+                    These email addresses are those that you may have used to register for an event.  <p>
+                @endif
 
-        <table id="phone_fields" class="table table-striped table-condensed">
-            <tr>
-                <th style="text-align:center;" colspan="2">Type</th>
-                <th style="text-align:left;">Phone Number</th>
-            </tr>
+                <table id="email_fields" class="table table-striped table-condensed">
+                    <tr>
+                        <th style="text-align:center;" colspan="2">Type</th>
+                        <th style="text-align:left;">Email</th>
+                        <th style="text-align:left;"><a data-toggle="tooltip"
+                                                        title="The primary address is the only one we'll use to contact you. It is also the email address selected above.">Primary?</a>
+                        </th>
+                    </tr>
+                    @foreach($emails as $email)
+                        <?php $em_cnt++; ?>
+                        <tr>
+                            <td style="text-align: left;">
+                                <form method="post" action="{{ "/email/" . $email->emailID . "/delete" }}">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                    <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                            data-btn-ok-label="Continue"
+                                            data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                            data-btn-ok-class="btn-success btn-sm"
+                                            data-btn-cancel-label="Stop!"
+                                            data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                            data-btn-cancel-class="btn-danger btn-sm"
+                                            data-title="Are you sure?" data-content="This cannot be undone.">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}"
+                                                             data-pk="{{ $email->emailID }}"
+                                                             data-url="{{ $emailURL . $email->emailID }}"
+                                                             data-title="Enter email type"
+                                                             data-value="{{ $email->emailTYPE }}"></a>
+                            </td>
+                            <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}"
+                                                             data-pk="{{ $email->emailID }}"
+                                                             data-url="{{ $emailURL . $email->emailID }}"
+                                                             data-title="Enter address 1">{{ $email->emailADDR }}</a>
+                            </td>
+                            <td style="text-align: left;">@if($email->isPrimary) Yes
+                                @else
+                                    No
+                                @endif
 
-            @foreach($phones as $phone)
-                <?php $ph_cnt++; ?>
-                <tr>
-                    <td style="text-align: left;">
-                        <form method="post" action="{{ "/phone/" . $phone->phoneID . "/delete" }}">
-                            {{ csrf_field() }}
-                            <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                            <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                    data-btn-ok-label="Continue"
-                                    data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                    data-btn-ok-class="btn-success btn-sm"
-                                    data-btn-cancel-label="Stop!"
-                                    data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                    data-btn-cancel-class="btn-danger btn-sm"
-                                    data-title="Are you sure?" data-content="This cannot be undone.">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </form>
-                    </td>
-                    <td style="text-align: left;"><a href="#" id="phoneType{{ $ph_cnt }}" data-pk="{{ $phone->phoneID }}" data-url="{{ $phoneURL . $phone->phoneID }}"
-                                                     data-value="{{ $phone->phoneType }}"></a></td>
-                    <td style="text-align: left;"><a href="#" id="phoneNumber{{ $ph_cnt }}" data-pk="{{ $phone->phoneID }}" data-url="{{ $phoneURL . $phone->phoneID }}"
-                                                     data-value="{{ $phone->phoneNumber }}"></a></td>
-                </tr>
-            @endforeach
-        </table>
-        <div class="col-md-4 col-sm-9 col-xs-12">
-            <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
-                    data-target="#phone_modal">Add Phone Number
-            </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
+                <div class="col-md-4 col-sm-9 col-xs-12">
+                    <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
+                            data-target="#email_modal">Add Email
+                    </button>
+                </div>
+                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
+                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                @include('v1.parts.end_content')
+
+                @include('v1.parts.start_content', ['header' => 'Phone Numbers', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+
+                @if(count($phones) == 0)
+                    There are no phone numbers associated with this profile.
+                @endif
+
+                <table id="phone_fields" class="table table-striped table-condensed">
+                    <tr>
+                        <th style="text-align:center;" colspan="2">Type</th>
+                        <th style="text-align:left;">Phone Number</th>
+                    </tr>
+
+                    @foreach($phones as $phone)
+                        <?php $ph_cnt++; ?>
+                        <tr>
+                            <td style="text-align: left;">
+                                <form method="post" action="{{ "/phone/" . $phone->phoneID . "/delete" }}">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                    <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                            data-btn-ok-label="Continue"
+                                            data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                            data-btn-ok-class="btn-success btn-sm"
+                                            data-btn-cancel-label="Stop!"
+                                            data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                            data-btn-cancel-class="btn-danger btn-sm"
+                                            data-title="Are you sure?" data-content="This cannot be undone.">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td style="text-align: left;"><a href="#" id="phoneType{{ $ph_cnt }}"
+                                                             data-pk="{{ $phone->phoneID }}"
+                                                             data-url="{{ $phoneURL . $phone->phoneID }}"
+                                                             data-value="{{ $phone->phoneType }}"></a></td>
+                            <td style="text-align: left;"><a href="#" id="phoneNumber{{ $ph_cnt }}"
+                                                             data-pk="{{ $phone->phoneID }}"
+                                                             data-url="{{ $phoneURL . $phone->phoneID }}"
+                                                             data-value="{{ $phone->phoneNumber }}"></a></td>
+                        </tr>
+                    @endforeach
+                </table>
+                <div class="col-md-4 col-sm-9 col-xs-12">
+                    <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
+                            data-target="#phone_modal">Add Phone Number
+                    </button>
+                </div>
+                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
+                <p>&nbsp;</p>
+                @include('v1.parts.end_content')
+
+            </div>
+            <div class="tab-pane active" id="tab_content2" aria-labelledby="password-tab">
+                &nbsp;<br/>
+            </div>
+            @if(Entrust::hasRole('Speaker'))
+            <div class="tab-pane active" id="tab_content3" aria-labelledby="other-tab">
+                &nbsp;<br/>
+            </div>
+            @endif
         </div>
-        <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
-        <p>&nbsp;</p>
-        @include('v1.parts.end_content')
-
+    </div>
 @endsection
 
 @section('scripts')
@@ -493,11 +539,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach($phoneTypes as $row) {
-                        $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
+                    $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });

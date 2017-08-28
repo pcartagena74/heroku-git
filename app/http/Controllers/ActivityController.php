@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+ini_set('max_execution_time', 0);
+
+use App\Event;
 use App\RegFinance;
 use App\Registration;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Person;
 
@@ -19,6 +23,18 @@ class ActivityController extends Controller
         // responds to /upcoming
         $this->currentPerson = Person::find(auth()->user()->id);
         $now                 = Carbon::now();
+
+        $bought = Registration::where('personID', $this->currentPerson->personID)
+            ->whereHas(
+                'event', function($q) {
+                $q->where('eventStartDate', '>=', Carbon::now());
+            })
+            ->whereHas(
+                'regfinance', function($q) {
+                    $q->where('personID', '!=', $this->currentPerson->personID);
+            })
+            ->with('event', 'ticket', 'person', 'regfinance')
+            ->get()->sortBy('event.eventStartDate');
 
         $paid = RegFinance::where('personID', '=', $this->currentPerson->personID)
                                 ->whereHas(
@@ -52,7 +68,7 @@ class ActivityController extends Controller
 
         $topBits = '';
 
-        return view('v1.auth_pages.members.future_event_list', compact('paid', 'unpaid', 'pending', 'topBits'));
+        return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits'));
     }
 
     public function index () {
@@ -93,7 +109,6 @@ class ActivityController extends Controller
         // $attendance = DB::select($attendance_sql, [$this->currentPerson->defaultOrgID, $this->currentPerson->personID]);
         $bar = DB::select($bar_sql, [$this->currentPerson->personID, $this->currentPerson->defaultOrgID]);
 
-
         $datastring = "";
         $myevents[] = null;
         foreach($bar as $bar_row) {
@@ -124,8 +139,32 @@ class ActivityController extends Controller
         // responds to GET /blah/id
     }
 
+    public function networking (Request $request) {
+        // responds to POST to /networking
+        $eventID = request()->input('eventID');
+        $eventName = request()->input('eventName');
+        $r = DB::table('event-registration as er')
+            ->where([
+                ['er.eventID', $eventID],
+                ['er.canNetwork', 1]
+            ])
+            ->join('person as p', 'er.personID', '=', 'p.personID')
+            ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'indName')
+            ->get();
+        return json_encode(array('event' => $eventName, 'data' => $r->toArray()));
+        dd($r);
+    }
+
     public function create () {
-        // responds to /blah/create and shows add/edit form
+        // triggered by GET /become
+        return view('v1.auth_pages.members.become');
+    }
+
+    public function become (Request $request) {
+        // triggered by POST /become
+        $new_id = request()->input('new_id');
+        Auth::loginUsingId($new_id, 0);
+        return redirect(env('APP_URL')."/dashboard");
     }
 
     public function store (Request $request) {
