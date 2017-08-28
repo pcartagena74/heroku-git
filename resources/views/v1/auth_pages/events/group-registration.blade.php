@@ -208,13 +208,14 @@ $topBits = '';  // remove this if this was set in the controller
                 $RIGHT_COL.css('min-height', contentHeight);
             };
 
-            $SIDEBAR_MENU.find('a[href="/group"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/group"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                 setContentHeight();
             }).parent().addClass('active');
-
+{{--
             @if($event->eventID !== null)
             $("#grp").text('Group Registration');
             @endif
+--}}
         });
     </script>
 @endif

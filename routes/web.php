@@ -77,10 +77,13 @@ Route::get('/storage/events/{filename}', function($filename){
 // ---------------------
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
+Route::post('/networking', 'ActivityController@networking');                     // Ajax
 Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
+Route::get('/become', 'ActivityController@create' );
+Route::post('/become', 'ActivityController@become');
 
 // My Profile / Member Editing
 // ---------------------

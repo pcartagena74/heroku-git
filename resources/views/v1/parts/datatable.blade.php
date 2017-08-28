@@ -10,9 +10,12 @@
  *
  */
 
-$scroll == 0 ? $id = 'generic_table' : $id = 'datatable-fixed-header';
+if(!isset($id)){
+    $scroll == 0 ? $id = 'generic_table' : $id = 'datatable-fixed-header';
+}
 $th_count = 0; $tb_count = 0;
 ?>
+<link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 <div>
     <table id="{{ $id }}" class="table table-striped table-bordered table-condensed table-responsive">
         <thead>
