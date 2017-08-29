@@ -25,46 +25,45 @@ class ActivityController extends Controller
         $now                 = Carbon::now();
 
         $bought = Registration::where('personID', $this->currentPerson->personID)
-            ->whereHas(
-                'event', function($q) {
-                $q->where('eventStartDate', '>=', Carbon::now());
-            })
-            ->whereHas(
-                'regfinance', function($q) {
-                    $q->where('personID', '!=', $this->currentPerson->personID);
-            })
-            ->with('event', 'ticket', 'person', 'regfinance')
-            ->get()->sortBy('event.eventStartDate');
+                              ->whereHas(
+                                  'event', function($q) {
+                                  $q->where('eventStartDate', '>=', Carbon::now());
+                              })
+                              ->whereHas(
+                                  'regfinance', function($q) {
+                                  $q->where('personID', '!=', $this->currentPerson->personID);
+                              })
+                              ->with('event', 'ticket', 'person', 'regfinance')
+                              ->get()->sortBy('event.eventStartDate');
 
-        $paid = RegFinance::where('personID', '=', $this->currentPerson->personID)
-                                ->whereHas(
-                                    'event', function($q) {
-                                    $q->where('eventStartDate', '>=', Carbon::now());
-                                })
-                                ->with('event', 'ticket', 'person', 'registration')
-                                ->where('status', '=', 'Active')
-                                ->orWhere('status', '=', 'Processed')
-                                ->get()->sortBy('event.eventStartDate');
+        //where('personID', '=', $this->currentPerson->personID)
+        $paid = RegFinance::whereHas(
+            'event', function($q) {
+            $q->where('eventStartDate', '>=', Carbon::now());
+        })
+                          ->with('event', 'ticket', 'person', 'registration')
+                          ->where('personID', '=', $this->currentPerson->personID)
+                          ->whereIn('status', ['Active', 'Processed'])
+                          ->get()->sortBy('event.eventStartDate');
 
         $unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
-                                ->whereHas(
-                                    'event', function($q) {
-                                    $q->where('eventStartDate', '>=', Carbon::now());
-                                })
-                                ->with('event', 'ticket', 'person', 'registration')
-                                ->where('status', '=', 'Active')
-                                ->orWhere('status', '=', 'Payment Pending')
-                                ->get()->sortBy('event.eventStartDate');
+                            ->whereHas(
+                                'event', function($q) {
+                                $q->where('eventStartDate', '>=', Carbon::now());
+                            })
+                            ->with('event', 'ticket', 'person', 'registration')
+                            ->whereIn('status', ['Active', 'Payment Pending'])
+                            ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(
             'event', function($q) {
             $q->where('eventStartDate', '>=', Carbon::now())
               ->orderBy('eventStartDate');
         })
-                              ->with('event', 'ticket', 'person', 'registration')
-                              ->where('personID', '=', $this->currentPerson->personID)
-                              ->where('status', '=', 'pending')
-                              ->get()->sortBy('event.eventStartDate');
+                             ->with('event', 'ticket', 'person', 'registration')
+                             ->where('personID', '=', $this->currentPerson->personID)
+                             ->where('status', '=', 'pending')
+                             ->get()->sortBy('event.eventStartDate');
 
         $topBits = '';
 
@@ -141,16 +140,16 @@ class ActivityController extends Controller
 
     public function networking (Request $request) {
         // responds to POST to /networking
-        $eventID = request()->input('eventID');
+        $eventID   = request()->input('eventID');
         $eventName = request()->input('eventName');
-        $r = DB::table('event-registration as er')
-            ->where([
-                ['er.eventID', $eventID],
-                ['er.canNetwork', 1]
-            ])
-            ->join('person as p', 'er.personID', '=', 'p.personID')
-            ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'indName')
-            ->get();
+        $r         = DB::table('event-registration as er')
+                       ->where([
+                           ['er.eventID', $eventID],
+                           ['er.canNetwork', 1]
+                       ])
+                       ->join('person as p', 'er.personID', '=', 'p.personID')
+                       ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'indName')
+                       ->get();
         return json_encode(array('event' => $eventName, 'data' => $r->toArray()));
         dd($r);
     }
@@ -164,7 +163,7 @@ class ActivityController extends Controller
         // triggered by POST /become
         $new_id = request()->input('new_id');
         Auth::loginUsingId($new_id, 0);
-        return redirect(env('APP_URL')."/dashboard");
+        return redirect(env('APP_URL') . "/dashboard");
     }
 
     public function store (Request $request) {
