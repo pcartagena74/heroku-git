@@ -49,7 +49,7 @@ $tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
     <script>
         $("#datatable-fixed-header").DataTable({
             "fixedHeader": true,
-            order: [[ 0, 'desc' ]],
+            order: [[ 0, 'desc' ]]
         });
         var list = $("#network_list").DataTable({
             "fixedHeader": true
