@@ -11,8 +11,11 @@ use App\Address;
 use App\Email;
 use App\Person;
 use App\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Cache;
+use App\Notifications\PasswordChange;
 
 class PersonController extends Controller
 {
@@ -173,13 +176,12 @@ class PersonController extends Controller
             Email::where('personID', $id)->select('emailID', 'emailTYPE', 'emailADDR', 'isPrimary')->orderBy('isPrimary', 'DESC')->get();
 
         $phones =
-            Phone::where('personID', $id)->select('phoneID', 'phoneType','phoneNumber')->get();
+            Phone::where('personID', $id)->select('phoneID', 'phoneType', 'phoneNumber')->get();
 
         return view('v1.auth_pages.members.profile',
             compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails',
                 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes'));
     }
-
 
     public function create () {
         // responds to /blah/create and shows add/edit form
@@ -240,6 +242,45 @@ class PersonController extends Controller
         }
     }
 
+    public function change_password (Request $request) {
+        $curPass               = request()->input('curPass');
+        $password              = request()->input('password');
+
+        // validate password matching
+        $validator = Validator::make($request->all(), [
+            'curPass' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput(['tab' => 'tab_content2']);
+        }
+
+        $user = User::find(auth()->id());
+        $person = Person::find($user->id);
+
+        // validate $curPass
+        if(Hash::check($curPass, $user->password)){
+            // update password
+            $user->password = bcrypt($password);
+            $user->save();
+            request()->session()->flash('alert-success', "The password was changed successfully.");
+
+            // send notification
+            $person->notify(new PasswordChange($person));
+            request()->session()->flash('alert-info', "A confirmation email was sent to $person->login.");
+
+            return back()->withInput(['tab' => 'tab_content2']);
+        } else {
+            request()->session()->flash('alert-danger', "Current password did not match.");
+            return back()
+                ->withErrors($validator)
+                ->withInput(['tab' => 'tab_content2']);
+        }
+    }
+
     public function destroy ($id) {
         // responds to DELETE /blah/id
     }
@@ -254,7 +295,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Obtain the user information from GitHub.
+     * Obtain the user information from LinkedIn
      *
      * @return Response
      */

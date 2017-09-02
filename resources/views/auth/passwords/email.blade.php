@@ -1,3 +1,8 @@
+<?php
+
+$e = request()->e;
+
+?>
 @extends('v1.layouts.no-auth-forms')
 
 @section('header')
@@ -38,7 +43,7 @@
 
                                 <div class="col-md-6">
                                     <input id="email" type="email" class="form-control" name="email"
-                                           value="{{ old('email') }}" required>
+                                           value="{{ $e or old('email') }}" required>
 
                                     @if ($errors->has('email'))
                                         <span class="help-block">

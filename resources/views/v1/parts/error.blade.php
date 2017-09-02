@@ -8,7 +8,9 @@
  *
  */
 ?>
+{{--
 <style> .error {color:red;} </style>
+--}}
 <div class="form-group">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
         @if(Session::has('alert-'.$msg))
@@ -17,4 +19,11 @@
             </p>
         @endif
     @endforeach
+    @if(count($errors))
+        @foreach ($errors->all() as $e)
+            <p class="alert alert-danger">{{ $e }}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </p>
+        @endforeach
+    @endif
 </div>

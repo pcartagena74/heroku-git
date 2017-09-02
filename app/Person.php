@@ -5,11 +5,13 @@ namespace App;
 //use Spatie\Activitylog\Traits\LogsActivity;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 class Person extends Model
 {
     //use LogsActivity;
     use SoftDeletes;
+    use Notifiable;
 
     // The table
     protected $table = 'person';
@@ -78,5 +80,9 @@ class Person extends Model
 
     public function showFullName(){
         return $this->firstName . " " . $this->lastName;
+    }
+
+    public function routeNotificationForMail() {
+        return $this->login;
     }
 }

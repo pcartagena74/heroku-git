@@ -130,7 +130,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 </table>
 
                 @include('v1.parts.end_content')
-                @include('v1.parts.start_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_min_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                 @if(count($addresses) == 0)
                     There are no addresses associated with this profile.
@@ -225,7 +225,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     @include('v1.parts.end_content')
                 @endif
 
-                @include('v1.parts.start_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_min_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
                 @if(count($emails) == 0)
                     There are no emails associated with this profile.
                 @else
@@ -290,7 +290,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 <p>&nbsp;</p>
                 @include('v1.parts.end_content')
 
-                @include('v1.parts.start_content', ['header' => 'Phone Numbers', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_min_content', ['header' => 'Phone Numbers', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                 @if(count($phones) == 0)
                     There are no phone numbers associated with this profile.
@@ -344,6 +344,30 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
             </div>
             <div class="tab-pane active" id="tab_content2" aria-labelledby="password-tab">
                 &nbsp;<br/>
+                <div class="col-sm-12">
+
+                    {!! Form::open(array('url' => env('APP_URL')."/password", 'method' => 'POST')) !!}
+                    {{-- Form::label('hasFood', 'Will food be served?', array('class' => 'control-label', 'style'=>'color:red;',
+                        'data-toggle'=>'tooltip', 'title'=>'Events with food have different questions asked of attendees.')) --}}
+                    <div class="form-group">
+                        {!! Form::label('curPass', 'Current Password', array('class' => 'control-label')) !!}
+                        {!! Form::password('curPass', $attributes = array('class' => 'form-control', 'required')) !!}
+                    </div>
+                    <div class="form-group">
+                        {!! Form::label('newPass', 'New Password', array('class' => 'control-label')) !!}
+                        {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
+                    </div>
+                    <div class="form-group">
+                        {!! Form::label('password_confirmation', 'Verify Password', array('class' => 'control-label')) !!}
+                        {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
+                    </div>
+                    <div class="form-group">
+                        {!! Form::submit('Change Password', array('class' => 'btn btn-primary btn-sm')) !!}
+                    </div>
+                    {{-- current, new, verify --}}
+                    {!! Form::close() !!}
+
+                </div>
             </div>
             @if(Entrust::hasRole('Speaker'))
             <div class="tab-pane active" id="tab_content3" aria-labelledby="other-tab">
@@ -355,6 +379,16 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 @endsection
 
 @section('scripts')
+    <script>
+        $('.collapsed').css('height', 'auto');
+        $('.collapsed').find('.x_content').css('display', 'none');
+    </script>
+    <script>
+        //redirection to a specific tab
+        $(document).ready(function () {
+            $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
+        });
+    </script>
     <script>
         @if($profile->personID !== auth()->user()->id)
     $(document).ready(function () {
