@@ -37,10 +37,6 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
-Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
-Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
-
-
 Route::get('/policies', function(){
     return view('v1.public_pages.policies');
 });
@@ -100,6 +96,10 @@ Route::post('/phones/create', 'PhoneController@store');
 Route::post('/phone/{id}/delete', 'PhoneController@destroy');
 Route::post('/password', 'PersonController@change_password');
 
+Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
+Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
+
+Route::get('/u/{person}/{email}', 'PersonController@undo_login');
 
 // Organizational Routes
 // ---------------------
