@@ -342,13 +342,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 @include('v1.parts.end_content')
 
             </div>
-            <div class="tab-pane active" id="tab_content2" aria-labelledby="password-tab">
+            <div class="tab-pane fade" id="tab_content2" aria-labelledby="password-tab">
                 &nbsp;<br/>
                 <div class="col-sm-12">
 
                     {!! Form::open(array('url' => env('APP_URL')."/password", 'method' => 'POST')) !!}
-                    {{-- Form::label('hasFood', 'Will food be served?', array('class' => 'control-label', 'style'=>'color:red;',
-                        'data-toggle'=>'tooltip', 'title'=>'Events with food have different questions asked of attendees.')) --}}
                     <div class="form-group">
                         {!! Form::label('curPass', 'Current Password', array('class' => 'control-label')) !!}
                         {!! Form::password('curPass', $attributes = array('class' => 'form-control', 'required')) !!}
@@ -370,7 +368,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 </div>
             </div>
             @if(Entrust::hasRole('Speaker'))
-            <div class="tab-pane active" id="tab_content3" aria-labelledby="other-tab">
+            <div class="tab-pane fade" id="tab_content3" aria-labelledby="other-tab">
                 &nbsp;<br/>
             </div>
             @endif
