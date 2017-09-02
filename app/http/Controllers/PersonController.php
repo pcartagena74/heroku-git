@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Cache;
 use App\Notifications\PasswordChange;
+use App\Notifications\LoginChange;
+use App\Notifications\UndoLoginChange;
 
 class PersonController extends Controller
 {
@@ -211,8 +213,6 @@ class PersonController extends Controller
 
             // when changing login we need to:
             // 1. update user->login, user->email, and person->login with the new value
-            // 2. change the Email::isPrimary field on the old and new primary email (the one where email will be sent)
-            // 3. trigger a notification to be sent to the old email address
 
             $user        = User::find($id);
             $orig_email  = $user->login;
@@ -221,6 +221,10 @@ class PersonController extends Controller
             $user->save();
 
             $person            = Person::find($id);
+
+            // 2. trigger a notification to be sent to the old email address
+            $person->notify(new LoginChange($person, $orig_email));
+
             $person->login     = $value;
             $person->updaterID = auth()->user()->id;
             $person->save();
@@ -229,6 +233,7 @@ class PersonController extends Controller
             $orig->isPrimary = 0;
             $orig->save();
 
+            // 3. change the Email::isPrimary field on the old and new primary email (the one where email will be sent)
             $new_email      = $value;
             $new            = Email::where('emailADDR', '=', $new_email)->first();
             $new->isPrimary = 1;
@@ -240,6 +245,28 @@ class PersonController extends Controller
             $person->updaterID = auth()->user()->id;
             $person->save();
         }
+    }
+
+    public function undo_login (Person $person, $string) {
+        $email = decrypt($string);
+        $user = User::find($person->personID);
+        $user->login = $email;
+        $user->email = $email;
+        $user->save();
+
+        $e = Email::where('emailADDR', $person->login)->first();
+        $e->isPrimary = 0;
+        $e->save();
+
+        $e = Email::where('emailADDR', $email)->first();
+        $e->isPrimary = 1;
+        $e->save();
+
+        $person->login = $email;
+        $person->save();
+
+        $person->notify(new UndoLoginChange($person));
+
     }
 
     public function change_password (Request $request) {
