@@ -98,6 +98,7 @@ Route::post('/email/{id}/delete', 'EmailController@destroy');
 Route::post('/phone/{id}', 'PhoneController@update');
 Route::post('/phones/create', 'PhoneController@store');
 Route::post('/phone/{id}/delete', 'PhoneController@destroy');
+Route::post('/password', 'PersonController@change_password');
 
 
 // Organizational Routes
