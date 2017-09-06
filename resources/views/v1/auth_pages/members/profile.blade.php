@@ -370,6 +370,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
             @if(Entrust::hasRole('Speaker'))
             <div class="tab-pane fade" id="tab_content3" aria-labelledby="other-tab">
                 &nbsp;<br/>
+                <b>Speaker features will appear here in the next update.</b>
             </div>
             @endif
         </div>

@@ -63,7 +63,11 @@ use App\EventSession;
                             <div class="col-sm-2 col-xs-2">
                                 <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
                                    style="white-space: normal;" class="btn btn-primary btn-sm">
-                                    {{ $s->sessionName }}
+                                    @if(\BrowserDetect::isMobile())
+                                        {{ $t->trackName . " " . $s->order }}
+                                    @else
+                                        {{ $s->sessionName }}
+                                    @endif
                                 </a>
                             </div>
                             @endif
