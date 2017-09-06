@@ -8,6 +8,7 @@
  *
  */
 use App\EventSession;
+use hisorange\BrowserDetect\Provider\BrowserDetectService;
 
 ?>
 @extends('v1.layouts.no-auth_simple')
@@ -63,7 +64,7 @@ use App\EventSession;
                             <div class="col-sm-3 col-xs-3">
                                 <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
                                    style="white-space: normal;" class="btn btn-primary btn-sm">
-                                    @if(\BrowserDetect::isMobile())
+                                    @if(BrowserDetect::isMobile())
                                         {{ $t->trackName . " " . $s->order }}
                                     @else
                                         {{ $s->sessionName }}

@@ -14,7 +14,7 @@ return [
 	'hisorange\BrowserDetect\Plugin\Browscap'	=> [
 		/**
 		 * Location of the browscap.ini file.
-		 * If setted to 'null' it will use the BrowserDetect package's cache directory.
+		 * If set to 'null' it will use the BrowserDetect package's cache directory.
 		 *
 		 * @see https://github.com/GaretJax/phpbrowscap
 		 * @var string|null
@@ -78,7 +78,7 @@ return [
 	 */
 	//'hisorange\BrowserDetect\Plugin\UAParser'	=> [
 		/**
-		 * Path to regexps yaml file, if null gona user the package's default.
+		 * Path to regexps yaml file, if null gona use the package's default.
 		 *
 		 * @var null|string
 		 */
@@ -107,7 +107,7 @@ return [
 	 * @link http://www.useragentstring.com/pages/api.php
 	 */
 	// Uncomment this value to enable the plugin. 
-	//'hisorange\BrowserDetect\Plugin\UserAgentStringApi' => [],
+	'hisorange\BrowserDetect\Plugin\UserAgentStringApi' => [],
 	
 
 ];
