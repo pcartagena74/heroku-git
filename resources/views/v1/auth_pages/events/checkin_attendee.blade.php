@@ -8,8 +8,8 @@
  *
  */
 use App\EventSession;
-use hisorange\BrowserDetect\Provider\BrowserDetectService;
-
+//use hisorange\BrowserDetect\Provider\BrowserDetectService;
+ini_set('memory_limit', '256M');
 ?>
 @extends('v1.layouts.no-auth_simple')
 
