@@ -26,7 +26,7 @@ use App\EventSession;
 
         <div class="col-sm-12 col-xs-12">
             @foreach($track as $t)
-                <div class="col-sm-2 col-xs-2">
+                <div class="col-sm-3 col-xs-3">
                     {{ $t->trackName }}
                 </div>
             @endforeach
@@ -35,7 +35,7 @@ use App\EventSession;
         @for($i=1;$i<=$event->confDays;$i++)
             <div class="form-group col-sm-12 col-xs-12">
                 <div style="background-color:#2a3f54; color:yellow;"
-                     class="col-sm-{{ 2 * count($track) }} col-xs-{{ 2 * count($track) }}">
+                     class="col-sm-{{ 3 * count($track) }} col-xs-{{ 3 * count($track) }}">
                     Day {{ $i }} Sessions
                 </div>
             </div>
@@ -60,10 +60,14 @@ use App\EventSession;
                             ])->first();
 ?>
                             @if($s !== null)
-                            <div class="col-sm-2 col-xs-2">
+                            <div class="col-sm-3 col-xs-3">
                                 <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
                                    style="white-space: normal;" class="btn btn-primary btn-sm">
-                                    {{ $s->sessionName }}
+                                    @if(\BrowserDetect::isMobile())
+                                        {{ $t->trackName . " " . $s->order }}
+                                    @else
+                                        {{ $s->sessionName }}
+                                    @endif
                                 </a>
                             </div>
                             @endif

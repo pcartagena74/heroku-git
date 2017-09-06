@@ -71,6 +71,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                             </ul>
                         </li>
                     @endif
+
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('member-management'))
                         || Entrust::hasRole('Development'))
                         <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
@@ -83,6 +84,19 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                             </ul>
                         </li>
                     @endif
+
+                    @if(Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-envelope"></i>Email Marketing<span
+                                        class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="{{ env('APP_URL') }}/campaigns">Campaigns</a></li>
+                                <li><a href="{{ env('APP_URL') }}/library">Asset Library</a></li>
+                                <li><a href="{{ env('APP_URL') }}/lists">List Maintenance</a></li>
+                                <li><a href="{{ env('APP_URL') }}/reports">Reporting</a></li>
+                            </ul>
+                        </li>
+                    @endif
+
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
                         || Entrust::hasRole('Development'))
                         <li><a><i class="fa fa-calendar"></i> Event Management<span

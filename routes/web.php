@@ -99,7 +99,7 @@ Route::post('/password', 'PersonController@change_password');
 Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
-Route::get('/u/{person}/{email}', 'PersonController@undo_login');
+Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogin');
 
 // Organizational Routes
 // ---------------------
@@ -187,7 +187,15 @@ Route::get('/locations', 'LocationController@index');
 Route::post('/location/update', 'LocationController@update');                   // Ajax
 Route::get('/locations/{id}', 'LocationController@show');
 
+// Mail Test
+Route::get('/mt', 'MailGunController@testmail');
 
+// Campaign Management Routes
+// ----------------------------------------------------------------------------------
+
+
+// Email List Routes
+Route::get('/lists', 'EmailListController@index');
 
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');

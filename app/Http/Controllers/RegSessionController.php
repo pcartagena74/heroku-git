@@ -34,9 +34,14 @@ class RegSessionController extends Controller
     public function volunteer_checkin ($param, $s = null) {
         // Called with /checkin/{event}
         // Given an event's sessionID, display a form for a person to enter their $regID
-        $event = Event::where('eventID', '=', $param)
-                      ->orWhere('slug', '=', $param)
-                      ->firstOrFail();
+        try {
+            $event = Event::where('eventID', '=', $param)
+                          ->orWhere('slug', '=', $param)
+                          ->firstOrFail();
+        } catch(\Exception $exception) {
+            request()->session()->flash('alert-danger', "Unable to find event.");
+            return redirect()->back();
+        }
 
         if($s === null) {
             $session = EventSession::find($event->mainSession);
