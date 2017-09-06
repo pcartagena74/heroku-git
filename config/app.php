@@ -149,8 +149,8 @@ return [
         \Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
         'Fideloper\Proxy\TrustedProxyServiceProvider',
         'GrahamCampbell\Flysystem\FlysystemServiceProvider',
-        'hisorange\BrowserDetect\Provider\BrowserDetectService',
         jdavidbakr\MailTracker\MailTrackerServiceProvider::class,
+        Jenssegers\Agent\AgentServiceProvider::class,
         Kouz\Providers\AirbrakeServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -212,13 +212,13 @@ return [
 
     'aliases' => [
 
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
         #'AWS' => 'Aws\Laravel\AwsFacade',
         'Blade' => Illuminate\Support\Facades\Blade::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
-        'BrowserDetect' => hisorange\BrowserDetect\Facade\Parser::class,
         'Bus' => Illuminate\Support\Facades\Bus::class,
         'Cache' => Illuminate\Support\Facades\Cache::class,
         'Config' => Illuminate\Support\Facades\Config::class,

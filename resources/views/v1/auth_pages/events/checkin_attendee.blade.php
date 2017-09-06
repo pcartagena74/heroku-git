@@ -9,7 +9,7 @@
  */
 use App\EventSession;
 //use hisorange\BrowserDetect\Provider\BrowserDetectService;
-ini_set('memory_limit', '256M');
+//ini_set('memory_limit', '256M');
 ?>
 @extends('v1.layouts.no-auth_simple')
 
@@ -64,7 +64,7 @@ ini_set('memory_limit', '256M');
                             <div class="col-sm-3 col-xs-3">
                                 <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
                                    style="white-space: normal;" class="btn btn-primary btn-sm">
-                                    @if(BrowserDetect::isMobile())
+                                    @if(Agent::isMobile())
                                         {{ $t->trackName . " " . $s->order }}
                                     @else
                                         {{ $s->sessionName }}
