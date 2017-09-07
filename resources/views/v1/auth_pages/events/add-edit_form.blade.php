@@ -31,7 +31,8 @@ $categories = $cats->pluck('catTXT', 'catID');
 
 $oe_types = DB::table('org-event_types')
               ->select('etID', 'etName')
-              ->where([['isActive', 1], ['orgID', $current_person->defaultOrgID]])->get();
+              ->whereIn('orgID', [1, $current_person->defaultOrgID])
+              ->get();
 
 $event_types = $oe_types->pluck('etName', 'etID');
 
@@ -105,7 +106,7 @@ $orgLogoPath = DB::table('organization')
     <div class="form-group col-md-3" id="slug_feedback">
     </div>
     <div class="form-group col-md-11 col-md-offset-1">
-        <b>URL will be:  https://www.mCentric.org/events/<span style="color:red;">custom_url</span></b>
+        <b>URL will be: https://www.mCentric.org/events/<span style="color:red;">custom_url</span></b>
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', 'Description*', array('class' => 'control-label')) !!}
@@ -127,29 +128,29 @@ $orgLogoPath = DB::table('organization')
         {!! Form::textarea('eventInfo', old('$event->eventInfo'), array('class'=>'form-control rich')) !!}
     </div>
 
-        <div class="col-sm-5">
-            {!! Form::label('hasTracks', 'Does this event have tracks? If so, how many?', array('class' => 'control-label', 'style'=>'color:red;',
-            'data-toggle'=>'tooltip', 'title'=>'Events with tracks require session setup.')) !!}
-        </div>
-        @if($event->eventID !== null && $event->hasTracks > 0)
-            <div class="col-sm-1"> {!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', true,
+    <div class="col-sm-5">
+        {!! Form::label('hasTracks', 'Does this event have tracks? If so, how many?', array('class' => 'control-label', 'style'=>'color:red;',
+        'data-toggle'=>'tooltip', 'title'=>'Events with tracks require session setup.')) !!}
+    </div>
+    @if($event->eventID !== null && $event->hasTracks > 0)
+        <div class="col-sm-1"> {!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!} </div>
+        <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', true,
             array('class' => 'flat js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
-            <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
-        @else
-            <div class="col-sm-1">{!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!}</div>
-            <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', false,
+        <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
+    @else
+        <div class="col-sm-1">{!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!}</div>
+        <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', false,
             array('class' => 'flat js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
-            <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
-        @endif
-            <div id="trackInput"
-                 @if($event->hasTracks == 0)
-                 style="display:none;"
-                 @endif
-                 class="col-sm-4">
-                {!! Form::text('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
-                array('class'=>'form-control has-feedback-left', 'placeholder'=>'Tracks') ) !!}
-            </div>
+        <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
+    @endif
+    <div id="trackInput"
+         @if($event->hasTracks == 0)
+         style="display:none;"
+         @endif
+         class="col-sm-4">
+        {!! Form::text('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
+        array('class'=>'form-control has-feedback-left', 'placeholder'=>'Tracks') ) !!}
+    </div>
 
 
     @include('v1.parts.end_content')
@@ -317,13 +318,13 @@ $orgLogoPath = DB::table('organization')
             // We'll help out users by populating the end date/time based on the start, but only once so we don't annoy.
             var fired;
             fired = 0;
-            $('#eventStartDate').on('change', function() {
-                if(!fired){
+            $('#eventStartDate').on('change', function () {
+                if (!fired) {
                     $('#eventEndDate').val($('#eventStartDate').val());
                     fired = 1;
                 }
             });
-            $('#hasTracksCheck').on('change', function(){
+            $('#hasTracksCheck').on('change', function () {
                 $("#trackInput").toggle();
             });
         });
@@ -386,7 +387,7 @@ $orgLogoPath = DB::table('organization')
                         url: theurl,
                         data: {
                             eventID: '{{ $event->eventID }}',
-                            slug:   selection
+                            slug: selection
                         },
                         dataType: "json",
                         success: function (data) {
