@@ -73,11 +73,18 @@ class RegSessionController extends Controller
         $regID     = request()->input('regID');
         $sessionID = request()->input('sessionID');
         $eventID   = request()->input('eventID');
-        $reg       = Registration::find($regID);
-        $event     = Event::find($eventID);
-        $org       = Org::find($event->orgID);
-        $session   = EventSession::find($event->mainSession);
-        $person    = Person::find($reg->personID);
+
+        // Check if Registration ID entered was invalid and redirect back with message
+        try{
+            $reg       = Registration::find($regID);
+            $event     = Event::find($eventID);
+            $org       = Org::find($event->orgID);
+            $session   = EventSession::find($event->mainSession);
+            $person    = Person::find($reg->personID);
+        } catch(\Exception $exception){
+            request()->session()->flash('alert-danger', "Invalid registration ID used.");
+            return redirect()->back();
+        }
 
         if($event->hasTracks > 0) {
             $track = Track::where([
