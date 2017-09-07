@@ -90,13 +90,24 @@ class RegSessionController extends Controller
             $track = 0;
         }
 
-        $rs              = RegSession::where([
-            ['regID', '=', $regID],
-            ['eventID', '=', request()->input('eventID')],
-            ['sessionID', '=', $sessionID]
-        ])->first();
-        $rs->hasAttended = 1;
-        $rs->save();
+        try {
+            $rs              = RegSession::where([
+                ['regID', '=', $regID],
+                ['eventID', '=', request()->input('eventID')],
+                ['sessionID', '=', $sessionID]
+            ])->first();
+            $rs->hasAttended = 1;
+            $rs->save();
+        } catch(\Exception $exception){
+            $rs = new RegSession;
+            $rs->regID = $regID;
+            $rs->eventID = request()->input('eventID');
+            $rs->sessionID = $sessionID;
+            $rs->personID = $person->personID;
+            $rs->confDay = $session->confDay;
+            $rs->hasAttended = 1;
+            $rs->save();
+        }
 
         request()->session()->flash('alert-success', $person->firstName . " " . $person->lastName . " was successfully registered.");
         //return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));

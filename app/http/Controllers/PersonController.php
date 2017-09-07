@@ -267,6 +267,10 @@ class PersonController extends Controller
 
         $person->notify(new UndoLoginChange($person));
 
+        $header = "Success";
+        $message = "Your login was successfully changed back to $email.  A confirmation email has been sent.";
+        return view('v1.public_pages.thanks', compact('header', 'message'));
+
     }
 
     public function change_password (Request $request) {
