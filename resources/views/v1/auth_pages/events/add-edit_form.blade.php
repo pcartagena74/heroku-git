@@ -72,7 +72,8 @@ $orgLogoPath = DB::table('organization')
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-12">
-        {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'required') ) !!}
+        {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName,
+        $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'maxlength' => '255', 'required') ) !!}
         <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
     </div>
 
@@ -98,7 +99,7 @@ $orgLogoPath = DB::table('organization')
         {!! Form::label('slug', 'Custom URL*', array('class' => 'control-label')) !!}
     </div>
     <div class="form-group col-md-3">
-        {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control', 'required', 'id' => 'slug') ) !!}
+        {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
     </div>
     <div class="form-group col-md-3">
         <a class="btn btn-primary btn-xs" id="validateSlug"><i class="">Validate Availability</i></a>
@@ -148,8 +149,8 @@ $orgLogoPath = DB::table('organization')
          style="display:none;"
          @endif
          class="col-sm-4">
-        {!! Form::text('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
-        array('class'=>'form-control has-feedback-left', 'placeholder'=>'Tracks') ) !!}
+        {!! Form::number('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
+            array('class'=>'form-control has-feedback-left', 'placeholder'=>'Tracks') ) !!}
     </div>
 
 
@@ -190,28 +191,28 @@ $orgLogoPath = DB::table('organization')
     <div class="ln_solid"></div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('locName', old('$exLoc->locName'), $attributes = array('class'=>'form-control has-feedback-left', 'id'=>'locName', 'placeholder'=>'Location Name', 'required') ) !!}
+        {!! Form::text('locName', old('$exLoc->locName'), $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '50', 'id'=>'locName', 'placeholder'=>'Location Name', 'required') ) !!}
         <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
     </div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('addr1', old('$exLoc->addr1'), $attributes = array('class'=>'form-control', 'id'=>'addr1', 'placeholder'=>'Address 1', 'required') ) !!}
+        {!! Form::text('addr1', old('$exLoc->addr1'), $attributes = array('class'=>'form-control', 'maxlength' => '255', 'id'=>'addr1', 'placeholder'=>'Address 1', 'required') ) !!}
     </div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('addr2', old('$exLoc->addr2'), $attributes = array('class'=>'form-control', 'id'=>'addr2', 'placeholder'=>'Address 2') ) !!}
+        {!! Form::text('addr2', old('$exLoc->addr2'), $attributes = array('class'=>'form-control', 'maxlength' => '255', 'id'=>'addr2', 'placeholder'=>'Address 2') ) !!}
     </div>
 
     <div class="form-group col-md-6">
-        {!! Form::text('city', old('$exLoc->city'), $attributes = array('class'=>'form-control', 'id'=>'city', 'placeholder'=>'City', 'required') ) !!}
+        {!! Form::text('city', old('$exLoc->city'), $attributes = array('class'=>'form-control', 'maxlength' => '50', 'id'=>'city', 'placeholder'=>'City', 'required') ) !!}
     </div>
 
     <div class="form-group col-md-3">
-        {!! Form::text('state', old('$exLoc->state'), $attributes = array('class'=>'form-control', 'id'=>'state', 'placeholder'=>'State', 'required') ) !!}
+        {!! Form::text('state', old('$exLoc->state'), $attributes = array('class'=>'form-control', 'maxlength' => '10', 'id'=>'state', 'placeholder'=>'State', 'required') ) !!}
     </div>
 
     <div class="form-group col-md-3">
-        {!! Form::text('zip', old('$exLoc->zip'), $attributes = array('class'=>'form-control', 'id'=>'zip', 'placeholder'=>'Zip', 'required') ) !!}
+        {!! Form::text('zip', old('$exLoc->zip'), $attributes = array('class'=>'form-control', 'maxlength' => '10', 'id'=>'zip', 'placeholder'=>'Zip', 'required') ) !!}
     </div>
 
     @include('v1.parts.end_content')
@@ -224,7 +225,7 @@ $orgLogoPath = DB::table('organization')
         </div>
 
         <div class="form-group col-md-9">
-            {!! Form::text('contactOrg', old('$event->contactOrg') ?: $defaults->orgName, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=> $current_person->defaultOrg->orgName, 'required') ) !!}
+            {!! Form::text('contactOrg', old('$event->contactOrg') ?: $defaults->orgName, $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '100', 'placeholder'=> $current_person->defaultOrg->orgName, 'required') ) !!}
             <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
         </div>
     </div>
@@ -235,7 +236,7 @@ $orgLogoPath = DB::table('organization')
         </div>
 
         <div class="form-group col-md-9">
-            {!! Form::text('contactEmail', old('$event->contactEmail') ?: $defaults->eventEmail, $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Contact Email', 'required') ) !!}
+            {!! Form::text('contactEmail', old('$event->contactEmail') ?: $defaults->eventEmail, $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '100', 'placeholder'=>'Contact Email', 'required') ) !!}
             <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
         </div>
     </div>

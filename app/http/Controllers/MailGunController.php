@@ -6,8 +6,7 @@ use App\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
-class MailGunController extends Controller
-{
+class MailGunController extends Controller {
     public function send(Request $request){
         $title = $request->input('title');
         $content = $request->input('content');

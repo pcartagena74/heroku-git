@@ -75,6 +75,25 @@ return [
             // 'cache'           => 'foo'
         ],
 
+        's3_media' => [
+            'driver' => 'awss3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'bucket' => env('AWS_BUCKET3'),
+            'region' => env('AWS_REGION'),
+            'version' => 'latest',
+            'visibility' => 'public',
+            // 'bucket_endpoint' => false,
+            // 'calculate_md5'   => true,
+            // 'scheme'          => 'https',
+            // 'endpoint'        => 'your-url',
+            // 'prefix'          => 'your-prefix',
+            // 'visibility'      => 'public',
+            // 'pirate'          => false,
+            // 'eventable'       => true,
+            // 'cache'           => 'foo'
+        ],
+
         'azure' => [
             'driver' => 'azure',
             'account-name' => 'your-account-name',
