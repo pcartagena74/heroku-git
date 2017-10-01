@@ -36,4 +36,11 @@ class Event extends Model
     public function org() {
         return $this->belongsTo(Org::class, 'orgID');
     }
+
+    public static function events_this_year(){
+        return static::whereYear('eventStartDate', '=', date('Y'))
+            ->whereDate('eventStartDate', '<', \Carbon\Carbon::now())
+            ->select('eventID')
+            ->get();
+    }
 }

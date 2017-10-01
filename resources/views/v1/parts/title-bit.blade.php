@@ -11,6 +11,9 @@
  *
  * icons: fa-user, fa-bar-chart, fa-calendar, fa-clock-o, fa-home, fa-heart
  */
+if(!isset($up)){
+    $up = 1;
+}
 switch ($icon) {
     case 1:
         $itxt = "fa-user";
@@ -37,11 +40,21 @@ switch ($icon) {
         $itxt = "fa-cog";
         break;
 }
+
+switch($up){
+    case 0:
+        $up = 'desc';
+        $color = 'red';
+        break;
+    default:
+        $up = 'asc';
+        $color = 'green';
+}
 ?>
 <div class="col-md-2 col-sm-2 col-xs-3 tile_stats_count">
     <span style="text-align: center;" class="animated flipInY count_top"><i class="fa {{ $itxt }}">&nbsp;</i>{{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
     @if($ctext <> "")
-        <span style="text-align: center;" class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>{{ $ctext }}</i>{{ $rtext }}</span>
+        <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fa fa-sort-{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>
     @endif
 </div>

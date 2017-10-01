@@ -10,7 +10,8 @@
 |
 */
 
-/*  // This is to debug by seeing eloquent --> sql
+/*
+  // This is to debug by seeing eloquent --> sql
 
 \Event::listen('Illuminate\Database\Events\QueryExecuted', function ($query) {
     var_dump($query->sql);
@@ -193,9 +194,20 @@ Route::get('/mt', 'MailGunController@testmail');
 // Campaign Management Routes
 // ----------------------------------------------------------------------------------
 
-
 // Email List Routes
 Route::get('/lists', 'EmailListController@index');
+Route::post('/list', 'EmailListController@store');
+Route::get('/list/{emailList}', 'EmailListController@show');
+Route::patch('/list/{list}', 'EmailListController@update')->name('list_update');
+
+// Campaign Routes
+Route::get('/c/{campaign}', 'CampaignController@show_campaign');
+Route::get('/campaigns', 'CampaignController@index');
+Route::get('/campaign/create', 'CampaignController@create');
+Route::post('/campaign', 'CampaignController@store');
+Route::get('/campaign/{campaign}', 'CampaignController@show');
+Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
+Route::patch('/campaign/{campaign}', 'CampaignController@update');
 
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');

@@ -268,18 +268,7 @@ if($event->isSymmetric) {
 
 
 @section('scripts')
-    {{--
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    --}}
-    {{--
-    <script>
-        $(document).ready(function () {
-            $('#nocard').on('click', function (e) {
-                $('script[src="https://checkout.stripe.com/checkout.js"]').remove();
-            });
-        });
-    </script>
-    --}}
+
     @if($rf->cost > 0)
     <script src="https://checkout.stripe.com/checkout.js"></script>
     <script>
@@ -437,27 +426,6 @@ if($event->isSymmetric) {
             $SIDEBAR_MENU.find('a[href="/group"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                 setContentHeight();
             }).parent().addClass('active');
-{{--
-            @if($event->eventID !== null)
-            $("#grp").text('Group Registration');
-            @endif
---}}
         });
     </script>
 @endsection
-{{--
-
-Code related to the original non-custom button.  You never know...
-                            <script
-                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                    data-key="{{ env('STRIPE_KEY') }}"
-                                    data-amount="{{ $rf->cost*100 }}"
-                                    data-label="Pay Now by Credit Card"
-                                    data-email="{{ $person->login }}"
-                                    data-name="{{ $event->org->orgName }} (mCentric)"
-                                    data-description="Event Registration"
-                                    data-zip-code="true"
-                                    data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
-                                    data-locale="auto">
-                            </script>
---}}

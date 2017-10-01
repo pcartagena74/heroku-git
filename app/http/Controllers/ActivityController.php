@@ -85,28 +85,29 @@ class ActivityController extends Controller
         $attendance = DB::table('org-event as oe')
                         ->join('org-event_types as oet', function($join) {
                             $join->on('oet.etID', '=', 'oe.eventTypeID');
-                            $join->on('oet.orgID', '=', 'oe.orgID')->where('oe.orgID', '=', $this->currentPerson->defaultOrgID);
                         })->join('event-registration as er', 'er.eventID', '=', 'oe.eventID')
-                        ->where('er.personID', '=', auth()->user()->id)
+                        ->where('er.personID', '=', $this->currentPerson->personID)
+                        ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
+                        ->where('oe.orgID', '=', $this->currentPerson->defaultOrgID)
                         ->where(function($w) {
                             $w->where('er.regStatus', '=', 'Active')
                               ->orWhere('er.regStatus', '=', 'In Progress');
                         })
-                        ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'eventStartDate', 'oe.eventEndDate')
+                        ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'oe.eventStartDate', 'oe.eventEndDate')
                         ->orderBy('oe.eventStartDate', 'DESC')->get();
 
         $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, et.etName as 'label',
                         (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=?) as 'attended'
                     FROM `org-event` oe
                     LEFT JOIN `event-registration` er on er.eventID=oe.eventID
-                    JOIN `org-event_types` et on et.etID = oe.eventTypeID AND et.orgID=? AND oe.eventTypeID in (1, 9)
+                    JOIN `org-event_types` et on et.etID = oe.eventTypeID AND oe.eventTypeID in (1, 9)
                     WHERE oe.isDeleted = 0 AND oe.deleted_at is NULL
                     GROUP BY eventID
                     ORDER BY oe.eventStartDate DESC
                     LIMIT 14";
 
         // $attendance = DB::select($attendance_sql, [$this->currentPerson->defaultOrgID, $this->currentPerson->personID]);
-        $bar = DB::select($bar_sql, [$this->currentPerson->personID, $this->currentPerson->defaultOrgID]);
+        $bar = DB::select($bar_sql, [$this->currentPerson->personID]);
 
         $datastring = "";
         $myevents[] = null;
