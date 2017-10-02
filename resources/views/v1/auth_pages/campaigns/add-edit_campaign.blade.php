@@ -94,7 +94,7 @@ $topBits = '';  // remove this if this was set in the controller
         </div>
     </div>
     @include('v1.parts.end_content')
-{{-- Test Email Div --}}
+    {{-- Test Email Div --}}
     <div>
         @include('v1.parts.start_content', ['header' => 'Test Emails',
                  'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -140,28 +140,38 @@ $topBits = '';  // remove this if this was set in the controller
 
     <div class="form-group">
         @if($campaign == null)
-            <div class="col-sm-3"> {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-6">{!! Form::checkbox('send', '1', false, array('class' => 'flat js-switch', 'id' => 'date')) !!}</div>
+            <div class="col-sm-3">{!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}</div>
+            <div class="col-sm-5" style="text-align: center;">
+                {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
+            </div>
             <div class="col-sm-3">{!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}</div>
         @else
             <div class="col-sm-3"> {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-6">{!! Form::checkbox('send', '1', false, array('class' => 'flat js-switch')) !!}</div>
+            <div class="col-sm-5" style="text-align: center;">
+                {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
+            </div>
             <div class="col-sm-3">{!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}</div>
         @endif
     </div>
-
-    <div id="schedule" class="form-group" style="display: none;">
+    <p>&nbsp;</p>
+    <div id="schedule" style="display: none;">
         {!! Form::label('schedule', 'Release Date') !!}
         @if($campaign == null)
-            {!! Form::text('schedule', '', array('class' => 'form-control')) !!}
+            <div class="form-group col-sm-12">
+                {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left')) !!}
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+            </div>
         @else
-            {!! Form::text('schedule', '', array('class' => 'form-control')) !!}
+            <div class="form-group col-sm-12">
+                {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left')) !!}
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+            </div>
         @endif
     </div>
+    <div class="form-group">
+        {!! Form::submit('Send Now', array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id' => 'clicked')) !!}
+    </div>
     @include('v1.parts.end_content')
-
-
-
 
     @if($campaign === null)
     @else
@@ -177,6 +187,7 @@ $topBits = '';  // remove this if this was set in the controller
 
 @section('scripts')
     @include('v1.parts.footer-tinymce2')
+    @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule', 'time' => 'true', 'single' => 'true'])
     <script>
         var x = 2;
         function add_email() {
@@ -186,6 +197,9 @@ $topBits = '';  // remove this if this was set in the controller
                 $('#add_email').hide();
             }
         }
+        $(document).ready(function () {
+            $('#schedule').val(moment(new Date($('#schedule').val())).format("MM/DD/YYYY HH:mm A"));
+        });
     </script>
     <script>
         $(document).ready(function () {
@@ -215,8 +229,19 @@ $topBits = '';  // remove this if this was set in the controller
     </script>
     <script>
         $('#send').on('change', function () {
-            console.log('triggered');
             $("#schedule").toggle();
+            if($("#clicked").val() == 'Send Now'){
+                $("#clicked").val('Schedule');
+            } else {
+                $("#clicked").val('Send Now');
+            }
+        });
+    </script>
+    <script>
+        $('form').submit(function () {
+            $('#schedule').each(function () {
+                $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
+            });
         });
     </script>
 @endsection
