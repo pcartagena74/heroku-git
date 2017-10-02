@@ -6,6 +6,11 @@
 use Illuminate\Support\Collection;
 use App\Location;
 use App\Event;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use Aws\S3\S3Client;
+use League\Flysystem\Filesystem;
+use League\Flysystem\AdapterInterface;
 
 $dateFormat = 'm/d/Y h:i A';
 
@@ -56,6 +61,19 @@ $loc_list = ['' => 'Existing Location'] + Location::orderBy('locName')->pluck('l
 $orgLogoPath = DB::table('organization')
                  ->select('orgPath', 'orgLogo')
                  ->where('orgID', $current_person->defaultOrgID)->first();
+
+$client = new S3Client([
+    'credentials' => [
+        'key'    => env('AWS_KEY'),
+        'secret' => env('AWS_SECRET')
+    ],
+    'region' => env('AWS_REGION'),
+    'version' => 'latest',
+]);
+
+$adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
+$s3fs = new Filesystem($adapter);
+$logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
 ?>
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -85,21 +103,21 @@ $orgLogoPath = DB::table('organization')
         </div>
         @if($event->eventID !== null && $event->hasFood != 1)
             <div class="col-sm-1"> {!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', false, array('class' => 'flat js-switch')) !!}</div>
+            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', false, array('class' => 'js-switch')) !!}</div>
             <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
         @else
             <div class="col-sm-1">{!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!}</div>
-            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', true, array('class' => 'flat js-switch')) !!}</div>
+            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', true, array('class' => 'js-switch')) !!}</div>
             <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
         @endif
     </div>
     <p>&nbsp;</p>
 
     <div class="form-group col-md-3">
-        {!! Form::label('slug', 'Custom URL*', array('class' => 'control-label')) !!}
+        {!! Form::label('slug', 'Custom URL*', array('class' => 'control-label input-sm')) !!}
     </div>
     <div class="form-group col-md-3">
-        {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
+        {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
     </div>
     <div class="form-group col-md-3">
         <a class="btn btn-primary btn-xs" id="validateSlug"><i class="">Validate Availability</i></a>
@@ -116,12 +134,12 @@ $orgLogoPath = DB::table('organization')
 
     <div class="form-group col-md-12">
         {!! Form::label('eventTypeID', 'Event Type*', array('class' => 'control-label')) !!}
-        {!! Form::select('eventTypeID', $event_types, old('$event->eventTypeID'), array('class' =>'form-control')) !!}
+        {!! Form::select('eventTypeID', $event_types, old('$event->eventTypeID'), array('class' =>'form-control input-sm')) !!}
     </div>
 
     <div class="form-group col-md-12">
         {!! Form::label('catID', 'Category*', array('class' => 'control-label')) !!}
-        {!! Form::select('catID', $categories, old('$event->catID') ?: $defaults->orgCategory, array('class' =>'form-control')) !!}
+        {!! Form::select('catID', $categories, old('$event->catID') ?: $defaults->orgCategory, array('class' =>'form-control input-sm')) !!}
     </div>
 
     <div class="form-group col-md-12">
@@ -136,12 +154,12 @@ $orgLogoPath = DB::table('organization')
     @if($event->eventID !== null && $event->hasTracks > 0)
         <div class="col-sm-1"> {!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!} </div>
         <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', true,
-            array('class' => 'flat js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
+            array('class' => 'js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
         <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
     @else
         <div class="col-sm-1">{!! Form::label('hasTracks', 'No', array('class' => 'control-label')) !!}</div>
         <div class="col-sm-1">{!! Form::checkbox('hasTracksCheck', '1', false,
-            array('class' => 'flat js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
+            array('class' => 'js-switch', 'onchange' => 'javascript:toggleShow()')) !!}</div>
         <div class="col-sm-1">{!! Form::label('hasTracks', 'Yes', array('class' => 'control-label')) !!}</div>
     @endif
     <div id="trackInput"
@@ -150,7 +168,7 @@ $orgLogoPath = DB::table('organization')
          @endif
          class="col-sm-4">
         {!! Form::number('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
-            array('class'=>'form-control has-feedback-left', 'placeholder'=>'Tracks') ) !!}
+            array('class'=>'form-control has-feedback-left input-sm', 'placeholder'=>'Tracks') ) !!}
     </div>
 
 
@@ -181,7 +199,7 @@ $orgLogoPath = DB::table('organization')
 
     <div class="form-group">
         <div class="col-md-8">
-            {!! Form::select('locationID', $loc_list, old($event->locationID), array('class' =>'form-control', 'id'=>'org_location_list')) !!}
+            {!! Form::select('locationID', $loc_list, old($event->locationID), array('class' =>'form-control input-sm', 'id'=>'org_location_list')) !!}
         </div>
         <div class="col-md-4">
             <a class="btn btn-primary btn-sm" id="useAddr"><i class="">Use Address</i></a>
@@ -196,23 +214,23 @@ $orgLogoPath = DB::table('organization')
     </div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('addr1', old('$exLoc->addr1'), $attributes = array('class'=>'form-control', 'maxlength' => '255', 'id'=>'addr1', 'placeholder'=>'Address 1', 'required') ) !!}
+        {!! Form::text('addr1', old('$exLoc->addr1'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255', 'id'=>'addr1', 'placeholder'=>'Address 1', 'required') ) !!}
     </div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('addr2', old('$exLoc->addr2'), $attributes = array('class'=>'form-control', 'maxlength' => '255', 'id'=>'addr2', 'placeholder'=>'Address 2') ) !!}
+        {!! Form::text('addr2', old('$exLoc->addr2'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255', 'id'=>'addr2', 'placeholder'=>'Address 2') ) !!}
     </div>
 
     <div class="form-group col-md-6">
-        {!! Form::text('city', old('$exLoc->city'), $attributes = array('class'=>'form-control', 'maxlength' => '50', 'id'=>'city', 'placeholder'=>'City', 'required') ) !!}
+        {!! Form::text('city', old('$exLoc->city'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '50', 'id'=>'city', 'placeholder'=>'City', 'required') ) !!}
     </div>
 
     <div class="form-group col-md-3">
-        {!! Form::text('state', old('$exLoc->state'), $attributes = array('class'=>'form-control', 'maxlength' => '10', 'id'=>'state', 'placeholder'=>'State', 'required') ) !!}
+        {!! Form::text('state', old('$exLoc->state'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10', 'id'=>'state', 'placeholder'=>'State', 'required') ) !!}
     </div>
 
     <div class="form-group col-md-3">
-        {!! Form::text('zip', old('$exLoc->zip'), $attributes = array('class'=>'form-control', 'maxlength' => '10', 'id'=>'zip', 'placeholder'=>'Zip', 'required') ) !!}
+        {!! Form::text('zip', old('$exLoc->zip'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10', 'id'=>'zip', 'placeholder'=>'Zip', 'required') ) !!}
     </div>
 
     @include('v1.parts.end_content')
@@ -264,18 +282,18 @@ $orgLogoPath = DB::table('organization')
             <div class="container row col-sm-12">
                 @if($event->eventID !== null && $event->showLogo != 1)
                     <div class="col-sm-2"> {!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!} </div>
-                    <div class="col-sm-3">{!! Form::checkbox('showLogo', '1', false, array('class' => 'flat js-switch')) !!}</div>
+                    <div class="col-sm-3">{!! Form::checkbox('showLogo', '1', false, array('class' => 'js-switch')) !!}</div>
                     <div class="col-sm-1">{!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}</div>
                 @else
                     <div class="col-sm-2">{!! Form::label('showLogo', 'No', array('class' => 'control-label')) !!}</div>
-                    <div class="col-sm-3">{!! Form::checkbox('showLogo', '1', true, array('class' => 'flat js-switch')) !!}</div>
+                    <div class="col-sm-3">{!! Form::checkbox('showLogo', '1', true, array('class' => 'js-switch')) !!}</div>
                     <div class="col-sm-1">{!! Form::label('showLogo', 'Yes', array('class' => 'control-label')) !!}</div>
                 @endif
             </div>
         </div>
 
         <div class="form-group col-sm-4 col-md-4">
-            <img src="{{ $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo }}" alt=" Logo">
+            <img src="{{ $logo }}" alt=" Logo">
         </div>
 
 
