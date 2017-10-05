@@ -41,6 +41,9 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('/policies', function(){
     return view('v1.public_pages.policies');
 });
+Route::get('/pricing', function(){
+    return view('v1.public_pages.pricing');
+});
 Route::get('/details', function(){
     return view('v1.public_pages.details');
 });

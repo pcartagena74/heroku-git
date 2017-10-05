@@ -41,17 +41,40 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
                     <td colspan="2" style="text-align: left;"><a href="#" id="orgFax" data-value="{{ $org->orgFax }}"></a></td>
                 </tr>
                 <tr>
+                    <th colspan="2" style="text-align: left;">Admin Email</th>
+                    <th colspan="1" style="text-align: left;"></th>
+                    <th colspan="2" style="text-align: left;"><a data-toggle="tooltip" data-placement="top" title="The bit after fb.com/">Facebook URL</a></th>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: left;"><a href="#" id="adminEmail" data-value="{{ $org->adminEmail }}"></a></td>
+                    <td colspan="1" style="text-align: left;"></td>
+                    <td colspan="2" style="text-align: left;"><a href="#" id="facebookURL" data-value="{{ $org->facebookURL }}"></a></td>
+                </tr>
+                <tr>
                     <th colspan="2" style="text-align: left;">Website URL</th>
                     <th colspan="1" style="text-align: left;">Credit Label</th>
                     <th colspan="2" style="text-align: left;">Twitter Handle</th>
-                    <th></th>
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align: left;"><a href="#" id="orgURL" data-value="{{ $org->orgURL }}"></a></td>
                     <td colspan="1" style="text-align: left;"><a href="#" id="creditLabel" data-value="{{ $org->creditLabel }}"></a></td>
                     <td colspan="2" style="text-align: left;"><a href="#" id="orgHandle" data-value="{{ $org->orgHandle }}"></a></td>
-                    <td></td>
                 </tr>
+                <tr>
+                    <th colspan="3" style="text-align: left;">LinkedIn URL</th>
+                    <th colspan="2" style="text-align: left;">Google URL</th>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL" data-value="{{ $org->linkedinURL }}"></a></td>
+                    <td colspan="2" style="text-align: left;"><a href="#" id="googleURL" data-value="{{ $org->googleURL }}"></a></td>
+                </tr>
+                <tr>
+                    <th colspan="5" style="text-align: left;">Admin Contact Statement</th>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align: left;"><a href="#" id="adminStatement" data-value="{{ $org->adminContactStatement }}"></a></td>
+                </tr>
+
             </table>
         Need to add a logo upload/validation here.
         @include('v1.parts.end_content')
@@ -90,7 +113,6 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
 
 
 @section('scripts')
-
     <script>
         $(document).ready(function () {
             $.ajaxSetup({
@@ -167,6 +189,31 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
                 url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
                 pk:  {{ $org->orgID }},
             });
+            $('#adminEmail').editable({
+                type: 'text',
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                pk:  {{ $org->orgID }},
+            });
+            $('#facebookURL').editable({
+                type: 'text',
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                pk:  {{ $org->orgID }},
+            });
+            $('#adminStatement').editable({
+                type: 'textarea',
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                pk:  {{ $org->orgID }},
+            });
+            $('#linkedinURL').editable({
+                type: 'text',
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                pk:  {{ $org->orgID }},
+            });
+            $('#googleURL').editable({
+                type: 'text',
+                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                pk:  {{ $org->orgID }},
+            });
 
 
             @for($i=1; $i<=10; $i++)
@@ -202,8 +249,7 @@ $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$
 
                 $RIGHT_COL.css('min-height', contentHeight);
             };
-
-            $SIDEBAR_MENU.find('a[href="/orgsettings"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            $SIDEBAR_MENU.find('a[href="{!! env('APP_URL') !!}/orgsettings"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                 setContentHeight();
             }).parent().addClass('active');
 
