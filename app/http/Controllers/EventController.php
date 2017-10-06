@@ -33,7 +33,7 @@ class EventController extends Controller
     }
 
     public function index () {
-        // responds to /events
+        // responds to GET /events
 
         $topBits        = '';
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
@@ -66,7 +66,7 @@ class EventController extends Controller
 
         */
 
-        $past_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF,
+        $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
                             count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                      FROM `org-event` e
@@ -74,13 +74,13 @@ class EventController extends Controller
                      LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
                      WHERE e.orgID = ?
                         AND eventStartDate < NOW() AND e.deleted_at is null
-                     GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
-                     ORDER BY e.eventStartDate DESC";
+                     GROUP BY e.eventStartDate, e.eventID, e.eventName, e.eventEndDate, e.isActive, e.eventStartDate
+                     ORDER BY eventStartDateF DESC";
 
         $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
 
         $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
-
+//dd($past_events);
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
     }
 
