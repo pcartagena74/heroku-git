@@ -26,14 +26,15 @@ $topBits = '';  // remove this if this was set in the controller
         } else {
             $status = "SENT";
         }
-    $opens = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('opens');
-    $clicks = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('clicks');
+        $opens = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('opens');
+        $clicks = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('clicks');
 ?>
         @if($c == $campaigns->first())
             <div class="col-md-10 col-xs-10">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2><a href="{!! env('APP_URL') !!}/campaign/{!! $c->campaignID !!}/edit">{!! $c->title !!}</a> &nbsp;
+                        <h2><a href="{!! env('APP_URL') !!}/campaign/{!! $c->campaignID !!}/edit">{!! $c->title !!}</a>
+                            &nbsp;
                             <small>
                                 {!! $status !!}
                                 @if($c->sendDate)
@@ -71,7 +72,8 @@ $topBits = '';  // remove this if this was set in the controller
                                     <small>OPENS</small>
                                 </div>
                                 <div class="col-sm-3">
-                                    <br /><small>OPEN RATE</small>
+                                    <br/>
+                                    <small>OPEN RATE</small>
                                     <div class="progress progress_sm">
                                         <div class="progress-bar bg-green" role="progressbar"
                                              aria-valuemin="0" aria-valuemax="100"
@@ -97,7 +99,8 @@ $topBits = '';  // remove this if this was set in the controller
                                 </div>
 
                                 <div class="col-sm-3">
-                                    <br /><small>CLICK RATE</small>
+                                    <br/>
+                                    <small>CLICK RATE</small>
                                     <div class="progress progress_sm">
                                         <div class="progress-bar bg-green" role="progressbar"
                                              aria-valuemin="0" aria-valuemax="100"
@@ -122,11 +125,10 @@ $topBits = '';  // remove this if this was set in the controller
                                     <small>EMAILS SENT</small>
                                 </div>
                             </div>
-                    </div>
-
-                    @endif
-                </div> <!-- x_content -->
-            </div>    <!-- x_panel -->
+                        @endif
+                    </div> <!-- x_content -->
+                </div>    <!-- x_panel -->
+            </div>
         @else
             <div class="col-md-10 col-xs-10">
                 <div class="x_panel collapsed">
@@ -137,7 +139,7 @@ $topBits = '';  // remove this if this was set in the controller
                                 @if($c->sendDate)
                                     on {!! $c->sendDate->format('M j, Y') !!}
                                 @else
-                                    created on {!! $c->sendDate->format('n/j/Y') !!}
+                                    created on {!! $c->createDate->format('n/j/Y') !!}
                                 @endif
                             </small>
                         </h2>
@@ -216,11 +218,10 @@ $topBits = '';  // remove this if this was set in the controller
                                     <small>EMAILS SENT</small>
                                 </div>
                             </div>
-                    </div>
-
-                    @endif
-                </div> <!-- x_content -->
-            </div>    <!-- x_panel -->
+                        @endif
+                    </div> <!-- x_content -->
+                </div>    <!-- x_panel -->
+            </div>
         @endif
 
     @endforeach
@@ -237,31 +238,31 @@ $topBits = '';  // remove this if this was set in the controller
 @endsection
 
 @section('modals')
-{{--
-        <div class="modal fade" id="campaign_modal" tabindex="-1" role="dialog" aria-labelledby="campaign_label"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button style="float:right;" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="campaign_label">Campaign Editor</h4>
-                    </div>
-                    <div class="modal-body">
-                        {!! Form::open(array('url' =>env('APP_URL')."/campaign", 'method' => 'get')) !!}
+    {{--
+            <div class="modal fade" id="campaign_modal" tabindex="-1" role="dialog" aria-labelledby="campaign_label"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button style="float:right;" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="campaign_label">Campaign Editor</h4>
+                        </div>
+                        <div class="modal-body">
+                            {!! Form::open(array('url' =>env('APP_URL')."/campaign", 'method' => 'get')) !!}
 
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                        <button type="submit" id="addr_submit" class="btn btn-sm btn-success">Save Address</button>
-                        </form>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                            <button type="submit" id="addr_submit" class="btn btn-sm btn-success">Save Address</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
---}}
+    --}}
 @endsection

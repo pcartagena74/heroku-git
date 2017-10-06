@@ -8,7 +8,8 @@
  */
 
 $current_headers =
-    ['#', 'Event Name', 'Event Type', 'Event Dates', 'Event Status', 'Attendee Count', 'Event Management'];
+    ['Event Dates', 'Event Name', 'Event Type', 'Event Status', 'Attendee Count', 'Event Management'];
+//    ['#', 'Event Name', 'Event Type', 'Event Dates', 'Event Status', 'Attendee Count', 'Event Management'];
 $current_data    = [];
 
 foreach($current_events as $event) {
@@ -32,28 +33,14 @@ foreach($current_events as $event) {
         <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="' . $event->cnt . '"></div>
         </div><small>' . $event->cnt . ' attendees</small>';
 
-    $editURL    = '/event/' . $event->eventID . '/edit';
-
-    $displayURL = '/events/' . $event->slug;
-    $tktURL = '/event-tickets/'. $event->eventID;
-    $eventDiscountURL = '/eventdiscount/' . $event->eventID;
-    $trackURL = '/tracks/' . $event->eventID;
-    $rptURL = '/eventreport/' . $event->slug;
-    $copyURL = '/eventcopy/' . $event->slug;
-    $checkinURL = '/checkin/' . $event->slug;
-
-    /*
-    $edit_button = "<form method='post' action='$editURL'>" .
-        $csrf . '
-        <label for="mySubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit Event</label>
-        <input type="hidden" name="eventID" value="' . $event->eventID . '">
-        <input type="hidden" name="function" value="edit">
-        <input id="mySubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" />
-        </form>';
-    */
-
-// if(Entrust::ability($currentOrg->orgName, "event-management", $options))
-// introduce twitter button; administration, etc.
+    $editURL    = env('APP_URL').'/event/' . $event->eventID . '/edit';
+    $displayURL = env('APP_URL').'/events/' . $event->slug;
+    $tktURL = env('APP_URL').'/event-tickets/'. $event->eventID;
+    $eventDiscountURL = env('APP_URL').'/eventdiscount/' . $event->eventID;
+    $trackURL = env('APP_URL').'/tracks/' . $event->eventID;
+    $rptURL = env('APP_URL').'/eventreport/' . $event->slug;
+    $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
+    $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 
     $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit Event</a>";
     $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Tracks & Sessions</a>";
@@ -76,41 +63,40 @@ foreach($current_events as $event) {
     $ticket_button =
         "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
     $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-xs'><i class='fa fa-check-square-o'></i> Check-in Attendees</a>";
-/*
-    $ticket_button = '<form method="post" action="/event-tickets/' . $event->eventID . '">' . $csrf .
-        '<label for="TicketSubmit' . $event->eventID . '" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Tickets</label>
-            <input type="hidden" name="eventID" value="' . $event->eventID . '">
-            <input type="hidden" name="eventName" value="' . $event->eventID . '">
-            <input type="hidden" name="function" value="ticket">
-            <input id="TicketSubmit' . $event->eventID . '" type="submit" value="Go" class="hidden" /></form>';
-*/
-    array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
-        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
+
+    array_push($current_data, ["<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
+        $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
         $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $checkin_button . $delete_button]);
+//    array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
+//        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
+//        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
+//        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $checkin_button . $delete_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
 
-$past_headers = ['#', 'Event Name', 'Event Type', 'Event Dates', 'Attendee Count', 'Event Management'];
+$past_headers =
+['Event Dates', 'Event Name', 'Event Type', 'Attendee Count', 'Event Management'];
+//['#', 'Event Name', 'Event Type', 'Event Dates', 'Attendee Count', 'Event Management'];
 $past_data    = [];
 
 foreach($past_events as $event) {
-    $rptURL = '/eventreport/' . $event->slug;
-    $tktURL = '/event-tickets/'. $event->eventID;
-    $copyURL = '/eventcopy/' . $event->slug;
-
+    $rptURL = env('APP_URL').'/eventreport/' . $event->slug;
+    $tktURL = env('APP_URL').'/event-tickets/'. $event->eventID;
+    $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
 
     $ticket_button =
         "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
     $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
     $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
 
-    array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
-        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
+    array_push($past_data, [ "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
+        $event->eventName, $event->etName, $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
+//    array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
+//        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
+//        $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
 }
-
+//dd($past_data);
 count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 
 ?>
@@ -119,7 +105,6 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 @section('content')
 
     @include('v1.parts.start_content', ['header' => '', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             <li class="active"><a href="#tab_content1" id="current_events-tab" data-toggle="tab"
@@ -136,7 +121,6 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
                 <p>&nbsp;</p>
                 @include('v1.parts.datatable', ['headers' => $past_headers, 'data' => $past_data, 'scroll' => $past_scroll])
             </div>
-
         </div>
     </div>
     @include('v1.parts.end_content')
