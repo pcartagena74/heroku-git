@@ -103,6 +103,7 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
+    @include('v1.parts.header-datatable')
 
     @include('v1.parts.start_content', ['header' => '', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -115,11 +116,21 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
         <div id="tab-content" class="tab-content">
             <div class="tab-pane active" id="tab_content1" aria-labelledby="current_events-tab">
                 <p>&nbsp;</p>
-                @include('v1.parts.datatable', ['headers' => $current_headers, 'data' => $current_data, 'scroll' => $current_scroll])
+                @if(count($current_data) > 0)
+                @include('v1.parts.datatable', ['headers' => $current_headers,
+                    'data' => $current_data,
+                    'id' => 'current_events',
+                    'scroll' => $current_scroll])
+                @else
+                    There are no future events in the system.
+                @endif
             </div>
             <div class="tab-pane fade" id="tab_content2" aria-labelledby="past_events-tab">
                 <p>&nbsp;</p>
-                @include('v1.parts.datatable', ['headers' => $past_headers, 'data' => $past_data, 'scroll' => $past_scroll])
+                @include('v1.parts.datatable', ['headers' => $past_headers,
+                    'data' => $past_data,
+                    'id' => 'past_events',
+                    'scroll' => $past_scroll])
             </div>
         </div>
     </div>
@@ -140,11 +151,17 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
         $('[data-toggle=confirmation]').confirmation();
     </script>
     <script>
+        $(document).ready(function() {
+            $('#past_events').DataTable({
+                "fixedHeader": true,
+                "order": [[ 0, "desc" ]]
+            });
+        });
         $(document).ready(function () {
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
             });
-            $('#datatable-fixed-header').DataTable().search('').draw();
+            $('#past_events').DataTable().search('').draw();
         });
     </script>
     <script>
