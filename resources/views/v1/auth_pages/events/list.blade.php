@@ -85,8 +85,9 @@ foreach($past_events as $event) {
     $tktURL = env('APP_URL').'/event-tickets/'. $event->eventID;
     $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
 
-    $ticket_button =
-        "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
+    // 10/7/17: blanked out button to remove from past event display
+    $ticket_button = '';
+        //"<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
     $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
     $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
 

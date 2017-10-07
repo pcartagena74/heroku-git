@@ -125,7 +125,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
     <div class="form-group col-md-3" id="slug_feedback">
     </div>
     <div class="form-group col-md-11 col-md-offset-1">
-        <b>URL will be: https://www.mCentric.org/events/<span style="color:red;">custom_url</span></b>
+        <b>URL will be: https://www.mCentric.org/events/<span id="curl" style="color:red;">custom_url</span></b>
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', 'Description*', array('class' => 'control-label')) !!}
@@ -411,7 +411,8 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                         dataType: "json",
                         success: function (data) {
                             $('#slug_feedback').html(data.message);
-                            console.log(data);
+                            //console.log(data);
+                            $('#curl').text($('#slug').val());
                         },
                         error: function (data) {
                             alert('error?  url: ' + theurl);
