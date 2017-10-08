@@ -250,9 +250,9 @@ $default = Org::find($event->orgID);
         @include('v1.parts.end_content')
         @endif
 
-        @endsection
+@endsection
 
-        @section('scripts')
+@section('scripts')
         <script>
             $(document).ready(function () {
                 $.ajaxSetup({
@@ -279,9 +279,7 @@ $default = Org::find($event->orgID);
                 $("#earlyDiscount").editable({
                     type: 'text',
                     success: function () {
-                        window.location = '{{ env('
-                        APP_URL
-                        ') . "/event-tickets/" . $event->eventID }}';
+                        window.location = "{{ env('APP_URL') . '/event-tickets/' . $event->eventID }}";
                     }
                 });
 
@@ -418,7 +416,7 @@ $default = Org::find($event->orgID);
                     $RIGHT_COL.css('min-height', contentHeight);
                 };
 
-                $SIDEBAR_MENU.find('a[href="/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+                $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                     setContentHeight();
                 }).parent().addClass('active');
 
@@ -426,10 +424,9 @@ $default = Org::find($event->orgID);
             });
         </script>
 
-        @endsection
+@endsection
 
-        @section('modals')
-
+@section('modals')
         <div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
              aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -533,5 +530,4 @@ $default = Org::find($event->orgID);
                 </div>
             </div>
         </div>
-
 @endsection

@@ -24,7 +24,10 @@ foreach($mbr_list as $mbr) {
         $activity_form = '';
     }
 
-    $mbr->cnt = $profile_form . $activity_form;
+    $merge_form = "<a href='" . env('APP_URL') . "/merge/p/$mbr->personID' data-toggle='tooltip' data-placement='top' title='Merge Record' class='btn btn-xs btn-warning'>
+                   <i class='fa fa-code-fork'></i></a>";
+
+    $mbr->cnt = $profile_form . $activity_form . $merge_form;
     // fullName, OrgStat1, OrgStat2, compName, title, indName, 'RelDate4' (now named 'Expire') - 7/20/17
 }
 $data = collect($mbr_list);
@@ -36,7 +39,10 @@ $data = collect($mbr_list);
 
     @include('v1.parts.start_content', ['header' => 'Member List', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-    @include('v1.parts.datatable', ['headers' => $headers, 'data' => $data->toArray(), 'scroll' => $scroll])
+    @include('v1.parts.datatable', ['headers' => $headers,
+        'data' => $data->toArray(),
+        'id' => 'member_table',
+        'scroll' => $scroll])
 
     @include('v1.parts.end_content')
 
@@ -44,4 +50,12 @@ $data = collect($mbr_list);
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
+    <script>
+        $(document).ready(function() {
+            $('#member_table').DataTable({
+                "fixedHeader": true,
+                "order": [[ 0, "asc" ]]
+            });
+        });
+    </script>
 @endsection
