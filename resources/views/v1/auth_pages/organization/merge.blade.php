@@ -216,7 +216,7 @@ if($model1){
                                 $RIGHT_COL.css('min-height', contentHeight);
                             };
 
-                            $SIDEBAR_MENU.find('a[href="/merge/p"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+                            $SIDEBAR_MENU.find('a[href="{{ app('APP_URL') }}/merge/p"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                                 setContentHeight();
                             }).parent().addClass('active');
 

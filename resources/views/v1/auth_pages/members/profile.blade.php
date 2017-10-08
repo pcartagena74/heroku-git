@@ -60,30 +60,31 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     </thead>
                     <tbody>
                     <tr>
-                        <td style="text-align: left;"><a href="#" id="prefix"
-                                                         data-title="Enter prefix">{{ $profile->prefix }}</a>
+                        <td style="text-align: left;"><a href="#" id="prefix" data-title="Enter prefix">{{ $profile->prefix }}</a>
+                        </td>
+                        <td style="text-align: left;">
+                            {{-- Check OrgStat2 (PMI Type) to verify that PMI provided the first & last name --}}
+                            {{-- Chose OrgStat2 because we might populate OrgStat1 --}}
+                            @if($profile->OrgStat2)
+                                <a data-toggle="tooltip" title="You need to contact PMI to change first name." id="firstName">
+                                    {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}</a></td>
+                            @else
+                                <a href="#" id="firstName" data-title="Enter first name">
+                                    {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}</a></td>
+                            @endif
+                        <td style="text-align: left;">
+                            <a href="#" id="midName" data-title="Enter middle name">{{ $profile->midName }}</a>
                         </td>
                         <td style="text-align: left;">
                             @if($profile->OrgStat2)
-                                <a data-toggle="tooltip" title="You need to contact PMI to change first name."
-                                   id="firstName">
-                                    @else
-                                        <a href="#" id="firstName" data-title="Enter first name">
-                                            @endif
-                                            {{ $profile->firstName }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="midName"
-                                                         data-title="Enter middle name"><?php echo($profile->midName);?></a>
-                        </td>
+                                <a data-toggle="tooltip" title="You need to contact PMI to change last name." id="lastName">
+                                {{ $profile->lastName }}</a></td>
+                            @else
+                                <a href="#" id="lastName" data-title="Enter last name">
+                                {{ $profile->lastName }}</a></td>
+                            @endif
                         <td style="text-align: left;">
-                            @if($profile->OrgStat2)
-                                <a data-toggle="tooltip" title="You need to contact PMI to change last name."
-                                   id="lastName">
-                                    @else
-                                        <a href="#" id="lastName" data-title="Enter last name">
-                                            @endif
-                                            {{ $profile->lastName }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="suffix"
-                                                         data-title="Enter suffix">{{ $profile->suffix }}</a>
+                            <a href="#" id="suffix" data-title="Enter suffix">{{ $profile->suffix }}</a>
                         </td>
                     </tr>
                     <tr>
@@ -121,7 +122,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                         @if(isset($profile->{'ODN'.$i}))
                             <tr>
                                 <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
-                                <td style="text-align: left;">{{ $profile->{'RelDate'.$i} or '' }}</td>
+                                <td style="text-align: left;">{!! $profile->{'RelDate'.$i} or "<i style='color:red;'>Empty</i>" !!}</td>
                             </tr>
                         @elseif($i == 1)
                             If this is empty, you do not have a PMI ID on file.
@@ -216,7 +217,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                             @if(isset($profile->{'OSN'.$i}))
                                 <tr>
                                     <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
-                                    <td style="text-align: left;">{{ $profile->{'OrgStat'.$i} }}</td>
+                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} or "<i style='color:red;'>Empty</i>" !!}</td>
                                 </tr>
                             @endif
                         @endfor
@@ -406,7 +407,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 $RIGHT_COL.css('min-height', contentHeight);
             };
 
-            $SIDEBAR_MENU.find('a[href="/members"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/members"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                 setContentHeight();
             }).parent().addClass('active');
 
