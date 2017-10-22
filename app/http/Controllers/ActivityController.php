@@ -71,31 +71,42 @@ class ActivityController extends Controller
     }
 
     public function index () {
-        // responds to /blah:  This is the dashboard
+        // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
         /*
-        $original_sql = "SELECT oe.eventID, oe.eventName, oet.etName, date_format(oe.eventStartDate, '%c/%d/%Y') as eventStartDate,
-                              date_format(oe.eventEndDate, '%c/%d/%Y') AS eventEndDate
-                           FROM `org-event` oe
-                           JOIN `org-event_types` oet on oe.eventTypeID=oet.etID and oet.orgID=?
-                           JOIN `event-registration` er on er.eventID = oe.eventID 
-                           WHERE (er.regStatus='Active' or er.regStatus='In Progress') AND personID=? AND oe.deleted_at is NULL
-                           ORDER BY oe.eventStartDate DESC";
+                // This is deprecated code because withCount is not available with DB::table()
+                $attendance = DB::table('org-event as oe')
+                                ->join('org-event_types as oet', function($join) {
+                                    $join->on('oet.etID', '=', 'oe.eventTypeID');
+                                })->join('event-registration as er', 'er.eventID', '=', 'oe.eventID')
+                                ->where('er.personID', '=', $this->currentPerson->personID)
+                                ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
+                                ->where('oe.orgID', '=', $this->currentPerson->defaultOrgID)
+                                ->where(function($w) {
+                                    $w->where('er.regStatus', '=', 'Active')
+                                      ->orWhere('er.regStatus', '=', 'In Progress');
+                                })
+                                ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'oe.eventStartDate', 'oe.eventEndDate')
+                                ->orderBy('oe.eventStartDate', 'DESC')->paginate(20);
         */
-        $attendance = DB::table('org-event as oe')
-                        ->join('org-event_types as oet', function($join) {
-                            $join->on('oet.etID', '=', 'oe.eventTypeID');
-                        })->join('event-registration as er', 'er.eventID', '=', 'oe.eventID')
-                        ->where('er.personID', '=', $this->currentPerson->personID)
-                        ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
-                        ->where('oe.orgID', '=', $this->currentPerson->defaultOrgID)
-                        ->where(function($w) {
-                            $w->where('er.regStatus', '=', 'Active')
-                              ->orWhere('er.regStatus', '=', 'In Progress');
-                        })
-                        ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'oe.eventStartDate', 'oe.eventEndDate')
-                        ->orderBy('oe.eventStartDate', 'DESC')->get();
+        $attendance = Event::where('er.personID', '=', $this->currentPerson->personID)
+                           ->join('org-event_types as oet', function($join) {
+                               $join->on('oet.etID', '=', 'org-event.eventTypeID');
+                           })->join('event-registration as er', 'er.eventID', '=', 'org-event.eventID')
+                           ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
+                           ->where('org-event.orgID', '=', $this->currentPerson->defaultOrgID)
+                           ->where(function($w) {
+                               $w->where('er.regStatus', '=', 'Active')
+                                 ->orWhere('er.regStatus', '=', 'In Progress');
+                           })
+                           ->select('org-event.eventID', 'org-event.eventName', 'oet.etName',
+                               'org-event.eventStartDate', 'org-event.eventEndDate',
+                               DB::raw('(select count(*) from `event-registration` er2
+                                        where er2.eventID = `org-event`.eventID and er2.canNetwork=1) as cnt2'))
+                           ->withCount('registrations')
+                           ->orderBy('org-event.eventStartDate', 'DESC')->get(20);
 
+        // withCount above does nothing.  See about adding the count of Networking=1 here.
         $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, et.etName as 'label',
                         (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=?) as 'attended'
                     FROM `org-event` oe
@@ -152,7 +163,6 @@ class ActivityController extends Controller
                        ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'indName')
                        ->get();
         return json_encode(array('event' => $eventName, 'data' => $r->toArray()));
-        dd($r);
     }
 
     public function create () {

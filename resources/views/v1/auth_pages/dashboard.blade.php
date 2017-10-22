@@ -13,8 +13,13 @@ $data         = [];
 $current_user = auth()->user()->id;
 foreach($attendance as $event) {
     $dt   = Carbon::parse($event->eventStartDate);
-    $nlb  =
-        '<a onclick="getList(' . $event->eventID . ", '" . $event->eventName . "'" . ');" class="network btn btn-success btn-xs">View Networking List</a>';
+    if($event->cnt2 > 0) {
+        $nlb  =
+            '<a onclick="getList(' . $event->eventID . ", '" . $event->eventName . "'" . ');" class="network btn btn-success btn-xs">View Networking List</a>';
+    } else {
+        $nlb  = '<a class="network btn btn-cancel btn-xs" disabled data-toggle="tooltip" data-placement="top" '.
+                'title="No permission to display networking list.">View Networking List</a>';
+    }
     array_push($data, [$dt->format('Y/n/j'), $event->eventName, $nlb]);
 }
 count($data) > 15 ? $scroll = 1 : $scroll = 0;
@@ -76,7 +81,6 @@ $tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
                 success: function (data) {
                     var result = eval(data);
                     $("#event_name").text(result.event).css('font-weight', 'bold').css('font-size', '16px').css('color', 'red');
-                    //console.log(result.event);
                     $("#network_list").DataTable({
                         destroy: true,
                         data: result.data,
@@ -89,6 +93,9 @@ $tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
                             { data: 'indName', title: 'Industry' }
                         ]
                     });
+                    {{--
+                    console.log(result);
+                    --}}
                 },
                 error: function (data) {
                     var result = eval(data);

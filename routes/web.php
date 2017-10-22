@@ -65,9 +65,6 @@ Route::post('/rs_survey', 'RegSessionController@store');
 Route::get('/checkin/{event}/{session?}', 'RegSessionController@volunteer_checkin');
 Route::post('/process_checkin', 'RegSessionController@process_checkin');
 
-
-
-
 Route::get('/storage/events/{filename}', function($filename){
     $filePath = Flysystem::connection('awss3')->get($filename);
     return redirect($filePath);

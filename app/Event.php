@@ -18,23 +18,23 @@ class Event extends Model
     protected static $ignoreChangedAttributes = ['createDate'];
 
     public function tickets() {
-        return $this->hasMany(Ticket::class, 'ticketID');
+        return $this->hasMany(Ticket::class, 'eventID', 'eventID');
     }
 
     public function bundles() {
-        return $this->hasMany(Bundle::class, 'ticketID');
+        return $this->hasMany(Bundle::class, 'eventID', 'eventID');
     }
 
     public function registrations() {
-        return $this->hasMany(Registration::class, 'ticketID');
+        return $this->hasMany(Registration::class, 'eventID', 'eventID');
     }
 
     public function regfinances() {
-        return $this->hasMany(RegFinance::class, 'ticketID');
+        return $this->hasMany(RegFinance::class, 'eventID', 'eventID');
     }
 
     public function org() {
-        return $this->belongsTo(Org::class, 'orgID');
+        return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
     public static function events_this_year(){

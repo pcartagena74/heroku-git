@@ -43,35 +43,18 @@ class EventController extends Controller
                                count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                         FROM `org-event` e
                         LEFT JOIN `event-registration` er ON er.eventID=e.eventID AND er.regStatus != 'In Progress'
-                        LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
+                        LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                         WHERE e.orgID = ?
                             AND eventStartDate >= NOW() AND e.deleted_at is null
                         GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                         ORDER BY e.eventStartDate ASC";
-
-        /*
-        $c = DB::table('org-event as oe')
-               ->leftJoin('event-registration as er', 'er.eventID', '=', 'oe.eventID')
-               ->leftJoin('org-event_types as et', 'et.etID', '=', 'oe.eventTypeID')
-               ->where('et.orgID', '=', 'oe.orgID')
-               ->where([
-                   ['oe.orgID', '=', $this->currentPerson->defaultOrgID],
-                   ['oe.eventStartDate', '>=', 'NOW()']
-               ])
-            ->groupBy('oe.eventID', 'oe.eventName', 'oe.eventStartDate', 'oe.eventEndDate', 'oe.isActive', 'oe.slug', 'oe.hasTracks')
-            ->orderBy('oe.eventStartDate')
-               ->select(DB::raw('oe.eventID, oe.eventName, oe.eventStartDate, oe.eventEndDate, oe.isActive,
-                                 count(er.ticketID) as cnt, et.etName, oe.slug, oe.hasTracks'))
-               ->get();
-
-        */
 
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
                             count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                      FROM `org-event` e
                      LEFT JOIN `event-registration` er ON er.eventID=e.eventID
-                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
+                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                      WHERE e.orgID = ?
                         AND eventStartDate < NOW() AND e.deleted_at is null
                      GROUP BY e.eventStartDate, e.eventID, e.eventName, e.eventEndDate, e.isActive, e.eventStartDate

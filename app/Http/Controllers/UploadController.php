@@ -36,7 +36,7 @@ class UploadController extends Controller
 
         $events = Event::where([
             ['orgID', '=', $user->defaultOrgID]
-        ])->get();
+        ])->withCount('registrations')->get();
 
         return view('v1.auth_pages.organization.data_upload', compact('events'));
     }
@@ -405,24 +405,21 @@ class UploadController extends Controller
                                 $this->counter++;
                                 $create_user = 0;
                                 foreach(array_keys($row) as $k) {
+                                    //dd($row);
                                     switch (1) {
                                         case preg_match('/attended/i', $k):
                                             break;
                                         case preg_match('/^ticket$/i', $k):
                                             $tktTxt = $row[$k];
                                             if(preg_match('/Bundle/i', $tktTxt)){
-                                                $ticketID = 24;
-                                            } elseif(preg_match('/Friday.Only/i', $tktTxt)){
-                                                $ticketID = 22;
-                                            } elseif(preg_match('/Thursday/i', $tktTxt)){
-                                                $ticketID = 23;
+                                                $ticketID = 126;
+                                            } elseif(preg_match('/Friday Only/i', $tktTxt)){
+                                                $ticketID = 123;
+                                            } elseif(preg_match('/Saturday Only/i', $tktTxt)){
+                                                $ticketID = 124;
+                                            } elseif(preg_match('/Friday evening/i', $tktTxt)){
+                                                $ticketID = 125;
                                             }
-                                            break;
-                                        case (preg_match('/morning/i', $k)):
-                                            $morning = $row[$k];
-                                            break;
-                                        case (preg_match('/afternoon/i', $k)):
-                                            $afternoon = $row[$k];
                                             break;
                                         case preg_match('/salutation/i', $k):
                                             $prefix = trim(substr($row[$k], 0, 5));
@@ -574,29 +571,88 @@ class UploadController extends Controller
                                         case (preg_match('/experience/i', $k)):
                                             $experience = $row[$k];
                                             break;
+                                        case (preg_match('/1_Friday$/i', $k)):
+                                            $f1 = $row[$k];
+                                            //dd($f1);
+                                            break;
+                                        case (preg_match('/1_Saturday$/i', $k)):
+                                            $s1 = $row[$k];
+                                            break;
+                                        case (preg_match('/2_Friday$/i', $k)):
+                                            $f2 = $row[$k];
+                                            break;
+                                        case (preg_match('/2_Saturday$/i', $k)):
+                                            $s2 = $row[$k];
+                                            break;
+                                        case (preg_match('/3_Friday$/i', $k)):
+                                            $f3 = $row[$k];
+                                            break;
+                                        case (preg_match('/3_Saturday$/i', $k)):
+                                            $s3 = $row[$k];
+                                            break;
 
                                         default:
                                             echo("Encountered an unknown column: '" . $k . "'<br>");
                                             break;
                                     }
                                 }
-                                if($eventID == 6){
-                                    if (preg_match('/^Kerry/i', $morning)) {
-                                        $mSessionID = 126;
-                                    } elseif (preg_match('/^Stefanie/i', $morning)) {
-                                        $mSessionID = 121;
-                                    } elseif (preg_match('/^Evan/i', $morning)) {
-                                        $mSessionID = 131;
+                                //dd(get_defined_vars());
+                                if($eventID == 97 && ($ticketID == 123 || $ticketID == 126)) {
+                                    if(preg_match('/^AGILE/i', $f1)) {
+                                        $fs1 = 91;
+                                    } elseif(preg_match('/^PORTFOLIO/i', $f1)) {
+                                        $fs1 = 92;
+                                    } elseif(preg_match('/^RISK/i', $f1)) {
+                                        $fs1 = 93;
                                     } else {
-                                        $mSessionID = null;
+                                        $fs1 = null;
                                     }
-
-                                    if (preg_match('/^Eric/i', $afternoon)) {
-                                        $aSessionID = 127;
-                                    } elseif (preg_match('/^Marie/i', $afternoon)){
-                                        $aSessionID = 122;
+                                    if(preg_match('/^AGILE/i', $f2)) {
+                                        $fs2 = 96;
+                                    } elseif(preg_match('/^PORTFOLIO/i', $f2)) {
+                                        $fs2 = 97;
+                                    } elseif(preg_match('/^RISK/i', $f2)) {
+                                        $fs2 = 98;
                                     } else {
-                                        $aSessionID = null;
+                                        $fs2 = null;
+                                    }
+                                    if(preg_match('/^AGILE/i', $f3)) {
+                                        $fs3 = 101;
+                                    } elseif(preg_match('/^PORTFOLIO/i', $f3)) {
+                                        $fs3 = 102;
+                                    } elseif(preg_match('/^RISK/i', $f3)) {
+                                        $fs3 = 103;
+                                    } else {
+                                        $fs3 = null;
+                                    }
+                                }
+                                if($eventID == 97 && ($ticketID == 124 || $ticketID == 126)){
+                                    if (preg_match('/^AGILE/i', $s1)) {
+                                        $ss1 = 106;
+                                    } elseif (preg_match('/^PORTFOLIO/i', $s1)) {
+                                        $ss1 = 107;
+                                    } elseif (preg_match('/^RISK/i', $s1)) {
+                                        $ss1 = 108;
+                                    } else {
+                                        $ss1 = null;
+                                    }
+                                    if (preg_match('/^AGILE/i', $s2)) {
+                                        $ss2 = 111;
+                                    } elseif (preg_match('/^PORTFOLIO/i', $s2)) {
+                                        $ss2 = 112;
+                                    } elseif (preg_match('/^RISK/i', $s2)) {
+                                        $ss2 = 113;
+                                    } else {
+                                        $ss2 = null;
+                                    }
+                                    if (preg_match('/^AGILE/i', $s3)) {
+                                        $ss3 = 116;
+                                    } elseif (preg_match('/^PORTFOLIO/i', $s3)) {
+                                        $ss3 = 117;
+                                    } elseif (preg_match('/^RISK/i', $s3)) {
+                                        $ss3 = 118;
+                                    } else {
+                                        $ss3 = null;
                                     }
                                 }
                                 if(!isset($canNtwk)) {
@@ -669,6 +725,9 @@ class UploadController extends Controller
                                         $p               = Person::find($op->personID);
                                         $p->defaultOrgID = $orgID;
                                         $p->updaterID    = $this->currentPerson->personID;
+                                        if($experience != null && $p->experience === null){
+                                            $p->experience = $experience;
+                                        }
                                         $p->save();
 
                                         $e = Email::where('emailADDR', '=', $email)->first();
@@ -687,6 +746,9 @@ class UploadController extends Controller
                                             $p               = Person::find($e->personID);
                                             $p->defaultOrgID = $orgID;
                                             $p->updaterID    = $this->currentPerson->personID;
+                                            if($experience != null && $p->experience === null){
+                                                $p->experience = $experience;
+                                            }
                                             $p->save();
 
                                             if($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
@@ -702,6 +764,7 @@ class UploadController extends Controller
                                                 $ps->login        = $email;
                                                 $ps->compName     = $coName;
                                                 $ps->indName      = $indName;
+                                                $ps->experience   = $experience;
                                                 if(isset($affiliation)){
                                                     $ps->affiliation  = $affiliation;
                                                 } else {
@@ -751,6 +814,9 @@ class UploadController extends Controller
                                             }
                                             $p->allergenInfo = $allergy;
                                             $p->creatorID    = $this->currentPerson->personID;
+                                            if($experience != null){
+                                                $p->experience = $experience;
+                                            }
                                             $p->save();
 
                                             $op            = new OrgPerson;
@@ -875,7 +941,7 @@ class UploadController extends Controller
                                     $create_user = 0;
                                 }
                                 // do the rest of the processing for this row
-                                if($eventID == 6){
+                                if($eventID == 97){
                                     $tktID = $ticketID;
                                 }
                                 $r                   = new Registration;
@@ -929,33 +995,49 @@ class UploadController extends Controller
                                 $rf->status       = $status;
                                 $rf->save();
 
-                                if($eventID == 6){
-                                    // look for morning & afternoon variables
-                                    // morning: Kerry, Stefanie, Evans      : 126,  121, 131
-                                    // afternoon: Eric, Marie, Evans        : 127, 122, 131
-
-                                    if($mSessionID !== null){
-                                        $rs = new RegSession;
-                                        $rs->regID = $r->regID;
-                                        $rs->eventID = $eventID;
-                                        $rs->personID = $p->personID;
-                                        $rs->sessionID = $mSessionID;
-                                        $rs->confDay = 1;
-                                        $rs->creatorID = auth()->user()->id;
-                                        $rs->updaterID = auth()->user()->id;
-                                        $rs->save();
+                                if($eventID == 97){
+                                    // try to decrement ticket regCounts
+                                    if($ticketID == 126){
+                                        $t = Ticket::find(123);
+                                        $t->regCount++;
+                                        $t->save();
+                                        $t = Ticket::find(124);
+                                        $t->regCount++;
+                                        $t->save();
+                                        $t = Ticket::find(125);
+                                        $t->regCount++;
+                                        $t->save();
+                                    }else{
+                                        $t = Ticket::find($ticketID);
+                                        $t->regCount++;
+                                        $t->save();
                                     }
 
-                                    if($aSessionID !== null){
-                                        $rs = new RegSession;
-                                        $rs->regID = $r->regID;
-                                        $rs->eventID = $eventID;
-                                        $rs->personID = $p->personID;
-                                        $rs->sessionID = $aSessionID;
-                                        $rs->confDay = 1;
-                                        $rs->creatorID = auth()->user()->id;
-                                        $rs->updaterID = auth()->user()->id;
-                                        $rs->save();
+                                    foreach(array($fs1, $fs2, $fs3) as $sessID) {
+                                        if($sessID !== null){
+                                            $rs = new RegSession;
+                                            $rs->regID = $r->regID;
+                                            $rs->eventID = $eventID;
+                                            $rs->personID = $p->personID;
+                                            $rs->sessionID = $sessID;
+                                            $rs->confDay = 1;
+                                            $rs->creatorID = auth()->user()->id;
+                                            $rs->updaterID = auth()->user()->id;
+                                            $rs->save();
+                                        }
+                                    }
+                                    foreach(array($ss1, $ss2, $ss3) as $sessID) {
+                                        if($sessID !== null){
+                                            $rs = new RegSession;
+                                            $rs->regID = $r->regID;
+                                            $rs->eventID = $eventID;
+                                            $rs->personID = $p->personID;
+                                            $rs->sessionID = $sessID;
+                                            $rs->confDay = 1;
+                                            $rs->creatorID = auth()->user()->id;
+                                            $rs->updaterID = auth()->user()->id;
+                                            $rs->save();
+                                        }
                                     }
                                 }
                                 //dd(get_defined_vars());
