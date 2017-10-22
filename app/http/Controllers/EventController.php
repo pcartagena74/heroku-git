@@ -154,6 +154,7 @@ class EventController extends Controller
             $this->currentPerson = Person::find(auth()->user()->id);
             $current_person      = $this->currentPerson;
         }
+        $currentOrg = Org::find($event->orgID);
 
         //$referer = Referer::get();
         $referer = app(Referer::class)->get();
@@ -167,7 +168,7 @@ class EventController extends Controller
         }
 
         $event_loc = Location::where('locID', $event->locationID)->first();
-        $org_stuff = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
+        $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
         $bundles   =
             Ticket::where([
                 ['isaBundle', 1],
@@ -185,10 +186,10 @@ class EventController extends Controller
         if($event->hasTracks > 0) {
             $tracks = Track::where('eventID', $event->eventID)->get();
             return view('v1.public_pages.display_event_w_sessions',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff', 'tracks'));
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg'));
         } else {
             return view('v1.public_pages.display_event',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff'));
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
         }
     }
 
