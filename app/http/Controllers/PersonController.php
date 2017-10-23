@@ -168,10 +168,6 @@ class PersonController extends Controller
         dd(request()->all());
     }
 
-    public function edit ($id) {
-        // responds to GET /blah/id/edit and shows the add/edit form
-    }
-
     public function update (Request $request, $id) {
         // responds to PATCH /blah/id
         $personID = request()->input('pk');
@@ -285,10 +281,6 @@ class PersonController extends Controller
         }
     }
 
-    public function destroy ($id) {
-        // responds to DELETE /blah/id
-    }
-
     /**
      * Redirect the user to the LinkedIn authentication page.
      *
@@ -305,5 +297,10 @@ class PersonController extends Controller
      */
     public function handleLinkedInCallback () {
         $user = Socialite::driver('linkedin')->user();
+    }
+
+    public function show_report(){
+        $topBits = '';
+        return view('v1.auth_pages.members.mbr_report', compact('topBits'));
     }
 }

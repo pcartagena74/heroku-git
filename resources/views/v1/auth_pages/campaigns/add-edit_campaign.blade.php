@@ -21,8 +21,6 @@ $topBits = '';  // remove this if this was set in the controller
         {!! Form::model($campaign, array('url' => env('APP_URL')."/campaign", 'method' => 'post')) !!}
     @endif
 
-
-
     @include('v1.parts.start_content', ['header' => ' Campaign Message',
              'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">

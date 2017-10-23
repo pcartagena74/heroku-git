@@ -24,32 +24,29 @@ if(isset($blah)){
 
     <form enctype='multipart/form-data' action='{{ env('APP_URL') }}/load_data' method='post'>
         {{ csrf_field() }}
-        <div class="col-sm-6 col-xs-6">
-
+        <div class="col-sm-6 col-xs-6 form-group">
             <label for="filename">File name to import:</label>
-            <input size='50' type='file' name='filename' required>
-
+            <input size='50' type='file' name='filename' required class="form-control">
         </div>
 
-        <div class="col-sm-7 col-xs-7">
-            <select id="dt" name='data_type' required>
+        <div class="col-sm-7 col-xs-7 form-group">
+            <select id="dt" name='data_type' required class="form-control">
                 <option value='mbrdata'>Member Data</option>
                 <option value='evtdata'>Event Data</option>
             </select><br/>
         </div>
 
-        <div class="col-sm-8 col-xs-8">
-            <select id="evt" name='eventID' style='display:none;'>
+        <div class="col-sm-8 col-xs-8 form-group">
+            <select id="evt" name='eventID' style='display:none;' class="form-control">
                 <option value="">Select an event...</option>
                 @foreach($events as $event)
                     <option value="{{ $event->eventID }}">{{ $event->eventID }}
                         : {{ $event->eventStartDate->format('n/Y') }}
-                        -> {{ $event->eventName }}</option>
+                        -> {{ $event->eventName }} ({{ $event->registrations_count }})</option>
                 @endforeach
-
             </select>
-
         </div>
+
         <div class="col-sm-9 col-xs-9">
             <br />
             <input type='submit' name='submit' value='Upload'><br/>

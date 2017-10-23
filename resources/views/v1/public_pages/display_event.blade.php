@@ -4,6 +4,12 @@
  * Created: 2/2/2017
  */
 
+use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use Aws\S3\S3Client;
+use League\Flysystem\Filesystem;
+//use League\Flysystem\AdapterInterface;
+
 $category = DB::table('event-category')->where([
     ['orgID', $event->orgID],
     ['catID', $event->catID]
@@ -16,17 +22,33 @@ $category = DB::table('event-category')->where([
 // Early Bird-ism
 // 1. Get today's date
 // 2. Compare to early bird dates per ticket
-// 3. Calculate new price and display
+// 3. Calculate new pri
 
 $today = Carbon\Carbon::now();
+
+$client = new S3Client([
+    'credentials' => [
+        'key'    => env('AWS_KEY'),
+        'secret' => env('AWS_SECRET')
+    ],
+    'region' => env('AWS_REGION'),
+    'version' => 'latest',
+]);
+
+$adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
+$s3fs = new Filesystem($adapter);
+$logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
 ?>
 @extends('v1.layouts.no-auth')
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '',
+        'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '',
+        'w1' => '8', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <form method="post" action="/regstep1/{{ $event->eventID }}" id="start_registration" role="form">
+    <form method="post" action="{{ env('APP_URL') }}/regstep1/{{ $event->eventID }}"
+            id="start_registration" role="form">
         {{ csrf_field() }}
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
@@ -40,9 +62,9 @@ $today = Carbon\Carbon::now();
                         <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
                             <img src="/images/earlybird.jpg" style="float:right; width:75px;">
                         </div>
-                    <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">
-                        <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
-                    </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">
+                            <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
+                        </div>
                     </div>
                 @endif
                 <table id="datatable" class="table table-striped jambo_table">
@@ -175,40 +197,39 @@ $today = Carbon\Carbon::now();
                 <button type="submit" class="btn btn-success btn-sm" id="purchase"
                         style="height: 32px;"><b>Purchase Ticket(s)</b></button>
             </div>
+        </div>
     </form>
-    &nbsp;<br />
+    &nbsp;<br/>
     <SUP style="color: red">*</SUP> Member pricing is applied automatically when you are 1)
     logged in and 2) have a PMI ID associated with your account.<br/>
-    <SUP style='color: red'>**</SUP>Bundles include multiple tickets so you do not have to
-    manually purchase multiple tickets.
-    @if($errors->all())
-        @include('v1.parts.error')
-    @endif
-
+    <SUP style='color: red'>**</SUP>Bundles include multiple tickets so you do not have to manually purchase multiple tickets.
+        @if($errors->all())
+            @include('v1.parts.error')
+        @endif
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Date &amp; Time', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <table class="table" style="border: none;">
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h3>From:</h3></td>
+                <td style="text-align: right; border: none;"><h4>From:</h4></td>
                 <td style="border: none;">
                     <nobr>
-                        <h3>{{ $event->eventStartDate->format('n/j/Y') }}</h3>
+                        <h4>{{ $event->eventStartDate->format('n/j/Y') }}</h4>
                     </nobr>
                     <nobr>
-                        <h3>{{ $event->eventStartDate->format('g:i A') }}</h3>
+                        <h4>{{ $event->eventStartDate->format('g:i A') }}</h4>
                     </nobr>
                 </td>
             </tr>
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h3>To:</h3></td>
+                <td style="text-align: right; border: none;"><h4>To:</h4></td>
                 <td style="border: none;">
                     <nobr>
-                        <h3>{{ $event->eventEndDate->format('n/j/Y') }}</h3>
+                        <h4>{{ $event->eventEndDate->format('n/j/Y') }}</h4>
                     </nobr>
                     <nobr>
-                        <h3>{{ $event->eventEndDate->format('g:i A') }}</h3>
+                        <h4>{{ $event->eventEndDate->format('g:i A') }}</h4>
                     </nobr>
                 </td>
 
@@ -219,23 +240,26 @@ $today = Carbon\Carbon::now();
 
     @include('v1.parts.start_content', ['header' => 'Location', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <div id="map_canvas" class="col-md-12 col-sm-12 col-xs-12" style="padding:15px;">
-            <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="0" scrolling="no"
-                    marginheight="0" marginwidth="0"
-                    src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&output=embed"></iframe>
-        </div>
-        {{ $event_loc->locName }}<br>
-        {{ $event_loc->addr1 }}<br>{!! $event_loc->addr2 !!}
-        @if($event_loc->addr2)
-            <br>
+        @if($event_loc->isVirtual == 1)
+            {{ $event_loc->locName }}<br>
+        @else
+            <div id="map_canvas" class="col-md-12 col-sm-12 col-xs-12" style="padding:15px;">
+                <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="0" scrolling="no"
+                        marginheight="0" marginwidth="0"
+                        src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&output=embed"></iframe>
+            </div>
+            {{ $event_loc->locName }}<br>
+            {{ $event_loc->addr1 }}<br>{!! $event_loc->addr2 !!}
+            @if($event_loc->addr2)
+                <br>
+            @endif
+            {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}<br>
         @endif
-        {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}<br>
     </div>
-
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Organizer Information', 'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <p><img src="{{ $org_stuff->orgPath }}/{{ $org_stuff->orgLogo }}"></p>
+    <p><img src="{{ $logo }}" alt="{!! $currentOrg->orgName !!} Logo"></p>
     {{ $event->contactOrg }}<br>
     {{ $event->contactEmail }}<br>
     <br>
@@ -282,8 +306,7 @@ $today = Carbon\Carbon::now();
                         discount_code: codeValue
                     },
                     beforeSend: function () {
-                        $('#status_msg').html('');
-                        $('#status_msg').fadeIn(0);
+                        $('#status_msg').html('').fadeIn(0);
                     },
                     success: function (data) {
                         console.log(data);
@@ -297,7 +320,7 @@ $today = Carbon\Carbon::now();
                     }
                 });
             }
-        };
+        }
     </script>
 
 @endsection

@@ -43,35 +43,18 @@ class EventController extends Controller
                                count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                         FROM `org-event` e
                         LEFT JOIN `event-registration` er ON er.eventID=e.eventID AND er.regStatus != 'In Progress'
-                        LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
+                        LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                         WHERE e.orgID = ?
                             AND eventStartDate >= NOW() AND e.deleted_at is null
                         GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                         ORDER BY e.eventStartDate ASC";
-
-        /*
-        $c = DB::table('org-event as oe')
-               ->leftJoin('event-registration as er', 'er.eventID', '=', 'oe.eventID')
-               ->leftJoin('org-event_types as et', 'et.etID', '=', 'oe.eventTypeID')
-               ->where('et.orgID', '=', 'oe.orgID')
-               ->where([
-                   ['oe.orgID', '=', $this->currentPerson->defaultOrgID],
-                   ['oe.eventStartDate', '>=', 'NOW()']
-               ])
-            ->groupBy('oe.eventID', 'oe.eventName', 'oe.eventStartDate', 'oe.eventEndDate', 'oe.isActive', 'oe.slug', 'oe.hasTracks')
-            ->orderBy('oe.eventStartDate')
-               ->select(DB::raw('oe.eventID, oe.eventName, oe.eventStartDate, oe.eventEndDate, oe.isActive,
-                                 count(er.ticketID) as cnt, et.etName, oe.slug, oe.hasTracks'))
-               ->get();
-
-        */
 
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
                             count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
                      FROM `org-event` e
                      LEFT JOIN `event-registration` er ON er.eventID=e.eventID
-                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID = e.orgID
+                     LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                      WHERE e.orgID = ?
                         AND eventStartDate < NOW() AND e.deleted_at is null
                      GROUP BY e.eventStartDate, e.eventID, e.eventName, e.eventEndDate, e.isActive, e.eventStartDate
@@ -171,6 +154,7 @@ class EventController extends Controller
             $this->currentPerson = Person::find(auth()->user()->id);
             $current_person      = $this->currentPerson;
         }
+        $currentOrg = Org::find($event->orgID);
 
         //$referer = Referer::get();
         $referer = app(Referer::class)->get();
@@ -184,7 +168,7 @@ class EventController extends Controller
         }
 
         $event_loc = Location::where('locID', $event->locationID)->first();
-        $org_stuff = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
+        $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
         $bundles   =
             Ticket::where([
                 ['isaBundle', 1],
@@ -202,10 +186,10 @@ class EventController extends Controller
         if($event->hasTracks > 0) {
             $tracks = Track::where('eventID', $event->eventID)->get();
             return view('v1.public_pages.display_event_w_sessions',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff', 'tracks'));
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg'));
         } else {
             return view('v1.public_pages.display_event',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'org_stuff'));
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
         }
     }
 

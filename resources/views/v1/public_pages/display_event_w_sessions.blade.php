@@ -6,14 +6,15 @@
 
 use App\EventSession;
 use App\Ticket;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use Aws\S3\S3Client;
+use League\Flysystem\Filesystem;
 
 $category = DB::table('event-category')->where([
     ['orgID', $event->orgID],
     ['catID', $event->catID]
 ])->select('catTXT')->first();
-
-//$string = $event->eventStartDate->format('n/j/Y g:i A');
-//dd($string);
 
 // -----------------
 // Early Bird-ism
@@ -60,7 +61,18 @@ if(!$event->isSymmetric) {
     }
 }
 
-//dd($mda);
+$client = new S3Client([
+    'credentials' => [
+        'key'    => env('AWS_KEY'),
+        'secret' => env('AWS_SECRET')
+    ],
+    'region' => env('AWS_REGION'),
+    'version' => 'latest',
+]);
+
+$adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
+$s3fs = new Filesystem($adapter);
+$logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
 ?>
 @extends('v1.layouts.no-auth')
 
@@ -433,24 +445,24 @@ if(!$event->isSymmetric) {
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <table class="table" style="border: none;">
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h3>From:</h3></td>
+                <td style="text-align: right; border: none;"><h4>From:</h4></td>
                 <td style="border: none;">
                     <nobr>
-                        <h3>{{ $event->eventStartDate->format('n/j/Y') }}</h3>
+                        <h4>{{ $event->eventStartDate->format('n/j/Y') }}</h4>
                     </nobr>
                     <nobr>
-                        <h3>{{ $event->eventStartDate->format('g:i A') }}</h3>
+                        <h4>{{ $event->eventStartDate->format('g:i A') }}</h4>
                     </nobr>
                 </td>
             </tr>
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h3>To:</h3></td>
+                <td style="text-align: right; border: none;"><h4>To:</h4></td>
                 <td style="border: none;">
                     <nobr>
-                        <h3>{{ $event->eventEndDate->format('n/j/Y') }}</h3>
+                        <h4>{{ $event->eventEndDate->format('n/j/Y') }}</h4>
                     </nobr>
                     <nobr>
-                        <h3>{{ $event->eventEndDate->format('g:i A') }}</h3>
+                        <h4>{{ $event->eventEndDate->format('g:i A') }}</h4>
                     </nobr>
                 </td>
             </tr>
@@ -460,23 +472,26 @@ if(!$event->isSymmetric) {
 
     @include('v1.parts.start_content', ['header' => 'Location', 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <div id="map_canvas" class="col-md-12 col-sm-12 col-xs-12" style="padding:15px;">
-            <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="0" scrolling="no"
-                    marginheight="0" marginwidth="0"
-                    src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&output=embed"></iframe>
-        </div>
-        {{ $event_loc->locName }}<br>
-        {{ $event_loc->addr1 }}<br>{!! $event_loc->addr2 !!}
-        @if($event_loc->addr2)
-            <br>
+        @if($event_loc->isVirtual)
+            {{ $event_loc->locName }}<br>
+        @else
+            <div id="map_canvas" class="col-md-12 col-sm-12 col-xs-12" style="padding:15px;">
+                <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="0" scrolling="no"
+                        marginheight="0" marginwidth="0"
+                        src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&output=embed"></iframe>
+            </div>
+            {{ $event_loc->locName }}<br>
+            {{ $event_loc->addr1 }}<br>{!! $event_loc->addr2 !!}
+            @if($event_loc->addr2)
+                <br>
+            @endif
+            {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}<br>
         @endif
-        {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}<br>
     </div>
-
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Organizer Information', 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <p><img src="{{ $org_stuff->orgPath }}/{{ $org_stuff->orgLogo }}"></p>
+    <p><img src="{{ $logo }}" alt="{!! $currentOrg->orgName !!} Logo"></p>
     {{ $event->contactOrg }}<br>
     {{ $event->contactEmail }}<br>
     <br>

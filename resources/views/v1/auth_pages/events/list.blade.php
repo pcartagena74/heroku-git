@@ -42,27 +42,27 @@ foreach($current_events as $event) {
     $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
     $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 
-    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-xs'><i class='fa fa-pencil'></i> Edit Event</a>";
-    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Tracks & Sessions</a>";
+    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event'><i class='fa fa-pencil'></i></a>";
+    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tracks & Sessions'><i class='fa fa-pencil'></i></a>";
     if($event->hasTracks == 0){
         $track_link_button = '';
     }
-    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
-    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
+    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='Event Report'><i class='fa fa-bar-chart-o'></i></a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top' title='Copy Event'><i class='fa fa-copy'></i></a>";
     $display_link_button =
-        "<a target='_new' href='$displayURL' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> Preview</a>";
+        "<a target='_new' href='$displayURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='Preview Event'><i class='fa fa-eye'></i></a>";
     $eventDiscount_button =
-       "<a href='$eventDiscountURL' class='btn btn-success btn-xs'><i class='fa fa-pencil'></i> Event Discounts</a>";
+       "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event Discounts'><i class='fa fa-pencil'></i></a>";
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
-        '<button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</button>
+        '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
     if($event->isActive) {
         $delete_button = '';
     }
 
     $ticket_button =
-        "<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
-    $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-xs'><i class='fa fa-check-square-o'></i> Check-in Attendees</a>";
+        "<a href='$tktURL' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tickets'><i class='fa fa-pencil'></i></a>";
+    $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='CheckIn Attendees'><i class='fa fa-check-square-o'></i></a>";
 
     array_push($current_data, ["<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
@@ -84,15 +84,21 @@ foreach($past_events as $event) {
     $rptURL = env('APP_URL').'/eventreport/' . $event->slug;
     $tktURL = env('APP_URL').'/event-tickets/'. $event->eventID;
     $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
+    $editURL    = env('APP_URL').'/event/' . $event->eventID . '/edit';
 
     // 10/7/17: blanked out button to remove from past event display
     $ticket_button = '';
         //"<a href='$tktURL' class='btn btn-info btn-xs'><i class='fa fa-pencil'></i> Tickets</a>";
-    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-xs'><i class='fa fa-bar-chart-o'></i> Event Reporting</a>";
-    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-xs'><i class='fa fa-copy'></i> Copy Event</a>";
+    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event'><i class='fa fa-pencil'></i></a>";
+    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='Event Report'><i class='fa fa-bar-chart-o'></i></a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top' title='Copy Event'><i class='fa fa-copy'></i></a>";
+    $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
+        '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
+            <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
+    if($event->cnt > 0) { $delete_button = ''; }
 
     array_push($past_data, [ "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $event->eventName, $event->etName, $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
+        $event->eventName, $event->etName, $event->cnt, $edit_link_button . $rpt_link_button . $copy_link_button . $delete_button]);
 //    array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
 //        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
 //        $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);

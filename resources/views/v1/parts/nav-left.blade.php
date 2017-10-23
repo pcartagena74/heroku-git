@@ -19,6 +19,10 @@ $currentOrg    = $currentPerson->defaultOrg;
 
 $options = array('validate_all' => true); // , 'return_type' => 'both');
 ?>
+{{--
+    // small green nav button
+    <span class="label label-success pull-right">Coming Soon</span>
+--}}
 <div class="col-md-3 left_col menu_fixed">
     <div class="left_col scroll-view">
 
@@ -79,8 +83,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="{{ env('APP_URL') }}/members" id="mem">Member Management</a></li>
                                 <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
                                                 class="label label-success pull-right">New</span></a></li>
-                                <li><a href="{{ env('APP_URL') }}#">Something New... <span
-                                                class="label label-success pull-right">Coming Soon</span></a></li>
+                                <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a></li>
                             </ul>
                         </li>
                     @endif

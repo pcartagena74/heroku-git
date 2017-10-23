@@ -11,23 +11,27 @@ $string = '';
 $topBits = '';  // remove this if this was set in the controller
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
-
 @section('content')
-{{--
+    {{--
     {!! Form::open(array('url' => env('APP_URL')."/getperson", 'method' => 'POST')) !!}
     {!! Form::hidden('string', '357-blah') !!}
     {!! Form::submit('test') !!}
     {!! Form::close() !!}
 --}}
-    @include('v1.parts.typeahead')
-
-    @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @if(!isset($event))
-        {!! Form::open(array('url' => env('APP_URL')."/group", 'method' => 'POST')) !!}
-        {!! Form::label('eventID', 'Select the event for registration:', array('class' => 'control-label')) !!}
-        {!! Form::select('eventID', $events, old('$event->eventTypeID'), array('id' => 'eventID', 'class' =>'form-control')) !!}
-        {!! Form::close() !!}
+        @include('v1.parts.typeahead')
+
+        @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+        @if(count($events) == 0)
+            {!! Form::open(array('url' => env('APP_URL')."/group", 'method' => 'POST')) !!}
+            {!! Form::label('eventID', 'Select the event for registration:', array('class' => 'control-label')) !!}
+            {!! Form::select('eventID', $events, old('$event->eventTypeID'), array('id' => 'eventID', 'class' =>'form-control')) !!}
+            {!! Form::close() !!}
+        @else
+            <b>There are no future events in the system to engage group registration.</b>
+        @endif
     @else
+        @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         You can register up to 15 attendees for this event at a time.<br />
         <b>Please keep the following in mind:</b>
         <ul>
