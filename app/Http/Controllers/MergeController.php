@@ -134,12 +134,12 @@ class MergeController extends Controller
      * Just like getmodel, for the group-registration page
      * @param: string
      */
-    public function getperson (Request $request){
+    public function getperson (Request $request) {
         $string = request()->input('string');
         list($personID, $field) = array_pad(explode("-", $string, 2), 2, null);
         $person = Person::with('orgperson')
-            ->where('personID', $personID)
-            ->first();
+                        ->where('personID', $personID)
+                        ->first();
         return json_encode(array('status' => 'success',
             'personID' => $person->personID,
             'firstName' => $person->firstName,
@@ -172,7 +172,7 @@ class MergeController extends Controller
     public function store (Request $request) {
         // responds to POST to /execute_merge
         $this->currentPerson = Person::find(auth()->user()->id);
-        $letter = request()->input('letter');
+        $letter              = request()->input('letter');
 
         $id1 = request()->input('model1');
         $id2 = request()->input('model2');
@@ -200,13 +200,13 @@ class MergeController extends Controller
         $model1->updaterID = $this->currentPerson->personID;
 
         foreach($model2->emails as $e) {
-            $m2 = Email::find($e->emailID);
+            $m2            = Email::find($e->emailID);
             $m2->personID  = $model1->personID;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
         }
         foreach($model2->addresses as $e) {
-            $m2 = Address::find($e->addrID);
+            $m2            = Address::find($e->addrID);
             $m2->personID  = $model1->personID;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
@@ -217,13 +217,13 @@ class MergeController extends Controller
             $e->save();
         }
         foreach($model2->registrations as $e) {
-            $m2 = Registration::find($e->regID);
+            $m2            = Registration::find($e->regID);
             $m2->personID  = $model1->personID;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
         }
         foreach($model2->regfinances as $e) {
-            $m2 = RegFinance::find($e->regID);
+            $m2            = RegFinance::find($e->regID);
             $m2->personID  = $model1->personID;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
@@ -235,13 +235,13 @@ class MergeController extends Controller
             ['orgID', $this->currentPerson->defaultOrgID]
         ])->first();
 
-        if(isset($o)){
+        if(isset($o)) {
             $o->delete();
         }
 
         // Trigger Notification
         $u = User::find($model2->personID);
-        if(isset($u)){
+        if(isset($u)) {
             $u->delete();
         }
         $model2->delete();
@@ -252,7 +252,7 @@ class MergeController extends Controller
         request()->session()->flash('alert-success', $this->models[$letter] .
             " record: " . $model2->personID . " was successfully merged into " . $model1->personID . '.');
 
-        return redirect ('/merge/'.$letter.'/'.$model1->personID);
+        return redirect('/merge/' . $letter . '/' . $model1->personID);
     }
 
     public function index () {
@@ -262,8 +262,11 @@ class MergeController extends Controller
     public function query (Request $request) {
         $this->currentPerson = Person::find(auth()->user()->id);
         $query               = $request->q;
-        $exclude_model       = $request->m;
-        $usersArray          = [];
+        if(!isset($query)) {
+            $query = request()->input('query');
+        }
+        $exclude_model = $request->m;
+        $usersArray    = [];
 
         if($exclude_model) {
             $res = Person::where('personID', '<>', $exclude_model)
@@ -272,6 +275,7 @@ class MergeController extends Controller
                              $q->where('firstName', 'LIKE', "%$query%")
                                ->orWhere('lastName', 'LIKE', "%$query%")
                                ->orWhere('login', 'LIKE', "%$query%")
+                               ->orWhere('personID', 'LIKE', "%$query%")
                                ->orWhereHas('orgperson', function($q) {
                                    $query = request()->q;
                                    $q->where('OrgStat1', 'LIKE', "%$query%");
@@ -279,10 +283,10 @@ class MergeController extends Controller
                                ->orWhereHas('emails', function($q) {
                                    $query = request()->q;
                                    $q->where('emailADDR', 'LIKE', "%$query%");
-                               })
-                               ->whereHas('orgs', function($q) {
-                                   $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                                });
+                         })
+                         ->whereHas('orgs', function($q) {
+                             $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                          })
                          ->with('orgperson')
                          ->select('personID', 'firstName', 'lastName', 'login')

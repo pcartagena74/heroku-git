@@ -122,6 +122,7 @@ Route::post('/role/{person}/{role}', 'RoleController@update');                  
 Route::get('/members', 'PersonController@index')->name('manageMembers');
 Route::get('/merge/{model_code}/{id1?}/{id2?}', 'MergeController@show')->name('showMergeModel');
 //Route::get('/find', 'MergeController@find')->name('search');
+Route::get('/mbrreport', 'PersonController@show_report')->name('member_report');
 Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete');
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
@@ -238,3 +239,7 @@ Route::get('/blank', ['middleware' => 'auth', function(){
 }]);
 
 Auth::routes();
+
+Route::any('{all}', function(){
+    return view('errors.404');
+})->where('all', '.*');

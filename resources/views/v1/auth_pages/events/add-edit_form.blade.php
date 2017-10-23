@@ -64,7 +64,7 @@ $orgLogoPath = DB::table('organization')
 
 $client = new S3Client([
     'credentials' => [
-        'key'    => env('AWS_KEY'),
+        'key' => env('AWS_KEY'),
         'secret' => env('AWS_SECRET')
     ],
     'region' => env('AWS_REGION'),
@@ -72,8 +72,9 @@ $client = new S3Client([
 ]);
 
 $adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
-$s3fs = new Filesystem($adapter);
-$logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
+$s3fs    = new Filesystem($adapter);
+$logo    =
+    $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
 ?>
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -120,12 +121,13 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
         {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
     </div>
     <div class="form-group col-md-3">
-        <a class="btn btn-primary btn-xs" id="validateSlug"><i class="">Validate Availability</i></a>
+        <a class="btn btn-primary btn-sm" id="validateSlug"><i class="">Validate Availability</i></a>
     </div>
     <div class="form-group col-md-3" id="slug_feedback">
     </div>
     <div class="form-group col-md-11 col-md-offset-1">
-        <b>URL will be: https://www.mCentric.org/events/<span id="curl" style="color:red;">{{ $event->slug or '' }}</span></b>
+        <b>URL will be: https://www.mCentric.org/events/<span id="curl"
+                                                              style="color:red;">{{ $event->slug or '' }}</span></b>
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', 'Description*', array('class' => 'control-label')) !!}
@@ -209,30 +211,49 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
     <div class="ln_solid"></div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('locName', old('$exLoc->locName'), $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '50', 'id'=>'locName', 'placeholder'=>'Location Name', 'required') ) !!}
+        {!! Form::text('locName', old('$exLoc->locName'),
+            $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '50',
+                                'id'=>'locName', 'placeholder'=>'Location Name', 'required')) !!}
         <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
     </div>
 
-    <div class="form-group col-md-12">
-        {!! Form::text('addr1', old('$exLoc->addr1'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255', 'id'=>'addr1', 'placeholder'=>'Address 1', 'required') ) !!}
+    <div id="address_info" {!! $exLoc->isVirtual==0 ?: 'style="display:none;"' !!}>
+        <div class="form-group col-md-12">
+            {!! Form::text('addr1', old('$exLoc->addr1'),
+                $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255',
+                                    'id'=>'addr1', 'placeholder'=>'Address 1', 'required')) !!}
+        </div>
+        <div class="form-group col-md-12">
+            {!! Form::text('addr2', old('$exLoc->addr2'),
+                $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255',
+                                    'id'=>'addr2', 'placeholder'=>'Address 2')) !!}
+        </div>
+        <div class="form-group col-md-6">
+            {!! Form::text('city', old('$exLoc->city'),
+                $attributes = array('class'=>'form-control input-sm', 'maxlength' => '50',
+                                    'id'=>'city', 'placeholder'=>'City', 'required')) !!}
+        </div>
+        <div class="form-group col-md-3">
+            {!! Form::text('state', old('$exLoc->state'),
+                $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10',
+                                    'id'=>'state', 'placeholder'=>'State', 'required')) !!}
+        </div>
+        <div class="form-group col-md-3">
+            {!! Form::text('zip', old('$exLoc->zip'),
+                $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10',
+                                    'id'=>'zip', 'placeholder'=>'Zip', 'required')) !!}
+        </div>
     </div>
 
-    <div class="form-group col-md-12">
-        {!! Form::text('addr2', old('$exLoc->addr2'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255', 'id'=>'addr2', 'placeholder'=>'Address 2') ) !!}
+    <div class="form-group col-md-3 col-md-offset-1">
+        {!! Form::label('virtual', 'This is a virtual event', array('class' => 'control-label')) !!} &nbsp; &nbsp;
     </div>
-
-    <div class="form-group col-md-6">
-        {!! Form::text('city', old('$exLoc->city'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '50', 'id'=>'city', 'placeholder'=>'City', 'required') ) !!}
+    <div class="form-group col-md-8">
+        {!! Form::label('virtual', 'No', array('class' => 'control-label')) !!} &nbsp;
+        {!! Form::checkbox('virtual', 1, ($exLoc->isVirtual?'true':'false'),
+            $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
+        {!! Form::label('virtual', 'Yes', array('class' => 'control-label')) !!}
     </div>
-
-    <div class="form-group col-md-3">
-        {!! Form::text('state', old('$exLoc->state'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10', 'id'=>'state', 'placeholder'=>'State', 'required') ) !!}
-    </div>
-
-    <div class="form-group col-md-3">
-        {!! Form::text('zip', old('$exLoc->zip'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10', 'id'=>'zip', 'placeholder'=>'Zip', 'required') ) !!}
-    </div>
-
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Contact Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -332,6 +353,9 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
         function toggleShow() {
             $("#trackInput").toggle();
+        }
+        function toggleHide() {
+            $("#address_info").toggle();
         }
         $(document).ready(function () {
             // We'll help out users by populating the end date/time based on the start, but only once so we don't annoy.

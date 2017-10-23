@@ -8,6 +8,11 @@ $topBits = '';  // remove this if this was set in the controller
 if($model1) {
     $columns = Schema::getColumnListing($model1->getTable());
 }
+if($model1){
+    $string = 'm='.$model1->personID.'&';
+} else {
+    $string = '';
+}
 $ignore_array = array('firstName', 'lastName', 'login', 'defaultOrgID', 'personID');
 $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'defaultOrgID', 'lastLoginDate', 'deleted_at');
 ?>
@@ -107,7 +112,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                 @if($model2)
                 {!! Form::submit('Merge Record', array('class' => 'btn btn-sm btn-primary')) !!}
                 @endif
-                    </div>
+            </div>
                     @if(isset($model2))
                         <div class="col-sm-3">
                             @include('v1.parts.start_content',
@@ -159,6 +164,14 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                     <div id="search-results"></div>
                                 </div>
                                 {!! Form::close() !!}
+{{--
+// Quick form to force view of return from autocomplete
+                                {!! Form::open(array('url' => env('APP_URL')."/autocomplete/?" . $string, 'method' => 'get')) !!}
+                                {!! Form::text('query', null, array('id' => 'query', 'class' => 'form-control input-sm')) !!}
+                                {!! Form::submit('Force Query', array('class' => 'btn btn-sm btn-danger')) !!}
+                                {!! Form::close() !!}
+--}}
+
                             @endif
                         </div>
                     @endif
@@ -174,13 +187,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 --}}
                     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
-<?php
-if($model1){
-    $string = 'm='.$model1->personID.'&';
-} else {
-    $string = '';
-}
-?>
+
                     <script>
                         $(document).ready(function ($) {
                             var people = new Bloodhound({
@@ -216,7 +223,7 @@ if($model1){
                                 $RIGHT_COL.css('min-height', contentHeight);
                             };
 
-                            $SIDEBAR_MENU.find('a[href="{{ app('APP_URL') }}/merge/p"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+                            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/merge/p"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
                                 setContentHeight();
                             }).parent().addClass('active');
 
