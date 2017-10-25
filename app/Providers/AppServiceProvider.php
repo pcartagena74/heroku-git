@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('dd', function ($expression) {
             return "<?php dd(with{$expression}); ?>";
         });
+        URL::forceScheme('https');
     }
 
     /**
