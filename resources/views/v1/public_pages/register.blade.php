@@ -145,7 +145,7 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                 <th style="width:20%;">Prefix</th>
                 <th style="width:20%;">
                     @if($i == 1 && $isMember)
-                        <a data-toggle="tooltip" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
+                        <a data-toggle="tooltip" data-placement="top" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
                     @endif
                         First Name<sup>*</sup>
                     @if($i == 1 && $isMember)
@@ -155,10 +155,10 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                 <th style="width:20%;">Middle Name</th>
                 <th style="width:20%;">
                     @if($i == 1 && $isMember)
-                        <a data-toggle="tooltip" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
-                            @endif
-                            Last Name<sup>*</sup>
-                            @if($i == 1 && $isMember)
+                        <a data-toggle="tooltip" data-placement="top" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
+                    @endif
+                        Last Name<sup>*</sup>
+                    @if($i == 1 && $isMember)
                         </a>
                     @endif
                 </th>
@@ -200,7 +200,7 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                 <th style="width:20%;">Title</th>
                 <th style="width:20%;">
                     @if($i == 1 && Auth::check())
-                    <a data-toggle="tooltip" title="Changing your email address can only be done via your profile page." id="emailchange">
+                    <a data-toggle="tooltip" data-placement="top" title="Changing your email address can only be done via your profile page." id="emailchange">
                     @endif
                         Email Address<sup>*</sup>
                     @if($i == 1 && Auth::check())
@@ -481,7 +481,9 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
         };
     });
     </script>
-
+    <script>
+        $("[data-toggle=tooltip]").tooltip();
+    </script>
 @endsection
 
 @section('modals')

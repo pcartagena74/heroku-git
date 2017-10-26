@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Phirehose;
 use App\TwitterStream;
 use \Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
