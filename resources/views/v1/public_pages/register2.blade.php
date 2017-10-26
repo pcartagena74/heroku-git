@@ -25,11 +25,11 @@ foreach($array as $chap) {
     $affiliation_array[$i] = $chap;
 }
 
-if($event->isSymmetric) {
+if($event->isSymmetric && $event->hasTracks) {
     $columns = ($event->hasTracks * 2) + 1;
     $width   = number_format(85 / $event->hasTracks, 0, '', '');
     $mw      = number_format(90 / $event->hasTracks, 0, '', '');
-} else {
+} elseif($event->hasTracks) {
     $columns = $event->hasTracks * 3;
     $width   = number_format(80 / $event->hasTracks, 0, '', '');
     $mw      = number_format(85 / $event->hasTracks, 0, '', '');
@@ -37,7 +37,6 @@ if($event->isSymmetric) {
 
 ?>
 @extends('v1.layouts.no-auth')
-
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])

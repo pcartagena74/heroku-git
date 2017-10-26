@@ -15,6 +15,8 @@ if(!isset($id)){
 }
 $th_count = 0; $tb_count = 0;
 //<link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+        $width = number_format(100/count($headers), 0, '', '');
+//width: {{ $width }}%; min-width: 1px; max-width: 20%;">
 ?>
 <div>
     <table id="{{ $id }}" class="table table-striped table-bordered table-condensed table-responsive">
@@ -25,7 +27,8 @@ $th_count = 0; $tb_count = 0;
                 @if(isset($hidecol[$th_count]))
                     <th style="display:none;">{{ $header }}</th>
                 @else
-                    <th style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%; width: {{ number_format(100/count($headers), 0, '', '') }}%;">{{ $header }}</th>
+                    <th style="vertical-align: top; text-align: left;">
+                        {{ $header }}</th>
                 @endif
 
             @endforeach

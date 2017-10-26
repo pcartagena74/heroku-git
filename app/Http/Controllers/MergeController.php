@@ -285,6 +285,7 @@ class MergeController extends Controller
                                    $q->where('emailADDR', 'LIKE', "%$query%");
                                });
                          })
+                // moved outside of where clause above because this is and-ed
                          ->whereHas('orgs', function($q) {
                              $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                          })

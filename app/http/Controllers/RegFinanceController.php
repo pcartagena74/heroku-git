@@ -181,7 +181,7 @@ class RegFinanceController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $needSessionPick     = $request->input('needSessionPick');
         $stripeToken     = $request->input('stripeToken');
-
+dd($rf->with('ticket'));
         if($needSessionPick) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
                              ->where([
