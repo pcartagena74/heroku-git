@@ -83,7 +83,9 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="{{ env('APP_URL') }}/members" id="mem">Member Management</a></li>
                                 <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
                                                 class="label label-success pull-right">New</span></a></li>
-                                <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a></li>
+                                <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a>
+                                <span class="label label-success pull-right">IN DEV</span>
+                                </li>
                             </ul>
                         </li>
                     @endif
