@@ -3,7 +3,6 @@ RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [L]
 
 #RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteCond %{HTTPS} !=on
@@ -16,3 +15,5 @@ RewriteCond %{HTTP:X-Forwarded-Proto} !https
 
 #If neither above conditions are met, redirect to https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteRule ^ index.php [L]
