@@ -8,13 +8,14 @@ RewriteCond %{HTTPS} =on
 RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
 RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
 
-# Rewrite condition: if not https, then make it so.
-RewriteCond %{HTTPS} =off
+# Rewrite condition: if not https, and not localhost, then make it so.
+#RewriteCond %{HTTPS} =off
+#RewriteCond "%{SERVER_NAME}" "!=localhost" [NC]
+#Heroku way
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteCond "%{SERVER_NAME}" "!=localhost" [NC]
 RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=302,L]
 
-#Heroku way
-#RewriteCond %{HTTP:X-Forwarded-Proto} !https
 
 #If neither above conditions are met, redirect to https
 #RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=302,L]
