@@ -10,8 +10,8 @@ RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
 
 # Rewrite condition: if not https, then make it so.
 RewriteCond %{HTTPS} =off
-RewriteCond "%{SERVER_NAME}" "!=localhost"
-RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+RewriteCond "%{SERVER_NAME}" "!=localhost" [NC]
+RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=302,L]
 
 #Heroku way
 #RewriteCond %{HTTP:X-Forwarded-Proto} !https
@@ -23,6 +23,5 @@ RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
 #because laravel routing doesn't really exist, this means rules should fire
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-
 
 RewriteRule ^ index.php [L]
