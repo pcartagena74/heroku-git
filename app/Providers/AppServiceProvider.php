@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
             return "<?php dd(with{$expression}); ?>";
         });
         if (!\App::environment('local')) {
-            \URL::forceSchema('https');
+            \URL::forceScheme('https');
         }
     }
 
