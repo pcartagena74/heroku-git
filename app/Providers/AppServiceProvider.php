@@ -6,7 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Phirehose;
 use App\TwitterStream;
 use \Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\URL;
+use \Illuminate\Support\Facades\URL;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('dd', function ($expression) {
             return "<?php dd(with{$expression}); ?>";
         });
-        URL::forceScheme('https');
+        if (!\App::environment('local')) {
+            \URL::forceSchema('https');
+        }
     }
 
     /**
