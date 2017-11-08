@@ -1,19 +1,28 @@
 Options +FollowSymLinks
+#RewriteLog "storage/log"
+#RewriteLogLevel 5
 RewriteEngine On
 
+#If the server is localhost and the URL was https, send the URL but on http
+RewriteCond %{HTTPS} =on
+RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
+RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
+
+# Rewrite condition: if not https, then make it so.
+RewriteCond %{HTTPS} =off
+RewriteCond "%{SERVER_NAME}" "!=localhost"
+RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+
+#Heroku way
+#RewriteCond %{HTTP:X-Forwarded-Proto} !https
+
+#If neither above conditions are met, redirect to https
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=302,L]
+
+#checking if request is for a non-existent directory or file
+#because laravel routing doesn't really exist, this means rules should fire
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
-#RewriteCond %{HTTP:X-Forwarded-Proto} !https
-RewriteCond %{HTTPS} !=on
-# This checks to make sure the connection is not already HTTPS
-
-RewriteRule ^/?secure/(.*) https://%{SERVER_NAME}/secure/$1 [R,L]
-
-#Heroku way
-RewriteCond %{HTTP:X-Forwarded-Proto} !https
-
-#If neither above conditions are met, redirect to https
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 RewriteRule ^ index.php [L]

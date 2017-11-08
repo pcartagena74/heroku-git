@@ -11,10 +11,9 @@
         <div class="container">
             <div class="col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;;">
                 <a class="navbar-brand" href="#">
-                    <img style="height: 25px; vertical-align: top;" src="/images/mCentric_logo.png" alt="m|Centric"/></a>
+                    <img style="height: 25px; vertical-align: top;" src="{{ env('APP_URL') }}/images/mCentric_logo.png" alt="mCentric"/></a>
             </div>
-            <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12"
-                 style="display:table-cell; vertical-align:top">
+            <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12" style="display:table-cell; vertical-align:top">
             </div><!--/.navbar-collapse -->
             <div class="col-md-12 col-sm-12 col-xs-12 navbar-inverse"><span id="err"></span></div>
         </div>
