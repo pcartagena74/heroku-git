@@ -13,7 +13,7 @@
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;">
-            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;" src="/images/mCentric_logo.png" alt="m|Centric"/></a>
+            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;" src="{{ env('APP_URL') }}/images/mCentric_logo.png" alt="mCentric"/></a>
         </div>
     </div>
 </nav>
