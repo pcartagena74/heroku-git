@@ -3,6 +3,7 @@
 
     <title>mCentric: Members, Marketing, Messaging &amp; More...</title>
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
     <link href="https://maxcdn.bootstrapcdn.com/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
     <script src="{{ env('APP_URL') }}/js/ie-emulation-modes-warning.js"></script>
     <!--[if lt IE 9]>

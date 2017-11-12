@@ -217,7 +217,11 @@ $logo    =
         <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
     </div>
 
-    <div id="address_info" {!! $exLoc->isVirtual==0 ?: 'style="display:none;"' !!}>
+    @if($event->eventID !== null)
+        <div id="address_info" {!! $exLoc->isVirtual==0 ?: 'style="display:none;"' !!}>
+    @else
+                <div id="address_info">
+    @endif
         <div class="form-group col-md-12">
             {!! Form::text('addr1', old('$exLoc->addr1'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255',
@@ -250,8 +254,13 @@ $logo    =
     </div>
     <div class="form-group col-md-8">
         {!! Form::label('virtual', 'No', array('class' => 'control-label')) !!} &nbsp;
-        {!! Form::checkbox('virtual', 1, ($exLoc->isVirtual?'true':'false'),
-            $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
+        @if($event->eventID !== null)
+            {!! Form::checkbox('virtual', 1, ($exLoc->isVirtual?'true':'false'),
+                $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
+        @else
+            {!! Form::checkbox('virtual', 1, false,
+                $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
+        @endif
         {!! Form::label('virtual', 'Yes', array('class' => 'control-label')) !!}
     </div>
     @include('v1.parts.end_content')

@@ -94,30 +94,30 @@ $default = Org::find($event->orgID);
                        data-title="When should ticket sales end for this event?"
                        data-pk="{{ $ticket->ticketID }}"></a></td>
                 <td><a href="#" id="earlyBirdEndDate{{ $tc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                       data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
                        data-viewformat="MMM D, YYYY h:mm A"
                        data-title="When should Early Bird pricing end for this event?"
                        data-pk="{{ $ticket->ticketID }}"></a></td>
                 <td>
                     <a href="#" id="earlyBirdPercent{{ $tc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                       data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
                 </td>
                 <td>
                     <i class="fa fa-dollar"></i>
                     <a href="#" id="memberBasePrice{{ $tc }}" data-value="{{ $ticket->memberBasePrice }}"
-                       data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->memberBasePrice }}</a>
                 </td>
                 <td>
                     <i class="fa fa-dollar"></i>
                     <a href="#" id="nonmbrBasePrice{{ $tc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
-                       data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->nonmbrBasePrice }}</a>
                 </td>
                 <td><a href="#" id="maxAttendees{{ $tc }}" data-value="{{ $ticket->maxAttendees }}"
-                       data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->maxAttendees }}</a>
                 </td>
             </tr>
@@ -170,37 +170,37 @@ $default = Org::find($event->orgID);
                         {!! Form::close() !!}
                     </td>
                     <td><a href="#" id="ticketLabel{{ $tc+$bc }}" data-value="{{ $ticket->ticketLabel }}"
-                           data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-pk="{{ $ticket->ticketID }}">{{ $ticket->ticketLabel }}</a>
                     </td>
                     <td><a href="#" id="availabilityEndDate{{ $tc+$bc }}"
-                           data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-value="{{ $ticket->availabilityEndDate }}"
                            data-template="MMM DD YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
                            data-viewformat="MMM D, YYYY h:mm A"
                            data-title="When should ticket sales end for this event?"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
                     <td><a href="#" id="earlyBirdEndDate{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                           data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
                            data-viewformat="MMM D, YYYY h:mm A"
                            data-title="When should Early Bird pricing end for this event?"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
                     <td>
                         <a href="#" id="earlyBirdPercent{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                           data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
                     </td>
                     <td>
                         <i class="fa fa-dollar"></i>
                         <a href="#" id="memberBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->memberBasePrice }}"
-                           data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-pk="{{ $ticket->ticketID }}">{{ $ticket->memberBasePrice }}</a>
                     </td>
                     <td>
                         <i class="fa fa-dollar"></i>
                         <a href="#" id="nonmbrBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
-                           data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-pk="{{ $ticket->ticketID }}">{{ $ticket->nonmbrBasePrice }}</a>
                     </td>
                 </tr>
@@ -211,13 +211,13 @@ $default = Org::find($event->orgID);
                     <th colspan="5">Ticket</th>
                 </tr>
 
-                <?php
+<?php
                 $sql = "SELECT et.ticketID, et.ticketLabel, bt.ticketID as 'bundleID'
                         FROM `event-tickets` et
                         LEFT JOIN `bundle-ticket` bt ON bt.bundleid=$ticket->ticketID AND bt.ticketID = et.ticketID
                         WHERE et.eventID=$event->eventID and isaBundle=0";
                 $b_tkts = DB::select($sql);
-                ?>
+?>
                 @foreach($b_tkts as $tkt)
                     <?php $bi++; $bid[$bi] = $ticket->ticketID; // $tkt->ticketID ?>
                     <tr>
@@ -228,8 +228,8 @@ $default = Org::find($event->orgID);
                                data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
                         <td colspan="5">{{ $tkt->ticketLabel }}</td>
                     </tr>
-                    @endforeach
-                    @endforeach
+                @endforeach
+            @endforeach
 
             </tbody>
         </table>
@@ -387,14 +387,14 @@ $default = Org::find($event->orgID);
                 $("#eventID-{{ $bid[$i] }}-{{ $tktIDs[$i] }}").editable({
                     type: 'select',
                     source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}],
-                    url: "{{ env('APP_URL') }}{{ ' / bundle / ' . $event->eventID }}",
+                    url: "{{ env('APP_URL') }}/bundle/{{ $event->eventID }}",
                     error: function (xhr, ajaxOptions, e) {
                         console.log(xhr);
                         console.log(ajaxOptions);
                         console.log(e);
                     },
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                     }
                 });
             @endfor
