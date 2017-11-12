@@ -276,13 +276,6 @@ class EventController extends Controller
         if(request()->input('hasTracksCheck') == 1) {
             $numTracks        = request()->input('hasTracks');
             $event->hasTracks = $numTracks;
-            $count            = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
-            for($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
-                $track            = new Track;
-                $track->trackName = "Track" . $i;
-                $track->eventID   = $event->eventID;
-                $track->save();
-            }
         } else {
             $event->hasTracks = 0;
         }
@@ -292,7 +285,15 @@ class EventController extends Controller
         $event->updaterID     = $this->currentPerson->personID;
 
         $event->save();
-
+        if(request()->input('hasTracksCheck') == 1) {
+            $count            = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
+            for($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
+                $track            = new Track;
+                $track->trackName = "Track" . $i;
+                $track->eventID   = $event->eventID;
+                $track->save();
+            }
+        }
         // Create a stub for the default ticket for the event
         $tkt                      = new Ticket;
         $tkt->ticketLabel         = $label->defaultTicketLabel;

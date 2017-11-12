@@ -51,11 +51,11 @@ $tickets = Ticket::where([
         'data-toggle'=>'tooltip', 'title'=>'If most sessions are, say yes for now.  You can change this later (after setting up the similar sessions) to adjust the times of individual differences.')) !!}
         @if($event->isSymmetric !== null && $event->isSymmetric != 1)
             <div class="col-sm-4"> {!! Form::label('isSymmetric', 'No', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-4">{!! Form::checkbox('isSymmetric', '1', false, array('class' => 'flat js-switch', 'onchange' => 'javascript:submit()')) !!}</div>
+            <div class="col-sm-4">{!! Form::checkbox('isSymmetric', '1', false, array('class' => 'js-switch', 'onchange' => 'javascript:submit()')) !!}</div>
             <div class="col-sm-4">{!! Form::label('isSymmetric', 'Yes', array('class' => 'control-label')) !!}</div>
         @else
             <div class="col-sm-4"> {!! Form::label('isSymmetric', 'No', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-4">{!! Form::checkbox('isSymmetric', '1', true, array('class' => 'flat js-switch', 'onchange' => 'javascript:submit();')) !!}</div>
+            <div class="col-sm-4">{!! Form::checkbox('isSymmetric', '1', true, array('class' => 'js-switch', 'onchange' => 'javascript:submit();')) !!}</div>
             <div class="col-sm-4">{!! Form::label('isSymmetric', 'Yes', array('class' => 'control-label')) !!}</div>
         @endif
         {!! Form::close() !!}
