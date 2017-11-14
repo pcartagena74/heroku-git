@@ -16,7 +16,7 @@ use App\Ticket;
 $today = Carbon\Carbon::now();
 
 // $rf, $loc, $event, $org
-$ticketLabel = $rf->registration->ticket->ticketLabel;
+$ticketLabel = $rf->ticket->ticketLabel;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();

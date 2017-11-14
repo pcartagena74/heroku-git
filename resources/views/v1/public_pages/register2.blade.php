@@ -45,7 +45,7 @@ if($event->isSymmetric && $event->hasTracks) {
     <div class="whole">
 
         <div style="float: right;" class="col-md-5 col-sm-5">
-            <img style="opacity: .25;" src="/images/meeting.jpg" width="100%" height="90%">
+            <img style="opacity: .25;" src="{{ env('APP_URL') }}/images/meeting.jpg" width="100%" height="90%">
         </div>
         <div class="left col-md-7 col-sm-7">
             <div class="myrow col-md-12 col-sm-12">
@@ -69,7 +69,7 @@ if($event->isSymmetric && $event->hasTracks) {
                     <p></p>
 
                     @if($rf->cost > 0)
-                        <button id="card1" type="submit" class="btn btn-primary btn-md">
+                        <button id="payment-request-button" type="submit" class="btn btn-primary btn-md card">
                             <b>Pay Now by Credit Card</b>
                         </button>
                     @endif
@@ -306,7 +306,6 @@ if($event->isSymmetric && $event->hasTracks) {
                                         ['eventID', '=', $event->eventID]
                                     ])->first();
                                     $y = Ticket::find($z->ticketID);
-
 ?>
                                     @if($tickets->contains('ticketID', $z->ticketID))
                                         <tr>
@@ -323,7 +322,6 @@ if($event->isSymmetric && $event->hasTracks) {
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
-
                                             // As long as there are any sessions, the row will be displayed
 ?>
                                             @if($s !== null)
@@ -426,7 +424,7 @@ if($event->isSymmetric && $event->hasTracks) {
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0)
-                        <button id="card2" type="submit" class="btn btn-primary btn-md">
+                        <button id="payment-request-button" type="submit" class="btn btn-primary btn-md card">
                             <b>Pay Now by Credit Card</b>
                         </button>
                         <br/>
@@ -463,50 +461,85 @@ if($event->isSymmetric && $event->hasTracks) {
     {{--
     <script src="https://www.google.com/recaptcha/api.js"></script>
     --}}
-    <script src="https://checkout.stripe.com/checkout.js"></script>
-    {{--
-    <script>
-        $(document).ready(function () {
-            $('#nocard').on('click', function (e) {
-                $('script[src="https://checkout.stripe.com/checkout.js"]').remove();
-            });
-        });
-    </script>
-    --}}
-    <script>
-        $(document).ready(function () {
-            var input1 = '';
-            var input2 = '';
-            var handler = StripeCheckout.configure({
-                key: '{{ env('STRIPE_KEY') }}',
-                image: 'https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png',
-                locale: 'auto',
-                token: function (token) {
-                    for (var key in token) {
-                        if (token.hasOwnProperty(key)) {
-                            console.log(key + " -> " + token[key]);
-                        }
-                    }
-                    input1 = $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "stripeToken").val(token.id);
-                    $('#complete_registration').append($(input1));
+    <script src="https://js.stripe.com/v3/"></script>
+<script>
+    var paymentRequest = stripe.paymentRequest({
+        country: 'US',
+        currency: 'usd',
+        total: {
+            label: 'Demo total',
+            amount: 1000,
+        },
+    });
+    var elements = stripe.elements();
+    var prButton = elements.create('paymentRequestButton', {
+        paymentRequest: paymentRequest,
+    });
 
-                    input2 = $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "stripeEmail").val(token.email);
-                    $('#complete_registration').append($(input2));
+    // Check the availability of the Payment Request API first.
+    paymentRequest.canMakePayment().then(function(result) {
+        if (result) {
+            prButton.mount('#payment-request-button');
+        } else {
+            document.getElementById('payment-request-button').style.display = 'none';
+        }
+    });
 
-                    input3 = $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "stripeTokenType").val(token.type);
-                    $('#complete_registration').append($(input3));
-
-                    $('#complete_registration').submit();
+    paymentRequest.on('token', function(ev) {
+        // Send the token to your server to charge it!
+        fetch('/charges', {
+            method: 'POST',
+            body: JSON.stringify({token: ev.token.id}),
+        })
+            .then(function(response) {
+                if (response.ok) {
+                    // Report to the browser that the payment was successful, prompting
+                    // it to close the browser payment interface.
+                    ev.complete('success');
+                } else {
+                    // Report to the browser that the payment failed, prompting it to
+                    // re-show the payment interface, or show an error message and close
+                    // the payment interface.
+                    ev.complete('fail');
                 }
             });
+    });
 
-            $('#card1').on('click', function (e) {
+</script>
+    {{--
+    <script>
+        var stripe = Stripe({{ env('STRIPE_KEY') }});
+        var input1 = '';
+        var input2 = '';
+        var handler = StripeCheckout.configure({
+            key: '{{ env('STRIPE_KEY') }}',
+            image: 'https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png',
+            locale: 'auto',
+            token: function (token) {
+                for (var key in token) {
+                    if (token.hasOwnProperty(key)) {
+                        console.log(key + " -> " + token[key]);
+                    }
+                }
+                input1 = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "stripeToken").val(token.id);
+                $('#complete_registration').append($(input1));
+
+                input2 = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "stripeEmail").val(token.email);
+                $('#complete_registration').append($(input2));
+
+                input3 = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "stripeTokenType").val(token.type);
+                $('#complete_registration').append($(input3));
+
+                $('#complete_registration').submit();
+            }
+
+            $('.card').on('click', function (e) {
                 // Open Checkout with further options:
                 e.preventDefault();
                 $('#complete_registration').validate();
@@ -521,7 +554,7 @@ if($event->isSymmetric && $event->hasTracks) {
                 }
             });
 
-            $('#card2').on('click', function (e) {
+            $('.card2').on('click', function (e) {
                 // Open Checkout with further options:
                 e.preventDefault();
                 $('#complete_registration').validate();
@@ -539,6 +572,7 @@ if($event->isSymmetric && $event->hasTracks) {
             // Close Checkout on page navigation:
         });
     </script>
+    --}}
     <script>
         $(document).ready(function () {
             $.ajaxSetup({

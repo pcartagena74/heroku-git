@@ -80,7 +80,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    {!! Form::open(['url' => "{{ env('APP_URL') }}/regstep1/".$event->eventID, 'method' => 'post', 'id' => 'start_registration']) !!}
+    {!! Form::open(['url' => env('APP_URL').'/regstep1/'.$event->eventID, 'method' => 'post', 'id' => 'start_registration']) !!}
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
         <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
@@ -103,7 +103,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                         @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->gt($today))
                             <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
                                 <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
-                                    <img src="/images/earlybird.jpg" style="float:right; width:75px;">
+                                    <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-6"
                                      style="margin-top: auto; word-break: break-all;">
@@ -230,8 +230,8 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                                                     id="btn-validate">Validate</a></div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
-                        <img alt="Visa Logo" src="/images/visa.png"><img alt="MasterCard Logo"
-                                                                         src="/images/mastercard.png">
+                        <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png"><img
+                        alt="MasterCard Logo" src="{{ env('APP_URL') }}/images/mastercard.png">
                         <button type="submit" class="btn btn-success btn-sm" id="purchase"
                                 style="height: 32px;"><b>Purchase Ticket(s)</b></button>
                     </div>
