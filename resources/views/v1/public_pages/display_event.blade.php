@@ -47,8 +47,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '',
         'w1' => '8', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <form method="post" action="{{ env('APP_URL') }}/regstep1/{{ $event->eventID }}"
-            id="start_registration" role="form">
+    <form method="post" action="{{ env('APP_URL') }}/regstep1/{{ $event->eventID }}" id="start_registration" role="form">
         {{ csrf_field() }}
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
@@ -60,7 +59,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                 @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->gt($today))
                     <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
                         <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
-                            <img src="/images/earlybird.jpg" style="float:right; width:75px;">
+                            <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">
                             <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
@@ -91,12 +90,12 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                             <td>
                                 {{ $bundle->ticketLabel }}<SUP style='color: red'>**</SUP>
 
-                                <?php
-                                //                                        $sql = "SELECT et.ticketID, et.ticketLabel, bt.ticketID as 'bundleID'
-                                //                                                FROM `event-tickets` et
-                                //                                                LEFT JOIN `bundle-ticket` bt ON bt.bundleid=$bundle->ticketID
-                                //                                                    AND bt.ticketID = et.ticketID
-                                //                                                WHERE et.eventID=$event->eventID and isaBundle=0";
+<?php
+//                                        $sql = "SELECT et.ticketID, et.ticketLabel, bt.ticketID as 'bundleID'
+//                                                FROM `event-tickets` et
+//                                                LEFT JOIN `bundle-ticket` bt ON bt.bundleid=$bundle->ticketID
+//                                                    AND bt.ticketID = et.ticketID
+//                                                WHERE et.eventID=$event->eventID and isaBundle=0";
                                 $b_tkts = DB::table('event-tickets')
                                             ->join('bundle-ticket', function($join) use ($bundle) {
                                                 $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
@@ -106,7 +105,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                         ['event-tickets.isaBundle', 0],
                                     ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID')->get();
                                 // $b_tkts = DB::select($sql);
-                                ?>
+?>
                                 <ul>
                                     @foreach($b_tkts as $tkt)
                                         <li>
@@ -192,8 +191,8 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                                             id="btn-validate">Validate</a></div>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
-                <img alt="Visa Logo" src="/images/visa.png"><img alt="MasterCard Logo"
-                                                                 src="/images/mastercard.png">
+                <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png"><img alt="MasterCard Logo"
+                                                                 src="{{ env('APP_URL') }}/images/mastercard.png">
                 <button type="submit" class="btn btn-success btn-sm" id="purchase"
                         style="height: 32px;"><b>Purchase Ticket(s)</b></button>
             </div>

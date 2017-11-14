@@ -70,7 +70,9 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/orgsettings">Custom Field Labels</a></li>
                                 <li><a href="{{ env('APP_URL') }}/eventdefaults">Event Defaults</a></li>
-                                <li><a href="{{ env('APP_URL') }}/load_data">Upload Data</a></li>
+                                @if(Entrust::hasRole('Admin'))
+                                    <li><a href="{{ env('APP_URL') }}/load_data">Upload Data</a></li>
+                                @endif
                                 <li><a href="{{ env('APP_URL') }}/role_mgmt">Roles & Permissions</a></li>
                             </ul>
                         </li>

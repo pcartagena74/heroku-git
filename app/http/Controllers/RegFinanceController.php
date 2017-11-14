@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 //use App\Notifications\EventReceipt;
 use App\EventSession;
 use App\Mail\GroupEventReceipt;
+use App\Mail\EventReceipt;
 use Illuminate\Support\Facades\Mail;
 use App\Registration;
 use Illuminate\Http\Request;
@@ -169,7 +170,7 @@ class RegFinanceController extends Controller
         // responds to PATCH /complete_registration/{id}
 //dd(request()->all());
 
-        $rf                  = RegFinance::find($id);
+        $rf                  = RegFinance::with('registration', 'ticket')->where('regID', $id)->first();
         $event               = Event::find($rf->eventID);
         $org                 = Org::find($event->orgID);
         $user                = User::find($rf->personID);
@@ -181,7 +182,7 @@ class RegFinanceController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $needSessionPick     = $request->input('needSessionPick');
         $stripeToken     = $request->input('stripeToken');
-dd($rf->with('ticket'));
+//dd($rf->with('ticket'));
         if($needSessionPick) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
                              ->where([
