@@ -36,8 +36,10 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/autosize.js/3.0.20/autosize.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.3.0/jquery.autocomplete.min.js"></script>
 <script src="/js/jquery.smartWizard.min.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
+
+ // Stripe script added to every page per Stripe recommendation for v3 security
 --}}
+<script src="https://js.stripe.com/v3/"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/js/custom.min.js"></script>
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

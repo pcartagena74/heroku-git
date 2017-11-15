@@ -69,9 +69,13 @@ if($event->isSymmetric && $event->hasTracks) {
                     <p></p>
 
                     @if($rf->cost > 0)
+                        {{--
                         <button id="payment-request-button" type="submit" class="btn btn-primary btn-md card">
                             <b>Pay Now by Credit Card</b>
                         </button>
+                        --}}
+                        <div id="payment-request-button" class="card">
+                        </div>
                     @endif
 
                     <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
@@ -460,8 +464,9 @@ if($event->isSymmetric && $event->hasTracks) {
 @section('scripts')
     {{--
     <script src="https://www.google.com/recaptcha/api.js"></script>
-    --}}
+    //included in footer-script.blade
     <script src="https://js.stripe.com/v3/"></script>
+    --}}
 <script>
     var paymentRequest = stripe.paymentRequest({
         country: 'US',
