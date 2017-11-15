@@ -24,8 +24,8 @@
     @yield('content')
 
     @include('v1.parts.footer_script')
-    @include('v1.parts.footer')
     @yield('scripts')
+    @include('v1.parts.footer')
     @yield('modals')
     </div>
 </div>
