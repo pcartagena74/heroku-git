@@ -468,6 +468,7 @@ if($event->isSymmetric && $event->hasTracks) {
     <script src="https://js.stripe.com/v3/"></script>
     --}}
 <script>
+    var stripe = Stripe({{ env('STRIPE_KEY') }});
     var paymentRequest = stripe.paymentRequest({
         country: 'US',
         currency: 'usd',
@@ -513,7 +514,6 @@ if($event->isSymmetric && $event->hasTracks) {
 </script>
     {{--
     <script>
-        var stripe = Stripe({{ env('STRIPE_KEY') }});
         var input1 = '';
         var input2 = '';
         var handler = StripeCheckout.configure({
