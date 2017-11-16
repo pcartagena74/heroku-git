@@ -27,6 +27,14 @@ foreach($speakers as $speaker){
 
 @section('scripts')
 @include('v1.parts.footer-datatable')
+<script>
+    $(document).ready(function() {
+        $('#datatable-fixed-header').DataTable({
+            "fixedHeader": true,
+            "order": [[ 1, "asc" ]]
+        });
+    });
+</script>
 @endsection
 
 @section('modals')

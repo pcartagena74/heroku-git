@@ -555,10 +555,13 @@ class EventController extends Controller
         if(!isset($event)){
             $e = Event::where([
                 ['orgID', '=', $this->currentPerson->defaultOrgID],
-                ['eventStartDate', '>=', $today->subDays(10)]
+                // Removed 10-day past buffer to allow for post-event registrations if needed
+                ['eventStartDate', '>=', $today->subDays(10)],
+                ['eventStartDate', '>=', $today]
             ])
                       ->select('eventID', 'eventName')
-                      ->limit(2)
+                      // Same with limit (2)
+                      // ->limit(2)
                       ->get();
 
             $a = $e->pluck('eventName', 'eventID');
@@ -567,6 +570,7 @@ class EventController extends Controller
             $events = $b + $c;
             return view('v1.auth_pages.events.group-registration', compact('title', 'event', 'events'));
         } else {
+            // Cannot pass object as reference so need to set here
             $event = Event::find($event);
             $title = $title . ": $event->eventName";
             $t = Ticket::where('eventID', '=', $event->eventID)->get();
