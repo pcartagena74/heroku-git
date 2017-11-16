@@ -38,7 +38,6 @@ if($reg->ticket->isaBundle) {
         }
     }
 
-    //dd($tickets);
 } else {
     $tickets  = Ticket::where('ticketID', '=', $reg->ticketID)->get();
     $ticket  = Ticket::where('ticketID', '=', $reg->ticketID)->first();
@@ -56,6 +55,8 @@ if($reg->ticket->isaBundle) {
 @if($needSessionPick)
     @if(count($regSessions)==0)
         <b>You have not yet registered for sessions. You can do so below. </b><br/>
+    @else
+        <b>You can review and modify your session registrations below. </b><br/>
     @endif
 
     {!! Form::open(['url' => '/update_sessions/'.$reg->regID, 'method' => 'post',

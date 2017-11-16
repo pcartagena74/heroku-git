@@ -19,10 +19,9 @@ $topBits = '';  // remove this if this was set in the controller
     {!! Form::close() !!}
 --}}
     @if(!isset($event))
-        @include('v1.parts.typeahead')
 
         @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-        @if(count($events) == 0)
+        @if(count($events) != 0)
             {!! Form::open(array('url' => env('APP_URL')."/group", 'method' => 'POST')) !!}
             {!! Form::label('eventID', 'Select the event for registration:', array('class' => 'control-label')) !!}
             {!! Form::select('eventID', $events, old('$event->eventTypeID'), array('id' => 'eventID', 'class' =>'form-control')) !!}
@@ -31,6 +30,7 @@ $topBits = '';  // remove this if this was set in the controller
             <b>There are no future events in the system to engage group registration.</b>
         @endif
     @else
+        @include('v1.parts.typeahead')
         @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         You can register up to 15 attendees for this event at a time.<br />
         <b>Please keep the following in mind:</b>
@@ -101,8 +101,10 @@ $topBits = '';  // remove this if this was set in the controller
         $('#eventID').on('change', function(){
             x = $(this).val();
             location.href = "{{ env('APP_URL') }}/group/" + x;
+            {{--
             //location.href=this.options[this.selectedIndex].value
             //window.location = "{{ env('APP_URL') }}/group/" + x;
+            --}}
         })
     });
     </script>
@@ -146,7 +148,7 @@ $topBits = '';  // remove this if this was set in the controller
             var helper;
             helper = $("#helper-"+row).val();
             if(helper != ''){
-                // lookup via ajax the personID in helper and shove the values into the other fields
+                // lookup via ajax the personID in helper and place values into the other fields
                 $.ajax({
                     type: 'POST',
                     cache: false,
@@ -157,9 +159,11 @@ $topBits = '';  // remove this if this was set in the controller
                         string: helper
                     },
                     success: function (data) {
-                        // parse output, add a hidden item (person+row), and populate text fields
                         var result = eval(data);
+                        {{--
+                        // parse output, add a hidden item (person+row), and populate text fields
                         //console.log(result);
+                        --}}
                         $('<input />').attr('type', 'hidden')
                             .attr('name', "person-"+row)
                             .attr('value', result.personID)

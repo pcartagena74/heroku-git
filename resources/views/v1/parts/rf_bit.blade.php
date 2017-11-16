@@ -19,12 +19,11 @@ use App\Event;
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();
-//dd($rf_array);
+
 ?>
 
 @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 <div class="col-md-12 col-sm-12 col-xs-12">
-
 
     @foreach($rf_array as $a)
         @if($a->event->eventEndDate->gte($today))

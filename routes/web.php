@@ -158,7 +158,7 @@ Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');          
 Route::get('/tracks/{event}', 'TrackController@show');
 Route::post('/track/{track}', 'TrackController@update');                        // Ajax
 Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');            // Ajax
-Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');
+Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');          // Ajax
 Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');        // Ajax
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
