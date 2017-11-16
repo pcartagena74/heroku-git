@@ -114,19 +114,19 @@ $tickets = Ticket::where([
                     @for($x=1;$x<=5;$x++)
 <?php
                                 // Check to see if there are any events for $x (this row)
-                                $s = EventSession::where([
+                                $check = EventSession::where([
                                     ['eventID', $event->eventID],
                                     ['confDay', $i],
                                     ['order', $x]
                                 ])->first();
 
-                                // As long as there are any sessions, if this is the first track, or if non symmetric, show the times
+                                // As long as there are any sessions, if this is the first track
+                                // or if non symmetric, show the times
 ?>
-                                @if($s !== null)
+                                @if($check !== null)
                                     <tr>
                                     @foreach($tracks as $track)
                                         {{-- For each of the tracks... --}}
-                                        @if($tracks->first() == $track || !$event->isSymmetric)
 <?php
                                             $s = EventSession::where([
                                                 ['trackID', $track->trackID],
@@ -138,6 +138,7 @@ $tickets = Ticket::where([
                                             // If this particular session exists...
                                             // ...give the option to delete it from DB if  the sessionName is null
 ?>
+                                       @if($tracks->first() == $track || !$event->isSymmetric)
                                             <td rowspan="4" style="text-align:left;">
                                                 @if($s !== null)
                                                     <nobr>
@@ -186,7 +187,7 @@ $tickets = Ticket::where([
 
 <?php
                                 // Check to see if there are any events for $x (this row)
-                                $s = EventSession::where([
+                                $check = EventSession::where([
                                     ['eventID', $event->eventID],
                                     ['confDay', $i],
                                     ['order', $x]
@@ -194,7 +195,7 @@ $tickets = Ticket::where([
 
                                 // As long as there are any sessions, the row will be displayed
 ?>
-                        @if($s !== null)
+                        @if($check !== null)
                         <tr>
                             @foreach($tracks as $track)
 
@@ -225,7 +226,7 @@ $tickets = Ticket::where([
 
 <?php
                         // Check to see if there are any events for $x (this row)
-                        $s = EventSession::where([
+                        $check = EventSession::where([
                             ['eventID', $event->eventID],
                             ['confDay', $i],
                             ['order', $x]
@@ -233,7 +234,7 @@ $tickets = Ticket::where([
 
                         // As long as there are any sessions, the row will be displayed
 ?>
-                        @if($s !== null)
+                        @if($check !== null)
                         <tr>
                             @foreach($tracks as $track)
                                 <?php
@@ -277,7 +278,7 @@ $tickets = Ticket::where([
 
 <?php
                         // Check to see if there are any events for $x (this row)
-                        $s = EventSession::where([
+                        $check = EventSession::where([
                             ['eventID', $event->eventID],
                             ['confDay', $i],
                             ['order', $x]
@@ -285,7 +286,7 @@ $tickets = Ticket::where([
 
                         // As long as there are any sessions, the row will be displayed
 ?>
-                        @if($s !== null)
+                        @if($check !== null)
                         <tr>
                             @foreach($tracks as $track)
 <?php
