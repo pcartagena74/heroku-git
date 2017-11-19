@@ -42,67 +42,73 @@ class RegFinanceController extends Controller
 
     public function show ($id) {
         // responds to GET /blah/id
-        $needSessionPick = 0;
-        $rf              = RegFinance::find($id);
-        $event           = Event::find($rf->eventID);
-        if($event->hasTracks > 0) {
-            $tracks = Track::where('eventID', $event->eventID)->get();
-        } else {
-            $tracks = null;
-        }
+        try {
+            $rf              = RegFinance::find($id);
+            $needSessionPick = 0;
+            $event           = Event::find($rf->eventID);
+            if($event->hasTracks > 0) {
+                $tracks = Track::where('eventID', $event->eventID)->get();
+            } else {
+                $tracks = null;
+            }
 
-        $ticket = Ticket::find($rf->ticketID);
+            $ticket = Ticket::find($rf->ticketID);
 
-        if($ticket->isaBundle) {
-            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                             ->where([
-                                 ['bt.bundleID', '=', $ticket->ticketID],
-                                 ['event-tickets.eventID', '=', $event->eventID]
-                             ])
-                             ->get();
-            $s       = EventSession::where('eventID', '=', $event->eventID)
-                                   ->select(DB::raw('distinct ticketID'))
-                                   ->get();
-            foreach($s as $t) {
-                if($tickets->contains('ticketID', $t->ticketID)) {
+            if($ticket->isaBundle) {
+                $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+                                 ->where([
+                                     ['bt.bundleID', '=', $ticket->ticketID],
+                                     ['event-tickets.eventID', '=', $event->eventID]
+                                 ])
+                                 ->get();
+                $s       = EventSession::where('eventID', '=', $event->eventID)
+                                       ->select(DB::raw('distinct ticketID'))
+                                       ->get();
+                foreach($s as $t) {
+                    if($tickets->contains('ticketID', $t->ticketID)) {
+                        $needSessionPick = 1;
+                        break;
+                    }
+                }
+            } else {
+                $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
+                $s       = EventSession::where([
+                    ['eventID', '=', $event->eventID],
+                    ['ticketID', '=', '$ticket->ticketID']
+                ])->first();
+
+                if($s !== null) {
                     $needSessionPick = 1;
-                    break;
                 }
             }
-        } else {
-            $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
-            $s       = EventSession::where([
-                ['eventID', '=', $event->eventID],
-                ['ticketID', '=', '$ticket->ticketID']
-            ])->first();
 
-            if($s !== null) {
-                $needSessionPick = 1;
-            }
+            $loc           = Location::find($event->locationID);
+            $quantity      = $rf->seats;
+            $discount_code = $rf->discountCode;
+            $person        = Person::find($rf->personID);
+            $org           = Org::find($event->orgID);
+
+            $prefixes   = DB::table('prefixes')->get();
+            $industries = DB::table('industries')->get();
+
+            // prep for stripe-related stuff since the next step is billing for non-$0
+
+            return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
+                'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
+
+        } catch(\Exception $exception) {
+            $message = "An unexpected error occurred.";
+            return view('v1.public_pages.error_display', compact('message'));
         }
-
-        $loc           = Location::find($event->locationID);
-        $quantity      = $rf->seats;
-        $discount_code = $rf->discountCode;
-        $person        = Person::find($rf->personID);
-        $org           = Org::find($event->orgID);
-
-        $prefixes   = DB::table('prefixes')->get();
-        $industries = DB::table('industries')->get();
-
-        // prep for stripe-related stuff since the next step is billing for non-$0
-
-        return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
-            'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
     }
 
-    public function show_receipt(RegFinance $rf){
-        $event = Event::find($rf->eventID);
-        $ticket = Ticket::find($rf->ticketID);
-        $quantity = $rf->seats;
+    public function show_receipt (RegFinance $rf) {
+        $event         = Event::find($rf->eventID);
+        $ticket        = Ticket::find($rf->ticketID);
+        $quantity      = $rf->seats;
         $discount_code = $rf->discountCode;
-        $org = Org::find($event->orgID);
-        $loc = Location::find($event->locationID);
+        $org           = Org::find($event->orgID);
+        $loc           = Location::find($event->locationID);
 
         if($ticket->isaBundle) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
@@ -143,7 +149,8 @@ class RegFinanceController extends Controller
             $tickets = null;
         }
 
-        $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf', 'person', 'org', 'tickets');
+        $x =
+            compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf', 'person', 'org', 'tickets');
         return view('v1.public_pages.event_receipt', $x);
     }
 
@@ -159,9 +166,9 @@ class RegFinanceController extends Controller
     public function edit (RegFinance $rf) {
         // responds to GET /groupreg/reg and shows the add/edit form
         $quantity = $rf->seats;
-        $event = Event::find($rf->eventID);
-        $org = Org::find($event->orgID);
-        $loc = Location::find($event->locationID);
+        $event    = Event::find($rf->eventID);
+        $org      = Org::find($event->orgID);
+        $loc      = Location::find($event->locationID);
 
         return view('v1.auth_pages.events.group_reg1', compact('event', 'quantity', 'org', 'loc', 'rf'));
     }
@@ -181,7 +188,7 @@ class RegFinanceController extends Controller
         $ticket              = Ticket::find($rf->ticketID);
         $this->currentPerson = Person::find(auth()->user()->id);
         $needSessionPick     = $request->input('needSessionPick');
-        $stripeToken     = $request->input('stripeToken');
+        $stripeToken         = $request->input('stripeToken');
 //dd($rf->with('ticket'));
         if($needSessionPick) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
@@ -208,25 +215,25 @@ class RegFinanceController extends Controller
 
                 // Check if a customer id exists, and retrieve or create
                 if(!$user->stripe_id) {
-                    $customer        = \Stripe\Customer::create(array(
+                    $customer          = \Stripe\Customer::create(array(
                         'email' => $user->email,
                         'source' => $stripeToken,
                     ));
                     $user->stripeEmail = $customer->email;
-                    $user->stripe_id = $customer->id;
+                    $user->stripe_id   = $customer->id;
                     $user->save();
                 }
 
-                $charge = \Stripe\Charge::create(array(
+                $charge             = \Stripe\Charge::create(array(
                     'amount' => $rf->cost * 100,
                     'currency' => 'usd',
                     'description' => "$org->orgName Event Registration: $event->eventName",
                     'customer' => $user->stripe_id,
                 ));
                 $rf->stripeChargeID = $charge->id;
-                $rf->status  = 'Processed';
-                $rf->pmtType = $stripeTokenType;
-                $rf->pmtRecd = 1;
+                $rf->status         = 'Processed';
+                $rf->pmtType        = $stripeTokenType;
+                $rf->pmtRecd        = 1;
 
             } elseif($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
@@ -332,25 +339,25 @@ class RegFinanceController extends Controller
             'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
-        $pdf = PDF::loadView('v1.public_pages.event_receipt', $x)
-            ->setOption('disable-javascript', false)
-            ->setOption('encoding', 'utf-8');
-            //->save($receipt_filename);
+        $pdf              = PDF::loadView('v1.public_pages.event_receipt', $x)
+                               ->setOption('disable-javascript', false)
+                               ->setOption('encoding', 'utf-8');
+        //->save($receipt_filename);
 
         //Storage::put($receipt_filename, $pdf->output());
         Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         $client = new S3Client([
             'credentials' => [
-                'key'    => env('AWS_KEY'),
+                'key' => env('AWS_KEY'),
                 'secret' => env('AWS_SECRET')
             ],
             'region' => env('AWS_REGION'),
             'version' => 'latest',
         ]);
 
-        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-        $s3fs = new Filesystem($adapter);
+        $adapter   = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+        $s3fs      = new Filesystem($adapter);
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
         //return $pdf->download('invoice.pdf');
@@ -360,7 +367,7 @@ class RegFinanceController extends Controller
         return view('v1.public_pages.event_receipt', $x);
     }
 
-    public function group_reg2(Request $request, RegFinance $rf){
+    public function group_reg2 (Request $request, RegFinance $rf) {
         // responds to PATCH /group_reg2/{rf}
 
         $event               = Event::find($rf->eventID);
@@ -371,7 +378,7 @@ class RegFinanceController extends Controller
         $quantity            = $rf->seats;
         $this->currentPerson = Person::find(auth()->user()->id);
         $stripeToken         = $request->input('stripeToken');
-        $total_handle = 0;
+        $total_handle        = 0;
 
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
@@ -386,25 +393,25 @@ class RegFinanceController extends Controller
 
                 // Check if a customer id exists, and retrieve or create
                 if(!$user->stripe_id) {
-                    $customer        = \Stripe\Customer::create(array(
+                    $customer          = \Stripe\Customer::create(array(
                         'email' => $user->email,
                         'source' => $stripeToken,
                     ));
                     $user->stripeEmail = $customer->email;
-                    $user->stripe_id = $customer->id;
+                    $user->stripe_id   = $customer->id;
                     $user->save();
                 }
 
-                $charge = \Stripe\Charge::create(array(
+                $charge             = \Stripe\Charge::create(array(
                     'amount' => $rf->cost * 100,
                     'currency' => 'usd',
                     'description' => "$org->orgName Group Registration: $event->eventName",
                     'customer' => $user->stripe_id,
                 ));
                 $rf->stripeChargeID = $charge->id;
-                $rf->status  = 'Processed';
-                $rf->pmtType = $stripeTokenType;
-                $rf->pmtRecd = 1;
+                $rf->status         = 'Processed';
+                $rf->pmtType        = $stripeTokenType;
+                $rf->pmtRecd        = 1;
 
             } elseif($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
@@ -444,11 +451,13 @@ class RegFinanceController extends Controller
                     $ticket->regCount++;
                     $ticket->save();
                 }
-                if($reg->subtotal > 0){
+                if($reg->subtotal > 0) {
                     // mCentric Handle fee = 2.9% of $rf->cost + $0.30
                     $handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
                     // capped at $5.00
-                    if($handleFee > 5){ $handleFee = number_format(5, 2, '.', ''); }
+                    if($handleFee > 5) {
+                        $handleFee = number_format(5, 2, '.', '');
+                    }
                     $total_handle += $handleFee;
                 }
             }
@@ -461,7 +470,7 @@ class RegFinanceController extends Controller
                 $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
 
                 // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $5.00
-                $rf->handleFee = $total_handle;
+                $rf->handleFee   = $total_handle;
                 $rf->orgAmt      = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
                 $rf->discountAmt = number_format($discountAmt, 2, '.', '');
             }
@@ -474,10 +483,10 @@ class RegFinanceController extends Controller
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
-        $pdf = PDF::loadView('v1.auth_pages.events.group_receipt', $x)
-                  ->setOption('disable-javascript', false)
-                  ->setOption('javascript-delay', 20)
-                  ->setOption('encoding', 'utf-8');
+        $pdf              = PDF::loadView('v1.auth_pages.events.group_receipt', $x)
+                               ->setOption('disable-javascript', false)
+                               ->setOption('javascript-delay', 20)
+                               ->setOption('encoding', 'utf-8');
         //->save($receipt_filename);
 
         //Storage::put($receipt_filename, $pdf->output());
@@ -485,15 +494,15 @@ class RegFinanceController extends Controller
 
         $client = new S3Client([
             'credentials' => [
-                'key'    => env('AWS_KEY'),
+                'key' => env('AWS_KEY'),
                 'secret' => env('AWS_SECRET')
             ],
             'region' => env('AWS_REGION'),
             'version' => 'latest',
         ]);
 
-        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-        $s3fs = new Filesystem($adapter);
+        $adapter   = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+        $s3fs      = new Filesystem($adapter);
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
