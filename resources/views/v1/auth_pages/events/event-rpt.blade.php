@@ -55,14 +55,14 @@ if($event->hasTracks && $event->isSymmetric) {
     $width   = (integer)80 / $event->hasTracks;
     $mw      = (integer)85 / $event->hasTracks;
 }
-
+$stats = '<a href="'.env('APP_URL').'/tracks/'.$event->eventID.'">Ticket Statistics</a>';
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
     @include('v1.parts.start_content', ['header' => $event->eventName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    @include('v1.parts.start_content', ['header' => 'Ticket Statistics', 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => $stats, 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.datatable', ['headers' => $headers, 'data' => $rows, 'scroll' => 0])
     @include('v1.parts.end_content')
 

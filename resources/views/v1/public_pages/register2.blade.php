@@ -74,7 +74,7 @@ if($event->isSymmetric && $event->hasTracks) {
                             <b>Pay Now by Credit Card</b>
                         </button>
                         --}}
-                        <div id="payment-request-button" class="card">
+                        <div id="payment-request-button" class="card col-sm-2">
                         </div>
                     @endif
 
@@ -428,10 +428,14 @@ if($event->isSymmetric && $event->hasTracks) {
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0)
+                        {{--
                         <button id="payment-request-button" type="submit" class="btn btn-primary btn-md card">
                             <b>Pay Now by Credit Card</b>
                         </button>
                         <br/>
+                        --}}
+                        <div id="payment-request-button" class="card col-sm-2">
+                        </div>
                     @endif
 
                     <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
@@ -473,8 +477,8 @@ if($event->isSymmetric && $event->hasTracks) {
         country: 'US',
         currency: 'usd',
         total: {
-            label: 'Demo total',
-            amount: 1000,
+            label: '{{ $event->org->orgName }} Event Registration (Powered by mCentric)',
+            amount: {{ $rf->cost*100 }}
         },
     });
     var elements = stripe.elements();
@@ -493,8 +497,8 @@ if($event->isSymmetric && $event->hasTracks) {
 
     paymentRequest.on('token', function(ev) {
         // Send the token to your server to charge it!
-        fetch('/charges', {
-            method: 'POST',
+        fetch('{{ env('APP_URL') }}/complete_registration/{{ $rf->regID }}', {
+            method: 'PATCH',
             body: JSON.stringify({token: ev.token.id}),
         })
             .then(function(response) {
