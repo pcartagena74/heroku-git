@@ -40,7 +40,6 @@ $today = \Carbon\Carbon::now();
         @endif
     @endif
 
-
 @endsection
 
 @section('scripts')
