@@ -17,6 +17,7 @@ class LocationController extends Controller
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
         $locations           = DB::table('event-location')->where('orgID', $this->currentPerson->defaultOrgID)
+                                 ->orderBy('locName')
                                  ->select('locID', 'locName', 'addr1', 'addr2', 'city', 'state', 'zip')->get();
         //dd($locations);
         $topBits = '';

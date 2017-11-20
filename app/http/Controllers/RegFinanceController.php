@@ -164,7 +164,7 @@ class RegFinanceController extends Controller
     }
 
     public function edit (RegFinance $rf) {
-        // responds to GET /groupreg/reg and shows the add/edit form
+        // responds to GET /groupreg/reg and shows the group_reg1 page
         $quantity = $rf->seats;
         $event    = Event::find($rf->eventID);
         $org      = Org::find($event->orgID);
@@ -175,7 +175,6 @@ class RegFinanceController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /complete_registration/{id}
-//dd(request()->all());
 
         $rf                  = RegFinance::with('registration', 'ticket')->where('regID', $id)->first();
         $event               = Event::find($rf->eventID);
@@ -189,7 +188,7 @@ class RegFinanceController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $needSessionPick     = $request->input('needSessionPick');
         $stripeToken         = $request->input('stripeToken');
-//dd($rf->with('ticket'));
+
         if($needSessionPick) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
                              ->where([
@@ -205,11 +204,14 @@ class RegFinanceController extends Controller
         // if the cost is $0, the pay button won't show on the form
 
         if($rf->status != 'Processed') {
-
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if($rf->cost > 0 && isset($stripeToken)) {
                 $stripeEmail     = $request->input('stripeEmail');
+                // $stripeEmail doesn't appear to be set by Stripe's token anymore
+                if($stripeEmail === null){
+                    $stripeEmail = $user->email;
+                }
                 $stripeTokenType = $request->input('stripeTokenType');
                 Stripe::setApiKey(env('STRIPE_SECRET'));
 

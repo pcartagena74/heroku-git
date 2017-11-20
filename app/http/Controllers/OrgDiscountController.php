@@ -63,6 +63,9 @@ class OrgDiscountController extends Controller
         // responds to PATCH /blah/id
         $name = request()->input('name');
         $value = request()->input('value');
+        if($value === null){
+            $value = 0;
+        }
         $this->currentPerson = Person::find(auth()->user()->id);
         $discount            = OrgDiscount::find($id);
 
