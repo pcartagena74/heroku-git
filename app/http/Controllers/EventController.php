@@ -597,7 +597,7 @@ class EventController extends Controller
         $seats = 0; $total_cost = 0; $total_orig = 0; $total_handle = 0;
         $today = Carbon::now();
 
-        //dd(request()->all());
+        // Process up to 15 entries
         for($i=1; $i<=15; $i++){
             $personID = request()->input('person-'.$i);
             $firstName = request()->input('firstName-'.$i);
@@ -690,10 +690,10 @@ class EventController extends Controller
                     // Use earlybird discount pricing as base
                     if($reg->membership == 'Member'){
                         $reg->origcost = $t->memberBasePrice;
-                        $reg->subtotal = $t->memberBasePrice - ($t->memberBasePrice * $t->earlyBirdPercent);
+                        $reg->subtotal = $t->memberBasePrice - ($t->memberBasePrice * $t->earlyBirdPercent/100);
                     } else {
                         $reg->origcost = $t->nonmbrBasePrice;
-                        $reg->subtotal = $t->nonmbrBasePrice - ($t->nonmbrBasePrice * $t->earlyBirdPercent);
+                        $reg->subtotal = $t->nonmbrBasePrice - ($t->nonmbrBasePrice * $t->earlyBirdPercent/100);
                     }
                 } else {
                     // Use non-discount pricing

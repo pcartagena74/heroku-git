@@ -12,6 +12,9 @@ use App\Track;
 use App\EventSession;
 use App\RegSession;
 
+        // Determining whether picking sessions is required is complex.
+        // If an event has tracks, there will be sessions associated with 1 or more tickets
+        // (depending on the number of days that have sessions)
 $needSessionPick = 0;
 if($event->hasTracks > 0) {
     $tracks = Track::where('eventID', $event->eventID)->get();
@@ -19,6 +22,11 @@ if($event->hasTracks > 0) {
     $tracks = null;
 }
 
+// Bundle Tickets won't have sessions associated with them, but the individual ticket(s) that make it up
+// So if it's a bundle,
+// 1. Get the child tickets of the bundle (parent)
+// 2. Get all session records that were created for the event
+// 3. Check if the ticketID associated with the sessions appears in #1 collection, and set $needSessionPick = 1
 if($reg->ticket->isaBundle) {
     $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
                      ->where([
@@ -39,20 +47,22 @@ if($reg->ticket->isaBundle) {
     }
 
 } else {
+    // Setting a collection of 1 ticket and the 1 ticket.
     $tickets  = Ticket::where('ticketID', '=', $reg->ticketID)->get();
     $ticket  = Ticket::where('ticketID', '=', $reg->ticketID)->first();
     $s       = EventSession::where([
         ['eventID', '=', $event->eventID],
         ['ticketID', '=', $ticket->ticketID]
-    ])->first();
+    ])->get();
 
-    if($s !== null) {
+    // Check if there's more than 1 session associated with the ticket
+    // Every ticket has a default session (for registration purposes)
+    if(count($s) > 1) {
         $needSessionPick = 1;
     }
 }
-
 ?>
-@if($needSessionPick)
+@if($needSessionPick == 1)
     @if(count($regSessions)==0)
         <b>You have not yet registered for sessions. You can do so below. </b><br/>
     @else

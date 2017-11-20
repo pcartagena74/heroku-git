@@ -20,10 +20,11 @@ class ActivityController extends Controller
     }
 
     public function future_index () {
-        // responds to /upcoming
+        // responds to GET /upcoming
         $this->currentPerson = Person::find(auth()->user()->id);
         $now                 = Carbon::now();
 
+        // Registrations bought by someone else for $this->currentPerson
         $bought = Registration::where('personID', $this->currentPerson->personID)
                               ->whereHas(
                                   'event', function($q) {
@@ -35,8 +36,15 @@ class ActivityController extends Controller
                               })
                               ->with('event', 'ticket', 'person', 'regfinance')
                               ->get()->sortBy('event.eventStartDate');
-
-        //where('personID', '=', $this->currentPerson->personID)
+/*
+       $bought = Event::where('eventStartDate', '>=', Carbon::now())
+           ->with('registrations', 'tickets', 'regfinances')
+           ->whereHas('registrations', function($q){
+               $q->where('personID', $this->currentPerson->personID);
+           })
+           ->get()->sortBy('eventStartDate');
+       dd($bought);
+*/
         $paid = RegFinance::whereHas(
             'event', function($q) {
             $q->where('eventStartDate', '>=', Carbon::now());

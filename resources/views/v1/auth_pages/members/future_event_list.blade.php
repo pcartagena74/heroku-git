@@ -22,13 +22,13 @@ $today = \Carbon\Carbon::now();
 
 @section('content')
 
-    @if(count($bought)>0)
-        @include('v1.parts.reg_bit', ['header' => 'Events Purchased On Your Behalf', 'reg_array' => $bought])
-    @endif
-
     @if(count($paid) + count($unpaid) + count($pending) + count($bought) == 0)
         <b>You have not registered for any upcoming events.</b>
     @else
+        @if(count($bought)>0)
+            @include('v1.parts.reg_bit', ['header' => 'Events Purchased On Your Behalf', 'reg_array' => $bought])
+        @endif
+
         @if(count($paid)>0)
             @include('v1.parts.rf_bit', ['header' => 'Your Paid Registered Events', 'rf_array' => $paid])
         @endif

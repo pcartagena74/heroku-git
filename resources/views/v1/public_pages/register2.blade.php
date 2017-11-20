@@ -65,17 +65,18 @@ if($event->isSymmetric && $event->hasTracks) {
                     </div>
                     <br/>
                 </div>
-                <div class="col-md-4 col-sm-4" style="text-align: right;">
+                <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
 
                     @if($rf->cost > 0)
-                        {{--
-                        <button id="payment-request-button" type="submit" class="btn btn-primary btn-md card">
+                        <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
+                                class="card btn btn-primary btn-md">
                             <b>Pay Now by Credit Card</b>
                         </button>
-                        --}}
-                        <div id="payment-request-button" class="card col-sm-2">
+                        {{--
+                        <div id="payment-request-button" class="card">
                         </div>
+                        --}}
                     @endif
 
                     <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
@@ -433,11 +434,15 @@ if($event->isSymmetric && $event->hasTracks) {
                             <b>Pay Now by Credit Card</b>
                         </button>
                         <br/>
-                        --}}
-                        <div id="payment-request-button" class="card col-sm-2">
+                        <div id="payment-request-button" class="card">
                         </div>
+                        --}}
+                        <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
+                                class="card btn btn-primary btn-md">
+                            <b>Pay Now by Credit Card</b>
+                        </button>
                     @endif
-
+                    <br />
                     <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                         <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
                     </button>
@@ -464,125 +469,13 @@ if($event->isSymmetric && $event->hasTracks) {
     @include('v1.parts.end_content')
 @endsection
 
-
 @section('scripts')
-    {{--
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    //included in footer-script.blade
-    <script src="https://js.stripe.com/v3/"></script>
-    --}}
-<script>
-    var stripe = Stripe('{{ env('STRIPE_KEY') }}');
-    var paymentRequest = stripe.paymentRequest({
-        country: 'US',
-        currency: 'usd',
-        total: {
-            label: '{{ $event->org->orgName }} Event Registration (Powered by mCentric)',
-            amount: {{ $rf->cost*100 }}
-        },
-    });
-    var elements = stripe.elements();
-    var prButton = elements.create('paymentRequestButton', {
-        paymentRequest: paymentRequest,
-    });
-
-    // Check the availability of the Payment Request API first.
-    paymentRequest.canMakePayment().then(function(result) {
-        if (result) {
-            prButton.mount('#payment-request-button');
-        } else {
-            document.getElementById('payment-request-button').style.display = 'none';
-        }
-    });
-
-    paymentRequest.on('token', function(ev) {
-        // Send the token to your server to charge it!
-        fetch('{{ env('APP_URL') }}/complete_registration/{{ $rf->regID }}', {
-            method: 'PATCH',
-            body: JSON.stringify({token: ev.token.id}),
-        })
-            .then(function(response) {
-                if (response.ok) {
-                    // Report to the browser that the payment was successful, prompting
-                    // it to close the browser payment interface.
-                    ev.complete('success');
-                } else {
-                    // Report to the browser that the payment failed, prompting it to
-                    // re-show the payment interface, or show an error message and close
-                    // the payment interface.
-                    ev.complete('fail');
-                }
-            });
-    });
-
-</script>
-    {{--
     <script>
-        var input1 = '';
-        var input2 = '';
-        var handler = StripeCheckout.configure({
-            key: '{{ env('STRIPE_KEY') }}',
-            image: 'https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png',
-            locale: 'auto',
-            token: function (token) {
-                for (var key in token) {
-                    if (token.hasOwnProperty(key)) {
-                        console.log(key + " -> " + token[key]);
-                    }
-                }
-                input1 = $("<input>")
-                    .attr("type", "hidden")
-                    .attr("name", "stripeToken").val(token.id);
-                $('#complete_registration').append($(input1));
-
-                input2 = $("<input>")
-                    .attr("type", "hidden")
-                    .attr("name", "stripeEmail").val(token.email);
-                $('#complete_registration').append($(input2));
-
-                input3 = $("<input>")
-                    .attr("type", "hidden")
-                    .attr("name", "stripeTokenType").val(token.type);
-                $('#complete_registration').append($(input3));
-
-                $('#complete_registration').submit();
-            }
-
-            $('.card').on('click', function (e) {
-                // Open Checkout with further options:
-                e.preventDefault();
-                $('#complete_registration').validate();
-                if( $('#complete_registration').valid() ){
-                    handler.open({
-                        name: '{{ $event->org->orgName }} (mCentric)',
-                        description: 'Event Registration',
-                        zipCode: true,
-                        email: "{{ $person->login }}",
-                        amount: {{ $rf->cost*100 }}
-                    });
-                }
-            });
-
-            $('.card2').on('click', function (e) {
-                // Open Checkout with further options:
-                e.preventDefault();
-                $('#complete_registration').validate();
-                if( $('#complete_registration').valid() ){
-                    handler.open({
-                        name: '{{ $event->org->orgName }} (mCentric)',
-                        description: 'Event Registration',
-                        zipCode: true,
-                        email: "{{ $person->login }}",
-                        amount: {{ $rf->cost*100 }}
-                    });
-                }
-            });
-
-            // Close Checkout on page navigation:
+        $('.card').on('click', function (e) {
+            // Open Checkout with further options:
+            e.preventDefault();
         });
-    </script>
-    --}}
-    <script>
+
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -685,6 +578,10 @@ if($event->isSymmetric && $event->hasTracks) {
             @endfor
         });
     </script>
+@endsection
+
+@section('modals')
+    @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
 @endsection
 {{--
 

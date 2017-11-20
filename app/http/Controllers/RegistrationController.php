@@ -725,6 +725,7 @@ class RegistrationController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         if($reg->regStatus == 'pending') {
+            // the registration was never finalized, sessions weren't picked, so delete
             $reg->delete();
         } elseif($reg->subtotal > 0 && $rf->stripeChargeID) {
             // There's a refund that needs to occur with Stripe
@@ -763,7 +764,8 @@ class RegistrationController extends Controller
         } elseif($rf->seats > 1) {
             $reg->regStatus = 'Canceled';
             $rf->status     = 'Partially Canceled';
-            $rf->seats      = $rf->seats - 1;
+            // decided against decrementing original seat count
+            // $rf->seats      = $rf->seats - 1;
             $rf->save();
             $reg->save();
             $reg->delete();
@@ -804,18 +806,19 @@ class RegistrationController extends Controller
                 }
             }
         } else {
+            // Collection of 1 ticket (when not a bundle) for code uniformity
             $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
             $s       = EventSession::where([
                 ['eventID', '=', $reg->eventID],
                 ['ticketID', '=', '$ticket->ticketID']
-            ])->first();
+            ])->get();
 
-            if($s !== null) {
+            if(count($s) > 1) {
                 $needSessionPick = 1;
             }
         }
 
-        // Decrementing the tickets
+        // Decrement the regCount on the ticket
         foreach($tickets as $t) {
             $t->regCount = $t->regCount - 1;
         }
