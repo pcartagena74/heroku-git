@@ -43,8 +43,8 @@ class LocationController extends Controller
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update (Request $request, $id) {
-        // responds to PATCH /blah/id
+    public function update (Request $request) {
+        // responds to POST /location/update
         $this->currentPerson = Person::find(auth()->user()->id);
         $locID               = request()->input('locID');
         $location            = Location::find($locID);

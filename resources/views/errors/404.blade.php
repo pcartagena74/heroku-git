@@ -15,19 +15,20 @@
                     <div class="text-center text-center" style="text-align: center;">
                         <h1 class="error-number">404</h1>
                         <h2>Sorry but we couldn't find this page</h2>
-                        This page you are looking for does not exist. <a href="#">Report this?</a>
-                        <div class="mid_center">
-                            <h3>Search</h3>
-                            <form>
+                        This page you are looking for does not exist. <a onclick="javascript:show()">Report this?</a>
+                        <div class="mid_center" style="display:none">
+                            <h3>Report Issue</h3>
+                            {{ Form::open(['url' => env('APP_URL').'/reportissue', 'method' => 'post']) }}
+                            {{-- Add Captcha --}}
                                 <div class="col-xs-12 form-group pull-right top_search">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search for...">
-                                        <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">Go!</button>
-                                        </span>
+                                        <textarea rows="5" class="form-control custom-control" required style="resize:none;"
+                                            placeholder="This does not work yet. Please describe the issue in detail."></textarea>
+                                        <span class="input-group-addon btn btn-primary"
+                                            style="border-radius: 0px 25px 25px 0px;">Go!</span>
                                     </div>
                                 </div>
-                            </form>
+                            {{ Form::close() }}
                         </div>
                     </div>
                 </div>
@@ -35,4 +36,9 @@
             <!-- /page content -->
         </div>
     </div>
+    <script>
+        function show(){
+           $('.mid_center').toggle();
+        }
+    </script>
 @stop

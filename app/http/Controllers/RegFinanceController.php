@@ -74,10 +74,10 @@ class RegFinanceController extends Controller
                 $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
                 $s       = EventSession::where([
                     ['eventID', '=', $event->eventID],
-                    ['ticketID', '=', '$ticket->ticketID']
-                ])->first();
-
-                if($s !== null) {
+                    ['ticketID', '=', $ticket->ticketID]
+                ])->get();
+//dd($s);
+                if(count($s) > 1) {
                     $needSessionPick = 1;
                 }
             }
@@ -90,7 +90,6 @@ class RegFinanceController extends Controller
 
             $prefixes   = DB::table('prefixes')->get();
             $industries = DB::table('industries')->get();
-
             // prep for stripe-related stuff since the next step is billing for non-$0
 
             return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
@@ -206,7 +205,7 @@ class RegFinanceController extends Controller
         if($rf->status != 'Processed') {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
-            if($rf->cost > 0 && isset($stripeToken)) {
+            if($rf->cost > 0 && $stripeToken !== null) {
                 $stripeEmail     = $request->input('stripeEmail');
                 // $stripeEmail doesn't appear to be set by Stripe's token anymore
                 if($stripeEmail === null){
@@ -388,7 +387,7 @@ class RegFinanceController extends Controller
         if($rf->status != 'Processed') {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
-            if($rf->cost > 0 && isset($stripeToken)) {
+            if($rf->cost > 0 && $stripeToken !== null) {
                 $stripeEmail     = $request->input('stripeEmail');
                 $stripeTokenType = $request->input('stripeTokenType');
                 Stripe::setApiKey(env('STRIPE_SECRET'));
