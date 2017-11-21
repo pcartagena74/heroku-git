@@ -267,7 +267,9 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
     @if($event->eventInfo)
         @include('v1.parts.start_content', ['header' => 'Additional Information', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         {!! $event->eventInfo !!}
+        @if(isset($tags))
         <p>Add Event Tags</p>
+        @endif
         @include('v1.parts.end_content')
     @endif
     @include('v1.parts.end_content')

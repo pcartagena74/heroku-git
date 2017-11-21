@@ -25,4 +25,10 @@ class HomeController extends Controller
     {
         return view('v1.public_pages.home-login');
     }
+
+    public function store(Request $request){
+        // This is the function that processes issues reported by error page
+        // Responds to POST /reportissue
+
+    }
 }
