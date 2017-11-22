@@ -428,14 +428,6 @@ if($event->isSymmetric && $event->hasTracks) {
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0)
-                        {{--
-                        <button id="payment-request-button" type="submit" class="btn btn-primary btn-md card">
-                            <b>Pay Now by Credit Card</b>
-                        </button>
-                        <br/>
-                        <div id="payment-request-button" class="card">
-                        </div>
-                        --}}
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>Pay Now by Credit Card</b>
