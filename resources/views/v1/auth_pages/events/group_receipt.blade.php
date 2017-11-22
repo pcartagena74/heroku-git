@@ -248,6 +248,10 @@ if($rf->pmtRecd){
                 </div>
             </div>
 
+        <hr>
+        <div class="col-sm-offset-2 col-sm-10">
+            <h4>Add this event to your calendar program of choice.</h4>
+        </div>
             @if(0)
                 <table class="table borderless">
                     <tr>

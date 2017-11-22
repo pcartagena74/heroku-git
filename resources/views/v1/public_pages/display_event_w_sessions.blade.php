@@ -287,7 +287,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     @for($x=1;$x<=5;$x++)
 <?php
                                         // Check to see if there are any events for $x (this row)
-                                        $s = EventSession::where([
+                                        $check = EventSession::where([
                                             ['eventID', $event->eventID],
                                             ['confDay', $i],
                                             ['order', $x]
@@ -295,7 +295,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
                                         // As long as there are any sessions, the row will be displayed
 ?>
-                                        @if($s !== null)
+                                        @if($check !== null)
                                             <tr>
                                             @foreach($tracks as $track)
 <?php
@@ -308,18 +308,22 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 ?>
                                                 @if($s !== null)
                                                     @if($tracks->first() == $track || !$event->isSymmetric)
-                                                        <td rowspan="4" style="text-align:left;">
+                                                        <td rowspan="3" style="text-align:left;">
                                                             <nobr> {{ $s->start->format('g:i A') }} </nobr>
                                                             &dash;
                                                             <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                         </td>
+                                                    @endif
                                                         <td colspan="2" style="text-align:left; min-width:150px;
                                                                 width: {{ $width }}%; max-width: {{ $mw }}%;">
                                                             <b>{{ $s->sessionName }}</b>
+                                                            <a tabindex="0" class="btn btn-xs btn-primary pull-right"
+                                                               data-toggle="popover" data-trigger="focus"
+                                                               data-placement="left" title="{!! $s->sessionName !!}"
+                                                               data-content="{!! $s->sessionAbstract !!}">Abstract</a><br/>
                                                         </td>
-                                                    @endif
                                                 @else
-                                                    <td rowspan="4" colspan="{{ $columns }}" style="text-align:left;">&nbsp;</td>
+                                                    <td rowspan="3" colspan="{{ $columns }}" style="text-align:left;">&nbsp;</td>
                                                 @endif
                                             @endforeach
                                             </tr>
@@ -327,7 +331,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
 <?php
                                         // Check to see if there are any events for $x (this row)
-                                        $s = EventSession::where([
+                                        $check = EventSession::where([
                                             ['eventID', $event->eventID],
                                             ['confDay', $i],
                                             ['order', $x]
@@ -335,7 +339,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
                                         // As long as there are any sessions, the row will be displayed
 ?>
-                                        @if($s !== null)
+                                        @if($check !== null)
                                         <tr>
                                             @foreach($tracks as $track)
 <?php
@@ -360,7 +364,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
 <?php
                                         // Check to see if there are any events for $x (this row)
-                                        $s = EventSession::where([
+                                        $check = EventSession::where([
                                             ['eventID', $event->eventID],
                                             ['confDay', $i],
                                             ['order', $x]
@@ -368,7 +372,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
                                         // As long as there are any sessions, the row will be displayed
 ?>
-                                        @if($s !== null)
+                                        @if($check !== null)
                                         <tr>
                                             @foreach($tracks as $track)
 <?php
@@ -392,38 +396,6 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                                     </td>
                                                 @else
 
-                                                @endif
-                                            @endforeach
-                                        </tr>
-                                        @endif
-
-<?php
-                                        // Check to see if there are any events for $x (this row)
-                                        $s = EventSession::where([
-                                            ['eventID', $event->eventID],
-                                            ['confDay', $i],
-                                            ['order', $x]
-                                        ])->first();
-
-                                        // As long as there are any sessions, the row will be displayed
-?>
-                                        @if($s !== null)
-                                        <tr>
-                                            @foreach($tracks as $track)
-<?php
-                                                $s = EventSession::where([
-                                                    ['trackID', $track->trackID],
-                                                    ['eventID', $event->eventID],
-                                                    ['confDay', $i],
-                                                    ['order', $x]
-                                                ])->first();
-?>
-                                                @if($s !== null)
-                                                    <td colspan="2" style="text-align:left;">
-                                                        <b>Abstract</b><br/>
-                                                        {!! $s->sessionAbstract !!}
-                                                    </td>
-                                                @else
                                                 @endif
                                             @endforeach
                                         </tr>
@@ -564,6 +536,11 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
             }
         }
         ;
+    </script>
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        });
     </script>
 
 @endsection

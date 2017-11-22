@@ -67,7 +67,8 @@ if($event->isSymmetric) {
                     <p></p>
 
                     @if($rf->cost > 0)
-                        <button id="card1" type="submit" class="btn btn-primary btn-md">
+                        <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
+                                class="card btn btn-primary btn-md">
                             <b>Pay Now by Credit Card</b>
                         </button>
                     @endif
@@ -234,7 +235,8 @@ if($event->isSymmetric) {
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0)
-                        <button id="card2" type="submit" class="btn btn-primary btn-md">
+                        <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
+                                class="card btn btn-primary btn-md">
                             <b>Pay Now by Credit Card</b>
                         </button>
                         <br/>
@@ -268,75 +270,83 @@ if($event->isSymmetric) {
 
 
 @section('scripts')
-
+<script>
     @if($rf->cost > 0)
-    <script src="https://checkout.stripe.com/checkout.js"></script>
-    <script>
-        $(document).ready(function () {
-            var input1 = '';
-            var input2 = '';
-            var handler = StripeCheckout.configure({
-                key: '{{ env('STRIPE_KEY') }}',
-                image: 'https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png',
-                locale: 'auto',
-                token: function (token) {
-                    for (var key in token) {
-                        if (token.hasOwnProperty(key)) {
-                            console.log(key + " -> " + token[key]);
-                        }
+        $('.card').on('click', function (e) {
+        // Open Checkout with further options:
+        e.preventDefault();
+        });
+
+</script>
+
+        {{--
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script>
+    $(document).ready(function () {
+        var input1 = '';
+        var input2 = '';
+        var handler = StripeCheckout.configure({
+            key: '{{ env('STRIPE_KEY') }}',
+            image: 'https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png',
+            locale: 'auto',
+            token: function (token) {
+                for (var key in token) {
+                    if (token.hasOwnProperty(key)) {
+                        console.log(key + " -> " + token[key]);
                     }
-                    input1 = $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "stripeToken").val(token.id);
-                    $('#complete_registration').append($(input1));
-
-                    input2 = $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "stripeEmail").val(token.email);
-                    $('#complete_registration').append($(input2));
-
-                    input3 = $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "stripeTokenType").val(token.type);
-                    $('#complete_registration').append($(input3));
-
-                    $('#complete_registration').submit();
                 }
-            });
+                input1 = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "stripeToken").val(token.id);
+                $('#complete_registration').append($(input1));
 
-            $('#card1').on('click', function (e) {
-                // Open Checkout with further options:
-                e.preventDefault();
-                $('#complete_registration').validate();
-                if( $('#complete_registration').valid() ){
-                    handler.open({
-                        name: '{{ $event->org->orgName }} (mCentric)',
-                        description: 'Event Registration',
-                        zipCode: true,
-                        email: "{{ $person->login }}",
-                        amount: {{ $rf->cost*100 }}
-                    });
-                }
-            });
+                input2 = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "stripeEmail").val(token.email);
+                $('#complete_registration').append($(input2));
 
-            $('#card2').on('click', function (e) {
-                // Open Checkout with further options:
-                e.preventDefault();
-                $('#complete_registration').validate();
-                if( $('#complete_registration').valid() ){
-                    handler.open({
-                        name: '{{ $event->org->orgName }} (mCentric)',
-                        description: 'Event Registration',
-                        zipCode: true,
-                        email: "{{ $person->login }}",
-                        amount: {{ $rf->cost*100 }}
-                    });
-                }
-            });
+                input3 = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "stripeTokenType").val(token.type);
+                $('#complete_registration').append($(input3));
+
+                $('#complete_registration').submit();
+            }
+        });
+        $('#card1').on('click', function (e) {
+            // Open Checkout with further options:
+            e.preventDefault();
+            $('#complete_registration').validate();
+            if( $('#complete_registration').valid() ){
+                handler.open({
+                    name: '{{ $event->org->orgName }} (mCentric)',
+                    description: 'Event Registration',
+                    zipCode: true,
+                    email: "{{ $person->login }}",
+                    amount: {{ $rf->cost*100 }}
+                });
+            }
+        });
+
+        $('#card2').on('click', function (e) {
+            // Open Checkout with further options:
+            e.preventDefault();
+            $('#complete_registration').validate();
+            if( $('#complete_registration').valid() ){
+                handler.open({
+                    name: '{{ $event->org->orgName }} (mCentric)',
+                    description: 'Event Registration',
+                    zipCode: true,
+                    email: "{{ $person->login }}",
+                    amount: {{ $rf->cost*100 }}
+                });
+            }
+        });
 
             // Close Checkout on page navigation:
         });
     </script>
+        --}}
     @endif
 
     <script>
@@ -411,5 +421,5 @@ if($event->isSymmetric) {
 @endsection
 
 @section('modals')
-    @include('v1.modals.stripe')
+    @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
 @endsection
