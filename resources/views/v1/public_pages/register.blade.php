@@ -392,11 +392,15 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
             var subtotal = 0;
 
             @for($i=1;$i<=$quantity; $i++)
-                var tc{{ $i }} = $('#tcost{{ $i }}').text() * 1;
+                var tc{{ $i }} = $('#tcost{{ $i }}').text().replace(/,/g,'') * 1;
                 var newval{{ $i }} = tc{{ $i }} * 1;
-                $('#final{{ $i }}').text(tc{{ $i }});
+                $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
                 subtotal += newval{{ $i }} * 1;
                 $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+            {{--
+                console.log('tc{{ $i }} ' + tc{{ $i }});
+                console.log('newval{{ $i }} ' + newval{{ $i }});
+            --}}
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -433,7 +437,7 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                         $('.status_msg').fadeIn(0);
                     },
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         var result = eval(data);
                         $('.status_msg').html(result.message).fadeIn(0);
                         $('#discount').text(result.percent);
@@ -444,10 +448,14 @@ if(!($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today
                         $('#i_percent').val(percent);
                         $('#i_flatamt').val(flatAmt);
                         subtotal = 0;
+                        {{--
+                        console.log('percent: '+ percent);
+                        console.log('flat: '+ flatAmt);
+                        --}}
 
                         if(percent>0) {
                             @for($i=1;$i<=$quantity; $i++)
-                                newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
+                                newval{{ $i }} = tc{{ $i }} - (tc{{ $i }} * percent / 100);
                             $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
                             subtotal += newval{{ $i }} * 1.00;
                             $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
