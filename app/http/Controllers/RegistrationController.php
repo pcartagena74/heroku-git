@@ -179,6 +179,8 @@ class RegistrationController extends Controller
         $ticketID      = request()->input('ticketID');
         $subtotal      = request()->input('sub1');
         $origcost      = request()->input('cost1');
+        // strip out , from $ figure over $1,000
+        $origcost      = str_replace(',', '', $origcost);
         if($event->hasFood) {
             $specialNeeds = request()->input('specialNeeds');
             $eventNotes   = request()->input('eventNotes');
