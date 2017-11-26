@@ -33,18 +33,11 @@ class ActivityController extends Controller
                               ->whereHas(
                                   'regfinance', function($q) {
                                   $q->where('personID', '!=', $this->currentPerson->personID);
+                                  $q->where('regStatus', '!=', 'In Progress');
                               })
                               ->with('event', 'ticket', 'person', 'regfinance')
                               ->get()->sortBy('event.eventStartDate');
-/*
-       $bought = Event::where('eventStartDate', '>=', Carbon::now())
-           ->with('registrations', 'tickets', 'regfinances')
-           ->whereHas('registrations', function($q){
-               $q->where('personID', $this->currentPerson->personID);
-           })
-           ->get()->sortBy('eventStartDate');
-       dd($bought);
-*/
+
         $paid = RegFinance::whereHas(
             'event', function($q) {
             $q->where('eventStartDate', '>=', Carbon::now());
@@ -60,7 +53,7 @@ class ActivityController extends Controller
                                 $q->where('eventStartDate', '>=', Carbon::now());
                             })
                             ->with('event', 'ticket', 'person', 'registration')
-                            ->whereIn('status', ['Active', 'Payment Pending'])
+                            ->whereIn('status', ['Payment Pending'])
                             ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(

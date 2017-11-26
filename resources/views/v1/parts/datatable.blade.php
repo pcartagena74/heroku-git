@@ -19,7 +19,7 @@ $th_count = 0; $tb_count = 0;
 //width: {{ $width }}%; min-width: 1px; max-width: 20%;">
 ?>
 <div>
-    <table id="{{ $id }}" class="table table-striped table-bordered table-condensed table-responsive">
+    <table id="{{ $id }}" class="table compact table-striped table-bordered table-condensed table-responsive">
         <thead>
         <tr>
             @foreach ($headers as $header)

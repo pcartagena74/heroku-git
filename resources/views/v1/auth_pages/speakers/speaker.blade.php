@@ -15,9 +15,11 @@ foreach($speakers as $speaker){
 @extends('v1.layouts.auth')
 
 @section('content')
-
     @include('v1.parts.start_content', ['header' => 'Speaker List',
     'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+
+    <b>Note:</b> to add speakers to this list, register the person to an event using a speaker discount code.
+    <br />
 
     @include('v1.parts.datatable', ['headers' => $header, 'data' => $data, 'scroll' => 1])
 

@@ -798,31 +798,15 @@ class RegistrationController extends Controller
                                  ['event-tickets.eventID', '=', $reg->eventID]
                              ])
                              ->get();
-            $s       = EventSession::where('eventID', '=', $reg->eventID)
-                                   ->select(DB::raw('distinct ticketID'))
-                                   ->get();
-            foreach($s as $t) {
-                if($tickets->contains('ticketID', $t->ticketID)) {
-                    $needSessionPick = 1;
-                    break;
-                }
-            }
         } else {
             // Collection of 1 ticket (when not a bundle) for code uniformity
             $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
-            $s       = EventSession::where([
-                ['eventID', '=', $reg->eventID],
-                ['ticketID', '=', '$ticket->ticketID']
-            ])->get();
-
-            if(count($s) > 1) {
-                $needSessionPick = 1;
-            }
         }
 
         // Decrement the regCount on the ticket
         foreach($tickets as $t) {
             $t->regCount = $t->regCount - 1;
+            $t->save();
         }
 
         $sessions = RegSession::where('regID', '=', $reg->regID)->get();

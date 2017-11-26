@@ -52,7 +52,7 @@ foreach($current_events as $event) {
     $display_link_button =
         "<a target='_new' href='$displayURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='Preview Event'><i class='fa fa-eye'></i></a>";
     $eventDiscount_button =
-       "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event Discounts'><i class='fa fa-pencil'></i></a>";
+       "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event Discounts'><i class='fa fa-dollar'></i></a>";
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
@@ -61,12 +61,13 @@ foreach($current_events as $event) {
     }
 
     $ticket_button =
-        "<a href='$tktURL' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tickets'><i class='fa fa-pencil'></i></a>";
+        "<a href='$tktURL' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tickets'><i class='fa fa-ticket'></i></a>";
     $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='CheckIn Attendees'><i class='fa fa-check-square-o'></i></a>";
 
     array_push($current_data, ["<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-        $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
-        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $checkin_button . $delete_button]);
+        $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button .
+        $eventDiscount_button . $track_link_button . $ticket_button . $rpt_link_button  . $copy_link_button .
+        $checkin_button . $delete_button]);
 //    array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
 //        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
 //        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
