@@ -220,5 +220,7 @@ if($reg->ticket->isaBundle) {
    </button>
    {!! Form::close() !!}
 @else
+    {{--
    <b>This event does not have sessions. </b><br/>
+    --}}
 @endif      {{-- closes $needSessionPick --}}

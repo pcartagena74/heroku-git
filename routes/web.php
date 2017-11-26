@@ -84,6 +84,10 @@ Route::post('/become', 'ActivityController@become');
 
 // My Profile / Member Editing
 // ---------------------
+// Linked in routes need to be above profile routes so "linkedin" overrides {id}
+Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
+Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
+
 Route::get('/profile/{id}', 'PersonController@show')->name('showMemberProfile');
 Route::post('/profile/{id}', 'PersonController@update');
 Route::post('/address/{id}', 'AddressController@update');
@@ -97,8 +101,6 @@ Route::post('/phones/create', 'PhoneController@store');
 Route::post('/phone/{id}/delete', 'PhoneController@destroy');
 Route::post('/password', 'PersonController@change_password');
 
-Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
-Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
 Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogin');
 

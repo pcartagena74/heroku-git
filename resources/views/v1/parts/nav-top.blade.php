@@ -35,7 +35,10 @@ $currentPerson = App\Person::find(auth()->user()->id);
                                 <span>Connect Linked In</span>
                             </a>
                         </li>
+                        {{--
+                        // Add this back when context-help is added
                         <li><a href="javascript:;">Help</a></li>
+                        --}}
                         <li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> Logout</a></li>
                     </ul>
                 </li>
