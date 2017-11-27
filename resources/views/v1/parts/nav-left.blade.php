@@ -78,32 +78,6 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('member-management'))
-                        || Entrust::hasRole('Development'))
-                        <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
-                            <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/members" id="mem">Member Management</a></li>
-                                <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
-                                                class="label label-success pull-right">New</span></a></li>
-                                <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a>
-                                <span class="label label-success pull-right">IN DEV</span>
-                                </li>
-                            </ul>
-                        </li>
-                    @endif
-
-                    @if(Entrust::hasRole('Development'))
-                        <li><a><i class="fa fa-envelope"></i>Email Marketing<span
-                                        class="fa fa-chevron-down"></span></a>
-                            <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/campaigns">Campaigns</a></li>
-                                <li><a href="{{ env('APP_URL') }}/library">Asset Library</a></li>
-                                <li><a href="{{ env('APP_URL') }}/lists">List Maintenance</a></li>
-                                <li><a href="{{ env('APP_URL') }}/reports">Reporting</a></li>
-                            </ul>
-                        </li>
-                    @endif
-
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
                         || Entrust::hasRole('Development'))
                         <li><a><i class="fa fa-calendar"></i> Event Management<span
@@ -125,6 +99,32 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="{{ env('APP_URL') }}/speakers">Manage Speakers</a></li>
                                 <li><a href="{{ env('APP_URL') }}#">New Report <span
                                                 class="label label-success pull-right">Just Define It</span></a></li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('member-management'))
+                        || Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="{{ env('APP_URL') }}/members" id="mem">Member Management</a></li>
+                                <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
+                                                class="label label-success pull-right">New</span></a></li>
+                                <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a>
+                                    <span class="label label-success pull-right">IN DEV</span>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    @if(Entrust::hasRole('Development'))
+                        <li><a><i class="fa fa-envelope"></i>Email Marketing<span
+                                        class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="{{ env('APP_URL') }}/campaigns">Campaigns</a></li>
+                                <li><a href="{{ env('APP_URL') }}/library">Asset Library</a></li>
+                                <li><a href="{{ env('APP_URL') }}/lists">List Maintenance</a></li>
+                                <li><a href="{{ env('APP_URL') }}/reports">Reporting</a></li>
                             </ul>
                         </li>
                     @endif

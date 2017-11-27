@@ -126,13 +126,13 @@ if($event->isSymmetric && $event->hasTracks) {
                                 </td>
 
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
-                                    @if($rf->discountCode)
+                                    @if($reg->discountCode)
                                         <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;">Early Bird</td>
                                     @endif
                                 @else
-                                    @if($rf->discountCode)
+                                    @if($reg->discountCode)
                                         <td style="text-align: left;">{{ $rf->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;"> --</td>
@@ -360,10 +360,15 @@ if($event->isSymmetric && $event->hasTracks) {
                                                             @endif
                                                             <td colspan="2" style="text-align:left; min-width:150px;
                                                                     width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                                                <b>{{ $s->sessionName }}</b><br/>
-
-                                                                {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
-                                                                    $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                                @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                                    <b><a data-toggle="tooltip" title="Maximum attendees reached.">{{ $s->sessionName }}</a></b><br/>
+                                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                                        $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                                @else
+                                                                    <b>{{ $s->sessionName }}</b><br/>
+                                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                                        $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                                @endif
 
                                                                 {{--  Need to connect to 'sess-'.$j.'-'.$x-1 and 'sess-'.$j.'-'.$x
                                                                       and have jquery set it to clicked and vice versa;
@@ -388,9 +393,14 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                         $myTess = $t->sessionID;
                                                                     }
 ?>
-                                                                    {!! Form::radio('sess-'. $j . '-'.$x, '', false,
-                                                                        $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
-                                                                    <script>
+                                                                    @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', false,
+                                                                            $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
+                                                                    @else
+                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', false,
+                                                                            $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
+                                                                    @endif
+                                                                        <script>
                                                                         $(document).ready(function () {
                                                                             $("input:radio[name='{{ 'sess-'. $j . '-'.$x }}']").on('change', function () {
                                                                                 if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {

@@ -176,6 +176,9 @@ class RegistrationController extends Controller
         $flatamt       = request()->input('flatamt');
         $percent       = request()->input('percent');
         $dCode         = request()->input('discount_code');
+        if($dCode === null || $dCode == " ") {
+            $dCode = 'N/A';
+        }
         $ticketID      = request()->input('ticketID');
         $t = Ticket::find($ticketID);
         $subtotal      = request()->input('sub1');
@@ -300,7 +303,6 @@ class RegistrationController extends Controller
 
             $regBy = $person->firstName . " " . $person->lastName;
 
-
         } elseif(Auth::check() && ($email->personID != $this->currentPerson->personID)) {
             // someone logged in is registering for someone else in the DB (usually CAMI)
             $person = Person::find($email->personID);
@@ -399,6 +401,7 @@ class RegistrationController extends Controller
         $reg->registeredBy     = $regBy;
         $reg->token            = request()->input('_token');
         $reg->subtotal         = $subtotal;
+        $reg->discountCode     = $dCode;
         $reg->origcost         = $origcost;
         $reg->membership       = $regMem;
         if($event->hasFood) {
@@ -576,45 +579,12 @@ class RegistrationController extends Controller
 
             } else {
                 // this is a rehash of the first option
-                /*
-                 $person               = new Person;
-                 $person->prefix       = $prefix;
-                 $person->firstName    = $firstName;
-                 $person->midName      = $middleName;
-                 $person->lastName     = $lastName;
-                 $person->suffix       = $suffix;
-                 $person->defaultOrgID = $event->orgID;
-                 $person->prefName     = $prefName;
-                 $person->compName     = $compName;
-                 $person->indName      = $indName;
-                 $person->title        = $title;
-                 if($event->hasFood) {
-                     $person->allergenInfo = implode(",", (array)$allergenInfo);
-                 }
-                 $person->affiliation = implode(",", $affiliation);
-                 $person->creatorID   = $this->currentPerson->personID;
-                 $person->updaterID   = $this->currentPerson->personID;
-                 $person->save();
-
-                 $op           = new OrgPerson;
-                 $op->orgID    = $event->orgID;
-                 $op->personID = $person->personID;
-                 $op->save();
-
-                 $email            = new Email;
-                 $email->personID  = $person->personID;
-                 $email->emailADDR = $checkEmail;
-                 $email->isPrimary = 1;
-                 $email->save();
-
-                 $regBy  = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
-                 $regMem = 'Non-Member';
-                */
                 dd("shouldn't have gotten here");
             }
             if($dCode === null || $dCode = " ") {
                 $dCode = 'N/A';
             }
+            dd($dCode);
             $reg                   = new Registration;
             $reg->eventID          = $event->eventID;
             $reg->ticketID         = request()->input('ticketID');
@@ -652,9 +622,7 @@ class RegistrationController extends Controller
             return Redirect::back()->withErrors();
 //                ['warning' => "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total"]);
         } else {
-            if($dCode === null || $dCode = " ") {
-                $dCode = 'N/A';
-            }
+
             $rf               = new RegFinance;
             $rf->regID        = $reg->regID;
             $rf->creatorID    = $this->currentPerson->personID;
