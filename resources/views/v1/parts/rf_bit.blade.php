@@ -120,10 +120,10 @@ $today = \Carbon\Carbon::now();
                            class="btn btn-success btn-sm">Display Receipt</a>
                     @endif
 
-                    @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                    @if($rf->cost >= 0 && $rf->pmtRecd == 0)
                         <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                            class="btn btn-primary btn-sm">
-                            @if($rf->status == 'pending')
+                            @if($rf->status == 'pending' || $rf->status == 'In Progress')
                                 Complete Registration
                             @else
                                 Pay Balance Due Now
