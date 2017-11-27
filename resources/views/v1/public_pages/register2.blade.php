@@ -67,7 +67,7 @@ if($event->isSymmetric && $event->hasTracks) {
                 <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
 
-                    @if($rf->cost > 0)
+                    @if($rf->cost > 0 && $rf->status != 'Wait List')
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>Pay Now by Credit Card</b>
@@ -79,7 +79,11 @@ if($event->isSymmetric && $event->hasTracks) {
                     @endif
 
                     <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
-                        <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
+                        @if($rf->cost > 0 && $rf->status != 'Wait List')
+                            <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
+                        @else
+                            <b>Join the Wait List</b>
+                        @endif
                     </button>
 
                 </div>
@@ -409,13 +413,10 @@ if($event->isSymmetric && $event->hasTracks) {
                                                             @endforeach
                                                 </tr>
                                             @endif
-
                                         @endfor
                                     @endif  {{-- if included ticket --}}
                                 @endfor  {{-- this closes confDays loop --}}
-
                             </table>
-
                         @endif  {{-- closes hasTracks loop --}}
                     </div>
                 </div>
@@ -427,7 +428,7 @@ if($event->isSymmetric && $event->hasTracks) {
                     <h1 class="fa fa-5x fa-dollar"></h1>
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
-                    @if($rf->cost > 0)
+                    @if($rf->cost > 0 && $rf->status != 'Wait List')
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>Pay Now by Credit Card</b>
@@ -435,7 +436,11 @@ if($event->isSymmetric && $event->hasTracks) {
                     @endif
                     <br />
                     <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                        <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
+                        @if($rf->cost > 0 && $rf->status != 'Wait List')
+                            <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
+                        @else
+                            <b>Join the Wait List</b>
+                        @endif
                     </button>
 
                 </div>
@@ -574,19 +579,3 @@ if($event->isSymmetric && $event->hasTracks) {
 @section('modals')
     @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
 @endsection
-{{--
-
-Code related to the original non-custom button.  You never know...
-                            <script
-                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                    data-key="{{ env('STRIPE_KEY') }}"
-                                    data-amount="{{ $rf->cost*100 }}"
-                                    data-label="Pay Now by Credit Card"
-                                    data-email="{{ $person->login }}"
-                                    data-name="{{ $event->org->orgName }} (mCentric)"
-                                    data-description="Event Registration"
-                                    data-zip-code="true"
-                                    data-image="https://s3.amazonaws.com/stripe-uploads/acct_19zQbHCzTucS72R2merchant-icon-1490128809088-mCentric_square.png"
-                                    data-locale="auto">
-                            </script>
---}}

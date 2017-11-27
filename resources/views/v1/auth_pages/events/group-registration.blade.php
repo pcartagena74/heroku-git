@@ -35,7 +35,8 @@ $topBits = '';  // remove this if this was set in the controller
         You can register up to 15 attendees for this event at a time.<br />
         <b>Please keep the following in mind:</b>
         <ul>
-            <li>Attendees will need to have records in this system.  You can find them typing the name, email or PMI ID of the desired attendee in the search box.</li>
+            <li>Attendees will need to have records in this system.  You can find them by typing
+            <b class="red">any part</b> of the name, email or PMI ID of the desired attendee in the search box.</li>
             <li>If a record doesn't already exist, enter the information in the fields and it will be created.</li>
             <li>If this event has sessions, you will <b>NOT</b> be able to select them for the attendees.</li>
             <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
@@ -49,7 +50,9 @@ $topBits = '';  // remove this if this was set in the controller
             {{-- Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) --}}
             <div id="custom-template" class="form-group col-sm-12">
                 <div class="col-sm-2">
-                {!! Form::label('helper-'.$i, 'Search for person:') !!}<br/>
+                    <a data-toggle="tooltip" title="Type at least 3 characters.  Unique is better.">
+                {!! Form::label('helper-'.$i, 'Search for person:') !!}
+                    </a><br />
                 {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs')) !!}<br />
                     <a id="pop-{{ $i }}" onclick="populate({{ $i }});" class="btn btn-primary btn-xs">Populate Row</a>
                 <div id="search-results"></div>
@@ -91,8 +94,6 @@ $topBits = '';  // remove this if this was set in the controller
 
 @endsection
 
-
-
 @section('scripts')
 @if(!isset($event))
     <script>
@@ -124,6 +125,7 @@ $topBits = '';  // remove this if this was set in the controller
             $('#custom-template .typeahead').typeahead(null, {
                 name: 'people',
                 display: 'value',
+                limit: 10,
                 source: people
             });
         });
@@ -199,32 +201,6 @@ $topBits = '';  // remove this if this was set in the controller
             }
         });
     </script>
-    <script>
-        $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
-
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
-
-            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/group"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
-{{--
-            @if($event->eventID !== null)
-            $("#grp").text('Group Registration');
-            @endif
---}}
-        });
-    </script>
+    @include('v1.parts.menu-fix', array('path' => '/group'))
 @endif
 @endsection

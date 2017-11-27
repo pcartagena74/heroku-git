@@ -33,7 +33,7 @@ $today = \Carbon\Carbon::now();
             <div class="col-md-12 col-sm-12 col-xs-12">
                 @if($rf->seats > 1)
                     @foreach($rf->registration as $reg)
-<?php
+                        <?php
                         $person = Person::find($reg->personID);
                         $ticket = Ticket::find($reg->ticketID);
                         $event = Event::find($reg->eventID);
@@ -41,88 +41,103 @@ $today = \Carbon\Carbon::now();
                             ['regID', '=', $reg->regID],
                             ['eventID', '=', $event->eventID]
                         ])->get();
-?>
-    @include('v1.parts.start_min_content', ['header' => $reg->membership .
-    " Ticket (" .  $person->showFullName() . "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")",
-    'subheader' => '<i class="fa fa-dollar"></i> ' . $reg->subtotal,
-    'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                        ?>
+                        @include('v1.parts.start_min_content', ['header' => $reg->membership .
+                        " Ticket (" .  $person->showFullName() . "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")",
+                        'subheader' => '<i class="fa fa-dollar"></i> ' . $reg->subtotal,
+                        'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-    @if($rf->pmtType == "At Door")
-        {!! Form::open(['method'  => 'delete',
-                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                        'data-toggle' => 'validator' ]) !!}
-        <button type="submit" class="btn btn-danger btn-sm">
-            Cancel Registration
-        </button>
-        {!! Form::close() !!}
-        @if($rf->cost > 0 && $rf->pmtRecd == 0)
-            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-               class="btn btn-primary btn-sm">Pay Balance Due Now</a>
-        @endif
-        <br/>
+                        @if($rf->pmtType == "At Door")
+                            {!! Form::open(['method'  => 'delete',
+                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                            'data-toggle' => 'validator' ]) !!}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Cancel Registration
+                            </button>
+                            {!! Form::close() !!}
+                            @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                                <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                                   class="btn btn-primary btn-sm">Pay Balance Due Now</a>
+                            @endif
+                            <br/>
 
-        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-        'reg' => $reg, 'regSession' => $regSessions])
+                            @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                            'reg' => $reg, 'regSession' => $regSessions])
 
-    @else
-        {!! Form::open(['method'  => 'delete',
-                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                        'data-toggle' => 'validator' ]) !!}
-        <button type="submit" class="btn btn-danger btn-sm">
-            @if($reg->subtotal > 0 && $rf->pmtRecd == 1)
-                Refund Registration
-            @else
-                Cancel Registration
-            @endif
-        </button>
-        {!! Form::close() !!}
-        <br/>
-        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-        'reg' => $reg, 'regSession' => $regSessions])
-    @endif
+                        @else
+                            {!! Form::open(['method'  => 'delete',
+                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                            'data-toggle' => 'validator' ]) !!}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                @if($reg->subtotal > 0 && $rf->pmtRecd == 1)
+                                    Refund Registration
+                                @else
+                                    Cancel Registration
+                                @endif
+                            </button>
+                            {!! Form::close() !!}
+                            <br/>
+                            @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                            'reg' => $reg, 'regSession' => $regSessions])
+                        @endif
 
-    @include('v1.parts.end_content')
+                        @include('v1.parts.end_content')
 
                     @endforeach  {{-- end of multiple-seat purchase --}}
                 @else
-<?php
+                    <?php
                     $reg = Registration::with('ticket', 'person')->where('regID', $rf->regID)->first();
-?>
+                    ?>
                     @include('v1.parts.start_min_content', ['header' => $reg->membership .
                     " (" . $reg->person->showFullName() . ") Ticket: " . $reg->ticket->ticketLabel .
                     " (" . $reg->regID . ")", 'subheader' => '<i class="fa fa-dollar"></i> ' . $reg->subtotal,
                     'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-<?php
+                    <?php
                     $regSessions = RegSession::where([
                         ['regID', '=', $reg->regID],
                         ['eventID', '=', $rf->event->eventID]
                     ])->get();
-?>
-
+                    ?>
                     {!! Form::open(['method'  => 'delete',
                     'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
                     'data-toggle' => 'validator' ]) !!}
 
                     <button type="submit" class="btn btn-danger btn-sm">
-                        @if($reg->subtotal > 0 && $rf->pmtType != 'At Door')
+                        @if($reg->subtotal > 0 && $rf->pmtRecd == 1 && $rf->pmtType == 'At Door')
                             Refund Registration
                         @else
                             Cancel Registration
                         @endif
                     </button>
                     {!! Form::close() !!}
-    @if($rf->cost > 0 && $rf->pmtRecd == 0)
-        <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-           class="btn btn-primary btn-sm">Pay Balance Due Now</a>
-    @endif
+                    @if($rf->pmtRecd == 1 || $rf->pmtType == 'At Door')
+                        <a target="_new"
+                           @if($rf->isGroupReg)
+                           href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+                           @else
+                           href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                           @endif
+                           class="btn btn-success btn-sm">Display Receipt</a>
+                    @endif
+
+                    @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                        <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                           class="btn btn-primary btn-sm">
+                            @if($rf->status == 'pending')
+                                Complete Registration
+                            @else
+                                Pay Balance Due Now
+                            @endif
+                        </a>
+                    @endif
                     <br/>
-
-                    @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-                    'reg' => $reg, 'regSession' => $regSessions])
-
+                    @if($rf->pmtRecd)
+                        @include('v1.parts.session_bubbles', ['event' => $rf->event,
+                                 'ticket' => $reg->ticket, 'rf' => $rf,
+                                 'reg' => $reg, 'regSession' => $regSessions])
+                    @endif
                     @include('v1.parts.end_content')
                 @endif
-
             </div>
             @include('v1.parts.end_content')
         @endif

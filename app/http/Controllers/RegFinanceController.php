@@ -76,7 +76,7 @@ class RegFinanceController extends Controller
                     ['eventID', '=', $event->eventID],
                     ['ticketID', '=', $ticket->ticketID]
                 ])->get();
-//dd($s);
+
                 if(count($s) > 1) {
                     $needSessionPick = 1;
                 }
@@ -101,13 +101,24 @@ class RegFinanceController extends Controller
         }
     }
 
+    public function show_group_receipt (RegFinance $rf) {
+        $quantity = $rf->seats;
+        $event = Event::find($rf->eventID);
+        $loc = Location::find($event->locationID);
+        $person = Person::find($rf->personID);
+        $org = Org::find($event->orgID);
+
+        return view('v1.auth_pages.events.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+    }
+
     public function show_receipt (RegFinance $rf) {
-        $event         = Event::find($rf->eventID);
-        $ticket        = Ticket::find($rf->ticketID);
-        $quantity      = $rf->seats;
-        $discount_code = $rf->discountCode;
-        $org           = Org::find($event->orgID);
-        $loc           = Location::find($event->locationID);
+        $event           = Event::find($rf->eventID);
+        $ticket          = Ticket::find($rf->ticketID);
+        $quantity        = $rf->seats;
+        $discount_code   = $rf->discountCode;
+        $org             = Org::find($event->orgID);
+        $loc             = Location::find($event->locationID);
+        $needSessionPick = 0;
 
         if($ticket->isaBundle) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
@@ -130,9 +141,9 @@ class RegFinanceController extends Controller
             $s       = EventSession::where([
                 ['eventID', '=', $event->eventID],
                 ['ticketID', '=', '$ticket->ticketID']
-            ])->first();
+            ])->get();
 
-            if($s !== null) {
+            if(count($s) > 1) {
                 $needSessionPick = 1;
             }
         }
@@ -144,12 +155,11 @@ class RegFinanceController extends Controller
                                  ['event-tickets.eventID', '=', $event->eventID]
                              ])
                              ->get();
-        } else {
-            $tickets = null;
         }
 
         $x =
-            compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf', 'person', 'org', 'tickets');
+            compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
+                    'person', 'org', 'tickets');
         return view('v1.public_pages.event_receipt', $x);
     }
 
@@ -206,9 +216,9 @@ class RegFinanceController extends Controller
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if($rf->cost > 0 && $stripeToken !== null) {
-                $stripeEmail     = $request->input('stripeEmail');
+                $stripeEmail = $request->input('stripeEmail');
                 // $stripeEmail doesn't appear to be set by Stripe's token anymore
-                if($stripeEmail === null){
+                if($stripeEmail === null) {
                     $stripeEmail = $user->email;
                 }
                 $stripeTokenType = $request->input('stripeTokenType');
@@ -238,8 +248,13 @@ class RegFinanceController extends Controller
 
             } elseif($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                $rf->status  = 'Payment Pending';
-                $rf->pmtType = 'At Door';
+                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees){
+                    $rf->status  = 'Wait List';
+                    $rf->pmtType = 'pending';
+                } else {
+                    $rf->status  = 'Payment Pending';
+                    $rf->pmtType = 'At Door';
+                }
             } else {
                 $rf->pmtRecd = 1;
                 $rf->status  = 'Processed';
@@ -250,7 +265,11 @@ class RegFinanceController extends Controller
             $end         = $rf->seats - 1;
             for($i = $id - $end; $i <= $id; $i++) {
                 $reg            = Registration::find($i);
-                $reg->regStatus = 'Processed';
+                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees){
+                    $reg->regStatus = 'Wait List';
+                } else {
+                    $reg->regStatus = 'Processed';
+                }
                 // No one is actually, necessarily, logged in...
                 //$reg->updaterID = auth()->user()->id;
                 $discountAmt += ($reg->origcost - $reg->subtotal);
@@ -287,7 +306,6 @@ class RegFinanceController extends Controller
                 $ticket->regCount += $rf->seats;
                 $ticket->save();
             }
-
         }
         // update $rf record and each $reg record status
 
@@ -316,15 +334,18 @@ class RegFinanceController extends Controller
                             // if this is set, the value is the session that was chosen.
                             // Create the RegSession record
 
-                            $es            = new RegSession;
-                            $es->regID     = $rf->regID;
-                            $es->personID  = $reg->personID;
-                            $es->eventID   = $event->eventID;
-                            $es->confDay   = $j;
-                            $es->sessionID = request()->input('sess-' . $j . '-' . $x);
-                            $es->creatorID = auth()->user()->id;
-                            $es->updaterID = auth()->user()->id;
-                            $es->save();
+                            $rs            = new RegSession;
+                            $rs->regID     = $rf->regID;
+                            $rs->personID  = $reg->personID;
+                            $rs->eventID   = $event->eventID;
+                            $rs->confDay   = $j;
+                            $rs->sessionID = request()->input('sess-' . $j . '-' . $x);
+                            $rs->creatorID = auth()->user()->id;
+                            $rs->updaterID = auth()->user()->id;
+                            $rs->save();
+
+                            $e = EventSession::find($rs->sessionID);
+                            $e->regCount++; $e->save();
                         }
                     }
                 }
@@ -343,10 +364,9 @@ class RegFinanceController extends Controller
         $pdf              = PDF::loadView('v1.public_pages.event_receipt', $x)
                                ->setOption('disable-javascript', false)
                                ->setOption('encoding', 'utf-8');
-        //->save($receipt_filename);
 
-        //Storage::put($receipt_filename, $pdf->output());
-        Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(),
+                             ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         $client = new S3Client([
             'credentials' => [
@@ -476,6 +496,7 @@ class RegFinanceController extends Controller
                 $rf->discountAmt = number_format($discountAmt, 2, '.', '');
             }
             // fees above are already $0 unless changed so save.
+            $rf->isGroupReg = 1;
             $rf->save();
         }
 

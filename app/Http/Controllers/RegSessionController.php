@@ -131,15 +131,19 @@ class RegSessionController extends Controller
         $event = Event::find($reg->eventID);
         $verb = 'saved';
 
-        // Check if there are any sessions already saved, and delete.
+        // Check if there are any sessions already saved, so you can decrement EventSession->regCount and delete.
         $rs = RegSession::where([
             ['eventID', '=', $reg->eventID],
             ['regID', '=', $reg->regID]
         ])->get();
 
-        if(count($rs)>0){
+        if(count($rs)>1){
             $verb = 'updated';
             foreach($rs as $s){
+                $e = EventSession::find($s->sessionID);
+                if($e->regCount > 0){
+                    $e->regCount--;
+                } $e->save();
                 $s->delete();
             }
         }
@@ -154,7 +158,6 @@ class RegSessionController extends Controller
             for($x = 1; $x <= 5; $x++) {
                 if(request()->input('sess-' . $j . '-' . $x)) {
                     // if this is set, the value is the session that was chosen.
-
                     $rs            = new RegSession;
                     $rs->regID     = $reg->regID;
                     $rs->personID  = $reg->personID;
@@ -163,6 +166,9 @@ class RegSessionController extends Controller
                     $rs->sessionID = request()->input('sess-' . $j . '-' . $x);
                     $rs->creatorID = auth()->user()->id;
                     $rs->save();
+
+                    $e = EventSession::find($rs->sessionID);
+                    $e->regCount++; $e->save();
                 }
             }
         }
