@@ -63,11 +63,10 @@ class ActivityController extends Controller
         })
                              ->with('event', 'ticket', 'person', 'registration')
                              ->where('personID', '=', $this->currentPerson->personID)
-                             ->where('status', '=', 'pending')
+                             ->whereIn('status', ['pending', 'In Progress'])
                              ->get()->sortBy('event.eventStartDate');
 
         $topBits = '';
-
         return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits'));
     }
 

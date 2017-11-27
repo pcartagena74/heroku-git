@@ -819,20 +819,23 @@ class RegistrationController extends Controller
             $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
         }
 
-        // Decrement the regCount on the ticket
-        foreach($tickets as $t) {
-            $t->regCount = $t->regCount - 1;
-            $t->save();
+        // Decrement the regCount on the ticket if ticket was paid OR 'At Door'
+        if($rf->pmtRecd || $rf->pmtType == 'At Door') {
+            foreach($tickets as $t) {
+                $t->regCount = $t->regCount - 1;
+                $t->save();
+            }
+
+            $sessions = RegSession::where('regID', '=', $reg->regID)->get();
+            foreach($sessions as $s) {
+                $e = EventSession::find($s->sessionID);
+                if($e->regCount > 0){
+                    $e->regCount--;
+                } $e->save();
+                $s->delete();
+            }
         }
 
-        $sessions = RegSession::where('regID', '=', $reg->regID)->get();
-        foreach($sessions as $s) {
-            $e = EventSession::find($s->sessionID);
-            if($e->regCount > 0){
-                $e->regCount--;
-            } $e->save();
-            $s->delete();
-        }
         request()->session()->flash('alert-success', 'The registration with id ' . $reg->regID . ' has been ' . $verb);
         return redirect('/upcoming');
     }
