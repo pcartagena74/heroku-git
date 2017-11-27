@@ -16,6 +16,7 @@ use App\Person;
 use App\Ticket;
 use App\EventSession;
 use App\Event;
+use App\Org;
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();
@@ -35,8 +36,8 @@ $today = \Carbon\Carbon::now();
                     @foreach($rf->registration as $reg)
                         <?php
                         $person = Person::find($reg->personID);
-                        $ticket = Ticket::find($reg->ticketID);
                         $event = Event::find($reg->eventID);
+                        $org = Org::find($event->orgID);
                         $regSessions = RegSession::where([
                             ['regID', '=', $reg->regID],
                             ['eventID', '=', $event->eventID]
@@ -48,13 +49,15 @@ $today = \Carbon\Carbon::now();
                         'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                         @if($rf->pmtType == "At Door")
-                            {!! Form::open(['method'  => 'delete',
-                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                            'data-toggle' => 'validator' ]) !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                Cancel Registration
-                            </button>
-                            {!! Form::close() !!}
+                            @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                                {!! Form::open(['method'  => 'delete',
+                                                'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                                'data-toggle' => 'validator' ]) !!}
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    Cancel Registration
+                                </button>
+                                {!! Form::close() !!}
+                            @endif
                             @if($rf->cost > 0 && $rf->pmtRecd == 0)
                                 <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                    class="btn btn-primary btn-sm">Pay Balance Due Now</a>
@@ -65,18 +68,20 @@ $today = \Carbon\Carbon::now();
                             'reg' => $reg, 'regSession' => $regSessions])
 
                         @else
-                            {!! Form::open(['method'  => 'delete',
-                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                            'data-toggle' => 'validator' ]) !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                @if($reg->subtotal > 0 && $rf->pmtRecd == 1)
-                                    Refund Registration
-                                @else
-                                    Cancel Registration
-                                @endif
-                            </button>
-                            {!! Form::close() !!}
-                            <br/>
+                            @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                                {!! Form::open(['method'  => 'delete',
+                                                'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                                'data-toggle' => 'validator' ]) !!}
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    @if($reg->subtotal > 0 && $rf->pmtRecd == 1)
+                                        Refund Registration
+                                    @else
+                                        Cancel Registration
+                                    @endif
+                                </button>
+                                {!! Form::close() !!}
+                                <br/>
+                            @endif
                             @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
                             'reg' => $reg, 'regSession' => $regSessions])
                         @endif
@@ -98,18 +103,20 @@ $today = \Carbon\Carbon::now();
                         ['eventID', '=', $rf->event->eventID]
                     ])->get();
                     ?>
-                    {!! Form::open(['method'  => 'delete',
-                    'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                    'data-toggle' => 'validator' ]) !!}
+                    @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                        {!! Form::open(['method'  => 'delete',
+                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                        'data-toggle' => 'validator' ]) !!}
 
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        @if($reg->subtotal > 0 && $rf->pmtRecd == 1 && $rf->pmtType == 'At Door')
-                            Refund Registration
-                        @else
-                            Cancel Registration
-                        @endif
-                    </button>
-                    {!! Form::close() !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @if(($reg->subtotal > 0 && $rf->pmtRecd == 1) || $rf->pmtType == 'At Door')
+                                Refund Registration
+                            @else
+                                Cancel Registration
+                            @endif
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
                     @if($rf->pmtRecd == 1 || $rf->pmtType == 'At Door')
                         <a target="_new"
                            @if($rf->isGroupReg)

@@ -52,6 +52,22 @@ $topBits = '';
             <td style="text-align: left;"><a href="#" id="nearbyChapters" data-value="{{ $org->nearbyChapters }}"></a>
             </td>
         </tr>
+        <tr>
+            <th style="text-align: left;">
+                <a data-toggle="tooltip" data-title="This is the number of days, PRIOR to an event, after which a refund is no longer possible.">
+                    Event Refund Days
+                </a>
+            </th>
+            <th style="text-align: left;"></th>
+            <th style="text-align: left;"> </th>
+        </tr>
+        <tr>
+            <td style="text-align: left;">
+                <a href="#" id="refundDays" data-value="{{ $org->refundDays }}"></a> &nbsp; Days </td>
+            <td style="text-align: left;"></td>
+            <td style="text-align: left;"></td>
+            </td>
+        </tr>
     </table>
 
     @include('v1.parts.end_content')
@@ -121,12 +137,12 @@ $topBits = '';
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
 
             $('#orgZone').editable({
                 type: 'select',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 pk:  {{ $org->orgID }},
                 source: [
                     @foreach($tz as $zone)
@@ -137,7 +153,7 @@ $topBits = '';
             $('#orgCategory').editable({
                 type: 'select',
                 pk:  {{ $org->orgID }},
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 source: [
                     @foreach($cats as $category)
                     {!! "{ value: '" . $category->catID . "', text: '" . $category->catTXT . "' }," !!}
@@ -149,25 +165,32 @@ $topBits = '';
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
 
             $('#eventEmail').editable({
                 type: 'text',
                 pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
 
             $("#nearbyChapters").editable({
                 pk:  {{ $org->orgID }},
                 placement: 'top',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
                 select2: {
                     tags: ["None of the above"],
                     multiple: true
                 },
                 maximumInputLength: 5
+            });
+
+            $('#refundDays').editable({
+                type: 'number',
+                pk:  {{ $org->orgID }},
+                placement: 'right',
+                url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}'
             });
         });
     </script>
