@@ -73,6 +73,8 @@ $client = new S3Client([
 $adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
 $s3fs = new Filesystem($adapter);
 $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
+
+$soldout = 0;
 ?>
 @extends('v1.layouts.no-auth')
 
@@ -86,6 +88,17 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
         <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
             Category: {{ $category->catTXT }}</div>
 
+        @if($event->earlyBirdDate !== null && $event->earlyBirdDate->gte($today))
+            <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
+                <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
+                    <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6"
+                     style="margin-top: auto; word-break: break-all;">
+                    <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
+                </div>
+            </div>
+        @endif
         <div class="col-md-12 col-sm-12 col-xs-12">
             <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
                 <li class="active"><a href="#tab_content1" id="ticketing-tab" data-toggle="tab"
@@ -93,24 +106,11 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                 <li class=""><a href="#tab_content2" id="sessions-tab" data-toggle="tab"
                                 aria-expanded="false"><b>Event Sessions</b></a></li>
             </ul>
-
             <div id="tab-content" class="tab-content">
                 <div class="tab-pane active" id="tab_content1" aria-labelledby="ticketing-tab">
                     <br />
 
                     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
-
-                        @if(!($event->earlyBirdDate === null) && $event->earlyBirdDate->gt($today))
-                            <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
-                                <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
-                                    <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6"
-                                     style="margin-top: auto; word-break: break-all;">
-                                    <h2><span style="color:red;">Act Now!</span> Early Bird Pricing in Effect</h2>
-                                </div>
-                            </div>
-                        @endif
                         <table id="datatable" class="table table-striped jambo_table">
                             <thead>
                             <tr>
@@ -142,17 +142,27 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                                     })->where([
                                                 ['event-tickets.eventID', $event->eventID],
                                                 ['event-tickets.isaBundle', 0],
-                                            ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID')->get();
+                                            ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID',
+                                                       'event-tickets.maxAttendees', 'event-tickets.regCount')->get();
                                         // $b_tkts = DB::select($sql);
 ?>
                                         <ul>
                                             @foreach($b_tkts as $tkt)
+<?php
+                                                if($tkt->maxAttendees > 0 && $tkt->regCount >= $tkt->maxAttendees) {
+                                                    $soldout = 1;
+                                                } else {
+                                                    $soldout = 0;
+                                                }
+?>
                                                 <li>
                                                     {{ $tkt->ticketLabel }}
                                                 </li>
-
                                             @endforeach
                                         </ul>
+                                        @if($soldout)
+                                            <b class="red">This ticket is sold out.  Add yourself to the wait list.</b>
+                                        @endif
                                     </td>
                                     <td><i class="fa fa-dollar"></i>
                                         @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
@@ -179,9 +189,14 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                             @endforeach
                             @foreach($tickets as $ticket)
                                 <tr>
-                                    <td style="text-align: center;"><input type="radio" name="ticketID"
-                                                                           value="{{ $ticket->ticketID }}"></td>
-                                    <td>{{ $ticket->ticketLabel }}</td>
+                                    <td style="text-align: center;">
+                                        <input type="radio" name="ticketID" value="{{ $ticket->ticketID }}">
+                                    </td>
+                                    <td>{{ $ticket->ticketLabel }}
+                                        @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
+                                            <br /><b class="red">This ticket is sold out.  Add yourself to the wait list.</b>
+                                        @endif
+                                    </td>
                                     <td><i class="fa fa-dollar"></i>
                                         @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                             <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike>

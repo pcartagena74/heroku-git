@@ -22,7 +22,7 @@ if($event->hasTracks > 0) {
     $tracks = null;
 }
 
-// Bundle Tickets won't have sessions associated with them, but the individual ticket(s) that make it up
+// Bundle Tickets won't have sessions associated with them, but any individual ticket(s) that make it up can
 // So if it's a bundle,
 // 1. Get the child tickets of the bundle (parent)
 // 2. Get all session records that were created for the event
@@ -145,15 +145,29 @@ if($reg->ticket->isaBundle) {
 
                                         @endif
                                         <div class="col-sm-3" style="text-align:left;">
-                                            <b>{{ $s->sessionName }}</b><br/>
+                                            @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                <b class="red"><a data-toggle="tooltip" title="Maximum attendees reached.">
+                                                        {{ $s->sessionName }}</a></b><br/>
+                                            @else
+                                                <b>{{ $s->sessionName }}</b><br/>
+                                            @endif
                                             <center>
                                                 @if($regSessions->contains('sessionID', $s->sessionID))
-
-                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, true,
-                                                        $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                    @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, true,
+                                                            $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                    @else
+                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, true,
+                                                            $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                    @endif
                                                 @else
-                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
-                                                        $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                    @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                            $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                    @else
+                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                            $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
+                                                    @endif
                                                 @endif
                                             </center>
                                             {{--  Need to connect to 'sess-'.$j.'-'.$x-1 and 'sess-'.$j.'-'.$x

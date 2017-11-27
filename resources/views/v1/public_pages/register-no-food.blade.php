@@ -39,7 +39,7 @@ foreach($array as $chap) {
 
 // Determine if Early Bird Pricing should be in effect
 $today = Carbon\Carbon::now();
-if((!$ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->gt($today)){
+if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)){
     $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
 } else {
@@ -96,10 +96,18 @@ if((!$ticket->earlyBirdEndDate === null) && $ticket->earlyBirdEndDate->gt($today
     {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
+    @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
+        <div class="clearfix"><p></div>
+        <b class="red">
+            Registering will secure {{ $quantity == 1? 'a ':'' }}spot{{ $quantity == 1?'':'s' }} on the wait list.
+            You will not be charged at this time.
+        </b>
+        <div class="clearfix"></div>
+    @endif
+
     @for($i=1; $i<=$quantity; $i++)
         {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
         {!! Form::hidden('cost'.$i, Auth::check() ? $earlymbr : $earlynon, array('id' => 'cost'.$i)) !!}
-        <div class="clearfix"><p>&nbsp;</p></div>
         <table id="ticket_head" class="table table-striped">
             <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
                 <span id="ticket_type{{ $i }}">#{{ $i }} @if(Auth::check()) MEMBER @else NON-MEMBER @endif

@@ -20,6 +20,12 @@ $ticketLabel = $rf->ticket->ticketLabel;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();
+
+// For discount comparison.  Need to see if $today > ticket->earlyBirdEndDate
+// Also need to show the "Early Bird" based on whether it was true when purchased -- BUT also need catch
+// the potential continued purchases after the end (or change from At Door to credit but allowing it)
+$compareDate = $today;
+
 $string = '';
 
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
@@ -70,6 +76,8 @@ http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru
 an email url to a form
 */
 
+// To track whether there were any parts of the registration canceled/refunded
+$deletion = 0;
 ?>
 @extends('v1.layouts.no-auth_simple')
 
@@ -96,10 +104,20 @@ an email url to a form
                         {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
-                    <b style="color:red;">Purchased on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
-                    <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
+                    <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
+                    <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
+                    @if($rf->createDate != $rf->cancelDate)
+                        <b style="color:red;">Updated on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
+                        <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
+                    @endif
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
-                        <h1 style="color:red;">Balance Due at Event</h1>
+                        <h1 style="color:red;">
+                            @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
+                                WAIT LIST ONLY - Not a Ticket
+                            @else
+                                Balance Due at Event
+                            @endif
+                        </h1>
                     @endif
                 </div>
                 <div class="col-md-3 col-sm-3">
@@ -108,22 +126,50 @@ an email url to a form
 
             @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
 <?php
-                $reg = Registration::find($i); $tcount++;
+                try {
+                    $reg = Registration::where('regID', $i)->withTrashed()->first();
+                } catch(Exception $e) {
+                    next;
+                }
+                $tcount++;
+                if($reg->deleted_at){
+                    $deletion = 1;
+                }
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
 ?>
-
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
-                        <h1 class="fa fa-5x fa-user"></h1>
+                        @if($reg->deleted_at)
+                            <h1 class="fa fa-5x fa-user red"></h1>
+                        @else
+                            <h1 class="fa fa-5x fa-user"></h1>
+                        @endif
                     </div>
                     <div class="col-md-10 col-sm-10">
                         <table class="table table-bordered table-condensed table-striped">
                             <tr>
                                 <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
                                     #{{ $tcount }}
+                                    @if($reg->deleted_at)
+                                        &nbsp; &nbsp;
+                                        &nbsp; &nbsp;
+                                        <span class="red">
+                                            @if($reg->subtotal > 0)
+                                                REFUNDED
+                                            @else
+                                                CANCELED
+                                            @endif
+                                        </span>
+                                    @endif
 
-                                    <span style="float: right;">Registration ID#: <span style="color:red;">{{ $reg->regID }}</span></span>
+                                    <span style="float: right;">Registration ID#:
+                                        @if($reg->deleted_at)
+                                            {{ $reg->regID }}
+                                        @else
+                                            <span style="color:red;">{{ $reg->regID }}</span>
+                                        @endif
+                                    </span>
                                 </th>
                             </tr>
                             <tr>
@@ -142,8 +188,11 @@ an email url to a form
                                         {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
                                     @endif
                                 </td>
+<?php
+                                    $compareDate = $today;
 
-                                @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
+?>
+                                @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
                                     @if($rf->discountCode)
                                         <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
                                     @else
@@ -306,7 +355,9 @@ an email url to a form
                     <h1 class="fa fa-5x fa-dollar"></h1>
                 </div>
                 <div class="col-md-7 col-sm-7">
-                    <p></p>
+                    @if($deletion)
+                        <p class="red"><b>Note:</b> Total does NOT reflect updates due to refunds. </p>
+                    @endif
                 </div>
                 <div class="col-md-3 col-sm-3">
                     <table class="table table-striped table-condensed jambo_table">

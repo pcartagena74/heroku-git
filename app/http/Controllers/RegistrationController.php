@@ -158,7 +158,7 @@ class RegistrationController extends Controller
         if(count($resubmit) == $quantity) {
             //return redirect('/confirm_registration/' . $resubmit->regID);
         }
-//dd(request()->all());
+
         $checkEmail = request()->input('login');
 
         $prefix        = ucwords(request()->input('prefix'));
@@ -177,6 +177,7 @@ class RegistrationController extends Controller
         $percent       = request()->input('percent');
         $dCode         = request()->input('discount_code');
         $ticketID      = request()->input('ticketID');
+        $t = Ticket::find($ticketID);
         $subtotal      = request()->input('sub1');
         $origcost      = request()->input('cost1');
         // strip out , from $ figure over $1,000
@@ -392,6 +393,9 @@ class RegistrationController extends Controller
         $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
         $reg->affiliation      = implode(",", $affiliation);
         $reg->regStatus        = 'In Progress';
+        if($t->maxAttendees > 0 && $t->regCount > $t->maxAttendees){
+            $reg->regStatus        = 'Wait List';
+        }
         $reg->registeredBy     = $regBy;
         $reg->token            = request()->input('_token');
         $reg->subtotal         = $subtotal;
@@ -623,6 +627,9 @@ class RegistrationController extends Controller
             $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
             $reg->affiliation      = implode(",", $affiliation);
             $reg->regStatus        = 'In Progress';
+            if($t->maxAttendees > 0 && $t->regCount > $t->maxAttendees){
+                $reg->regStatus        = 'Wait List';
+            }
             $reg->registeredBy     = $regBy;
             $reg->discountCode     = $dCode;
             $reg->token            = request()->input('_token');
@@ -666,6 +673,9 @@ class RegistrationController extends Controller
             }
             Auth::check() ? $rf->creatorID = auth()->user()->id : $rf->creatorID = 1;
             Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->updaterID = 1;
+            if($t->maxAttendees > 0 && $t->regCount > $t->maxAttendees){
+                $rf->status       = 'Wait List';
+            }
             $rf->save();
 
             // Everything is saved and updated and such, now display the data back for review
@@ -741,6 +751,9 @@ class RegistrationController extends Controller
                     $rf->status     = 'Refunded';
                     $rf->save();
                     $reg->save();
+
+                    // Generate Refund Email
+
                 } catch(Exception $e) {
                     request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
@@ -758,6 +771,9 @@ class RegistrationController extends Controller
                     $verb           = 'refunded';
                     $rf->save();
                     $reg->save();
+
+                    // Generate Refund Email
+
                 } catch(\Exception $e) {
                     request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
@@ -811,6 +827,10 @@ class RegistrationController extends Controller
 
         $sessions = RegSession::where('regID', '=', $reg->regID)->get();
         foreach($sessions as $s) {
+            $e = EventSession::find($s->sessionID);
+            if($e->regCount > 0){
+                $e->regCount--;
+            } $e->save();
             $s->delete();
         }
         request()->session()->flash('alert-success', 'The registration with id ' . $reg->regID . ' has been ' . $verb);

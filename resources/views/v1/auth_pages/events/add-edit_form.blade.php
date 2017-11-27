@@ -217,11 +217,11 @@ $logo    =
         <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
     </div>
 
+    <div id="address_info"
     @if($event->eventID !== null)
-        <div id="address_info" {!! $exLoc->isVirtual==0 ?: 'style="display:none;"' !!}>
-    @else
-                <div id="address_info">
+        {!! $exLoc->isVirtual==0 ?: 'style="display:none;"' !!}
     @endif
+    >
         <div class="form-group col-md-12">
             {!! Form::text('addr1', old('$exLoc->addr1'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255',
@@ -334,7 +334,6 @@ $logo    =
         {!! Form::submit('Submit & Review Tickets', array('class' => 'btn btn-primary')) !!}
         <a href="/events" class="btn btn-default">Cancel</a>
     </div>
-
     {!! Form::close() !!}
 @endsection
 
@@ -392,7 +391,6 @@ $logo    =
             });
         });
     </script>
-
     <script>
         $(document).ready(function () {
             $('#useAddr').click(function () {
@@ -433,7 +431,7 @@ $logo    =
             $('#validateSlug').click(function () {
                 var selection = $('#slug').val();
                 if (selection != '') {
-                    var theurl = "/eventslug/" + {{ $event->eventID or 0 }};
+                    var theurl = "/eventslug/" + "{{ $event->eventID or 0 }}";
                     $.ajax({
                         method: 'post',
                         url: theurl,
@@ -461,36 +459,15 @@ $logo    =
                         }
                     });
                 } else {
-                    $('#slug_feedback').text('Please enter a custom URL.')
+                    $('#slug_feedback').text('Please enter a custom URL.');
+                    $('#slug').focus();
                 }
             });
         });
     </script>
-    <script>
-        $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
-
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
-
-            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
-
-            @if($event->eventID !== null)
-            $("#add").text('Edit Event');
-            @endif
-        });
-    </script>
-
+    @if($event->event === null)
+        @include('v1.parts.menu-fix', array('path' => '/event/create'))
+    @else
+        @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => 'Edit Event'))
+    @endif
 @endsection

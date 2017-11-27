@@ -34,15 +34,16 @@ class EventController extends Controller
 
     public function index () {
         // responds to GET /events
-
         $topBits        = '';
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
         $current_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF,
                                date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
-                               count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
+                               count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
                         FROM `org-event` e
-                        LEFT JOIN `event-registration` er ON er.eventID=e.eventID AND er.regStatus != 'In Progress'
+                        LEFT JOIN `event-registration` er ON er.eventID=e.eventID
+                                  AND er.regStatus != 'In Progress'
+                                  AND er.deleted_at IS NULL
                         LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                         WHERE e.orgID = ?
                             AND eventStartDate >= NOW() AND e.deleted_at is null
@@ -51,9 +52,11 @@ class EventController extends Controller
 
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
-                            count(er.ticketID) AS 'cnt', et.etName, e.slug, e.hasTracks
+                            count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
                      FROM `org-event` e
                      LEFT JOIN `event-registration` er ON er.eventID=e.eventID
+                               AND er.regStatus != 'In Progress'
+                               AND er.deleted_at IS NULL
                      LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                      WHERE e.orgID = ?
                         AND eventStartDate < NOW() AND e.deleted_at is null
