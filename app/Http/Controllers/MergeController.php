@@ -275,33 +275,35 @@ class MergeController extends Controller
 
         if($exclude_model) {
             $res = Person::where('personID', '<>', $exclude_model)
-                         ->where(function($q) use($query) {
+                         ->where(function($q) use ($query) {
                              $q->where('firstName', 'LIKE', "%$query%")
+                               ->orWhere('personID', 'LIKE', "%$query%")
                                ->orWhere('lastName', 'LIKE', "%$query%")
                                ->orWhere('login', 'LIKE', "%$query%")
                                ->orWhere('personID', 'LIKE', "%$query%")
-                               ->orWhereHas('orgperson', function($q) use($query) {
+                               ->orWhereHas('orgperson', function($q) use ($query) {
                                    $q->where('OrgStat1', 'LIKE', "%$query%");
                                })
-                               ->orWhereHas('emails', function($q) use($query) {
+                               ->orWhereHas('emails', function($q) use ($query) {
                                    $q->where('emailADDR', 'LIKE', "%$query%");
                                });
                          })
                 // moved outside of where clause above because this is and-ed
                          ->whereHas('orgs', function($q) {
-                             $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
-                         })
+                    $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+                })
                          ->with('orgperson')
                          ->select('personID', 'firstName', 'lastName', 'login')
                          ->get();
         } else {
             $res = Person::where('firstName', 'LIKE', "%$query%")
+                         ->orWhere('personID', 'LIKE', "%$query%")
                          ->orWhere('lastName', 'LIKE', "%$query%")
                          ->orWhere('login', 'LIKE', "%$query%")
-                         ->orWhereHas('orgperson', function($q) use($query) {
+                         ->orWhereHas('orgperson', function($q) use ($query) {
                              $q->where('OrgStat1', 'LIKE', "%$query%");
                          })
-                         ->orWhereHas('emails', function($q) use($query) {
+                         ->orWhereHas('emails', function($q) use ($query) {
                              $q->where('emailADDR', 'LIKE', "%$query%");
                          })
                          ->whereHas('orgs', function($q) {

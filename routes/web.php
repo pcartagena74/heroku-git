@@ -170,7 +170,7 @@ Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 // Group Registration
 Route::get('/group/{event?}', 'EventController@showGroup');
 Route::post('/getperson', 'MergeController@getperson');                         // Ajax
-Route::post('/group-reg1', 'EventController@group_reg1');
+Route::post('/group-reg1', 'RegFinanceController@group_reg1');
 Route::get('/groupreg/{rf}', 'RegFinanceController@edit')->name('group_reg1');
 Route::patch('/group_reg2/{rf}', 'RegFinanceController@group_reg2');
 Route::get('/show_group_receipt/{rf}', 'RegFinanceController@show_group_receipt');

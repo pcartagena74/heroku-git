@@ -101,16 +101,6 @@ class RegFinanceController extends Controller
         }
     }
 
-    public function show_group_receipt (RegFinance $rf) {
-        $quantity = $rf->seats;
-        $event = Event::find($rf->eventID);
-        $loc = Location::find($event->locationID);
-        $person = Person::find($rf->personID);
-        $org = Org::find($event->orgID);
-
-        return view('v1.auth_pages.events.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
-    }
-
     public function show_receipt (RegFinance $rf) {
         $event           = Event::find($rf->eventID);
         $ticket          = Ticket::find($rf->ticketID);
@@ -159,7 +149,7 @@ class RegFinanceController extends Controller
 
         $x =
             compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
-                    'person', 'org', 'tickets');
+                'person', 'org', 'tickets');
         return view('v1.public_pages.event_receipt', $x);
     }
 
@@ -248,7 +238,7 @@ class RegFinanceController extends Controller
 
             } elseif($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees){
+                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
                     $rf->status  = 'Wait List';
                     $rf->pmtType = 'pending';
                 } else {
@@ -264,8 +254,8 @@ class RegFinanceController extends Controller
             $discountAmt = 0;
             $end         = $rf->seats - 1;
             for($i = $id - $end; $i <= $id; $i++) {
-                $reg            = Registration::find($i);
-                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees){
+                $reg = Registration::find($i);
+                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
                     $reg->regStatus = 'Wait List';
                 } else {
                     $reg->regStatus = 'Processed';
@@ -345,7 +335,8 @@ class RegFinanceController extends Controller
                             $rs->save();
 
                             $e = EventSession::find($rs->sessionID);
-                            $e->regCount++; $e->save();
+                            $e->regCount++;
+                            $e->save();
                         }
                     }
                 }
@@ -366,7 +357,7 @@ class RegFinanceController extends Controller
                                ->setOption('encoding', 'utf-8');
 
         Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(),
-                             ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         $client = new S3Client([
             'credentials' => [
@@ -386,6 +377,163 @@ class RegFinanceController extends Controller
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
         return view('v1.public_pages.event_receipt', $x);
+    }
+
+    public function group_reg1 (Request $request) {
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $seats               = 0;
+        $total_cost          = 0;
+        $total_orig          = 0;
+        $total_handle        = 0;
+        $today               = Carbon::now();
+
+        // Process up to 15 entries
+        for($i = 1; $i <= 15; $i++) {
+            $personID  = request()->input('person-' . $i);
+            $firstName = request()->input('firstName-' . $i);
+            $lastName  = request()->input('lastName-' . $i);
+            $email     = request()->input('email-' . $i);
+            $pmiid     = request()->input('pmiid-' . $i);
+            $ticketID  = request()->input('ticketID-' . $i);
+            $code      = request()->input('code-' . $i);
+            if($code === null || $code == " ") {
+                $code = 'N/A';
+            }
+            if($personID === null && $firstName !== null) {
+                // Perform a quick search to determine if this is a resubmit
+
+                $e = Email::where('emailADDR', $email)->first();
+                if($e) {
+                    $p = Person::find($e->personID);
+                } else {
+                    // create requisite records: person, orgperson
+                    $p               = new Person;
+                    $p->firstName    = $firstName;
+                    $p->lastName     = $lastName;
+                    $p->defaultOrgID = $this->currentPerson->defaultOrgID;
+                    $p->login        = $email;
+                    $p->creatorID    = $this->currentPerson->personID;
+                    $p->save();
+
+                    $u        = new User;
+                    $u->id    = $p->personID;
+                    $u->login = $email;
+                    $u->email = $email;
+                    $u->save();
+
+                    $op           = new OrgPerson;
+                    $op->personID = $p->personID;
+                    $op->orgID    = $p->defaultOrgID;
+                    $op->OrgStat1 = $pmiid;
+                    $op->save();
+
+                    $e            = new Email;
+                    $e->personID  = $p->personID;
+                    $e->emailADDR = $email;
+                    $e->save();
+                }
+            } else {
+                // get the person record from $personID
+                $p = Person::find($personID);
+            }
+
+            // Create a registration record for each attendee
+            $eventID = request()->input('eventID');
+
+            $handle = 0;
+            if($p) {
+                // Setup variables for valid attendee
+                $t = Ticket::find($ticketID);
+                // tr: ticket remember
+                $tr = $t->ticketID;
+                // cr: code remember
+                $cr = $code;
+                $seats++;
+
+                $reg           = new Registration;
+                $reg->eventID  = $eventID;
+                $reg->ticketID = $ticketID;
+                $reg->personID = $p->personID;
+                if($p->allergenInfo) {
+                    $reg->allergenInfo = $p->allergenInfo;
+                }
+                $reg->registeredBy = $this->currentPerson->showFullName();
+                $reg->discountCode = $code;
+                if($pmiid) {
+                    $reg->membership = "Member";
+                } else {
+                    $reg->membership = "Non-Member";
+                }
+                $reg->token     = request()->input('_token');
+                $reg->creatorID = $this->currentPerson->personID;
+                if($p->affiliation) {
+                    $reg->affiliation = $p->affiliation;
+                }
+                $reg->canNetwork = 1;
+                if($pmiid) {
+                    $reg->isAuthPDU = 1;
+                } else {
+                    $reg->isAuthPDU = 0;
+                }
+                // origcost
+                // subtotal
+                if($t->earlyBirdEndDate !== null && $today->lte($t->earlyBirdEndDate)) {
+                    // Use earlybird discount pricing as base
+                    if($reg->membership == 'Member') {
+                        $reg->origcost = $t->memberBasePrice;
+                        $reg->subtotal = $t->memberBasePrice - ($t->memberBasePrice * $t->earlyBirdPercent / 100);
+                    } else {
+                        $reg->origcost = $t->nonmbrBasePrice;
+                        $reg->subtotal = $t->nonmbrBasePrice - ($t->nonmbrBasePrice * $t->earlyBirdPercent / 100);
+                    }
+                } else {
+                    // Use non-discount pricing
+                    if($reg->membership == 'Member') {
+                        $reg->origcost = $t->memberBasePrice;
+                        $reg->subtotal = $t->memberBasePrice;
+                    } else {
+                        $reg->origcost = $t->nonmbrBasePrice;
+                        $reg->subtotal = $t->nonmbrBasePrice;
+                    }
+                }
+                if($code) {
+                    $dCode = EventDiscount::where([
+                        ['eventID', $eventID],
+                        ['discountCODE', $code]
+                    ])->first();
+                    if($dCode->percent > 0) {
+                        $reg->subtotal = $reg->subtotal - ($reg->subtotal * $dCode->percent / 100);
+                    } else {
+                        $reg->subtotal = $reg->subtotal - $dCode->flatAmt;
+                    }
+                }
+                $reg->regStatus = 'In Progress';
+                $reg->save();
+                $total_orig = $total_orig + $reg->origcost;
+                $total_cost = $total_cost + $reg->subtotal;
+                $handle     = $reg->subtotal * 0.029;
+                if($handle > 5) {
+                    $handle = 5;
+                }
+                $total_handle = $total_handle + $handle;
+                $reg_save     = $reg->regID;
+            }
+        }
+        // Create a regfinance record for all of the attendees
+        // Show a group receipt
+        $rf               = new RegFinance;
+        $rf->regID        = $reg_save;
+        $rf->eventID      = $eventID;
+        $rf->ticketID     = $tr;
+        $rf->discountCode = $cr;
+        $rf->seats        = $seats;
+        $rf->personID     = $this->currentPerson->personID;
+        $rf->cost         = $total_cost;
+        $rf->status       = 'In Progress';
+        $rf->handleFee    = $total_handle;
+        $rf->token        = request()->input('_token');
+        $rf->save();
+        return redirect('/groupreg/' . $reg_save);
     }
 
     public function group_reg2 (Request $request, RegFinance $rf) {
@@ -531,6 +679,16 @@ class RegFinanceController extends Controller
         Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
 
         return view('v1.auth_pages.events.group_receipt', $x);
+    }
+
+    public function show_group_receipt (RegFinance $rf) {
+        $quantity = $rf->seats;
+        $event    = Event::find($rf->eventID);
+        $loc      = Location::find($event->locationID);
+        $person   = Person::find($rf->personID);
+        $org      = Org::find($event->orgID);
+
+        return view('v1.auth_pages.events.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
     }
 
     public function destroy ($id) {
