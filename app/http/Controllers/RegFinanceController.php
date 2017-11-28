@@ -289,11 +289,19 @@ class RegFinanceController extends Controller
             // Update ticket purchase on all bundle ticket members by $rf->seat
             if($ticket->isaBundle) {
                 foreach($tickets as $t) {
-                    $t->regCount += $rf->seats;
+                    if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
+                        $t->waitCount += $rf->seats;
+                    } else {
+                        $t->regCount += $rf->seats;
+                    }
                     $t->save();
                 }
             } else {
-                $ticket->regCount += $rf->seats;
+                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
+                    $ticket->waitCount += $rf->seats;
+                } else {
+                    $ticket->regCount += $rf->seats;
+                }
                 $ticket->save();
             }
         }
