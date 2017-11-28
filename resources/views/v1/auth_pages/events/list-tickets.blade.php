@@ -54,13 +54,28 @@ $default = Org::find($event->orgID);
         <thead>
         <tr>
             <th style="width: 5%">#</th>
-            <th style="width: 20%">Ticket Label</th>
-            <th>Available Until</th>
+            <th style="width: 20%">
+                <a data-toggle="tooltip" title="This is what users will see when purchasing a ticket and on receipts.">
+                    Ticket Label
+                </a>
+            </th>
+            <th style="width: 20%">
+                <a data-toggle="tooltip"
+                   title="Tickets cannot be purchased after this date.  Default value: Event Start Date">
+                    Available Until
+                </a>
+            </th>
+            {{--
             <th>Early Bird Date</th>
             <th>Early Bird Percent</th>
+            --}}
             <th>Member Price</th>
             <th>Non-Member Price</th>
-            <th>Max Attendees</th>
+            <th style="width: 20%">
+                <a data-toggle="tooltip" title="Set to 0 if there is no maximum.">
+                    Max Attendees
+                </a>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -69,19 +84,22 @@ $default = Org::find($event->orgID);
             <?php $tc++; ?>
             <tr>
                 <td>
-                    {!! Form::open(['url'=>env('APP_URL').'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                            'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
-                    <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
-                    <input type="hidden" name="function" value="delete">
                     @if($tickets->first() == $ticket)
-                        <button class="btn btn-danger btn-xs" data-toggle="tooltip"
-                                title="Original ticket cannot be deleted." data-placement="top" disabled>
-                            @else
-                                <button class="btn btn-danger btn-xs" id="launchConfirm">
-                                    @endif
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                        <a class="btn btn-danger btn-xs" data-toggle="tooltip"
+                                title="The original ticket cannot be deleted. Please edit as needed."
+                                data-placement="right" disabled>
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    @else
+                        {!! Form::open(['url'=>env('APP_URL').'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
+                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
+                        <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
+                        <input type="hidden" name="function" value="delete">
+                        <button class="btn btn-danger btn-xs" id="launchConfirm">
+                            <i class="fa fa-trash"></i>
+                        </button>
                         {!! Form::close() !!}
+                    @endif
                 </td>
                 <td><a href="#" id="ticketLabel{{ $tc }}" data-value="{{ $ticket->ticketLabel }}"
                        data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
@@ -93,6 +111,8 @@ $default = Org::find($event->orgID);
                        data-viewformat="MMM D, YYYY h:mm A"
                        data-title="When should ticket sales end for this event?"
                        data-pk="{{ $ticket->ticketID }}"></a></td>
+                {{--
+                // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
                 <td><a href="#" id="earlyBirdEndDate{{ $tc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
                        data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
@@ -104,6 +124,7 @@ $default = Org::find($event->orgID);
                        data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
                 </td>
+                --}}
                 <td>
                     <i class="fa fa-dollar"></i>
                     <a href="#" id="memberBasePrice{{ $tc }}" data-value="{{ $ticket->memberBasePrice }}"
@@ -148,8 +169,10 @@ $default = Org::find($event->orgID);
                 <th style="width: 5%">#</th>
                 <th style="width: 20%">Ticket Label</th>
                 <th>Available Until</th>
+                {{--
                 <th>Early Bird Date</th>
                 <th>Early Bird Percent</th>
+                --}}
                 <th>Member Price</th>
                 <th>Non-Member Price</th>
             </tr>
@@ -180,354 +203,358 @@ $default = Org::find($event->orgID);
                            data-viewformat="MMM D, YYYY h:mm A"
                            data-title="When should ticket sales end for this event?"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
-                    <td><a href="#" id="earlyBirdEndDate{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                           data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
-                           data-viewformat="MMM D, YYYY h:mm A"
-                           data-title="When should Early Bird pricing end for this event?"
-                           data-pk="{{ $ticket->ticketID }}"></a></td>
-                    <td>
-                        <a href="#" id="earlyBirdPercent{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                           data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
-                    </td>
-                    <td>
-                        <i class="fa fa-dollar"></i>
-                        <a href="#" id="memberBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->memberBasePrice }}"
-                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                           data-pk="{{ $ticket->ticketID }}">{{ $ticket->memberBasePrice }}</a>
-                    </td>
-                    <td>
-                        <i class="fa fa-dollar"></i>
-                        <a href="#" id="nonmbrBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
-                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                           data-pk="{{ $ticket->ticketID }}">{{ $ticket->nonmbrBasePrice }}</a>
-                    </td>
-                </tr>
+        {{--
+        // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
+            <td><a href="#" id="earlyBirdEndDate{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
+                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                   data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
+                   data-viewformat="MMM D, YYYY h:mm A"
+                   data-title="When should Early Bird pricing end for this event?"
+                   data-pk="{{ $ticket->ticketID }}"></a></td>
+            <td>
+                <a href="#" id="earlyBirdPercent{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdPercent }}"
+                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                   data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
+            </td>
+            --}}
+            <td>
+                <i class="fa fa-dollar"></i>
+                <a href="#" id="memberBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->memberBasePrice }}"
+                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                   data-pk="{{ $ticket->ticketID }}">{{ $ticket->memberBasePrice }}</a>
+            </td>
+            <td>
+                <i class="fa fa-dollar"></i>
+                <a href="#" id="nonmbrBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
+                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                   data-pk="{{ $ticket->ticketID }}">{{ $ticket->nonmbrBasePrice }}</a>
+            </td>
+        </tr>
 
-                <tr>
-                    <td></td>
-                    <th>Include?</th>
-                    <th colspan="5">Ticket</th>
-                </tr>
+        <tr>
+            <td></td>
+            <th>Include?</th>
+            <th colspan="5">Ticket</th>
+        </tr>
 
 <?php
-                $sql = "SELECT et.ticketID, et.ticketLabel, bt.ticketID as 'bundleID'
-                        FROM `event-tickets` et
-                        LEFT JOIN `bundle-ticket` bt ON bt.bundleid=$ticket->ticketID AND bt.ticketID = et.ticketID
-                        WHERE et.eventID=$event->eventID and isaBundle=0";
-                $b_tkts = DB::select($sql);
+        $sql = "SELECT et.ticketID, et.ticketLabel, bt.ticketID as 'bundleID'
+                FROM `event-tickets` et
+                LEFT JOIN `bundle-ticket` bt ON bt.bundleid=$ticket->ticketID AND bt.ticketID = et.ticketID
+                WHERE et.eventID=$event->eventID and isaBundle=0";
+        $b_tkts = DB::select($sql);
 ?>
-                @foreach($b_tkts as $tkt)
-                    <?php $bi++; $bid[$bi] = $ticket->ticketID; // $tkt->ticketID ?>
-                    <tr>
-                        <td></td>
-                        <td><a id="eventID-{{ $ticket->ticketID }}-{{ $tktIDs[$bi]=$tkt->ticketID }}"
-                               name="eventID-{{ $ticket->ticketID }}-{{ $tkt->ticketID }}"
-                               data-pk="{{ $ticket->ticketID }}"
-                               data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
-                        <td colspan="5">{{ $tkt->ticketLabel }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
+        @foreach($b_tkts as $tkt)
+            <?php $bi++; $bid[$bi] = $ticket->ticketID; // $tkt->ticketID ?>
+            <tr>
+                <td></td>
+                <td><a id="eventID-{{ $ticket->ticketID }}-{{ $tktIDs[$bi]=$tkt->ticketID }}"
+                       name="eventID-{{ $ticket->ticketID }}-{{ $tkt->ticketID }}"
+                       data-pk="{{ $ticket->ticketID }}"
+                       data-value="{{ $tkt->bundleID ? 1 : 0 }}"></a></td>
+                <td colspan="5">{{ $tkt->ticketLabel }}</td>
+            </tr>
+        @endforeach
+    @endforeach
 
-            </tbody>
-        </table>
-        <br/>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-            <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
-                    data-target="#ticket_modal">Add Tickets
-            </button>
-            <a href="/events" class="btn btn-default">Return to Event Listing</a>
+    </tbody>
+</table>
+<br/>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
+            data-target="#ticket_modal">Add Tickets
+    </button>
+    <a href="/events" class="btn btn-default">Return to Event Listing</a>
 
-        </div>
-        <div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
-            @if($event->hasTracks > 0)
-            <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">Edit Tracks &amp; Sessions</a>
-            @endif
-        </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
+    @if($event->hasTracks > 0)
+    <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">Edit Tracks &amp; Sessions</a>
+    @endif
+</div>
 
-        @include('v1.parts.end_content')
-        @endif
+@include('v1.parts.end_content')
+@endif
 
 @endsection
 
 @section('scripts')
-        <script>
-            $(document).ready(function () {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.fn.editable.defaults.mode = 'popup';
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.fn.editable.defaults.mode = 'popup';
 
-                $("#earlyBirdDate").editable({
-                    type: 'combodate',
-                    placement: 'right',
-                    combodate: {
-                        minYear: '{{ date("Y") }}',
-                        maxYear: '{{ date("Y")+3 }}',
-                        minuteStep: 15
-                    },
-                    success: function () {
-                        window.location = '{{ env('
-                        APP_URL
-                        ') . "/event-tickets/" . $event->eventID }}';
-                    }
-                });
-                $("#earlyDiscount").editable({
-                    type: 'text',
-                    success: function () {
-                        window.location = "{{ env('APP_URL') . '/event-tickets/' . $event->eventID }}";
-                    }
-                });
+        $("#earlyBirdDate").editable({
+            type: 'combodate',
+            placement: 'right',
+            combodate: {
+                minYear: '{{ date("Y") }}',
+                maxYear: '{{ date("Y")+3 }}',
+                minuteStep: 15
+            },
+            success: function () {
+                window.location = '{{ env("APP_URL") . "/event-tickets/" . $event->eventID }}';
+            }
+        });
+        $("#earlyDiscount").editable({
+            type: 'text',
+            success: function () {
+                window.location = "{{ env('APP_URL') . '/event-tickets/' . $event->eventID }}";
+            }
+        });
 
-            @for ($i = 1; $i <= $tc; $i++)
+    @for ($i = 1; $i <= $tc; $i++)
 
-                    $("#ticketLabel{{ $i }}").editable({type: 'text'});
-                $("#availabilityEndDate{{ $i }}").editable({
-                    type: 'combodate',
-                    combodate: {
-                        minYear: '{{ date("Y") }}',
-                        maxYear: '{{ date("Y")+3 }}',
-                        minuteStep: 15
-                    }
-                });
-                $("#earlyBirdEndDate{!! $i !!}").editable({
-                    type: 'combodate',
-                    combodate: {
-                        minYear: '{{ date("Y") }}',
-                        maxYear: '{{ date("Y")+3 }}',
-                        minuteStep: 15
-                    }
-                });
-                $('#earlyBirdPercent{{ $i }}').editable({type: 'text'});
-                $('#memberBasePrice{{ $i }}').editable({type: 'text'});
-                $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
-                $('#maxAttendees{{ $i }}').editable({type: 'text'});
-                @endfor
-
-                @for ($i = $tc + 1; $i <= $tc + $bc; $i++)
-
-                    $('#ticketLabel{{ $i }}').editable({type: 'text'});
-                $('#availabilityEndDate{{ $i }}').editable({
-                    type: 'combodate',
-                    combodate: {
-                        minYear: '{{ date("Y") }}',
-                        maxYear: '{{ date("Y")+3 }}',
-                        minuteStep: 15
-                    }
-                });
-                $('#earlyBirdEndDate{{ $i }}').editable({
-                    type: 'combodate',
-                    combodate: {
-                        minYear: '{{ date("Y") }}',
-                        maxYear: '{{ date("Y")+3 }}',
-                        minuteStep: 15
-                    },
-                    error: function (xhr, ajaxOptions, e) {
-                        //alert(xhr.status);
-                        //alert(e);
-                    },
-                    success: function (data) {
-                        //alert(data);
-                    }
-                });
-                $('#earlyBirdPercent{{ $i }}').editable({type: 'text'});
-                $('#memberBasePrice{{ $i }}').editable({type: 'text'});
-                $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
-
-                @endfor
-            });
-        </script>
-
-        <script>
-            $(document).ready(function () {
-                var i = 2;
-                var x;
-                $('#add_row').click(function () {
-                    if (i <= 5) {
-                        $('#delete_row').show();
-                        $('#tkt_submit').show();
-                        x = "tkt" + i + "_row";
-                        $('#' + x).show();
-                        i++;
-                    }
-                    if (i >= 3) {
-                        $('#tkt_submit').text("Save Tickets");
-                    }
-                    if (i == 6) {
-                        $('#add_row').prop('disabled', true);
-                    }
-                });
-                $('#delete_row').click(function () {
-                    if (i >= 3) {
-                        y = i - 1;
-                        x = "tkt" + y + "_row";
-                        $('#' + x).hide();
-                        i--;
-                        $('#add_row').prop('disabled', false);
-                    }
-
-                    if (i <= 2) {
-                        $('#tkt_submit').text("Save Ticket");
-                        $('#delete_row').hide();
-                    }
-                });
-            });
-        </script>
-
-        @for($i=1; $i=0; $i++)
-        @include('v1.parts.footer-daterangepicker', ['fieldname' => 'availabilityEndDate'. $i, 'time' => 'true', 'single' => 'true'])
+            $("#ticketLabel{{ $i }}").editable({type: 'text'});
+        $("#availabilityEndDate{{ $i }}").editable({
+            type: 'combodate',
+            combodate: {
+                minYear: '{{ date("Y") }}',
+                maxYear: '{{ date("Y")+3 }}',
+                minuteStep: 15
+            }
+        });
+        {{--
+            // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
+        //$("#earlyBirdEndDate{{ $i }}").editable({
+        //    type: 'combodate',
+        //    combodate: {
+        //        minYear: '{{ date("Y") }}',
+        //        maxYear: '{{ date("Y")+3 }}',
+        //        minuteStep: 15
+        //    }
+        // });
+        // $("#earlyBirdPercent{{ $i }}").editable({type: 'text'});
+        --}}
+        $('#memberBasePrice{{ $i }}').editable({type: 'text'});
+        $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
+        $('#maxAttendees{{ $i }}').editable({type: 'text'});
         @endfor
 
-        <script>
-            @for ($i = 1; $i <= $bi; $i++)
-                $("#eventID-{{ $bid[$i] }}-{{ $tktIDs[$i] }}").editable({
-                    type: 'select',
-                    source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}],
-                    url: "{{ env('APP_URL') }}/bundle/{{ $event->eventID }}",
-                    error: function (xhr, ajaxOptions, e) {
-                        console.log(xhr);
-                        console.log(ajaxOptions);
-                        console.log(e);
-                    },
-                    success: function (data) {
-                        //console.log(data);
-                    }
-                });
-            @endfor
-        </script>
-        <script>
-            $(document).ready(function () {
-                var setContentHeight = function () {
-                    // reset height
-                    $RIGHT_COL.css('min-height', $(window).height());
+        @for ($i = $tc + 1; $i <= $tc + $bc; $i++)
 
-                    var bodyHeight = $BODY.outerHeight(),
-                        footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                        leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                        contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+            $("#ticketLabel{{ $i }}").editable({type: 'text'});
+        $('#availabilityEndDate{{ $i }}').editable({
+            type: 'combodate',
+            combodate: {
+                minYear: '{{ date("Y") }}',
+                maxYear: '{{ date("Y")+3 }}',
+                minuteStep: 15
+            }
+        });
+        $('#earlyBirdEndDate{{ $i }}').editable({
+            type: 'combodate',
+            combodate: {
+                minYear: '{{ date("Y") }}',
+                maxYear: '{{ date("Y")+3 }}',
+                minuteStep: 15
+            },
+            error: function (xhr, ajaxOptions, e) {
+                //alert(xhr.status);
+                //alert(e);
+            },
+            success: function (data) {
+                //alert(data);
+            }
+        });
+        $('#earlyBirdPercent{{ $i }}').editable({type: 'text'});
+        $('#memberBasePrice{{ $i }}').editable({type: 'text'});
+        $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
 
-                    // normalize content
-                    contentHeight -= $NAV_MENU.height() + footerHeight;
+        @endfor
+    });
+</script>
 
-                    $RIGHT_COL.css('min-height', contentHeight);
-                };
+<script>
+    $(document).ready(function () {
+        var i = 2;
+        var x;
+        $('#add_row').click(function () {
+            if (i <= 5) {
+                $('#delete_row').show();
+                $('#tkt_submit').show();
+                x = "tkt" + i + "_row";
+                $('#' + x).show();
+                i++;
+            }
+            if (i >= 3) {
+                $('#tkt_submit').text("Save Tickets");
+            }
+            if (i == 6) {
+                $('#add_row').prop('disabled', true);
+            }
+        });
+        $('#delete_row').click(function () {
+            if (i >= 3) {
+                y = i - 1;
+                x = "tkt" + y + "_row";
+                $('#' + x).hide();
+                i--;
+                $('#add_row').prop('disabled', false);
+            }
 
-                $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                    setContentHeight();
-                }).parent().addClass('active');
+            if (i <= 2) {
+                $('#tkt_submit').text("Save Ticket");
+                $('#delete_row').hide();
+            }
+        });
+    });
+</script>
 
-                $("#add").text('Manage Event Tickets');
-            });
-        </script>
+@for($i=1; $i=0; $i++)
+@include('v1.parts.footer-daterangepicker', ['fieldname' => 'availabilityEndDate'. $i, 'time' => 'true', 'single' => 'true'])
+@endfor
+
+<script>
+    @for ($i = 1; $i <= $bi; $i++)
+        $("#eventID-{{ $bid[$i] }}-{{ $tktIDs[$i] }}").editable({
+            type: 'select',
+            source: [{value: '0', text: 'No'}, {value: '1', text: 'Yes'}],
+            url: "{{ env('APP_URL') }}/bundle/{{ $event->eventID }}",
+            error: function (xhr, ajaxOptions, e) {
+                console.log(xhr);
+                console.log(ajaxOptions);
+                console.log(e);
+            },
+            success: function (data) {
+                //console.log(data);
+            }
+        });
+    @endfor
+</script>
+<script>
+    $(document).ready(function () {
+        var setContentHeight = function () {
+            // reset height
+            $RIGHT_COL.css('min-height', $(window).height());
+
+            var bodyHeight = $BODY.outerHeight(),
+                footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+                leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+                contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+
+            // normalize content
+            contentHeight -= $NAV_MENU.height() + footerHeight;
+
+            $RIGHT_COL.css('min-height', contentHeight);
+        };
+
+        $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/event/create"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            setContentHeight();
+        }).parent().addClass('active');
+
+        $("#add").text('Manage Event Tickets');
+    });
+</script>
 
 @endsection
 
 @section('modals')
-        <div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="ticket_label">Add Additional Tickets</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticket_label">Add Additional Tickets</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body form-group">
+                <form id="ticket_form" name="tickets" method="post" action="/tickets/create">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="eventID" value="{{ $event->eventID }}">
+                    <table id="new_tickets" class="table table-striped table-bordered">
+                        @for($n=1;$n<=5;$n++)
+                        <tr id="tkt{{ $n }}_row"<?php if($n > 1) echo(' style="display: none;"'); ?>>
+                            <td class="col-md-4 col-md-offset-4">
+                                <label class="control-label">Ticket Name</label>
+                                <input id='ticketLabel-{{ $n }}' name='ticketLabel-{{ $n }}' type='text'
+                                       class='form-control input-sm'>
+                                <p>&nbsp;</p>
+                                <label>Max Attendees</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic_user{{ $n }}"><i
+                                                class="fa fa-user"></i></span>
+                                    <input name='maxAttendees-{{ $n }}' type='text' size="5" placeholder='0'
+                                           class='form-control input-sm col-md-1'
+                                           aria-describedby="basic_user{{ $n }}"></div>
+                                <br>
+                                <p><label class="control-label">Bundle</label>
+                                    <input name='isaBundle-{{ $n }}' type='checkbox' value="1"
+                                           class='form-control input-sm js-switch'></p>
+                            </td>
+                            <td class="col-md-4 col-md-offset-4">
+                                <label>Available Until</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic_cal"><i
+                                                class="fa fa-calendar"></i></span>
+                                    <input name='availabilityEndDate-{{ $n }}' type='text'
+                                           value="{{ $event->eventStartDate }}" class='form-control input-sm'
+                                           required></div>
+                                <br/>
+                                <label>Early Bird End Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic_cal2"><i
+                                                class="fa fa-calendar"></i></span>
+                                    <input type="text" id="earlyBirdEndDate-{{ $n }}"
+                                           value="{{ $event->earlyBirdDate }}"
+                                           name="earlyBirdEndDate-{{ $n }}" class="form-control input-sm"
+                                           placeholder=""></div>
+                                <br/>
+                                <label>Early Bird Percent</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic_cal2"><i
+                                                class="fa fa-percent"></i></span>
+                                    <input type="text" id="earlyBirdPercent-{{ $n }}"
+                                           value="{{ $default->earlyBirdPercent }}"
+                                           name="earlyBirdPercent-{{ $n }}" class="form-control input-sm"
+                                           placeholder=""></div>
+                            </td>
+                            <td class="col-md-4 col-md-offset-4">
+                                <label>Member Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic_dollar{{ $n }}">$</span>
+                                    <input name='memberBasePrice-{{ $n }}'
+                                           id='memberBasePrice-{{ $n }}' type='text' value='0.00'
+                                           class='form-control input-sm'
+                                           aria-describedby="basic_dollar{{ $n }}">
+                                </div>
+                                <br/>
+                                <label>Non-Member Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic_dollar{{ $n }}2">$</span><input
+                                            name='nonmbrBasePrice-{{ $n }}' id='nonmbrBasePrice-{{ $n }}'
+                                            type='text' value='0.00'
+                                            class='form-control input-sm'
+                                            aria-describedby="basic_dollar{{ $n }}2">
+                                </div>
+                            </td>
+                        </tr>
+                        @endfor
+
+                    </table>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
+                        <button type="button" style="display: none" id="delete_row"
+                                class="btn btn-sm btn-danger">
+                            Delete
                         </button>
                     </div>
-                    <div class="modal-body form-group">
-                        <form id="ticket_form" name="tickets" method="post" action="/tickets/create">
-                            {{ csrf_field() }}
-                            <input type="hidden" name="eventID" value="{{ $event->eventID }}">
-                            <table id="new_tickets" class="table table-striped table-bordered">
-                                @for($n=1;$n<=5;$n++)
-                                <tr id="tkt{{ $n }}_row"<?php if($n > 1) echo(' style="display: none;"'); ?>>
-                                    <td class="col-md-4 col-md-offset-4">
-                                        <label class="control-label">Ticket Name</label>
-                                        <input id='ticketLabel-{{ $n }}' name='ticketLabel-{{ $n }}' type='text'
-                                               class='form-control input-sm'>
-                                        <p>&nbsp;</p>
-                                        <label>Max Attendees</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic_user{{ $n }}"><i
-                                                        class="fa fa-user"></i></span>
-                                            <input name='maxAttendees-{{ $n }}' type='text' size="5" placeholder='0'
-                                                   class='form-control input-sm col-md-1'
-                                                   aria-describedby="basic_user{{ $n }}"></div>
-                                        <br>
-                                        <p><label class="control-label">Bundle</label>
-                                            <input name='isaBundle-{{ $n }}' type='checkbox' value="1"
-                                                   class='form-control input-sm js-switch'></p>
-                                    </td>
-                                    <td class="col-md-4 col-md-offset-4">
-                                        <label>Available Until</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic_cal"><i
-                                                        class="fa fa-calendar"></i></span>
-                                            <input name='availabilityEndDate-{{ $n }}' type='text'
-                                                   value="{{ $event->eventStartDate }}" class='form-control input-sm'
-                                                   required></div>
-                                        <br/>
-                                        <label>Early Bird End Date</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic_cal2"><i
-                                                        class="fa fa-calendar"></i></span>
-                                            <input type="text" id="earlyBirdEndDate-{{ $n }}"
-                                                   value="{{ $event->earlyBirdDate }}"
-                                                   name="earlyBirdEndDate-{{ $n }}" class="form-control input-sm"
-                                                   placeholder=""></div>
-                                        <br/>
-                                        <label>Early Bird Percent</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic_cal2"><i
-                                                        class="fa fa-percent"></i></span>
-                                            <input type="text" id="earlyBirdPercent-{{ $n }}"
-                                                   value="{{ $default->earlyBirdPercent }}"
-                                                   name="earlyBirdPercent-{{ $n }}" class="form-control input-sm"
-                                                   placeholder=""></div>
-                                    </td>
-                                    <td class="col-md-4 col-md-offset-4">
-                                        <label>Member Price</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic_dollar{{ $n }}">$</span>
-                                            <input name='memberBasePrice-{{ $n }}'
-                                                   id='memberBasePrice-{{ $n }}' type='text' value='0.00'
-                                                   class='form-control input-sm'
-                                                   aria-describedby="basic_dollar{{ $n }}">
-                                        </div>
-                                        <br/>
-                                        <label>Non-Member Price</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic_dollar{{ $n }}2">$</span><input
-                                                    name='nonmbrBasePrice-{{ $n }}' id='nonmbrBasePrice-{{ $n }}'
-                                                    type='text' value='0.00'
-                                                    class='form-control input-sm'
-                                                    aria-describedby="basic_dollar{{ $n }}2">
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endfor
-
-                            </table>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
-                                <button type="button" style="display: none" id="delete_row"
-                                        class="btn btn-sm btn-danger">
-                                    Delete
-                                </button>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                        <button type="submit" id="tkt_submit" class="btn btn-sm btn-success">Save Ticket</button>
-                        </form>
-                    </div>
-
-                </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                <button type="submit" id="tkt_submit" class="btn btn-sm btn-success">Save Ticket</button>
+                </form>
+            </div>
+
         </div>
+    </div>
+</div>
 @endsection
