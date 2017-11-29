@@ -143,7 +143,10 @@ $topBits = '';  // remove this if this was set in the controller
                 $("#lastName-"+row).attr('required', 'required');
                 $("#email-"+row).attr('required', 'required');
                 $("#ticketID-"+row).attr('required', 'required');
+                {{--
+                // Not required.
                 $("#pmiid-"+row).attr('required', 'required');
+                --}}
             }
         }
         function populate(row){
