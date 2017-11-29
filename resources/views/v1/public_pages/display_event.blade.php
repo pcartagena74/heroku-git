@@ -58,7 +58,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 
                 @if($event->earlyBirdDate !== null && $event->earlyBirdDate->gte($today))
                     <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
-                        <div class="col-md-2 col-sm-2 col-xs-2 col-lg-offset-2">
+                        <div class="col-md-2 col-sm-2 col-xs-2">
                             <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">

@@ -284,14 +284,14 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @if($i==1)
                         <td><div class="container row col-sm-3">
                                 <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', true, array('class' => 'flat js-switch')) !!} </div>
+                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', false, array('class' => 'flat js-switch')) !!} </div>
                                 <div class="col-sm-1">Yes</div>
                             </div>
                         </td>
                 @else
                         <td><div class="container row col-sm-3">
                                 <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU_$i", '1', true, array('class' => 'flat js-switch')) !!} </div>
+                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
                                 <div class="col-sm-1">Yes</div>
                             </div>
                         </td>
@@ -340,14 +340,14 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @if($i==1)
                     <td><div class="container row col-sm-3">
                             <div class="col-sm-1">No</div>
-                            <div class="col-sm-2">{!! Form::checkbox("canNetwork", '1', true, array('class' => 'flat js-switch')) !!}</div>
+                            <div class="col-sm-2">{!! Form::checkbox("canNetwork", '1', false, array('class' => 'flat js-switch')) !!}</div>
                             <div class="col-sm-1">Yes</div>
                         </div>
                     </td>
                 @else
                         <td><div class="container row col-sm-3">
                                 <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("canNetwork_$i", '1', true, array('class' => 'flat js-switch')) !!} </div>
+                                <div class="col-sm-2"> {!! Form::checkbox("canNetwork_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
                                 <div class="col-sm-1">Yes</div>
                             </div>
                         </td>

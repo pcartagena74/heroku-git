@@ -17,6 +17,9 @@ class Event extends Model
     protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'slug', 'hasTracks'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
+    public function location() {
+        return $this->hasOne(Location::class, 'locID', 'locationID');
+    }
     public function tickets() {
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
     }

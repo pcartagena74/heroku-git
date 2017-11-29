@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Storage;
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
+use Carbon\Carbon;
+use App\EventDiscount;
 
 class RegFinanceController extends Controller
 {
@@ -477,12 +479,10 @@ class RegFinanceController extends Controller
                 if($p->affiliation) {
                     $reg->affiliation = $p->affiliation;
                 }
-                $reg->canNetwork = 1;
-                if($pmiid) {
-                    $reg->isAuthPDU = 1;
-                } else {
-                    $reg->isAuthPDU = 0;
-                }
+                // Defaulting to No for explicit user agreement
+                // Add to orgperson / profile
+                $reg->canNetwork = 0;
+                $reg->isAuthPDU = 0;
                 // origcost
                 // subtotal
                 if($t->earlyBirdEndDate !== null && $today->lte($t->earlyBirdEndDate)) {

@@ -25,16 +25,19 @@ $currentPerson = App\Person::find(auth()->user()->id);
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
                         <li><a href="/profile/my"> Profile</a></li>
-                        <li>
-                            <a href="/profile/linkedin">
-                                @if($currentPerson->avatarURL !== null)
-                                    <span class="badge bg-success pull-right">&nbsp;</span>
-                                @else
-                                <span class="badge bg-red pull-right">&nbsp;</span>
-                                @endif
-                                <span>Connect Linked In</span>
-                            </a>
-                        </li>
+
+                        @if(Entrust::hasRole('Development'))
+                            <li>
+                                <a href="/profile/linkedin">
+                                    @if($currentPerson->avatarURL !== null)
+                                        <span class="badge bg-success pull-right">&nbsp;</span>
+                                    @else
+                                        <span class="badge bg-red pull-right">&nbsp;</span>
+                                    @endif
+                                    <span>Connect Linked In</span>
+                                </a>
+                            </li>
+                        @endif
                         {{--
                         // Add this back when context-help is added
                         <li><a href="javascript:;">Help</a></li>

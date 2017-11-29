@@ -29,7 +29,7 @@ use App\EventSession;
 class EventController extends Controller
 {
     public function __construct () {
-        $this->middleware('auth', ['except' => ['show']]);
+        $this->middleware('auth', ['except' => ['show', 'listing']]);
     }
 
     public function index () {
@@ -594,4 +594,41 @@ class EventController extends Controller
 
         //return view('v1.auth_pages.events.group-registration', compact('event'));
     }
+
+    public function listing($orgID, $etID){
+        try {
+            $org = Org::find($orgID);
+        } catch (\Exception $exception) {
+            $message = "The requested organization does not exist.";
+            return view('v1.public_pages.error_display', 'message');
+        }
+        $tag =  DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
+
+        if($etID == 1) {
+            $events = Event::where([
+                ['orgID', $orgID],
+                ['isActive', 1],
+                ['isPrivate', 0],
+            ])
+                ->whereIn('eventTypeID', [3, $etID])
+                           ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
+                           ->with('location')
+                           ->orderBy('eventStartDate')
+                           ->get();
+        } else {
+            $events = Event::where([
+                ['orgID', $orgID],
+                ['eventTypeID', $etID],
+                ['isActive', 1],
+                ['isPrivate', 0],
+            ])
+                           ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
+                           ->with('location')
+                           ->orderBy('eventStartDate')
+                           ->get();
+        }
+        $cnt = count($events);
+        return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+    }
+
 }
