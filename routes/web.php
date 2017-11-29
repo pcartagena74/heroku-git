@@ -9,17 +9,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 /*
   // This is to debug by seeing eloquent --> sql
-
 \Event::listen('Illuminate\Database\Events\QueryExecuted', function ($query) {
     var_dump($query->sql);
     var_dump($query->bindings);
     var_dump($query->time);
 });
 */
-
 /*
 Route::get('/linkedin1', 'SocialController@linkedin_login');
 
@@ -166,6 +163,8 @@ Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
 Route::get('/eventcopy/{slug}', 'EventController@event_copy');
+
+Route::get('/eventlist/{orgID}/{etID}', 'EventController@listing');
 
 // Group Registration
 Route::get('/group/{event?}', 'EventController@showGroup');
