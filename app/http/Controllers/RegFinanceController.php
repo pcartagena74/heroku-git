@@ -30,6 +30,7 @@ use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
 use Carbon\Carbon;
 use App\EventDiscount;
+use App\Email;
 
 class RegFinanceController extends Controller
 {
