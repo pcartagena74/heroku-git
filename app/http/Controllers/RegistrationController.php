@@ -584,7 +584,7 @@ class RegistrationController extends Controller
             if($dCode === null || $dCode = " ") {
                 $dCode = 'N/A';
             }
-            dd($dCode);
+
             $reg                   = new Registration;
             $reg->eventID          = $event->eventID;
             $reg->ticketID         = request()->input('ticketID');
