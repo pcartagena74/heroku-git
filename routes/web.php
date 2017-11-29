@@ -164,7 +164,9 @@ Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
 Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 
+// Routes that circumvent AUTH and mCentric navigation, etc.
 Route::get('/eventlist/{orgID}/{etID}', 'EventController@listing');
+Route::get('/ticketlist/{eventslug}', 'EventController@ticket_listing');
 
 // Group Registration
 Route::get('/group/{event?}', 'EventController@showGroup');

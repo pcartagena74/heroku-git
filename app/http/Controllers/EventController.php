@@ -631,4 +631,62 @@ class EventController extends Controller
         return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
     }
 
+    public function ticket_listing($param) {
+        try {
+            $event = Event::where('eventID', '=', $param)
+                          ->orWhere('slug', '=', $param)
+                          ->firstOrFail();
+        } catch (\Exception $exception) {
+            $message = "$param is not a valid event identifier.";
+            return view('v1.public_pages.error_display', compact('message'));
+        }
+
+        if(auth()->guest()) {
+            $current_person = 0;
+        } else {
+            $this->currentPerson = Person::find(auth()->user()->id);
+            $current_person      = $this->currentPerson;
+        }
+        $currentOrg = Org::find($event->orgID);
+
+        //$referer = Referer::get();
+        $referer = app(Referer::class)->get();
+
+        if($referer) {
+            $r              = new ReferLink;
+            $r->objectType  = 'eventID';
+            $r->objectID    = $event->eventID;
+            $r->refererText = $referer;
+            $r->save();
+        }
+
+        $event_loc = Location::where('locID', $event->locationID)->first();
+        $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
+        $bundles   =
+            Ticket::where([
+                ['isaBundle', 1],
+                ['isDeleted', 0],
+                ['eventID', $event->eventID],
+            ])->get()->sortByDesc('availableEndDate');
+
+        $tickets =
+            Ticket::where([
+                ['isaBundle', 0],
+                ['isDeleted', 0],
+                ['eventID', $event->eventID]
+            ])->get()->sortByDesc('availableEndDate');
+
+        /*
+        if($event->hasTracks > 0) {
+            $tracks = Track::where('eventID', $event->eventID)->get();
+            return view('v1.public_pages.display_event_w_sessions',
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg'));
+        } else {
+            return view('v1.public_pages.display_event',
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
+        }
+        */
+
+    }
+
 }
