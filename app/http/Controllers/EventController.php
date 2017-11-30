@@ -29,7 +29,7 @@ use App\EventSession;
 class EventController extends Controller
 {
     public function __construct () {
-        $this->middleware('auth', ['except' => ['show', 'listing']]);
+        $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing']]);
     }
 
     public function index () {
