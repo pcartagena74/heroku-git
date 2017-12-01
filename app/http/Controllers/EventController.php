@@ -76,11 +76,11 @@ class EventController extends Controller
                       ->orWhere('slug', '=', $param)
                       ->firstOrFail();
 
-        $e           = $event->replicate();
-        $e->slug     = 'temporary_slug_placeholder';
-        $e->isActive = 0;
+        $e                 = $event->replicate();
+        $e->slug           = 'temporary_slug_placeholder';
+        $e->isActive       = 0;
         $e->eventStartDate = $today;
-        $e->eventEndDate = $today;
+        $e->eventEndDate   = $today;
         // this is here until we decide to copy EVERYTHING associated with a PD Day event
         $e->hasTracks = 0;
         $e->save();
@@ -159,20 +159,20 @@ class EventController extends Controller
         }
         $currentOrg = Org::find($event->orgID);
 
-        //$referer = Referer::get();
-        $referer = app(Referer::class)->get();
+        //$referrer = Referer::get();
+        $referrer = app(Referer::class)->get();
 
-        if($referer) {
-            $r              = new ReferLink;
-            $r->objectType  = 'eventID';
-            $r->objectID    = $event->eventID;
-            $r->refererText = $referer;
+        if($referrer) {
+            $r               = new ReferLink;
+            $r->objectType   = 'eventID';
+            $r->objectID     = $event->eventID;
+            $r->referrerText = $referrer;
             $r->save();
         }
 
-        $event_loc = Location::where('locID', $event->locationID)->first();
+        $event_loc   = Location::where('locID', $event->locationID)->first();
         $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
-        $bundles   =
+        $bundles     =
             Ticket::where([
                 ['isaBundle', 1],
                 ['isDeleted', 0],
@@ -289,7 +289,7 @@ class EventController extends Controller
 
         $event->save();
         if(request()->input('hasTracksCheck') == 1) {
-            $count            = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
+            $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
                 $track            = new Track;
                 $track->trackName = "Track" . $i;
@@ -307,21 +307,21 @@ class EventController extends Controller
         $tkt->save();
 
         // Create a mainSession for the default ticket for the event
-        $mainSession = new EventSession;
-        $mainSession->trackID = 0;
-        $mainSession->eventID = $event->eventID;
-        $mainSession->ticketID = $tkt->ticketID;
+        $mainSession              = new EventSession;
+        $mainSession->trackID     = 0;
+        $mainSession->eventID     = $event->eventID;
+        $mainSession->ticketID    = $tkt->ticketID;
         $mainSession->sessionName = 'Default Session';
-        $mainSession->confDay = 0;
-        $mainSession->start = $event->eventStartDate;
-        $mainSession->end = $event->eventEndDate;
-        $mainSession->order = 0;
-        $mainSession->creatorID = $this->currentPerson->personID;
-        $mainSession->updaterID = $this->currentPerson->personID;
+        $mainSession->confDay     = 0;
+        $mainSession->start       = $event->eventStartDate;
+        $mainSession->end         = $event->eventEndDate;
+        $mainSession->order       = 0;
+        $mainSession->creatorID   = $this->currentPerson->personID;
+        $mainSession->updaterID   = $this->currentPerson->personID;
         $mainSession->save();
 
         $event->mainSession = $mainSession->sessionID;
-        $event->updaterID = $this->currentPerson->personID;
+        $event->updaterID   = $this->currentPerson->personID;
         $event->save();
 
         if($event->eventStartDate > $today) {
@@ -467,21 +467,21 @@ class EventController extends Controller
         }
         $event->updaterID = $this->currentPerson->personID;
 
-        if($event->mainSession === null){
-            $mainSession = new EventSession;
-            $mainSession->trackID = 0;
-            $mainSession->eventID = $event->eventID;
+        if($event->mainSession === null) {
+            $mainSession              = new EventSession;
+            $mainSession->trackID     = 0;
+            $mainSession->eventID     = $event->eventID;
             $mainSession->sessionName = 'Default Session';
-            $mainSession->confDay = 0;
-            $mainSession->start = $event->eventStartDate;
-            $mainSession->end = $event->eventEndDate;
-            $mainSession->order = 0;
-            $mainSession->creatorID = $this->currentPerson->personID;
-            $mainSession->updaterID = $this->currentPerson->personID;
+            $mainSession->confDay     = 0;
+            $mainSession->start       = $event->eventStartDate;
+            $mainSession->end         = $event->eventEndDate;
+            $mainSession->order       = 0;
+            $mainSession->creatorID   = $this->currentPerson->personID;
+            $mainSession->updaterID   = $this->currentPerson->personID;
             $mainSession->save();
 
             $event->mainSession = $mainSession->sessionID;
-            $event->updaterID = $this->currentPerson->personID;
+            $event->updaterID   = $this->currentPerson->personID;
         }
         $event->save();
 
@@ -550,12 +550,12 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function showGroup($event = null){
-        $title = "Group Registration";
-        $today = Carbon::now();
+    public function showGroup ($event = null) {
+        $title               = "Group Registration";
+        $today               = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        if(!isset($event)){
+        if(!isset($event)) {
             $e = Event::where([
                 ['orgID', '=', $this->currentPerson->defaultOrgID],
                 // Removed 10-day past buffer to allow for post-event registrations if needed
@@ -563,23 +563,23 @@ class EventController extends Controller
                 ['eventStartDate', '>=', $today]
             ])
                       ->select('eventID', 'eventName')
-                      // Same with limit (2)
-                      // ->limit(2)
+                // Same with limit (2)
+                // ->limit(2)
                       ->get();
 
-            $a = $e->pluck('eventName', 'eventID');
-            $b = array(0 => 'Select Event');
-            $c = $a->toArray();
+            $a      = $e->pluck('eventName', 'eventID');
+            $b      = array(0 => 'Select Event');
+            $c      = $a->toArray();
             $events = $b + $c;
             return view('v1.auth_pages.events.group-registration', compact('title', 'event', 'events'));
         } else {
             // Cannot pass object as reference so need to set here
-            $event = Event::find($event);
-            $title = $title . ": $event->eventName";
-            $t = Ticket::where('eventID', '=', $event->eventID)->get();
-            $a = $t->pluck('ticketLabel', 'ticketID');
-            $b = array(0 => 'Select Ticket');
-            $c = $a->toArray();
+            $event   = Event::find($event);
+            $title   = $title . ": $event->eventName";
+            $t       = Ticket::where('eventID', '=', $event->eventID)->get();
+            $a       = $t->pluck('ticketLabel', 'ticketID');
+            $b       = array(0 => 'Select Ticket');
+            $c       = $a->toArray();
             $tickets = $b + $c;
 
             $a = EventDiscount::where('eventID', '=', $event->eventID)->get();
@@ -595,14 +595,14 @@ class EventController extends Controller
         //return view('v1.auth_pages.events.group-registration', compact('event'));
     }
 
-    public function listing($orgID, $etID){
+    public function listing ($orgID, $etID) {
         try {
             $org = Org::find($orgID);
-        } catch (\Exception $exception) {
+        } catch(\Exception $exception) {
             $message = "The requested organization does not exist.";
             return view('v1.public_pages.error_display', 'message');
         }
-        $tag =  DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
+        $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
 
         if($etID == 1) {
             $events = Event::where([
@@ -610,7 +610,7 @@ class EventController extends Controller
                 ['isActive', 1],
                 ['isPrivate', 0],
             ])
-                ->whereIn('eventTypeID', [3, $etID])
+                           ->whereIn('eventTypeID', [3, $etID])
                            ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
                            ->with('location')
                            ->orderBy('eventStartDate')
@@ -631,12 +631,12 @@ class EventController extends Controller
         return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
     }
 
-    public function ticket_listing($param) {
+    public function ticket_listing ($param) {
         try {
             $event = Event::where('eventID', '=', $param)
                           ->orWhere('slug', '=', $param)
                           ->firstOrFail();
-        } catch (\Exception $exception) {
+        } catch(\Exception $exception) {
             $message = "$param is not a valid event identifier.";
             return view('v1.public_pages.error_display', compact('message'));
         }
@@ -649,20 +649,20 @@ class EventController extends Controller
         }
         $currentOrg = Org::find($event->orgID);
 
-        //$referer = Referer::get();
-        $referer = app(Referer::class)->get();
+        //$referrer = Referer::get();
+        $referrer = app(Referer::class)->get();
 
-        if($referer) {
-            $r              = new ReferLink;
-            $r->objectType  = 'eventID';
-            $r->objectID    = $event->eventID;
-            $r->refererText = $referer;
+        if($referrer) {
+            $r               = new ReferLink;
+            $r->objectType   = 'eventID';
+            $r->objectID     = $event->eventID;
+            $r->referrerText = $referrer;
             $r->save();
         }
 
-        $event_loc = Location::where('locID', $event->locationID)->first();
+        $event_loc   = Location::where('locID', $event->locationID)->first();
         $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
-        $bundles   =
+        $bundles     =
             Ticket::where([
                 ['isaBundle', 1],
                 ['isDeleted', 0],
@@ -676,16 +676,8 @@ class EventController extends Controller
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
 
-        /*
-        if($event->hasTracks > 0) {
-            $tracks = Track::where('eventID', $event->eventID)->get();
-            return view('v1.public_pages.display_event_w_sessions',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg'));
-        } else {
-            return view('v1.public_pages.display_event',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
-        }
-        */
+        return view('v1.public_pages.display_tickets_only',
+            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
 
     }
 
