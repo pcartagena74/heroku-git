@@ -44,6 +44,15 @@ Route::get('/pricing', function(){
 Route::get('/details', function(){
     return view('v1.public_pages.details');
 });
+Route::get('/mktg', function(){
+    return view('v1.public_pages.details');
+})->name('mktg');
+Route::get('/mail', function(){
+    return view('v1.public_pages.details');
+})->name('mail');
+Route::get('/mtgs', function(){
+    return view('v1.public_pages.details');
+})->name('mtgs');
 
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');

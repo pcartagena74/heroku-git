@@ -333,7 +333,7 @@ $soldout = 0;
                                                                 width: {{ $width }}%; max-width: {{ $mw }}%;">
                                                             <b>{{ $s->sessionName }}</b>
                                                             <a tabindex="0" class="btn btn-xs btn-primary pull-right"
-                                                               data-toggle="popover" data-trigger="focus"
+                                                               data-html="true" data-toggle="popover" data-trigger="focus"
                                                                data-placement="left" title="{!! $s->sessionName !!}"
                                                                data-content="{!! $s->sessionAbstract !!}">Abstract</a><br/>
                                                         </td>

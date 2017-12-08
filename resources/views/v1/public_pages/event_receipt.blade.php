@@ -104,12 +104,6 @@ $deletion = 0;
                         {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
-                    <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
-                    <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
-                    @if($rf->createDate != $rf->cancelDate)
-                        <b style="color:red;">Updated on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
-                        <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
-                    @endif
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
                         <h1 style="color:red;">
                             @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
@@ -118,6 +112,15 @@ $deletion = 0;
                                 Balance Due at Event
                             @endif
                         </h1>
+                        <b style="color:red;">Wait-Listed on: </b> {{ $rf->createDate->format('n/j/Y') }}
+                        <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
+                    @else
+                        <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
+                        <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
+                        @if($rf->createDate != $rf->cancelDate)
+                            <b style="color:red;">Updated on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
+                            <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
+                        @endif
                     @endif
                 </div>
                 <div class="col-md-3 col-sm-3">

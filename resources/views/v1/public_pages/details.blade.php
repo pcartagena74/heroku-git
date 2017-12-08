@@ -12,14 +12,15 @@
         <div class="container">
             <p>You can read more about mCentric features available to chapters.</p>
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#marketing">Marketing</a></li>
-                <li><a data-toggle="tab" href="#mailings">Mailings</a></li>
-                <li><a data-toggle="tab" href="#meetings">Meetings</a></li>
+                <li><a href="{{ env('APP_URL') }}">Home</a></li>
+                <li class="{{ Route::is('mktg')?'active':'' }}"><a data-toggle="tab" href="#marketing">Marketing</a></li>
+                <li class="{{ Route::is('mail')?'active':'' }}"><a data-toggle="tab" href="#mailings">Mailings</a></li>
+                <li class="{{ Route::is('mtgs')?'active':'' }}"><a data-toggle="tab" href="#meetings">Meetings</a></li>
                 <li><a data-toggle="tab" href="#membership">Integrated Membership Management</a></li>
             </ul>
 
             <div class="tab-content">
-                <div id="marketing" class="tab-pane fade in active">
+                <div id="marketing" class="tab-pane fade in{{ Route::is('mktg')?' active':'' }}">
                     <h2><span class="fa fa-dashboard"></span> mCentric-Facilitated Marketing</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
@@ -41,7 +42,7 @@
                     <br/>
 
                 </div>
-                <div id="mailings" class="tab-pane fade">
+                <div id="mailings" class="tab-pane fade in{{ Route::is('mail')?' active':'' }}">
                     <h2><span class="fa fa-envelope-o"></span> mCentric-Facilitated Mailings</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
@@ -58,7 +59,7 @@
                     <br/>
 
                 </div>
-                <div id="meetings" class="tab-pane fade">
+                <div id="meetings" class="tab-pane fade in{{ Route::is('mtgs')?' active':'' }}">
                     <h2><span class="fa fa-calendar"></span> mCentric-Facilitated Meeting &amp; Event Management</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />

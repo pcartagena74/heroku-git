@@ -18,7 +18,7 @@ foreach($attendance as $event) {
             '<a onclick="getList('. $event->eventID . ", '" . $event->eventName . "'" . ');" class="network btn btn-success btn-xs">View Networking List</a>';
     } else {
         $nlb  = '<a class="network btn btn-cancel btn-xs" disabled data-toggle="tooltip" data-placement="top" '.
-                'title="No permission to display networking list.">View Networking List</a>';
+                'title="This event has no networking list.">View Networking List</a>';
     }
     array_push($data, [$dt->format('Y/n/j'), $event->eventName, $nlb]);
 }

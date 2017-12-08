@@ -232,8 +232,8 @@ if($event->isSymmetric && $event->hasTracks) {
                                                              data-pk="{{ $reg->regID }}"
                                                              data-value="{{ $reg->canNetwork }}"
                                                              data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
-                                    <b><a data-toggle="tooltip" title="Do you authorize PMI to submit your PDUs?">PDU
-                                            Submission :</a></b> <a id="isAuthPDU-{{ $tcount }}"
+                                            @include('v1.parts.tooltip', ['title' => "Do you authorize PMI to submit your PDUs?"])
+                                        <b>PDU Submission :</b> <a id="isAuthPDU-{{ $tcount }}"
                                                                     data-pk="{{ $reg->regID }}"
                                                                     data-value="{{ $reg->isAuthPDU }}"
                                                                     data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
@@ -360,8 +360,9 @@ if($event->isSymmetric && $event->hasTracks) {
                                                             @endif
                                                             <td colspan="2" style="text-align:left; min-width:150px;
                                                                     width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                                                @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
-                                                                    <b><a data-toggle="tooltip" title="Maximum attendees reached.">{{ $s->sessionName }}</a></b><br/>
+                                                                @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
+                                                                    <b>{{ $s->sessionName }}</b><br/>
+                                                                    @include('v1.parts.tooltip', ['title' => "Maximum attendance reached.", 'c' => 'red'])
                                                                     {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
                                                                         $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                                 @else
@@ -393,7 +394,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                         $myTess = $t->sessionID;
                                                                     }
 ?>
-                                                                    @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                                    @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
                                                                         {!! Form::radio('sess-'. $j . '-'.$x, '', false,
                                                                             $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
                                                                     @else

@@ -387,7 +387,8 @@ class RegFinanceController extends Controller
         Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
-        return view('v1.public_pages.event_receipt', $x);
+        //return view('v1.public_pages.event_receipt', $x);
+        return redirect('/show_receipt/'. $rf->regID);
     }
 
     public function group_reg1 (Request $request) {
