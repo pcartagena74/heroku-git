@@ -99,7 +99,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
-    @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
+    @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
         <div class="clearfix"><p></div>
         <b class="red">
             Registering will secure {{ $quantity == 1? 'a ':'' }}spot{{ $quantity == 1?'':'s' }} on the wait list.
@@ -151,22 +151,16 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             <tr>
                 <th style="width:20%;">Prefix</th>
                 <th style="width:20%;">
-                    @if($i == 1 && $isMember)
-                        <a data-toggle="tooltip" data-placement="top" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
-                    @endif
                         First Name<sup>*</sup>
                     @if($i == 1 && $isMember)
-                        </a>
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
                     @endif
                 </th>
                 <th style="width:20%;">Middle Name</th>
                 <th style="width:20%;">
-                    @if($i == 1 && $isMember)
-                        <a data-toggle="tooltip" data-placement="top" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
-                    @endif
                         Last Name<sup>*</sup>
                     @if($i == 1 && $isMember)
-                        </a>
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
                     @endif
                 </th>
                 <th style="width:20%;">Suffix</th>
@@ -206,12 +200,9 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 <th style="width:20%;">Company</th>
                 <th style="width:20%;">Title</th>
                 <th style="width:20%;">
-                    @if($i == 1 && Auth::check())
-                    <a data-toggle="tooltip" data-placement="top" title="Changing your email address can only be done via your profile page." id="emailchange">
-                    @endif
                         Email Address<sup>*</sup>
                     @if($i == 1 && Auth::check())
-                    </a>
+                        @include('v1.parts.tooltip', ['title' => "Changing your email address can only be done via your profile page."])
                     @endif
                 </th>
             </tr>
@@ -244,7 +235,9 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             </tr>
 
             <tr>
-                <td style="width:20%;"><b>Please select any dietary requirements.</b><br><small>We'll do our best to accomodate you.</small></td>
+                <td style="width:20%;"><b>Please select any dietary requirements.</b>
+                    @include('v1.parts.tooltip', ['title' => "Ctrl-Click to select more than dietary choice."])
+                    <br><small>We'll do our best to accommodate you.</small></td>
                 <th style="width:20%;">Is this your first event?</th>
                 <th style="width:20%;">What future event topics would interest you?</th>
                 <th style="width:20%;">From what city and state will you be commuting?</th>
@@ -301,8 +294,10 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             <tr>
                 <th style="width:20%;">Dietary/Other Comments</th>
                 <th style="width:20%;">List any questions for the speaker(s).</th>
-                <td style="width:20%;"><b>List any special arrangements you may need.</b> <small>We'll do our best to accomodate you.</small></td>
-                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b><br><small>Ctrl-Click to select > 1 choice.</small></td>
+                <td style="width:20%;"><b>List any special arrangements you may need.</b><br><small>We'll do our best to accommodate you.</small></td>
+                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b>
+                    @include('v1.parts.tooltip', ['title' => "Ctrl-Click to select more than one affiliation."])
+                    <br></td>
                 <th style="width:20%;">Do you want to be added to a participant roster?</th>
             </tr>
 

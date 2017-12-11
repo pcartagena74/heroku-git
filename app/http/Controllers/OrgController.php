@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EventType;
 use Illuminate\Http\Request;
 use App\Person;
 use App\Org;
@@ -37,7 +38,10 @@ class OrgController extends Controller
             ->select('discountID', 'discountCODE', 'percent')
             ->get();
 
-        return view('v1.auth_pages.organization.event_defaults', compact('org', 'current_person', 'discount_codes'));
+        $event_types = EventType::whereIn('orgID', [1, $current_person->defaultOrgID])->get();
+
+        return view('v1.auth_pages.organization.event_defaults',
+            compact('org', 'current_person', 'discount_codes', 'event_types'));
     }
 
     public function show($id) {

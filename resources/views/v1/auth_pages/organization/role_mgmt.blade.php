@@ -7,6 +7,7 @@
 $topBits = '';  // remove this if this was set in the controller
 $counter = 0;
 $headers = ['Last Name', 'First Name', 'Email', 'PMI ID'];
+set_time_limit(100);
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -210,10 +211,10 @@ $headers = ['Last Name', 'First Name', 'Email', 'PMI ID'];
                     . '<i class="fa fa-file-archive-o"></i></a>';
 
                 if($p->roles->contains('id', 11)) {
-                    $board_color = 'btn-llime';
+                    $board_color = 'btn-lbrown';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Marketing Role" ';
                 } else {
-                    $board_color = 'btn-lime';
+                    $board_color = 'btn-brown';
                     $tooltip     = 'data-toggle="tooltip" title="Add Marketing Role" ';
                 }
                 $mktg =

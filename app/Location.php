@@ -13,6 +13,6 @@ class Location extends Model
     protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
     public function event() {
-        return $this->belongsTo(Org::class, 'orgID', 'locID');
+        return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 }

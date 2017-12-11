@@ -79,6 +79,11 @@ $soldout = 0;
 @extends('v1.layouts.no-auth')
 
 @section('content')
+    <style>
+        .popover{
+            max-width: 50%;
+        }
+    </style>
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
@@ -333,7 +338,7 @@ $soldout = 0;
                                                                 width: {{ $width }}%; max-width: {{ $mw }}%;">
                                                             <b>{{ $s->sessionName }}</b>
                                                             <a tabindex="0" class="btn btn-xs btn-primary pull-right"
-                                                               data-toggle="popover" data-trigger="focus"
+                                                               data-html="true" data-toggle="popover" data-trigger="focus"
                                                                data-placement="left" title="{!! $s->sessionName !!}"
                                                                data-content="{!! $s->sessionAbstract !!}">Abstract</a><br/>
                                                         </td>
@@ -553,8 +558,9 @@ $soldout = 0;
         ;
     </script>
     <script>
-        $(function () {
-            $('[data-toggle="popover"]').popover()
+        $('[data-toggle="popover"]').popover({
+            container: 'body',
+            placement: 'top'
         });
     </script>
 

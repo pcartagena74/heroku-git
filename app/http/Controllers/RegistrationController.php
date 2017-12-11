@@ -155,9 +155,9 @@ class RegistrationController extends Controller
         }
 
         // This is a quick check to pass through without saving another record if the _token is already in the db
-        if(count($resubmit) == $quantity) {
+        //if(count($resubmit) == $quantity) {
             //return redirect('/confirm_registration/' . $resubmit->regID);
-        }
+        //}
 
         $checkEmail = request()->input('login');
 

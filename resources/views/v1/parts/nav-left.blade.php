@@ -65,7 +65,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
 
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
                         || Entrust::hasRole('Development'))
-                        <li><a><i class="fa fa-edit"></i>Organization Settings<span
+                        <li><a><i class="fa fa-bank"></i>Organization Settings<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/orgsettings">Custom Field Labels</a></li>

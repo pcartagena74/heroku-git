@@ -146,7 +146,7 @@ return [
         #'Aws\Laravel\AwsServiceProvider',
         Barryvdh\Snappy\ServiceProvider::class,
 	    Collective\Html\HtmlServiceProvider::class,
-        \Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
+        #\Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
         'Fideloper\Proxy\TrustedProxyServiceProvider',
         'GrahamCampbell\Flysystem\FlysystemServiceProvider',
         jdavidbakr\MailTracker\MailTrackerServiceProvider::class,

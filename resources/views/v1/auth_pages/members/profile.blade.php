@@ -60,29 +60,33 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     </thead>
                     <tbody>
                     <tr>
-                        <td style="text-align: left;"><a href="#" id="prefix" data-title="Enter prefix">{{ $profile->prefix }}</a>
+                        <td style="text-align: left;"><a href="#" id="prefix"
+                                                         data-title="Enter prefix">{{ $profile->prefix }}</a>
                         </td>
                         <td style="text-align: left;">
                             {{-- Check OrgStat2 (PMI Type) to verify that PMI provided the first & last name --}}
                             {{-- Chose OrgStat2 because we might populate OrgStat1 --}}
                             @if($profile->OrgStat2)
-                                <a data-toggle="tooltip" title="You need to contact PMI to change first name." id="firstName">
-                                    {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}</a></td>
+                                {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}
+                                @include('v1.parts.tooltip', ['title' => "You need to contact PMI to change your name."])
                             @else
                                 <a href="#" id="firstName" data-title="Enter first name">
-                                    {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}</a></td>
+                                    {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}</a>
                             @endif
+                        </td>
+
                         <td style="text-align: left;">
                             <a href="#" id="midName" data-title="Enter middle name">{{ $profile->midName }}</a>
                         </td>
                         <td style="text-align: left;">
                             @if($profile->OrgStat2)
-                                <a data-toggle="tooltip" title="You need to contact PMI to change last name." id="lastName">
-                                {{ $profile->lastName }}</a></td>
+                                {{ $profile->lastName or "<i style='color:red;'>Empty</i>" }}
+                                @include('v1.parts.tooltip', ['title' => "You need to contact PMI to change your name."])
                             @else
                                 <a href="#" id="lastName" data-title="Enter last name">
-                                {{ $profile->lastName }}</a></td>
+                                    {{ $profile->lastName }}</a>
                             @endif
+                        </td>
                         <td style="text-align: left;">
                             <a href="#" id="suffix" data-title="Enter suffix">{{ $profile->suffix }}</a>
                         </td>
@@ -93,8 +97,8 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                         <th style="text-align: left;">Company</th>
                         <th style="text-align: left;">Title</th>
                         <th style="text-align: left;">
-                            <a data-toggle="tooltip" title="If you want your login to be a new email address,
-                you'll have to first add it by clicking 'Add Email' below.">Login</a>
+                            Login
+                            @include('v1.parts.tooltip', ['title' => "If you want your login to be a new email address, you'll have to first add it by clicking 'Add Email' below."])
                         </th>
                     </tr>
                     <tr>
@@ -237,14 +241,19 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     <tr>
                         <th style="text-align:center;" colspan="2">Type</th>
                         <th style="text-align:left;">Email</th>
-                        <th style="text-align:left;"><a data-toggle="tooltip"
-                                                        title="The primary address is the only one we'll use to contact you. It is also the email address selected above.">Primary?</a>
+                        <th style="text-align:left;">
+                            Primary?
+                            @include('v1.parts.tooltip', ['title' => "The primary address is the only one we'll use to contact you. It is also the email address selected above."])
                         </th>
                     </tr>
                     @foreach($emails as $email)
                         <?php $em_cnt++; ?>
                         <tr>
                             <td style="text-align: left;">
+                                @if($email->isPrimary)
+                                    <button class="btn btn-danger btn-xs" disabled><i class="fa fa-trash"></i></button>
+                                    @include('v1.parts.tooltip', ['title' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first."])
+                                @else
                                 <form method="post" action="{{ "/email/" . $email->emailID . "/delete" }}">
                                     {{ csrf_field() }}
                                     <input type="hidden" name="personID" value="{{ $profile->personID }}">
@@ -259,6 +268,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </form>
+                                @endif
                             </td>
                             <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}"
                                                              data-pk="{{ $email->emailID }}"
@@ -369,10 +379,10 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 </div>
             </div>
             @if(Entrust::hasRole('Speaker'))
-            <div class="tab-pane fade" id="tab_content3" aria-labelledby="other-tab">
-                &nbsp;<br/>
-                <b>Speaker features will appear here in the next update.</b>
-            </div>
+                <div class="tab-pane fade" id="tab_content3" aria-labelledby="other-tab">
+                    &nbsp;<br/>
+                    <b>Speaker features will appear here in the next update.</b>
+                </div>
             @endif
         </div>
     </div>
@@ -387,6 +397,10 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
         //redirection to a specific tab
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
+        });
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            // other options
         });
     </script>
     <script>

@@ -50,12 +50,15 @@ if($event->hasTracks && $event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
     $width   = (integer)85 / $event->hasTracks;
     $mw      = (integer)90 / $event->hasTracks;
+    $stats = '<a href="'.env('APP_URL').'/tracks/'.$event->eventID.'">Ticket Statistics</a>';
 } elseif($event->hasTracks) {
     $columns = $event->hasTracks * 3;
     $width   = (integer)80 / $event->hasTracks;
     $mw      = (integer)85 / $event->hasTracks;
+    $stats = '<a href="'.env('APP_URL').'/tracks/'.$event->eventID.'">Ticket Statistics</a>';
+} else {
+    $stats = 'Ticket Statistics';
 }
-$stats = '<a href="'.env('APP_URL').'/tracks/'.$event->eventID.'">Ticket Statistics</a>';
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 

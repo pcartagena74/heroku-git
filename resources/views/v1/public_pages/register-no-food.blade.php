@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 if(Auth::check()) {
     $person       = Person::find(auth()->user()->id);
     $registration = new Registration;
-    if($person->orgperson->OrgStat1){
+    if($person->orgperson->OrgStat1) {
         $isMember = 1;
     } else {
         $isMember = 0;
@@ -20,7 +20,7 @@ if(Auth::check()) {
 } else {
     $person       = new Person;
     $registration = new Registration;
-    $isMember = 0;
+    $isMember     = 0;
 }
 $loc = Location::find($event->locationID);
 
@@ -39,9 +39,11 @@ foreach($array as $chap) {
 
 // Determine if Early Bird Pricing should be in effect
 $today = Carbon\Carbon::now();
-if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)){
-    $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
-    $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)) {
+    $earlymbr =
+        number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+    $earlynon =
+        number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
 } else {
     $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
@@ -132,11 +134,11 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             <tr>
                 <td style="width: 11%"><b>Ticket Cost:</b> <i class="fa fa-dollar"></i> <span id="tcost{{ $i }}">
                         @if(Auth::check())
-                                @if(Auth::check())
-                                    {{ $earlymbr }}
-                                @else
-                                    {{ $earlynon }}
-                                @endif
+                            @if(Auth::check())
+                                {{ $earlymbr }}
+                            @else
+                                {{ $earlynon }}
+                            @endif
                         @else
                             @if($event->earlyBirdEndDate && (time() - strtotime($event->earlyBirdEndDate) < 0))
                                 {{ $ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent) }}
@@ -157,23 +159,17 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             <tr>
                 <th style="width:20%;">Prefix</th>
                 <th style="width:20%;">
-                @if($i == 1 && $isMember)
-                    <a data-toggle="tooltip" data-placement="top" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
-                @endif
                     First Name<sup>*</sup>
-                @if($i == 1 && $isMember)
-                    </a>
-                @endif
+                    @if($i == 1 && $isMember)
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
+                    @endif
                 </th>
                 <th style="width:20%;">Middle Name</th>
                 <th style="width:20%;">
-                @if($i == 1 && $isMember)
-                    <a data-toggle="tooltip" data-placement="top" title="As a PMI Member, your name must match PMI's roster for PDU processing." id="emailchange">
-                @endif
                     Last Name<sup>*</sup>
-                @if($i == 1 && $isMember)
-                    </a>
-                @endif
+                    @if($i == 1 && $isMember)
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
+                    @endif
                 </th>
                 <th style="width:20%;">Suffix</th>
             </tr>
@@ -212,12 +208,9 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 <th style="width:20%;">Company</th>
                 <th style="width:20%;">Title</th>
                 <th style="width:20%;">
+                    Email Address<sup>*</sup>
                     @if($i == 1 && Auth::check())
-                        <a data-toggle="tooltip" data-placement="top" title="Changing your email address can only be done via your profile page." id="emailchange">
-                            @endif
-                            Email Address<sup>*</sup>
-                            @if($i == 1 && Auth::check())
-                        </a>
+                        @include('v1.parts.tooltip', ['title' => "Changing your email address can only be done via your profile page."])
                     @endif
                 </th>
             </tr>
@@ -303,8 +296,8 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
 
             <tr>
                 <th style="width:20%;">List any questions for the speaker(s).</th>
-                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b><br>
-                    <small>Ctrl-Click to select > 1 choice.</small>
+                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b>
+                    @include('v1.parts.tooltip', ['title' => "Ctrl-Click to select more than one affiliation."])
                 </td>
                 <th style="width:20%;">Do you want to be added to a participant roster?</th>
             </tr>
@@ -384,12 +377,12 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             var flatAmt = $('#flatdisc').text();
             var subtotal = 0;
 
-            @for($i=1;$i<=$quantity; $i++)
-                var tc{{ $i }} = $('#tcost{{ $i }}').text() * 1;
-                var newval{{ $i }} = tc{{ $i }} * 1;
-                $('#final{{ $i }}').text(tc{{ $i }});
-                subtotal += newval{{ $i }} * 1;
-                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                    @for($i=1;$i<=$quantity; $i++)
+            var tc{{ $i }} = $('#tcost{{ $i }}').text() * 1;
+            var newval{{ $i }} = tc{{ $i }} * 1;
+            $('#final{{ $i }}').text(tc{{ $i }});
+            subtotal += newval{{ $i }} * 1;
+            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -438,7 +431,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                             $('#i_flatamt').val(flatAmt);
                             subtotal = 0;
 
-                            if(percent>0) {
+                            if (percent > 0) {
                                 @for($i=1;$i<=$quantity; $i++)
                                     newval{{ $i }} = (tc{{ $i }} - (tc{{ $i }} * percent / 100));
                                 $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
@@ -447,17 +440,17 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                                 @endfor
                             } else {
                                 newval{{ 1 }} = ((tc{{ 1 }} * 1) - (flatAmt * 1));
-                                if(newval1 < 0) newval1 = 0;
-                                    $('#final{{ 1 }}').text(newval{{ 1 }}.toFixed(2));
-                                    subtotal += newval{{ 1 }} * 1;
-                                    $("#sub{{ 1 }}").val(newval{{ 1 }}.toFixed(2));
+                                if (newval1 < 0) newval1 = 0;
+                                $('#final{{ 1 }}').text(newval{{ 1 }}.toFixed(2));
+                                subtotal += newval{{ 1 }} * 1;
+                                $("#sub{{ 1 }}").val(newval{{ 1 }}.toFixed(2));
 
                                 @for($i=2;$i<=$quantity; $i++)
                                     newval{{ $i }} = tc{{ $i }} * 1;
-                                    if(newval{{ $i }} < 0) newval{{ $i }} = 0;
-                                    $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
-                                    subtotal += newval{{ $i }} * 1;
-                                    $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                                if (newval{{ $i }} < 0) newval{{ $i }} = 0;
+                                $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                                subtotal += newval{{ $i }} * 1;
+                                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
                                 @endfor
                             }
 

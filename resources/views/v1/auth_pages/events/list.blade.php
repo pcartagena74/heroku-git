@@ -58,6 +58,11 @@ foreach($current_events as $event) {
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
     if($event->isActive) {
         $delete_button = '';
+    } else {
+        if($event->cnt > 0){
+            $delete_button = '';
+        }
+        $checkin_button = '';
     }
 
     $ticket_button =
@@ -66,7 +71,7 @@ foreach($current_events as $event) {
 
     array_push($current_data, ["<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button .
-        $eventDiscount_button . $track_link_button . $ticket_button . $rpt_link_button  . $copy_link_button .
+        $eventDiscount_button . $ticket_button . $track_link_button . $rpt_link_button  . $copy_link_button .
         $checkin_button . $delete_button]);
 //    array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
 //        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
@@ -97,6 +102,10 @@ foreach($past_events as $event) {
         '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
     if($event->cnt > 0) { $delete_button = ''; }
+
+    if($current_person->personID != 357){
+        $edit_link_button = '';
+    }
 
     array_push($past_data, [ "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $event->eventName, $event->etName, $event->cnt, $edit_link_button . $rpt_link_button . $copy_link_button . $delete_button]);
