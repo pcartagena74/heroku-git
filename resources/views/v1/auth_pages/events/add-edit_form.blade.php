@@ -99,16 +99,16 @@ $logo    =
     <div class="container row col-sm-12">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            {!! Form::label('hasFood', 'Will food be served?', array('class' => 'control-label', 'style'=>'color:red;',
-            'data-toggle'=>'tooltip', 'title'=>'Events with food have different questions asked of attendees.')) !!}
+            {!! Form::label('hasFood', 'Will food be served?', array('class' => 'control-label', 'style'=>'color:red;')) !!}
+            @include('v1.parts.tooltip', ['title' => "Events with food have additional questions asked of attendees."])
         </div>
-        @if($event->eventID !== null && $event->hasFood != 1)
+        @if($event->eventID !== null && $event->hasFood == 1)
             <div class="col-sm-1"> {!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', false, array('class' => 'js-switch')) !!}</div>
+            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', true, array('class' => 'js-switch')) !!}</div>
             <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
         @else
             <div class="col-sm-1">{!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!}</div>
-            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', true, array('class' => 'js-switch')) !!}</div>
+            <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', false, array('class' => 'js-switch')) !!}</div>
             <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
         @endif
     </div>
@@ -273,7 +273,7 @@ $logo    =
         </div>
 
         <div class="form-group col-md-9">
-            {!! Form::text('contactOrg', old('$event->contactOrg') ?: $defaults->orgName, $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '100', 'placeholder'=> $current_person->defaultOrg->orgName, 'required') ) !!}
+            {!! Form::text('contactOrg', $event->contactOrg ?: $defaults->orgName, $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '100', 'placeholder'=> $current_person->defaultOrg->orgName, 'required') ) !!}
             <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
         </div>
     </div>
@@ -284,7 +284,7 @@ $logo    =
         </div>
 
         <div class="form-group col-md-9">
-            {!! Form::text('contactEmail', old('$event->contactEmail') ?: $defaults->eventEmail, $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '100', 'placeholder'=>'Contact Email', 'required') ) !!}
+            {!! Form::text('contactEmail', $event->contactEmail ?: $defaults->eventEmail, $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '100', 'placeholder'=>'Contact Email', 'required') ) !!}
             <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
         </div>
     </div>
@@ -295,7 +295,7 @@ $logo    =
         </div>
 
         <div class="form-group col-md-9">
-            {!! Form::textarea('contactDetails', old('$event->contactDetails'), $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
+            {!! Form::textarea('contactDetails', $event->contactDetails ?: '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
         </div>
     </div>
     @include('v1.parts.end_content')
@@ -332,7 +332,7 @@ $logo    =
 
     <div class="col-md-12">
         {!! Form::submit('Submit & Review Tickets', array('class' => 'btn btn-primary')) !!}
-        <a href="/events" class="btn btn-default">Cancel</a>
+        <a href="{{ env('APP_URL') }}/events" class="btn btn-default">Cancel</a>
     </div>
     {!! Form::close() !!}
 @endsection
@@ -465,7 +465,7 @@ $logo    =
             });
         });
     </script>
-    @if($event->event === null)
+    @if($event->eventID === null)
         @include('v1.parts.menu-fix', array('path' => '/event/create'))
     @else
         @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => 'Edit Event'))

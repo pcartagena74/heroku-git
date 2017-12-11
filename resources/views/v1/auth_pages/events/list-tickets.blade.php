@@ -55,15 +55,12 @@ $default = Org::find($event->orgID);
         <tr>
             <th style="width: 5%">#</th>
             <th style="width: 20%">
-                <a data-toggle="tooltip" title="This is what users will see when purchasing a ticket and on receipts.">
                     Ticket Label
-                </a>
+                    @include('v1.parts.tooltip', ['title' => "This is what users will see when purchasing a ticket and on receipts."])
             </th>
             <th style="width: 20%">
-                <a data-toggle="tooltip"
-                   title="Tickets cannot be purchased after this date.  Default value: Event Start Date">
-                    Available Until
-                </a>
+                Available Until
+                @include('v1.parts.tooltip', ['title' => "Tickets cannot be purchased after this date.  Default value: Event Start Date"])
             </th>
             {{--
             <th>Early Bird Date</th>
@@ -72,9 +69,8 @@ $default = Org::find($event->orgID);
             <th>Member Price</th>
             <th>Non-Member Price</th>
             <th style="width: 20%">
-                <a data-toggle="tooltip" title="Set to 0 if there is no maximum.">
-                    Max Attendees
-                </a>
+                Max Attendees
+                @include('v1.parts.tooltip', ['title' => "Set to 0 if there is no maximum."])
             </th>
         </tr>
         </thead>
@@ -233,7 +229,10 @@ $default = Org::find($event->orgID);
 
         <tr>
             <td></td>
-            <th>Include?</th>
+            <th>
+                Include?
+                @include('v1.parts.tooltip', ['title' => "Change to 'Yes' to add tickets to bundle."])
+            </th>
             <th colspan="5">Ticket</th>
         </tr>
 
@@ -472,7 +471,7 @@ $default = Org::find($event->orgID);
                         @for($n=1;$n<=5;$n++)
                         <tr id="tkt{{ $n }}_row"<?php if($n > 1) echo(' style="display: none;"'); ?>>
                             <td class="col-md-4 col-md-offset-4">
-                                <label class="control-label">Ticket Name</label>
+                                <label class="control-label">Ticket Label</label>
                                 <input id='ticketLabel-{{ $n }}' name='ticketLabel-{{ $n }}' type='text'
                                        class='form-control input-sm'>
                                 <p>&nbsp;</p>
