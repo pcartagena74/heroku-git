@@ -79,6 +79,11 @@ $soldout = 0;
 @extends('v1.layouts.no-auth')
 
 @section('content')
+    <style>
+        .popover{
+            max-width: 50%;
+        }
+    </style>
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
@@ -553,8 +558,9 @@ $soldout = 0;
         ;
     </script>
     <script>
-        $(function () {
-            $('[data-toggle="popover"]').popover()
+        $('[data-toggle="popover"]').popover({
+            container: 'body',
+            placement: 'top'
         });
     </script>
 

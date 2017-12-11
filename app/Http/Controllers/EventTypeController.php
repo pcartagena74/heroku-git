@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\EventType;
+use App\Person;
 use Illuminate\Http\Request;
 
 class EventTypeController extends Controller
@@ -33,9 +34,24 @@ class EventTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        // responds to POST to /eventtype/create and creates, adds, stores the event
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $orgID = $this->currentPerson->defaultOrgID;
+
+        for($i = 1; $i <= 5; $i++) {
+            $eventType = "eventType-" . $i;
+
+            $type = request()->input($eventType);
+            if(isset($type)){
+                $newET = new EventType();
+                $newET->orgID = $orgID;
+                $newET->creatorID = $this->currentPerson->personID;
+                $newET->etName = $type;
+                $newET->save();
+            }
+        }
+        return redirect('/eventdefaults');
     }
 
     /**
@@ -44,8 +60,7 @@ class EventTypeController extends Controller
      * @param  \App\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
-    public function show(EventType $eventType)
-    {
+    public function show(EventType $eventType) {
         //
     }
 
@@ -64,22 +79,41 @@ class EventTypeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\EventType  $eventType
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, EventType $eventType)
+    public function update(Request $request, $id)
     {
-        //
+        // responds to POST /eventType/id
+        $etID = request()->input('pk');
+
+        $name = request()->input('name');
+        if(strpos($name, '-')) {
+            // if passed from the registration receipt, the $name will have a dash
+            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+        }
+        $value = request()->input('value');
+
+        $oet = EventType::find($etID);
+        $oet->{$name}   = $value;
+        $oet->updaterID = auth()->user()->id;
+        $oet->save();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\EventType  $eventType
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EventType $eventType)
-    {
-        //
+    public function destroy($id) {
+        // responds to DELETE /eventtype/id/delete
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $et = EventType::find($id);
+        $et->updaterID = $this->currentPerson->personID;
+        $et->save();
+        $et->delete();
+
+        return redirect('/eventdefaults');
     }
 }

@@ -125,6 +125,10 @@ Route::post('/load_data', 'UploadController@store');
 Route::get('/role_mgmt', 'RoleController@index');
 Route::post('/role/{person}/{role}', 'RoleController@update');                  // Ajax
 
+Route::post('/eventtype/create', 'EventTypeController@store');
+Route::delete('/eventtype/{etID}/delete', 'EventTypeController@destroy');
+Route::post('/eventtype/{etID}', 'EventTypeController@update');                 // Ajax
+
 // Member Routes
 // ---------------------
 Route::get('/members', 'PersonController@index')->name('manageMembers');

@@ -60,7 +60,7 @@ $topBits = '';
         <tr>
             <th style="text-align: left;">
                 Event Refund Days
-                @include('v1.parts.tooltip', ['title' => "This is the number of days, PRIOR to an event, after which a refund is no longer possible."])
+                @include('v1.parts.tooltip', ['title' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible."])
             </th>
             <th style="text-align: left;"></th>
             <th style="text-align: left;"></th>
@@ -116,29 +116,49 @@ $topBits = '';
     </table>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Event Types' , 'subheader' => '',
+    @include('v1.parts.start_content', ['header' => 'Default & Custom Event Types' , 'subheader' => '',
              'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
-            <th style="text-align: left;">Event Type</th>
+            <th colspan="2" style="text-align: left;">Event Types</th>
         </tr>
         </thead>
         <tbody>
         @foreach($event_types as $et)
             <tr>
-                <td style="text-align: left;">
-                    @if($et->orgID != 1)
-                        <a data-pk="{{ $et->etID }}" id="eventTypeID-{{ $et->etID }}"
+                @if($et->orgID != 1)
+                    <td style="text-align: left; width: 15px;">
+                        {!! Form::open(array('url' => env('APP_URL')."/eventtype/" . $et->etID . "/delete", 'method' => 'delete')) !!}
+                        <input type="hidden" name="personID" value="{{ $current_person->personID }}">
+                        <button class="btn btn-danger btn-xs"
+                                {{--
+                                data-toggle="confirmation"
+                                --}}
+                                data-btn-ok-label="Continue"
+                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                data-btn-ok-class="btn-success btn-sm"
+                                data-btn-cancel-label="Stop!"
+                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                data-btn-cancel-class="btn-danger btn-sm"
+                                data-title="Are you sure?" data-content="This cannot be undone.">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        {{ Form::close() }}
+                    </td>
+                    <td style="text-align: left;">
+                        <a data-pk="{{ $et->etID }}" id="etName-{{ $et->etID }}"
                            data-value="{{ $et->etName }}"
-                           data-url="{{ env('APP_URL') }}/eventtypes/{{ $et->etID }}"
+                           data-url="{{ env('APP_URL') }}/eventtype/{{ $et->etID }}"
                            data-type="text" data-placement="top"></a>
-                    @else
-                        {{ $et->etName }}
-                        @include('v1.parts.tooltip', ['title' => "This value cannot be edited or removed."])
-                    @endif
-                </td>
+                    </td>
+                @else
+                    <td colspan="2" style="text-align: left;">
+                    {{ $et->etName }}
+                    @include('v1.parts.tooltip', ['title' => "This value cannot be edited or removed."])
+                    </td>
+                @endif
             </tr>
         @endforeach
         </tbody>
@@ -172,6 +192,9 @@ $topBits = '';
                 params._token = $("meta[name=token]").attr("content");
                 return params;
             };
+            $('[data-toggle=confirmation]').confirmation({
+                rootSelector: '[data-toggle=confirmation]',
+            });
             $('#defaultTicketLabel').editable({
                 type: 'text',
                 pk:  {{ $org->orgID }},
@@ -234,7 +257,7 @@ $topBits = '';
 
             @foreach($event_types as $et)
             @if($et->orgID != 1)
-            $('#eventTypeID-{{ $et->etID }}').editable({
+            $('#etName-{{ $et->etID }}').editable({
                 placement: 'top'
             });
             @endif
@@ -290,7 +313,7 @@ $topBits = '';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form name="eventtypes" method="post" action="/eventtypes/store">
+                    <form name="eventtypes" method="post" action="{{ env('APP_URL') }}/eventtype/create">
                         {{ csrf_field() }}
                         <input type="hidden" name="personID" value="{{ $current_person->personID }}">
                         <table id="new_et_fields" class="table table-striped">
