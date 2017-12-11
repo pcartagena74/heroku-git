@@ -101,7 +101,9 @@ foreach($past_events as $event) {
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
-    if($event->cnt > 0) { $delete_button = ''; }
+    if($event->cnt > 0 && $current_person->personID != 357) {
+        $delete_button = '';
+    }
 
     if($current_person->personID != 357){
         $edit_link_button = '';

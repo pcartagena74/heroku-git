@@ -558,13 +558,9 @@ class EventController extends Controller
         if(!isset($event)) {
             $e = Event::where([
                 ['orgID', '=', $this->currentPerson->defaultOrgID],
-                // Removed 10-day past buffer to allow for post-event registrations if needed
                 ['eventStartDate', '>=', $today->subDays(10)],
-                ['eventStartDate', '>=', $today]
             ])
                       ->select('eventID', 'eventName')
-                // Same with limit (2)
-                // ->limit(2)
                       ->get();
 
             $a      = $e->pluck('eventName', 'eventID');
