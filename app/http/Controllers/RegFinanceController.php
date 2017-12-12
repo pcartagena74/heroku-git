@@ -177,6 +177,7 @@ class RegFinanceController extends Controller
 
     public function update (Request $request, $id) {
         // responds to PATCH /complete_registration/{id}
+        set_time_limit(100);
 
         $rf                  = RegFinance::with('registration', 'ticket')->where('regID', $id)->first();
         $event               = Event::find($rf->eventID);
