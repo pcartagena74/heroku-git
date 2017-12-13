@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Support\Facades\DB;
+use App\Bundle;
 
 class Ticket extends Model
 {
@@ -32,5 +34,23 @@ class Ticket extends Model
 
     public function regfinances() {
         return $this->hasMany(RegFinance::class, 'ticketID');
+    }
+
+    public function waitlisting(){
+        if($this->isaBundle){
+            $members = Bundle::with('ticket')->where('bundleID', $this->ticketID)->get();
+            foreach ($members as $m){
+                if($m->ticket->maxAttendees > 0 && $m->ticket->regCount > $m->ticket->maxAttendees){
+                    return 1;
+                }
+            }
+            return 0;
+        } else {
+            if($this->maxAttendees > 0 && $this->regCount > $this->maxAttendees){
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

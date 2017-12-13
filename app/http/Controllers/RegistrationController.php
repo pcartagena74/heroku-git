@@ -395,7 +395,7 @@ class RegistrationController extends Controller
         $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
         $reg->affiliation      = implode(",", $affiliation);
         $reg->regStatus        = 'In Progress';
-        if($t->maxAttendees > 0 && $t->regCount > $t->maxAttendees){
+        if($t->waitlisting()) {
             $reg->regStatus        = 'Wait List';
         }
         $reg->registeredBy     = $regBy;
@@ -597,7 +597,7 @@ class RegistrationController extends Controller
             $reg->canNetwork       = request()->input('canNetwork') !== null ? 1 : 0;
             $reg->affiliation      = implode(",", $affiliation);
             $reg->regStatus        = 'In Progress';
-            if($t->maxAttendees > 0 && $t->regCount > $t->maxAttendees){
+            if($t->waitlisting()){
                 $reg->regStatus        = 'Wait List';
             }
             $reg->registeredBy     = $regBy;
@@ -641,7 +641,7 @@ class RegistrationController extends Controller
             }
             Auth::check() ? $rf->creatorID = auth()->user()->id : $rf->creatorID = 1;
             Auth::check() ? $rf->updaterID = auth()->user()->id : $rf->updaterID = 1;
-            if($t->maxAttendees > 0 && $t->regCount > $t->maxAttendees){
+            if($t->waitlisting()){
                 $rf->status       = 'Wait List';
             }
             $rf->save();

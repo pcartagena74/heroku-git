@@ -106,7 +106,7 @@ $deletion = 0;
                     <br/>
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
                         <h1 style="color:red;">
-                            @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
+                            @if($ticket->waitlisting())
                                 WAIT LIST ONLY - Not a Ticket
                             @else
                                 Balance Due at Event

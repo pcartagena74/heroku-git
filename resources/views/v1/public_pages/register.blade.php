@@ -99,13 +99,17 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
+    {{--
     @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
+    --}}
+    @if($ticket->waitlisting())
         <div class="clearfix"><p></div>
         <b class="red">
             Registering will secure {{ $quantity == 1? 'a ':'' }}spot{{ $quantity == 1?'':'s' }} on the wait list.
             You will not be charged at this time.
         </b>
         <div class="clearfix"></div>
+    @else
     @endif
     @for($i=1; $i<=$quantity; $i++)
         {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}

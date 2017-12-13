@@ -95,6 +95,9 @@ class RegFinanceController extends Controller
             $industries = DB::table('industries')->get();
             // prep for stripe-related stuff since the next step is billing for non-$0
 
+            if($ticket->waitlisting()){
+                $needSessionPick = 0;
+            }
             return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
                 'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
 
@@ -141,15 +144,6 @@ class RegFinanceController extends Controller
             }
         }
 
-        if($needSessionPick) {
-            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                             ->where([
-                                 ['bt.bundleID', '=', $ticket->ticketID],
-                                 ['event-tickets.eventID', '=', $event->eventID]
-                             ])
-                             ->get();
-        }
-
         $x =
             compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
                 'person', 'org', 'tickets');
@@ -192,7 +186,7 @@ class RegFinanceController extends Controller
         $needSessionPick     = $request->input('needSessionPick');
         $stripeToken         = $request->input('stripeToken');
 
-        if($needSessionPick) {
+        if($ticket->isaBundle) {
             $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
                              ->where([
                                  ['bt.bundleID', '=', $ticket->ticketID],
@@ -242,7 +236,7 @@ class RegFinanceController extends Controller
 
             } elseif($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
+                if($ticket->waitlisting()){
                     $rf->status  = 'Wait List';
                     $rf->pmtType = 'pending';
                 } else {
@@ -259,7 +253,7 @@ class RegFinanceController extends Controller
             $end         = $rf->seats - 1;
             for($i = $id - $end; $i <= $id; $i++) {
                 $reg = Registration::find($i);
-                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
+                if($ticket->waitlisting()){
                     $reg->regStatus = 'Wait List';
                 } else {
                     $reg->regStatus = 'Processed';
@@ -293,7 +287,7 @@ class RegFinanceController extends Controller
             // Update ticket purchase on all bundle ticket members by $rf->seat
             if($ticket->isaBundle) {
                 foreach($tickets as $t) {
-                    if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
+                    if($t->waitlisting()){
                         $t->waitCount += $rf->seats;
                     } else {
                         $t->regCount += $rf->seats;
@@ -301,7 +295,7 @@ class RegFinanceController extends Controller
                     $t->save();
                 }
             } else {
-                if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees) {
+                if($ticket->waitlisting()){
                     $ticket->waitCount += $rf->seats;
                 } else {
                     $ticket->regCount += $rf->seats;
