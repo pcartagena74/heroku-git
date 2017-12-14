@@ -292,7 +292,7 @@ $deletion = 0;
                             </tr>
                         </table>
 
-                        @if($event->hasTracks > 0 && $needSessionPick == 1)
+                        @if($event->hasTracks > 0 && $needSessionPick == 1 && !$ticket)
                             <table class="table table-bordered jambo_table table-striped">
                                 <thead>
                                 <tr>
