@@ -99,7 +99,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
-    @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
+    @if($ticket->waitlisting())
         <div class="clearfix"><p></div>
         <b class="red">
             Registering will secure {{ $quantity == 1? 'a ':'' }}spot{{ $quantity == 1?'':'s' }} on the wait list.
@@ -153,14 +153,14 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 <th style="width:20%;">
                         First Name<sup>*</sup>
                     @if($i == 1 && $isMember)
-                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here."])
                     @endif
                 </th>
                 <th style="width:20%;">Middle Name</th>
                 <th style="width:20%;">
                         Last Name<sup>*</sup>
                     @if($i == 1 && $isMember)
-                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here."])
                     @endif
                 </th>
                 <th style="width:20%;">Suffix</th>
@@ -378,6 +378,12 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 $('#login_modal').modal('show');
             });
         </script>
+    @elseif(!Auth::check())
+<script>
+    $(document).ready(function () {
+        $('#login_modal2').modal('show');
+    });
+</script>
     @endif
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
@@ -499,6 +505,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
 @section('modals')
     @if(!Auth::check())
         @include('v1.modals.login')
+        @include('v1.modals.login', ['id' => 'login_modal2', 'msg' => 'If you have an account, login now and the form will auto-fill.<br>If you do not have one, one will be created for you during registration.'])
         @include('v1.modals.forgot')
     @endif
 @endsection

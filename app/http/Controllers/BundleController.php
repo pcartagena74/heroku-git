@@ -47,7 +47,7 @@ class BundleController extends Controller
         list($field1, $field2, $ticketID) = array_pad(explode("-", $name, 3), 3, null);
 
         $value    = request()->input('value');
-        // pk is the bundleID.  Yes. Redundance above done for editable_jQ_uniqueness
+        // pk is the bundleID.  Yes. Redundancy above done for editable_jQ_uniqueness
         $bundleID = request()->input('pk');
 
         // The ticketID is no longer part of the bundle

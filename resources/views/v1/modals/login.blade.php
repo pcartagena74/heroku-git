@@ -2,10 +2,19 @@
 /**
  * Comment: a Login Modal that will submit silently
  * Created: 3/3/2017
+ *
+ * @param: $id
  */
+if(!isset($id)){
+    $id = 'login_modal';
+}
+if(!isset($msg)){
+    $msg = 'If registering resulted in mCentric telling you that an account exists for you, login or
+    click on the "Forgot Your Password?" link above and enter the email you used to register.';
+}
 ?>
 
-<div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="login_label" aria-hidden="true">
+<div class="modal fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="login_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -74,8 +83,7 @@
             <div class="modal-footer">
                 <div class="container">
                 <div class="col-sm-10" style="text-align: left;">
-                    If registering resulted in mCentric telling you that an account exists for you, login or
-                    click on the "Forgot Your Password?" link above and enter the email you used to register.
+                    {!! $msg !!}
                 </div>
                 <div class="col-sm-1">
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>

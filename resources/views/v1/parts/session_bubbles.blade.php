@@ -146,8 +146,9 @@ if($reg->ticket->isaBundle) {
                                         @endif
                                         <div class="col-sm-3" style="text-align:left;">
                                             @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
-                                                <b class="red"><a data-toggle="tooltip" title="Maximum attendees reached.">
-                                                        {{ $s->sessionName }}</a></b><br/>
+                                                <b>{{ $s->sessionName }}</b><br />
+                                            <span class="red">Maximum attendees reached.</span>
+                                                <br/>
                                             @else
                                                 <b>{{ $s->sessionName }}</b><br/>
                                             @endif

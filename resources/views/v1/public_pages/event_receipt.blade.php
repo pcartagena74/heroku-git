@@ -106,7 +106,7 @@ $deletion = 0;
                     <br/>
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
                         <h1 style="color:red;">
-                            @if($ticket->maxAttendees > 0 && $ticket->regCount > $ticket->maxAttendees)
+                            @if($ticket->waitlisting())
                                 WAIT LIST ONLY - Not a Ticket
                             @else
                                 Balance Due at Event
@@ -292,7 +292,7 @@ $deletion = 0;
                             </tr>
                         </table>
 
-                        @if($event->hasTracks > 0 && $needSessionPick == 1)
+                        @if($event->hasTracks > 0 && $needSessionPick == 1 && !$ticket)
                             <table class="table table-bordered jambo_table table-striped">
                                 <thead>
                                 <tr>

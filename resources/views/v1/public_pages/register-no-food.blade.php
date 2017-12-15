@@ -98,7 +98,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
-    @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
+    @if($ticket->waitlisting())
         <div class="clearfix"><p></div>
         <b class="red">
             Registering will secure {{ $quantity == 1? 'a ':'' }}spot{{ $quantity == 1?'':'s' }} on the wait list.
@@ -361,6 +361,12 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 $('#login_modal').modal('show');
             });
         </script>
+    @elseif(!Auth::check())
+        <script>
+            $(document).ready(function () {
+                $('#login_modal2').modal('show');
+            });
+        </script>
     @endif
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
@@ -505,6 +511,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
 @section('modals')
     @if(!Auth::check())
         @include('v1.modals.login')
+        @include('v1.modals.login', ['id' => 'login_modal2', 'msg' => 'If you have an account, login now and the form will auto-fill.<br>If you do not have one, one will be created for you during registration.'])
         @include('v1.modals.forgot')
     @endif
 @endsection

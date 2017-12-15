@@ -25,7 +25,7 @@ $reg_rows = [];
 foreach($regs as $r) {
     $p = Person::find($r->personID);
     array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        '<i class="fa fa-dollar"></i>' . $r->subtotal]);
+        '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', '')]);
 }
 
 if(count($reg_rows) >= 15) {
@@ -174,6 +174,7 @@ if($event->hasTracks && $event->isSymmetric) {
                                                         width: {{ $width }}%; max-width: {{ $mw }}%;">
 <?php
                                                     // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
+                                                    $sTotal = 0;
                                                     $sRegs =
                                                         RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
                                                                   ->where([
@@ -181,22 +182,13 @@ if($event->hasTracks && $event->isSymmetric) {
                                                                       ['er.eventID', $event->eventID]
                                                                   ])->select(DB::raw('er.discountCode, count(*) as cnt'))
                                                                   ->groupBy('er.discountCode')->get();
-                                                    /*
-                                                    $sRegs = DB::table('reg-session as rs')
-                                                        ->where([
-                                                            ['sessionID', $s->sessionID],
-                                                            ['rs.eventID', $event->eventID]
-                                                        ])
-                                                        ->join('event-registration as er', 'er.regID', '=', 'rs.regID')
-                                                        ->select(DB::raw('er.discountCode, count(*) as total'))
-                                                        ->groupBy('er.discountCode')
-                                                        ->get();
-                                                    */
 ?>
                                                     <ul>
                                                     @foreach($sRegs as $sr)
                                                         <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
+                                                        <?php $sTotal += $sr->cnt; ?>
                                                     @endforeach
+                                                        <li><b>Total: {{ $sTotal }}</b></li>
                                                     </ul>
                                                 </td>
                                             @else
