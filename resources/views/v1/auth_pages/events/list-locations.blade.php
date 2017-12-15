@@ -33,8 +33,10 @@ count($locations) > 15 ? $location_scroll = 1 : $location_scroll = 0;
             });
             $('#datatable-fixed-header').Tabledit({
                 type: 'post',
+                rowIdentifier: 'locID',
                 editButton: false,
                 deleteButton: true,
+                restoreButton: false,
                 eventType: 'click',
                 url: '{{ env('APP_URL') }}/location/update',
                 columns: {
@@ -50,6 +52,5 @@ count($locations) > 15 ? $location_scroll = 1 : $location_scroll = 0;
             });
         });
     </script>
-
 @endsection
 

@@ -47,23 +47,28 @@ class LocationController extends Controller
         // responds to POST /location/update
         $this->currentPerson = Person::find(auth()->user()->id);
         $locID               = request()->input('locID');
+        $action              = request()->input('action');
         $location            = Location::find($locID);
 
-        if(request()->input('locName')) {
-            $location->locName = request()->input('locName');
-        } elseif(request()->input('addr1')) {
-            $location->addr1 = request()->input('addr1');
-        } elseif(request()->input('addr2')) {
-            $location->addr2 = request()->input('addr2');
-        } elseif(request()->input('city')) {
-            $location->city = request()->input('city');
-        } elseif(request()->input('state')) {
-            $location->state = request()->input('state');
-        } elseif(request()->input('zip')) {
-            $location->zip = request()->input('zip');
+        if($action != 'delete'){
+            if(request()->input('locName')) {
+                $location->locName = request()->input('locName');
+            } elseif(request()->input('addr1')) {
+                $location->addr1 = request()->input('addr1');
+            } elseif(request()->input('addr2')) {
+                $location->addr2 = request()->input('addr2');
+            } elseif(request()->input('city')) {
+                $location->city = request()->input('city');
+            } elseif(request()->input('state')) {
+                $location->state = request()->input('state');
+            } elseif(request()->input('zip')) {
+                $location->zip = request()->input('zip');
+            }
+            $location->updaterID = $this->currentPerson->personID;
+            $location->save();
+        } else {
+            $location->delete();
         }
-        $location->updaterID = $this->currentPerson->personID;
-        $location->save();
 
         return json_encode(array('input' => request(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID));
     }
