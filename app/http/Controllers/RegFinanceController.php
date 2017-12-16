@@ -95,9 +95,6 @@ class RegFinanceController extends Controller
             $industries = DB::table('industries')->get();
             // prep for stripe-related stuff since the next step is billing for non-$0
 
-            if($ticket->waitlisting()){
-                $needSessionPick = 0;
-            }
             return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
                 'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
 
@@ -347,7 +344,6 @@ class RegFinanceController extends Controller
                     }
                 }
             }
-
         } else {
             // No session selection data to record;
         }

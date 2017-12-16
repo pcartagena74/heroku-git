@@ -161,14 +161,14 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 <th style="width:20%;">
                     First Name<sup>*</sup>
                     @if($i == 1 && $isMember)
-                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here."])
                     @endif
                 </th>
                 <th style="width:20%;">Middle Name</th>
                 <th style="width:20%;">
                     Last Name<sup>*</sup>
                     @if($i == 1 && $isMember)
-                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing."])
+                        @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here."])
                     @endif
                 </th>
                 <th style="width:20%;">Suffix</th>
