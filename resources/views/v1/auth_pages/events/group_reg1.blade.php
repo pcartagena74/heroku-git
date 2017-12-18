@@ -40,7 +40,7 @@ if($event->isSymmetric && $event->hasTracks) {
 
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => "Group Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     {!! Form::open(['url' => env('APP_URL').'/group_reg2/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
 
     <div class="whole">

@@ -69,9 +69,15 @@ $topBits = '';  // remove this if this was set in the controller
                     {!! Form::label('email-'.$i, 'Email') !!}<br/>
                     {!! Form::text('email-'.$i, null, array('id' => 'email-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     {!! Form::label('ticketID-'.$i, 'Ticket') !!}<br/>
-                    {!! Form::select('ticketID-'.$i, $tickets, old('ticketID-'.$i), array('id' => 'ticketID-'.$i, 'class' =>'input-sm', 'style' => 'width:150px;')) !!}
+                    {!! Form::select('ticketID-'.$i, $tickets, old('ticketID-'.$i), array('id' => 'ticketID-'.$i, 'class' =>'input-sm', 'style' => 'width:75px;')) !!}
+                </div>
+                <div class="col-sm-1">
+                    {!! Form::label('override-'.$i, 'Override') !!}
+                    @include('v1.parts.tooltip', ['title' => "Enter a value here to set a price.  If you leave it empty, the price will be automatically determined."])
+                    <br/>
+                    {!! Form::text('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
                 </div>
                 <div class="col-sm-1">
                     {!! Form::label('pmiid-'.$i, 'PMI ID') !!}<br/>
@@ -81,6 +87,11 @@ $topBits = '';  // remove this if this was set in the controller
                     {!! Form::label('code-'.$i, 'Discount') !!}<br/>
                     {!! Form::select('code-'.$i, $discounts, array('id' => 'code-'.$i, 'class' => 'input-sm', 'style' => 'width:75px')) !!}<br />
                 </div>
+                {{--
+                <div class="col-sm-offset-8 col-sm-4" id="prices-{{ $i }}">
+                    Words
+                </div>
+                --}}
             </div>
 
         @endfor

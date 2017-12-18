@@ -14,12 +14,14 @@ class LocationController extends Controller
     }
 
     public function index () {
-        // responds to /blah
+        // responds to GET /locations
         $this->currentPerson = Person::find(auth()->user()->id);
         $locations           = DB::table('event-location')->where('orgID', $this->currentPerson->defaultOrgID)
+                                 ->whereNull('deleted_at')
                                  ->orderBy('locName')
-                                 ->select('locID', 'locName', 'addr1', 'addr2', 'city', 'state', 'zip')->get();
-        //dd($locations);
+                                 ->select('locID', 'locName', 'addr1', 'addr2', 'city', 'state', 'zip',
+                                     DB::raw("(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt"))->get();
+
         $topBits = '';
         return view('v1.auth_pages.events.list-locations', compact('locations', 'topBits'));
     }
@@ -50,7 +52,7 @@ class LocationController extends Controller
         $action              = request()->input('action');
         $location            = Location::find($locID);
 
-        if($action != 'delete'){
+        if($action != 'delete') {
             if(request()->input('locName')) {
                 $location->locName = request()->input('locName');
             } elseif(request()->input('addr1')) {
@@ -69,8 +71,7 @@ class LocationController extends Controller
         } else {
             $location->delete();
         }
-
-        return json_encode(array('input' => request(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID));
+        return json_encode(array('input' => request()->all(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID));
     }
 
     public function destroy ($id) {

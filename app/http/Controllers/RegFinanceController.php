@@ -31,6 +31,7 @@ use League\Flysystem\Filesystem;
 use Carbon\Carbon;
 use App\EventDiscount;
 use App\Email;
+use Illuminate\Support\Facades\Validator;
 
 class RegFinanceController extends Controller
 {
@@ -44,7 +45,13 @@ class RegFinanceController extends Controller
     }
 
     public function show ($id) {
-        // responds to GET /blah/id
+        // responds to GET /confirm_registration/{id}
+        $show_pass_fields = 0;
+        $today            = Carbon::now()->format('n/j/Y');
+        $u                = User::find(auth()->user()->id);
+        if($u->createDate->format('n/j/Y') == $today && $u->password === null) {
+            $show_pass_fields = 1;
+        }
         try {
             $rf              = RegFinance::find($id);
             $needSessionPick = 0;
@@ -96,7 +103,7 @@ class RegFinanceController extends Controller
             // prep for stripe-related stuff since the next step is billing for non-$0
 
             return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
-                'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick'));
+                'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick', 'show_pass_fields'));
 
         } catch(\Exception $exception) {
             $message = "An unexpected error occurred.";
@@ -169,6 +176,21 @@ class RegFinanceController extends Controller
     public function update (Request $request, $id) {
         // responds to PATCH /complete_registration/{id}
         set_time_limit(100);
+        $u = User::find(auth()->user()->id);
+        if($u->password === null) {
+            // validate password matching
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|min:6|confirmed',
+            ]);
+            if($validator->fails()) {
+                return back()->withErrors($validator);
+            }
+            $password = request()->input('password');
+            $u->password = bcrypt($password);
+            $u->save();
+            request()->session()->flash('alert-success', "Your password was set successfully.");
+            // email confirmation
+        }
 
         $rf                  = RegFinance::with('registration', 'ticket')->where('regID', $id)->first();
         $event               = Event::find($rf->eventID);
@@ -233,7 +255,7 @@ class RegFinanceController extends Controller
 
             } elseif($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                if($ticket->waitlisting()){
+                if($ticket->waitlisting()) {
                     $rf->status  = 'Wait List';
                     $rf->pmtType = 'pending';
                 } else {
@@ -250,7 +272,7 @@ class RegFinanceController extends Controller
             $end         = $rf->seats - 1;
             for($i = $id - $end; $i <= $id; $i++) {
                 $reg = Registration::find($i);
-                if($ticket->waitlisting()){
+                if($ticket->waitlisting()) {
                     $reg->regStatus = 'Wait List';
                 } else {
                     $reg->regStatus = 'Processed';
@@ -284,7 +306,7 @@ class RegFinanceController extends Controller
             // Update ticket purchase on all bundle ticket members by $rf->seat
             if($ticket->isaBundle) {
                 foreach($tickets as $t) {
-                    if($t->waitlisting()){
+                    if($t->waitlisting()) {
                         $t->waitCount += $rf->seats;
                     } else {
                         $t->regCount += $rf->seats;
@@ -292,7 +314,7 @@ class RegFinanceController extends Controller
                     $t->save();
                 }
             } else {
-                if($ticket->waitlisting()){
+                if($ticket->waitlisting()) {
                     $ticket->waitCount += $rf->seats;
                 } else {
                     $ticket->regCount += $rf->seats;
@@ -379,7 +401,7 @@ class RegFinanceController extends Controller
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
         //return view('v1.public_pages.event_receipt', $x);
-        return redirect('/show_receipt/'. $rf->regID);
+        return redirect('/show_receipt/' . $rf->regID);
     }
 
     public function group_reg1 (Request $request) {
@@ -399,6 +421,7 @@ class RegFinanceController extends Controller
             $pmiid     = request()->input('pmiid-' . $i);
             $ticketID  = request()->input('ticketID-' . $i);
             $code      = request()->input('code-' . $i);
+            $override  = request()->input('override-' . $i);
             if($code === null || $code == " ") {
                 $code = 'N/A';
             }
@@ -475,7 +498,7 @@ class RegFinanceController extends Controller
                 // Defaulting to No for explicit user agreement
                 // Add to orgperson / profile
                 $reg->canNetwork = 0;
-                $reg->isAuthPDU = 0;
+                $reg->isAuthPDU  = 0;
                 // origcost
                 // subtotal
                 if($t->earlyBirdEndDate !== null && $today->lte($t->earlyBirdEndDate)) {
@@ -497,6 +520,9 @@ class RegFinanceController extends Controller
                         $reg->subtotal = $t->nonmbrBasePrice;
                     }
                 }
+                if(isset($override)) {
+                    $reg->subtotal = $override;
+                }
                 if($code) {
                     $dCode = EventDiscount::where([
                         ['eventID', $eventID],
@@ -506,6 +532,9 @@ class RegFinanceController extends Controller
                         $reg->subtotal = $reg->subtotal - ($reg->subtotal * $dCode->percent / 100);
                     } else {
                         $reg->subtotal = $reg->subtotal - $dCode->flatAmt;
+                    }
+                    if($reg->subtotal < 0) {
+                        $reg->subtotal = 0;
                     }
                 }
                 $reg->regStatus = 'In Progress';

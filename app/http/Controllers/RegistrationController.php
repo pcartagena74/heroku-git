@@ -137,7 +137,7 @@ class RegistrationController extends Controller
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store (Request $request, Event $event) {
-        // responds to POST to /blah and creates, adds, stores the event
+        // responds to POST to /regstep3/{event}/create and creates, adds, stores the event
         // check if someone logged in
         // if so, get person record and update
         // if not, check to see if email matches any person record and update
@@ -153,11 +153,7 @@ class RegistrationController extends Controller
             $this->currentPerson = Person::find(auth()->user()->id)->load('orgperson');
             //$this->currentPerson->load('orgperson');
         }
-
-        // This is a quick check to pass through without saving another record if the _token is already in the db
-        //if(count($resubmit) == $quantity) {
-            //return redirect('/confirm_registration/' . $resubmit->regID);
-        //}
+        $show_pass_fields = 0;
 
         $checkEmail = request()->input('login');
 
@@ -190,7 +186,6 @@ class RegistrationController extends Controller
             $eventNotes   = request()->input('eventNotes');
             $allergenInfo = request()->input('allergenInfo');
             $cityState    = request()->input('cityState');
-            //$allergenInfo = implode(",", request()->input('allergenInfo'));
         }
 
         // put in some validation to ensure that nothing was tampered with
@@ -230,6 +225,7 @@ class RegistrationController extends Controller
             $user->email = $checkEmail;
             $user->save();
             Auth::loginUsingId($user->id);
+            $show_pass_fields = 1;
             // send email notification with password setting stuff
 
             $this->currentPerson = $person;
@@ -367,6 +363,15 @@ class RegistrationController extends Controller
             $person->creatorID   = $this->currentPerson->personID;
             $person->updaterID   = $this->currentPerson->personID;
             $person->save();
+
+            // Need to create a user record with new personID
+
+            $user        = new User();
+            $user->id    = $person->personID;
+            $user->login = $checkEmail;
+            $user->email = $checkEmail;
+            $user->save();
+            $show_pass_fields = 1;
 
             $op           = new OrgPerson;
             $op->orgID    = $event->orgID;
