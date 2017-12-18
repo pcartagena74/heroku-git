@@ -81,13 +81,25 @@ if($event->isSymmetric && $event->hasTracks) {
                     <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
                         @if($rf->cost > 0 && $rf->status != 'Wait List')
                             <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
-                        @else
+                        @elseif($rf->status == 'Wait List')
                             <b>Join the Wait List</b>
+                        @else
+                            <b>Complete Registration</b>
                         @endif
                     </button>
 
                 </div>
             </div>
+            @if($show_pass_fields)
+            <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
+                <div class="col-sm-6 form-group">
+                    {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => 'Set a password')) !!}
+                </div>
+                <div class="col-sm-6 form-group">
+                    {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => 'Confirm your password')) !!}
+                </div>
+            </div>
+            @endif
 
             @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
 <?php
@@ -449,8 +461,10 @@ if($event->isSymmetric && $event->hasTracks) {
                     <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                         @if($rf->cost > 0 && $rf->status != 'Wait List')
                             <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
-                        @else
+                        @elseif($rf->status == 'Wait List')
                             <b>Join the Wait List</b>
+                        @else
+                            <b>Complete Registration</b>
                         @endif
                     </button>
 

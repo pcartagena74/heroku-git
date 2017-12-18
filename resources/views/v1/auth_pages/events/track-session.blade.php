@@ -339,7 +339,7 @@ $tickets = Ticket::where([
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $.fn.editable.defaults.mode = 'inline';
+            $.fn.editable.defaults.mode = 'popup';
         });
     </script>
     <script>
@@ -388,6 +388,7 @@ $tickets = Ticket::where([
                 type: 'combodate',
                 template: 'MMM DD YYYY h:mm A',
                 format: 'YYYY-MM-DD HH:mm:ss',
+                placement: 'right',
                 viewformat: 'h:mm A',
                 combodate: {
                     minYear: '{{ date("Y") }}',
@@ -399,6 +400,7 @@ $tickets = Ticket::where([
                 type: 'combodate',
                 template: 'MMM DD YYYY h:mm A',
                 format: 'YYYY-MM-DD HH:mm:ss',
+                placement: 'right',
                 viewformat: 'h:mm A',
                 combodate: {
                     minYear: '{{ date("Y") }}',

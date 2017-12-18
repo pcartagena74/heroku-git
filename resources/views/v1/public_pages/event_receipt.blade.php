@@ -155,8 +155,6 @@ $deletion = 0;
                                 <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
                                     #{{ $tcount }}
                                     @if($reg->deleted_at)
-                                        &nbsp; &nbsp;
-                                        &nbsp; &nbsp;
                                         <span class="red">
                                             @if($reg->subtotal > 0)
                                                 REFUNDED
@@ -292,7 +290,7 @@ $deletion = 0;
                             </tr>
                         </table>
 
-                        @if($event->hasTracks > 0 && $needSessionPick == 1 && !$ticket)
+                        @if($event->hasTracks > 0 && $needSessionPick == 1 && !$ticket->waitlisting())
                             <table class="table table-bordered jambo_table table-striped">
                                 <thead>
                                 <tr>
