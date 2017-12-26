@@ -37,7 +37,7 @@ return [
 
     'connections' => [
 
-        'awss3' => [
+        's3_events' => [
             'driver' => 'awss3',
             'key' => env('AWS_KEY'),
             'secret' => env('AWS_SECRET'),

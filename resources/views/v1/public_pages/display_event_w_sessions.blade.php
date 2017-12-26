@@ -79,6 +79,7 @@ $soldout = 0;
 @extends('v1.layouts.no-auth')
 
 @section('content')
+    @include('v1.parts.not-table_header')
     <style>
         .popover{
             max-width: 50%;
@@ -115,9 +116,9 @@ $soldout = 0;
                 <div class="tab-pane active" id="tab_content1" aria-labelledby="ticketing-tab">
                     <br />
 
-                    <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                    <div id="not" class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                         <table id="datatable" class="table table-striped jambo_table">
-                            <thead>
+                            <thead id="cf">
                             <tr>
                                 <th style="width: 40%" colspan="2">Ticket</th>
                                 <th style="width: 20%">PMI Member Cost<SUP style="color: red">*</SUP></th>
@@ -137,7 +138,7 @@ $soldout = 0;
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td data-title="Ticket">
                                         {{ $bundle->ticketLabel }}<SUP style='color: red'>**</SUP>
 <?php
                                         $b_tkts = DB::table('event-tickets')
@@ -169,7 +170,7 @@ $soldout = 0;
                                             <b class="red">This ticket is sold out.  Add yourself to the wait list.</b>
                                         @endif
                                     </td>
-                                    <td><i class="fa fa-dollar"></i>
+                                    <td data-title="Member Price"><i class="fa fa-dollar"></i>
                                         @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
                                             <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike>
                                             <br>
@@ -179,7 +180,7 @@ $soldout = 0;
                                             {{ number_format($bundle->memberBasePrice, 2, '.', ',') }}
                                         @endif
                                     </td>
-                                    <td><i class="fa fa-dollar"></i>
+                                    <td data-title="Non-Member Price"><i class="fa fa-dollar"></i>
                                         @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
                                             <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike>
                                             <br>
@@ -189,7 +190,7 @@ $soldout = 0;
                                             {{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}
                                         @endif
                                     </td>
-                                    <td>{{ $bundle->availabilityEndDate->format('n/j/Y g:i A') }}</td>
+                                    <td data-title="Available Until">{{ $bundle->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                                 </tr>
                             @endforeach
                             @foreach($tickets as $ticket)
@@ -197,12 +198,12 @@ $soldout = 0;
                                     <td style="text-align: center;">
                                         <input type="radio" name="ticketID" value="{{ $ticket->ticketID }}">
                                     </td>
-                                    <td>{{ $ticket->ticketLabel }}
+                                    <td data-title="Ticket">{{ $ticket->ticketLabel }}
                                         @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
                                             <br /><b class="red">This ticket is sold out.  Add yourself to the wait list.</b>
                                         @endif
                                     </td>
-                                    <td><i class="fa fa-dollar"></i>
+                                    <td data-title="Member Price"><i class="fa fa-dollar"></i>
                                         @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                             <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike>
                                             <br>
@@ -212,7 +213,7 @@ $soldout = 0;
                                             {{ number_format($ticket->memberBasePrice, 2, '.', ',') }}
                                         @endif
                                     </td>
-                                    <td>
+                                    <td data-title="Non-Member Price">
                                         <i class="fa fa-dollar"></i>
                                         @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                             <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike>
@@ -223,12 +224,11 @@ $soldout = 0;
                                             {{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}
                                         @endif
                                     </td>
-                                    <td>{{ $ticket->availabilityEndDate->format('n/j/Y g:i A') }}</td>
+                                    <td data-title="Available Until">{{ $ticket->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td></td>
-                                <td colspan="4">
+                                <td colspan="5">
                                     <div class="form-group">
                                         <input type="number" pattern="[1-5]" name="quantity"
                                                placeholder="  Quantity" required
@@ -243,10 +243,10 @@ $soldout = 0;
 
                     <div class="col-md-12 col-sm-12 col-xs-12" id="status_msg"></div>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <div class="col-md-9 col-sm-9 col-xs-12" style="text-align: right"><input
+                        <div class="col-md-9 col-sm-9 col-xs-6" style="text-align: right"><input
                                     id="discount_code" name="discount_code" type="text"
                                     placeholder="  Enter discount code"/></div>
-                        <div class="col-md-3 col-sm-3 col-xs-12"><a class="btn btn-xs btn-primary"
+                        <div class="col-md-3 col-sm-3 col-xs-6"><a class="btn btn-xs btn-primary"
                                                                     id="btn-validate">Validate</a></div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
@@ -270,13 +270,13 @@ $soldout = 0;
                     <br/>
 
                     @if($event->confDays != 0)
-                        <div class="col-sm-12 col-md-12 col-xs-12">
+                        <div id="not" class="col-sm-12 col-md-12 col-xs-12">
 
                             <p>Here are this event's {{ count($tracks) }} tracks and its sessions from which attendees
                                 can choose to participate.<br/>
                                 This does not show any full-group keynotes, lunch or evening sessions.</p>
                             <table class="table table-bordered table-striped table-condensed table-responsive">
-                                <thead>
+                                <thead class="cf">
                                 <tr>
                                     @foreach($tracks as $track)
 
@@ -328,13 +328,13 @@ $soldout = 0;
 ?>
                                                 @if($s !== null)
                                                     @if($tracks->first() == $track || !$event->isSymmetric)
-                                                        <td rowspan="3" style="text-align:left;">
+                                                        <td data-title="Times" rowspan="3" style="text-align:left;">
                                                             <nobr> {{ $s->start->format('g:i A') }} </nobr>
                                                             &dash;
                                                             <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                         </td>
                                                     @endif
-                                                        <td colspan="2" style="text-align:left; min-width:150px;
+                                                        <td data-title="Session" colspan="2" style="text-align:left; min-width:150px;
                                                                 width: {{ $width }}%; max-width: {{ $mw }}%;">
                                                             <b>{{ $s->sessionName }}</b>
                                                             <a tabindex="0" class="btn btn-xs btn-primary pull-right"
@@ -371,7 +371,7 @@ $soldout = 0;
                                                 ])->first();
 ?>
                                                 @if($s !== null)
-                                                    <td colspan="2" style="text-align:left;">
+                                                    <td data-title="Speaker" colspan="2" style="text-align:left;">
                                                         <b>Session Speaker(s)</b><br/>
                                                         {{ $s->sessionSpeakers or "tbd" }}
                                                     </td>
@@ -404,14 +404,14 @@ $soldout = 0;
                                                 ])->first();
 ?>
                                                 @if($s !== null)
-                                                    <td style="text-align:left;">
+                                                    <td data-title="Credit" style="text-align:left;">
                                                         <b>{{ $s->creditAmt }}
                                                             {{ $s->creditArea }}
                                                             {{ $s->event->org->creditLabel }}<?php if($s->creditAmt > 1) {
                                                                 echo('s');
                                                             } ?></b>
                                                     </td>
-                                                    <td style="text-align:left;">
+                                                    <td data-title="Limit" style="text-align:left;">
                                                         <b> Attendee Limit: </b> {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
                                                     </td>
                                                 @else

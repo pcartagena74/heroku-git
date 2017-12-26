@@ -147,6 +147,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                     <span id="final{{ $i }}">---</span></td>
             </tr>
         </table>
+        <div id="not">
         <table class="table table-striped">
             <tr>
                 <th style="width:20%;">Prefix</th>
@@ -349,6 +350,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @endif
             </tr>
         </table>
+        </div>
     @endfor
 
     <span id="discount" style="display: none;">0</span>
