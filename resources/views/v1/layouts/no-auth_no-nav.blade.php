@@ -12,6 +12,7 @@
     body {
         overflow-y: 0 auto;
     }
+
     footer {
         background-color: #fff;
         position: fixed;
@@ -19,7 +20,8 @@
         top: 100vh;
         margin-top: -50px;
         margin-right: 50px;
-        width: 100%; height: 100px;
+        width: 100%;
+        height: 100px;
     }
 </style>
 </head>
@@ -27,7 +29,9 @@
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;">
-            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;" src="{{ env('APP_URL') }}/images/mCentric_logo.png" alt="mCentric"/></a>
+            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;"
+                                                  src="{{ env('APP_URL') }}/images/mCentric_logo.png"
+                                                  alt="mCentric"/></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12"
              style="display:table-cell; vertical-align:top">
@@ -37,14 +41,16 @@
                     @if ($errors->has('email'))
                         <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
                     @endif
-                    <input type="email" placeholder="Email Address" class="form-control input-sm" name="email" id="user_email"
+                    <input type="email" placeholder="Email Address" class="form-control input-sm" name="email"
+                           id="user_email"
                            value="{{ old('email') }}" required autofocus>
                 </div>
                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                     @if ($errors->has('password'))
                         <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
                     @endif
-                    <input type="password" placeholder="Password" class="form-control input-sm" name="password" id="password" required>
+                    <input type="password" placeholder="Password" class="form-control input-sm" name="password"
+                           id="password" required>
                 </div>
                 <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">Login</button>
                 <div class="form-group">
@@ -52,7 +58,9 @@
                         <div class="checkbox">
                             <label style="color: white;">
                                 <nobr><input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                                    &nbsp; Remember Me</nobr><br />
+                                    &nbsp; Remember Me
+                                </nobr>
+                                <br/>
                                 <a style="color: white;" href="/password/reset">Forgot Password?</a>
                             </label>
                         </div>
@@ -63,81 +71,88 @@
         <div class="col-md-12 col-sm-12 col-xs-12 navbar-inverse"><span id="err"></span></div>
     </div>
 </nav>
-<div class="top_content">
-    <div class="mainimage">
-        <img src="{{ env('APP_URL') }}/images/main.jpg" alt="" style="height: 350px; width:100%;"/>
-        <div class="overlay">
-            <div class='console-container'><span id='text'></span>
-                <div class='console-underscore' id='console'>&#95;</div>
+
+    <div class="top_content">
+        <div class="mainimage">
+            <img src="{{ env('APP_URL') }}/images/main.jpg" alt="" style="height: 350px; width:100%;"/>
+            <div class="overlay">
+                <div class='console-container'><span id='text'></span>
+                    @if(!Agent::isMobile())
+                    <div class='console-underscore' id='console'>&#95;</div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
+
 <div class="container body col-md-12 col-sm-12 col-xs-12">
     <div class="main_container bit">
 
-    @yield('content')
+        @yield('content')
 
-    @include('v1.parts.footer_public_scripts')
-    @yield('scripts')
-    <script>
-            // function([string1, string2],target id,[color1,color2])
-            consoleText(['Marketing', 'Mailings', 'Meetings', 'Integrated Membership Management'], 'text', ['black', 'black', 'black']);
+        @include('v1.parts.footer_public_scripts')
+        @yield('scripts')
+        @if(Agent::isMobile())
+        @else
+            <script>
+                // function([string1, string2],target id,[color1,color2])
+                consoleText(['Marketing', 'Mailings', 'Meetings', 'Integrated Membership Management'], 'text', ['black', 'black', 'black']);
 
-            function consoleText(words, id, colors) {
-                if (colors === undefined) colors = ['black'];
-                var visible = true;
-                var con = document.getElementById('console');
-                var letterCount = 1;
-                var x = 1;
-                var waiting = false;
-                var target = document.getElementById(id)
-                target.setAttribute('style', 'color:' + colors[0])
-                window.setInterval(function () {
+                function consoleText(words, id, colors) {
+                    if (colors === undefined) colors = ['black'];
+                    var visible = true;
+                    var con = document.getElementById('console');
+                    var letterCount = 1;
+                    var x = 1;
+                    var waiting = false;
+                    var target = document.getElementById(id)
+                    target.setAttribute('style', 'color:' + colors[0])
+                    window.setInterval(function () {
 
-                    if (letterCount === 0 && waiting === false) {
-                        waiting = true;
-                        target.innerHTML = words[0].substring(0, letterCount)
-                        window.setTimeout(function () {
-                            var usedColor = colors.shift();
-                            colors.push(usedColor);
-                            var usedWord = words.shift();
-                            words.push(usedWord);
-                            x = 1;
-                            target.setAttribute('style', 'color:' + colors[0])
-                            letterCount += x;
-                            waiting = false;
-                        }, 1500)
-                    } else if (letterCount === words[0].length + 1 && waiting === false) {
-                        waiting = true;
-                        window.setTimeout(function () {
-                            x = -1;
-                            letterCount += x;
-                            waiting = false;
-                        }, 1000)
-                    } else if (waiting === false) {
-                        if (x === -1) {
-                            target.innerHTML = '';
-                            letterCount = 0;
-                        } else {
+                        if (letterCount === 0 && waiting === false) {
+                            waiting = true;
                             target.innerHTML = words[0].substring(0, letterCount)
-                            letterCount += x;
+                            window.setTimeout(function () {
+                                var usedColor = colors.shift();
+                                colors.push(usedColor);
+                                var usedWord = words.shift();
+                                words.push(usedWord);
+                                x = 1;
+                                target.setAttribute('style', 'color:' + colors[0])
+                                letterCount += x;
+                                waiting = false;
+                            }, 1500)
+                        } else if (letterCount === words[0].length + 1 && waiting === false) {
+                            waiting = true;
+                            window.setTimeout(function () {
+                                x = -1;
+                                letterCount += x;
+                                waiting = false;
+                            }, 1000)
+                        } else if (waiting === false) {
+                            if (x === -1) {
+                                target.innerHTML = '';
+                                letterCount = 0;
+                            } else {
+                                target.innerHTML = words[0].substring(0, letterCount)
+                                letterCount += x;
+                            }
                         }
-                    }
-                }, 60)
-                window.setInterval(function () {
-                    if (visible === true) {
-                        con.className = 'console-underscore hidden'
-                        visible = false;
+                    }, 60)
+                    window.setInterval(function () {
+                        if (visible === true) {
+                            con.className = 'console-underscore hidden'
+                            visible = false;
 
-                    } else {
-                        con.className = 'console-underscore'
-                        visible = true;
-                    }
-                }, 2000)
-            }
-        </script>
-    @yield('modals')
+                        } else {
+                            con.className = 'console-underscore'
+                            visible = true;
+                        }
+                    }, 2000)
+                }
+            </script>
+        @endif
+        @yield('modals')
     </div>
 </div>
 @include('v1.parts.footer')

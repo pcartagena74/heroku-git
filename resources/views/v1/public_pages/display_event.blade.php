@@ -54,7 +54,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
             <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
                 Category: {{ $category->catTXT }}</div>
 
-            <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+            <div id="not" class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
 
                 @if($event->earlyBirdDate !== null && $event->earlyBirdDate->gte($today))
                     <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
@@ -67,7 +67,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                     </div>
                 @endif
                 <table id="datatable" class="table table-striped jambo_table">
-                    <thead>
+                    <thead class="cf">
                     <tr>
                         <th style="width: 40%" colspan="2">Ticket</th>
                         <th style="width: 20%">PMI Member Cost<SUP style="color: red">*</SUP></th>
@@ -87,7 +87,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </td>
-                            <td>
+                            <td data-title="Ticket">
                                 {{ $bundle->ticketLabel }}<SUP style='color: red'>**</SUP>
 
 <?php
@@ -124,7 +124,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     <b class="red">This ticket is sold out.  Add yourself to the wait list.</b>
                                 @endif
                             </td>
-                            <td><i class="fa fa-dollar"></i>
+                            <td data-title="Member Price"><i class="fa fa-dollar"></i>
                                 @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike>
                                     <br>
@@ -134,7 +134,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     {{ number_format($bundle->memberBasePrice, 2, '.', ',') }}
                                 @endif
                             </td>
-                            <td><i class="fa fa-dollar"></i>
+                            <td data-title="Non-Member Price"><i class="fa fa-dollar"></i>
                                 @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike>
                                     <br>
@@ -144,7 +144,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     {{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}
                                 @endif
                             </td>
-                            <td>{{ $bundle->availabilityEndDate->format('n/j/Y g:i A') }}</td>
+                            <td data-title="Available Until">{{ $bundle->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                         </tr>
                     @endforeach
                     @foreach($tickets as $ticket)
@@ -152,12 +152,12 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                             <td style="text-align: center;">
                                 <input type="radio" name="ticketID" value="{{ $ticket->ticketID }}">
                             </td>
-                            <td>{{ $ticket->ticketLabel }}
+                            <td data-title="Ticket">{{ $ticket->ticketLabel }}
                                 @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
                                     <br /><b class="red">This ticket is sold out.  Add yourself to the wait list.</b>
                                 @endif
                             </td>
-                            <td><i class="fa fa-dollar"></i>
+                            <td data-title="Member Price"><i class="fa fa-dollar"></i>
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike>
                                     <br>
@@ -167,7 +167,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     {{ number_format($ticket->memberBasePrice, 2, '.', ',') }}
                                 @endif
                             </td>
-                            <td>
+                            <td data-title="Non-Member Price">
                                 <i class="fa fa-dollar"></i>
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike>
@@ -178,12 +178,11 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                                     {{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}
                                 @endif
                             </td>
-                            <td>{{ $ticket->availabilityEndDate->format('n/j/Y g:i A') }}</td>
+                            <td data-title="Available Until">{{ $ticket->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td></td>
-                        <td colspan="4">
+                        <td colspan="5">
                             <div class="form-group">
                                 <input type="number" pattern="[1-5]" name="quantity"
                                        placeholder="  Quantity" required

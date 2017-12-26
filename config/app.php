@@ -144,6 +144,7 @@ return [
          */
 
         #'Aws\Laravel\AwsServiceProvider',
+        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
         Barryvdh\Snappy\ServiceProvider::class,
 	    Collective\Html\HtmlServiceProvider::class,
         #\Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,

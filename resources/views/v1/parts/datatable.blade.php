@@ -78,8 +78,7 @@ $th_count = 0; $tb_count = 0;
                 @if(isset($hidecol[$th_count]))
                     <th style="display:none;">{{ $header }}</th>
                 @else
-                    <th style="vertical-align: top; text-align: left;">
-                        {{ $header }}</th>
+                    <th style="vertical-align: top; text-align: left;">{{ $header }}</th>
                 @endif
             @endforeach
         </tr>
