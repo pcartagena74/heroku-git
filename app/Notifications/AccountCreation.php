@@ -46,9 +46,10 @@ class AccountCreation extends Notification
     public function toMail ($notifiable) {
         $o = Org::find($this->person->defaultOrgID);
         $name = $o->orgName;
+        $ename = $this->event->eventName;
         return (new MailMessage)
             ->subject("Your mCentric Account ($name)")
-            ->line("An mCentric account was recently created for you during registration for $this->event->eventName.")
+            ->line("An mCentric account was recently created for you during registration for $ename.")
             ->line('If you initiated this change, you can delete this email.')
             ->action('Visit mCentric', env('APP_URL'))
             ->line("Thank you for using mCentric with $name");
