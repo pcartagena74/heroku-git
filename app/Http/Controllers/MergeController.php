@@ -239,18 +239,18 @@ class MergeController extends Controller
             $o->delete();
         }
 
+        // change any permissions that might be set
+        DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
+
+        request()->session()->flash('alert-success', $this->models[$letter] .
+            " record: " . $model2->personID . " was successfully merged into " . $model1->personID . '.');
+
         // Trigger Notification
         $u = User::find($model2->personID);
         if(isset($u)) {
             $u->delete();
         }
         $model2->delete();
-
-        // change any permissions that might be set
-        DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
-
-        request()->session()->flash('alert-success', $this->models[$letter] .
-            " record: " . $model2->personID . " was successfully merged into " . $model1->personID . '.');
 
         return redirect('/merge/' . $letter . '/' . $model1->personID);
     }
