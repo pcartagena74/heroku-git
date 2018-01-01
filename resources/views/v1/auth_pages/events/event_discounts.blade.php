@@ -7,9 +7,15 @@
 $discount_headers = ['#', 'Discount Code', 'Discount Percent', 'Flat Amount'];
 
 $topBits = '';
+
+$currentPerson = App\Person::find(auth()->user()->id);
+$currentOrg    = $currentPerson->defaultOrg;
 ?>
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
+
+@if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+    || Entrust::hasRole('Development'))
 
 @section('content')
 
@@ -83,6 +89,7 @@ $topBits = '';
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                {!! Form::open(['url' => env('APP_URL').'/eventdiscount', 'method' => 'post']) !!}
                 <div class="modal-header">
                     <h5 class="modal-title" id="discount_label">Add Additional Discount</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -90,16 +97,14 @@ $topBits = '';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form name="discounts" method="post" action="/eventdiscount">
-                        {{ csrf_field() }}
                         <input type="hidden" name="personID" value="{{ $current_person->personID }}">
                         <input type="hidden" name="eventID" value="{{ $event->eventID }}">
                         <table id="new_discounts" class="table table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 10%">Discount Code</th>
-                                <th style="width: 20%">Percent</th>
-                                <th style="width: 20%">Dollar Amount</th>
+                                <th style="width: 50%">Discount Code</th>
+                                <th style="width: 25%">Percent</th>
+                                <th style="width: 25%">Dollar Amount</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -107,10 +112,15 @@ $topBits = '';
                             @for($n=1; $n<=5; $n++)
 
                                 <tr id="disc{{ $n }}_row"<?php if($n > 1) echo(' style="display:none"'); ?>>
-                                    <td><input type='text' id='discountCode{{ $n }}'
-                                               name='discountCode{{ $n }}'></input></td>
-                                    <td><input type='text' id='percent{{ $n }}' name='percent{{ $n }}'></input>
-                                    <td><input type='text' id='flatAmt{{ $n }}' name='flatAmt{{ $n }}'></input>
+                                    <td>
+                                        {!! Form::text('discountCode'.$n, '', array('id' => 'discountCode'.$n, 'class' => 'form-control input-sm', 'placeholder' => 'Enter code')) !!}
+                                    </td>
+                                    <td>
+                                        {!! Form::number('percent'.$n, '', array('id' => 'percent'.$n, 'class' => 'form-control input-sm', 'placeholder' => '0')) !!}
+                                    </td>
+                                    <td>
+                                        {!! Form::number('flatAmt'.$n, '', array('id' => 'flatAmt'.$n, 'class' => 'form-control input-sm', 'placeholder' => '0')) !!}
+                                    </td>
                                 </tr>
 
                             @endfor
@@ -129,8 +139,8 @@ $topBits = '';
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                     <button type="submit" id="disc_submit" class="btn btn-sm btn-success">Save Discount</button>
-                    </form>
                 </div>
+                {!! Form::close() !!}
             </div>
         </div>
     </div>
@@ -218,3 +228,5 @@ $topBits = '';
         });
     </script>
 @endsection
+
+@endif

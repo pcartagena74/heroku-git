@@ -200,9 +200,10 @@ class EventController extends Controller
         // responds to /events/create and shows add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson;
+        $org                = Org::find($current_person->defaultOrgID);
         $page_title          = 'Create New Event';
 
-        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title'));
+        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
     }
 
     public function store (Request $request) {
@@ -344,7 +345,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
-        Flysystem::connection('awss3')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         return redirect('/event-tickets/' . $event->eventID);
     }
@@ -382,7 +383,7 @@ class EventController extends Controller
     }
 
     public function update (Request $request, Event $event) {
-        // responds to PATCH /events/id
+        // responds to PATCH /event/id
         // $event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
         $input_loc           = request()->input('locationID');
@@ -489,7 +490,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
-        Flysystem::connection('awss3')->put($event_filename, $contents);
+        Flysystem::connection('s3_events')->put($event_filename, $contents);
 
         // Think about whether ticket modification should be done here.
         // Maybe catch the auto-created tickets when events are copied

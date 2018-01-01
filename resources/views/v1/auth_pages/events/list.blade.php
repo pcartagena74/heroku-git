@@ -9,7 +9,6 @@
 
 $current_headers =
     ['Event Dates', 'Event Name', 'Event Type', 'Event Status', 'Attendee Count', 'Event Management'];
-//    ['#', 'Event Name', 'Event Type', 'Event Dates', 'Event Status', 'Attendee Count', 'Event Management'];
 $current_data    = [];
 
 foreach($current_events as $event) {
@@ -56,13 +55,9 @@ foreach($current_events as $event) {
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
-    if($event->isActive) {
+    // Deletion should not be possible when 1. event is active 2. event has registrations.
+    if($event->isActive || $event->cnt > 0) {
         $delete_button = '';
-    } else {
-        if($event->cnt > 0){
-            $delete_button = '';
-        }
-        $checkin_button = '';
     }
 
     $ticket_button =
@@ -73,10 +68,6 @@ foreach($current_events as $event) {
         $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button .
         $eventDiscount_button . $ticket_button . $track_link_button . $rpt_link_button  . $copy_link_button .
         $checkin_button . $delete_button]);
-//    array_push($current_data, [$event->eventID, $event->eventName, $event->etName,
-//        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-//        $active_button, $progress_bar, $display_link_button . $edit_link_button . $eventDiscount_button .
-//        $rpt_link_button  . $copy_link_button . $track_link_button . $ticket_button . $checkin_button . $delete_button]);
 }
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
@@ -111,11 +102,7 @@ foreach($past_events as $event) {
 
     array_push($past_data, [ "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $event->eventName, $event->etName, $event->cnt, $edit_link_button . $rpt_link_button . $copy_link_button . $delete_button]);
-//    array_push($past_data, [$event->eventID, $event->eventName, $event->etName,
-//        "<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
-//        $event->cnt, $ticket_button . $rpt_link_button . $copy_link_button]);
 }
-//dd($past_data);
 count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 
 ?>

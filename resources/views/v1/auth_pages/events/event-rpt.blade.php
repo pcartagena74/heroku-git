@@ -20,7 +20,8 @@ foreach($tkts as $t) {
 }
 
 $reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost'];
-$reg_rows = [];
+$notreg_headers = ['Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost'];
+$reg_rows = []; $notreg_rows = [];
 
 foreach($regs as $r) {
     $p = Person::find($r->personID);
@@ -28,10 +29,22 @@ foreach($regs as $r) {
         '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', '')]);
 }
 
+foreach($notregs as $r) {
+    $p = Person::find($r->personID);
+    array_push($notreg_rows, [$r->regStatus, $p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+        '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', '')]);
+}
+
 if(count($reg_rows) >= 15) {
     $scroll = 1;
 } else {
     $scroll = 0;
+}
+
+if(count($notreg_rows) >= 15) {
+    $notscroll = 1;
+} else {
+    $notscroll = 0;
 }
 
 $disc_headers = ['Code', 'Count', 'Cost', 'CC Fee', 'Handle Fee', 'Net'];
@@ -82,6 +95,8 @@ if($event->hasTracks && $event->isSymmetric) {
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             <li class="active"><a href="#tab_content1" id="attendees-tab" data-toggle="tab"
                                   aria-expanded="true"><b>Registered Attendees</b></a></li>
+            <li class=""><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
+                            aria-expanded="false"><b>Wait List or Interrupted Registrations</b></a></li>
             <li class=""><a href="#tab_content2" id="finances-tab" data-toggle="tab"
                             aria-expanded="false"><b>Detailed Financial Data</b></a></li>
             @if($event->hasTracks)
@@ -94,7 +109,21 @@ if($event->hasTracks && $event->isSymmetric) {
             <div class="tab-pane active" id="tab_content1" aria-labelledby="attendees-tab">
                 &nbsp;<br/>
 
-                @include('v1.parts.datatable', ['headers' => $reg_headers, 'data' => $reg_rows, 'scroll' => $scroll])
+                @if(count($reg_rows)>0)
+                    @include('v1.parts.datatable', ['headers' => $reg_headers, 'data' => $reg_rows, 'scroll' => $scroll])
+                @else
+                    There are no attendees registered for this event at this time.
+                @endif
+
+            </div>
+            <div class="tab-pane fade" id="tab_content4" aria-labelledby="nonreg-tab">
+                &nbsp;<br/>
+
+                @if(count($notreg_rows)>0)
+                    @include('v1.parts.datatable', ['headers' => $notreg_headers, 'data' => $notreg_rows, 'scroll' => $notscroll])
+                @else
+                    There are no interrupted registrations or wait listed registrations for this event at this time.
+                @endif
 
             </div>
             <div class="tab-pane fade" id="tab_content2" aria-labelledby="finances-tab">
@@ -243,7 +272,7 @@ if($event->hasTracks && $event->isSymmetric) {
             responsive: true,
             legend: {
                 display: false,
-                position: "bottom",
+                position: "bottom"
             },
             legendCallback: function (chart) {
                 console.log(chart.data);
@@ -310,7 +339,7 @@ if($event->hasTracks && $event->isSymmetric) {
                 responsive: true,
                 legend: {
                     display: false,
-                    position: "bottom",
+                    position: "bottom"
                 },
                 legendCallback: function (chart) {
                     console.log(chart.data);

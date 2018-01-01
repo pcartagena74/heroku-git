@@ -12,10 +12,15 @@ $title = '"Adding a new field label here does NOT introduce new data for your me
 $fieldnames =
     " &nbsp; <a data-toggle='tooltip' title=" . $title .
     " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
+
+$currentPerson = App\Person::find(auth()->user()->id);
+$currentOrg    = $currentPerson->defaultOrg;
 ?>
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
+@if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
+    || Entrust::hasRole('Development'))
 @section('content')
 
     @include('v1.parts.start_content', ['header' => 'Organizational Settings for: ' . $orgHeader, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -124,8 +129,6 @@ $fieldnames =
     @include('v1.parts.end_content')
 
 @endsection
-
-
 
 @section('scripts')
     <script>
@@ -272,3 +275,4 @@ $fieldnames =
     </script>
 
 @endsection
+@endif

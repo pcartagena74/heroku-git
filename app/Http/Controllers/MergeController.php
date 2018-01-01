@@ -190,7 +190,6 @@ class MergeController extends Controller
         $columns      = explode(',', request()->input('columns'));
         $ignore_array = explode(',', request()->input('ignore_array'));
 
-
         foreach($columns as $c) {
             $x = request()->input($c);
             if($x == 2) {
@@ -202,6 +201,7 @@ class MergeController extends Controller
         foreach($model2->emails as $e) {
             $m2            = Email::find($e->emailID);
             $m2->personID  = $model1->personID;
+            $m2->isPrimary = 0;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
         }
@@ -225,6 +225,8 @@ class MergeController extends Controller
         foreach($model2->regfinances as $e) {
             $m2            = RegFinance::find($e->regID);
             $m2->personID  = $model1->personID;
+            // Person soft-deletes require unique key 'login' to be uniquely modified
+            $m2->login     = '_' . $m2->login;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
         }
@@ -245,11 +247,14 @@ class MergeController extends Controller
         request()->session()->flash('alert-success', $this->models[$letter] .
             " record: " . $model2->personID . " was successfully merged into " . $model1->personID . '.');
 
-        // Trigger Notification
         $u = User::find($model2->personID);
         if(isset($u)) {
             $u->delete();
         }
+
+        // Trigger Notification
+        // Need to notify $model2 it's being merged ONLY if password !== null
+        // $model2->notify(new AccountMerge($model2, $model1));
         $model2->delete();
 
         return redirect('/merge/' . $letter . '/' . $model1->personID);
