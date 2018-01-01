@@ -13,7 +13,8 @@ class PhoneController extends Controller
     }
 
     public function store (Request $request) {
-        // responds to POST to /blah and creates, adds, stores the event
+        // responds to POST to /phones/create and creates, adds, stores the phone number
+        // properly takes into account whether user is changing their own info or another user's info
         $this->currentPerson = Person::find(auth()->user()->id);
 
         for($i = 1; $i <= 5; $i++) {
@@ -52,7 +53,7 @@ class PhoneController extends Controller
     }
 
     public function update (Request $request, $id) {
-        // responds to PATCH /blah/id
+        // responds to POST /phone/id
         $email          = Phone::find($id);
         $name           = request()->input('name');
         $value          = request()->input('value');
@@ -62,13 +63,14 @@ class PhoneController extends Controller
     }
 
     public function destroy ($id) {
-        // responds to DELETE /blah/id
+        // responds to POST /phone/id/delete
         $personID = request()->input('personID');
         $this->currentPerson = Person::find(auth()->user()->id);
-        $email               = Phone::find($id);
-        $email->updaterID    = $this->currentPerson->personID;
-        $email->save();
-        $email->delete();
+
+        $phone               = Phone::find($id);
+        $phone->updaterID    = $this->currentPerson->personID;
+        $phone->save();
+        $phone->delete();
 
         if(request()->input('personID') == $this->currentPerson->personID) {
             return redirect("/profile/my");

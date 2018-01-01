@@ -3,14 +3,9 @@
  * Comment: This is the form that will serve for both creation and editing of an event
  * Created: 2/11/2017
  */
-use Illuminate\Support\Collection;
 use App\Location;
 use App\Event;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
-use Aws\S3\S3Client;
-use League\Flysystem\Filesystem;
-use League\Flysystem\AdapterInterface;
 
 $dateFormat = 'm/d/Y h:i A';
 
@@ -62,22 +57,23 @@ $orgLogoPath = DB::table('organization')
                  ->select('orgPath', 'orgLogo')
                  ->where('orgID', $current_person->defaultOrgID)->first();
 
-$client = new S3Client([
-    'credentials' => [
-        'key' => env('AWS_KEY'),
-        'secret' => env('AWS_SECRET')
-    ],
-    'region' => env('AWS_REGION'),
-    'version' => 'latest',
-]);
+$currentPerson = $current_person;
+$currentOrg    = $org;
 
-$adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
-$s3fs    = new Filesystem($adapter);
-$logo    =
-    $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
+try {
+    if ($org->orgLogo !== null) {
+        $s3m = Flysystem::connection('s3_media');
+        $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
+    }
+} catch (\League\Flysystem\Exception $exception) {
+    $logo = '';
+}
 ?>
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
+
+@if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+    || Entrust::hasRole('Development'))
 
 @section('content')
 
@@ -357,23 +353,46 @@ $logo    =
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            var show;
+            var hide;
         });
+
+        show = 1;
+        hide = 0;
 
         function toggleShow() {
             $("#trackInput").toggle();
         }
         function toggleHide() {
             $("#address_info").toggle();
+            if(show){
+                show = 0;
+                hide = 1;
+                $('#addr1').removeAttr('required')
+                $('#addr2').removeAttr('required')
+                $('#city').removeAttr('required')
+                $('#state').removeAttr('required')
+                $('#zip').removeAttr('required')
+            } else {
+                show = 1;
+                hide = 0;
+            }
         }
         $(document).ready(function () {
-            // We'll help out users by populating the end date/time based on the start, but only once so we don't annoy.
-            var fired;
-            fired = 0;
+            // We'll help out users by populating the end date/time based on the start
             $('#eventStartDate').on('change', function () {
-                if (!fired) {
-                    $('#eventEndDate').val($('#eventStartDate').val());
-                    fired = 1;
-                }
+                foo = new moment($('#eventStartDate').val()).add(1, 'h').toDate();
+                $('#eventEndDate').val(moment(new Date(foo)).format("MM/DD/YYYY HH:mm A"));
+                $('#eventEndDate').daterangepicker({
+                    timePicker: true,
+                    autoUpdateInput: true,
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    timePickerIncrement: 15,
+                    locale: {
+                        format: 'M/D/Y h:mm A'
+                    }
+                });
             });
             $('#hasTracksCheck').on('change', function () {
                 $("#trackInput").toggle();
@@ -412,14 +431,6 @@ $logo    =
                         error: function (data) {
                             alert('error?  url: ' + theurl);
                             console.log(data);
-                        },
-                        statusCode: {
-                            500: function () {
-                                //
-                            },
-                            422: function (data) {
-                                //
-                            }
                         }
                     });
                 }
@@ -471,3 +482,5 @@ $logo    =
         @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => 'Edit Event'))
     @endif
 @endsection
+
+@endif

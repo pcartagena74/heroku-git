@@ -112,12 +112,18 @@ $deletion = 0;
                                 Balance Due at Event
                             @endif
                         </h1>
-                        <b style="color:red;">Wait-Listed on: </b> {{ $rf->createDate->format('n/j/Y') }}
+                        <b style="color:red;">
+                            @if($ticket->waitlisting())
+                                Wait-Listed
+                            @else
+                                Registered
+                            @endif
+                            on: </b> {{ $rf->createDate->format('n/j/Y') }}
                         <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
                     @else
                         <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
                         <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
-                        @if($rf->createDate != $rf->cancelDate)
+                        @if($rf->createDate->format('n/j/Y') != $rf->cancelDate->format('n/j/Y'))
                             <b style="color:red;">Updated on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
                             <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
                         @endif

@@ -140,7 +140,11 @@ class ActivityController extends Controller
                 $output_string .= " row.label == '" . $single . "' ||";
             }
         }
-        $output = substr($output_string, 0, -3);
+        if($output_string == '') {
+            $output = 'false';
+        } else {
+            $output = substr($output_string, 0, -3);
+        }
 
         $topBits = '';
         return view('v1.auth_pages.dashboard', compact('attendance', 'datastring', 'output', 'topBits'));

@@ -8,16 +8,28 @@
  *
  */
 use App\EventSession;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
+
 //use hisorange\BrowserDetect\Provider\BrowserDetectService;
 //ini_set('memory_limit', '256M');
+
+try {
+    if ($event->showLogo && $org->orgLogo !== null) {
+        $s3m = Flysystem::connection('s3_media');
+        $logo_url = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
+    }
+} catch (\League\Flysystem\Exception $exception) {
+    $logo_url = '';
+}
+
 ?>
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Register Attendee", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    @if($event->showLogo && $org->orgLogo !== null)
-        <img src="{{ $org->orgPath . "/" . $org->orgLogo }}" height="50">
+    @if($logo_url)
+        <img src="{{ $logo_url }}" height="50">
     @endif
     <h2>Event: {{ $event->eventName }}</h2>
 
@@ -42,38 +54,38 @@ use App\EventSession;
             </div>
 
             @for($x=1;$x<=5;$x++)
-<?php
+                <?php
                 $s = EventSession::where([
                     ['eventID', $event->eventID],
                     ['confDay', $i],
                     ['order', $x]
                 ])->first();
-?>
+                ?>
                 @if($s !== null)
-                <div class="form-group col-sm-12 col-xs-12">
-                    @foreach($track as $t)
-<?php
+                    <div class="form-group col-sm-12 col-xs-12">
+                        @foreach($track as $t)
+                            <?php
                             $s = EventSession::where([
                                 ['trackID', $t->trackID],
                                 ['eventID', $event->eventID],
                                 ['confDay', $i],
                                 ['order', $x]
                             ])->first();
-?>
+                            ?>
                             @if($s !== null)
-                            <div class="col-sm-3 col-xs-3">
-                                <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
-                                   style="white-space: normal;" class="btn btn-primary btn-sm">
-                                    @if(Agent::isMobile())
-                                        {{ $t->trackName . " " . $s->order }}
-                                    @else
-                                        {{ $s->sessionName }}
-                                    @endif
-                                </a>
-                            </div>
+                                <div class="col-sm-3 col-xs-3">
+                                    <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
+                                       style="white-space: normal;" class="btn btn-primary btn-sm">
+                                        @if(Agent::isMobile())
+                                            {{ $t->trackName . " " . $s->order }}
+                                        @else
+                                            {{ $s->sessionName }}
+                                        @endif
+                                    </a>
+                                </div>
                             @endif
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
                 @endif
             @endfor
         @endfor

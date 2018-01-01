@@ -96,7 +96,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         <li><a><i class="fa fa-microphone"></i> Speaker Management<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/speakers">Manage Speakers</a></li>
+                                <li><a href="{{ env('APP_URL') }}/speakers">Speakers List</a></li>
                                 <li><a href="{{ env('APP_URL') }}#">New Report <span
                                                 class="label label-success pull-right">Just Define It</span></a></li>
                             </ul>
@@ -107,7 +107,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         || Entrust::hasRole('Development'))
                         <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/members" id="mem">Member Management</a></li>
+                                <li><a href="{{ env('APP_URL') }}/members" id="mem">Member List</a></li>
                                 <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
                                                 class="label label-success pull-right">New</span></a></li>
                                 <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a>

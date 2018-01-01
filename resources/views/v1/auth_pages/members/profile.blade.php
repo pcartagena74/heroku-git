@@ -14,7 +14,7 @@ $emailURL = env('APP_URL') . "/email/";
 $phoneURL = env('APP_URL') . "/phone/";
 $ad_cnt = 0;  $em_cnt = 0; $ph_cnt = 0;
 
-if($profile->personID == $currentPerson->personID) {
+if ($profile->personID == $currentPerson->personID) {
     $display = "My";
 } else {
     $display = '<b style="color:red;">' . $profile->firstName . " " . $profile->lastName . "'s</b>";
@@ -139,70 +139,71 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 
                 @if(count($addresses) == 0)
                     There are no addresses associated with this profile.
-                @endif
-                <table id="address_fields" class="table table-striped table-condensed">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th style="width: 10%">Type</th>
-                        <th style="width: 20%">Address 1</th>
-                        <th style="width: 20%">Address 2</th>
-                        <th style="width: 20%">City</th>
-                        <th style="width: 10%">State</th>
-                        <th style="width: 10%">Zip</th>
-                        <th style="width: 10%">Country</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @foreach($addresses as $address)
-                        <?php $ad_cnt++; ?>
+                @else
+                    <table id="address_fields" class="table table-striped table-condensed">
+                        <thead>
                         <tr>
-                            <td>
-                                <form method="post" action="{{ "/address/" . $address->addrID . "/delete" }}">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                    <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                            data-btn-ok-label="Continue"
-                                            data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                            data-btn-ok-class="btn-success btn-sm"
-                                            data-btn-cancel-label="Stop!"
-                                            data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                            data-btn-cancel-class="btn-danger btn-sm"
-                                            data-title="Are you sure?" data-content="This cannot be undone.">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            <td><a href="#" id="addrTYPE{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-title="Enter address type"
-                                   data-value="{{ $address->addrTYPE }}">{{ $address->addrTYPE }}</a></td>
-                            <td><a href="#" id="addr1{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-title="Enter address 1" data-value="{{ $address->addr1 }}"></a></td>
-                            <td><a href="#" id="addr2{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-title="Enter address 2" data-value="{{ $address->addr2 }}"></a></td>
-                            <td><a href="#" id="city{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-title="Enter city"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-value="{{ $address->city }}"></a></td>
-                            <td><a href="#" id="state{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-title="Enter state"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-value="{{ $address->state }}"></a></td>
-                            <td><a href="#" id="zip{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-title="Enter zip code"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-value="{{ $address->zip }}"></a></td>
-                            <td><a href="#" id="cntryID{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                   data-url="{{ $addrURL . $address->addrID }}"
-                                   data-title="Enter country" data-value="{{ $address->cntryID }}"></a></td>
+                            <th></th>
+                            <th style="width: 10%">Type</th>
+                            <th style="width: 20%">Address 1</th>
+                            <th style="width: 20%">Address 2</th>
+                            <th style="width: 20%">City</th>
+                            <th style="width: 10%">State</th>
+                            <th style="width: 10%">Zip</th>
+                            <th style="width: 10%">Country</th>
                         </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+
+                        @foreach($addresses as $address)
+                            <?php $ad_cnt++; ?>
+                            <tr>
+                                <td>
+                                    <form method="post" action="{{ "/address/" . $address->addrID . "/delete" }}">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                                data-btn-ok-label="Continue"
+                                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                                data-btn-ok-class="btn-success btn-sm"
+                                                data-btn-cancel-label="Stop!"
+                                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                                data-btn-cancel-class="btn-danger btn-sm"
+                                                data-title="Are you sure?" data-content="This cannot be undone.">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td><a href="#" id="addrTYPE{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-title="Enter address type"
+                                       data-value="{{ $address->addrTYPE }}">{{ $address->addrTYPE }}</a></td>
+                                <td><a href="#" id="addr1{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-title="Enter address 1" data-value="{{ $address->addr1 }}"></a></td>
+                                <td><a href="#" id="addr2{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-title="Enter address 2" data-value="{{ $address->addr2 }}"></a></td>
+                                <td><a href="#" id="city{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-title="Enter city"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-value="{{ $address->city }}"></a></td>
+                                <td><a href="#" id="state{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-title="Enter state"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-value="{{ $address->state }}"></a></td>
+                                <td><a href="#" id="zip{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-title="Enter zip code"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-value="{{ $address->zip }}"></a></td>
+                                <td><a href="#" id="cntryID{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
+                                       data-url="{{ $addrURL . $address->addrID }}"
+                                       data-title="Enter country" data-value="{{ $address->cntryID }}"></a></td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                @endif
                 <div class="col-md-4 col-sm-9 col-xs-12">
                     <button type="button" id="add_address" class="btn btn-sm btn-success"
                             data-toggle="modal" data-target="#address_modal">Add Address
@@ -235,61 +236,62 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     There are no emails associated with this profile.
                 @else
                     These email addresses are those that you may have used to register for an event.  <p>
-                @endif
 
-                <table id="email_fields" class="table table-striped table-condensed">
-                    <tr>
-                        <th style="text-align:center;" colspan="2">Type</th>
-                        <th style="text-align:left;">Email</th>
-                        <th style="text-align:left;">
-                            Primary?
-                            @include('v1.parts.tooltip', ['title' => "The primary address is the only one we'll use to contact you. It is also the email address selected above."])
-                        </th>
-                    </tr>
-                    @foreach($emails as $email)
-                        <?php $em_cnt++; ?>
+                    <table id="email_fields" class="table table-striped table-condensed">
                         <tr>
-                            <td style="text-align: left;">
-                                @if($email->isPrimary)
-                                    <button class="btn btn-danger btn-xs" disabled><i class="fa fa-trash"></i></button>
-                                    @include('v1.parts.tooltip', ['title' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first."])
-                                @else
-                                <form method="post" action="{{ "/email/" . $email->emailID . "/delete" }}">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                    <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                            data-btn-ok-label="Continue"
-                                            data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                            data-btn-ok-class="btn-success btn-sm"
-                                            data-btn-cancel-label="Stop!"
-                                            data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                            data-btn-cancel-class="btn-danger btn-sm"
-                                            data-title="Are you sure?" data-content="This cannot be undone.">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                                @endif
-                            </td>
-                            <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}"
-                                                             data-pk="{{ $email->emailID }}"
-                                                             data-url="{{ $emailURL . $email->emailID }}"
-                                                             data-title="Enter email type"
-                                                             data-value="{{ $email->emailTYPE }}"></a>
-                            </td>
-                            <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}"
-                                                             data-pk="{{ $email->emailID }}"
-                                                             data-url="{{ $emailURL . $email->emailID }}"
-                                                             data-title="Enter address 1">{{ $email->emailADDR }}</a>
-                            </td>
-                            <td style="text-align: left;">@if($email->isPrimary) Yes
-                                @else
-                                    No
-                                @endif
-
-                            </td>
+                            <th style="text-align:center;" colspan="2">Type</th>
+                            <th style="text-align:left;">Email</th>
+                            <th style="text-align:left;">
+                                Primary?
+                                @include('v1.parts.tooltip', ['title' => "The primary address is the only one we'll use to contact you. It is also the email address selected above."])
+                            </th>
                         </tr>
-                    @endforeach
-                </table>
+                        @foreach($emails as $email)
+                            <?php $em_cnt++; ?>
+                            <tr>
+                                <td style="text-align: left;">
+                                    @if($email->isPrimary)
+                                        <button class="btn btn-danger btn-xs" disabled><i class="fa fa-trash"></i>
+                                        </button>
+                                        @include('v1.parts.tooltip', ['title' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first."])
+                                    @else
+                                        <form method="post" action="{{ "/email/" . $email->emailID . "/delete" }}">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                            <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                                    data-btn-ok-label="Continue"
+                                                    data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                                    data-btn-ok-class="btn-success btn-sm"
+                                                    data-btn-cancel-label="Stop!"
+                                                    data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                                    data-btn-cancel-class="btn-danger btn-sm"
+                                                    data-title="Are you sure?" data-content="This cannot be undone.">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+                                <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}"
+                                                                 data-pk="{{ $email->emailID }}"
+                                                                 data-url="{{ $emailURL . $email->emailID }}"
+                                                                 data-title="Enter email type"
+                                                                 data-value="{{ $email->emailTYPE }}"></a>
+                                </td>
+                                <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}"
+                                                                 data-pk="{{ $email->emailID }}"
+                                                                 data-url="{{ $emailURL . $email->emailID }}"
+                                                                 data-title="Enter address 1">{{ $email->emailADDR }}</a>
+                                </td>
+                                <td style="text-align: left;">@if($email->isPrimary) Yes
+                                    @else
+                                        No
+                                    @endif
+
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                @endif
                 <div class="col-md-4 col-sm-9 col-xs-12">
                     <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
                             data-target="#email_modal">Add Email
@@ -305,44 +307,45 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 
                 @if(count($phones) == 0)
                     There are no phone numbers associated with this profile.
-                @endif
+                @else
 
-                <table id="phone_fields" class="table table-striped table-condensed">
-                    <tr>
-                        <th style="text-align:center;" colspan="2">Type</th>
-                        <th style="text-align:left;">Phone Number</th>
-                    </tr>
-
-                    @foreach($phones as $phone)
-                        <?php $ph_cnt++; ?>
+                    <table id="phone_fields" class="table table-striped table-condensed">
                         <tr>
-                            <td style="text-align: left;">
-                                <form method="post" action="{{ "/phone/" . $phone->phoneID . "/delete" }}">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                    <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                            data-btn-ok-label="Continue"
-                                            data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                            data-btn-ok-class="btn-success btn-sm"
-                                            data-btn-cancel-label="Stop!"
-                                            data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                            data-btn-cancel-class="btn-danger btn-sm"
-                                            data-title="Are you sure?" data-content="This cannot be undone.">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            <td style="text-align: left;"><a href="#" id="phoneType{{ $ph_cnt }}"
-                                                             data-pk="{{ $phone->phoneID }}"
-                                                             data-url="{{ $phoneURL . $phone->phoneID }}"
-                                                             data-value="{{ $phone->phoneType }}"></a></td>
-                            <td style="text-align: left;"><a href="#" id="phoneNumber{{ $ph_cnt }}"
-                                                             data-pk="{{ $phone->phoneID }}"
-                                                             data-url="{{ $phoneURL . $phone->phoneID }}"
-                                                             data-value="{{ $phone->phoneNumber }}"></a></td>
+                            <th style="text-align:center;" colspan="2">Type</th>
+                            <th style="text-align:left;">Phone Number</th>
                         </tr>
-                    @endforeach
-                </table>
+
+                        @foreach($phones as $phone)
+                            <?php $ph_cnt++; ?>
+                            <tr>
+                                <td style="text-align: left;">
+                                    <form method="post" action="{{ "/phone/" . $phone->phoneID . "/delete" }}">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                                data-btn-ok-label="Continue"
+                                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                                data-btn-ok-class="btn-success btn-sm"
+                                                data-btn-cancel-label="Stop!"
+                                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                                data-btn-cancel-class="btn-danger btn-sm"
+                                                data-title="Are you sure?" data-content="This cannot be undone.">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td style="text-align: left;"><a href="#" id="phoneType{{ $ph_cnt }}"
+                                                                 data-pk="{{ $phone->phoneID }}"
+                                                                 data-url="{{ $phoneURL . $phone->phoneID }}"
+                                                                 data-value="{{ $phone->phoneType }}"></a></td>
+                                <td style="text-align: left;"><a href="#" id="phoneNumber{{ $ph_cnt }}"
+                                                                 data-pk="{{ $phone->phoneID }}"
+                                                                 data-url="{{ $phoneURL . $phone->phoneID }}"
+                                                                 data-value="{{ $phone->phoneNumber }}"></a></td>
+                            </tr>
+                        @endforeach
+                    </table>
+                @endif
                 <div class="col-md-4 col-sm-9 col-xs-12">
                     <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
                             data-target="#phone_modal">Add Phone Number
@@ -400,35 +403,16 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
         });
         $('[data-toggle=confirmation]').confirmation({
             rootSelector: '[data-toggle=confirmation]',
-            // other options
-        });
+            onConfirm: function (event, element) {
+                console.log(element);
+                alert('triggered' + element);
+            }});
     </script>
-    <script>
-        @if($profile->personID !== auth()->user()->id)
-    $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
-
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
-
-            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/members"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
-
-            $("#mem").text('Edit Member Profile');
-        });
-        @endif
-    </script>
+    @if($profile->personID !== auth()->user()->id)
+        <script>
+            @include('v1.parts.menu-fix', array('path' => '/members', 'tag' => '#mem', 'newTxt' => 'Edit Member Profile'))
+        </script>
+    @endif
     <script>
         $(document).ready(function () {
             $.ajaxSetup({
@@ -447,14 +431,17 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 autotext: 'auto',
                 pk: {{ $profile->personID }},
                 url: '{{ $profile_script_url }}',
-                <?php if($profile->prefix <> "") {
-                    echo("value: '$profile->prefix', \n");
-                } ?>
+<?php
+                    if ($profile->prefix <> "") {
+                        echo("value: '$profile->prefix', \n");
+                    }
+?>
                 source: [
-                    <?php
-                    foreach($prefixes as $row) {
+<?php
+                    foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
-                    } ?>
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -493,14 +480,17 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 autotext: 'auto',
                 pk: {{ $profile->personID }},
                 url: '{{ $profile_script_url }}',
-                <?php if($profile->indName <> "") {
-                    echo("value: '$profile->indName', \n");
-                } ?>
+<?php
+                    if ($profile->indName <> "") {
+                        echo("value: '$profile->indName', \n");
+                    }
+?>
                 source: [
-                    <?php
-                    foreach($industries as $row) {
+<?php
+                    foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
-                    } ?>
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -527,14 +517,15 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
             });
 
             @for($j=1;$j<=$ad_cnt;$j++)
-                    $('#addrTYPE{{ $j }}').editable({
+            $('#addrTYPE{{ $j }}').editable({
                 type: 'select',
                 autotext: 'auto',
                 source: [
                     <?php
-                    foreach($addrTypes as $row) {
+                    foreach ($addrTypes as $row) {
                         $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
-                    } ?>
+                    }
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -548,42 +539,33 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 autotext: 'auto',
                 source: [
                     <?php
-                    foreach($countries as $row) {
+                    foreach ($countries as $row) {
                         $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
-                    } ?>
+                    }
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             @endfor
 
             @for($j=1;$j<=$em_cnt;$j++)
-                    $('#emailTYPE{{ $j }}').editable({
+            $('#emailTYPE{{ $j }}').editable({
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
-                    foreach($emailTypes as $row) {
+<?php
+                    foreach ($emailTypes as $row) {
                         $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
-                    } ?>
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             $('#emailADDR{{ $j }}').editable({type: 'text'});
-            <?php
-            /*
-                        $('#isPrimary{{ $j }}').editable({
-                            type: 'select',
-                            source: [
-                                {value: '0', text: 'No'},
-                                {value: '1', text: 'Yes'}
-                            ]
-                        });
-            */
-            ?>
             @endfor
 
             @for($j=1;$j<=$ph_cnt;$j++)
-                    $('#phoneType{{ $j }}').editable({
+            $('#phoneType{{ $j }}').editable({
                 type: 'select',
                 autotext: 'auto',
                 source: [
@@ -712,14 +694,14 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="address_label">Add Additional Addresses</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form name="addresses" method="post" action="/addresses/create">
+                <form name="addresses" method="post" action="/addresses/create">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="address_label">Add Additional Addresses</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
                         {{ csrf_field() }}
                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                         <table id="new_address_fields" class="table table-striped">
@@ -769,12 +751,12 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                                 Delete
                             </button>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                    <button type="submit" id="addr_submit" class="btn btn-sm btn-success">Save Address</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="submit" id="addr_submit" class="btn btn-sm btn-success">Save Address</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -783,14 +765,14 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="address_label">Add Additional Email</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form name="emails" method="post" action="/emails/create">
+                <form name="emails" method="post" action="/emails/create">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="address_label">Add Additional Email</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
                         {{ csrf_field() }}
                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                         <table id="new_email_fields" class="table table-striped">
@@ -825,12 +807,12 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                                 Delete
                             </button>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                    <button type="submit" id="email_submit" class="btn btn-sm btn-success">Save Email</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="submit" id="email_submit" class="btn btn-sm btn-success">Save Email</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -839,14 +821,14 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="phone_label">Add Additional Phone Numbers</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form name="phones" method="post" action="/phones/create">
+                <form name="phones" method="post" action="/phones/create">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="phone_label">Add Additional Phone Numbers</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
                         {{ csrf_field() }}
                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                         <table id="new_phone_fields" class="table table-striped">
@@ -881,12 +863,12 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                                 Delete
                             </button>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                    <button type="submit" id="email_submit" class="btn btn-sm btn-success">Save Phone</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="submit" id="phone_submit" class="btn btn-sm btn-success">Save Phone</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
