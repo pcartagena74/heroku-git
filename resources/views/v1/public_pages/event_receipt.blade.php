@@ -197,7 +197,6 @@ $deletion = 0;
                                 </td>
 <?php
                                     $compareDate = $today;
-
 ?>
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
                                     @if($rf->discountCode)
@@ -374,8 +373,8 @@ $deletion = 0;
                         </tr>
                         </thead>
                         <tr>
-                            <td style="text-align: center;"><b><i
-                                            class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                            <td style="text-align: center;">
+                                <b><i class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
                             </td>
                         </tr>
                     </table>
@@ -384,8 +383,7 @@ $deletion = 0;
 
             <hr>
             <div class="col-sm-offset-2 col-sm-10">
-                <h4>Add this event to your calendar program of choice.</h4>
-            </div>
+                <h4>Add this event to your calendar app of choice.</h4>
             @if(0)
                 <table class="table borderless">
                     <tr>
@@ -438,6 +436,10 @@ $deletion = 0;
                     </tr>
                 </table>
             @endif
+            </div>
+            <div class="col-sm-offset-2 col-sm-10">
+                {!! $event->postRegInfo or '' !!}
+            </div>
 
         </div>
     </div>
