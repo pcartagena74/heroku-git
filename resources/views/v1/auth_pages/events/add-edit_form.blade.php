@@ -330,6 +330,16 @@ try {
         {!! Form::submit('Submit & Review Tickets', array('class' => 'btn btn-primary')) !!}
         <a href="{{ env('APP_URL') }}/events" class="btn btn-default">Cancel</a>
     </div>
+
+
+    @include('v1.parts.start_content', ['header' => 'OPTIONAL: Post-Registration Information', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    <div class="form-group col-md-12">
+        {!! Form::label('postRegInfo', "Anything added here will displayed to attendees AFTER they've registered.", array('class' => 'control-label red')) !!}
+        {!! Form::textarea('postRegInfo', old('$event->postRegInfo'), array('class'=>'form-control rich')) !!}
+    </div>
+    @include('v1.parts.end_content')
+
+
     {!! Form::close() !!}
 @endsection
 
