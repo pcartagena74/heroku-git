@@ -212,6 +212,12 @@ class EventController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = new Event;
         $label               = Org::find($this->currentPerson->defaultOrgID);
+        $slug                = request()->input('slug');
+        $slug_not_unique     = Event::where('slug', $slug)->first();
+        if($slug_not_unique){
+            request()->session()->flash('alert-danger', "Please set a custom URL and validate it before proceeding.");
+            return back()->withInput();
+        }
 
         if(request()->input('locationID') != '') {
             $location = Location::find(request()->input('locationID'));

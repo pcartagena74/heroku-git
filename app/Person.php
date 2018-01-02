@@ -85,4 +85,8 @@ class Person extends Model
     public function routeNotificationForMail() {
         return $this->login;
     }
+
+    public function org_role_id(){
+       return Role::where('name', $this->defaultOrg()->orgName)->select('id')->first();
+    }
 }

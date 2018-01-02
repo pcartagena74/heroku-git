@@ -66,7 +66,16 @@ class RoleController extends Controller
 
     public function update (Request $request, Person $person, Role $role) {
         // responds to POST /role/{person}/{id}
+
         $person->roles()->toggle($role->id);
+
+        // The check to ensure that a role for the orgName is in the DB for any users with assigned roles...
+        // ONLY if it's not already there...
+        if($person->roles()->contains($role->id)){
+            if(!$person->roles()->contains($person->org_role_id())){
+                $person->roles()->toggle($person->org_role_id());
+            }
+        }
 
         $message =
             '<div class="well bg-blue"> The role "' . $role->display_name . '" was toggled for ' . $person->showFullName() . "</div>";

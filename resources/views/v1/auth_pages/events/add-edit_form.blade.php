@@ -175,14 +175,14 @@ try {
     @include('v1.parts.start_content', ['header' => 'Event Date &amp; Time', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-5">
-        {!! Form::text('eventStartDate', old($eventStartDate), $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventStartDate') ) !!}
+        {!! Form::text('eventStartDate', 'old($event->eventStartDate)' or $eventStartDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventStartDate') ) !!}
         <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
     </div>
 
     <div class="form-group col-md-2" style="text-align: center; vertical-align: bottom;"><b> to </b></div>
 
     <div class="form-group col-md-5">
-        {!! Form::text('eventEndDate', old($eventEndDate), $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventEndDate') ) !!}
+        {!! Form::text('eventEndDate', 'old($event->eventEndDate)' or $eventEndDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventEndDate') ) !!}
         <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
     </div>
 
@@ -378,14 +378,19 @@ try {
             if(show){
                 show = 0;
                 hide = 1;
-                $('#addr1').removeAttr('required')
-                $('#addr2').removeAttr('required')
-                $('#city').removeAttr('required')
-                $('#state').removeAttr('required')
-                $('#zip').removeAttr('required')
+                $('#addr1').removeAttr('required');
+                $('#addr2').removeAttr('required');
+                $('#city').removeAttr('required');
+                $('#state').removeAttr('required');
+                $('#zip').removeAttr('required');
             } else {
                 show = 1;
                 hide = 0;
+                $('#addr1').required = true;
+                $('#addr2').required = true;
+                $('#city').required = true;
+                $('#state').required = true;
+                $('#zip').required = true;
             }
         }
         $(document).ready(function () {
