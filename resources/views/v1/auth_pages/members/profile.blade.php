@@ -159,17 +159,10 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                             <?php $ad_cnt++; ?>
                             <tr>
                                 <td>
-                                    <form method="post" action="{{ "/address/" . $address->addrID . "/delete" }}">
+                                    <form id="ad-{{ $ad_cnt }}" method="post" action="{{ env('APP_URL') . "/address/" . $address->addrID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                                data-btn-ok-label="Continue"
-                                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                                data-btn-ok-class="btn-success btn-sm"
-                                                data-btn-cancel-label="Stop!"
-                                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                                data-btn-cancel-class="btn-danger btn-sm"
-                                                data-title="Are you sure?" data-content="This cannot be undone.">
+                                        <button class="btn btn-danger btn-xs">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </form>
@@ -255,16 +248,14 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                                         </button>
                                         @include('v1.parts.tooltip', ['title' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first."])
                                     @else
-                                        <form method="post" action="{{ "/email/" . $email->emailID . "/delete" }}">
+                                        <form method="post" action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                             <button class="btn btn-danger btn-xs" data-toggle="confirmation"
                                                     data-btn-ok-label="Continue"
                                                     data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                                    data-btn-ok-class="btn-success btn-sm"
-                                                    data-btn-cancel-label="Stop!"
+                                                    data-btn-cancel-label="Stop!" data-id="em-{{ $em_cnt }}"
                                                     data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                                    data-btn-cancel-class="btn-danger btn-sm"
                                                     data-title="Are you sure?" data-content="This cannot be undone.">
                                                 <i class="fa fa-trash"></i>
                                             </button>
@@ -319,16 +310,14 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                             <?php $ph_cnt++; ?>
                             <tr>
                                 <td style="text-align: left;">
-                                    <form method="post" action="{{ "/phone/" . $phone->phoneID . "/delete" }}">
+                                    <form id="ph-{{ $ph_cnt }}" method="post" action="{{ env('APP_URL') . "/phone/" . $phone->phoneID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs" data-toggle="confirmation"
                                                 data-btn-ok-label="Continue"
                                                 data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                                data-btn-ok-class="btn-success btn-sm"
-                                                data-btn-cancel-label="Stop!"
+                                                data-btn-cancel-label="Stop!" data-id="ph-{{ $ph_cnt }}"
                                                 data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                                data-btn-cancel-class="btn-danger btn-sm"
                                                 data-title="Are you sure?" data-content="This cannot be undone.">
                                             <i class="fa fa-trash"></i>
                                         </button>
@@ -401,12 +390,6 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
         });
-        $('[data-toggle=confirmation]').confirmation({
-            rootSelector: '[data-toggle=confirmation]',
-            onConfirm: function (event, element) {
-                console.log(element);
-                alert('triggered' + element);
-            }});
     </script>
     @if($profile->personID !== auth()->user()->id)
         <script>
@@ -521,11 +504,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($addrTypes as $row) {
                         $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -538,11 +521,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($countries as $row) {
                         $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -569,11 +552,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach($phoneTypes as $row) {
                     $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
