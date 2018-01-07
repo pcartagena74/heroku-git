@@ -361,9 +361,10 @@ class EventController extends Controller
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson = Person::find(auth()->user()->id);
+        $org                = Org::find($current_person->defaultOrgID);
         $exLoc               = Location::find($event->locationID);
         $page_title          = 'Edit Event';
-        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
+        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }
 
     public function checkSlugUniqueness (Request $request, $id) {
