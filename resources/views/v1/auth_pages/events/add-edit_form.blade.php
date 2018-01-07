@@ -12,11 +12,19 @@ $dateFormat = 'm/d/Y h:i A';
 if(isset($event)) {
     $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
     $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
+} elseif(old('eventStartDate')) {
+    //$eventStartDate = DateTime::createFromFormat('m/d/Y h:M A', old('eventStartDate'))->format('Y-m-d');
+    $eventStartDate = date($dateFormat, strtotime(old('eventStartDate')));
+    $eventEndDate = date($dateFormat, strtotime(old('eventEndDate')));
+    $event          = new Event;
+    $exLoc          = new Location;
 } else {
     $event          = new Event;
     $exLoc          = new Location;
-    $eventStartDate = date('Y-m-d', strtotime("now"));
-    $eventEndDate   = date('Y-m-d', strtotime("now"));
+    $eventStartDate = date($dateFormat, strtotime("now"));
+    $eventEndDate   = date($dateFormat, strtotime("now"));
+    //$eventStartDate = date('Y-m-d', strtotime("now"));
+    //$eventEndDate   = date('Y-m-d', strtotime("now"));
 }
 $topBits = '';
 
@@ -32,6 +40,7 @@ $categories = $cats->pluck('catTXT', 'catID');
 $oe_types = DB::table('org-event_types')
               ->select('etID', 'etName')
               ->whereIn('orgID', [1, $current_person->defaultOrgID])
+              ->whereNull('deleted_at')
               ->get();
 
 $event_types = $oe_types->pluck('etName', 'etID');
@@ -87,7 +96,7 @@ try {
     @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-12">
-        {!! Form::text('eventName', old('$event->eventName') ?: $event->eventName,
+        {!! Form::text('eventName', old('eventName') ?: $event->eventName,
         $attributes = array('class'=>'form-control has-feedback-left', 'placeholder'=>'Event Name*', 'maxlength' => '255', 'required') ) !!}
         <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
     </div>
@@ -99,7 +108,7 @@ try {
             @include('v1.parts.tooltip', ['title' => "Events with food have additional questions asked of attendees."])
         </div>
         @if($event->eventID !== null && $event->hasFood == 1)
-            <div class="col-sm-1"> {!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!} </div>
+            <div class="col-sm-1">{!! Form::label('hasFood', 'No', array('class' => 'control-label')) !!}</div>
             <div class="col-sm-1">{!! Form::checkbox('hasFood', '1', true, array('class' => 'js-switch')) !!}</div>
             <div class="col-sm-1">{!! Form::label('hasFood', 'Yes', array('class' => 'control-label')) !!}</div>
         @else
@@ -114,7 +123,7 @@ try {
         {!! Form::label('slug', 'Custom URL*', array('class' => 'control-label input-sm')) !!}
     </div>
     <div class="form-group col-md-3">
-        {!! Form::text('slug', old('$event->slug'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
+        {!! Form::text('slug', old('slug'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
     </div>
     <div class="form-group col-md-3">
         <a class="btn btn-primary btn-sm" id="validateSlug"><i class="">Validate Availability</i></a>
@@ -127,22 +136,22 @@ try {
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', 'Description*', array('class' => 'control-label')) !!}
-        {!! Form::textarea('eventDescription', old('$event->eventDescription'), array('class'=>'form-control rich')) !!}
+        {!! Form::textarea('eventDescription', old('eventDescription'), array('class'=>'form-control rich')) !!}
     </div>
 
     <div class="form-group col-md-12">
         {!! Form::label('eventTypeID', 'Event Type*', array('class' => 'control-label')) !!}
-        {!! Form::select('eventTypeID', $event_types, old('$event->eventTypeID'), array('class' =>'form-control input-sm')) !!}
+        {!! Form::select('eventTypeID', $event_types, old('eventTypeID'), array('class' =>'form-control input-sm')) !!}
     </div>
 
     <div class="form-group col-md-12">
         {!! Form::label('catID', 'Category*', array('class' => 'control-label')) !!}
-        {!! Form::select('catID', $categories, old('$event->catID') ?: $defaults->orgCategory, array('class' =>'form-control input-sm')) !!}
+        {!! Form::select('catID', $categories, old('catID') ?: $defaults->orgCategory, array('class' =>'form-control input-sm')) !!}
     </div>
 
     <div class="form-group col-md-12">
         {!! Form::label('eventInfo', 'Additional Information', array('class' => 'control-label')) !!}
-        {!! Form::textarea('eventInfo', old('$event->eventInfo'), array('class'=>'form-control rich')) !!}
+        {!! Form::textarea('eventInfo', old('eventInfo'), array('class'=>'form-control rich')) !!}
     </div>
 
     <div class="col-sm-5">
@@ -165,7 +174,7 @@ try {
          style="display:none;"
          @endif
          class="col-sm-4">
-        {!! Form::number('hasTracks', old('$event->hasTracks') ?: $event->hasTracks, $attributes =
+        {!! Form::number('hasTracks', old('hasTracks') ?: $event->hasTracks, $attributes =
             array('class'=>'form-control has-feedback-left input-sm', 'placeholder'=>'Tracks') ) !!}
     </div>
 
@@ -175,20 +184,20 @@ try {
     @include('v1.parts.start_content', ['header' => 'Event Date &amp; Time', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-5">
-        {!! Form::text('eventStartDate', 'old($event->eventStartDate)' or $eventStartDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventStartDate') ) !!}
+        {!! Form::text('eventStartDate', $eventStartDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventStartDate') ) !!}
         <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
     </div>
 
     <div class="form-group col-md-2" style="text-align: center; vertical-align: bottom;"><b> to </b></div>
 
     <div class="form-group col-md-5">
-        {!! Form::text('eventEndDate', 'old($event->eventEndDate)' or $eventEndDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventEndDate') ) !!}
+        {!! Form::text('eventEndDate', $eventEndDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventEndDate') ) !!}
         <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
     </div>
 
     <div class="form-group col-md-12">
         {!! Form::label('eventTimeZone', 'Time Zone*', array('class' => 'control-label')) !!}
-        {!! Form::select('eventTimeZone', $timezones, old($event->eventTimeZone) ?: $defaults->orgZone, array('class' =>'form-control')) !!}
+        {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $defaults->orgZone, array('class' =>'form-control')) !!}
     </div>
 
     @include('v1.parts.end_content')
@@ -197,7 +206,7 @@ try {
 
     <div class="form-group">
         <div class="col-md-8">
-            {!! Form::select('locationID', $loc_list, old($event->locationID), array('class' =>'form-control input-sm', 'id'=>'org_location_list')) !!}
+            {!! Form::select('locationID', $loc_list, old('locationID'), array('class' =>'form-control input-sm', 'id'=>'org_location_list')) !!}
         </div>
         <div class="col-md-4">
             <a class="btn btn-primary btn-sm" id="useAddr"><i class="">Use Address</i></a>
@@ -207,7 +216,7 @@ try {
     <div class="ln_solid"></div>
 
     <div class="form-group col-md-12">
-        {!! Form::text('locName', old('$exLoc->locName'),
+        {!! Form::text('locName', old('locName'),
             $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '50',
                                 'id'=>'locName', 'placeholder'=>'Location Name', 'required')) !!}
         <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
@@ -219,27 +228,27 @@ try {
     @endif
     >
         <div class="form-group col-md-12">
-            {!! Form::text('addr1', old('$exLoc->addr1'),
+            {!! Form::text('addr1', old('addr1'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255',
                                     'id'=>'addr1', 'placeholder'=>'Address 1', 'required')) !!}
         </div>
         <div class="form-group col-md-12">
-            {!! Form::text('addr2', old('$exLoc->addr2'),
+            {!! Form::text('addr2', old('addr2'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '255',
                                     'id'=>'addr2', 'placeholder'=>'Address 2')) !!}
         </div>
         <div class="form-group col-md-6">
-            {!! Form::text('city', old('$exLoc->city'),
+            {!! Form::text('city', old('city'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '50',
                                     'id'=>'city', 'placeholder'=>'City', 'required')) !!}
         </div>
         <div class="form-group col-md-3">
-            {!! Form::text('state', old('$exLoc->state'),
+            {!! Form::text('state', old('state'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10',
                                     'id'=>'state', 'placeholder'=>'State', 'required')) !!}
         </div>
         <div class="form-group col-md-3">
-            {!! Form::text('zip', old('$exLoc->zip'),
+            {!! Form::text('zip', old('zip'),
                 $attributes = array('class'=>'form-control input-sm', 'maxlength' => '10',
                                     'id'=>'zip', 'placeholder'=>'Zip', 'required')) !!}
         </div>
@@ -335,7 +344,7 @@ try {
     @include('v1.parts.start_content', ['header' => 'OPTIONAL: Post-Registration Information', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="form-group col-md-12">
         {!! Form::label('postRegInfo', "Anything added here will displayed to attendees AFTER they've registered.", array('class' => 'control-label red')) !!}
-        {!! Form::textarea('postRegInfo', old('$event->postRegInfo'), array('class'=>'form-control rich')) !!}
+        {!! Form::textarea('postRegInfo', old('postRegInfo') or $event->postRegInfo, array('class'=>'form-control rich')) !!}
     </div>
     @include('v1.parts.end_content')
 
@@ -345,14 +354,12 @@ try {
 
 @section('scripts')
     @include('v1.parts.footer-tinymce')
-    @if($event->eventID !== null)
-        <script>
-            $(document).ready(function () {
-                $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
-                $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
-            });
-        </script>
-    @endif
+<script>
+    $(document).ready(function () {
+        $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
+        $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
+    });
+</script>
 
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventStartDate', 'time' => 'true', 'single' => 'true'])
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventEndDate', 'time' => 'true', 'single' => 'true'])
@@ -414,7 +421,6 @@ try {
             });
         });
     </script>
-
     <script>
         $('form').submit(function () {
             $('#eventStartDate').each(function () {
