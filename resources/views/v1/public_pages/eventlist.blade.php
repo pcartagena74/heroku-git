@@ -53,7 +53,7 @@ function truncate_saw($string, $limit, $break = ".", $pad = "...") {
         </tbody>
     </table>
     @else
-        There are no future events at this time.
+        There are no <b class="red">active</b> future events at this time.
     @endif
 @endsection
 
