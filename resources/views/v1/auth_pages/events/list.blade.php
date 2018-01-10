@@ -11,6 +11,8 @@ $current_headers =
     ['Event Dates', 'Event Name', 'Event Type', 'Event Status', 'Attendee Count', 'Event Management'];
 $current_data    = [];
 
+$today = \Carbon\Carbon::now();
+
 foreach($current_events as $event) {
     $csrf = csrf_field();
 
@@ -63,6 +65,10 @@ foreach($current_events as $event) {
     $ticket_button =
         "<a href='$tktURL' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tickets'><i class='fa fa-ticket'></i></a>";
     $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='CheckIn Attendees'><i class='fa fa-check-square-o'></i></a>";
+
+    if($today < $event->eventStartDate){
+        $checkin_button = '';
+    }
 
     array_push($current_data, ["<nobr>" . $event->eventStartDateF . "  - </nobr><br><nobr>" . $event->eventEndDateF . "</nobr>",
         $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button .
