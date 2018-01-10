@@ -50,7 +50,7 @@ class EventController extends Controller
                                   AND er.deleted_at IS NULL
                         LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
                         WHERE e.orgID = ?
-                            AND eventStartDate >= NOW() AND e.deleted_at is null
+                            AND eventEndDate >= NOW() AND e.deleted_at is null
                         GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                         ORDER BY e.eventStartDate ASC";
 

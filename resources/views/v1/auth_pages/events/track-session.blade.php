@@ -210,8 +210,7 @@ $tickets = Ticket::where([
                                 <td colspan="2" style="text-align:left;">
                                 @if($s !== null)
                                         <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">Session
-                                            Speaker(s)</label><br/>
+                                               style="color: #2a3f54;" class="control-label">Session Speaker(s)</label><br/>
                                         <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
@@ -237,27 +236,65 @@ $tickets = Ticket::where([
                         @if($check !== null)
                         <tr>
                             @foreach($tracks as $track)
-                                <?php
+<?php
                                 $s = EventSession::where([
                                     ['trackID', $track->trackID],
                                     ['eventID', $event->eventID],
                                     ['confDay', $i],
                                     ['order', $x]
                                 ])->first();
-                                ?>
+?>
                                 @if($s !== null)
                                     <td style="text-align:left;">
-                                        <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">{{ $s->creditAmt }}</label>
+                                        {{--
                                         <a id="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->creditArea }}"></a>
+                                        --}}
+                                        <a id="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                           data-pk="{{ $s->sessionID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                           data-value="{{ $s->leadAmt }}"></a>
                                         <label style="color: #2a3f54;"
-                                               for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
-                                            {{ $s->event->org->creditLabel }}<?php if($s->creditAmt > 1) {
+                                               for="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> Leadership
+                                            {{ $s->event->org->creditLabel }}<?php
+                                            if($s->leadAmt != 1) {
                                                 echo('s');
-                                            } ?>
+                                            }
+?>
+                                        </label><br />
+                                        <a id="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                           data-pk="{{ $s->sessionID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                           data-value="{{ $s->stratAmt }}"></a>
+                                        <label style="color: #2a3f54;"
+                                               for="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> Strategy
+                                            {{ $s->event->org->creditLabel }}<?php
+                                            if($s->stratAmt != 1) {
+                                                echo('s');
+                                            }
+?>
+                                        </label><br />
+                                        <a id="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                           data-pk="{{ $s->sessionID }}"
+                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                           data-value="{{ $s->techAmt }}"></a>
+                                        <label style="color: #2a3f54;"
+                                               for="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> Technical Skills
+                                            {{ $s->event->org->creditLabel }}<?php
+                                            if($s->techAmt != 1) {
+                                                echo('s');
+                                            }
+?>
+                                        </label><br />
+                                        <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               style="color: #2a3f54;" class="control-label">
+                                            {{ $s->creditAmt }} Total {{ $s->event->org->creditLabel }}<?php
+                                        if($s->creditAmt != 1) {
+                                            echo('s');
+                                        }
+?>
                                         </label>
                                     </td>
                                     <td style="text-align:left;">
@@ -427,6 +464,10 @@ $tickets = Ticket::where([
                     console.log(data);
                 }
             });
+
+            $("#leadAmt-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
+            $("#stratAmt-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
+            $("#techAmt-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
 
             $("#creditArea-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
                 type: 'select',
