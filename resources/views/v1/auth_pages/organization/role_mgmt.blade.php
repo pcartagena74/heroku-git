@@ -69,13 +69,13 @@ set_time_limit(100);
 
             <?php $counter = 0 ?>
             @foreach($permissions as $p)
-                <?php
+<?php
                 if($counter++ % 2) {
                     $bg = "bg-info";
                 } else {
                     $bg = "";
                 }
-                ?>
+?>
                 <div class="col-sm-12 well-sm">
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $p->name }}</div>
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $p->display_name }}</div>
@@ -119,13 +119,12 @@ set_time_limit(100);
             </thead>
             <tbody>
             @foreach ($persons as $p)
-                <?php
-
+<?php
                 if($p->roles->contains('id', 1)) {
-                    $board_color = 'btn-lpurple';
+                    $board_color = 'btn-purple';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Board Role" ';
                 } else {
-                    $board_color = 'btn-purple';
+                    $board_color = 'btn-lpurple';
                     $tooltip     = 'data-toggle="tooltip" title="Add Board Role" ';
                 }
 
@@ -134,10 +133,10 @@ set_time_limit(100);
                     . '<i class="fa fa-users"></i></a>';
 
                 if($p->roles->contains('id', 2)) {
-                    $board_color = 'btn-lred';
+                    $board_color = 'btn-red';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Speaker Role" ';
                 } else {
-                    $board_color = 'btn-red';
+                    $board_color = 'btn-lred';
                     $tooltip     = 'data-toggle="tooltip" title="Add Speaker Role" ';
                 }
                 $speaker =
@@ -145,10 +144,10 @@ set_time_limit(100);
                     . '<i class="fa fa-microphone"></i></a>';
 
                 if($p->roles->contains('id', 3)) {
-                    $board_color = 'btn-ldeep-purple';
+                    $board_color = 'btn-deep-purple';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Events Role" ';
                 } else {
-                    $board_color = 'btn-deep-purple';
+                    $board_color = 'btn-ldeep-purple';
                     $tooltip     = 'data-toggle="tooltip" title="Add Events Role" ';
                 }
                 $event =
@@ -156,10 +155,10 @@ set_time_limit(100);
                     . '<i class="fa fa-calendar"></i></a>';
 
                 if($p->roles->contains('id', 4)) {
-                    $board_color = 'btn-lblue';
+                    $board_color = 'btn-blue';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Volunteer Role" ';
                 } else {
-                    $board_color = 'btn-blue';
+                    $board_color = 'btn-lblue';
                     $tooltip     = 'data-toggle="tooltip" title="Add Volunteer Role" ';
                 }
                 $volunteer =
@@ -167,10 +166,10 @@ set_time_limit(100);
                     . '<i class="fa fa-thumbs-o-up"></i></a>';
 
                 if($p->roles->contains('id', 6)) {
-                    $board_color = 'btn-lcyan';
+                    $board_color = 'btn-cyan';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Speaker-Volunteer Role" ';
                 } else {
-                    $board_color = 'btn-cyan';
+                    $board_color = 'btn-lcyan';
                     $tooltip     = 'data-toggle="tooltip" title="Add Speaker-Volunteer Role" ';
                 }
                 $spkvol =
@@ -178,10 +177,10 @@ set_time_limit(100);
                     . '<i class="fa fa-microphone-slash"></i></a>';
 
                 if($p->roles->contains('id', 7)) {
-                    $board_color = 'btn-lteal';
+                    $board_color = 'btn-teal';
                     $tooltip     = 'data-toggle="tooltip" title="Remove RoundTable-Volunteer Role" ';
                 } else {
-                    $board_color = 'btn-teal';
+                    $board_color = 'btn-lteal';
                     $tooltip     = 'data-toggle="tooltip" title="Add RoundTable-Volunteer Role" ';
                 }
                 $rtvol =
@@ -189,10 +188,10 @@ set_time_limit(100);
                     . '<i class="fa fa-circle-o"></i></a>';
 
                 if($p->roles->contains('id', 8)) {
-                    $board_color = 'btn-lgreen';
+                    $board_color = 'btn-green';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Admin Role" ';
                 } else {
-                    $board_color = 'btn-green';
+                    $board_color = 'btn-lgreen';
                     $tooltip     = 'data-toggle="tooltip" title="Add Admin Role" ';
                 }
                 $admin =
@@ -200,10 +199,10 @@ set_time_limit(100);
                     . '<i class="fa fa-dashboard"></i></a>';
 
                 if($p->roles->contains('id', 9)) {
-                    $board_color = 'btn-lamber';
+                    $board_color = 'btn-amber';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Developer Role" ';
                 } else {
-                    $board_color = 'btn-amber';
+                    $board_color = 'btn-lamber';
                     $tooltip     = 'data-toggle="tooltip" title="Add Developer Role" ';
                 }
                 $dev =
@@ -211,10 +210,10 @@ set_time_limit(100);
                     . '<i class="fa fa-file-archive-o"></i></a>';
 
                 if($p->roles->contains('id', 11)) {
-                    $board_color = 'btn-lbrown';
+                    $board_color = 'btn-brown';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Marketing Role" ';
                 } else {
-                    $board_color = 'btn-brown';
+                    $board_color = 'btn-lbrown';
                     $tooltip     = 'data-toggle="tooltip" title="Add Marketing Role" ';
                 }
                 $mktg =
