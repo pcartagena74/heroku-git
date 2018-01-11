@@ -225,8 +225,6 @@ class MergeController extends Controller
         foreach($model2->regfinances as $e) {
             $m2            = RegFinance::find($e->regID);
             $m2->personID  = $model1->personID;
-            // Person soft-deletes require unique key 'login' to be uniquely modified
-            $m2->login     = '_' . $m2->login;
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
         }
@@ -255,6 +253,8 @@ class MergeController extends Controller
         // Trigger Notification
         // Need to notify $model2 it's being merged ONLY if password !== null
         // $model2->notify(new AccountMerge($model2, $model1));
+        // Person soft-deletes require unique key 'login' to be uniquely modified
+        $model2->login     = '_' . $model2->login;
         $model2->delete();
 
         return redirect('/merge/' . $letter . '/' . $model1->personID);
