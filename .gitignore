@@ -10,3 +10,4 @@ Homestead.yaml
 .env
 .env.example
 composer.phar
+known_composer.lck
