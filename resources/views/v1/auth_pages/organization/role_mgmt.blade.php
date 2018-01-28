@@ -32,13 +32,13 @@ set_time_limit(100);
             </div>
 
             @foreach($roles as $r)
-                <?php
+<?php
                 if($counter++ % 2) {
                     $bg = "bg-info";
                 } else {
                     $bg = "";
                 }
-                ?>
+?>
                 <div class="col-sm-12">
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->name }}</div>
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->display_name }}</div>
@@ -209,7 +209,7 @@ set_time_limit(100);
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
                     . '<i class="fa fa-file-archive-o"></i></a>';
 
-                if($p->roles->contains('id', 11)) {
+                if($p->roles->contains('id', 10)) {
                     $board_color = 'btn-brown';
                     $tooltip     = 'data-toggle="tooltip" title="Remove Marketing Role" ';
                 } else {
@@ -217,7 +217,7 @@ set_time_limit(100);
                     $tooltip     = 'data-toggle="tooltip" title="Add Marketing Role" ';
                 }
                 $mktg =
-                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
+                    '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '10)" class="btn btn-sm ' . $board_color . '">'
                     . '<i class="fa fa-bar-chart"></i></a>';
                 ?>
                 <tr>
@@ -233,7 +233,7 @@ set_time_limit(100);
                         {!! $spkvol !!}
                         {!! $volunteer !!}
                         {!! $speaker !!}
-                        @if((Entrust::hasRole('Admin')))
+                        @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
                             {!! $admin !!}
                         @endif
                         @if((Entrust::hasRole('Developer')))

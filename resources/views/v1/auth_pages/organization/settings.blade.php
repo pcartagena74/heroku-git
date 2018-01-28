@@ -20,7 +20,7 @@ $currentOrg    = $currentPerson->defaultOrg;
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-    || Entrust::hasRole('Development'))
+    || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 @section('content')
 
     @include('v1.parts.start_content', ['header' => 'Organizational Settings for: ' . $orgHeader, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])

@@ -27,7 +27,7 @@ $loc = Location::find($event->locationID);
 $prefixes     = DB::table('prefixes')->select('prefix', 'prefix')->get();
 $prefix_array = ['' => 'Prefix'] + $prefixes->pluck('prefix', 'prefix')->toArray();
 
-$industries     = DB::table('industries')->select('industryName', 'industryName')->get();
+$industries     = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
 $industry_array = ['' => 'Select Industry'] + $industries->pluck('industryName', 'industryName')->toArray();
 
 $allergens      = DB::table('allergens')->select('allergen', 'allergen')->get();

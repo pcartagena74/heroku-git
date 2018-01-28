@@ -26,6 +26,7 @@ class RoleController extends Controller
             ['orgID', '=', $org->orgID],
             ['name', '!=', $org->orgName]
         ])
+            // This line is to prevent the display of roles with relevant ID.  0 blocks nothing...
                                    ->whereNotIn('id', [0])
                                    ->with('permissions')
                                    ->get();
@@ -67,14 +68,17 @@ class RoleController extends Controller
     public function update (Request $request, Person $person, Role $role) {
         // responds to POST /role/{person}/{id}
 
+        // toggle the role selected
         $person->roles()->toggle($role->id);
 
-        // The check to ensure that a role for the orgName is in the DB for any users with assigned roles...
-        // ONLY if it's not already there...
-        if($person->roles()->contains($role->id)){
-            if(!$person->roles()->contains($person->org_role_id())){
-                $person->roles()->toggle($person->org_role_id());
+        // Check to ensure that a role for the orgName is in the DB if user has any assigned roles...
+        // ONLY add it if it's not already there...
+        if(count($person->roles)>1){
+            if(!$person->roles->contains('id', $person->org_role_id()->id)){
+                $person->roles()->toggle($person->org_role_id()->id);
             }
+        } else {
+            $person->roles->forget('id', $person->org_role_id()->id);
         }
 
         $message =

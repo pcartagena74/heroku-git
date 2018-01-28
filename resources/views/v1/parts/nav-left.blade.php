@@ -57,20 +57,20 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                             <li><a href="{{ env('APP_URL') }}/dashboard">My Dashboard</a></li>
                             <li><a href="{{ env('APP_URL') }}/upcoming">My Future Events</a></li>
                             <li><a href="{{ env('APP_URL') }}/profile/my">My Profile</a></li>
-                            @if(Entrust::hasRole('Development'))
+                            @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                             <li><a href="{{ env('APP_URL') }}/become">Become</a></li>
                             @endif
                         </ul>
                     </li>
 
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-                        || Entrust::hasRole('Development'))
+                        || Entrust::hasRole('Developer' || Entrust::hasRole('Admin')))
                         <li><a><i class="fa fa-bank"></i>Organization Settings<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/orgsettings">Custom Field Labels</a></li>
                                 <li><a href="{{ env('APP_URL') }}/eventdefaults">Event Defaults</a></li>
-                                @if(Entrust::hasRole('Admin'))
+                                @if(Entrust::hasRole('Developer'))
                                     <li><a href="{{ env('APP_URL') }}/load_data">Upload Data</a></li>
                                 @endif
                                 <li><a href="{{ env('APP_URL') }}/role_mgmt">Roles & Permissions</a></li>
@@ -79,7 +79,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                     @endif
 
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
-                        || Entrust::hasRole('Development'))
+                        || Entrust::hasRole('Developer' || Entrust::hasRole('Admin')))
                         <li><a><i class="fa fa-calendar"></i> Event Management<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -92,7 +92,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                     @endif
 
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('speaker-management'))
-    || Entrust::hasRole('Development'))
+                        || Entrust::hasRole('Developer' || Entrust::hasRole('Admin')))
                         <li><a><i class="fa fa-microphone"></i> Speaker Management<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -104,7 +104,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                     @endif
 
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('member-management'))
-                        || Entrust::hasRole('Development'))
+                        || Entrust::hasRole('Developer' || Entrust::hasRole('Admin')))
                         <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/members" id="mem">Member List</a></li>
@@ -117,7 +117,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         </li>
                     @endif
 
-                    @if(Entrust::hasRole('Development'))
+                    @if(Entrust::hasRole('Developer'))
                         <li><a><i class="fa fa-envelope"></i>Email Marketing<span
                                         class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
