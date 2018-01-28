@@ -93,7 +93,7 @@ class PersonController extends Controller
     }
 
     // Shows profile information for chosen person (or self)
-    public function show ($id) {
+    public function show ($id, $modal = null) {
         // responds to GET /profile/{id}
         $this->currentPerson = Person::where('personID', '=', auth()->user()->id)->with('socialites')->first();
         if($id == 'my') {
@@ -139,7 +139,7 @@ class PersonController extends Controller
 
         $prefixes = DB::table('prefixes')->get();
 
-        $industries = DB::table('industries')->get();
+        $industries = DB::table('industries')->orderBy('industryName')->get();
         $addrTypes  = DB::table('address-type')->get();
         $emailTypes = DB::table('email-type')->get();
         $phoneTypes = DB::table('phone-type')->get();
@@ -299,8 +299,4 @@ class PersonController extends Controller
         $user = Socialite::driver('linkedin')->user();
     }
 
-    public function show_report(){
-        $topBits = '';
-        return view('v1.auth_pages.members.mbr_report', compact('topBits'));
-    }
 }

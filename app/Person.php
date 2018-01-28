@@ -67,7 +67,7 @@ class Person extends Model
     }
 
     public function defaultOrg () {
-        return $this->hasOne(Org::class, 'orgID', 'defaultOrgID');
+        return $this->belongsTo(Org::class, 'defaultOrgID', 'orgID');
     }
 
     public function showDisplayName(){
@@ -87,6 +87,6 @@ class Person extends Model
     }
 
     public function org_role_id(){
-       return Role::where('name', $this->defaultOrg()->orgName)->select('id')->first();
+       return Role::where('name', $this->defaultOrg->orgName)->select('id')->first();
     }
 }

@@ -26,7 +26,7 @@ $currentPerson = App\Person::find(auth()->user()->id);
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
                         <li><a href="/profile/my"> Profile</a></li>
 
-                        @if(Entrust::hasRole('Development'))
+                        @if(Entrust::hasRole('Developer'))
                             <li>
                                 <a href="/profile/linkedin">
                                     @if($currentPerson->avatarURL !== null)

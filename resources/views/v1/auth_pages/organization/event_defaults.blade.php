@@ -26,7 +26,7 @@ $currentOrg    = $currentPerson->defaultOrg;
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-    || Entrust::hasRole('Development'))
+    || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
 @section('content')
 

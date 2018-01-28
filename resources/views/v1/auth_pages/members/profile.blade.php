@@ -392,9 +392,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
         });
     </script>
     @if($profile->personID !== auth()->user()->id)
-        <script>
-            @include('v1.parts.menu-fix', array('path' => '/members', 'tag' => '#mem', 'newTxt' => 'Edit Member Profile'))
-        </script>
+        @include('v1.parts.menu-fix', array('path' => '/members', 'tag' => '#mem', 'newTxt' => 'Edit Member Profile'))
     @endif
     <script>
         $(document).ready(function () {

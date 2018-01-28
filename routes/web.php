@@ -94,7 +94,7 @@ Route::post('/become', 'ActivityController@become');
 Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
-Route::get('/profile/{id}', 'PersonController@show')->name('showMemberProfile');
+Route::get('/profile/{id}/{modal?}', 'PersonController@show')->name('showMemberProfile');
 Route::post('/profile/{id}', 'PersonController@update');
 Route::post('/address/{id}', 'AddressController@update');
 Route::post('/addresses/create', 'AddressController@store');
@@ -134,7 +134,7 @@ Route::post('/eventtype/{etID}', 'EventTypeController@update');                 
 Route::get('/members', 'PersonController@index')->name('manageMembers');
 Route::get('/merge/{model_code}/{id1?}/{id2?}', 'MergeController@show')->name('showMergeModel');
 //Route::get('/find', 'MergeController@find')->name('search');
-Route::get('/mbrreport', 'PersonController@show_report')->name('member_report');
+Route::get('/mbrreport', 'ReportController@member_report')->name('member_report');
 Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete'); // Ajax
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
