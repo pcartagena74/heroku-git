@@ -53,8 +53,9 @@ $topBits = '';  // remove this if this was set in the controller
                     <a data-toggle="tooltip" title="Type at least 3 characters.  Unique is better.">
                 {!! Form::label('helper-'.$i, 'Search for person:') !!}
                     </a><br />
-                {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs')) !!}<br />
+                {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs', 'required')) !!}<br />
                     <a id="pop-{{ $i }}" onclick="populate({{ $i }});" class="btn btn-primary btn-xs">Populate Row</a>
+                    <a id="clr-{{ $i }}" onclick="go_clear({{ $i }});" class="btn btn-danger btn-xs invisible">Clear Row</a>
                 <div id="search-results"></div>
                 </div>
                 <div class="col-sm-2">
@@ -77,11 +78,11 @@ $topBits = '';  // remove this if this was set in the controller
                     {!! Form::label('override-'.$i, 'Override') !!}
                     @include('v1.parts.tooltip', ['title' => "Enter a value here to set a price.  If you leave it empty, the price will be automatically determined."])
                     <br/>
-                    {!! Form::text('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
+                    {!! Form::number('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
                 </div>
                 <div class="col-sm-1">
                     {!! Form::label('pmiid-'.$i, 'PMI ID') !!}<br/>
-                    {!! Form::text('pmiid-'.$i, null, array('id' => 'pmiid-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
+                    {!! Form::number('pmiid-'.$i, null, array('id' => 'pmiid-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
                 </div>
                 <div class="col-sm-1">
                     {!! Form::label('code-'.$i, 'Discount') !!}<br/>
@@ -160,10 +161,23 @@ $topBits = '';  // remove this if this was set in the controller
                 --}}
             }
         }
+        function go_clear(row){
+            $("#helper-"+row).val("");
+            $("#firstName-"+row).val("");
+            $("#lastName-"+row).val("");
+            $("#email-"+row).val("");
+            $("#pmiid-"+row).val("");
+            $("#override-"+row).val("");
+            $("#pmiid-"+row).val("");
+            $("#ticketID-"+row).val("Select Ticket");
+            $("#code-"+row).val("Select");
+            $("#clr-"+row).addClass("invisible");
+        }
+
         function populate(row){
             var helper;
             helper = $("#helper-"+row).val();
-            if(helper != ''){
+            if(helper.length > 1 ){
                 // lookup via ajax the personID in helper and place values into the other fields
                 $.ajax({
                     type: 'POST',
@@ -189,6 +203,7 @@ $topBits = '';  // remove this if this was set in the controller
                         $("#email-"+row).val(result.login);
                         $("#pmiid-"+row).val(result.OrgStat1);
                         $("#firstName-"+row).blur();
+                        $("#clr-"+row).removeClass("invisible");
                     },
                     error: function (data) {
                         var result = eval(data);

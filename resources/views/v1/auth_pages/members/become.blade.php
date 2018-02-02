@@ -24,7 +24,7 @@ $topBits = '';  // remove this if this was set in the controller
 
     <div class="col-sm-12">
         {!! Form::open(array('url' => env('APP_URL')."/become", 'method' => 'POST')) !!}
-        {!! Form::text('new_id', '', array('class' => 'form-control')) !!}
+        {!! Form::text('new_id', '', array('class' => 'form-control', 'required')) !!}
         {!! Form::submit('Become!', array('class' => 'btn btn-primary btn-xs')) !!}
         {!! Form::close() !!}
     </div>
