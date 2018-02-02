@@ -174,7 +174,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("firstName", old("firstName"), array('class' => 'form-control',
-                    $isMember ? 'disabled' : '', 'required')) !!}</td>
+                    $isMember ? 'readonly' : '', 'required')) !!}</td>
                 @else
                     <td>{!! Form::text("firstName_$i", old("firstName_$i"), array('class' => 'form-control', 'required')) !!}</td>
                 @endif
@@ -185,7 +185,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @endif
                 @if($i==1)
                     <td>{!! Form::text("lastName", old("lastName"), array('class' => 'form-control',
-                    $isMember ? 'disabled' : '', 'required')) !!}</td>
+                    $isMember ? 'readonly' : '', 'required')) !!}</td>
                 @else
                     <td>{!! Form::text("lastName_$i", old("lastName_$i"), array('class' => 'form-control', 'required')) !!}</td>
                 @endif
