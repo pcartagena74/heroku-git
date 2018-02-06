@@ -14,9 +14,9 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             <li class="active"><a href="#tab_content1" id="member_tab" data-toggle="tab"
-                                  aria-expanded="true"><b>Report: Members Only</b></a></li>
+                                  aria-expanded="true"><b>Member Demographics</b></a></li>
             <li class=""><a href="#tab_content2" id="everyone_tab" data-toggle="tab"
-                            aria-expanded="false"><b>Report: All People</b></a></li>
+                            aria-expanded="false"><b>Heat Map [Coming Soon]</b></a></li>
 {{--
             @if(Entrust::hasRole('Speaker'))
                 <li class=""><a href="#tab_content3" id="other-tab" data-toggle="tab"
@@ -31,13 +31,20 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                 @include('v1.parts.start_content', ['header' => 'Number of Events Attended by Year', 'subheader' => '',
                          'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
+                <b>Graph Years:</b> <a id="years" name="choose_years[]"
+                                        data-pk="{{ 1 }}" data-type="select2" data-title="Select Years to Display"
+                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ 1 }}">2013, 2014, 2015, 2016, 2017, 2018</a><br/>
                 <div id="canvas"></div>
 
                 @include('v1.parts.end_content')
 
-                @include('v1.parts.start_content', ['header' => 'Industry Breakdown', 'subheader' => '',
-                         'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])A
-                Pie Chart of Industries
+                @include('v1.parts.start_content', ['header' => 'Identified Industry Breakdown', 'subheader' => '',
+                         'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <canvas id="indPie"></canvas>
+                </div>
+                <div id="pieLegend" class="col-md-12 col-sm-12 col-xs-12">
+                </div>
                 @include('v1.parts.end_content')
 
 
@@ -55,49 +62,131 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
 --}}
 
 @section('scripts')
+    <script>
+        {{--
+        $('#years').editable({
+            type: 'checklist',
+            source: [
+                '2013', '2014', '2015', '2016', '2017', '2018'
+            ]
+        });
+        --}}
+        $('#years').editable({
+            inputclass: 'input-large',
+            select2: {
+                tags: ['2013', '2014', '2015', '2016', '2017', '2018'],
+                tokenSeparators: [",", " "]
+            }
+        });
+    </script>
     @include('v1.parts.footer-chart')
     <script>
         $(document).ready(function () {
             Morris.Bar({
                 element: 'canvas',
                 data: [
-                    { Events: '1 Event', a: 518, b: 533},
-                    { Events: '2 Events', a: 153, b: 200},
-                    { Events: '3 Events', a: 57, b: 77},
-                    { Events: '4 Events', a: 23, b: 25},
-                    { Events: '5 Events', a: 16, b: 16},
-                    { Events: '6 Events', a: 10, b: 2},
-                    { Events: '7 Events', a: 5, b: 1},
-                    { Events: '8+ Events', a: 15, b: 20},
-        ],
+                    {!! $datastring !!}
+                ],
                 xkey: 'Events',
-                ykeys: ['a', 'b'],
-                labels: ['2017', '2016'],
+                ykeys: [ {!! $labels !!} ],
+                labels: [ {!! $labels !!} ],
                 barRatio: 0.1,
-            {{--
-                barColors: function (row, series, type) {
-                    if (1) {
-                        return "#26B99A";
-                    } else {
-                        return "#f00";
-                    }
-                },
-            --}}
                 xLabelAngle: 35,
                 hideHover: 'auto',
                 resize: true
             });
         });
     </script>
-{{--
-    @include('v1.parts.footer-datatable')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#member_table').DataTable({
-                "fixedHeader": true,
-                "order": [[ 0, "asc" ]]
-            });
+        var ctx = document.getElementById("indPie").getContext('2d');
+        var options = {
+            responsive: true,
+            legend: {
+                display: false,
+                position: "bottom"
+            },
+            legendCallback: function (chart) {
+                console.log(chart.data);
+                var text = [];
+                text.push('<ul>');
+                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                    text.push('<li>');
+                    text.push('<span style="background-color:' + chart.data.datasets[0].backgroundColor[i]
+                        + '">' + chart.data.datasets[0].data[i] + '</span>');
+                    if (chart.data.labels[i]) {
+                        text.push(chart.data.labels[i]);
+                    }
+                    text.push('</li>');
+                }
+                text.push('</ul>');
+                return text.join("");
+            }
+        };
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    @foreach($indPie as $i)
+                        '{{ $i->indName }}',
+                    @endforeach
+                ],
+                datasets: [{
+                    backgroundColor: [
+                        "#2ecc71",
+                        "#3498db",
+                        "#95a5a6",
+                        "#9b59b6",
+                        "#f1c40f",
+                        "#e74c3c",
+                        "#34495e",
+                        "#b7ad6c",
+                        "#CCFDFF",
+                        "#ccffde",
+                        "#d7ccff",
+                        "#ffccf3",
+                        "#ffcccc",
+                        "#ff9651",
+                        "#ff0000",
+                        "#00ff00",
+                        "#0000ff"
+                    ],
+
+                    data: [
+                        @foreach($indPie as $i)
+                        @if($i->indName == 'Total')
+                        @else
+                        {{ $i->cnt }},
+                        @endif
+                        @endforeach
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    display: false,
+                    position: "bottom"
+                },
+                legendCallback: function (chart) {
+                    console.log(chart.data);
+                    var text = [];
+                    text.push('<ul>');
+                    for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                        text.push('<li>');
+                        text.push('<span style="color:white; background-color:'
+                            + chart.data.datasets[0].backgroundColor[i] + '">&nbsp;'
+                            + chart.data.datasets[0].data[i] + ' </span> &nbsp;');
+                        if (chart.data.labels[i]) {
+                            text.push(chart.data.labels[i]);
+                        }
+                        text.push('</li>');
+                    }
+                    text.push('</ul>');
+                    return text.join("");
+                }
+            }
         });
+        document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
     </script>
---}}
 @endsection

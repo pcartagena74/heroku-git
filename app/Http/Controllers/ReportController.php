@@ -22,54 +22,85 @@ class ReportController extends Controller
         $years = Event::where('orgID', $this->currentPerson->defaultOrgID)
             ->join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
             ->select(DB::raw("year(eventStartDate) as 'year'"))
-            ->distinct()->orderBy('year', 'desc')->get();
+            ->distinct()->orderBy('year', 'asc')->get();
 
-        $y = $years->toArray();
-        $y1 = $y[0]['year'];
-        $datastring = "";  $eplus = 0;
+        $datastring = "";  $pluses = array(); $labels = "";
 
-   /*
-        { Events: '1 Event', a: 518, b: 533},
-        { Events: '2 Events', a: 153, b: 200},
-        { Events: '3 Events', a: 57, b: 77},
-        { Events: '4 Events', a: 23, b: 25},
-        { Events: '5 Events', a: 16, b: 16},
-        { Events: '6 Events', a: 10, b: 2},
-        { Events: '7 Events', a: 5, b: 1},
-        { Events: '8+ Events', a: 15, b: 20},
-    */
+        foreach($years as $y){
+            $pluses{$y->year} = 0;
+            $labels .= "'$y->year', ";
+        }
+        rtrim($labels, ",");
 
-        $sql = "select numEvent, count(*) 'cnt'
-                FROM (
-                  select er.personID, count(er.personID) 'numEvent'
-                  from `event-registration` er
-                  join `org-event` oe on er.eventID = oe.eventID and oe.deleted_at is null
-                  where year(oe.eventStartDate) = ? and er.deleted_at is null
-                  group by er.personID
-                ) tbl
-                GROUP BY numEvent;";
-        //$chart = DB::select($sql, ["$y1"]);
-        $chart = DB::select($sql, ["2017"]);
+        $chart = DB::select('call member_report');
 
         foreach($chart as $e){
             if($e->numEvent >= 8){
-                $eplus += $e->cnt;
+                foreach($years as $y){
+                    if($e->{$y->year} === null){
+                        $e->{$y->year} = 0;
+                    }
+                    $pluses{$y->year} += $e->{$y->year};
+                }
                 if($e == last($chart)){
-                    $datastring .= "{ Events: '8+ Events', Attendees: " . $eplus . "},";
+                    $datastring .= "{ Events: '8+ Events', '";
+                    foreach($years as $y){
+                        if($e->{$y->year} === null){
+                            $e->{$y->year} = 0;
+                        }
+                        if($y == $years->last()){
+                            $datastring .= $y->year . "': " . $pluses{$y->year};
+                        } else {
+                            $datastring .= $y->year . "': " . $pluses{$y->year} . ", '";
+                        }
+                    }
+                    rtrim($datastring, ",");
+                    $datastring .= "}";
                 }
             } else {
                 if($e != reset($chart)){
                     $datastring .= "\n";
                 }
                 if($e->numEvent == 1){
-                    $datastring .= "{ Events: '" . $e->numEvent . " Event', Attendees: " . $e->cnt . "},";
+                    $datastring .= "{ Events: '" . $e->numEvent . " Event', '";
+                    foreach($years as $y){
+                        if($e->{$y->year} === null){
+                            $e->{$y->year} = 0;
+                        }
+                        if($y == $years->last()){
+                            $datastring .= $y->year . "': " . $e->{$y->year};
+                        } else {
+                            $datastring .= $y->year . "': " . $e->{$y->year} . ", '";
+                        }
+                    }
+                    rtrim($datastring, ",");
+                    $datastring .= "},";
                 } else {
-                    $datastring .= "{ Events: '" . $e->numEvent . " Events', Attendees: " . $e->cnt . "},";
+                    $datastring .= "{ Events: '" . $e->numEvent . " Events', '";
+                    foreach($years as $y){
+                        if($e->{$y->year} === null){
+                            $e->{$y->year} = 0;
+                        }
+                        if($y == $years->last()){
+                            $datastring .= $y->year . "': " . $e->{$y->year};
+                        } else {
+                            $datastring .= $y->year . "': " . $e->{$y->year} . ", '";
+                        }
+                    }
+                    rtrim($datastring, ",");
+                    $datastring .= "},";
                 }
             }
         }
-        rtrim($datastring, ",");
 
-        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'datastring'));
+        $indPie = DB::select('select indName, count(indName) as cnt
+                                 from person p 
+                                 join `org-person` op on op.personID = p.personID
+                                 join `organization` o on op.orgID = o.orgID 
+                                 where o.orgID = ?
+                                       and indName is not null and indName <> ""
+                                 group by indName', [$this->currentPerson->defaultOrgID]);
+
+        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'datastring', 'labels', 'indPie'));
     }
 }
