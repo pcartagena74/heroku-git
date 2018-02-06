@@ -16,10 +16,12 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 {{--
     <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    // replaced with cloudflare
+	<link href="{{ env('APP_URL') }}/css/select2.min.css" rel="stylesheet">
 --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/prettify.min.css" rel="stylesheet">
-	<link href="{{ env('APP_URL') }}/css/select2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" rel="stylesheet">
 	<link href="{{ env('APP_URL') }}/css/switchery.min.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/starrr.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/daterangepicker.css" rel="stylesheet">
