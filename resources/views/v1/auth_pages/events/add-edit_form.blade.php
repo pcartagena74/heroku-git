@@ -8,6 +8,7 @@ use App\Event;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 
 $dateFormat = 'm/d/Y h:i A';
+$org = $current_person->defaultOrg;
 
 if(isset($event)) {
     $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
