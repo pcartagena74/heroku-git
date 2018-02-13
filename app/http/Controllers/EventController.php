@@ -115,9 +115,6 @@ class EventController extends Controller
         $exLoc = Location::find($event->locationID);
         $page_title = 'Edit Copied Event';
 
-        /*
-         * Commented out because the store function creates the ticket stub
-         # and mainSession for initial event
         // Create a stub for the default ticket for the event
         $label                    = Org::find($this->currentPerson->defaultOrgID);
         $tkt                      = new Ticket;
@@ -145,7 +142,6 @@ class EventController extends Controller
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
-        */
 
         if ($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
