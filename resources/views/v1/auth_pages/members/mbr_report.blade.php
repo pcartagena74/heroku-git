@@ -31,9 +31,11 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                 @include('v1.parts.start_content', ['header' => 'Number of Events Attended by Year', 'subheader' => '',
                          'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-                <b>Graph Years:</b> <a id="years" name="choose_years[]"
+                @if(Entrust::hasRole('Developer'))
+                <b>Graph Years:</b> <a id="tags"
                                         data-pk="{{ 1 }}" data-type="select2" data-title="Select Years to Display"
                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ 1 }}">2013, 2014, 2015, 2016, 2017, 2018</a><br/>
+                @endif
                 <div id="canvas"></div>
 
                 @include('v1.parts.end_content')
@@ -57,21 +59,16 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
 
 @endsection
 
-{{--
-{!! $datastring  or '' !!}
---}}
-
 @section('scripts')
     <script>
-        {{--
-        $('#years').editable({
-            type: 'checklist',
-            source: [
-                '2013', '2014', '2015', '2016', '2017', '2018'
-            ]
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            }
         });
-        --}}
-        $('#years').editable({
+        $.fn.editable.defaults.mode = 'popup';
+        $('#tags').editable({
+            placement: 'right',
             inputclass: 'input-large',
             select2: {
                 tags: ['2013', '2014', '2015', '2016', '2017', '2018'],
@@ -107,7 +104,7 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                 position: "bottom"
             },
             legendCallback: function (chart) {
-                console.log(chart.data);
+                //console.log(chart.data);
                 var text = [];
                 text.push('<ul>');
                 for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
@@ -142,13 +139,13 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                         "#34495e",
                         "#b7ad6c",
                         "#CCFDFF",
-                        "#ccffde",
                         "#d7ccff",
                         "#ffccf3",
-                        "#ffcccc",
                         "#ff9651",
                         "#ff0000",
                         "#00ff00",
+                        "#ccffde",
+                        "#ffcccc",
                         "#0000ff"
                     ],
 
@@ -169,7 +166,7 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                     position: "bottom"
                 },
                 legendCallback: function (chart) {
-                    console.log(chart.data);
+                    //console.log(chart.data);
                     var text = [];
                     text.push('<ul>');
                     for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
