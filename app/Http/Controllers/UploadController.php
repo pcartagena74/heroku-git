@@ -700,6 +700,9 @@ class UploadController extends Controller
                                 if(!isset($prefName)) {
                                     $prefName = null;
                                 }
+                                if(!isset($experience)) {
+                                    $experience = null;
+                                }
                                 // foreach cycle through $row's keys() and switch on preg_match
                                 // do the following things to input data:
                                 // 1. set the following items to lower case: email addresses
