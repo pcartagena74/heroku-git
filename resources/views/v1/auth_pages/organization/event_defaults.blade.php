@@ -60,8 +60,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                                              data-value="{{ $org->earlyBirdPercent }}"></a> &nbsp;
                 <i class="fa fa-percent"></i></td>
             <td style="text-align: left;"><a href="#" id="eventEmail" data-value="{{ $org->eventEmail }}"></a></td>
-            <td style="text-align: left;"><a href="#" id="nearbyChapters" data-value="{{ $org->nearbyChapters }}"></a>
-            </td>
+            <td style="text-align: left;"><a href="#" id="nearbyChapters" data-value="{{ $org->nearbyChapters }}"></a></td>
         </tr>
         <tr>
             <th style="text-align: left;">
@@ -69,14 +68,14 @@ $currentOrg    = $currentPerson->defaultOrg;
                 @include('v1.parts.tooltip', ['title' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible."])
             </th>
             <th style="text-align: left;"></th>
-            <th style="text-align: left;"></th>
+            <th style="text-align: left;">Region Chapters</th>
         </tr>
         <tr>
             <td style="text-align: left;">
                 <a href="#" id="refundDays" data-value="{{ $org->refundDays }}"></a> &nbsp; Days
             </td>
             <td style="text-align: left;"></td>
-            <td style="text-align: left;"></td>
+            <td style="text-align: left;"><a href="#" id="regionChapters" data-value="{{ $org->regionChapters }}"></a></td>
             </td>
         </tr>
     </table>
@@ -253,6 +252,18 @@ $currentOrg    = $currentPerson->defaultOrg;
                 },
                 maximumInputLength: 5
             });
+
+            $("#regionChapters").editable({
+                pk:  {{ $org->orgID }},
+                placement: 'top',
+                url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
+                select2: {
+                    tags: ["None of the above"],
+                    multiple: true
+                },
+                maximumInputLength: 5
+            });
+
 
             $('#refundDays').editable({
                 type: 'number',

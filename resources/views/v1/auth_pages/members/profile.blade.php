@@ -115,6 +115,22 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                         <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a>
                         </td>
                     </tr>
+                    <tr>
+                        <th style="text-align: left;">PM Experience</th>
+                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;"></th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;"><a href="#" id="experience"
+                                                         data-title="PM Experience (Years)">{{ $profile->experience }}</a>
+                        </td>
+                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;"></td>
+                    </tr>
                     </tbody>
                 </table>
                 @include('v1.parts.end_content')
@@ -494,6 +510,19 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     @foreach($emails as $email)
                     {!! "{ value: '" . $email->emailADDR . "', text: '" . $email->emailADDR . "' }," !!}
                     @endforeach
+                ]
+            });
+
+            $('#experience').editable({
+                type: 'select',
+                pk: {{ $profile->personID }},
+                url: '{{ $profile_script_url }}',
+                source:[
+                    { value: '1-4', text: '1-4 Years'},
+                    { value: '5-9', text: '5-9 Years'},
+                    { value: '10-14', text: '10-14 Years'},
+                    { value: '15-19', text: '15-19 Years'},
+                    { value: '20+', text: '20+ Years'}
                 ]
             });
 

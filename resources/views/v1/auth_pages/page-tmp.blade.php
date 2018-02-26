@@ -16,7 +16,8 @@ $topBits = '';  // remove this if this was set in the controller
 
 @endsection
 
-
-
 @section('scripts')
+@endsection
+
+@section('footer')
 @endsection
