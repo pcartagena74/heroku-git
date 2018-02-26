@@ -140,7 +140,7 @@ $soldout = 0;
                                     </td>
                                     <td data-title="Ticket">
                                         {{ $bundle->ticketLabel }}<SUP style='color: red'>**</SUP>
-                                        <?php
+<?php
                                         $b_tkts = DB::table('event-tickets')
                                             ->join('bundle-ticket', function ($join) use ($bundle) {
                                                 $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
@@ -151,16 +151,16 @@ $soldout = 0;
                                             ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID',
                                                 'event-tickets.maxAttendees', 'event-tickets.regCount')->get();
                                         // $b_tkts = DB::select($sql);
-                                        ?>
+?>
                                         <ul>
                                             @foreach($b_tkts as $tkt)
-                                                <?php
+<?php
                                                 if ($tkt->maxAttendees > 0 && $tkt->regCount >= $tkt->maxAttendees) {
                                                     $soldout = 1;
                                                 } else {
                                                     $soldout = 0;
                                                 }
-                                                ?>
+?>
                                                 <li>
                                                     {{ $tkt->ticketLabel }}
                                                 </li>
@@ -339,11 +339,13 @@ $soldout = 0;
                                                             style="text-align:left; min-width:150px;
                                                                     width: {{ $width }}%; max-width: {{ $mw }}%;">
                                                             <b>{{ $s->sessionName }}</b>
+                                                            @if($s->sessionAbstract !== null)
                                                             <a tabindex="0" class="btn btn-xs btn-primary pull-right"
                                                                data-html="true" data-toggle="popover"
                                                                data-trigger="focus"
                                                                data-placement="left" title="{!! $s->sessionName !!}"
                                                                data-content="{!! $s->sessionAbstract !!}">Abstract</a><br/>
+                                                            @endif
                                                         </td>
                                                     @else
                                                         <td rowspan="3" colspan="{{ $columns }}"
@@ -354,7 +356,7 @@ $soldout = 0;
                                             </tr>
                                         @endif
 
-                                        <?php
+<?php
                                         // Check to see if there are any events for $x (this row)
                                         $check = EventSession::where([
                                             ['eventID', $event->eventID],
@@ -363,19 +365,19 @@ $soldout = 0;
                                         ])->first();
 
                                         // As long as there are any sessions, the row will be displayed
-                                        ?>
+?>
                                         @if($check !== null)
                                             <tr>
                                                 @foreach($tracks as $track)
-                                                    <?php
+<?php
                                                     $s = EventSession::where([
                                                         ['trackID', $track->trackID],
                                                         ['eventID', $event->eventID],
                                                         ['confDay', $i],
                                                         ['order', $x]
                                                     ])->first();
-                                                    ?>
-                                                    @if($s !== null)
+?>
+                                                    @if($s !== null && $s->sessionSpeakers !== null)
                                                         <td data-title="Speaker" colspan="2" style="text-align:left;">
                                                             <b>Session Speaker(s)</b><br/>
                                                             {{ $s->sessionSpeakers or "tbd" }}
@@ -387,7 +389,7 @@ $soldout = 0;
                                             </tr>
                                         @endif
 
-                                        <?php
+<?php
                                         // Check to see if there are any events for $x (this row)
                                         $check = EventSession::where([
                                             ['eventID', $event->eventID],
@@ -396,19 +398,19 @@ $soldout = 0;
                                         ])->first();
 
                                         // As long as there are any sessions, the row will be displayed
-                                        ?>
+?>
                                         @if($check !== null)
                                             <tr>
                                                 @foreach($tracks as $track)
-                                                    <?php
+<?php
                                                     $s = EventSession::where([
                                                         ['trackID', $track->trackID],
                                                         ['eventID', $event->eventID],
                                                         ['confDay', $i],
                                                         ['order', $x]
                                                     ])->first();
-                                                    ?>
-                                                    @if($s !== null)
+?>
+                                                    @if($s !== null && $s->leadAmt+$s->stratAmt+$s->techAmt > 0 && $s->maxAttendees > 0)
                                                         <td data-title="Credit" style="text-align:left;">
                                                             @if($s->leadAmt > 0)
                                                                 <b>{{ $s->leadAmt }}
@@ -433,8 +435,7 @@ $soldout = 0;
                                                             @endif
                                                         </td>
                                                         <td data-title="Limit" style="text-align:left;">
-                                                            <b> Attendee
-                                                                Limit: </b> {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
+                                                            <b> Attendee Limit: </b> {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
                                                         </td>
                                                     @else
 

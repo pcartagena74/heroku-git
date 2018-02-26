@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment: Registration form for events that do not have foot... (Roundtables)
+ * Comment: Registration form for events that do not have food... (Roundtables)
  * Created: 2/25/2017
  */
 use Illuminate\Support\Facades\DB;
@@ -40,10 +40,8 @@ foreach($array as $chap) {
 // Determine if Early Bird Pricing should be in effect
 $today = Carbon\Carbon::now();
 if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)) {
-    $earlymbr =
-        number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
-    $earlynon =
-        number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+    $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+    $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
 } else {
     $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
@@ -82,9 +80,8 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
             @if(Session::has('alert-' . $msg))
                 <p>&nbsp;</p>
-                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close"
-                                                                                         data-dismiss="alert"
-                                                                                         aria-label="close">&times;</a>
+                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </p>
             @endif
         @endforeach

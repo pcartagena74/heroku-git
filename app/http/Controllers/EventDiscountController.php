@@ -31,6 +31,7 @@ class EventDiscountController extends Controller
                                 ['orgID', $org->orgID],
                                 ['eventID', $event->eventID],
                             ])
+                            ->whereNull('deleted_at')
                             ->select('discountID', 'discountCODE', 'percent', 'flatAmt')
                             ->orderBy('discountID', 'DESC')
                             ->get();

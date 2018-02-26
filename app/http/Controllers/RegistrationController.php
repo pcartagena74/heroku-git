@@ -59,11 +59,14 @@ class RegistrationController extends Controller
         $discount_code = request()->input('discount_code');
         $event         = Event::find($ticket->eventID);
         */
+        return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
+
+        /*
         if ($event->hasFood) {
-            return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
         } else {
             return view('v1.public_pages.register-no-food', compact('ticket', 'event', 'quantity', 'discount_code'));
         }
+        */
     }
 
     public function show($param)

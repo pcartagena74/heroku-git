@@ -33,8 +33,13 @@ $industry_array = ['' => 'Select Industry'] + $industries->pluck('industryName',
 $allergens      = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-$array    = explode(',', $chapters->nearbyChapters);
+if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+    $array    = explode(',', $chapters->regionChapters);
+} else {
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+    $array    = explode(',', $chapters->nearbyChapters);
+}
 
 foreach($array as $chap) {
     $affiliation_array[$chap] = $chap;
@@ -80,7 +85,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             @endif
         </div>
     </div>
-
+{{-- Possibly Redundant --}}
     <div class="flash-message">
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
             @if(Session::has('alert-' . $msg))
@@ -107,6 +112,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
         </b>
         <div class="clearfix"></div>
     @endif
+
     @for($i=1; $i<=$quantity; $i++)
         {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
         {!! Form::hidden('cost'.$i, $isMember ? $earlymbr : $earlynon, array('id' => 'cost'.$i)) !!}
@@ -199,7 +205,11 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 <th style="width:20%;">Preferred Name<sup>*</sup></th>
                 <th style="width:20%;">Industry</th>
                 <th style="width:20%;">Company</th>
-                <th style="width:20%;">Title</th>
+                @if($event->eventTypeID == 5)
+                    <th style="width:20%;">Chapter Role</th>
+                @else
+                    <th style="width:20%;">Title</th>
+                @endif
                 <th style="width:20%;">
                         Email Address<sup>*</sup>
                     @if($i == 1 && Auth::check())
@@ -236,19 +246,33 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             </tr>
 
             <tr>
+                @if($event->hasFood)
                 <td style="width:20%;"><b>Please select any dietary requirements.</b>
                     @include('v1.parts.tooltip', ['title' => "Ctrl-Click to select more than dietary choice."])
                     <br><small>We'll do our best to accommodate you.</small></td>
+                <th style="width:20%;">From what city and state will you be commuting?</th>
+                @endif
                 <th style="width:20%;">Is this your first event?</th>
                 <th style="width:20%;">What future event topics would interest you?</th>
-                <th style="width:20%;">From what city and state will you be commuting?</th>
                 <th style="width:20%;">Do you authorize PMI MassBay to submit your PDUs for you?</th>
+                @if(!$event->hasFood)
+                <td colspan="2" rowspan="4">
+                    <div width="100%">
+                         <img src="/images/roundtable.jpg" width="100%"/>
+                    </div>
+                </td>
+                @endif
             </tr>
             <tr>
                 @if($i==1)
                     <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
                 @else
                     <td>{!! Form::select('allergenInfo_'.$i.'[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                @endif
+                @if($i==1)
+                    <td>{!! Form::text("cityState", old("cityState"), array('class' => 'form-control')) !!}</td>
+                @else
+                    <td>{!! Form::text("cityState_$i", old("cityState_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
                 @if($i==1)
                         <td><div class="container row col-sm-3">
@@ -271,11 +295,6 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                     <td>{!! Form::text("eventTopics_$i", old("eventTopics_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
                 @if($i==1)
-                    <td>{!! Form::text("cityState", old("cityState"), array('class' => 'form-control')) !!}</td>
-                @else
-                    <td>{!! Form::text("cityState_$i", old("cityState_$i"), array('class' => 'form-control')) !!}</td>
-                @endif
-                @if($i==1)
                         <td><div class="container row col-sm-3">
                                 <div class="col-sm-1">No</div>
                                 <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', false, array('class' => 'flat js-switch')) !!} </div>
@@ -293,40 +312,44 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             </tr>
 
             <tr>
+                @if($event->hasFood)
                 <th style="width:20%;">Dietary/Other Comments</th>
+                <th style="width:20%;"><b>List any special arrangements you may need.</b><br><small>We'll do our best to accommodate you.</small></th>
+                @endif
                 <th style="width:20%;">List any questions for the speaker(s).</th>
-                <td style="width:20%;"><b>List any special arrangements you may need.</b><br><small>We'll do our best to accommodate you.</small></td>
-                <td style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b>
+                <th style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b>
                     @include('v1.parts.tooltip', ['title' => "Ctrl-Click to select more than one affiliation."])
                     <br></td>
                 <th style="width:20%;">Do you want to be added to a participant roster?</th>
             </tr>
 
             <tr>
+                @if($event->hasFood)
                 @if($i==1)
                     <td>{!! Form::textarea("eventNotes", old("eventNotes"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
                 @else
                     <td>{!! Form::textarea("eventNotes_$i", old("eventNotes_$i"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
                 @endif
+                    @if($i==1)
+                        <td>
+                            <div class="form-group col-md-12">
+                                {!! Form::text("specialNeeds", old("specialNeeds"), array('class' => 'form-control has-feedback-left')) !!}
+                                <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </td>
+                    @else
+                        <td>
+                            <div class="form-group col-md-12">
+                                <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
+                                {!! Form::text("specialNeeds_$i", old("specialNeeds_$i"), array('class' => 'form-control')) !!}
+                            </div>
+                        </td>
+                    @endif
+                @endif
                 @if($i==1)
                     <td>{!! Form::textarea("eventQuestion", old("eventQuestion"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
                 @else
                     <td>{!! Form::textarea("eventTopics_$i", old("eventTopics_$i"), $attributes = array('class'=>'form-control', 'rows' => '3')) !!}</td>
-                @endif
-                @if($i==1)
-                    <td>
-                        <div class="form-group col-md-12">
-                        {!! Form::text("specialNeeds", old("specialNeeds"), array('class' => 'form-control has-feedback-left')) !!}
-                            <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
-                        </div>
-                    </td>
-                @else
-                    <td>
-                        <div class="form-group col-md-12">
-                        <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
-                        {!! Form::text("specialNeeds_$i", old("specialNeeds_$i"), array('class' => 'form-control')) !!}
-                        </div>
-                    </td>
                 @endif
                 @if($i==1)
                     <td>{!! Form::select('affiliation[]', $affiliation_array, old("affiliation") ?: reset($affiliation_array), array('class' => 'form-control', 'multiple' => 'multiple', 'required')) !!}</td>
