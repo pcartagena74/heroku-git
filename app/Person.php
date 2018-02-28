@@ -26,67 +26,82 @@ class Person extends Model
 
     protected $hidden = [ 'remember_token' ];
 
-    public function roles () {
+    public function roles()
+    {
         return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id');
     }
 
-    public function orgs () {
+    public function orgs()
+    {
         return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID');
     }
 
-    public function emails () {
+    public function emails()
+    {
         return $this->hasMany(Email::class, 'personID', 'personID');
     }
 
-    public function phones () {
+    public function phones()
+    {
         return $this->hasMany(Phone::class, 'personID', 'personID');
     }
 
-    public function addresses () {
+    public function addresses()
+    {
         return $this->hasMany(Address::class, 'personID', 'personID');
     }
 
-    public function socialites () {
+    public function socialites()
+    {
         return $this->hasMany(PersonSocialite::class, 'personID', 'personID');
     }
 
-    public function orgperson () {
+    public function orgperson()
+    {
         return $this->belongsTo(OrgPerson::class, 'personID', 'personID');
     }
 
-    public function registrations () {
+    public function registrations()
+    {
         return $this->hasMany(Registration::class, 'personID', 'personID');
     }
 
-    public function regfinances () {
+    public function regfinances()
+    {
         return $this->hasMany(RegFinance::class, 'personID', 'personID');
     }
 
-    public function user () {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'id', 'personID');
     }
 
-    public function defaultOrg () {
+    public function defaultOrg()
+    {
         return $this->belongsTo(Org::class, 'defaultOrgID', 'orgID');
     }
 
-    public function showDisplayName(){
-        if($this->prefName){
+    public function showDisplayName()
+    {
+        if ($this->prefName) {
             return $this->prefName;
         } else {
             return $this->firstName;
         }
     }
 
-    public function showFullName(){
+    public function showFullName()
+    {
         return $this->firstName . " " . $this->lastName;
     }
 
-    public function routeNotificationForMail() {
+    public function routeNotificationForMail()
+    {
         return $this->login;
     }
 
-    public function org_role_id(){
-       return Role::where('name', $this->defaultOrg->orgName)->select('id')->first();
+    public function org_role_id()
+    {
+        return Role::where('name', $this->defaultOrg->orgName)->select('id')->first();
     }
 }

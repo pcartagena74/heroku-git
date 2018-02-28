@@ -13,23 +13,28 @@ class PersonHistory extends Model
 
     protected $hidden = [ 'remember_token' ];
 
-    public function emails () {
+    public function emails()
+    {
         return $this->hasMany(Email::class, 'emailID');
     }
 
-    public function addresses () {
+    public function addresses()
+    {
         return $this->hasMany(Address::class, 'addrID');
     }
 
-    public function orgperson () {
+    public function orgperson()
+    {
         return $this->belongsTo(OrgPerson::class, 'personID');
     }
 
-    public function user () {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'id');
     }
 
-    public function defaultOrg () {
+    public function defaultOrg()
+    {
         return $this->hasOne(Org::class, 'orgID', 'defaultOrgID');
     }
 }

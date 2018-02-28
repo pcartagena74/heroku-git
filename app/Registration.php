@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
@@ -17,23 +18,28 @@ class Registration extends Model
     protected $primaryKey = 'regID';
     protected $dates = ['createDate', 'updateDate', 'deleted_at'];
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function ticket() {
+    public function ticket()
+    {
         return $this->belongsTo(Ticket::class, 'ticketID', 'ticketID');
     }
 
-    public function regfinance() {
+    public function regfinance()
+    {
         return $this->hasOne(RegFinance::class, 'token', 'token');
     }
 
-    public function regsession() {
+    public function regsession()
+    {
         return $this->hasMany(RegSession::class, 'regID', 'regID');
     }
 }

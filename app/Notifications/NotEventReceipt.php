@@ -23,7 +23,8 @@ class EventReceipt extends Notification
      *
      * @return void
      */
-    public function __construct (RegFinance $rf) {
+    public function __construct(RegFinance $rf)
+    {
         $this->rf = $rf;
     }
 
@@ -33,7 +34,8 @@ class EventReceipt extends Notification
      * @param  mixed $notifiable
      * @return array
      */
-    public function via ($notifiable) {
+    public function via($notifiable)
+    {
         return ['mail'];
     }
 
@@ -43,7 +45,8 @@ class EventReceipt extends Notification
      * @param  mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail ($notifiable) {
+    public function toMail($notifiable)
+    {
         $event  = Event::find($this->rf->eventID);
         $org    = Org::find($event->orgID);
         $person = Person::find($this->rf->personID);
@@ -65,7 +68,8 @@ class EventReceipt extends Notification
      * @param  mixed $notifiable
      * @return array
      */
-    public function toArray ($notifiable) {
+    public function toArray($notifiable)
+    {
         return [
             //
         ];

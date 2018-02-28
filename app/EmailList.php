@@ -13,7 +13,8 @@ class EmailList extends Model
     protected $table = 'email-list';
     protected $dates = ['created_at', 'deleted_at', 'updated_at'];
 
-    public function org() {
+    public function org()
+    {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 }

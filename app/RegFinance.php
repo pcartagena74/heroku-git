@@ -18,19 +18,23 @@ class RegFinance extends Model
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     //protected static $ignoreChangedAttributes = ['createDate', 'cancelDate'];
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function ticket() {
+    public function ticket()
+    {
         return $this->belongsTo(Ticket::class, 'ticketID', 'ticketID');
     }
 
-    public function registration() {
+    public function registration()
+    {
         return $this->hasMany(Registration::class, 'token', 'token');
     }
 

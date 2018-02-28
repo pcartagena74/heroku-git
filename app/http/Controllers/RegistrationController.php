@@ -262,16 +262,16 @@ class RegistrationController extends Controller
 
             $regBy = $person->firstName . " " . $person->lastName;
             $regMem = 'Non-Member';
-
         } elseif (!Auth::check() && $email !== null) {
             // Not logged in and email is in the database;
             // Should force a login -- return to form with input saved.
             //dd('No one logged in but main email is in DB');
-            request()->session()->flash('alert-warning',
+            request()->session()->flash(
+                'alert-warning',
                 "You have an account that we've created for you. Please click the login button. 
-             If you haven't yet set a password, we'll send one to your email address.");
+             If you haven't yet set a password, we'll send one to your email address."
+            );
             return back()->withInput();
-
         } elseif (Auth::check() && ($email->personID == $this->currentPerson->personID)) {
             // the email entered belongs to the person logged in; ergo in DB
             $person = $this->currentPerson;
@@ -317,7 +317,6 @@ class RegistrationController extends Controller
             $person->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
-
         } elseif (Auth::check() && ($email->personID != $this->currentPerson->personID)) {
             // someone logged in is registering for someone else in the DB (usually CAMI)
             $person = Person::find($email->personID);
@@ -361,7 +360,6 @@ class RegistrationController extends Controller
                 $person->affiliation = implode(",", $affiliation);
             }
             $person->save();
-
         } else {
             // someone logged in is registering for someone else NOT in the DB
             $person = new Person;
@@ -439,7 +437,6 @@ class RegistrationController extends Controller
         // ----------------------------------------------------------
 
         for ($i = 2; $i <= $quantity; $i++) {
-
             $prefix = ucwords(request()->input('prefix' . "_$i"));
             $firstName = ucwords(request()->input('firstName' . "_$i"));
             $middleName = ucwords(request()->input('middleName' . "_$i"));
@@ -511,7 +508,6 @@ class RegistrationController extends Controller
 
                 $regBy = $person->firstName . " " . $person->lastName;
                 $regMem = 'Non-Member';
-
             } elseif (Auth::check() && ($email->personID == $this->currentPerson->personID)) {
                 // the email entered belongs to the person logged in; ergo in DB
                 // addresses #2 - whatever should NOT be the same as the first
@@ -556,7 +552,6 @@ class RegistrationController extends Controller
                     $person->affiliation = implode(",", $affiliation);
                 }
                 $person->save();
-
             } elseif (Auth::check() && ($email->personID != $this->currentPerson->personID)) {
                 // someone logged in is registering someone else in the DB (usually CAMI)
                 $person = Person::find($email->personID);
@@ -600,7 +595,6 @@ class RegistrationController extends Controller
                     $person->affiliation = implode(",", $affiliation);
                 }
                 $person->save();
-
             } else {
                 // this is a rehash of the first option
                 dd("shouldn't have gotten here");
@@ -646,7 +640,6 @@ class RegistrationController extends Controller
             return Redirect::back()->withErrors();
 //                ['warning' => "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total"]);
         } else {
-
             $rf = new RegFinance;
             $rf->regID = $reg->regID;
             $rf->creatorID = $this->currentPerson->personID;
@@ -748,7 +741,6 @@ class RegistrationController extends Controller
                     $reg->save();
 
                     // Generate Refund Email
-
                 } catch (Exception $e) {
                     request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }
@@ -768,7 +760,6 @@ class RegistrationController extends Controller
                     $reg->save();
 
                     // Generate Refund Email
-
                 } catch (\Exception $e) {
                     request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
                 }

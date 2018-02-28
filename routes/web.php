@@ -35,22 +35,22 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
-Route::get('/policies', function(){
+Route::get('/policies', function () {
     return view('v1.public_pages.policies');
 });
-Route::get('/pricing', function(){
+Route::get('/pricing', function () {
     return view('v1.public_pages.pricing');
 });
-Route::get('/details', function(){
+Route::get('/details', function () {
     return view('v1.public_pages.details');
 });
-Route::get('/mktg', function(){
+Route::get('/mktg', function () {
     return view('v1.public_pages.details');
 })->name('mktg');
-Route::get('/mail', function(){
+Route::get('/mail', function () {
     return view('v1.public_pages.details');
 })->name('mail');
-Route::get('/mtgs', function(){
+Route::get('/mtgs', function () {
     return view('v1.public_pages.details');
 })->name('mtgs');
 
@@ -71,7 +71,7 @@ Route::post('/rs_survey', 'RegSessionController@store');
 Route::get('/checkin/{event}/{session?}', 'RegSessionController@volunteer_checkin');
 Route::post('/process_checkin', 'RegSessionController@process_checkin');
 
-Route::get('/storage/events/{filename}', function($filename){
+Route::get('/storage/events/{filename}', function ($filename) {
     $filePath = Flysystem::connection('awss3')->get($filename);
     return redirect($filePath);
 });
@@ -85,7 +85,7 @@ Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
-Route::get('/become', 'ActivityController@create' );
+Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 
 // My Profile / Member Editing
@@ -229,7 +229,7 @@ Route::patch('/campaign/{campaign}', 'CampaignController@update');
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
-Route::get('/test', function() {
+Route::get('/test', function () {
     $events = App\Event::all();
     return view('v1.auth_pages.welcome', compact('events'));
 });
@@ -238,9 +238,9 @@ Route::get('/twitter/{event}', 'TwitterController@show');
 
 Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http\Request $request) {
     foreach ($request->all() as $input_key => $input_val) {
-        if ( strpos($input_key, 'approval-status-') === 0 ) {
+        if (strpos($input_key, 'approval-status-') === 0) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
-            $tweet = App\Tweet::where('id',$tweet_id)->first();
+            $tweet = App\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
                 $tweet->approved = (int)$input_val;
                 $tweet->save();
@@ -250,12 +250,12 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
     return redirect()->back();
 }]);
 
-Route::get('/blank', ['middleware' => 'auth', function(){
+Route::get('/blank', ['middleware' => 'auth', function () {
     return view('v1.auth_pages.page-tmp');
 }]);
 
 Auth::routes();
 
-Route::any('{all}', function(){
+Route::any('{all}', function () {
     return view('errors.404');
 })->where('all', '.*');

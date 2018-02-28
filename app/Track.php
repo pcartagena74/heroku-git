@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 class Track extends Model
 {
     use SoftDeletes;
@@ -16,7 +15,8 @@ class Track extends Model
     protected $primaryKey = 'trackID';
     protected $dates = ['createDate', 'updateDate', 'deleted_at'];
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class, 'eventID');
     }
 

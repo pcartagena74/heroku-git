@@ -14,7 +14,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'Illuminate\Auth\Events\Login' => [
-            'App\Listeners\LogSuccessfulLogin',
+            \App\Listeners\LogSuccessfulLogin::class,
         ],
 
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
@@ -52,9 +52,8 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot () {
+    public function boot()
+    {
         parent::boot();
-
-
     }
 }

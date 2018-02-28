@@ -39,7 +39,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        if(url()->previous()){
+        if (url()->previous()) {
             $this->redirectTo = url()->previous();
         } else {
             $this->redirectTo = '/dashboard';
@@ -47,7 +47,8 @@ class LoginController extends Controller
         $this->middleware('guest', ['except' => 'logout']);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
 
         $this->validateLogin($request);
 
@@ -76,7 +77,8 @@ class LoginController extends Controller
         return $this->sendFailedLoginResponse($request);
     }
 
-    protected function sendFailedLoginResponse(Request $request) {
+    protected function sendFailedLoginResponse(Request $request)
+    {
         $errors = [$this->username() => trans('auth.failed')];
 
         if ($request->expectsJson()) {
@@ -96,5 +98,4 @@ class LoginController extends Controller
         $request->session()->invalidate();
         return redirect(env('APP_URL').'/');
     }
-
 }

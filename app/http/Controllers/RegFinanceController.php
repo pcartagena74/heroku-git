@@ -106,9 +106,22 @@ class RegFinanceController extends Controller
             $industries = DB::table('industries')->get();
             // prep for stripe-related stuff since the next step is billing for non-$0
 
-            return view('v1.public_pages.register2', compact('ticket', 'event', 'quantity', 'discount_code', 'org',
-                'loc', 'rf', 'person', 'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick', 'show_pass_fields'));
-
+            return view('v1.public_pages.register2', compact(
+                'ticket',
+                'event',
+                'quantity',
+                'discount_code',
+                'org',
+                'loc',
+                'rf',
+                'person',
+                'prefixes',
+                'industries',
+                'tracks',
+                'tickets',
+                'needSessionPick',
+                'show_pass_fields'
+            ));
         } catch (\Exception $exception) {
             $message = "An unexpected error occurred.";
             return view('v1.public_pages.error_display', compact('message'));
@@ -154,8 +167,18 @@ class RegFinanceController extends Controller
         }
 
         $x =
-            compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
-                'person', 'org', 'tickets');
+            compact(
+                'needSessionPick',
+                'ticket',
+                'event',
+                'quantity',
+                'discount_code',
+                'loc',
+                'rf',
+                'person',
+                'org',
+                'tickets'
+            );
         return view('v1.public_pages.event_receipt', $x);
     }
 
@@ -264,7 +287,6 @@ class RegFinanceController extends Controller
                 $rf->status = 'Processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
-
             } elseif ($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
                 if ($ticket->waitlisting()) {
@@ -384,16 +406,31 @@ class RegFinanceController extends Controller
 
         // email the user who paid
         // $user->notify(new EventReceipt($rf));
-        $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code',
-            'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
+        $x = compact(
+            'needSessionPick',
+            'ticket',
+            'event',
+            'quantity',
+            'discount_code',
+            'loc',
+            'rf',
+            'person',
+            'prefixes',
+            'industries',
+            'org',
+            'tickets'
+        );
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $pdf = PDF::loadView('v1.public_pages.event_receipt', $x)
             ->setOption('disable-javascript', false)
             ->setOption('encoding', 'utf-8');
 
-        Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(),
-            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('s3_receipts')->put(
+            $receipt_filename,
+            $pdf->output(),
+            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+        );
 
         $client = new S3Client([
             'credentials' => [
@@ -625,7 +662,6 @@ class RegFinanceController extends Controller
                 $rf->status = 'Processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
-
             } elseif ($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
                 $rf->status = 'Payment Pending';

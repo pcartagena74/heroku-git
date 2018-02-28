@@ -53,11 +53,13 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
      *
      */
 
-    public function person() {
+    public function person()
+    {
         return $this->hasOne(Person::class, 'personID');
     }
 
-    public function roles () {
+    public function roles()
+    {
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
     }
 }

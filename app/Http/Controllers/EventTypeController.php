@@ -34,16 +34,17 @@ class EventTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /eventtype/create and creates, adds, stores the event
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgID = $this->currentPerson->defaultOrgID;
 
-        for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $eventType = "eventType-" . $i;
 
             $type = request()->input($eventType);
-            if(isset($type)){
+            if (isset($type)) {
                 $newET = new EventType();
                 $newET->orgID = $orgID;
                 $newET->creatorID = $this->currentPerson->personID;
@@ -60,7 +61,8 @@ class EventTypeController extends Controller
      * @param  \App\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
-    public function show(EventType $eventType) {
+    public function show(EventType $eventType)
+    {
         //
     }
 
@@ -88,7 +90,7 @@ class EventTypeController extends Controller
         $etID = request()->input('pk');
 
         $name = request()->input('name');
-        if(strpos($name, '-')) {
+        if (strpos($name, '-')) {
             // if passed from the registration receipt, the $name will have a dash
             list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
         }
@@ -106,7 +108,8 @@ class EventTypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /eventtype/id/delete
         $this->currentPerson = Person::find(auth()->user()->id);
         $et = EventType::find($id);

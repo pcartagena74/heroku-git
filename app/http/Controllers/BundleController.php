@@ -12,32 +12,39 @@ use Illuminate\Support\Facades\Log;
 
 class BundleController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function index () {
+    public function index()
+    {
         // responds to /blah
     }
 
-    public function show ($id) {
+    public function show($id)
+    {
         // responds to GET /blah/id
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function edit ($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
         Log::info("Showing ajax input called on eventID: $id " . print_r(request()->all(), true));
         $eventID = $id;
@@ -51,13 +58,13 @@ class BundleController extends Controller
         $bundleID = request()->input('pk');
 
         // The ticketID is no longer part of the bundle
-        if($value == 0) {
+        if ($value == 0) {
             DB::table('bundle-ticket')->where([
                 ['bundleID', $bundleID],
                 ['eventID', $eventID],
                 ['ticketID', $ticketID]
             ])->delete();
-        } elseif($value == 1) {
+        } elseif ($value == 1) {
             $cp = $this->currentPerson = Person::find(auth()->user()->id);
             DB::table('bundle-ticket')->insert(
                 ['bundleID' => $bundleID, 'eventID' => $eventID, 'ticketID' => $ticketID,
@@ -67,13 +74,14 @@ class BundleController extends Controller
         return json_encode(array('status' => 'success', 'message' => print_r(request()->all(), true)));
     }
 
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $ticket              = Ticket::Find($id);
         $eventID             = $ticket->eventID;
         //check to see if any regIDs have this ticketID
-        if(Registration::where('ticketID', $id)->count() > 0) {
+        if (Registration::where('ticketID', $id)->count() > 0) {
             // soft-delete if there are registrations
 
             $ticket->isDeleted = 1;

@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 class OrgDiscount extends Model
 {
     // The table
@@ -10,7 +9,8 @@ class OrgDiscount extends Model
     protected $primaryKey = 'discountID';
     protected $dates = ['createDate', 'updateDate'];
 
-    public function org() {
+    public function org()
+    {
         return $this->belongsTo(Org::class, 'orgID');
     }
 }

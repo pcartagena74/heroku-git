@@ -8,26 +8,28 @@ use App\Person;
 
 class EmailController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $adType = "emailTYPE-" . $i;
             $addr1  = "emailADDR-" . $i;
 
             $type = request()->input($adType);
             $ad1  = request()->input($addr1);
 
-            if(!empty($ad1)) {
+            if (!empty($ad1)) {
                 // check to see if this is the database already (someone else's email or in a deleted state)
-                if($inDB = Email::withTrashed()->where('emailADDR', $ad1)->first()) {
+                if ($inDB = Email::withTrashed()->where('emailADDR', $ad1)->first()) {
                     // check that the email in the database actually belongs to the personID getting edited
-                    if($inDB->personID == request()->input('personID')) {
+                    if ($inDB->personID == request()->input('personID')) {
                         $inDB->updaterID = $this->currentPerson->personID;
                         $inDB->save();
                         $inDB->restore();
@@ -45,14 +47,15 @@ class EmailController extends Controller
                 }
             }
         }
-        if($this->currentPerson->personID == request()->input('personID')) {
+        if ($this->currentPerson->personID == request()->input('personID')) {
             return redirect('/profile/my');
         } else {
             return redirect("'/profile/" . request()->input('personID') . "'");
         }
     }
 
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
         $email          = Email::find($id);
         $name           = request()->input('name');
@@ -62,7 +65,8 @@ class EmailController extends Controller
         $email->save();
     }
 
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $email = Email::find($id);
@@ -70,7 +74,7 @@ class EmailController extends Controller
         $email->save();
         $email->delete();
 
-        if(request()->input('personID') == $this->currentPerson->personID) {
+        if (request()->input('personID') == $this->currentPerson->personID) {
             return redirect("/profile/my");
         } else {
             return redirect("/profile/" . $this->currentPerson->personID);

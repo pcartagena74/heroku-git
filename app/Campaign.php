@@ -17,19 +17,23 @@ class Campaign extends Model
     protected $primaryKey = 'campaignID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate', 'sendDate'];
 
-    public function org() {
+    public function org()
+    {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
-    public function emails(){
+    public function emails()
+    {
         return $this->hasMany(EmailSent::class, 'campaignID', 'campaignID');
     }
 
-    public function urls(){
+    public function urls()
+    {
         return $this->hasManyThrough(UrlClick::class, EmailSent::class, 'campaignID', 'sent_email_id', 'id', 'id');
     }
 
-    public function email_count(){
+    public function email_count()
+    {
         return $this->hasOne(EmailSent::class, 'campaignID', 'campaignID')
                     ->selectRaw('campaignID, count(*) as count')
                     ->groupBy('campaignID');

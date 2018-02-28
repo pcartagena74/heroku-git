@@ -21,7 +21,8 @@ class LoginChange extends Notification
      *
      * @return void
      */
-    public function __construct (Person $person, $orig_email) {
+    public function __construct(Person $person, $orig_email)
+    {
         $this->person     = $person;
         $this->orig_email = $orig_email;
     }
@@ -32,7 +33,8 @@ class LoginChange extends Notification
      * @param  mixed $notifiable
      * @return array
      */
-    public function via ($notifiable) {
+    public function via($notifiable)
+    {
         return ['mail'];
     }
 
@@ -42,7 +44,8 @@ class LoginChange extends Notification
      * @param  mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail ($notifiable) {
+    public function toMail($notifiable)
+    {
         $o = Org::find($this->person->defaultOrgID);
         $name = $o->orgName;
         $new_email = $this->person->login;
@@ -61,7 +64,8 @@ class LoginChange extends Notification
      * @param  mixed $notifiable
      * @return array
      */
-    public function toArray ($notifiable) {
+    public function toArray($notifiable)
+    {
         return [
             //
         ];

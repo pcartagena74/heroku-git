@@ -16,7 +16,8 @@ class Phone extends Model
     const CREATED_AT = 'createDate';
     protected $dates = ['createDate', 'updateDate'];
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 }

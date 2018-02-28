@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 class Org extends Model
 {
     // The table
@@ -10,19 +9,23 @@ class Org extends Model
     protected $primaryKey = 'orgID';
     protected $dates = ['createDate', 'updateDate'];
 
-    public function orgpeople() {
+    public function orgpeople()
+    {
         return $this->hasManyThrough(Person::class, OrgPerson::class, 'orgID', 'personID', 'orgID', 'personID');
     }
 
-    public function discounts() {
+    public function discounts()
+    {
         return $this->hasMany(OrgDiscount::class, 'orgID', 'orgID');
     }
 
-    public function orgperson() {
+    public function orgperson()
+    {
         return $this->belongsTo(OrgPerson::class, 'orgID', 'orgID');
     }
 
-    public function defaultPerson() {
+    public function defaultPerson()
+    {
         return $this->belongsToMany(Person::class, 'org-person', 'orgID', 'personID');
     }
 }

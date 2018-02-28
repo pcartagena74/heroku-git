@@ -30,19 +30,23 @@ class OPHistory extends Model
     // The table
     protected $table = 'org-person_history';
 
-    public function myperson () {
+    public function myperson()
+    {
         return $this->belongsTo(Person::class, 'orgID');
     }
 
-    public function myorg () {
+    public function myorg()
+    {
         return $this->belongsTo(Org::class, 'orgID');
     }
 
-    public function people () {
+    public function people()
+    {
         return $this->hasMany(Person::class, 'personID');
     }
 
-    public function orgs () {
+    public function orgs()
+    {
         return $this->hasMany(Org::class, 'orgID');
     }
 }

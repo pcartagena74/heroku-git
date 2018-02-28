@@ -11,7 +11,8 @@ class UserHistory extends Model
     protected $table = 'users_history';
     protected $primaryKey = 'revision';
 
-    public function person() {
+    public function person()
+    {
         return $this->hasOne(Person::class, 'personID');
     }
 }

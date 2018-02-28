@@ -15,11 +15,13 @@ class EventSession extends Model
     const UPDATED_AT = 'updateDate';
     protected $dates = ['start', 'end', 'createDate', 'updateDate', 'deleted_at'];
 
-    public function track() {
+    public function track()
+    {
         return $this->belongsTo(Track::class, 'trackID');
     }
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class, 'eventID');
     }
 }
