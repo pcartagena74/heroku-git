@@ -1,20 +1,20 @@
 <?php
 
-return array(
+return [
 
-    'pdf' => array(
+    'pdf' => [
         'enabled' => true,
         'binary'  => env('PDF_LOC'),
         'timeout' => 300,
-        'options' => array('load-error-handling' => 'ignore'),
-        'env'     => array(),
-    ),
-    'image' => array(
+        'options' => ['load-error-handling' => 'ignore'],
+        'env'     => [],
+    ],
+    'image' => [
         'enabled' => true,
         'binary'  => env('IMG_LOC'),
         'timeout' => 300,
-        'options' => array(),
-        'env'     => array(),
-    ),
+        'options' => [],
+        'env'     => [],
+    ],
 
-);
+];
