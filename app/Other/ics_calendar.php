@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use App\Org;
 use App\Location;
 
-
 class ics_calendar
 {
     private $start;
@@ -30,7 +29,8 @@ class ics_calendar
     private $org;
     private $o_string;
 
-    public function __construct (\App\Event $event) {
+    public function __construct(\App\Event $event)
+    {
         $etype             = DB::table('org-event_types')
                                ->where('etID', $event->eventTypeID)
                                ->select('etName')
@@ -55,16 +55,19 @@ class ics_calendar
         $this->contact     = $event->contactEmail;
     }
 
-    private function _escapeString($string) {
-        return preg_replace('/([\,;])/','\\\$1', ($string) ? $string : '');
+    private function _escapeString($string)
+    {
+        return preg_replace('/([\,;])/', '\\\$1', ($string) ? $string : '');
     }
 
-    public function get() {
+    public function get()
+    {
         ($this->o_string) ? $this->o_string : $this->_generate();
         return $this->o_string;
     }
 
-    private function _generate() {
+    private function _generate()
+    {
 
         $this->o_string = "BEGIN:VCALENDAR\n".
             "PRODID:-//mCentric-Hosted Event" ."\n".
@@ -122,5 +125,4 @@ END:VEVENT
 END:VCALENDAR
 
      */
-
 }

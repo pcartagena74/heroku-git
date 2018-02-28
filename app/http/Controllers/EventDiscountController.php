@@ -12,15 +12,18 @@ use App\RegFinance;
 
 class EventDiscountController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth')->except('showDiscount');
     }
 
-    public function index () {
+    public function index()
+    {
         // responds to /blah
     }
 
-    public function show (Event $event) {
+    public function show(Event $event)
+    {
         // responds to GET /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson;
@@ -39,7 +42,8 @@ class EventDiscountController extends Controller
         return view('v1.auth_pages.events.event_discounts', compact('org', 'event', 'current_person', 'discount_codes'));
     }
 
-    public function showDiscount (Request $request, $id) {
+    public function showDiscount(Request $request, $id)
+    {
         // AJAX response to check discountCode (vs. org-discount)
         // responds to POST /blah/id
         $eventID   = $id;
@@ -56,8 +60,8 @@ class EventDiscountController extends Controller
             ['orgID', $event->orgID]
         ])->first();
 
-        if($discounts > 0) {
-            if($discount->percent == 0) {
+        if ($discounts > 0) {
+            if ($discount->percent == 0) {
                 $discount_text = "$" . $discount->flatAmt;
             } else {
                 $discount_text = $discount->percent . "%";
@@ -72,17 +76,19 @@ class EventDiscountController extends Controller
         }
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the eventDiscount
 
         $this->currentPerson = Person::find($request->input('personID'));
         $event               = Event::find($request->input('eventID'));
 
-        for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $discountCode = "discountCode" . $i;
             $percent      = "percent" . $i;
             $flatAmt      = "flatAmt" . $i;
@@ -94,7 +100,7 @@ class EventDiscountController extends Controller
             $pc !== null ?: $pc = '0';
             $fa !== null ?: $fa = '0.00';
 
-            if($dc !== null) {
+            if ($dc !== null) {
                 $ed = new EventDiscount;
                 $ed->orgID = $event->orgID;
                 $ed->eventID = $event->eventID;
@@ -109,22 +115,25 @@ class EventDiscountController extends Controller
         return redirect("/eventdiscount/$event->eventID");
     }
 
-    public function edit ($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
     }
 
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $discount              = EventDiscount::Find($id);
         $eventID             = $discount->eventID;
 
         //check to see if any regIDs have this ticketID
-        if(RegFinance::where('discountCode', $discount->discountCODE)->count() > 0) {
+        if (RegFinance::where('discountCode', $discount->discountCODE)->count() > 0) {
             // soft-delete if there are registrations that used this discountCode
             $discount->updaterID = $this->currentPerson->personID;
             $discount->save();

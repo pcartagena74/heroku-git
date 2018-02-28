@@ -146,7 +146,7 @@ return [
         #'Aws\Laravel\AwsServiceProvider',
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
         Barryvdh\Snappy\ServiceProvider::class,
-	    Collective\Html\HtmlServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
         #\Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
         'Fideloper\Proxy\TrustedProxyServiceProvider',
         'GrahamCampbell\Flysystem\FlysystemServiceProvider',
@@ -235,7 +235,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'File' => Illuminate\Support\Facades\File::class,
         'Flysystem' => GrahamCampbell\Flysystem\Facades\Flysystem::class,
-	    'Form' => Collective\Html\FormFacade::class,
+        'Form' => Collective\Html\FormFacade::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
         'Html' => Collective\Html\HtmlFacade::class,

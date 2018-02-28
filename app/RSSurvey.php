@@ -17,12 +17,13 @@ class RSSurvey extends Model
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     //protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function session() {
+    public function session()
+    {
         return $this->belongsTo(EventSession::class, 'sessionID', 'sessionID');
     }
-
 }

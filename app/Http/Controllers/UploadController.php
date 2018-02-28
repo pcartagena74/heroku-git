@@ -25,11 +25,13 @@ use Illuminate\Support\Facades\DB;
 
 class UploadController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function index () {
+    public function index()
+    {
         // displays the data upload form
 
         $user = Person::find(auth()->user()->id);
@@ -41,15 +43,18 @@ class UploadController extends Controller
         return view('v1.auth_pages.organization.data_upload', compact('events'));
     }
 
-    public function show ($id) {
+    public function show($id)
+    {
         // responds to GET /blah/id
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
 
         $this->counter = 0;
@@ -58,7 +63,7 @@ class UploadController extends Controller
         $filename            = $_FILES['filename']['tmp_name'];
         $eventID = request()->input('eventID');
 
-        if($what == 'evtdata' && ($eventID === null || $eventID == 'Select an event...')){
+        if ($what == 'evtdata' && ($eventID === null || $eventID == 'Select an event...')) {
             // go back with message
             return Redirect::back()->with('alert-warning', 'You must select an event.');
         }
@@ -68,10 +73,10 @@ class UploadController extends Controller
 //                try {
                     DB::transaction(function () {
                         $filename            = $_FILES['filename']['tmp_name'];
-                        Excel::load($filename, function($reader) {
+                        Excel::load($filename, function ($reader) {
                             $results = $reader->get();
                             $orgID = $this->currentPerson->defaultOrgID;
-                            foreach($results as $row) {
+                            foreach ($results as $row) {
                                 $this->counter++;
                                 // columns in this sheet are fixed; check directly and then add if not found...
                                 // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
@@ -81,11 +86,11 @@ class UploadController extends Controller
                                 $em1  = trim(strtolower($row->primary_email));
                                 $em2  = trim(strtolower($row->alternate_email));
                                 $emchk1 = Email::where('emailADDR', '=', $em1)->first();
-                                if($emchk1 !== null) {
+                                if ($emchk1 !== null) {
                                     $emchk1 = $emchk1->emailADDR;
                                 }
                                 $emchk2 = Email::where('emailADDR', '=', $em2)->first();
-                                if($emchk2 !== null) {
+                                if ($emchk2 !== null) {
                                     $emchk2 = $emchk2->emailADDR;
                                 }
                                 $pchk = Person::where([
@@ -93,7 +98,7 @@ class UploadController extends Controller
                                     ['lastName', '=', $row->last_name]
                                 ])->first();
 
-                                if($op === null && $emchk1 === null && $emchk2 === null && $pchk === null) {
+                                if ($op === null && $emchk1 === null && $emchk2 === null && $pchk === null) {
                                     // PMI ID, emails, first/last name are not found so person is completely new; create all records
 
                                     $p               = new Person;
@@ -108,7 +113,7 @@ class UploadController extends Controller
                                     $p->creatorID    = auth()->user()->id;
                                     $p->defaultOrgID = $this->currentPerson->defaultOrgID;
 
-                                    if($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1 && $em1 != $emchk2) {
+                                    if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1 && $em1 != $emchk2) {
                                         $p->login = $em1;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -123,8 +128,7 @@ class UploadController extends Controller
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
                                         $e->save();
-
-                                    } elseif($em2 !== null && $em2 != '' && $em2 != ' ' && $em2 != $emchk2 && $em2 != $emchk1) {
+                                    } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && $em2 != $emchk2 && $em2 != $emchk1) {
                                         $p->login = $em2;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -162,7 +166,7 @@ class UploadController extends Controller
                                     $newOP->save();
 
 
-                                    if($row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
+                                    if ($row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
                                         $addr           = new Address;
                                         $addr->personID = $p->personID;
                                         $addr->addrTYPE = trim(ucwords($row->preferred_address_type));
@@ -170,9 +174,9 @@ class UploadController extends Controller
                                         $addr->city     = trim(ucwords($row->city));
                                         $addr->state    = trim(ucwords($row->state));
                                         $z              = (integer)trim(ucwords($row->zip));
-                                        if(strlen($z) == 4) {
+                                        if (strlen($z) == 4) {
                                             $z = "0" . $z;
-                                        } elseif(strlen($z) == 8) {
+                                        } elseif (strlen($z) == 8) {
                                             $r2 = substr($z, -4);
                                             $l2 = substr($z, 4);
                                             $z  = "0" . $l2 . "-" . $r2;
@@ -180,9 +184,9 @@ class UploadController extends Controller
                                         $addr->zip = $z;
 
                                         // Need a smarter way to determine country code
-                                        if(trim(ucwords($row->country)) == 'United States') {
+                                        if (trim(ucwords($row->country)) == 'United States') {
                                             $addr->cntryID = 228;
-                                        } elseif(trim(ucwords($row->country)) == 'Canada') {
+                                        } elseif (trim(ucwords($row->country)) == 'Canada') {
                                             $addr->cntryID = 36;
                                         }
                                         $addr->creatorID = auth()->user()->id;
@@ -190,7 +194,7 @@ class UploadController extends Controller
                                         $addr->save();
                                     }
 
-                                    if($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " ") {
+                                    if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " ") {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em2;
@@ -199,7 +203,7 @@ class UploadController extends Controller
                                         $e->save();
                                     }
 
-                                    if($row->home_phone !== null) {
+                                    if ($row->home_phone !== null) {
                                         $fone              = new Phone;
                                         $fone->personID    = $p->personID;
                                         $fone->phoneNumber = (integer)$row->home_phone;
@@ -209,7 +213,7 @@ class UploadController extends Controller
                                         $fone->save();
                                     }
 
-                                    if($row->work_phone !== null && $row->work_phone != $row->home_phone) {
+                                    if ($row->work_phone !== null && $row->work_phone != $row->home_phone) {
                                         $fone              = new Phone;
                                         $fone->personID    = $p->personID;
                                         $fone->phoneNumber = (integer)$row->work_phone;
@@ -219,7 +223,7 @@ class UploadController extends Controller
                                         $fone->save();
                                     }
 
-                                    if($row->mobile_phone !== null && $row->mobile_phone != $row->work_phone && $row->mobile_phone != $row->home_phone) {
+                                    if ($row->mobile_phone !== null && $row->mobile_phone != $row->work_phone && $row->mobile_phone != $row->home_phone) {
                                         $fone              = new Phone;
                                         $fone->personID    = $p->personID;
                                         $fone->phoneNumber = (integer)$row->mobile_phone;
@@ -228,23 +232,23 @@ class UploadController extends Controller
                                         $fone->updaterID   = auth()->user()->id;
                                         $fone->save();
                                     }
-                                } elseif($op !== null) {
+                                } elseif ($op !== null) {
                                     // There was an org-person record (found by $OrgStat1 == PMI ID)
                                     $newOP            = $op;
                                     $newOP->OrgStat2  = trim(ucwords($row->chapter_member_class));
-                                    if(isset($row->pmi_join_date)){
+                                    if (isset($row->pmi_join_date)) {
                                         $newOP->RelDate1  =
                                             Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
                                     }
-                                    if(isset($row->chapter_join_date)){
+                                    if (isset($row->chapter_join_date)) {
                                         $newOP->RelDate2  =
                                             Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
                                     }
-                                    if(isset($row->pmi_expiration)){
+                                    if (isset($row->pmi_expiration)) {
                                         $newOP->RelDate3  =
                                             Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
                                     }
-                                    if(isset($row->pmi_expiration)){
+                                    if (isset($row->pmi_expiration)) {
                                         $newOP->RelDate4  =
                                             Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
                                     }
@@ -252,7 +256,7 @@ class UploadController extends Controller
                                     $newOP->save();
 
                                     $p = Person::find($newOP->personID);
-                                    if($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1) {
+                                    if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1) {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em1;
@@ -260,9 +264,8 @@ class UploadController extends Controller
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
                                         $e->save();
-
                                     }
-                                    if($em2 !== null && $em2 != "" && $em2 != " " && $em2 != $emchk2 && $em2 != $em1) {
+                                    if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != $emchk2 && $em2 != $em1) {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em2;
@@ -276,7 +279,7 @@ class UploadController extends Controller
                                         ['phoneNumber', '=', $row->home_phone],
                                         ['phoneType', '=', 'Home']
                                     ])->first();
-                                    if($row->home_phone !== null && $fone === null) {
+                                    if ($row->home_phone !== null && $fone === null) {
                                         $fone              = new Phone;
                                         $fone->personID    = $p->personID;
                                         $fone->phoneNumber = (integer)$row->home_phone;
@@ -290,7 +293,7 @@ class UploadController extends Controller
                                         ['phoneNumber', '=', $row->work_phone],
                                         ['phoneType', '=', 'Work']
                                     ])->first();
-                                    if($row->work_phone !== null && $fone === null && $row->work_phone != $row->home_phone) {
+                                    if ($row->work_phone !== null && $fone === null && $row->work_phone != $row->home_phone) {
                                         $fone              = new Phone;
                                         $fone->personID    = $p->personID;
                                         $fone->phoneNumber = (integer)$row->work_phone;
@@ -304,7 +307,7 @@ class UploadController extends Controller
                                         ['phoneNumber', '=', $row->mobile_phone],
                                         ['phoneType', '=', 'Mobile']
                                     ])->first();
-                                    if($row->mobile_phone !== null && $fone === null &&
+                                    if ($row->mobile_phone !== null && $fone === null &&
                                         $row->mobile_phone != $row->work_phone && $row->mobile_phone != $row->home_phone
                                     ) {
                                         $fone              = new Phone;
@@ -317,7 +320,7 @@ class UploadController extends Controller
                                     }
 
                                     $addr = Address::where('addr1', '=', trim(ucwords($row->preferred_address)))->get();
-                                    if($addr === null && $row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
+                                    if ($addr === null && $row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
                                         $addr           = new Address;
                                         $addr->personID = $p->personID;
                                         $addr->addrTYPE = trim(ucwords($row->preferred_address_type));
@@ -325,17 +328,17 @@ class UploadController extends Controller
                                         $addr->city     = trim(ucwords($row->city));
                                         $addr->state    = trim(ucwords($row->state));
                                         $z              = (integer)trim(ucwords($row->zip));
-                                        if(strlen($z) == 4) {
+                                        if (strlen($z) == 4) {
                                             $z = "0" . $z;
-                                        } elseif(strlen($z) == 8) {
+                                        } elseif (strlen($z) == 8) {
                                             $r2 = substr($z, -4);
                                             $l2 = substr($z, 4);
                                             $z  = "0" . $l2 . "-" . $r2;
                                         }
                                         $addr->zip = $z;
-                                        if(trim(ucwords($row->country)) == 'United States') {
+                                        if (trim(ucwords($row->country)) == 'United States') {
                                             $addr->cntryID = 228;
-                                        } elseif(trim(ucwords($row->country)) == 'Canada') {
+                                        } elseif (trim(ucwords($row->country)) == 'Canada') {
                                             $addr->cntryID = 36;
                                         }
                                         $addr->creatorID = auth()->user()->id;
@@ -354,15 +357,12 @@ class UploadController extends Controller
                                         $p->creatorID    = auth()->user()->id;
                                         $p->save();
                                     }
-                                } elseif($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
-
-                                } elseif($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
-
+                                } elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
+                                } elseif ($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
                                 }
-
                             }
                         }); // end of Excel chunk
-                   }); // end of database transaction
+                    }); // end of database transaction
 /*
                 } catch(Exception $exception) {
                     Session::flash('alert-danger', 'The member data did not load properly.');
@@ -376,17 +376,16 @@ class UploadController extends Controller
 */
                 break;
 
-            case
-            'evtdata':
+            case 'evtdata':
 //                try {
 //                    DB::transaction(function () {
                         $filename            = $_FILES['filename']['tmp_name'];
-                        Excel::load($filename, function($reader) {
+                        Excel::load($filename, function ($reader) {
                             $results = $reader->get();
 
                             $eventID = request()->input('eventID');
                             $tktID   = Ticket::where('eventID', '=', $eventID)->first();
-                            if($tktID === null) {
+                            if ($tktID === null) {
                                 $e                      = Event::find($eventID);
                                 $t                      = new Ticket;
                                 $t->eventID             = $eventID;
@@ -401,23 +400,23 @@ class UploadController extends Controller
                             $orgID         = $this->currentPerson->defaultOrgID;
                             $rows          = $results->toArray();
 
-                            foreach($rows as $row) {
+                            foreach ($rows as $row) {
                                 $this->counter++;
                                 $create_user = 0;
-                                foreach(array_keys($row) as $k) {
+                                foreach (array_keys($row) as $k) {
                                     //dd($row);
                                     switch (1) {
                                         case preg_match('/attended/i', $k):
                                             break;
                                         case preg_match('/^ticket$/i', $k):
                                             $tktTxt = $row[$k];
-                                            if(preg_match('/Bundle/i', $tktTxt)){
+                                            if (preg_match('/Bundle/i', $tktTxt)) {
                                                 $ticketID = 126;
-                                            } elseif(preg_match('/Friday Only/i', $tktTxt)){
+                                            } elseif (preg_match('/Friday Only/i', $tktTxt)) {
                                                 $ticketID = 123;
-                                            } elseif(preg_match('/Saturday Only/i', $tktTxt)){
+                                            } elseif (preg_match('/Saturday Only/i', $tktTxt)) {
                                                 $ticketID = 124;
-                                            } elseif(preg_match('/Friday evening/i', $tktTxt)){
+                                            } elseif (preg_match('/Friday evening/i', $tktTxt)) {
                                                 $ticketID = 125;
                                             }
                                             break;
@@ -456,7 +455,7 @@ class UploadController extends Controller
                                             break;
                                         case (preg_match('/payment.rec/i', $k)):
                                             $pmtRecd = $row[$k];
-                                            if(preg_match('/[no|0]/i', $pmtRecd)) {
+                                            if (preg_match('/[no|0]/i', $pmtRecd)) {
                                                 $pmtRecd = 0;
                                             } else {
                                                 $pmtRecd = 1;
@@ -491,7 +490,7 @@ class UploadController extends Controller
                                             break;
                                         case (preg_match('/pmi.(number|membership)/i', $k)):
                                             $pmiID = $row[$k];
-                                            if(!is_numeric($pmiID)) {
+                                            if (!is_numeric($pmiID)) {
                                                 $pmiID = null;
                                             } else {
                                                 $pmiID = number_format($pmiID, 0, '', '');
@@ -505,7 +504,7 @@ class UploadController extends Controller
                                             break;
                                         case (preg_match('/(pmp|certification)/i', $k)):
                                             $hasPMP = $row[$k];
-                                            if(preg_match('/Yes/i', $hasPMP)) {
+                                            if (preg_match('/Yes/i', $hasPMP)) {
                                                 $hasPMP = 1;
                                             } else {
                                                 $hasPMP = 0;
@@ -513,12 +512,12 @@ class UploadController extends Controller
                                             break;
                                         case (preg_match('/first.time/i', $k)):
                                             $firstEvent = $row[$k];
-                                            if($firstEvent !== null) {
+                                            if ($firstEvent !== null) {
                                                 $firstEvent = 1;
                                             } else {
                                                 $firstEvent = 0;
                                             }
-                                            if(preg_match('/[no|0]/i', $firstEvent)) {
+                                            if (preg_match('/[no|0]/i', $firstEvent)) {
                                                 $firstEvent = 0;
                                             }
                                             break;
@@ -530,12 +529,12 @@ class UploadController extends Controller
                                             break;
                                         case (preg_match('/authorize/i', $k)):
                                             $canPDU = $row[$k];
-                                            if($canPDU === null) {
+                                            if ($canPDU === null) {
                                                 $canPDU = 0;
                                             } else {
                                                 $canPDU = 1;
                                             }
-                                            if(preg_match('/[no|0]/i', $canPDU)) {
+                                            if (preg_match('/[no|0]/i', $canPDU)) {
                                                 $canPDU = 0;
                                             }
                                             break;
@@ -550,12 +549,12 @@ class UploadController extends Controller
                                             break;
                                         case (preg_grep('/[(networking)|(registration.list)|(roster)]/i', $k)):
                                             $canNtwk = $row[$k];
-                                            if($canNtwk === null) {
+                                            if ($canNtwk === null) {
                                                 $canNtwk = 0;
                                             } else {
                                                 $canNtwk = 1;
                                             }
-                                            if(preg_match('/[no|0]/i', $canNtwk)) {
+                                            if (preg_match('/[no|0]/i', $canNtwk)) {
                                                 $canNtwk = 0;
                                             }
                                             break;
@@ -597,36 +596,36 @@ class UploadController extends Controller
                                     }
                                 }
                                 //dd(get_defined_vars());
-                                if($eventID == 97 && ($ticketID == 123 || $ticketID == 126)) {
-                                    if(preg_match('/^AGILE/i', $f1)) {
+                                if ($eventID == 97 && ($ticketID == 123 || $ticketID == 126)) {
+                                    if (preg_match('/^AGILE/i', $f1)) {
                                         $fs1 = 91;
-                                    } elseif(preg_match('/^PORTFOLIO/i', $f1)) {
+                                    } elseif (preg_match('/^PORTFOLIO/i', $f1)) {
                                         $fs1 = 92;
-                                    } elseif(preg_match('/^RISK/i', $f1)) {
+                                    } elseif (preg_match('/^RISK/i', $f1)) {
                                         $fs1 = 93;
                                     } else {
                                         $fs1 = null;
                                     }
-                                    if(preg_match('/^AGILE/i', $f2)) {
+                                    if (preg_match('/^AGILE/i', $f2)) {
                                         $fs2 = 96;
-                                    } elseif(preg_match('/^PORTFOLIO/i', $f2)) {
+                                    } elseif (preg_match('/^PORTFOLIO/i', $f2)) {
                                         $fs2 = 97;
-                                    } elseif(preg_match('/^RISK/i', $f2)) {
+                                    } elseif (preg_match('/^RISK/i', $f2)) {
                                         $fs2 = 98;
                                     } else {
                                         $fs2 = null;
                                     }
-                                    if(preg_match('/^AGILE/i', $f3)) {
+                                    if (preg_match('/^AGILE/i', $f3)) {
                                         $fs3 = 101;
-                                    } elseif(preg_match('/^PORTFOLIO/i', $f3)) {
+                                    } elseif (preg_match('/^PORTFOLIO/i', $f3)) {
                                         $fs3 = 102;
-                                    } elseif(preg_match('/^RISK/i', $f3)) {
+                                    } elseif (preg_match('/^RISK/i', $f3)) {
                                         $fs3 = 103;
                                     } else {
                                         $fs3 = null;
                                     }
                                 }
-                                if($eventID == 97 && ($ticketID == 124 || $ticketID == 126)){
+                                if ($eventID == 97 && ($ticketID == 124 || $ticketID == 126)) {
                                     if (preg_match('/^AGILE/i', $s1)) {
                                         $ss1 = 106;
                                     } elseif (preg_match('/^PORTFOLIO/i', $s1)) {
@@ -655,52 +654,52 @@ class UploadController extends Controller
                                         $ss3 = null;
                                     }
                                 }
-                                if(!isset($canNtwk)) {
+                                if (!isset($canNtwk)) {
                                     $canNtwk = 0;
                                 }
-                                if(!isset($allergy)) {
+                                if (!isset($allergy)) {
                                     $allergy = 0;
                                 }
-                                if(!isset($pmiID)) {
+                                if (!isset($pmiID)) {
                                     $pmiID = null;
                                 }
-                                if(!isset($canPDU)) {
+                                if (!isset($canPDU)) {
                                     $canPDU = 0;
                                 }
-                                if(!isset($firstEvent)) {
+                                if (!isset($firstEvent)) {
                                     $firstEvent = 0;
                                 }
-                                if(!isset($firstEvent)) {
+                                if (!isset($firstEvent)) {
                                     $firstEvent = 0;
                                 }
-                                if(!isset($pmtRecd)) {
+                                if (!isset($pmtRecd)) {
                                     $pmtRecd = 0;
                                 }
-                                if(!isset($specialNeeds)) {
+                                if (!isset($specialNeeds)) {
                                     $specialNeeds = null;
                                 }
-                                if(!isset($coName)) {
+                                if (!isset($coName)) {
                                     $coName = null;
                                 }
-                                if(!isset($indName)) {
+                                if (!isset($indName)) {
                                     $indName = null;
                                 }
-                                if(!isset($hear)) {
+                                if (!isset($hear)) {
                                     $hear = null;
                                 }
-                                if(!isset($questions)) {
+                                if (!isset($questions)) {
                                     $questions = null;
                                 }
-                                if(!isset($commute)) {
+                                if (!isset($commute)) {
                                     $commute = null;
                                 }
-                                if(!isset($topics)) {
+                                if (!isset($topics)) {
                                     $topics = null;
                                 }
-                                if(!isset($prefName)) {
+                                if (!isset($prefName)) {
                                     $prefName = null;
                                 }
-                                if(!isset($experience)) {
+                                if (!isset($experience)) {
                                     $experience = null;
                                 }
                                 // foreach cycle through $row's keys() and switch on preg_match
@@ -719,42 +718,42 @@ class UploadController extends Controller
                                 // 5. Create new event-registration and regFinance records and give regFinance record the same regID
 
                                 //dd(get_defined_vars());
-                                if($pmiID !== null) {
+                                if ($pmiID !== null) {
                                     // record of PMI member
                                     $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
-                                    if($op !== null) {
+                                    if ($op !== null) {
                                         // record of PMI member found in DB and matches provided PMI ID
                                         $create_user = 0;
                                         $p               = Person::find($op->personID);
                                         $p->defaultOrgID = $orgID;
                                         $p->updaterID    = $this->currentPerson->personID;
-                                        if($experience != null && $p->experience === null){
+                                        if ($experience != null && $p->experience === null) {
                                             $p->experience = $experience;
                                         }
                                         $p->save();
 
                                         $e = Email::where('emailADDR', '=', $email)->first();
-                                        if($e === null) {
+                                        if ($e === null) {
                                             $e            = new Email;
                                             $e->personID  = $p->personID;
                                             $e->emailADDR = $email;
                                             $e->creatorID = $this->currentPerson->personID;
                                             $e->save();
                                         }
-                                    } elseif($email !== null) {
+                                    } elseif ($email !== null) {
                                         $e = Email::where('emailADDR', '=', $email)->first();
-                                        if($e !== null) {
+                                        if ($e !== null) {
                                             // record of registrant found, by $email, in DB but no $pmiID provided with reg
                                             $create_user = 0;
                                             $p               = Person::find($e->personID);
                                             $p->defaultOrgID = $orgID;
                                             $p->updaterID    = $this->currentPerson->personID;
-                                            if($experience != null && $p->experience === null){
+                                            if ($experience != null && $p->experience === null) {
                                                 $p->experience = $experience;
                                             }
                                             $p->save();
 
-                                            if($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
+                                            if ($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                                 // creating a staging record instead of merging person records just in case
                                                 $ps               = new PersonStaging;
                                                 $ps->personID     = $p->personID;
@@ -768,7 +767,7 @@ class UploadController extends Controller
                                                 $ps->compName     = $coName;
                                                 $ps->indName      = $indName;
                                                 $ps->experience   = $experience;
-                                                if(isset($affiliation)){
+                                                if (isset($affiliation)) {
                                                     $ps->affiliation  = $affiliation;
                                                 } else {
                                                     $ps->affiliation  = 'PMI MassBay';
@@ -782,7 +781,7 @@ class UploadController extends Controller
                                                 ['orgID', '=', $orgID]
                                             ])->first();
                                             // If this Person didn't have an org-person record for this orgID
-                                            if($op === null) {
+                                            if ($op === null) {
                                                 $op            = new OrgPerson;
                                                 $op->personID  = $p->personID;
                                                 $op->orgID     = $orgID;
@@ -791,7 +790,7 @@ class UploadController extends Controller
                                                 $op->save();
                                             } else {
                                                 // update PMI ID if one doesn't already exist
-                                                if($op->OrgStat1 === null){
+                                                if ($op->OrgStat1 === null) {
                                                     $op->OrgStat1 = $pmiID;
                                                     $op->updaterID = $this->currentPerson->personID;
                                                     $op->save();
@@ -810,14 +809,14 @@ class UploadController extends Controller
                                             $p->login        = $email;
                                             $p->compName     = $coName;
                                             $p->indName      = $indName;
-                                            if(isset($affiliation)){
+                                            if (isset($affiliation)) {
                                                 $p->affiliation  = $affiliation;
                                             } else {
                                                 $p->affiliation  = 'PMI MassBay';
                                             }
                                             $p->allergenInfo = $allergy;
                                             $p->creatorID    = $this->currentPerson->personID;
-                                            if($experience != null){
+                                            if ($experience != null) {
                                                 $p->experience = $experience;
                                             }
                                             $p->save();
@@ -838,10 +837,10 @@ class UploadController extends Controller
                                     }
                                 } else {
                                     // $pmiID wasn't provided by registrant
-                                    if($email !== null) {
+                                    if ($email !== null) {
                                         $e = Email::where('emailADDR', '=', $email)->first();
 
-                                        if($e !== null) {
+                                        if ($e !== null) {
                                             // record of this email in DB
                                             $create_user = 0;
                                             $p               = Person::find($e->personID);
@@ -849,7 +848,7 @@ class UploadController extends Controller
                                             $p->updaterID    = $this->currentPerson->personID;
                                             $p->save();
 
-                                            if($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
+                                            if ($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                                 // firstName, lastName or company name changed; making staging record
                                                 $ps               = new PersonStaging;
                                                 $ps->personID     = $p->personID;
@@ -862,7 +861,7 @@ class UploadController extends Controller
                                                 $ps->login        = $email;
                                                 $ps->compName     = $coName;
                                                 $ps->indName      = $indName;
-                                                if(isset($affiliation)){
+                                                if (isset($affiliation)) {
                                                     $ps->affiliation  = $affiliation;
                                                 } else {
                                                     $ps->affiliation  = 'PMI MassBay';
@@ -876,7 +875,7 @@ class UploadController extends Controller
                                                 $p->defaultOrgID = $orgID;
                                                 $p->prefName     = $prefName;
                                                 $p->indName      = $indName;
-                                                if(isset($affiliation)){
+                                                if (isset($affiliation)) {
                                                     $p->affiliation  = $affiliation;
                                                 } else {
                                                     $p->affiliation  = 'PMI MassBay';
@@ -889,7 +888,7 @@ class UploadController extends Controller
                                                 ['personID', '=', $p->personID],
                                                 ['orgID', '=', $orgID]
                                             ])->first();
-                                            if($op === null) {
+                                            if ($op === null) {
                                                 // need to create a stub org-person record if one doesn't already exist
                                                 $op            = new OrgPerson;
                                                 $op->personID  = $p->personID;
@@ -910,7 +909,7 @@ class UploadController extends Controller
                                             $p->login        = $email;
                                             $p->compName     = $coName;
                                             $p->indName      = $indName;
-                                            if(isset($affiliation)){
+                                            if (isset($affiliation)) {
                                                 $p->affiliation  = $affiliation;
                                             } else {
                                                 $p->affiliation  = 'PMI MassBay';
@@ -935,7 +934,7 @@ class UploadController extends Controller
                                         // $pmiID was null & $email wais null
                                     }
                                 }
-                                if($create_user){
+                                if ($create_user) {
                                     $u = new User;
                                     $u->id = $p->personID;
                                     $u->login = $p->login;
@@ -944,7 +943,7 @@ class UploadController extends Controller
                                     $create_user = 0;
                                 }
                                 // do the rest of the processing for this row
-                                if($eventID == 97){
+                                if ($eventID == 97) {
                                     $tktID = $ticketID;
                                 }
                                 $r                   = new Registration;
@@ -960,7 +959,7 @@ class UploadController extends Controller
                                 $r->allergenInfo     = $allergy;
                                 $r->canNetwork       = $canNtwk;
                                 $r->specialNeeds     = $specialNeeds;
-                                if(isset($affiliation)){
+                                if (isset($affiliation)) {
                                     $r->affiliation  = $affiliation;
                                 } else {
                                     $r->affiliation  = 'PMI MassBay';
@@ -971,7 +970,7 @@ class UploadController extends Controller
                                 $r->discountCode     = $disCode;
                                 $r->origcost         = number_format($cost, 2, '.', '');
                                 $r->subtotal         = number_format($cost, 2, '.', '');
-                                if(preg_match('/Non/', $tktTxt)) {
+                                if (preg_match('/Non/', $tktTxt)) {
                                     $r->membership = 'Non-Member';
                                 } else {
                                     $r->membership = 'Member';
@@ -998,9 +997,9 @@ class UploadController extends Controller
                                 $rf->status       = $status;
                                 $rf->save();
 
-                                if($eventID == 97){
+                                if ($eventID == 97) {
                                     // try to decrement ticket regCounts
-                                    if($ticketID == 126){
+                                    if ($ticketID == 126) {
                                         $t = Ticket::find(123);
                                         $t->regCount++;
                                         $t->save();
@@ -1010,14 +1009,14 @@ class UploadController extends Controller
                                         $t = Ticket::find(125);
                                         $t->regCount++;
                                         $t->save();
-                                    }else{
+                                    } else {
                                         $t = Ticket::find($ticketID);
                                         $t->regCount++;
                                         $t->save();
                                     }
 
-                                    foreach(array($fs1, $fs2, $fs3) as $sessID) {
-                                        if($sessID !== null){
+                                    foreach (array($fs1, $fs2, $fs3) as $sessID) {
+                                        if ($sessID !== null) {
                                             $rs = new RegSession;
                                             $rs->regID = $r->regID;
                                             $rs->eventID = $eventID;
@@ -1029,8 +1028,8 @@ class UploadController extends Controller
                                             $rs->save();
                                         }
                                     }
-                                    foreach(array($ss1, $ss2, $ss3) as $sessID) {
-                                        if($sessID !== null){
+                                    foreach (array($ss1, $ss2, $ss3) as $sessID) {
+                                        if ($sessID !== null) {
                                             $rs = new RegSession;
                                             $rs->regID = $r->regID;
                                             $rs->eventID = $eventID;
@@ -1056,15 +1055,14 @@ class UploadController extends Controller
                 }
 */
                 break;
-
         }
-        if($what == 'mbrdata'){
+        if ($what == 'mbrdata') {
             $what = 'Member records';
         } else {
             $what = 'Event registration records';
         }
 
-        request()->session()->flash('alert-success', "$what were successfully loaded. (" . $this->counter . ")" );
+        request()->session()->flash('alert-success', "$what were successfully loaded. (" . $this->counter . ")");
         $events = Event::where([
             ['orgID', '=', $this->currentPerson->defaultOrgID]
         ])->get();
@@ -1072,18 +1070,18 @@ class UploadController extends Controller
         return view('v1.auth_pages.organization.data_upload', compact('events'));
     }
 
-    public
-    function edit ($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public
-    function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
     }
 
-    public
-    function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
     }
 }

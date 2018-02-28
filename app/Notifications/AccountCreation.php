@@ -22,7 +22,8 @@ class AccountCreation extends Notification
      *
      * @return void
      */
-    public function __construct (Person $person, Event $event) {
+    public function __construct(Person $person, Event $event)
+    {
         $this->person = $person;
         $this->event = $event;
     }
@@ -33,7 +34,8 @@ class AccountCreation extends Notification
      * @param  mixed $notifiable
      * @return array
      */
-    public function via ($notifiable) {
+    public function via($notifiable)
+    {
         return ['mail'];
     }
 
@@ -43,7 +45,8 @@ class AccountCreation extends Notification
      * @param  mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail ($notifiable) {
+    public function toMail($notifiable)
+    {
         $o = Org::find($this->person->defaultOrgID);
         $name = $o->orgName;
         $ename = $this->event->eventName;
@@ -61,7 +64,8 @@ class AccountCreation extends Notification
      * @param  mixed $notifiable
      * @return array
      */
-    public function toArray ($notifiable) {
+    public function toArray($notifiable)
+    {
         return [
             //
         ];

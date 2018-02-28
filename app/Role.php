@@ -15,15 +15,18 @@ class Role extends EntrustRole
     protected static $logAttributes = ['name', 'display_name', 'description'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function people () {
+    public function people()
+    {
         return $this->belongsToMany(Person::class);
     }
 
-    public function users () {
+    public function users()
+    {
         return $this->belongsToMany(User::class);
     }
 
-    public function permissions () {
+    public function permissions()
+    {
         return $this->belongsToMany(Permission::class);
     }
 }

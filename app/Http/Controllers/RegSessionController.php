@@ -15,12 +15,14 @@ use App\Ticket;
 
 class RegSessionController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         //$this->middleware('auth');
         //$this->middleware('tidy')->only('update');
     }
 
-    public function show (EventSession $session) {
+    public function show(EventSession $session)
+    {
         // Called with /rs/{session}
         // Given a event's sessionID, display a form for a person to enter their $regID
 
@@ -31,30 +33,31 @@ class RegSessionController extends Controller
         return view('v1.public_pages.attend_session', compact('session', 'event', 'track', 'org'));
     }
 
-    public function volunteer_checkin ($param, $s = null) {
+    public function volunteer_checkin($param, $s = null)
+    {
         // Called with /checkin/{event}
         // Given an event's sessionID, display a form for a person to enter their $regID
         try {
             $event = Event::where('eventID', '=', $param)
                           ->orWhere('slug', '=', $param)
                           ->firstOrFail();
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', "Unable to find event.");
             return redirect()->back();
         }
 
-        if($s === null) {
+        if ($s === null) {
             $session = EventSession::find($event->mainSession);
         } else {
             $session = EventSession::find($s);
         }
 
-        if($event->hasTracks > 0) {
+        if ($event->hasTracks > 0) {
             $track = Track::where([
                 ['eventID', '=', $event->eventID],
                 ['trackID', '!=', 0]
             ])->get();
-        } elseif($session->trackID == 0) {
+        } elseif ($session->trackID == 0) {
             $track = Track::find($session->trackID);
         } else {
             $track = 0;
@@ -64,7 +67,8 @@ class RegSessionController extends Controller
         return view('v1.auth_pages.events.checkin_attendee', compact('session', 'event', 'track', 'org'));
     }
 
-    public function process_checkin (Request $request) {
+    public function process_checkin(Request $request)
+    {
 //dd(request()->all());
         // Called as /process_checkin post;  Need to:
         // 1. check if hasTracks > 0 and give options and buttons to re-trigger
@@ -75,23 +79,23 @@ class RegSessionController extends Controller
         $eventID   = request()->input('eventID');
 
         // Check if Registration ID entered was invalid and redirect back with message
-        try{
+        try {
             $reg       = Registration::find($regID);
             $event     = Event::find($eventID);
             $org       = Org::find($event->orgID);
             $session   = EventSession::find($event->mainSession);
             $person    = Person::find($reg->personID);
-        } catch(\Exception $exception){
+        } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', "Invalid registration ID used.");
             return redirect()->back();
         }
 
-        if($event->hasTracks > 0) {
+        if ($event->hasTracks > 0) {
             $track = Track::where([
                 ['eventID', '=', $event->eventID],
                 ['trackID', '!=', 0]
             ])->get();
-        } elseif($session->trackID == 0) {
+        } elseif ($session->trackID == 0) {
             $track = Track::find($session->trackID);
         } else {
             $track = 0;
@@ -105,7 +109,7 @@ class RegSessionController extends Controller
             ])->first();
             $rs->hasAttended = 1;
             $rs->save();
-        } catch(\Exception $exception){
+        } catch (\Exception $exception) {
             $rs = new RegSession;
             $rs->regID = $regID;
             $rs->eventID = request()->input('eventID');
@@ -119,14 +123,15 @@ class RegSessionController extends Controller
         request()->session()->flash('alert-success', $person->firstName . " " . $person->lastName . " was successfully registered.");
         //return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));
 
-        if(request()->input('return')) {
+        if (request()->input('return')) {
             return redirect('/checkin/' . $eventID . '/' . $sessionID);
         } else {
             return redirect('/checkin/' . $eventID);
         }
     }
 
-    public function update_sessions (Request $request, Registration $reg) {
+    public function update_sessions(Request $request, Registration $reg)
+    {
         // Update or create session records, set a display message, and re-display list
         $event = Event::find($reg->eventID);
         $verb = 'saved';
@@ -137,26 +142,26 @@ class RegSessionController extends Controller
             ['regID', '=', $reg->regID]
         ])->get();
 
-        if(count($rs)>1){
+        if (count($rs)>1) {
             $verb = 'updated';
-            foreach($rs as $s){
+            foreach ($rs as $s) {
                 $e = EventSession::find($s->sessionID);
-                if($e->regCount > 0){
+                if ($e->regCount > 0) {
                     $e->regCount--;
                 } $e->save();
                 $s->delete();
             }
         }
 
-        for($j = 1; $j <= $event->confDays; $j++) {
+        for ($j = 1; $j <= $event->confDays; $j++) {
             $z = EventSession::where([
                 ['confDay', '=', $j],
                 ['eventID', '=', $event->eventID]
             ])->first();
             $y = Ticket::find($z->ticketID);
 
-            for($x = 1; $x <= 5; $x++) {
-                if(request()->input('sess-' . $j . '-' . $x)) {
+            for ($x = 1; $x <= 5; $x++) {
+                if (request()->input('sess-' . $j . '-' . $x)) {
                     // if this is set, the value is the session that was chosen.
                     $rs            = new RegSession;
                     $rs->regID     = $reg->regID;
@@ -168,7 +173,8 @@ class RegSessionController extends Controller
                     $rs->save();
 
                     $e = EventSession::find($rs->sessionID);
-                    $e->regCount++; $e->save();
+                    $e->regCount++;
+                    $e->save();
                 }
             }
         }
@@ -177,7 +183,8 @@ class RegSessionController extends Controller
         return redirect('/upcoming');
     }
 
-    public function update (Request $request, EventSession $session) {
+    public function update(Request $request, EventSession $session)
+    {
         // 1) Receive the check-in with $regID
         // 2) Update the RegSession instance, and
         // 3) Return the individual survey
@@ -195,7 +202,8 @@ class RegSessionController extends Controller
         return redirect('/rs_survey/' . $rs->id);
     }
 
-    public function show_session_survey (RegSession $rs) {
+    public function show_session_survey(RegSession $rs)
+    {
         $event   = Event::find($rs->eventID);
         $org     = Org::find($event->orgID);
         $session = EventSession::find($rs->sessionID);
@@ -203,14 +211,15 @@ class RegSessionController extends Controller
         return view('v1.public_pages.session_survey', compact('rs', 'session', 'event', 'org'));
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // Response from /rs_survey post
 
         $wants    = request()->input('wantsContact');
         $personID = request()->input('personID');
 
         $person = Person::find($personID);
-        if($person->prefName) {
+        if ($person->prefName) {
             $name = $person->prefName;
         } else {
             $name = $person->firstName;
@@ -227,7 +236,7 @@ class RegSessionController extends Controller
         $survey->favoriteResponse = request()->input('favoriteResponse');
         $survey->suggestResponse  = request()->input('suggestResponse');
         $survey->contactResponse  = request()->input('contactResponse');
-        if($wants) {
+        if ($wants) {
             $survey->wantsContact = 1;
         } else {
             $survey->wantsContact = 0;
@@ -238,12 +247,11 @@ class RegSessionController extends Controller
             ['sessionID', '=', request()->input('sessionID')]
         ])->get();
 
-        if(!$already_saved) {
+        if (!$already_saved) {
             $survey->save();
         }
 
         $message = "Thank you for providing session feedback, $name.";
         return view('v1.public_pages.thanks', compact('message'));
     }
-
 }

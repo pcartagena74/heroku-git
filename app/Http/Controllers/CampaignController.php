@@ -15,7 +15,8 @@ class CampaignController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index () {
+    public function index()
+    {
         $this->currentPerson = Person::find(auth()->id());
 
         //->with('emails', 'emails.urls', 'email_count', 'emails.url_count')
@@ -33,7 +34,8 @@ class CampaignController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create () {
+    public function create()
+    {
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org'));
@@ -45,7 +47,8 @@ class CampaignController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         //dd(request()->all());
         $this->currentPerson = Person::find(auth()->id());
         $test_emails         = [];
@@ -66,20 +69,23 @@ class CampaignController extends Controller
 
         // 2. Prep for any test emails and send if 'Send Test Message"
         $note = request()->input('note');
-        for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $e = request()->input('email' . $i);
-            if($e != null) {
+            if ($e != null) {
                 request()->session()->flash('alert-info', "Test message(s) sent.");
                 array_push($test_emails, $e);
-                Mail::send('v1.auth_pages.campaigns.generic_campaign_email',
-                    ['content' => $c->content], function($message) use ($c, $e) {
+                Mail::send(
+                    'v1.auth_pages.campaigns.generic_campaign_email',
+                    ['content' => $c->content],
+                    function ($message) use ($c, $e) {
                         $message->from($c->fromEmail, $c->fromName);
                         $message->sender($c->fromEmail, $c->fromName);
                         $message->to($e, $name = null);
                         $message->subject($c->subject);
                         // Create a custom header that we can later retrieve
                         //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
-                    });
+                    }
+                );
             }
         }
         return redirect(env('APP_URL')."/campaigns");
@@ -91,11 +97,13 @@ class CampaignController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show ($id) {
+    public function show($id)
+    {
         //
     }
 
-    public function show_campaign (Campaign $campaign) {
+    public function show_campaign(Campaign $campaign)
+    {
         $content = $campaign->content;
         return view('v1.auth_pages.campaigns.generic_campaign_email', compact('content'));
     }
@@ -105,7 +113,8 @@ class CampaignController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit (Campaign $campaign) {
+    public function edit(Campaign $campaign)
+    {
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         return view('v1.auth_pages.campaigns.add-edit_campaign', compact('campaign', 'org'));
@@ -118,7 +127,8 @@ class CampaignController extends Controller
      * @param  int                      $id
      * @return \Illuminate\Http\Response
      */
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         //
     }
 
@@ -128,7 +138,8 @@ class CampaignController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         //
     }
 }

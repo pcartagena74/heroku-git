@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -33,19 +34,23 @@ class OrgPerson extends Model
     // The table
     protected $table = 'org-person';
 
-    public function myperson () {
+    public function myperson()
+    {
         return $this->belongsTo(Person::class, 'orgID');
     }
 
-    public function myorg () {
+    public function myorg()
+    {
         return $this->belongsTo(Org::class, 'orgID');
     }
 
-    public function people () {
+    public function people()
+    {
         return $this->hasMany(Person::class, 'personID');
     }
 
-    public function orgs () {
+    public function orgs()
+    {
         return $this->hasMany(Org::class, 'orgID');
     }
 }

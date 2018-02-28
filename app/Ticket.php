@@ -20,33 +20,38 @@ class Ticket extends Model
     protected $primaryKey = 'ticketID';
     protected $dates = ['availabilityEndDate', 'earlyBirdEndDate', 'createDate', 'updateDate', 'deleted_at'];
 
-    public function bundle() {
+    public function bundle()
+    {
         return $this->belongsTo(Bundle::class, 'ticketID');
     }
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class, 'eventID');
     }
 
-    public function registrations() {
+    public function registrations()
+    {
         return $this->hasMany(Registration::class, 'ticketID');
     }
 
-    public function regfinances() {
+    public function regfinances()
+    {
         return $this->hasMany(RegFinance::class, 'ticketID');
     }
 
-    public function waitlisting(){
-        if($this->isaBundle){
+    public function waitlisting()
+    {
+        if ($this->isaBundle) {
             $members = Bundle::with('ticket')->where('bundleID', $this->ticketID)->get();
-            foreach ($members as $m){
-                if($m->ticket->maxAttendees > 0 && $m->ticket->regCount > $m->ticket->maxAttendees){
+            foreach ($members as $m) {
+                if ($m->ticket->maxAttendees > 0 && $m->ticket->regCount > $m->ticket->maxAttendees) {
                     return 1;
                 }
             }
             return 0;
         } else {
-            if($this->maxAttendees > 0 && $this->regCount > $this->maxAttendees){
+            if ($this->maxAttendees > 0 && $this->regCount > $this->maxAttendees) {
                 return 1;
             } else {
                 return 0;

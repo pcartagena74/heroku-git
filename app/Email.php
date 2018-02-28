@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Email extends Model
@@ -12,7 +13,8 @@ class Email extends Model
     protected $primaryKey = 'emailID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID');
     }
 }

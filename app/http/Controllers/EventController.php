@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 ini_set('max_execution_time', 0);
 
 use App\Email;
@@ -25,7 +26,6 @@ use App\ReferLink;
 use App\Other\ics_calendar;
 use Spatie\Referer\Referer;
 use App\EventSession;
-
 
 class EventController extends Controller
 {
@@ -206,11 +206,15 @@ class EventController extends Controller
 
         if ($event->hasTracks > 0) {
             $tracks = Track::where('eventID', $event->eventID)->get();
-            return view('v1.public_pages.display_event_w_sessions',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg'));
+            return view(
+                'v1.public_pages.display_event_w_sessions',
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg')
+            );
         } else {
-            return view('v1.public_pages.display_event',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
+            return view(
+                'v1.public_pages.display_event',
+                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg')
+            );
         }
     }
 
@@ -709,9 +713,9 @@ class EventController extends Controller
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
 
-        return view('v1.public_pages.display_tickets_only',
-            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg'));
-
+        return view(
+            'v1.public_pages.display_tickets_only',
+            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg')
+        );
     }
-
 }

@@ -29,7 +29,8 @@ class GroupEventReceipt extends Mailable
      *
      * @return void
      */
-    public function __construct (RegFinance $rf, $pdf_path, $x) {
+    public function __construct(RegFinance $rf, $pdf_path, $x)
+    {
         $this->rf = $rf;
         $this->event = Event::find($this->rf->eventID);
         $this->org = Org::find($this->event->orgID);
@@ -44,7 +45,8 @@ class GroupEventReceipt extends Mailable
      *
      * @return $this
      */
-    public function build () {
+    public function build()
+    {
         $orgName = $this->org->orgName;
         //dd($this->array);
         return $this

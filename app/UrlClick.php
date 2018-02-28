@@ -16,7 +16,8 @@ class UrlClick extends Model
         'clicks',
     ];
 
-    public function email(){
+    public function email()
+    {
         return $this->belongsTo(EmailSent::class);
     }
 }

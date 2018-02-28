@@ -24,9 +24,11 @@ class ReportController extends Controller
             ->select(DB::raw("year(eventStartDate) as 'year'"))
             ->distinct()->orderBy('year', 'asc')->get();
 
-        $datastring = "";  $pluses = array(); $labels = "";
+        $datastring = "";
+        $pluses = array();
+        $labels = "";
 
-        foreach($years as $y){
+        foreach ($years as $y) {
             $pluses{$y->year} = 0;
             $labels .= "'$y->year', ";
         }
@@ -34,21 +36,21 @@ class ReportController extends Controller
 
         $chart = DB::select('call member_report');
 
-        foreach($chart as $e){
-            if($e->numEvent >= 8){
-                foreach($years as $y){
-                    if($e->{$y->year} === null){
+        foreach ($chart as $e) {
+            if ($e->numEvent >= 8) {
+                foreach ($years as $y) {
+                    if ($e->{$y->year} === null) {
                         $e->{$y->year} = 0;
                     }
                     $pluses{$y->year} += $e->{$y->year};
                 }
-                if($e == last($chart)){
+                if ($e == last($chart)) {
                     $datastring .= "{ Events: '8+ Events', '";
-                    foreach($years as $y){
-                        if($e->{$y->year} === null){
+                    foreach ($years as $y) {
+                        if ($e->{$y->year} === null) {
                             $e->{$y->year} = 0;
                         }
-                        if($y == $years->last()){
+                        if ($y == $years->last()) {
                             $datastring .= $y->year . "': " . $pluses{$y->year};
                         } else {
                             $datastring .= $y->year . "': " . $pluses{$y->year} . ", '";
@@ -58,16 +60,16 @@ class ReportController extends Controller
                     $datastring .= "}";
                 }
             } else {
-                if($e != reset($chart)){
+                if ($e != reset($chart)) {
                     $datastring .= "\n";
                 }
-                if($e->numEvent == 1){
+                if ($e->numEvent == 1) {
                     $datastring .= "{ Events: '" . $e->numEvent . " Event', '";
-                    foreach($years as $y){
-                        if($e->{$y->year} === null){
+                    foreach ($years as $y) {
+                        if ($e->{$y->year} === null) {
                             $e->{$y->year} = 0;
                         }
-                        if($y == $years->last()){
+                        if ($y == $years->last()) {
                             $datastring .= $y->year . "': " . $e->{$y->year};
                         } else {
                             $datastring .= $y->year . "': " . $e->{$y->year} . ", '";
@@ -77,11 +79,11 @@ class ReportController extends Controller
                     $datastring .= "},";
                 } else {
                     $datastring .= "{ Events: '" . $e->numEvent . " Events', '";
-                    foreach($years as $y){
-                        if($e->{$y->year} === null){
+                    foreach ($years as $y) {
+                        if ($e->{$y->year} === null) {
                             $e->{$y->year} = 0;
                         }
-                        if($y == $years->last()){
+                        if ($y == $years->last()) {
                             $datastring .= $y->year . "': " . $e->{$y->year};
                         } else {
                             $datastring .= $y->year . "': " . $e->{$y->year} . ", '";

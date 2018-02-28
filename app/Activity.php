@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 class Activity extends Model
 {
     // The table
@@ -11,11 +10,13 @@ class Activity extends Model
     protected $dates = ['createDate', 'updateDate'];
 
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID');
     }
 
-    public function org() {
+    public function org()
+    {
         return $this->belongsTo(Org::class, 'orgID');
     }
 }

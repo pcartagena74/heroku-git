@@ -16,8 +16,8 @@ class PersonSocialite extends Model
     const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'updateDate', 'deleted_at'];
 
-    public function person () {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID', 'id');
     }
-
 }

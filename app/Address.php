@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
@@ -12,7 +13,8 @@ class Address extends Model
     protected $primaryKey = 'addrID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
-    public function person() {
+    public function person()
+    {
         return $this->belongsTo(Person::class, 'personID');
     }
 }

@@ -21,16 +21,18 @@ use App\Notifications\UndoLoginChange;
 
 class PersonController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
     // Shows member management page
-    public function index () {
+    public function index()
+    {
         // responds to GET /members; This is for member management page
         $this->currentPerson = Person::find(auth()->user()->id);
         $topBits             = [];
-        $total_people        = Cache::get('total_people', function() {
+        $total_people        = Cache::get('total_people', function () {
             return DB::table('person')
                      ->join('org-person', 'org-person.personID', '=', 'person.personID')
                      ->where([
@@ -39,7 +41,7 @@ class PersonController extends Controller
                      ])->count();
         });
         $individual          = 'Individual';
-        $individuals         = Cache::get('individual_data', function() {
+        $individuals         = Cache::get('individual_data', function () {
             $individual = 'Individual';
             return DB::table('person')
                      ->join('org-person', 'org-person.personID', '=', 'person.personID')
@@ -50,7 +52,7 @@ class PersonController extends Controller
                      ])->count();
         });
         $student             = 'Student';
-        $students            = Cache::get('student_data', function() {
+        $students            = Cache::get('student_data', function () {
             $student = 'Student';
             return DB::table('person')
                      ->join('org-person', 'org-person.personID', '=', 'person.personID')
@@ -61,7 +63,7 @@ class PersonController extends Controller
                      ])->count();
         });
         $retiree             = 'Retiree';
-        $retirees            = Cache::get('retiree_data', function() {
+        $retirees            = Cache::get('retiree_data', function () {
             $retiree = 'Retiree';
             return DB::table('person')
                      ->join('org-person', 'org-person.personID', '=', 'person.personID')
@@ -77,7 +79,7 @@ class PersonController extends Controller
         array_push($topBits, [3, $retiree . " Members", $retirees, '', '', '']);
         array_push($topBits, [3, $student . " Members", $students, '', '', '']);
 
-        $mbr_list = Cache::get('mbr_list', function() {
+        $mbr_list = Cache::get('mbr_list', function () {
             return OrgPerson::join('person as p', 'p.personID', '=', 'org-person.personID')
                             ->where([
                                 ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
@@ -93,14 +95,15 @@ class PersonController extends Controller
     }
 
     // Shows profile information for chosen person (or self)
-    public function show ($id, $modal = null) {
+    public function show($id, $modal = null)
+    {
         // responds to GET /profile/{id}
         $this->currentPerson = Person::where('personID', '=', auth()->user()->id)->with('socialites')->first();
-        if($id == 'my') {
+        if ($id == 'my') {
             // set $id to the logged in Person, otherwise keep the $id given
             $id = $this->currentPerson->personID;
-            if(request()->query() != null) {
-                if($this->currentPerson->avatarURL === null
+            if (request()->query() != null) {
+                if ($this->currentPerson->avatarURL === null
                     && !$this->currentPerson->socialites->contains('providerName', 'LinkedIN')
                 ) {
                     $user              = Socialite::driver('linkedin')->user();
@@ -121,7 +124,7 @@ class PersonController extends Controller
 
         $profile = Person::where('person.personID', $id)
                          ->join('users as u', 'u.id', '=', 'person.personID')
-                         ->join('org-person as op', function($join) {
+                         ->join('org-person as op', function ($join) {
                              $join->on('op.personID', '=', 'person.personID');
                              $join->on('op.orgID', '=', 'person.defaultOrgID');
                          })
@@ -154,33 +157,48 @@ class PersonController extends Controller
         $phones =
             Phone::where('personID', $id)->select('phoneID', 'phoneType', 'phoneNumber')->get();
 
-        return view('v1.auth_pages.members.profile',
-            compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails',
-                'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes'));
+        return view(
+            'v1.auth_pages.members.profile',
+            compact(
+                'profile',
+                'topBits',
+                'prefixes',
+                'industries',
+                'addresses',
+                'emails',
+                'addrTypes',
+                'emailTypes',
+                'countries',
+                'phones',
+                'phoneTypes'
+            )
+        );
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
         $personID = request()->input('pk');
 
         $name = request()->input('name');
-        if(strpos($name, '-')) {
+        if (strpos($name, '-')) {
             // if passed from the registration receipt, the $name will have a dash
             list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
         }
         $value = request()->input('value');
 
-        if($name == 'login') {
-
+        if ($name == 'login') {
             // when changing login we need to:
             // 1. update user->login, user->email, and person->login with the new value
 
@@ -208,7 +226,6 @@ class PersonController extends Controller
             $new            = Email::where('emailADDR', '=', $new_email)->first();
             $new->isPrimary = 1;
             $new->save();
-
         } else {
             $person            = Person::find($id);
             $person->{$name}   = $value;
@@ -217,7 +234,8 @@ class PersonController extends Controller
         }
     }
 
-    public function undo_login (Person $person, $string) {
+    public function undo_login(Person $person, $string)
+    {
         $email = decrypt($string);
         $user = User::find($person->personID);
         $user->login = $email;
@@ -242,7 +260,8 @@ class PersonController extends Controller
         return view('v1.public_pages.thanks', compact('header', 'message'));
     }
 
-    public function change_password (Request $request) {
+    public function change_password(Request $request)
+    {
         $curPass               = request()->input('curPass');
         $password              = request()->input('password');
 
@@ -262,7 +281,7 @@ class PersonController extends Controller
         $person = Person::find($user->id);
 
         // validate $curPass
-        if(Hash::check($curPass, $user->password)){
+        if (Hash::check($curPass, $user->password)) {
             // update password
             $user->password = bcrypt($password);
             $user->save();
@@ -286,7 +305,8 @@ class PersonController extends Controller
      *
      * @return Response
      */
-    public function redirectToLinkedIn () {
+    public function redirectToLinkedIn()
+    {
         return Socialite::driver('linkedin')->redirect();
     }
 
@@ -295,8 +315,8 @@ class PersonController extends Controller
      *
      * @return Response
      */
-    public function handleLinkedInCallback () {
+    public function handleLinkedInCallback()
+    {
         $user = Socialite::driver('linkedin')->user();
     }
-
 }

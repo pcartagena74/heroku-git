@@ -11,11 +11,13 @@ use App\OrgDiscount;
 
 class OrgController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function index() {
+    public function index()
+    {
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgID = $this->currentPerson->defaultOrgID;
@@ -28,7 +30,8 @@ class OrgController extends Controller
         return redirect('/orgsettings/'. $orgID);
     }
 
-    public function event_defaults() {
+    public function event_defaults()
+    {
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
         $org = Org::find($this->currentPerson->defaultOrgID);
@@ -40,11 +43,14 @@ class OrgController extends Controller
 
         $event_types = EventType::whereIn('orgID', [1, $current_person->defaultOrgID])->get();
 
-        return view('v1.auth_pages.organization.event_defaults',
-            compact('org', 'current_person', 'discount_codes', 'event_types'));
+        return view(
+            'v1.auth_pages.organization.event_defaults',
+            compact('org', 'current_person', 'discount_codes', 'event_types')
+        );
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         // responds to GET /blah/id
         $org = Org::find($id);
 
@@ -57,20 +63,24 @@ class OrgController extends Controller
         return view('v1.auth_pages.organization.settings', compact('org', 'topBits'));
     }
 
-    public function create() {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
         $name = request()->input('name');
         $value = request()->input('value');
@@ -82,7 +92,8 @@ class OrgController extends Controller
         $org->save();
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
     }
 }

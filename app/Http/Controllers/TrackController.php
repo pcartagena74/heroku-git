@@ -10,27 +10,30 @@ use App\Ticket;
 
 class TrackController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function show (Event $event) {
+    public function show(Event $event)
+    {
         $tracks = Track::where('eventID', $event->eventID)->get();
         return view('v1.auth_pages.events.track-session', compact('event', 'tracks'));
     }
 
-    public function confDaysUpdate (Request $request, Event $event) {
+    public function confDaysUpdate(Request $request, Event $event)
+    {
         // this function is only to update $event->confDays
         $value  = request()->input('value');
         $tracks = Track::where('eventID', $event->eventID)->get();
 
-        if($value < $event->confDays) {
-            if($value == 0) {
+        if ($value < $event->confDays) {
+            if ($value == 0) {
                 $value = 1;
             }
-            for($d = $value; $d <= $event->confDays; $d++) {
-                foreach($tracks as $t) {
-                    for($i = 1; $i <= 5; $i++) {
+            for ($d = $value; $d <= $event->confDays; $d++) {
+                foreach ($tracks as $t) {
+                    for ($i = 1; $i <= 5; $i++) {
                         $s = EventSession::where([
                             ['order', '=', $i],
                             ['confDay', '=', $d],
@@ -49,9 +52,9 @@ class TrackController extends Controller
         // once set, now populate sessions table with some sessions for each track
 
 
-        for($d = 1; $d <= $value; $d++) {
-            foreach($tracks as $t) {
-                for($i = 1; $i <= 5; $i++) {
+        for ($d = 1; $d <= $value; $d++) {
+            foreach ($tracks as $t) {
+                for ($i = 1; $i <= 5; $i++) {
                     $s            = new EventSession;
                     $s->eventID   = $event->eventID;
                     $s->trackID   = $t->trackID;
@@ -66,7 +69,8 @@ class TrackController extends Controller
         }
     }
 
-    public function update (Request $request, Track $track) {
+    public function update(Request $request, Track $track)
+    {
         // the name that is passed in is trackName + id and we only change trackName
         $value            = request()->input('value');
         $track->trackName = $value;
@@ -74,24 +78,25 @@ class TrackController extends Controller
         $track->save();
     }
 
-    public function sessionUpdate (Request $request, Event $event) {
+    public function sessionUpdate(Request $request, Event $event)
+    {
         $value = request()->input('value');
         list($name, $track, $day, $order) = array_pad(explode("-", request()->input('name'), 4), 4, null);
         $s = EventSession::find(request()->input('pk'));
 
         // symmetric schedules need to update start & end together
         // any other variable can be updated as a single update
-        if($name == 'start' || $name == 'end') {
-            if($event->isSymmetric) {
+        if ($name == 'start' || $name == 'end') {
+            if ($event->isSymmetric) {
                 $sessions = EventSession::where([
                     ['order', $order],
                     ['confDay', '=', $day],
                     ['eventID', $event->eventID],
                 ])->get();
 
-                foreach($sessions as $os) {
+                foreach ($sessions as $os) {
                     $os->{$name} = $value;
-                    if($os->end->gt($os->start)) {
+                    if ($os->end->gt($os->start)) {
                         $os->creditAmt = number_format($os->end->diffInMinutes($os->start) / 60, 2, '.', '');
                     }
                     $os->updaterID = auth()->user()->id;
@@ -99,7 +104,7 @@ class TrackController extends Controller
                 }
             } else {
                 $s->{$name} = $value;
-                if($s->end->gt($s->start)) {
+                if ($s->end->gt($s->start)) {
                     $s->creditAmt = number_format($s->end->diffInMinutes($s->start) / 60, 2, '.', '');
                 }
                 $s->updaterID = auth()->user()->id;
@@ -114,9 +119,10 @@ class TrackController extends Controller
             'pk' => request()->input('pk'), 'blah' => $name, 'val' => $value, 's' => $s));
     }
 
-    public function updateSymmetry (Request $request, Event $event) {
+    public function updateSymmetry(Request $request, Event $event)
+    {
 
-        if(request()->input('isSymmetric') === null) {
+        if (request()->input('isSymmetric') === null) {
             $isSymmetric = 0;
         } else {
             $isSymmetric = 1;
@@ -128,7 +134,8 @@ class TrackController extends Controller
         return redirect('/tracks/' . $event->eventID);
     }
 
-    public function assignTicketSessions (Request $request, $day) {
+    public function assignTicketSessions(Request $request, $day)
+    {
         // pass the day of the event in the URL and $value = ticketID
         $value  = request()->input('value');
         $ticket = Ticket::find($value);
@@ -138,7 +145,7 @@ class TrackController extends Controller
             ['eventID', '=', $ticket->eventID]
         ])->get();
 
-        foreach($sessions as $s) {
+        foreach ($sessions as $s) {
             $s->ticketID  = $ticket->ticketID;
             $s->updaterID = auth()->user()->id;
             $s->save();

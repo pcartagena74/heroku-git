@@ -14,5 +14,4 @@ class Controller extends BaseController
 
     protected $currentPerson = null;
     protected $counter = 0;
-
 }

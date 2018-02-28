@@ -31,7 +31,7 @@ class ProcessTweet implements ShouldQueue
      */
     public function handle()
     {
-        $tweet = json_decode($this->tweet,true);
+        $tweet = json_decode($this->tweet, true);
         $tweet_text = isset($tweet['text']) ? $tweet['text'] : null;
         $user_id = isset($tweet['user']['id_str']) ? $tweet['user']['id_str'] : null;
         $user_screen_name = isset($tweet['user']['screen_name']) ? $tweet['user']['screen_name'] : null;

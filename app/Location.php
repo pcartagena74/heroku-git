@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
@@ -12,7 +13,8 @@ class Location extends Model
     protected $primaryKey = 'locID';
     protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 }

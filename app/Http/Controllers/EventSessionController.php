@@ -9,21 +9,23 @@ use App\Track;
 
 class EventSessionController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function destroy (EventSession $es) {
+    public function destroy(EventSession $es)
+    {
         $event = Event::find($es->eventID);
 
-        if($event->isSymmetric){
+        if ($event->isSymmetric) {
             $sessions = EventSession::where([
                 ['order', $es->order],
                 ['confDay', '=', $es->confDay],
                 ['eventID', $event->eventID],
             ])->get();
 
-            foreach($sessions as $os) {
+            foreach ($sessions as $os) {
                 $os->delete();
             }
         } else {

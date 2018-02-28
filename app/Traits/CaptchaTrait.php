@@ -13,7 +13,8 @@ use ReCaptcha\ReCaptcha;
 trait CaptchaTrait
 {
 
-    public function captchaCheck () {
+    public function captchaCheck()
+    {
 
         $response = Input::get('g-recaptcha-response');
         $remoteip = $_SERVER['REMOTE_ADDR'];
@@ -21,12 +22,10 @@ trait CaptchaTrait
 
         $recaptcha = new ReCaptcha($secret);
         $resp      = $recaptcha->verify($response, $remoteip);
-        if($resp->isSuccess()) {
+        if ($resp->isSuccess()) {
             return 1;
         } else {
             return 0;
         }
-
     }
-
 }

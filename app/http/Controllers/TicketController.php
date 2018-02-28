@@ -11,15 +11,18 @@ use App\Registration;
 
 class TicketController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function index () {
+    public function index()
+    {
         // responds to /blah
     }
 
-    public function show ($id) {
+    public function show($id)
+    {
         // responds to GET /blah/id
         $event   = Event::find($id);
         $topBits = '';
@@ -41,18 +44,20 @@ class TicketController extends Controller
         return view('v1.auth_pages.events.list-tickets', compact('event', 'bundles', 'tickets', 'topBits'));
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         //dd(request()->all());
         $eventID             = request()->input('eventID');
         $this->currentPerson = Person::find(auth()->user()->id);
         $event               = Event::find($eventID);
 
-        for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $ticketLabel         = "ticketLabel-" . $i;
             $availabilityEndDate = "availabilityEndDate-" . $i;
             $earlyBirdEndDate    = "earlyBirdEndDate-" . $i;
@@ -74,7 +79,7 @@ class TicketController extends Controller
             empty($ava) ? $ava = null : $ava = date("Y-m-d H:i:s", strtotime($ava));
             empty($ear) ? $ear = null : $ear = date("Y-m-d H:i:s", strtotime($ear));
 
-            if(!empty($tkl)) {
+            if (!empty($tkl)) {
                 $newtkt                      = new Ticket;
                 $newtkt->ticketLabel         = $tkl;
                 $newtkt->availabilityEndDate = $ava;
@@ -93,11 +98,13 @@ class TicketController extends Controller
         return redirect("/event-tickets/" . $eventID);
     }
 
-    public function edit ($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
         $ticket              = Ticket::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -106,7 +113,7 @@ class TicketController extends Controller
         $name              = substr(request()->input('name'), 0, -1);
         $value             = request()->input('value');
 
-        if($name == 'availabilityEndDate' or $name == 'earlyBirdEndDate' and $value !== null) {
+        if ($name == 'availabilityEndDate' or $name == 'earlyBirdEndDate' and $value !== null) {
             $date = date("Y-m-d H:i:s", strtotime(trim($value)));
             $value = $date;
         }
@@ -116,13 +123,14 @@ class TicketController extends Controller
         $ticket->save();
     }
 
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $ticket              = Ticket::Find($id);
         $eventID             = $ticket->eventID;
         //check to see if any regIDs have this ticketID
-        if(Registration::where('ticketID', $id)->count() > 0) {
+        if (Registration::where('ticketID', $id)->count() > 0) {
             // soft-delete if there are registrations
 
             $ticket->isDeleted = 1;

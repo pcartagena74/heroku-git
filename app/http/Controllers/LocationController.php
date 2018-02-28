@@ -9,61 +9,76 @@ use App\Person;
 
 class LocationController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function index () {
+    public function index()
+    {
         // responds to GET /locations
         $this->currentPerson = Person::find(auth()->user()->id);
         $locations           = DB::table('event-location')->where('orgID', $this->currentPerson->defaultOrgID)
                                  ->whereNull('deleted_at')
                                  ->orderBy('locName')
-                                 ->select('locID', 'locName', 'addr1', 'addr2', 'city', 'state', 'zip',
-                                     DB::raw("(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt"))->get();
+                                 ->select(
+                                     'locID',
+                                     'locName',
+                                     'addr1',
+                                     'addr2',
+                                     'city',
+                                     'state',
+                                     'zip',
+                                     DB::raw("(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt")
+                                 )->get();
 
         $topBits = '';
         return view('v1.auth_pages.events.list-locations', compact('locations', 'topBits'));
     }
 
-    public function show ($id) {
+    public function show($id)
+    {
         // responds to GET /blah/id
         $loc = Location::find($id);
         return $loc->toJson();
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());
     }
 
-    public function edit ($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update (Request $request) {
+    public function update(Request $request)
+    {
         // responds to POST /location/update
         $this->currentPerson = Person::find(auth()->user()->id);
         $locID               = request()->input('locID');
         $action              = request()->input('action');
         $location            = Location::find($locID);
 
-        if($action != 'delete') {
-            if(request()->input('locName')) {
+        if ($action != 'delete') {
+            if (request()->input('locName')) {
                 $location->locName = request()->input('locName');
-            } elseif(request()->input('addr1')) {
+            } elseif (request()->input('addr1')) {
                 $location->addr1 = request()->input('addr1');
-            } elseif(request()->input('addr2')) {
+            } elseif (request()->input('addr2')) {
                 $location->addr2 = request()->input('addr2');
-            } elseif(request()->input('city')) {
+            } elseif (request()->input('city')) {
                 $location->city = request()->input('city');
-            } elseif(request()->input('state')) {
+            } elseif (request()->input('state')) {
                 $location->state = request()->input('state');
-            } elseif(request()->input('zip')) {
+            } elseif (request()->input('zip')) {
                 $location->zip = request()->input('zip');
             }
             $location->updaterID = $this->currentPerson->personID;
@@ -74,7 +89,8 @@ class LocationController extends Controller
         return json_encode(array('input' => request()->all(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID));
     }
 
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
     }
 }

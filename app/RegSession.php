@@ -17,15 +17,18 @@ class RegSession extends Model
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function session() {
+    public function session()
+    {
         return $this->belongsTo(EventSession::class, 'sessionID', 'sessionID');
     }
 
-    public function registration() {
+    public function registration()
+    {
         return $this->hasOne(Registration::class, 'regID', 'regID');
     }
 }

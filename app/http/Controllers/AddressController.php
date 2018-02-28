@@ -8,29 +8,32 @@ use App\Person;
 
 class AddressController extends Controller
 {
-    public function __construct () {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
-    public function index () {
+    public function index()
+    {
         // responds to /blah
-
     }
 
-    public function show ($id) {
+    public function show($id)
+    {
         // responds to GET /blah/id
-
     }
 
-    public function create () {
+    public function create()
+    {
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /blah and creates, adds, stores the event
         //dd(request()->all());
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $adType  = "addrTYPE-" . $i;
             $addr1   = "addr1-" . $i;
             $addr2   = "addr2-" . $i;
@@ -47,7 +50,7 @@ class AddressController extends Controller
             $zi   = request()->input($zip);
             $cnt  = request()->input($cntryID);
 
-            if(!empty($ad1)) {
+            if (!empty($ad1)) {
                 $newAddr            = new Address;
                 $newAddr->personID  = request()->input('personID');
                 $newAddr->addrTYPE  = $type;
@@ -62,18 +65,20 @@ class AddressController extends Controller
                 $newAddr->save();
             }
         }
-        if($this->currentPerson->personID == request()->input('personID')) {
+        if ($this->currentPerson->personID == request()->input('personID')) {
             return redirect('/profile/my');
         } else {
             return redirect("'/profile/" . request()->input('personID') . "'");
         }
     }
 
-    public function edit ($id) {
+    public function edit($id)
+    {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         // responds to PATCH /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $address = Address::find($id);
@@ -86,7 +91,8 @@ class AddressController extends Controller
         $address->save();
     }
 
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $address = Address::find($id);
@@ -94,7 +100,7 @@ class AddressController extends Controller
         $address->save();
         $address->delete();
 
-        if(request()->input('personID') == $this->currentPerson->personID) {
+        if (request()->input('personID') == $this->currentPerson->personID) {
             return redirect("/profile/my");
         } else {
             return redirect("/profile/" . $this->currentPerson->personID);

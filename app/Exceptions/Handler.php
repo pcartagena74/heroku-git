@@ -47,11 +47,10 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof TokenMismatchException) {
-
             return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
         }
         if ($exception instanceof InvalidArgumentException) {
-            if(env('APP_ENV') == 'local'){
+            if (env('APP_ENV') == 'local') {
                 dd(get_defined_vars());
             }
         }

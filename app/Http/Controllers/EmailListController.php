@@ -15,7 +15,8 @@ class EmailListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index () {
+    public function index()
+    {
         $this->currentPerson = Person::find(auth()->id());
         $rows                = [];
         $ids                 = [];
@@ -23,25 +24,25 @@ class EmailListController extends Controller
         $lists               = EmailList::where('orgID', $this->currentPerson->defaultOrgID)->get();
         $today               = Carbon::now();
 
-        foreach($defaults as $l) {
-            if($l->foundation == 'everyone') {
-                $c = Person::whereHas('orgs', function($q) {
+        foreach ($defaults as $l) {
+            if ($l->foundation == 'everyone') {
+                $c = Person::whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                 })
                            ->count();
-            } elseif($l->foundation == 'pmiid') {
-                $c = Person::whereHas('orgs', function($q) {
+            } elseif ($l->foundation == 'pmiid') {
+                $c = Person::whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                 })
-                           ->whereHas('orgperson', function($q) {
+                           ->whereHas('orgperson', function ($q) {
                                $q->whereNotNull('OrgStat1');
                            })
                            ->count();
-            } elseif($l->foundation == 'nonexpired') {
-                $c = Person::whereHas('orgs', function($q) {
+            } elseif ($l->foundation == 'nonexpired') {
+                $c = Person::whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                 })
-                           ->whereHas('orgperson', function($q) {
+                           ->whereHas('orgperson', function ($q) {
                                $q->whereDate('RelDate4', '>=', Carbon::now());
                            })
                            ->count();
@@ -54,20 +55,20 @@ class EmailListController extends Controller
         $defaults = $rows;
         $rows     = [];
 
-        foreach($lists as $l) {
+        foreach ($lists as $l) {
             $included   = explode(',', $l->included);
             $foundation = $l->foundation;
             $excluded   = explode(',', $l->excluded);
 
             // foundations are either filters (when $included !== null) or true foundations
-            if($included != null) {
+            if ($included != null) {
                 switch ($foundation) {
                     case "none":
                     case "everyone":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($included, $excluded) {
+                                   ->whereHas('registrations', function ($q) use ($included, $excluded) {
                                        $q->whereIn('eventID', $included);
                                        $q->whereNotIn('eventID', $excluded);
                                    })
@@ -76,14 +77,14 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "pmiid":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($included, $excluded) {
+                                   ->whereHas('registrations', function ($q) use ($included, $excluded) {
                                        $q->whereIn('eventID', $included);
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) {
+                                   ->whereHas('orgperson', function ($q) {
                                        $q->whereNotNull('OrgStat1');
                                    })
                                    ->distinct()
@@ -91,14 +92,14 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "nonexpired":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($included, $excluded) {
+                                   ->whereHas('registrations', function ($q) use ($included, $excluded) {
                                        $q->whereIn('eventID', $included);
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) use ($today) {
+                                   ->whereHas('orgperson', function ($q) use ($today) {
                                        $q->whereNotNull('OrgStat1');
                                        $q->whereDate('RelDate4', '>=', $today);
                                    })
@@ -113,10 +114,10 @@ class EmailListController extends Controller
                     case "none":
                         // none with a null $included is not possible
                     case "everyone":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereDoesntHave('registrations', function($q) use ($excluded) {
+                                   ->whereDoesntHave('registrations', function ($q) use ($excluded) {
                                        $q->whereIn('eventID', $excluded);
                                    })
                                    ->distinct()
@@ -124,13 +125,13 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "pmiid":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($excluded) {
+                                   ->whereHas('registrations', function ($q) use ($excluded) {
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) use ($today) {
+                                   ->whereHas('orgperson', function ($q) use ($today) {
                                        $q->whereNotNull('OrgStat1');
                                    })
                                    ->distinct()
@@ -138,13 +139,13 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "nonexpired":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($excluded) {
+                                   ->whereHas('registrations', function ($q) use ($excluded) {
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) use ($today) {
+                                   ->whereHas('orgperson', function ($q) use ($today) {
                                        $q->whereNotNull('OrgStat1');
                                        $q->whereDate('RelDate4', '>=', $today);
                                    })
@@ -164,7 +165,7 @@ class EmailListController extends Controller
                   ->whereDate('eventStartDate', '<', $today)
                   ->select('eventID')
                   ->get();
-        foreach($e as $id) {
+        foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }
         $ytd_events = implode(',', $ids);
@@ -174,14 +175,14 @@ class EmailListController extends Controller
         $e = Event::whereYear('eventStartDate', '=', date('Y') - 1)
                   ->select('eventID')
                   ->get();
-        foreach($e as $id) {
+        foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }
         $last_year = implode(',', $ids);
         $ids       = [];
 
         $e = Event::where('eventTypeID', '=', 3)->select('eventID')->get();
-        foreach($e as $id) {
+        foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }
         $pddays = implode(',', $ids);
@@ -201,8 +202,8 @@ class EmailListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create () {
-
+    public function create()
+    {
     }
 
     /**
@@ -211,7 +212,8 @@ class EmailListController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store (Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST /list
         $this->currentPerson = Person::find(auth()->id());
         $include_string      = '';
@@ -227,7 +229,7 @@ class EmailListController extends Controller
             $include_string = $foundation;
         $exclude !== null ? $exclude_string = implode(',', $exclude) : $exclude_string = null;
 
-        if($include === null && $foundation == 'none') {
+        if ($include === null && $foundation == 'none') {
             request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
             return redirect()->back();
         }
@@ -250,7 +252,8 @@ class EmailListController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show (EmailList $emailList) {
+    public function show(EmailList $emailList)
+    {
         $this->currentPerson = Person::find(auth()->id());
         $rows                = [];
         $ids                 = [];
@@ -258,25 +261,25 @@ class EmailListController extends Controller
         $lists               = EmailList::where('orgID', $this->currentPerson->defaultOrgID)->get();
         $today               = Carbon::now();
 
-        foreach($defaults as $l) {
-            if($l->included == 'everyone') {
-                $c = Person::whereHas('orgs', function($q) {
+        foreach ($defaults as $l) {
+            if ($l->included == 'everyone') {
+                $c = Person::whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                 })
                            ->count();
-            } elseif($l->included == 'pmiid') {
-                $c = Person::whereHas('orgs', function($q) {
+            } elseif ($l->included == 'pmiid') {
+                $c = Person::whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                 })
-                           ->whereHas('orgperson', function($q) {
+                           ->whereHas('orgperson', function ($q) {
                                $q->whereNotNull('OrgStat1');
                            })
                            ->count();
-            } elseif($l->included == 'nonexpired') {
-                $c = Person::whereHas('orgs', function($q) {
+            } elseif ($l->included == 'nonexpired') {
+                $c = Person::whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                 })
-                           ->whereHas('orgperson', function($q) {
+                           ->whereHas('orgperson', function ($q) {
                                $q->whereDate('RelDate4', '>=', Carbon::now());
                            })
                            ->count();
@@ -288,7 +291,7 @@ class EmailListController extends Controller
         $defaults = $rows;
         $rows     = [];
 
-        foreach($lists as $l) {
+        foreach ($lists as $l) {
             $included   = explode(',', $l->included);
             $foundation = array_shift($included);
             $excluded   = explode(',', $l->excluded);
@@ -307,14 +310,14 @@ class EmailListController extends Controller
                         dd($c);
             */
             // foundations are either filters (when $included !== null) or true foundations
-            if($included != null) {
+            if ($included != null) {
                 switch ($foundation) {
                     case "none":
                     case "everyone":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($included, $excluded) {
+                                   ->whereHas('registrations', function ($q) use ($included, $excluded) {
                                        $q->whereIn('eventID', $included);
                                        $q->whereNotIn('eventID', $excluded);
                                    })
@@ -323,14 +326,14 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "pmiid":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($included, $excluded) {
+                                   ->whereHas('registrations', function ($q) use ($included, $excluded) {
                                        $q->whereIn('eventID', $included);
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) {
+                                   ->whereHas('orgperson', function ($q) {
                                        $q->whereNotNull('OrgStat1');
                                    })
                                    ->distinct()
@@ -338,14 +341,14 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "nonexpired":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($included, $excluded) {
+                                   ->whereHas('registrations', function ($q) use ($included, $excluded) {
                                        $q->whereIn('eventID', $included);
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) use ($today) {
+                                   ->whereHas('orgperson', function ($q) use ($today) {
                                        $q->whereNotNull('OrgStat1');
                                        $q->whereDate('RelDate4', '>=', $today);
                                    })
@@ -360,10 +363,10 @@ class EmailListController extends Controller
                     case "none":
                         // none with a null $included is not possible
                     case "everyone":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereDoesntHave('registrations', function($q) use ($excluded) {
+                                   ->whereDoesntHave('registrations', function ($q) use ($excluded) {
                                        $q->whereIn('eventID', $excluded);
                                    })
                                    ->distinct()
@@ -371,13 +374,13 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "pmiid":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($excluded) {
+                                   ->whereHas('registrations', function ($q) use ($excluded) {
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) use ($today) {
+                                   ->whereHas('orgperson', function ($q) use ($today) {
                                        $q->whereNotNull('OrgStat1');
                                    })
                                    ->distinct()
@@ -385,13 +388,13 @@ class EmailListController extends Controller
                                    ->count();
                         break;
                     case "nonexpired":
-                        $c = Person::whereHas('orgs', function($q) {
+                        $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
                         })
-                                   ->whereHas('registrations', function($q) use ($excluded) {
+                                   ->whereHas('registrations', function ($q) use ($excluded) {
                                        $q->whereNotIn('eventID', $excluded);
                                    })
-                                   ->whereHas('orgperson', function($q) use ($today) {
+                                   ->whereHas('orgperson', function ($q) use ($today) {
                                        $q->whereNotNull('OrgStat1');
                                        $q->whereDate('RelDate4', '>=', $today);
                                    })
@@ -411,7 +414,7 @@ class EmailListController extends Controller
                   ->whereDate('eventStartDate', '<', $today)
                   ->select('eventID')
                   ->get();
-        foreach($e as $id) {
+        foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }
         $ytd_events = implode(',', $ids);
@@ -421,23 +424,26 @@ class EmailListController extends Controller
         $e = Event::whereYear('eventStartDate', '=', date('Y') - 1)
                   ->select('eventID')
                   ->get();
-        foreach($e as $id) {
+        foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }
         $last_year = implode(',', $ids);
         $ids       = [];
 
         $e = Event::where('eventTypeID', '=', 3)->select('eventID')->get();
-        foreach($e as $id) {
+        foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }
         $pddays = implode(',', $ids);
 
         $excludes = Event::whereYear('eventStartDate', '=', date('Y'))->get();
 
-        return view('v1.auth_pages.campaigns.email_lists',
-            compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'emailList'))
-            ->withInput(['tab' => 'tab_content2']);;
+        return view(
+            'v1.auth_pages.campaigns.email_lists',
+            compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'emailList')
+        )
+            ->withInput(['tab' => 'tab_content2']);
+        ;
     }
 
     /**
@@ -446,7 +452,8 @@ class EmailListController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit ($id) {
+    public function edit($id)
+    {
         //
     }
 
@@ -457,7 +464,8 @@ class EmailListController extends Controller
      * @param  int                      $id
      * @return \Illuminate\Http\Response
      */
-    public function update (Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         //
     }
 
@@ -467,7 +475,8 @@ class EmailListController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy ($id) {
+    public function destroy($id)
+    {
         //
     }
 }
