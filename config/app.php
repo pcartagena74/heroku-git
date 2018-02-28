@@ -190,7 +190,6 @@ return [
          * Package Service Providers...
          */
         Laravel\Cashier\CashierServiceProvider::class,
-        Laravel\Tinker\TinkerServiceProvider::class,
 
         /*
          * Application Service Providers...
