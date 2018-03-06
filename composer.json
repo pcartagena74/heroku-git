@@ -15,7 +15,7 @@
         "eduardokum/laravel-mail-auto-embed": "^1.0",
         "fedeisas/laravel-mail-css-inliner": "^2.2",
         "fennb/phirehose": "^1.0",
-        "fideloper/proxy": "^3.2",
+        "fideloper/proxy": "~3.0",
         "google/recaptcha": "~1.1",
         "graham-campbell/flysystem": "^4.1",
         "guzzlehttp/guzzle": "^6.2",
@@ -40,9 +40,11 @@
         "plank/laravel-mediable": "^2.5",
         "simplesoftwareio/simple-qrcode": "^1.5",
         "socialiteproviders/linkedin": "^3.0",
+        "spatie/laravel-activitylog": "dev-master",
         "spatie/laravel-link-checker": "^2.0",
         "spatie/laravel-referer": "^1.2",
         "stripe/stripe-php": "^4.13",
+        "true/punycode": "dev-master",
         "zizaco/entrust": "dev-laravel-5"
     },
     "require-dev": {

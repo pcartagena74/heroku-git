@@ -9,7 +9,9 @@ if(!isset($topBits)){
 }
 ?>
 @include('v1.parts.header')
+        {{--
 @yield('page')
+        --}}
 </head>
 <body class="nav-md footer_fixed">
 <div class="container body">

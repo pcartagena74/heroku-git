@@ -11,3 +11,4 @@ Homestead.yaml
 .env.example
 composer.phar
 known_composer.lck
+print_routes.txt

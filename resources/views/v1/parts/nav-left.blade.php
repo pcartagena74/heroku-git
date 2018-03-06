@@ -63,6 +63,18 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         </ul>
                     </li>
 
+                    @if(Entrust::hasRole('Developer'))
+                        <li><a><i class="fa fa-ticket"></i>Help Desk<span
+                                        class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="{{ env('APP_URL') }}/tickets-admin">Dashboard</a></li>
+                                <li><a href="{{ env('APP_URL') }}/tickets">Active Tickets</a></li>
+                                <li><a href="{{ env('APP_URL') }}/tickets/create">Create Ticket</a></li>
+                                <li><a href="{{ env('APP_URL') }}/reports">Reporting</a></li>
+                            </ul>
+                        </li>
+                    @endif
+
                     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
                         || Entrust::hasRole('Developer' || Entrust::hasRole('Admin')))
                         <li><a><i class="fa fa-bank"></i>Organization Settings<span
