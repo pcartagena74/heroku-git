@@ -27,7 +27,12 @@ $default = Org::find($event->orgID);
     <div class="col-sm-8 col-md-8">
         <table class="table table-bordered table-striped table-condensed">
             <tr>
-                <th style="text-align: left;">Early Bird End Date</th>
+                <th style="text-align: left;">
+                    Early Bird End Date
+                    @include('v1.parts.tooltip', ['title' => "Upon event creation, this value is set to today().
+                                                              If you do NOT want an early bird date, leave it alone and it will be ignored.
+                                                              Otherwise, edit the date so that it is in the future."])
+                </th>
                 <th style="text-align: left;">Early Bird Percent Discount</th>
             </tr>
             <tr>

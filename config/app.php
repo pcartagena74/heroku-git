@@ -152,7 +152,7 @@ return [
         'GrahamCampbell\Flysystem\FlysystemServiceProvider',
         jdavidbakr\MailTracker\MailTrackerServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
-        Kordy\Ticketit\TicketitServiceProvider::class,
+        //Kordy\Ticketit\TicketitServiceProvider::class,
         Kouz\Providers\AirbrakeServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
