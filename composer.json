@@ -39,7 +39,7 @@
         "nicolaslopezj/searchable": "1.*",
         "plank/laravel-mediable": "^2.5",
         "simplesoftwareio/simple-qrcode": "^1.5",
-        "socialiteproviders/linkedin": "^3.0",
+        "socialiteproviders/linkedin": "dev-master",
         "spatie/laravel-activitylog": "dev-master",
         "spatie/laravel-link-checker": "^2.0",
         "spatie/laravel-referer": "^1.2",
@@ -92,6 +92,5 @@
         "laravel": {
             "dont-discover": []
         }
-    },
-    "minimum-stability":"dev"
+    }
 }
