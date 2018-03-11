@@ -347,7 +347,9 @@ if($event->isSymmetric && $event->hasTracks) {
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
-                                            $cs = count($s);
+                                            if($s !== null){
+                                                $cs = count($s);
+                                            }
                                             if($cs==1){
                                                 $selected = true;
                                             } else {
