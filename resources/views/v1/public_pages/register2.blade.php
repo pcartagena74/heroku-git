@@ -16,8 +16,13 @@ $string = '';
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-$array = explode(',', $chapters->nearbyChapters);
+if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+    $array    = explode(',', $chapters->regionChapters);
+} else {
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+    $array    = explode(',', $chapters->nearbyChapters);
+}
 
 $i = 0;
 foreach($array as $chap) {
@@ -342,6 +347,12 @@ if($event->isSymmetric && $event->hasTracks) {
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
+                                            $cs = count($s);
+                                            if($cs==1){
+                                                $selected = true;
+                                            } else {
+                                                $selected = false;
+                                            }
                                             // As long as there are any sessions, the row will be displayed
 ?>
                                             @if($s !== null)
@@ -379,7 +390,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                         $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                                 @else
                                                                     <b>{{ $s->sessionName }}</b><br/>
-                                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, $selected,
                                                                         $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                                 @endif
 
@@ -407,10 +418,10 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                     }
 ?>
                                                                     @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
-                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', false,
+                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', $selected,
                                                                             $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
                                                                     @else
-                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', false,
+                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', $selected,
                                                                             $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
                                                                     @endif
                                                                         <script>
