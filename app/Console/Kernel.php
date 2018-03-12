@@ -5,6 +5,8 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+set_time_limit(0);
+
 class Kernel extends ConsoleKernel
 {
     /**
