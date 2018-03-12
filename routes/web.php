@@ -84,7 +84,6 @@ Route::post('/networking', 'ActivityController@networking');                    
 Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
-Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 
@@ -153,6 +152,7 @@ Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('reg
 Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');
 Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
+Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 
 // Event & Ticket Routes
 Route::get('/events', 'EventController@index')->name('manageEvents');
