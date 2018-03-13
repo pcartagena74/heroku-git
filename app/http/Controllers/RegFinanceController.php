@@ -34,6 +34,8 @@ use App\EventDiscount;
 use App\Email;
 use Illuminate\Support\Facades\Validator;
 
+set_time_limit(0);
+
 class RegFinanceController extends Controller
 {
     public function __construct()
@@ -406,20 +408,8 @@ class RegFinanceController extends Controller
 
         // email the user who paid
         // $user->notify(new EventReceipt($rf));
-        $x = compact(
-            'needSessionPick',
-            'ticket',
-            'event',
-            'quantity',
-            'discount_code',
-            'loc',
-            'rf',
-            'person',
-            'prefixes',
-            'industries',
-            'org',
-            'tickets'
-        );
+        $x = compact( 'needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
+            'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $pdf = PDF::loadView('v1.public_pages.event_receipt', $x)
