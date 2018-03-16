@@ -41,6 +41,7 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
 ?>
 @extends('v1.layouts.no-auth')
 
+@if($event->isActive)
 @section('content')
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '',
         'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -337,3 +338,8 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
         }
     </script>
 @endsection
+@else
+@section('content')
+    This event is inactive.
+@endsection
+@endif

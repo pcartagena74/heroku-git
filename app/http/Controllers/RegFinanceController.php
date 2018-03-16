@@ -436,7 +436,11 @@ class RegFinanceController extends Controller
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
         //return $pdf->download('invoice.pdf');
-        Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+        try {
+            Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+        } catch(\Exception $exception) {
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
+        }
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
         //return view('v1.public_pages.event_receipt', $x);
@@ -746,7 +750,11 @@ class RegFinanceController extends Controller
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
-        Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+        try {
+            Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+        } catch(\Exception $exception) {
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
+        }
 
         return view('v1.auth_pages.events.group_receipt', $x);
     }
