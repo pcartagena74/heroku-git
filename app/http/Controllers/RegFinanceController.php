@@ -437,7 +437,8 @@ class RegFinanceController extends Controller
 
         //return $pdf->download('invoice.pdf');
         try {
-            Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            //Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         }
@@ -751,7 +752,8 @@ class RegFinanceController extends Controller
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
-            Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            //Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         }
