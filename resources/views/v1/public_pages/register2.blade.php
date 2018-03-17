@@ -204,6 +204,17 @@ if($event->isSymmetric && $event->hasTracks) {
                                                data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> ]
                                     </nobr>
                                     <br/>
+                                    @if($event->eventTypeID==5)
+                                       <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                            data-value="{{ $person->title }}"
+                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                       with: PMI
+                                            <a id="affiliation-{{ $tcount }}"
+                                               data-pk="{{ $person->personID }}"
+                                               data-value="{{ $person->affiliation }}"
+                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+
+                                    @else
                                     @if($person->compName)
                                         @if($person->title)
                                             <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
@@ -235,6 +246,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                  data-pk="{{ $person->personID }}"
                                                                  data-value="{{ $person->affiliation }}"
                                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                    @endif
                                     @endif
                                 </td>
                                 <td colspan="2" style="text-align: left;">

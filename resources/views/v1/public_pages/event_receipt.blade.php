@@ -237,26 +237,35 @@ $deletion = 0;
                                     @endif
                                     <nobr>[ {{ $person->login }} ]</nobr>
                                     <br/>
-                                    @if($person->compName)
-                                        @if($person->title)
-                                            {{ $person->title }}
-                                        @else
-                                            Employed
-                                        @endif
-                                        at {{ $person->compName }}
+                                    @if($event->eventTypeID==5)
+                                            @if($person->title)
+                                                {{ $person->title }}
+                                            @endif
+                                            @if($person->affiliation)
+                                                with: PMI {{ $person->affiliation }}
+                                            @endif
                                     @else
-                                        @if($person->title !== null)
-                                            {{ $person->title }}
-                                        @elseif($person->indName !== null)
-                                            Employed
-                                        @endif
-                                    @endif
-                                    @if($person->indName !== null)
-                                        in the {{ $person->indName }} industry <br/>
-                                    @endif
+                                            @if($person->compName)
+                                                @if($person->title)
+                                                    {{ $person->title }}
+                                                @else
+                                                    Employed
+                                                @endif
+                                                at {{ $person->compName }}
+                                            @else
+                                                @if($person->title !== null)
+                                                    {{ $person->title }}
+                                                @elseif($person->indName !== null)
+                                                    Employed
+                                                @endif
+                                            @endif
+                                            @if($person->indName !== null)
+                                                in the {{ $person->indName }} industry <br/>
+                                            @endif
 
-                                    @if($person->affiliation)
-                                        <br/>Affiliated with: {{ $person->affiliation }}
+                                            @if($person->affiliation)
+                                                <br/>Affiliated with: {{ $person->affiliation }}
+                                            @endif
                                     @endif
                                 </td>
                                 <td colspan="2" style="text-align: left;">
