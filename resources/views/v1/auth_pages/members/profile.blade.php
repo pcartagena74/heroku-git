@@ -116,6 +116,8 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                         </td>
                     </tr>
                     <tr>
+                       {{-- Adding new fields to person for profile display will require the update of the show() query --}}
+
                         <th style="text-align: left;">PM Experience</th>
                         <th style="text-align: left;"></th>
                         <th style="text-align: left;"></th>
@@ -423,10 +425,30 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 params._token = $("meta[name=token]").attr("content");
                 return params;
             };
+
+            $('#experience').editable({
+                type: 'select',
+                autotext: 'auto',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}',
+<?php
+                    if ($profile->experience <> "") {
+                        echo("value: '$profile->experience',\n");
+                    }
+?>
+                source:[
+                    { value: '1-4', text: '1-4 Years'},
+                    { value: '5-9', text: '5-9 Years'},
+                    { value: '10-14', text: '10-14 Years'},
+                    { value: '15-19', text: '15-19 Years'},
+                    { value: '20+', text: '20+ Years'}
+                ]
+            });
+
             $('#prefix').editable({
                 type: 'select',
                 autotext: 'auto',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
 <?php
                     if ($profile->prefix <> "") {
@@ -445,37 +467,37 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
             @if(!isset($profile->OrgStat2))
             $('#firstName').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             @endif
             $('#midName').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             @if(!isset($profile->OrgStat2))
             $('#lastName').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             @endif
             $('#suffix').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             $('#prefName').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
 
             $('#indName').editable({
                 type: 'select',
                 autotext: 'auto',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
 <?php
                     if ($profile->indName <> "") {
@@ -494,35 +516,22 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 
             $('#compName').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             $('#title').editable({
                 type: 'text',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             $('#login').editable({
                 type: 'select',
-                pk: {{ $profile->personID }},
+                pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 source: [
                     @foreach($emails as $email)
                     {!! "{ value: '" . $email->emailADDR . "', text: '" . $email->emailADDR . "' }," !!}
                     @endforeach
-                ]
-            });
-
-            $('#experience').editable({
-                type: 'select',
-                pk: {{ $profile->personID }},
-                url: '{{ $profile_script_url }}',
-                source:[
-                    { value: '1-4', text: '1-4 Years'},
-                    { value: '5-9', text: '5-9 Years'},
-                    { value: '10-14', text: '10-14 Years'},
-                    { value: '15-19', text: '15-19 Years'},
-                    { value: '20+', text: '20+ Years'}
                 ]
             });
 
