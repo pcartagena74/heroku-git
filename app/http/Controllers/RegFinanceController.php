@@ -108,22 +108,9 @@ class RegFinanceController extends Controller
             $industries = DB::table('industries')->get();
             // prep for stripe-related stuff since the next step is billing for non-$0
 
-            return view('v1.public_pages.register2', compact(
-                'ticket',
-                'event',
-                'quantity',
-                'discount_code',
-                'org',
-                'loc',
-                'rf',
-                'person',
-                'prefixes',
-                'industries',
-                'tracks',
-                'tickets',
-                'needSessionPick',
-                'show_pass_fields'
-            ));
+            return view('v1.public_pages.register2',
+                compact('ticket', 'event', 'quantity', 'discount_code', 'org', 'loc', 'rf', 'person',
+                         'prefixes', 'industries', 'tracks', 'tickets', 'needSessionPick', 'show_pass_fields'));
         } catch (\Exception $exception) {
             $message = "An unexpected error occurred.";
             return view('v1.public_pages.error_display', compact('message'));
@@ -437,7 +424,8 @@ class RegFinanceController extends Controller
 
         //return $pdf->download('invoice.pdf');
         try {
-            Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            //Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         }
@@ -751,7 +739,8 @@ class RegFinanceController extends Controller
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
-            Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            //Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         }
