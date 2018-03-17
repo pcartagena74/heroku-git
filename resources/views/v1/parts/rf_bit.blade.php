@@ -17,16 +17,34 @@ use App\Ticket;
 use App\EventSession;
 use App\Event;
 use App\Org;
+use Aws\S3\S3Client;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use League\Flysystem\Filesystem;
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();
 
+$client = new S3Client([
+    'credentials' => [
+        'key'    => env('AWS_KEY'),
+        'secret' => env('AWS_SECRET')
+    ],
+    'region' => env('AWS_REGION'),
+    'version' => 'latest',
+]);
+
+$adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+$s3fs = new Filesystem($adapter);
 ?>
 
 @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 <div class="col-md-12 col-sm-12 col-xs-12">
 
     @foreach($rf_array as $rf)
+<?php
+        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+?>
         {{-- @if($rf->event->eventEndDate->gte($today)) --}}
         @include('v1.parts.start_min_content', ['header' => $rf->event->eventName,
                  'subheader' => $rf->event->eventStartDate->format('n/j/Y'),
@@ -127,6 +145,8 @@ $today = \Carbon\Carbon::now();
                        href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
                        @endif
                        class="btn btn-success btn-sm">Display Receipt</a>
+                    <a target="_new" href="{{ $receipt_url }}"
+                    class="btn btn-primary btn-sm">Download Receipt</a>
                 @endif
 
                 @if($rf->cost >= 0 && $rf->pmtRecd == 0)

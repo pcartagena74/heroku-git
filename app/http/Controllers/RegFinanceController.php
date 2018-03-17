@@ -395,7 +395,7 @@ class RegFinanceController extends Controller
 
         // email the user who paid
         // $user->notify(new EventReceipt($rf));
-        $x = compact( 'needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
+        $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
             'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
@@ -424,10 +424,10 @@ class RegFinanceController extends Controller
 
         //return $pdf->download('invoice.pdf');
         try {
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
             //Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
         } catch(\Exception $exception) {
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         }
         //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
@@ -740,9 +740,9 @@ class RegFinanceController extends Controller
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
             //Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         } catch(\Exception $exception) {
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  You can also see it by logging in and choosing My Settings -> Future Events.");
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         }
 
         return view('v1.auth_pages.events.group_receipt', $x);
