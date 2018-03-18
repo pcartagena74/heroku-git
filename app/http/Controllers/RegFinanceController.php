@@ -425,7 +425,9 @@ class RegFinanceController extends Controller
         //return $pdf->download('invoice.pdf');
         try {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
-            //Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            if(env('APP_ENV') == 'local'){
+                Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            }
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         }
