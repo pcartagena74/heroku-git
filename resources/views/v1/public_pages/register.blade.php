@@ -233,10 +233,19 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @else
                     <td>{!! Form::text("compName_$i", old("compName_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
-                @if($i==1)
-                    <td>{!! Form::text("title", old("title"), array('class' => 'form-control')) !!}</td>
+
+                @if($event->eventTypeID == 5)
+                        @if($i==1)
+                            <td>{!! Form::text("chapterRole", old("chapterRole"), array('class' => 'form-control')) !!}</td>
+                        @else
+                            <td>{!! Form::text("chapterRole_$i", old("chapterRole_$i"), array('class' => 'form-control')) !!}</td>
+                        @endif
                 @else
-                    <td>{!! Form::text("title_$i", old("title_$i"), array('class' => 'form-control')) !!}</td>
+                        @if($i==1)
+                            <td>{!! Form::text("title", old("title"), array('class' => 'form-control')) !!}</td>
+                        @else
+                            <td>{!! Form::text("title_$i", old("title_$i"), array('class' => 'form-control')) !!}</td>
+                        @endif
                 @endif
                 @if($i==1)
                     <td>{!! Form::email("login", old("login"), array('class' => 'form-control', Auth::check() ? 'onfocus="blur();"' : '', 'required')) !!}</td>

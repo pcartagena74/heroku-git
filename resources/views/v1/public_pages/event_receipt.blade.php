@@ -238,8 +238,8 @@ $deletion = 0;
                                     <nobr>[ {{ $person->login }} ]</nobr>
                                     <br/>
                                     @if($event->eventTypeID==5)
-                                            @if($person->title)
-                                                {{ $person->title }}
+                                            @if($person->chapterRole)
+                                                {{ $person->chapterRole }}
                                             @endif
                                             @if($person->affiliation)
                                                 with: PMI {{ $person->affiliation }}

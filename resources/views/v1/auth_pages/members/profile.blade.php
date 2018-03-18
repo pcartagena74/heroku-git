@@ -119,16 +119,18 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                        {{-- Adding new fields to person for profile display will require the update of the show() query --}}
 
                         <th style="text-align: left;">PM Experience</th>
-                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;">Chapter Role</th>
                         <th style="text-align: left;"></th>
                         <th style="text-align: left;"></th>
                         <th style="text-align: left;"></th>
                     </tr>
                     <tr>
-                        <td style="text-align: left;"><a href="#" id="experience"
-                                                         data-title="PM Experience (Years)">{{ $profile->experience }}</a>
+                        <td style="text-align: left;">
+                            <a href="#" id="experience" data-title="PM Experience (Years)">{{ $profile->experience }}</a>
                         </td>
-                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;">
+                            <a href="#" id="chapterRole" data-title="Chapter Role">{{ $profile->chapterRole }}</a>
+                        </td>
                         <td style="text-align: left;"></td>
                         <td style="text-align: left;"></td>
                         <td style="text-align: left;"></td>
@@ -533,6 +535,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                     {!! "{ value: '" . $email->emailADDR . "', text: '" . $email->emailADDR . "' }," !!}
                     @endforeach
                 ]
+            });
+            $('#chapterRole').editable({
+                type: 'text',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}'
             });
 
             @for($j=1;$j<=$ad_cnt;$j++)
