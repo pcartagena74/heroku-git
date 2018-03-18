@@ -213,27 +213,27 @@ if($event->isSymmetric && $event->hasTracks) {
                                                data-pk="{{ $person->personID }}"
                                                data-value="{{ $person->affiliation }}"
                                                data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-
                                     @else
-                                    @if($person->compName)
-                                        @if($person->title)
-                                            <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                               data-value="{{ $person->title }}"
-                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                        @else
-                                            Employed
-                                        @endif
-                                        at <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                              data-value="{{ $person->compName }}"
-                                              data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                    @else
-                                        @if($person->title !== null)
-                                            <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                               data-value="{{ $person->title }}"
-                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                        @elseif($person->indName !== null)
-                                            Employed
-                                        @endif
+                                            @if($person->compName)
+                                                @if($person->title)
+                                                    <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                       data-value="{{ $person->title }}"
+                                                       data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                                @else
+                                                    Employed
+                                                @endif
+                                                at <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                      data-value="{{ $person->compName }}"
+                                                      data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                            @else
+                                                @if($person->title !== null)
+                                                    <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                       data-value="{{ $person->title }}"
+                                                       data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                                @elseif($person->indName !== null)
+                                                    Employed
+                                                @endif
+                                            @endif
                                     @endif
                                     @if($person->indName !== null)
                                         in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
