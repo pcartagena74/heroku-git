@@ -129,7 +129,7 @@ class PersonController extends Controller
                              $join->on('op.orgID', '=', 'person.defaultOrgID');
                          })
                          ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
-                         ->select(DB::raw("prefix, firstName, midName, lastName, suffix, prefName, u.login, title, compName, indName, experience,
+                         ->select(DB::raw("prefix, firstName, midName, lastName, suffix, prefName, u.login, title, compName, indName, experience, chapterRole
                 OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
                 date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
                     date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
