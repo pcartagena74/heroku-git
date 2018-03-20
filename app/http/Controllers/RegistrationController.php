@@ -185,6 +185,7 @@ class RegistrationController extends Controller
         $compName = ucwords(request()->input('compName'));
         $indName = ucwords(request()->input('indName'));
         $title = ucwords(request()->input('title'));
+        $chapterRole = ucwords(request()->input('chapterRole'));
         $eventQuestion = request()->input('eventQuestion');
         $eventTopics = request()->input('eventTopics');
         $affiliation = request()->input('affiliation');
@@ -229,6 +230,7 @@ class RegistrationController extends Controller
             $person->compName = $compName;
             $person->indName = $indName;
             $person->title = $title;
+            $person->chapterRole = $chapterRole;
             $person->login = $checkEmail;
             if ($event->hasFood && $allergenInfo !== null) {
                 $person->allergenInfo = implode(",", (array)$allergenInfo);

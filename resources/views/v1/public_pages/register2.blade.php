@@ -205,7 +205,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                     </nobr>
                                     <br/>
                                     @if($event->eventTypeID==5)
-                                       <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                       <a id="chapterRole-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                             data-value="{{ $person->chapterRole }}"
                                             data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                        with: PMI
@@ -230,24 +230,22 @@ if($event->isSymmetric && $event->hasTracks) {
                                                     <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                        data-value="{{ $person->title }}"
                                                        data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                                @elseif($person->indName !== null)
+                                                @else($person->indName !== null)
                                                     Employed
                                                 @endif
+                                                    @if($person->indName !== null)
+                                                        in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                                  data-value="{{ $person->indName }}"
+                                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> industry <br/>
+                                                    @endif
                                             @endif
-                                    @endif
-                                    @if($person->indName !== null)
-                                        in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                                  data-value="{{ $person->indName }}"
-                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> industry <br/>
-                                    @endif
-
-                                    @if($person->affiliation)
-                                        <br/>Affiliated with: <a id="affiliation-{{ $tcount }}"
-                                                                 data-pk="{{ $person->personID }}"
-                                                                 data-value="{{ $person->affiliation }}"
-                                                                 data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                    @endif
-                                    @endif
+                                                @if($person->affiliation)
+                                                    <br/>Affiliated with: <a id="affiliation-{{ $tcount }}"
+                                                                             data-pk="{{ $person->personID }}"
+                                                                             data-value="{{ $person->affiliation }}"
+                                                                             data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                                @endif
+                                        @endif
                                 </td>
                                 <td colspan="2" style="text-align: left;">
                                     @if($reg->isFirstEvent)
@@ -566,6 +564,7 @@ if($event->isSymmetric && $event->hasTracks) {
 
             $("#compName-{{ $i }}").editable({type: 'text'});
             $("#title-{{ $i }}").editable({type: 'text', emptytext: 'Title'});
+            $("#chapterRole-{{ $i }}").editable({type: 'text', emptytext: 'Chapter Role'});
             $("#login-{{ $i }}").editable({type: 'text'});
 
             $('#affiliation-{{ $i }}').editable({
