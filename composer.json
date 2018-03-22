@@ -11,6 +11,7 @@
         "php": "~7.1.0",
         "barryvdh/laravel-ide-helper": "^2.4",
         "barryvdh/laravel-snappy": "^0.4.1",
+        "bugsnag/bugsnag-laravel": "^2.0",
         "doctrine/dbal": "^2.6",
         "eduardokum/laravel-mail-auto-embed": "^1.0",
         "fedeisas/laravel-mail-css-inliner": "^2.2",

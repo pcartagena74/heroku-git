@@ -207,6 +207,7 @@ Route::get('/locations/{id}', 'LocationController@show');
 
 // Mail Test
 Route::get('/mt', 'MailGunController@testmail');
+Route::get('/tb', 'MailGunController@bugsnag');
 
 // Campaign Management Routes
 // ----------------------------------------------------------------------------------
