@@ -218,7 +218,8 @@ class RegFinanceController extends Controller
             // Removed flash notification to preserve receipt look & feel
             // request()->session()->flash('alert-success', "Your password was set successfully.");
             // email notification
-            $person->notify(new AccountCreation($person, $event));
+
+            // $person->notify(new AccountCreation($person, $event));
         }
 
         $loc = Location::find($event->locationID);

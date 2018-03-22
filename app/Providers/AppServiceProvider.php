@@ -37,5 +37,8 @@ class AppServiceProvider extends ServiceProvider
             $twitter_access_token_secret = env('TWITTER_ACCESS_TOKEN_SECRET', null);
             return new TwitterStream($twitter_access_token, $twitter_access_token_secret, Phirehose::METHOD_FILTER);
         });
+
+        $this->app->alias('bugsnag.multi', \Illuminate\Contracts\Logging\Log::class);
+        $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
     }
 }

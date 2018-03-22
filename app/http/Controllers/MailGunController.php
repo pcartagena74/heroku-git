@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
+use RuntimeException;
 
 class MailGunController extends Controller
 {
@@ -41,5 +43,10 @@ class MailGunController extends Controller
             // Create a custom header that we can later retrieve
             $message->getHeaders()->addTextHeader('X-Model-ID', $model->id);
         });
+    }
+
+    public function bugsnag() {
+
+        Bugsnag::notifyException(new RuntimeException("Test error"));
     }
 }
