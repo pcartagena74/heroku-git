@@ -66,7 +66,7 @@ $s3fs = new Filesystem($adapter);
                     'subheader' => '<i class="fa fa-dollar"></i> ' . $reg->subtotal,
                     'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                    @if($rf->pmtType == "At Door")
+                    @if($rf->pmtType == "At the Door")
                         @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
                             {!! Form::open(['method'  => 'delete',
                                             'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
@@ -98,7 +98,17 @@ $s3fs = new Filesystem($adapter);
                                 @endif
                             </button>
                             {!! Form::close() !!}
-                            <br/>
+
+            <a target="_new"
+               @if($rf->isGroupReg)
+               href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+               @else
+               href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+               @endif
+               class="btn btn-success btn-sm">Display Receipt</a>
+            <a target="_new" href="{{ $receipt_url }}"
+               class="btn btn-primary btn-sm">Download Receipt</a>
+                        <br/>
                         @endif
                         @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
                         'reg' => $reg, 'regSession' => $regSessions])
@@ -129,7 +139,7 @@ $s3fs = new Filesystem($adapter);
                     'data-toggle' => 'validator' ]) !!}
 
                     <button type="submit" class="btn btn-danger btn-sm">
-                        @if(($reg->subtotal > 0 && $rf->pmtRecd == 1) || $rf->pmtType == 'At Door')
+                        @if(($reg->subtotal > 0 && $rf->pmtRecd == 1) || $rf->pmtType == 'At the Door')
                             Refund Registration
                         @else
                             Cancel Registration
@@ -137,7 +147,7 @@ $s3fs = new Filesystem($adapter);
                     </button>
                     {!! Form::close() !!}
                 @endif
-                @if($rf->pmtRecd == 1 || $rf->pmtType == 'At Door')
+                @if(($reg->subtotal > 0 && $rf->pmtRecd == 1) || $rf->pmtType == 'At the Door')
                     <a target="_new"
                        @if($rf->isGroupReg)
                        href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
