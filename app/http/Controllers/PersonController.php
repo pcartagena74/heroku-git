@@ -129,7 +129,9 @@ class PersonController extends Controller
                              $join->on('op.orgID', '=', 'person.defaultOrgID');
                          })
                          ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
-                         ->select(DB::raw("prefix, firstName, midName, lastName, suffix, prefName, u.login, title, compName, indName, experience, chapterRole
+                         ->select(DB::raw("person.prefix, person.firstName, person.midName, person.lastName, person.suffix,
+                                            person.prefName, u.login, person.title, person.compName, person.indName,
+                                            person.experience, person.chapterRole,
                 OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
                 date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
                     date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
@@ -159,19 +161,7 @@ class PersonController extends Controller
 
         return view(
             'v1.auth_pages.members.profile',
-            compact(
-                'profile',
-                'topBits',
-                'prefixes',
-                'industries',
-                'addresses',
-                'emails',
-                'addrTypes',
-                'emailTypes',
-                'countries',
-                'phones',
-                'phoneTypes'
-            )
+            compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes')
         );
     }
 
@@ -205,6 +195,7 @@ class PersonController extends Controller
             $user        = User::find($id);
             $orig_email  = $user->login;
             $user->login = $value;
+            $user->name  = $value;
             $user->email = $value;
             $user->save();
 
@@ -288,8 +279,8 @@ class PersonController extends Controller
             request()->session()->flash('alert-success', "The password was changed successfully.");
 
             // send notification
-            $person->notify(new PasswordChange($person));
-            request()->session()->flash('alert-info', "A confirmation email was sent to $person->login.");
+            // $person->notify(new PasswordChange($person));
+            // request()->session()->flash('alert-info', "A confirmation email was sent to $person->login.");
 
             return back()->withInput(['tab' => 'tab_content2']);
         } else {
@@ -298,6 +289,46 @@ class PersonController extends Controller
                 ->withErrors($validator)
                 ->withInput(['tab' => 'tab_content2']);
         }
+    }
+
+    public function show_force(){
+        $topBits = '';
+        return view('v1.auth_pages.members.force_pass_change', compact('topBits'));
+    }
+    /**
+     * This is just like the above but it doesn't ask for the prior password
+     *
+     * @return Response
+     */
+    public function force_password_change(Request $request)
+    {
+        $password  = request()->input('password');
+        $userid    = request()->input('userid');
+
+        // validate password matching
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator);
+                //->withInput(['tab' => 'tab_content2']);
+        }
+
+        $user = User::find($userid);
+        $person = Person::find($user->id);
+
+        // update password
+        $user->password = bcrypt($password);
+        $user->save();
+        request()->session()->flash('alert-success', $person->showFullName() . "'s password was changed successfully.");
+
+        // send notification
+        //$person->notify(new PasswordChange($person));
+        //request()->session()->flash('alert-info', "A confirmation email was sent to $person->login.");
+
+        return back(); //->withInput(['tab' => 'tab_content2']);
     }
 
     /**

@@ -105,6 +105,8 @@ Route::post('/phone/{id}', 'PhoneController@update');
 Route::post('/phones/create', 'PhoneController@store');
 Route::post('/phone/{id}/delete', 'PhoneController@destroy');
 Route::post('/password', 'PersonController@change_password');
+Route::get('/force', 'PersonController@show_force');
+Route::post('/force_password', 'PersonController@force_password_change');
 
 
 Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogin');

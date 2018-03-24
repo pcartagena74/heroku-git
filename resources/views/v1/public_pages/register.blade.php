@@ -261,7 +261,11 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                     <br><small>We'll do our best to accommodate you.</small></td>
                 <th style="width:20%;">From what city and state will you be commuting?</th>
                 @endif
-                <th style="width:20%;">Is this your first event?</th>
+                @if($event->eventTypeID == 5)
+                        <th style="width:20%;">Is this your first Regional Event?</th>
+                @else
+                        <th style="width:20%;">Is this your first event?</th>
+                @endif
                 <th style="width:20%;">What future event topics would interest you?</th>
                 <th style="width:20%;">Do you authorize PMI MassBay to submit your PDUs for you?</th>
                 @if(!$event->hasFood)
@@ -273,15 +277,17 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @endif
             </tr>
             <tr>
-                @if($i==1)
-                    <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
-                @else
-                    <td>{!! Form::select('allergenInfo_'.$i.'[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
-                @endif
-                @if($i==1)
-                    <td>{!! Form::text("cityState", old("cityState"), array('class' => 'form-control')) !!}</td>
-                @else
-                    <td>{!! Form::text("cityState_$i", old("cityState_$i"), array('class' => 'form-control')) !!}</td>
+                @if($event->hasFood)
+                    @if($i==1)
+                        <td>{!! Form::select('allergenInfo[]', $allergen_array, old("allergenInfo") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                    @else
+                        <td>{!! Form::select('allergenInfo_'.$i.'[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array), array('class' => 'form-control', 'multiple' => 'multiple')) !!}</td>
+                    @endif
+                    @if($i==1)
+                        <td>{!! Form::text("cityState", old("cityState"), array('class' => 'form-control')) !!}</td>
+                    @else
+                        <td>{!! Form::text("cityState_$i", old("cityState_$i"), array('class' => 'form-control')) !!}</td>
+                    @endif
                 @endif
                 @if($i==1)
                         <td><div class="container row col-sm-3">
