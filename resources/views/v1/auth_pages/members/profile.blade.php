@@ -472,19 +472,19 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
-            @endif
-            $('#midName').editable({
-                type: 'text',
-                pk: '{{ $profile->personID }}',
-                url: '{{ $profile_script_url }}'
-            });
-            @if(!isset($profile->OrgStat2))
             $('#lastName').editable({
                 type: 'text',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             @endif
+
+            $('#midName').editable({
+                type: 'text',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}'
+            });
+
             $('#suffix').editable({
                 type: 'text',
                 pk: '{{ $profile->personID }}',

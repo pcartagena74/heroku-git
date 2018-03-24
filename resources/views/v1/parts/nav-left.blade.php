@@ -125,6 +125,9 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a>
                                     <span class="label label-success pull-right">IN DEV</span>
                                 </li>
+                                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                                    <li><a href="{{ env('APP_URL') }}/force">Change Password</a></li>
+                                @endif
                             </ul>
                         </li>
                     @endif

@@ -308,6 +308,9 @@ class RegistrationController extends Controller
             if ($title) {
                 $person->title = $title;
             }
+            if ($chapterRole) {
+                $person->chapterRole = $chapterRole;
+            }
             if ($event->hasFood) {
                 if ($allergenInfo) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
@@ -353,6 +356,9 @@ class RegistrationController extends Controller
             if ($title) {
                 $person->title = $title;
             }
+            if ($chapterRole) {
+                $person->chapterRole = $chapterRole;
+            }
             if ($event->hasFood) {
                 if ($allergenInfo) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
@@ -375,6 +381,7 @@ class RegistrationController extends Controller
             $person->compName = $compName;
             $person->indName = $indName;
             $person->title = $title;
+            $person->chapterRole = $chapterRole;
             if ($event->hasFood) {
                 $person->allergenInfo = implode(",", (array)$allergenInfo);
             }
@@ -480,6 +487,7 @@ class RegistrationController extends Controller
                 $person->compName = $compName;
                 $person->indName = $indName;
                 $person->title = $title;
+                $person->chapterRole = $chapterRole;
                 $person->login = $checkEmail;
                 if ($event->hasFood) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
@@ -545,6 +553,9 @@ class RegistrationController extends Controller
                 if ($title) {
                     $person->title = $title;
                 }
+                if ($chapterRole) {
+                    $person->chapterRole = $chapterRole;
+                }
                 if ($event->hasFood) {
                     if ($allergenInfo) {
                         $person->allergenInfo = implode(",", (array)$allergenInfo);
@@ -587,6 +598,9 @@ class RegistrationController extends Controller
                 }
                 if ($title) {
                     $person->title = $title;
+                }
+                if ($chapterRole) {
+                    $person->chapterRole = $chapterRole;
                 }
                 if ($event->hasFood) {
                     if ($allergenInfo) {
@@ -678,7 +692,7 @@ class RegistrationController extends Controller
     public function update(Request $request, Registration $reg)
     {
         // responds to PATCH /blah/id
-        // This is the person record of the registration
+        // This is the person record for the registration
         $person = Person::find($reg->personID);
 
         if (auth()->check()) {
@@ -702,6 +716,11 @@ class RegistrationController extends Controller
             $person->save;
         } elseif ($name == 'indName') {
             $person->indName = $value;
+            $person->updaterID = $updater;
+            $person->save;
+        } elseif ($name == 'affiliation') {
+            $value = implode(",", (array)$value);
+            $person->affiliation = $value;
             $person->updaterID = $updater;
             $person->save;
         }
