@@ -259,6 +259,14 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 
 Auth::routes();
 
+Route::get('ste', function(){
+    Mail::raw('Sending email is easy', function($message){
+        $message->subject('Test Email');
+        $message->from('support@mCentric.org', 'mCentric Support');
+        $message->to('pcartagena@partners.org');
+    });
+});
+
 Route::any('{all}', function () {
     return view('errors.404');
 })->where('all', '.*');

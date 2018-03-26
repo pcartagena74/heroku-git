@@ -5,12 +5,16 @@
  */
 use Illuminate\Support\Facades\DB;
 use App\Person;
+use App\OrgPerson;
 use App\Location;
 use App\Registration;
 use Illuminate\Support\Facades\Auth;
 
 if(Auth::check()) {
     $person       = Person::find(auth()->user()->id);
+    if($event->eventTypeID==5){
+        $op           = OrgPerson::where('personID', $person->personID)->first();
+    }
     $registration = new Registration;
     if($person->orgperson->OrgStat1){
         $isMember = 1;
@@ -19,6 +23,9 @@ if(Auth::check()) {
     }
 } else {
     $person       = new Person;
+    if($event->eventTypeID==5){
+        $op       = new OrgPerson;
+    }
     $registration = new Registration;
     $isMember = 0;
 }
@@ -54,6 +61,14 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
 }
+
+$experience_choices = [
+    '1-4' => '1-4 Years',
+    '5-9' => '5-9 Years',
+    '10-14' => '10-14 Years',
+    '15-19' => '15-19 Years',
+    '20+' => '20+ Years'
+]
 //var_dump(Session::all());
 ?>
 @extends('v1.layouts.no-auth')
@@ -96,7 +111,11 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
         @endforeach
     </div>
 
-    {!! Form::model($person->toArray() + $registration->toArray(), ['route' => ['register_step2', $event->eventID], 'method' => 'post']) !!}
+    @if($event->eventTypeID==5)
+        {!! Form::model($person->toArray() + $registration->toArray() + $op->toArray(), ['route' => ['register_step2', $event->eventID], 'method' => 'post']) !!}
+    @else
+        {!! Form::model($person->toArray() + $registration->toArray(), ['route' => ['register_step2', $event->eventID], 'method' => 'post']) !!}
+    @endif
     {!! Form::hidden('eventID', $event->eventID, array('id' => 'eventID')) !!}
     {!! Form::hidden('ticketID', $ticket->ticketID, array('id' => 'ticketID')) !!}
     {!! Form::hidden('percent', 0, array('id' => 'i_percent')) !!}
@@ -264,10 +283,20 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                 @if($event->eventTypeID == 5)
                         <th style="width:20%;">Is this your first Regional Event?</th>
                 @else
-                        <th style="width:20%;">Is this your first event?</th>
+                        <th style="width:20%;">
+                            Project Management Experience
+                            @include('v1.parts.tooltip', ['title' => "Please select the number of years of Project Management experience you possess."])
+                        </th>
                 @endif
                 <th style="width:20%;">What future event topics would interest you?</th>
-                <th style="width:20%;">Do you authorize PMI MassBay to submit your PDUs for you?</th>
+                @if($event->eventTypeID == 5)
+                        <th style="width:20%;">
+                            What is your PMI Member ID?
+                            @include('v1.parts.tooltip', ['title' => "If you do not have a PMI Member ID, you can leave it empty."])
+                        </th>
+                @else
+                        <th style="width:20%;">Do you authorize PMI MassBay to submit your PDUs for you?</th>
+                @endif
                 @if(!$event->hasFood)
                 <td colspan="2" rowspan="4">
                     <div width="100%">
@@ -289,40 +318,57 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                         <td>{!! Form::text("cityState_$i", old("cityState_$i"), array('class' => 'form-control')) !!}</td>
                     @endif
                 @endif
-                @if($i==1)
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent", '1', false, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
-                @else
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
-                @endif
+                    @if($event->eventTypeID == 5)
+                        @if($i==1)
+                            <td><div class="container row col-sm-3">
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent", '1', false, array('class' => 'flat js-switch')) !!} </div>
+                                    <div class="col-sm-1">Yes</div>
+                                </div>
+                            </td>
+                        @else
+                            <td><div class="container row col-sm-3">
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
+                                    <div class="col-sm-1">Yes</div>
+                                </div>
+                            </td>
+                        @endif
+                    @else
+                        @if($i==1)
+                            <td>
+                                {!! Form::select('experience', $experience_choices, old('eventTypeID'), array('class' =>'form-control input-sm')) !!}
+                            </td>
+                        @else
+                        @endif
+                    @endif
                 @if($i==1)
                     <td>{!! Form::text("eventTopics", old("eventTopics"), array('class' => 'form-control')) !!}</td>
                 @else
                     <td>{!! Form::text("eventTopics_$i", old("eventTopics_$i"), array('class' => 'form-control')) !!}</td>
                 @endif
-                @if($i==1)
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', false, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
+                @if($event->eventTypeID == 5)
+                        @if($i==1)
+                            <td>{!! Form::number("OrgStat1", old("OrgStat1"), array('class' => 'form-control', $isMember ? 'readonly' : '')) !!}</td>
+                        @else
+                            <td>{!! Form::number("OrgStat1_$i", old("OrgStat1_$i"), array('class' => 'form-control')) !!}</td>
+                        @endif
                 @else
-                        <td><div class="container row col-sm-3">
-                                <div class="col-sm-1">No</div>
-                                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
-                                <div class="col-sm-1">Yes</div>
-                            </div>
-                        </td>
+                        @if($i==1)
+                            <td><div class="container row col-sm-3">
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU", '1', false, array('class' => 'flat js-switch')) !!} </div>
+                                    <div class="col-sm-1">Yes</div>
+                                </div>
+                            </td>
+                        @else
+                            <td><div class="container row col-sm-3">
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU_$i", '1', false, array('class' => 'flat js-switch')) !!} </div>
+                                    <div class="col-sm-1">Yes</div>
+                                </div>
+                            </td>
+                        @endif
                 @endif
             </tr>
 

@@ -180,6 +180,7 @@ class RegistrationController extends Controller
         $firstName = ucwords(request()->input('firstName'));
         $middleName = ucwords(request()->input('middleName'));
         $lastName = ucwords(request()->input('lastName'));
+        $pmiID = ucwords(request()->input('OrgStat1'));
         $suffix = ucwords(request()->input('suffix'));
         $prefName = ucwords(request()->input('prefName'));
         $compName = ucwords(request()->input('compName'));
@@ -189,6 +190,7 @@ class RegistrationController extends Controller
         $eventQuestion = request()->input('eventQuestion');
         $eventTopics = request()->input('eventTopics');
         $affiliation = request()->input('affiliation');
+        $experience = request()->input('experience');
         $flatamt = request()->input('flatamt');
         $percent = request()->input('percent');
         $dCode = request()->input('discount_code');
@@ -230,6 +232,7 @@ class RegistrationController extends Controller
             $person->compName = $compName;
             $person->indName = $indName;
             $person->title = $title;
+            $person->experience = $experience;
             $person->chapterRole = $chapterRole;
             $person->login = $checkEmail;
             if ($event->hasFood && $allergenInfo !== null) {
@@ -254,6 +257,9 @@ class RegistrationController extends Controller
             $op = new OrgPerson;
             $op->orgID = $event->orgID;
             $op->personID = $person->personID;
+            if($pmiID){
+                $op->OrgStat1 = $pmiID;
+            }
             $op->save();
 
             $email = new Email;
@@ -286,13 +292,10 @@ class RegistrationController extends Controller
             // only non-members can edit first & last name
             if ($regMem == 'Non-Member') {
                 $person->firstName = $firstName;
+                $person->lastName = $lastName;
             }
             if ($middleName) {
                 $person->midName = $middleName;
-            }
-            // only non-members can edit first & last name
-            if ($regMem == 'Non-Member') {
-                $person->lastName = $lastName;
             }
             if ($suffix) {
                 $person->suffix = $suffix;
@@ -307,6 +310,9 @@ class RegistrationController extends Controller
             }
             if ($title) {
                 $person->title = $title;
+            }
+            if ($experience) {
+                $person->experience = $experience;
             }
             if ($chapterRole) {
                 $person->chapterRole = $chapterRole;
@@ -356,6 +362,9 @@ class RegistrationController extends Controller
             if ($title) {
                 $person->title = $title;
             }
+            if ($experience) {
+                $person->experience = $experience;
+            }
             if ($chapterRole) {
                 $person->chapterRole = $chapterRole;
             }
@@ -381,6 +390,7 @@ class RegistrationController extends Controller
             $person->compName = $compName;
             $person->indName = $indName;
             $person->title = $title;
+            $person->experience = $experience;
             $person->chapterRole = $chapterRole;
             if ($event->hasFood) {
                 $person->allergenInfo = implode(",", (array)$allergenInfo);
@@ -402,6 +412,9 @@ class RegistrationController extends Controller
             $op = new OrgPerson;
             $op->orgID = $event->orgID;
             $op->personID = $person->personID;
+            if($pmiID){
+                $op->OrgStat1 = $pmiID;
+            }
             $op->save();
 
             $email = new Email;
@@ -455,6 +468,7 @@ class RegistrationController extends Controller
             $compName = ucwords(request()->input('compName' . "_$i"));
             $indName = ucwords(request()->input('indName' . "_$i"));
             $title = ucwords(request()->input('title' . "_$i"));
+            $experience = ucwords(request()->input('experience' . "_$i"));
             $eventQuestion = request()->input('eventQuestion' . "_$i");
             $eventTopics = request()->input('eventTopics' . "_$i");
             $checkEmail = request()->input('login' . "_$i");
@@ -487,6 +501,7 @@ class RegistrationController extends Controller
                 $person->compName = $compName;
                 $person->indName = $indName;
                 $person->title = $title;
+                $person->experience = $experience;
                 $person->chapterRole = $chapterRole;
                 $person->login = $checkEmail;
                 if ($event->hasFood) {
@@ -498,6 +513,9 @@ class RegistrationController extends Controller
                 $op = new OrgPerson;
                 $op->orgID = $event->orgID;
                 $op->personID = $person->personID;
+                if($pmiID){
+                    $op->OrgStat1 = $pmiID;
+                }
                 $op->save();
 
                 // Need to create a user record with new personID
@@ -553,6 +571,9 @@ class RegistrationController extends Controller
                 if ($title) {
                     $person->title = $title;
                 }
+                if ($experience) {
+                    $person->experience = $experience;
+                }
                 if ($chapterRole) {
                     $person->chapterRole = $chapterRole;
                 }
@@ -598,6 +619,9 @@ class RegistrationController extends Controller
                 }
                 if ($title) {
                     $person->title = $title;
+                }
+                if ($experience) {
+                    $person->experience = $experience;
                 }
                 if ($chapterRole) {
                     $person->chapterRole = $chapterRole;
@@ -702,9 +726,9 @@ class RegistrationController extends Controller
         }
 
         $name = request()->input('name');
-        if (strpos($name, '-')) {
-            // when passed from the registration receipt, the $name will have a dash
-            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+        if (strpos($name, '_')) {
+            // when passed from the registration receipt, the $name will have an underscore
+            list($name, $field) = array_pad(explode("_", $name, 2), 2, null);
         }
         $value = request()->input('value');
 
@@ -748,10 +772,10 @@ class RegistrationController extends Controller
         if ($reg->regStatus == 'pending') {
             // the registration was never finalized, sessions weren't picked, so delete
             $reg->delete();
-        } elseif ($reg->subtotal > 0 && $rf->stripeChargeID) {
+        } elseif ($reg->subtotal > 0 && $rf->pmtRecd == 1 && $rf->stripeChargeID) {
             // There's a refund that needs to occur with Stripe
             if ($reg->subtotal == $rf->cost) {
-                // This is a total refund
+                // This is a total refund and it was paid
                 try {
                     \Stripe\Refund::create(array(
                         "charge" => $rf->stripeChargeID,
@@ -763,7 +787,7 @@ class RegistrationController extends Controller
 
                     // Generate Refund Email
                 } catch (Exception $e) {
-                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
+                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed with order: ' . $rf->regID . '.' . $org->adminContactStatement);
                 }
                 $rf->delete();
                 $reg->delete();
@@ -782,7 +806,7 @@ class RegistrationController extends Controller
 
                     // Generate Refund Email
                 } catch (\Exception $e) {
-                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
+                    request()->session()->flash('alert-danger', 'The attempt to get a partial refund failed witih order; ' . $rf->regID . '. ' . $org->adminContactStatement);
                 }
                 $reg->delete();
             }

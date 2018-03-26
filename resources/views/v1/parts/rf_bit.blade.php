@@ -26,7 +26,7 @@ $today = \Carbon\Carbon::now();
 
 $client = new S3Client([
     'credentials' => [
-        'key'    => env('AWS_KEY'),
+        'key' => env('AWS_KEY'),
         'secret' => env('AWS_SECRET')
     ],
     'region' => env('AWS_REGION'),
@@ -66,52 +66,66 @@ $s3fs = new Filesystem($adapter);
                     'subheader' => '<i class="fa fa-dollar"></i> ' . $reg->subtotal,
                     'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                    @if($rf->pmtType == "At the Door")
-                        @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
-                            {!! Form::open(['method'  => 'delete',
-                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                            'data-toggle' => 'validator' ]) !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
+                    @if($rf->pmtRecd == 1)  {{-- payment received --}}
+
+                    @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                        {!! Form::open(['method'  => 'delete',
+                                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                        'data-toggle' => 'validator' ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @if($rf->cost > 0)
+                                Refund Registration
+                            @else
                                 Cancel Registration
-                            </button>
-                            {!! Form::close() !!}
-                        @endif
-                        @if($rf->cost > 0 && $rf->pmtRecd == 0)
-                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-                               class="btn btn-primary btn-sm">Pay Balance Due Now</a>
-                        @endif
-                        <br/>
+                            @endif
+                        </button>
+                        {!! Form::close() !!}
 
-                        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-                        'reg' => $reg, 'regSession' => $regSessions])
+                    @endif
 
+                    <a target="_new"
+                       @if($rf->isGroupReg)
+                       href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+                       @else
+                       href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                       @endif
+                       class="btn btn-success btn-sm">Display Receipt</a>
+                    <a target="_new" href="{{ $receipt_url }}"
+                       class="btn btn-primary btn-sm">Download Receipt</a>
+                    <br/>
+
+                    @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                    'reg' => $reg, 'regSession' => $regSessions])
+
+                    @else {{-- payment not received; possibly marked "At the Door" --}}
+                    @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                        {!! Form::open(['method'  => 'delete',
+                                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                        'data-toggle' => 'validator' ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Cancel Registration
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
+
+                    @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                        <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                           class="btn btn-primary btn-sm">Pay Balance Due Now</a>
                     @else
-                        @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
-                            {!! Form::open(['method'  => 'delete',
-                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                            'data-toggle' => 'validator' ]) !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                @if($reg->subtotal > 0 && $rf->pmtRecd == 1)
-                                    Refund Registration
-                                @else
-                                    Cancel Registration
-                                @endif
-                            </button>
-                            {!! Form::close() !!}
+                        <a target="_new"
+                           @if($rf->isGroupReg)
+                           href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+                           @else
+                           href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                           @endif
+                           class="btn btn-success btn-sm">Display Receipt</a>
+                        <a target="_new" href="{{ $receipt_url }}"
+                           class="btn btn-primary btn-sm">Download Receipt</a>
+                    @endif
 
-            <a target="_new"
-               @if($rf->isGroupReg)
-               href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
-               @else
-               href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-               @endif
-               class="btn btn-success btn-sm">Display Receipt</a>
-            <a target="_new" href="{{ $receipt_url }}"
-               class="btn btn-primary btn-sm">Download Receipt</a>
-                        <br/>
-                        @endif
-                        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-                        'reg' => $reg, 'regSession' => $regSessions])
+                    <br/>
+                    @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                    'reg' => $reg, 'regSession' => $regSessions])
                     @endif
 
                     @include('v1.parts.end_content')
@@ -133,13 +147,13 @@ $s3fs = new Filesystem($adapter);
                 $event = $rf->event;
                 $org = Org::find($event->orgID);
 ?>
+                @if($rf->pmtRecd == 1)  {{-- payment received --}}
                 @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
                     {!! Form::open(['method'  => 'delete',
-                    'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                    'data-toggle' => 'validator' ]) !!}
-
+                                    'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                    'data-toggle' => 'validator' ]) !!}
                     <button type="submit" class="btn btn-danger btn-sm">
-                        @if(($reg->subtotal > 0 && $rf->pmtRecd == 1) || $rf->pmtType == 'At the Door')
+                        @if($rf->cost > 0)
                             Refund Registration
                         @else
                             Cancel Registration
@@ -147,34 +161,51 @@ $s3fs = new Filesystem($adapter);
                     </button>
                     {!! Form::close() !!}
                 @endif
-                @if(($reg->subtotal > 0 && $rf->pmtRecd == 1) || $rf->pmtType == 'At the Door')
-                    <a target="_new"
-                       @if($rf->isGroupReg)
-                       href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
-                       @else
-                       href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                       @endif
-                       class="btn btn-success btn-sm">Display Receipt</a>
-                    <a target="_new" href="{{ $receipt_url }}"
-                    class="btn btn-primary btn-sm">Download Receipt</a>
+
+                <a target="_new"
+                   @if($rf->isGroupReg)
+                   href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+                   @else
+                   href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                   @endif
+                   class="btn btn-success btn-sm">Display Receipt</a>
+                <a target="_new" href="{{ $receipt_url }}"
+                   class="btn btn-primary btn-sm">Download Receipt</a>
+                <br/>
+
+                @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                'reg' => $reg, 'regSession' => $regSessions])
+
+                @else {{-- payment not received; possibly marked "At the Door" --}}
+                    @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                        {!! Form::open(['method'  => 'delete',
+                                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                        'data-toggle' => 'validator' ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Cancel Registration
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
+
+                    @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                        <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                           class="btn btn-primary btn-sm">Pay Balance Due Now</a>
+                    @else
+                        <a target="_new"
+                           @if($rf->isGroupReg)
+                           href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+                           @else
+                           href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                           @endif
+                           class="btn btn-success btn-sm">Display Receipt</a>
+                        <a target="_new" href="{{ $receipt_url }}"
+                           class="btn btn-primary btn-sm">Download Receipt</a>
+                    @endif
+                <br/>
+                @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                'reg' => $reg, 'regSession' => $regSessions])
                 @endif
 
-                @if($rf->cost >= 0 && $rf->pmtRecd == 0)
-                    <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-                       class="btn btn-primary btn-sm">
-                        @if($rf->status == 'pending' || $rf->status == 'In Progress')
-                            Complete Registration
-                        @else
-                            Pay Balance Due Now
-                        @endif
-                    </a>
-                @endif
-                <br/>
-                @if($rf->pmtRecd)
-                    @include('v1.parts.session_bubbles', ['event' => $rf->event,
-                             'ticket' => $reg->ticket, 'rf' => $rf,
-                             'reg' => $reg, 'regSession' => $regSessions])
-                @endif
                 @include('v1.parts.end_content')
             @endif
         </div>
