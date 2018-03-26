@@ -212,7 +212,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                             <a id="affiliation-{{ $tcount }}"
                                                data-pk="{{ $person->personID }}"
                                                data-value="{{ $person->affiliation }}"
-                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                               data-url="{{ env('APP_URL') }}/reg_verify/{{ $person->personID }}"></a>
                                     @else
                                             @if($person->compName)
                                                 @if($person->title)
@@ -245,7 +245,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                              data-value="{{ $person->affiliation }}"
                                                                              data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                                 @endif
-                                        @endif
+                                    @endif
                                 </td>
                                 <td colspan="2" style="text-align: left;">
                                     @if($reg->isFirstEvent)
