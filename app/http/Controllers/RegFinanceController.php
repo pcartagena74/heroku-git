@@ -394,8 +394,6 @@ class RegFinanceController extends Controller
             // No session selection data to record;
         }
 
-        // email the user who paid
-        $user->notify(new EventReceipt($rf));
         $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
             'person', 'prefixes', 'industries', 'org', 'tickets');
 
@@ -711,8 +709,6 @@ class RegFinanceController extends Controller
             $rf->save();
         }
 
-        // email the user who paid
-        $user->notify(new EventReceipt($rf));
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
@@ -746,7 +742,7 @@ class RegFinanceController extends Controller
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         }
 
-        return view('v1.auth_pages.events.group_receipt', $x);
+        return view('v1.auth_pages.events.registration.group_receipt', $x);
     }
 
     public function show_group_receipt(RegFinance $rf)

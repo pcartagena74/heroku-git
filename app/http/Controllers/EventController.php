@@ -608,7 +608,7 @@ class EventController extends Controller
             $b = array(0 => 'Select Event');
             $c = $a->toArray();
             $events = $b + $c;
-            return view('v1.auth_pages.events.group-registration', compact('title', 'event', 'events'));
+            return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'events'));
         } else {
             // Cannot pass object as reference so need to set here
             $event = Event::find($event);
@@ -626,7 +626,7 @@ class EventController extends Controller
 
             $discounts = $b + $d;
 
-            return view('v1.auth_pages.events.group-registration', compact('title', 'event', 'tickets', 'discounts'));
+            return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'tickets', 'discounts'));
         }
 
         //return view('v1.auth_pages.events.group-registration', compact('event'));
