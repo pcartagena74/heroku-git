@@ -423,8 +423,8 @@ class RegFinanceController extends Controller
 
         //return $pdf->download('invoice.pdf');
         try {
-            //request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
-            Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
+            //Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
         }
@@ -736,8 +736,8 @@ class RegFinanceController extends Controller
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
-            Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
-            //request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
+            //Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         }
