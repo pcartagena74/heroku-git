@@ -219,7 +219,7 @@ class RegFinanceController extends Controller
             // request()->session()->flash('alert-success', "Your password was set successfully.");
             // email notification
 
-            // $person->notify(new AccountCreation($person, $event));
+            $person->notify(new AccountCreation($person, $event));
         }
 
         $loc = Location::find($event->locationID);
@@ -395,7 +395,7 @@ class RegFinanceController extends Controller
         }
 
         // email the user who paid
-        // $user->notify(new EventReceipt($rf));
+        $user->notify(new EventReceipt($rf));
         $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
             'person', 'prefixes', 'industries', 'org', 'tickets');
 
@@ -425,10 +425,8 @@ class RegFinanceController extends Controller
 
         //return $pdf->download('invoice.pdf');
         try {
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
-            if(env('APP_ENV') == 'local'){
-                //Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
-            }
+            //request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
+            Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
         }
@@ -714,7 +712,7 @@ class RegFinanceController extends Controller
         }
 
         // email the user who paid
-        // $user->notify(new EventReceipt($rf));
+        $user->notify(new EventReceipt($rf));
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
@@ -742,8 +740,8 @@ class RegFinanceController extends Controller
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
-            //Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
+            Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            //request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         }
