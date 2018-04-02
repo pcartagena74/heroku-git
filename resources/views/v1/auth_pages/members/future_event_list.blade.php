@@ -36,7 +36,7 @@ $today = \Carbon\Carbon::now();
             @include('v1.parts.rf_bit', ['header' => 'Registered Events with Unpaid Balances', 'rf_array' => $unpaid])
         @endif
         @if(count($pending)>0)
-            @include('v1.parts.rf_bit', ['header' => 'Your Incomplete Registrations', 'rf_array' => $pending])
+            @include('v1.parts.rf_bit', ['header' => '<b class="red">Your Incomplete Registrations</b>', 'rf_array' => $pending])
         @endif
     @endif
 
