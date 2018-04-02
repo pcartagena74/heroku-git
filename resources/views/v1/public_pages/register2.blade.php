@@ -315,6 +315,8 @@ if($event->isSymmetric && $event->hasTracks) {
                             </tr>
                         </table>
 
+                        {{-- Do something here to set needSessionPick=0 if $discountCode in ['Sponsor%', 'Board%', 'Volunteer%', etc.] --}}
+
                         {!! Form::hidden('needSessionPick', $needSessionPick) !!}
 
                         @if($event->hasTracks > 0 && $needSessionPick == 1)
@@ -398,11 +400,11 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                 @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
                                                                     <b>{{ $s->sessionName }}</b><br/>
                                                                     @include('v1.parts.tooltip', ['title' => "Maximum attendance reached.", 'c' => 'red'])
-                                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                                    {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
                                                                         $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                                 @else
                                                                     <b>{{ $s->sessionName }}</b><br/>
-                                                                    {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, $selected,
+                                                                    {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, $selected,
                                                                         $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                                 @endif
 
@@ -430,22 +432,24 @@ if($event->isSymmetric && $event->hasTracks) {
                                                                     }
 ?>
                                                                     @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
-                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', $selected,
+                                                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, '', $selected,
                                                                             $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
                                                                     @else
                                                                         {!! Form::radio('sess-'. $j . '-'.$x, '', $selected,
                                                                             $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
                                                                     @endif
                                                                         <script>
+
+                                                                            {{-- There is likely a bug here that will be experienced with an uneven track --}}
                                                                         $(document).ready(function () {
-                                                                            $("input:radio[name='{{ 'sess-'. $j . '-'.$x }}']").on('change', function () {
+                                                                            $("input:radio[name='{{ 'sess-'. $j . '-'.$x . '-' . $reg->regID }}']").on('change', function () {
                                                                                 if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {
                                                                                     $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
                                                                                 } else {
                                                                                     $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').removeAttr('checked');
                                                                                 }
                                                                             });
-                                                                            $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) }}']").on('change', function () {
+                                                                            $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) . '-'. $reg->regID }}']").on('change', function () {
                                                                                 if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")) {
                                                                                     $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
                                                                                 } else {

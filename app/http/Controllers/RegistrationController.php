@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
 use App\EventSession;
+use App\Notifications\SetYourPassword;
 
 class RegistrationController extends Controller
 {
@@ -274,14 +275,17 @@ class RegistrationController extends Controller
             // Not logged in and email is in the database;
             // Should force a login -- return to form with input saved.
             //dd('No one logged in but main email is in DB');
+            $person = Person::find($email->personID);
             request()->session()->flash(
                 'alert-warning',
                 "You have an account that we've created for you. Please click the login button. 
-             If you haven't yet set a password, we'll send one to your email address."
+                 mCentric has emailed you instructions to reset your password if necessary."
             );
+            $person->notify(new SetYourPassword($person));
             return back()->withInput();
         } elseif (Auth::check() && ($email->personID == $this->currentPerson->personID)) {
             // the email entered belongs to the person logged in; ergo in DB
+            // This is where a change would be made for a provided PMI ID
             $person = $this->currentPerson;
             if ($person->orgperson->OrgStat1 === null) {
                 $regMem = 'Non-Member';
@@ -330,6 +334,10 @@ class RegistrationController extends Controller
             $regBy = $person->firstName . " " . $person->lastName;
         } elseif (Auth::check() && ($email->personID != $this->currentPerson->personID)) {
             // someone logged in is registering for someone else in the DB (usually CAMI)
+
+            // this is AFU b/c CAMI (or anyone else) wouldn't be able to put in first/last/email that isn't theirs
+            // into first position of registration.
+
             $person = Person::find($email->personID);
             if ($person->orgperson->OrgStat1 === null) {
                 $regMem = 'Non-Member';
@@ -379,6 +387,10 @@ class RegistrationController extends Controller
             $person->save();
         } else {
             // someone logged in is registering for someone else NOT in the DB
+
+            // this is AFU b/c CAMI (or anyone else) wouldn't be able to put in first/last/email that isn't theirs
+            // into first position of registration.
+
             $person = new Person;
             $person->prefix = $prefix;
             $person->firstName = $firstName;
@@ -730,6 +742,10 @@ class RegistrationController extends Controller
             // when passed from the registration receipt, the $name will have an underscore
             list($name, $field) = array_pad(explode("_", $name, 2), 2, null);
         }
+        if (strpos($name, '-')) {
+            // when passed from the registration receipt, the $name will have an underscore
+            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+        }
         $value = request()->input('value');
 
         // Because allergenInfo and Industry are reported in registrations and saved to the profile...
@@ -829,8 +845,9 @@ class RegistrationController extends Controller
             $verb = 'canceled';
         }
 
-        // Set a warning message to call the organization if there was an issue.
-        if ($reg->subtotal > 0 && $rf->stripeChargeID === null) {
+        // Set a warning message to call the organization if there was an issue...
+        // but only if someone paid an amount > $0 and there's no stripeChargeID
+        if ($reg->subtotal > 0 && $rf->pmtRecd && $rf->stripeChargeID === null) {
             request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
         }
 
@@ -869,6 +886,7 @@ class RegistrationController extends Controller
         }
 
         request()->session()->flash('alert-success', 'The registration with id ' . $reg->regID . ' has been ' . $verb);
-        return redirect('/upcoming');
+        //return redirect('/upcoming');
+        return redirect()->back()->withInput();
     }
 }

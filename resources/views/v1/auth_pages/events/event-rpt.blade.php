@@ -19,20 +19,40 @@ foreach($tkts as $t) {
     array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
 }
 
-$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost'];
-$notreg_headers = ['Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost'];
+$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel'];
+$notreg_headers = ['Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel'];
 $reg_rows = []; $notreg_rows = [];
 
 foreach($regs as $r) {
     $p = Person::find($r->personID);
+    $rf    = \App\RegFinance::where('token', $r->token)->first();
+
+    $f = Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $r->regID, $rf->regID ], 'data-toggle' => 'validator' ]);
+    $f .= '<button type="submit" class="btn btn-danger btn-sm">';
+    if($rf->cost > 0) {
+        $f .= '<i class="fa fa-usd"></i></button></form>';
+    } else {
+        $f .= '<i class="fa fa-trash"></i></button></form>';
+    }
+
     array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', '')]);
+        '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
 foreach($notregs as $r) {
     $p = Person::find($r->personID);
+    $rf    = \App\RegFinance::where('token', $r->token)->first();
+
+    $f = Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $r->regID, $rf->regID ], 'data-toggle' => 'validator' ]);
+    $f .= '<button type="submit" class="btn btn-danger btn-sm">';
+    if($rf->cost > 0) {
+        $f .= '<i class="fa fa-usd"></i></button></form>';
+    } else {
+        $f .= '<i class="fa fa-trash"></i></button></form>';
+    }
+
     array_push($notreg_rows, [$r->regStatus, $p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', '')]);
+        '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
 if(count($reg_rows) >= 15) {
