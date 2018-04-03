@@ -68,7 +68,7 @@ $s3fs = new Filesystem($adapter);
 
                     @if($rf->pmtRecd == 1)  {{-- payment received --}}
 
-                        @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                        @if($event->eventStartDate->gte($today->subDays($org->refundDays)) && !$event->isNonRefundable)
                             {!! Form::open(['method'  => 'delete',
                                             'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
                                             'data-toggle' => 'validator' ]) !!}
@@ -135,7 +135,7 @@ $s3fs = new Filesystem($adapter);
                 $org = Org::find($event->orgID);
 ?>
                 @if($rf->pmtRecd == 1)  {{-- payment received --}}
-                @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
+                @if($event->eventStartDate->gte($today->subDays($org->refundDays)) && !$event->isNonRefundable)
                     {!! Form::open(['method'  => 'delete',
                                     'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
                                     'data-toggle' => 'validator' ]) !!}
