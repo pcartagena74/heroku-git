@@ -40,7 +40,6 @@
         "maatwebsite/excel": "^2.1",
         "msclics/laravel-phantomjs": "^1.0",
         "nicolaslopezj/searchable": "1.*",
-        "phpmyadmin/phpmyadmin": "^4.7",
         "plank/laravel-mediable": "^2.5",
         "simplesoftwareio/simple-qrcode": "^1.5",
         "socialiteproviders/linkedin": "dev-master",
