@@ -34,6 +34,7 @@
         "laravelcollective/html": "5.5.*",
         "league/flysystem": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "limesurvey/limesurvey": "^3.2",
         "maatwebsite/excel": "^2.1",
         "msclics/laravel-phantomjs": "^1.0",
         "nicolaslopezj/searchable": "1.*",
