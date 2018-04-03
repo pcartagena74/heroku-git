@@ -478,9 +478,11 @@ class RegistrationController extends Controller
             $suffix = ucwords(request()->input('suffix' . "_$i"));
             $prefName = ucwords(request()->input('prefName' . "_$i"));
             $compName = ucwords(request()->input('compName' . "_$i"));
+            $pmiID = ucwords(request()->input('OrgStat1' . "_$i"));
             $indName = ucwords(request()->input('indName' . "_$i"));
             $title = ucwords(request()->input('title' . "_$i"));
             $experience = ucwords(request()->input('experience' . "_$i"));
+            $affiliation = request()->input('affiliation' . "_$i");
             $eventQuestion = request()->input('eventQuestion' . "_$i");
             $eventTopics = request()->input('eventTopics' . "_$i");
             $checkEmail = request()->input('login' . "_$i");

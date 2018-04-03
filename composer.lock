@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5beb8cbefc1e47373e3242c1f3a29651",
+    "content-hash": "2447bb0b9d268b5c1dd9d5e14051a6df",
     "packages": [
         {
             "name": "airbrake/phpbrake",
@@ -1529,6 +1529,61 @@
                 "html"
             ],
             "time": "2018-02-23T01:58:20+00:00"
+        },
+        {
+            "name": "facebook/webdriver",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/facebook/php-webdriver.git",
+                "reference": "86b5ca2f67173c9d34340845dd690149c886a605"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/86b5ca2f67173c9d34340845dd690149c886a605",
+                "reference": "86b5ca2f67173c9d34340845dd690149c886a605",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-zip": "*",
+                "php": "^5.6 || ~7.0",
+                "symfony/process": "^2.8 || ^3.1 || ^4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "guzzle/guzzle": "^3.4.1",
+                "php-coveralls/php-coveralls": "^1.0.2",
+                "php-mock/php-mock-phpunit": "^1.1",
+                "phpunit/phpunit": "^5.7",
+                "sebastian/environment": "^1.3.4 || ^2.0 || ^3.0",
+                "squizlabs/php_codesniffer": "^2.6",
+                "symfony/var-dumper": "^3.3 || ^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-community": "1.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Facebook\\WebDriver\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A PHP client for Selenium WebDriver",
+            "homepage": "https://github.com/facebook/php-webdriver",
+            "keywords": [
+                "facebook",
+                "php",
+                "selenium",
+                "webdriver"
+            ],
+            "time": "2017-11-15T11:08:09+00:00"
         },
         {
             "name": "fennb/phirehose",
@@ -3414,6 +3469,53 @@
                 "twitter"
             ],
             "time": "2016-08-17T00:36:58+00:00"
+        },
+        {
+            "name": "limesurvey/limesurvey",
+            "version": "3.2.1+180207",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LimeSurvey/LimeSurvey.git",
+                "reference": "28327d0c55cc73160d811d96c638d101a0537c2b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LimeSurvey/LimeSurvey/zipball/28327d0c55cc73160d811d96c638d101a0537c2b",
+                "reference": "28327d0c55cc73160d811d96c638d101a0537c2b",
+                "shasum": ""
+            },
+            "require": {
+                "facebook/webdriver": "^1.4"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LimeSurvey\\PluginManager\\": [
+                        "application/libraries/PluginManager/",
+                        "application/libraries/PluginManager/Storage"
+                    ],
+                    "LimeSurvey\\Menu\\": "application/libraries/MenuObjects/",
+                    "LimeSurvey\\Helpers\\": "application/helpers"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "LimeSurvey Team",
+                    "email": "support@limesurvey.org",
+                    "homepage": "https://www.limesurvey.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "The most popular FOSS online survey tool on the web",
+            "homepage": "https://www.limesurvey.org/",
+            "time": "2018-02-07T15:56:26+00:00"
         },
         {
             "name": "maatwebsite/excel",
