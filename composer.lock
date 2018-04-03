@@ -5024,12 +5024,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-activitylog.git",
-                "reference": "13e5ea8e4cabda59d714bbacc234e9dcbcd3974e"
+                "reference": "8dc0d56ecc53f8a87ca0dad8ba97663e1205f2f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/13e5ea8e4cabda59d714bbacc234e9dcbcd3974e",
-                "reference": "13e5ea8e4cabda59d714bbacc234e9dcbcd3974e",
+                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/8dc0d56ecc53f8a87ca0dad8ba97663e1205f2f1",
+                "reference": "8dc0d56ecc53f8a87ca0dad8ba97663e1205f2f1",
                 "shasum": ""
             },
             "require": {
@@ -5086,7 +5086,7 @@
                 "spatie",
                 "user"
             ],
-            "time": "2018-04-03T09:42:46+00:00"
+            "time": "2018-04-03T15:11:56+00:00"
         },
         {
             "name": "spatie/laravel-link-checker",
