@@ -281,7 +281,7 @@ class RegistrationController extends Controller
                 "You have an account that we've created for you. Please click the login button. 
                  mCentric has emailed you instructions to reset your password if necessary."
             );
-            $person->notify(new SetYourPassword($person));
+            //$person->notify(new SetYourPassword($person));
             return back()->withInput();
         } elseif (Auth::check() && ($email->personID == $this->currentPerson->personID)) {
             // the email entered belongs to the person logged in; ergo in DB
