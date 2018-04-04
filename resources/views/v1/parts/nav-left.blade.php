@@ -32,7 +32,7 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
 
         <div class="profile"><!-- img_2 -->
             <div class="profile_pic">
-                <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" class="img-circle profile_img">
+                <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" class="img-circle profile_img" width="56" height="56">
             </div>
             <div class="profile_info">
                 <span>Welcome,</span>
