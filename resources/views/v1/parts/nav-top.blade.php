@@ -19,7 +19,7 @@ $currentPerson = App\Person::find(auth()->user()->id);
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a href="#" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" width="56" height="56">
+                        <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" width="29" height="29">
                         {{ $currentPerson->prefName or $currentPerson->firstName }}
                         <span class=" fa fa-angle-down"></span>
                     </a>
