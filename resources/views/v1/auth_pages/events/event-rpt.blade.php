@@ -10,58 +10,75 @@ use App\RegFinance;
 use App\EventSession;
 use App\RegSession;
 
+$today = \Carbon\Carbon::now();
 $topBits = ''; // there should be topBits for this
 
-$headers = ['Ticket', 'Attendance Limit', 'Registrations', 'Wait List'];
 $rows = [];
-
-foreach($tkts as $t) {
-    array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
+if ($event->eventEndDate->gte($today)) {
+    $headers = ['Ticket', 'Attendance Limit', 'Regs', 'This Week', 'Wait List'];
+    foreach ($tkts as $t) {
+        array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->week_sales(), $t->waitCount]);
+    }
+} else {
+    $headers = ['Ticket', 'Attendance Limit', 'Regs', 'Wait List'];
+    foreach ($tkts as $t) {
+        array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
+    }
 }
 
-$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel'];
-$notreg_headers = ['Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel'];
+
+$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel Reg'];
+$notreg_headers = ['Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel Reg'];
 $reg_rows = []; $notreg_rows = [];
 
-foreach($regs as $r) {
+foreach ($regs as $r) {
     $p = Person::find($r->personID);
-    $rf    = \App\RegFinance::where('token', $r->token)->first();
+    $rf = \App\RegFinance::where('token', $r->token)->first();
 
-    $f = Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $r->regID, $rf->regID ], 'data-toggle' => 'validator' ]);
-    $f .= '<button type="submit" class="btn btn-danger btn-sm">';
-    if($rf->cost > 0) {
-        $f .= '<i class="fa fa-usd"></i></button></form>';
+    $f='';
+    if ($rf->cost > 0) {
+        if (Entrust::hasRole('Admin')) {
+            $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $rf->regID], 'data-toggle' => 'validator']);
+            $f .= '<button type="submit" class="btn btn-danger btn-sm">';
+            $f .= '<i class="fa fa-usd" data-toggle="tooltip" title="Click to refund this registration."></i></button></form>';
+        } else {
+            $f .= '<button type="submit" class="btn btn-secondary btn-sm">';
+            $f .= '<i class="fa fa-usd" data-toggle="tooltip" title="You cannot refund this registration. Find an admin."></i></button></form>';
+        }
     } else {
-        $f .= '<i class="fa fa-trash"></i></button></form>';
+        if (Entrust::hasRole('Admin')) {
+            $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $rf->regID], 'data-toggle' => 'validator']);
+            $f .= '<button type="submit" class="btn btn-danger btn-sm">';
+            $f .= '<i class="fa fa-trash" data-toggle="tooltip" title="Click to cancel this registration."></i></button></form>';
+        } else {
+            $f .= '<button type="submit" class="btn btn-secondary btn-sm">';
+            $f .= '<i class="fa fa-trash" data-toggle="tooltip" title="You cannot cancel this registration. Find an admin."></i></button></form>';
+        }
     }
 
     array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
-foreach($notregs as $r) {
+foreach ($notregs as $r) {
     $p = Person::find($r->personID);
-    $rf    = \App\RegFinance::where('token', $r->token)->first();
+    $rf = \App\RegFinance::where('token', $r->token)->first();
 
-    $f = Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $r->regID, $rf->regID ], 'data-toggle' => 'validator' ]);
-    $f .= '<button type="submit" class="btn btn-danger btn-sm">';
-    if($rf->cost > 0) {
-        $f .= '<i class="fa fa-usd"></i></button></form>';
-    } else {
-        $f .= '<i class="fa fa-trash"></i></button></form>';
-    }
+    $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $rf->regID], 'data-toggle' => 'validator']);
+    $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel this registration attempt.">';
+    $f .= '<i class="fa fa-trash"></i></button></form>';
 
     array_push($notreg_rows, [$r->regStatus, $p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
-if(count($reg_rows) >= 15) {
+if (count($reg_rows) >= 15) {
     $scroll = 1;
 } else {
     $scroll = 0;
 }
 
-if(count($notreg_rows) >= 15) {
+if (count($notreg_rows) >= 15) {
     $notscroll = 1;
 } else {
     $notscroll = 0;
@@ -70,7 +87,7 @@ if(count($notreg_rows) >= 15) {
 $disc_headers = ['Code', 'Count', 'Cost', 'CC Fee', 'Handle Fee', 'Net'];
 $disc_rows = [];
 
-foreach($discPie as $d) {
+foreach ($discPie as $d) {
     array_push($disc_rows, [$d->discountCode, $d->cnt,
         '<i class="fa fa-dollar"></i> ' . number_format($d->cost, 2, '.', ','),
         '<i class="fa fa-dollar"></i> ' . number_format($d->ccFee, 2, '.', ','),
@@ -79,16 +96,16 @@ foreach($discPie as $d) {
     ]);
 }
 
-if($event->hasTracks && $event->isSymmetric) {
+if ($event->hasTracks && $event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
-    $width   = (integer)85 / $event->hasTracks;
-    $mw      = (integer)90 / $event->hasTracks;
-    $stats = '<a href="'.env('APP_URL').'/tracks/'.$event->eventID.'">Ticket Statistics</a>';
-} elseif($event->hasTracks) {
+    $width = (integer)85 / $event->hasTracks;
+    $mw = (integer)90 / $event->hasTracks;
+    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">Ticket Statistics</a>';
+} elseif ($event->hasTracks) {
     $columns = $event->hasTracks * 3;
-    $width   = (integer)80 / $event->hasTracks;
-    $mw      = (integer)85 / $event->hasTracks;
-    $stats = '<a href="'.env('APP_URL').'/tracks/'.$event->eventID.'">Ticket Statistics</a>';
+    $width = (integer)80 / $event->hasTracks;
+    $mw = (integer)85 / $event->hasTracks;
+    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">Ticket Statistics</a>';
 } else {
     $stats = 'Ticket Statistics';
 }
@@ -172,13 +189,13 @@ if($event->hasTracks && $event->isSymmetric) {
                             @endforeach
                         </tr>
                         @for($j=1;$j<=$event->confDays;$j++)
-<?php
+                            <?php
                             $z = EventSession::where([
                                 ['confDay', '=', $j],
                                 ['eventID', '=', $event->eventID]
                             ])->first();
                             $y = Ticket::find($z->ticketID);
-?>
+                            ?>
 
                             <tr>
                                 <th style="text-align:center; color: yellow; background-color: #2a3f54;"
@@ -187,7 +204,7 @@ if($event->hasTracks && $event->isSymmetric) {
                                 </th>
                             </tr>
                             @for($x=1;$x<=5;$x++)
-<?php
+                                <?php
                                 // Check to see if there are any events for $x (this row)
                                 $s = EventSession::where([
                                     ['eventID', $event->eventID],
@@ -196,18 +213,18 @@ if($event->hasTracks && $event->isSymmetric) {
                                 ])->first();
 
                                 // As long as there are any sessions, the row will be displayed
-?>
+                                ?>
                                 @if($s !== null)
                                     <tr>
                                         @foreach($tracks as $track)
-<?php
+                                            <?php
                                             $s = EventSession::where([
                                                 ['trackID', $track->trackID],
                                                 ['eventID', $event->eventID],
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
-?>
+                                            ?>
                                             @if($s !== null)
                                                 @if($tracks->first() == $track || !$event->isSymmetric)
 
@@ -221,22 +238,22 @@ if($event->hasTracks && $event->isSymmetric) {
                                                 @endif
                                                 <td colspan="2" style="text-align:left; min-width:150px;
                                                         width: {{ $width }}%; max-width: {{ $mw }}%;">
-<?php
+                                                    <?php
                                                     // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
                                                     $sTotal = 0;
                                                     $sRegs =
                                                         RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
-                                                                  ->where([
-                                                                      ['sessionID', $s->sessionID],
-                                                                      ['er.eventID', $event->eventID]
-                                                                  ])->select(DB::raw('er.discountCode, count(*) as cnt'))
-                                                                  ->groupBy('er.discountCode')->get();
-?>
+                                                            ->where([
+                                                                ['sessionID', $s->sessionID],
+                                                                ['er.eventID', $event->eventID]
+                                                            ])->select(DB::raw('er.discountCode, count(*) as cnt'))
+                                                            ->groupBy('er.discountCode')->get();
+                                                    ?>
                                                     <ul>
-                                                    @foreach($sRegs as $sr)
-                                                        <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
-                                                        <?php $sTotal += $sr->cnt; ?>
-                                                    @endforeach
+                                                        @foreach($sRegs as $sr)
+                                                            <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
+                                                            <?php $sTotal += $sr->cnt; ?>
+                                                        @endforeach
                                                         <li><b>Total: {{ $sTotal }}</b></li>
                                                     </ul>
                                                 </td>
