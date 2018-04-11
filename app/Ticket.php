@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class Ticket extends Model
 
     public function bundle()
     {
-        return $this->belongsTo(Bundle::class, 'ticketID');
+        return $this->belongsTo(Bundle::class, 'ticketID', 'ticketID', Ticket::class);
     }
 
     public function event()
@@ -38,6 +39,22 @@ class Ticket extends Model
     public function regfinances()
     {
         return $this->hasMany(RegFinance::class, 'ticketID');
+    }
+
+    public function week_sales(){
+        $tickets = array($this->ticketID);
+        if(!$this->isaBundle){
+            $bundles = Bundle::where('ticketID', $this->ticketID)->select('bundleID')->get();
+            foreach($bundles as $b){
+                array_push($tickets, $b->bundleID);
+            }
+            // $tickets = implode(",", (array)$tickets);
+        }
+        return Registration::whereDate('updateDate', '>=', Carbon::now()->subWeek(1))
+            ->whereIn('ticketID', $tickets)
+            ->whereNull('deleted_at')
+            ->count();
+
     }
 
     public function waitlisting()
