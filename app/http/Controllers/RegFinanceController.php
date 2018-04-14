@@ -190,7 +190,7 @@ class RegFinanceController extends Controller
         $org = Org::find($event->orgID);
         $loc = Location::find($event->locationID);
 
-        return view('v1.auth_pages.events.group_reg1', compact('event', 'quantity', 'org', 'loc', 'rf'));
+        return view('v1.auth_pages.events.registration.group_reg1', compact('event', 'quantity', 'org', 'loc', 'rf'));
     }
 
     public function update(Request $request, $id)

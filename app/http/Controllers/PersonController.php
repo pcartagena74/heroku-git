@@ -131,7 +131,7 @@ class PersonController extends Controller
                          ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
                          ->select(DB::raw("person.prefix, person.firstName, person.midName, person.lastName, person.suffix,
                                             person.prefName, u.login, person.title, person.compName, person.indName,
-                                            person.experience, person.chapterRole,
+                                            person.experience, person.chapterRole, person.defaultOrgID, affiliation,
                 OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
                 date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
                     date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
@@ -291,6 +291,11 @@ class PersonController extends Controller
         }
     }
 
+    /**
+     * Shows the form to force-change a user's password; meant for CAMI, etc.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function show_force(){
         $topBits = '';
         return view('v1.auth_pages.members.force_pass_change', compact('topBits'));
@@ -349,5 +354,6 @@ class PersonController extends Controller
     public function handleLinkedInCallback()
     {
         $user = Socialite::driver('linkedin')->user();
+        //dd($user);
     }
 }

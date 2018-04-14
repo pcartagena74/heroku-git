@@ -53,7 +53,7 @@ $topBits = '';  // remove this if this was set in the controller
                     <a data-toggle="tooltip" title="Type at least 3 characters.  Unique is better.">
                 {!! Form::label('helper-'.$i, 'Search for person:') !!}
                     </a><br />
-                {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs', 'required')) !!}<br />
+                {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs')) !!}<br />
                     <a id="pop-{{ $i }}" onclick="populate({{ $i }});" class="btn btn-primary btn-xs">Populate Row</a>
                     <a id="clr-{{ $i }}" onclick="go_clear({{ $i }});" class="btn btn-danger btn-xs invisible">Clear Row</a>
                 <div id="search-results"></div>

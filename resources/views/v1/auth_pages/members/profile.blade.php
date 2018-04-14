@@ -26,6 +26,14 @@ $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from 
 $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
 $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from `phone-type`");
 
+$chapters = DB::table('organization')->where('orgID', $profile->defaultOrgID)->select('regionChapters')->first();
+$array = explode(',', $chapters->regionChapters);
+
+$i = 0;
+foreach ($array as $chap) {
+    $i++;
+    $affiliation_array[$i] = $chap;
+}
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -116,22 +124,25 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                         </td>
                     </tr>
                     <tr>
-                       {{-- Adding new fields to person for profile display will require the update of the show() query --}}
+                        {{-- Adding new fields to person for profile display will require the update of the show() query --}}
 
                         <th style="text-align: left;">PM Experience</th>
                         <th style="text-align: left;">Chapter Role</th>
-                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;">Chapter Affiliation</th>
                         <th style="text-align: left;"></th>
                         <th style="text-align: left;"></th>
                     </tr>
                     <tr>
                         <td style="text-align: left;">
-                            <a href="#" id="experience" data-title="PM Experience (Years)">{{ $profile->experience }}</a>
+                            <a href="#" id="experience"
+                               data-title="PM Experience (Years)">{{ $profile->experience }}</a>
                         </td>
                         <td style="text-align: left;">
                             <a href="#" id="chapterRole" data-title="Chapter Role">{{ $profile->chapterRole }}</a>
                         </td>
-                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;">
+                            <a href="#" id="affiliation" data-title="Chapter Affiliation">{{ $profile->affiliation }}</a>
+                        </td>
                         <td style="text-align: left;"></td>
                         <td style="text-align: left;"></td>
                     </tr>
@@ -179,7 +190,8 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                             <?php $ad_cnt++; ?>
                             <tr>
                                 <td>
-                                    <form id="ad-{{ $ad_cnt }}" method="post" action="{{ env('APP_URL') . "/address/" . $address->addrID . "/delete" }}">
+                                    <form id="ad-{{ $ad_cnt }}" method="post"
+                                          action="{{ env('APP_URL') . "/address/" . $address->addrID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs">
@@ -268,7 +280,8 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                                         </button>
                                         @include('v1.parts.tooltip', ['title' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first."])
                                     @else
-                                        <form method="post" action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
+                                        <form method="post"
+                                              action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                             <button class="btn btn-danger btn-xs" data-toggle="confirmation"
@@ -330,7 +343,8 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                             <?php $ph_cnt++; ?>
                             <tr>
                                 <td style="text-align: left;">
-                                    <form id="ph-{{ $ph_cnt }}" method="post" action="{{ env('APP_URL') . "/phone/" . $phone->phoneID . "/delete" }}">
+                                    <form id="ph-{{ $ph_cnt }}" method="post"
+                                          action="{{ env('APP_URL') . "/phone/" . $phone->phoneID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs" data-toggle="confirmation"
@@ -433,17 +447,17 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+                <?php
                     if ($profile->experience <> "") {
                         echo("value: '$profile->experience',\n");
                     }
-?>
-                source:[
-                    { value: '1-4', text: '1-4 Years'},
-                    { value: '5-9', text: '5-9 Years'},
-                    { value: '10-14', text: '10-14 Years'},
-                    { value: '15-19', text: '15-19 Years'},
-                    { value: '20+', text: '20+ Years'}
+                    ?>
+                source: [
+                    {value: '1-4', text: '1-4 Years'},
+                    {value: '5-9', text: '5-9 Years'},
+                    {value: '10-14', text: '10-14 Years'},
+                    {value: '15-19', text: '15-19 Years'},
+                    {value: '20+', text: '20+ Years'}
                 ]
             });
 
@@ -452,17 +466,17 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+                <?php
                     if ($profile->prefix <> "") {
                         echo("value: '$profile->prefix', \n");
                     }
-?>
+                    ?>
                 source: [
-<?php
+                    <?php
                     foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -501,17 +515,17 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+                <?php
                     if ($profile->indName <> "") {
                         echo("value: '$profile->indName', \n");
                     }
-?>
+                    ?>
                 source: [
-<?php
+                    <?php
                     foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -542,16 +556,29 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 url: '{{ $profile_script_url }}'
             });
 
+            $('#affiliation').editable({
+                type: 'checklist',
+                value: '{{ $profile->affiliation }}',
+                source: [
+<?php
+                    for ($j = 1; $j <= count($affiliation_array); $j++) {
+                        $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
+                    }
+?>
+                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                ]
+            });
+
             @for($j=1;$j<=$ad_cnt;$j++)
             $('#addrTYPE{{ $j }}').editable({
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($addrTypes as $row) {
                         $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -564,11 +591,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($countries as $row) {
                         $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -579,11 +606,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($emailTypes as $row) {
                         $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -595,11 +622,11 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
-                    foreach($phoneTypes as $row) {
-                    $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
+                    <?php
+                    foreach ($phoneTypes as $row) {
+                        $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -745,7 +772,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 
                             @for($n=1; $n<=5; $n++)
 
-                                <tr id="addr{{ $n }}_row"<?php if($n > 1) echo(' style="display:none"'); ?>>
+                                <tr id="addr{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
                                     <td><select name='addrTYPE-{{ $n }}'>
                                             <option>...</option>
                                             @include('v1.parts.form-option-show', ['array' => $address_type])
@@ -812,7 +839,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 
                             @for($n=1; $n<=5; $n++)
 
-                                <tr id="email{{ $n }}_row"<?php if($n > 1) echo(' style="display:none"'); ?>>
+                                <tr id="email{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
                                     <td><select name='emailTYPE-{{ $n }}'>
                                             <option>...</option>
                                             @include('v1.parts.form-option-show', ['array' => $address_type])
@@ -868,7 +895,7 @@ $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from 
 
                             @for($n=1; $n<=5; $n++)
 
-                                <tr id="phone{{ $n }}_row"<?php if($n > 1) echo(' style="display:none"'); ?>>
+                                <tr id="phone{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
                                     <td><select name='phoneType-{{ $n }}'>
                                             <option>...</option>
                                             @include('v1.parts.form-option-show', ['array' => $phone_type])
