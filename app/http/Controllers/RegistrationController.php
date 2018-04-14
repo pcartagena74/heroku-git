@@ -70,9 +70,15 @@ class RegistrationController extends Controller
         */
     }
 
+    /**
+     * Shows a report of registrations for a specific event
+     *
+     * @param $param: the slug or eventID for an event
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function show($param)
     {
-
+        // Responds to GET /eventreport/{slug]
         $event = Event::where('eventID', '=', $param)
             ->orWhere('slug', '=', $param)
             ->firstOrFail();

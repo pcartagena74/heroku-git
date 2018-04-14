@@ -28,8 +28,13 @@ $string = '';
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-$array = explode(',', $chapters->nearbyChapters);
+if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+    $array    = explode(',', $chapters->regionChapters);
+} else {
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+    $array    = explode(',', $chapters->nearbyChapters);
+}
 
 $i = 0;
 foreach($array as $chap) {

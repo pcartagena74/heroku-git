@@ -135,33 +135,33 @@ $s3fs = new Filesystem($adapter);
                 $org = Org::find($event->orgID);
 ?>
                 @if($rf->pmtRecd == 1)  {{-- payment received --}}
-                @if($event->eventStartDate->gte($today->subDays($org->refundDays)) && !$event->isNonRefundable)
-                    {!! Form::open(['method'  => 'delete',
-                                    'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                    'data-toggle' => 'validator' ]) !!}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        @if($rf->cost > 0)
-                            Refund Registration
-                        @else
-                            Cancel Registration
-                        @endif
-                    </button>
-                    {!! Form::close() !!}
-                @endif
+                    @if($event->eventStartDate->gte($today->subDays($org->refundDays)) && !$event->isNonRefundable)
+                        {!! Form::open(['method'  => 'delete',
+                                        'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
+                                        'data-toggle' => 'validator' ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @if($rf->cost > 0)
+                                Refund Registration
+                            @else
+                                Cancel Registration
+                            @endif
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
 
-                <a target="_new"
-                   @if($rf->isGroupReg)
-                   href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
-                   @else
-                   href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                   @endif
-                   class="btn btn-success btn-sm">Display Receipt</a>
-                <a target="_new" href="{{ $receipt_url }}"
-                   class="btn btn-primary btn-sm">Download Receipt</a>
-                <br/>
+                    <a target="_new"
+                       @if($rf->isGroupReg)
+                       href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
+                       @else
+                       href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                       @endif
+                       class="btn btn-success btn-sm">Display Receipt</a>
+                    <a target="_new" href="{{ $receipt_url }}"
+                       class="btn btn-primary btn-sm">Download Receipt</a>
+                    <br/>
 
-                @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-                'reg' => $reg, 'regSession' => $regSessions])
+                    @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                    'reg' => $reg, 'regSession' => $regSessions])
 
                 @else {{-- payment not received; possibly marked "At the Door" --}}
                     @if($event->eventStartDate->gte($today->subDays($org->refundDays)))
@@ -175,7 +175,12 @@ $s3fs = new Filesystem($adapter);
                     @endif
 
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
-                        <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                        <a target="_new"
+                           @if($rf->isGroupReg)
+                                href="{!! env('APP_URL') !!}/groupreg/{{ $rf->regID }}"
+                           @else
+                                href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                           @endif
                            class="btn btn-primary btn-sm">Pay Balance Due Now</a>
                     @else
                         <a target="_new"
@@ -188,12 +193,13 @@ $s3fs = new Filesystem($adapter);
                         <a target="_new" href="{{ $receipt_url }}"
                            class="btn btn-primary btn-sm">Download Receipt</a>
                     @endif
-                <br/>
-                @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-                'reg' => $reg, 'regSession' => $regSessions])
-                @endif
 
-                @include('v1.parts.end_content')
+                    <br/>
+                    @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                    'reg' => $reg, 'regSession' => $regSessions])
+                    @endif
+
+                    @include('v1.parts.end_content')
             @endif
         </div>
         @include('v1.parts.end_content')

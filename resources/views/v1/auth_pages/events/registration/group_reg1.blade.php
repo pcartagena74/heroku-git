@@ -16,8 +16,13 @@ $string = '';
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-$array = explode(',', $chapters->nearbyChapters);
+if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+    $array    = explode(',', $chapters->regionChapters);
+} else {
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+    $array    = explode(',', $chapters->nearbyChapters);
+}
 
 $i = 0;
 foreach($array as $chap) {
@@ -81,11 +86,11 @@ if($event->isSymmetric && $event->hasTracks) {
         </div>
 
         @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
-            <?php
+<?php
             $reg = Registration::find($i); $tcount++;
             $person = Person::find($reg->personID);
             $ticket = Ticket::find($reg->ticketID);
-            ?>
+?>
 
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
@@ -177,39 +182,48 @@ if($event->isSymmetric && $event->hasTracks) {
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> ]
                                 </nobr>
                                 <br/>
-                                @if($person->compName)
-                                    @if($person->title)
-                                        <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                           data-value="{{ $person->title }}"
+                                    @if($event->eventTypeID==5)
+                                        <a id="chapterRole-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                           data-value="{{ $person->chapterRole }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        with: PMI
+                                        <a id="affiliation-{{ $tcount }}"
+                                           data-pk="{{ $person->personID }}"
+                                           data-value="{{ $person->affiliation }}"
+                                           data-url="{{ env('APP_URL') }}/reg_verify/{{ $person->personID }}"></a>
                                     @else
-                                        Employed
+                                        @if($person->compName)
+                                            @if($person->title)
+                                                <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                   data-value="{{ $person->title }}"
+                                                   data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                            @else
+                                                Employed
+                                            @endif
+                                            at <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                  data-value="{{ $person->compName }}"
+                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        @else
+                                            @if($person->title !== null)
+                                                <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                   data-value="{{ $person->title }}"
+                                                   data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                            @else($person->indName !== null)
+                                                Employed
+                                            @endif
+                                            @if($person->indName !== null)
+                                                in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                          data-value="{{ $person->indName }}"
+                                                          data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> industry <br/>
+                                            @endif
+                                        @endif
+                                        @if($person->affiliation)
+                                            <br/>Affiliated with: <a id="affiliation-{{ $tcount }}"
+                                                                     data-pk="{{ $person->personID }}"
+                                                                     data-value="{{ $person->affiliation }}"
+                                                                     data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        @endif
                                     @endif
-                                    at <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                          data-value="{{ $person->compName }}"
-                                          data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                @else
-                                    @if($person->title !== null)
-                                        <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                           data-value="{{ $person->title }}"
-                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                    @elseif($person->indName !== null)
-                                        Employed
-                                    @endif
-                                @endif
-                                @if($person->indName !== null)
-                                    in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                              data-value="{{ $person->indName }}"
-                                              data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                    industry <br/>
-                                @endif
-
-                                @if($person->affiliation)
-                                    <br/>Affiliated with: <a id="affiliation-{{ $tcount }}"
-                                                             data-pk="{{ $person->personID }}"
-                                                             data-value="{{ $person->affiliation }}"
-                                                             data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                @endif
                             </td>
                             <td colspan="2" style="text-align: left;">
                                 <b>Add to Roster:</b> <a id="canNetwork-{{ $tcount }}"
@@ -303,16 +317,17 @@ if($event->isSymmetric && $event->hasTracks) {
 
             $("#compName-{{ $i }}").editable({type: 'text'});
             $("#title-{{ $i }}").editable({type: 'text', emptytext: 'Title'});
+            $("#chapterRole-{{ $i }}").editable({type: 'text', emptytext: 'Role'});
             $("#login-{{ $i }}").editable({type: 'text'});
 
             $('#affiliation-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-                    <?php
+<?php
                     for($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -336,10 +351,11 @@ if($event->isSymmetric && $event->hasTracks) {
             $("#allergenInfo-{{ $i }}").editable({
                 type: 'checklist',
                 source: [
-                    <?php
+<?php
                     foreach($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
-                    } ?>
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
