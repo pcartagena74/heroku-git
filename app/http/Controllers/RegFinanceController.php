@@ -267,12 +267,32 @@ class RegFinanceController extends Controller
                     $user->save();
                 }
 
-                $charge = \Stripe\Charge::create(array(
-                    'amount' => $rf->cost * 100,
-                    'currency' => 'usd',
-                    'description' => "$org->orgName Event Registration: $event->eventName",
-                    'customer' => $user->stripe_id,
-                ));
+                try {
+                    $charge = \Stripe\Charge::create(array(
+                        'amount' => $rf->cost * 100,
+                        'currency' => 'usd',
+                        'description' => "$org->orgName Event Registration: $event->eventName",
+                        'customer' => $user->stripe_id,
+                    ));
+                } catch(\Stripe\Error\Card $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                } catch(\Stripe\Error\InvalidRequest $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                } catch(\Stripe\Error\Authentication $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                } catch(\Stripe\Error\ApiConnection $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                } catch(\Stripe\Error\Base $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                } catch(\Exception $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                }
                 $rf->stripeChargeID = $charge->id;
                 $rf->status = 'Processed';
                 $rf->pmtType = $stripeTokenType;

@@ -15,9 +15,9 @@ $topBits = ''; // there should be topBits for this
 
 $rows = [];
 if ($event->eventEndDate->gte($today)) {
-    $headers = ['Ticket', 'Attendance Limit', 'Regs', 'This Week', 'Wait List'];
+    $headers = ['Ticket', 'Attendance Limit', 'This Week', 'Total Regs', 'Wait List'];
     foreach ($tkts as $t) {
-        array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->week_sales(), $t->waitCount]);
+        array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->week_sales(), $t->regCount, $t->waitCount]);
     }
 } else {
     $headers = ['Ticket', 'Attendance Limit', 'Regs', 'Wait List'];
@@ -26,10 +26,23 @@ if ($event->eventEndDate->gte($today)) {
     }
 }
 
+$reg_headers = ['RegID', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel Reg'];
+$notreg_headers = ['RegID', 'Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel Reg'];
+$reg_rows = []; $notreg_rows = []; $tag_rows = [];
 
-$reg_headers = ['First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel Reg'];
-$notreg_headers = ['Status', 'First Name', 'Last Name', 'Ticket', 'Code', 'Register Date', 'Cost', 'Cancel Reg'];
-$reg_rows = []; $notreg_rows = [];
+if($event->eventTypeID == 5) {
+    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Chapter', 'Role'];
+    foreach($regs as $r){
+        $p = Person::find($r->personID);
+        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel, $p->affiliation, $p->chapterRole]);
+    }
+} else {
+    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Company', 'Title', 'Industry'];
+    foreach($regs as $r){
+        $p = Person::find($r->personID);
+        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel, $p->compName, $p->title, $p->indName]);
+    }
+}
 
 foreach ($regs as $r) {
     $p = Person::find($r->personID);
@@ -56,7 +69,7 @@ foreach ($regs as $r) {
         }
     }
 
-    array_push($reg_rows, [$p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+    array_push($reg_rows, [$r->regID, $p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
@@ -68,7 +81,7 @@ foreach ($notregs as $r) {
     $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel this registration attempt.">';
     $f .= '<i class="fa fa-trash"></i></button></form>';
 
-    array_push($notreg_rows, [$r->regStatus, $p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+    array_push($notreg_rows, [$r->regID, $r->regStatus, $p->firstName, $p->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         '<i class="fa fa-dollar"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
@@ -82,6 +95,12 @@ if (count($notreg_rows) >= 15) {
     $notscroll = 1;
 } else {
     $notscroll = 0;
+}
+
+if (count($tag_rows) >= 15) {
+    $tagscroll = 1;
+} else {
+    $tagscroll = 0;
 }
 
 $disc_headers = ['Code', 'Count', 'Cost', 'CC Fee', 'Handle Fee', 'Net'];
@@ -140,6 +159,8 @@ if ($event->hasTracks && $event->isSymmetric) {
                 <li class=""><a href="#tab_content3" id="sessions-tab" data-toggle="tab"
                                 aria-expanded="false"><b>Session Registration</b></a></li>
             @endif
+            <li class=""><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
+                            aria-expanded="false"><b>Name Tag Data</b></a></li>
         </ul>
 
         <div id="tab-content" class="tab-content">
@@ -159,7 +180,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                 @if(count($notreg_rows)>0)
                     @include('v1.parts.datatable', ['headers' => $notreg_headers, 'data' => $notreg_rows, 'scroll' => $notscroll])
                 @else
-                    There are no interrupted registrations or wait listed registrations for this event at this time.
+                    There are no interrupted or wait listed registrations for this event at this time.
                 @endif
 
             </div>
@@ -189,13 +210,13 @@ if ($event->hasTracks && $event->isSymmetric) {
                             @endforeach
                         </tr>
                         @for($j=1;$j<=$event->confDays;$j++)
-                            <?php
+<?php
                             $z = EventSession::where([
                                 ['confDay', '=', $j],
                                 ['eventID', '=', $event->eventID]
                             ])->first();
                             $y = Ticket::find($z->ticketID);
-                            ?>
+?>
 
                             <tr>
                                 <th style="text-align:center; color: yellow; background-color: #2a3f54;"
@@ -204,7 +225,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                                 </th>
                             </tr>
                             @for($x=1;$x<=5;$x++)
-                                <?php
+<?php
                                 // Check to see if there are any events for $x (this row)
                                 $s = EventSession::where([
                                     ['eventID', $event->eventID],
@@ -213,18 +234,18 @@ if ($event->hasTracks && $event->isSymmetric) {
                                 ])->first();
 
                                 // As long as there are any sessions, the row will be displayed
-                                ?>
+?>
                                 @if($s !== null)
                                     <tr>
                                         @foreach($tracks as $track)
-                                            <?php
+<?php
                                             $s = EventSession::where([
                                                 ['trackID', $track->trackID],
                                                 ['eventID', $event->eventID],
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
-                                            ?>
+?>
                                             @if($s !== null)
                                                 @if($tracks->first() == $track || !$event->isSymmetric)
 
@@ -238,7 +259,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                                                 @endif
                                                 <td colspan="2" style="text-align:left; min-width:150px;
                                                         width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                                    <?php
+<?php
                                                     // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
                                                     $sTotal = 0;
                                                     $sRegs =
@@ -248,7 +269,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                                                                 ['er.eventID', $event->eventID]
                                                             ])->select(DB::raw('er.discountCode, count(*) as cnt'))
                                                             ->groupBy('er.discountCode')->get();
-                                                    ?>
+?>
                                                     <ul>
                                                         @foreach($sRegs as $sr)
                                                             <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
@@ -275,10 +296,19 @@ if ($event->hasTracks && $event->isSymmetric) {
 
                     </table>
 
-
                 </div>
             @endif
 
+            <div class="tab-pane fade" id="tab_content5" aria-labelledby="nametags-tab">
+                &nbsp;<br/>
+
+                @if(count($tag_rows)>0)
+                    @include('v1.parts.datatable', ['headers' => $tag_headers, 'data' => $tag_rows, 'scroll' => $tagscroll])
+                @else
+                    There are no attendees registered for this event at this time.
+                @endif
+
+            </div>
         </div>
     </div>
 
@@ -332,7 +362,7 @@ if ($event->hasTracks && $event->isSymmetric) {
             type: 'pie',
             data: {
                 labels: [
-                    @foreach($discPie as $d)
+                    @foreach($discountCounts as $d)
                             @if($d->discountCode == '' or $d->discountCode == ' ')
                         'N/A',
                     @elseif($d->discountCode == 'Total')
@@ -363,7 +393,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                     ],
 
                     data: [
-                        @foreach($discPie as $d)
+                        @foreach($discountCounts as $d)
                         @if($d->discountCode == 'Total')
                         @else
                         {{ $d->cnt }},

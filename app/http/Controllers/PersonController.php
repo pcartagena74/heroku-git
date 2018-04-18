@@ -131,7 +131,7 @@ class PersonController extends Controller
                          ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
                          ->select(DB::raw("person.prefix, person.firstName, person.midName, person.lastName, person.suffix,
                                             person.prefName, u.login, person.title, person.compName, person.indName,
-                                            person.experience, person.chapterRole, person.defaultOrgID, affiliation,
+                                            person.experience, person.chapterRole, person.defaultOrgID, person.affiliation, person.allergenInfo,
                 OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
                 date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
                     date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
@@ -178,7 +178,7 @@ class PersonController extends Controller
 
     public function update(Request $request, $id)
     {
-        // responds to PATCH /blah/id
+        // responds to POST /profile/{id} and is an AJAX call
         $personID = request()->input('pk');
 
         $name = request()->input('name');
@@ -187,42 +187,57 @@ class PersonController extends Controller
             list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
         }
         $value = request()->input('value');
+        $person = Person::find($personID);
+        $updater = auth()->user()->id;
 
         if ($name == 'login') {
             // when changing login we need to:
-            // 1. update user->login, user->email, and person->login with the new value
+            // 1. update user->login, user->email, and person->login with the new values
 
-            $user        = User::find($id);
-            $orig_email  = $user->login;
+            $user = User::find($id);
+            $orig_email = $user->login;
             $user->login = $value;
-            $user->name  = $value;
+            $user->name = $value;
             $user->email = $value;
             $user->save();
-
-            $person            = Person::find($id);
 
             // 2. trigger a notification to be sent to the old email address
             $person->notify(new LoginChange($person, $orig_email));
 
-            $person->login     = $value;
-            $person->updaterID = auth()->user()->id;
+            $person->login = $value;
+            $person->updaterID = $updater;
             $person->save();
 
-            $orig            = Email::where('emailADDR', '=', $orig_email)->first();
+            $orig = Email::where('emailADDR', '=', $orig_email)->first();
             $orig->isPrimary = 0;
+            $orig->updaterID = $updater;
             $orig->save();
 
             // 3. change the Email::isPrimary field on the old and new primary email (the one where email will be sent)
-            $new_email      = $value;
-            $new            = Email::where('emailADDR', '=', $new_email)->first();
+            $new_email = $value;
+            $new = Email::where('emailADDR', '=', $new_email)->first();
             $new->isPrimary = 1;
+            $new->updaterID = $updater;
             $new->save();
+
+        } elseif ($name == 'affiliation') {
+            $value = implode(",", (array)$value);
+            $person->affiliation = $value;
+            $person->updaterID = $updater;
+            $person->save();
+
+        } elseif ($name == 'allergenInfo') {
+            $value = implode(",", (array)$value);
+            $person->allergenInfo = $value;
+            $person->updaterID = $updater;
+            $person->save();
+
         } else {
-            $person            = Person::find($id);
             $person->{$name}   = $value;
             $person->updaterID = auth()->user()->id;
             $person->save();
         }
+        return json_encode(array('status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $personID));
     }
 
     public function undo_login(Person $person, $string)

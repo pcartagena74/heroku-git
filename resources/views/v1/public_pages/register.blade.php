@@ -48,8 +48,10 @@ if($event->eventTypeID == 5){ // This is a regional event so do that instead
     $array    = explode(',', $chapters->nearbyChapters);
 }
 
+$i = 0;
 foreach($array as $chap) {
-    $affiliation_array[$chap] = $chap;
+    $i++; $chap = trim($chap);
+    $affiliation_array[$i] = $chap;
 }
 
 // Determine if Early Bird Pricing should be in effect
