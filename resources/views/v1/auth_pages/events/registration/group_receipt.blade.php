@@ -38,7 +38,7 @@ if($event->eventTypeID == 5){ // This is a regional event so do that instead
 
 $i = 0;
 foreach($array as $chap) {
-    $i++;
+    $i++; $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 

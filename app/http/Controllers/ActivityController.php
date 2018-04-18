@@ -67,6 +67,7 @@ class ActivityController extends Controller
                              ->get()->sortBy('event.eventStartDate');
 
         $topBits = '';
+
         return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits'));
     }
 

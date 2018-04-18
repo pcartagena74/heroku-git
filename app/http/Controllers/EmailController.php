@@ -50,7 +50,7 @@ class EmailController extends Controller
         if ($this->currentPerson->personID == request()->input('personID')) {
             return redirect('/profile/my');
         } else {
-            return redirect("'/profile/" . request()->input('personID') . "'");
+            return redirect("/profile/" . request()->input('personID'));
         }
     }
 

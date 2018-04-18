@@ -26,7 +26,7 @@ if($event->eventTypeID == 5){ // This is a regional event so do that instead
 
 $i = 0;
 foreach($array as $chap) {
-    $i++;
+    $i++; $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 
@@ -561,7 +561,8 @@ if($event->isSymmetric && $event->hasTracks) {
 <?php
                     foreach($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
-} ?>
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });

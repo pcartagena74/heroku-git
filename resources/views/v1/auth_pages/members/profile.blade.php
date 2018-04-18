@@ -26,12 +26,15 @@ $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from 
 $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
 $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from `phone-type`");
 
+$allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
+$allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
+
 $chapters = DB::table('organization')->where('orgID', $profile->defaultOrgID)->select('regionChapters')->first();
 $array = explode(',', $chapters->regionChapters);
 
 $i = 0;
 foreach ($array as $chap) {
-    $i++;
+    $i++; $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 ?>
@@ -129,7 +132,7 @@ foreach ($array as $chap) {
                         <th style="text-align: left;">PM Experience</th>
                         <th style="text-align: left;">Chapter Role</th>
                         <th style="text-align: left;">Chapter Affiliation</th>
-                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;">Food Allergens</th>
                         <th style="text-align: left;"></th>
                     </tr>
                     <tr>
@@ -143,7 +146,7 @@ foreach ($array as $chap) {
                         <td style="text-align: left;">
                             <a href="#" id="affiliation" data-title="Chapter Affiliation">{{ $profile->affiliation }}</a>
                         </td>
-                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;"><a href="#" id="allergenInfo", data-tile="Food Allergens">{{ $profile->allergenInfo }}</a></td>
                         <td style="text-align: left;"></td>
                     </tr>
                     </tbody>
@@ -447,11 +450,11 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-                <?php
+<?php
                     if ($profile->experience <> "") {
                         echo("value: '$profile->experience',\n");
                     }
-                    ?>
+?>
                 source: [
                     {value: '1-4', text: '1-4 Years'},
                     {value: '5-9', text: '5-9 Years'},
@@ -466,17 +469,17 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-                <?php
+<?php
                     if ($profile->prefix <> "") {
                         echo("value: '$profile->prefix', \n");
                     }
-                    ?>
+?>
                 source: [
-                    <?php
+<?php
                     foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -515,17 +518,17 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-                <?php
+<?php
                     if ($profile->indName <> "") {
                         echo("value: '$profile->indName', \n");
                     }
-                    ?>
+?>
                 source: [
-                    <?php
+<?php
                     foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -558,11 +561,43 @@ foreach ($array as $chap) {
 
             $('#affiliation').editable({
                 type: 'checklist',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}',
                 value: '{{ $profile->affiliation }}',
+                success: function (response, data) {
+                    console.log(response);
+                    if(!response){
+                        alert('no response');
+                    }
+                    console.log(data);
+                },
+            {{--
+                success: function (response, data) {
+                    console.log(response);
+                    if(!response){
+                        alert('no response');
+                    }
+                    console.log(data);
+                },
+            --}}
                 source: [
 <?php
                     for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
+                    }
+?>
+                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                ]
+            });
+
+            $("#allergenInfo").editable({
+                type: 'checklist',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}',
+                source: [
+<?php
+                    foreach($allergen_array as $x) {
+                        $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
                     }
 ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
@@ -574,11 +609,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($addrTypes as $row) {
                         $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -591,11 +626,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($countries as $row) {
                         $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -606,11 +641,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($emailTypes as $row) {
                         $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -622,11 +657,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($phoneTypes as $row) {
                         $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });

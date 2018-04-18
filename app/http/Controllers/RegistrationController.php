@@ -117,8 +117,22 @@ class RegistrationController extends Controller
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
 
+        $discountCounts = DB::table('event-registration')
+            ->select(DB::raw('discountCode, count(origcost) as cnt'))
+            ->where([
+                ['eventID', '=', $event->eventID],
+                ['regStatus', '!=', 'pending'],
+                ['regStatus', '!=', 'In Progress'],
+                ['regStatus', '!=', 'Cancelled'],
+                ['regStatus', '!=', 'Wait List'],
+                ['regStatus', '!=', 'Canceled']
+            ])
+            ->whereNull('deleted_at')
+            ->groupBy('discountCode')
+            ->orderBy('cnt', 'desc')->get();
+        
         foreach ($discPie as $d) {
-            if ($d->discountCode == '' || $d->discountCode === null) {
+            if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
                 $d->discountCode = 'N/A';
             }
         }
@@ -146,9 +160,9 @@ class RegistrationController extends Controller
 
         if ($event->hasTracks) {
             $tracks = Track::where('eventID', $event->eventID)->get();
-            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refs', 'discPie', 'tracks'));
+            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refs', 'discPie', 'tracks', 'discountCounts'));
         } else {
-            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refs', 'discPie'));
+            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refs', 'discPie', 'discountCounts'));
         }
     }
 
