@@ -564,13 +564,6 @@ foreach ($array as $chap) {
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 value: '{{ $profile->affiliation }}',
-                success: function (response, data) {
-                    console.log(response);
-                    if(!response){
-                        alert('no response');
-                    }
-                    console.log(data);
-                },
             {{--
                 success: function (response, data) {
                     console.log(response);

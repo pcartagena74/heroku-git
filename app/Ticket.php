@@ -53,6 +53,7 @@ class Ticket extends Model
         return Registration::whereDate('updateDate', '>=', Carbon::now()->subWeek(1))
             ->whereIn('ticketID', $tickets)
             ->whereNull('deleted_at')
+            ->where('regStatus', '=', 'Processed')
             ->count();
 
     }

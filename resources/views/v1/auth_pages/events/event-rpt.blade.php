@@ -10,6 +10,11 @@ use App\RegFinance;
 use App\EventSession;
 use App\RegSession;
 
+/**
+ * To Do:
+ * 1. Past Event: show a tab that allows for registration confirmations & allows to add registrants (free events only)
+ * 2.
+ */
 $today = \Carbon\Carbon::now();
 $topBits = ''; // there should be topBits for this
 
@@ -31,22 +36,24 @@ $notreg_headers = ['RegID', 'Status', 'First Name', 'Last Name', 'Ticket', 'Code
 $reg_rows = []; $notreg_rows = []; $tag_rows = [];
 
 if($event->eventTypeID == 5) {
-    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Chapter', 'Role'];
+    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Chapter', 'Role', 'Food Allergens'];
     foreach($regs as $r){
         $p = Person::find($r->personID);
-        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel, $p->affiliation, $p->chapterRole]);
+        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel,
+                               $p->affiliation, $p->chapterRole, $p->allergenInfo]);
     }
 } else {
-    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Company', 'Title', 'Industry'];
+    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Company', 'Title', 'Industry', 'Food Allergens'];
     foreach($regs as $r){
         $p = Person::find($r->personID);
-        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel, $p->compName, $p->title, $p->indName]);
+        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel,
+                               $p->compName, $p->title, $p->indName, $p->allergenInfo]);
     }
 }
 
 foreach ($regs as $r) {
     $p = Person::find($r->personID);
-    $rf = \App\RegFinance::where('token', $r->token)->first();
+    $rf = RegFinance::where('token', $r->token)->first();
 
     $f='';
     if ($rf->cost > 0) {
@@ -75,7 +82,7 @@ foreach ($regs as $r) {
 
 foreach ($notregs as $r) {
     $p = Person::find($r->personID);
-    $rf = \App\RegFinance::where('token', $r->token)->first();
+    $rf = RegFinance::where('token', $r->token)->first();
 
     $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $rf->regID], 'data-toggle' => 'validator']);
     $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel this registration attempt.">';
@@ -303,7 +310,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                 &nbsp;<br/>
 
                 @if(count($tag_rows)>0)
-                    @include('v1.parts.datatable', ['headers' => $tag_headers, 'data' => $tag_rows, 'scroll' => $tagscroll])
+                    @include('v1.parts.datatable', ['headers' => $tag_headers, 'data' => $tag_rows, 'scroll' => $tagscroll, 'id' => 'nametags'])
                 @else
                     There are no attendees registered for this event at this time.
                 @endif
@@ -321,13 +328,16 @@ if ($event->hasTracks && $event->isSymmetric) {
     @if($scroll)
         @include('v1.parts.footer-datatable')
     @endif
-    @if(count($rows) > 15 || count($reg_rows) > 15)
+    @if(count($rows) > 15 || count($reg_rows) > 15 || count($tag_rows) > 15)
         <script>
             $(document).ready(function () {
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
                 });
                 $('#datatable-fixed-header').DataTable().search('').draw();
+                @if($tagscroll)
+                $('#nametags').DataTable().search('').draw();
+                @endif
             });
         </script>
     @endif
