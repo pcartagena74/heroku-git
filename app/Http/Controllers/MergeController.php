@@ -160,7 +160,7 @@ class MergeController extends Controller
     */
 
     /*
-     * store function
+     * store function for surviving model.  Should probably be update
      * @param: $letter
      * @param: $model1
      * @param: $model2

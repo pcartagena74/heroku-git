@@ -8,6 +8,9 @@
  * @param   $data       array of table data array
  * @param   $scroll     binary: 1 for 'generic_table' or 0 for 'datatable-fixed-header'  overrides
  *
+ * Optional override parameters:
+ * @param   $id         set a specific ID - good when multiple scrolling tables are needed
+ *
  */
 
 if(!isset($id)){
