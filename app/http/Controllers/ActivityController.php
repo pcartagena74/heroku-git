@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
 use App\Event;
+use App\Person;
 use App\RegFinance;
 use App\Registration;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Person;
 
 class ActivityController extends Controller
 {
@@ -152,7 +152,15 @@ class ActivityController extends Controller
     }
 
     public function show ($id) {
-        // responds to GET /blah/id
+        // responds to GET /activity/{id} where id = personID
+
+        $event_list = Event::join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
+           ->where('event-registration.personID', '=', $id)
+            ->selectRaw("distinct `org-event`.eventStartDate, `org-event`.eventName")
+            ->orderBy('org-event.eventStartDate','ASC')
+           ->get();
+        $html = view('v1.modals.activity_modal', compact('event_list'))->render();
+        return json_encode(array('html'=>$html));
     }
 
     public function networking (Request $request) {

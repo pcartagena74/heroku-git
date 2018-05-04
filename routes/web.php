@@ -139,6 +139,7 @@ Route::get('/mbrreport', 'ReportController@member_report')->name('member_report'
 Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete'); // Ajax
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
+Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');    // Ajax
 
 // Speaker Routes
 // ---------------------
@@ -178,6 +179,7 @@ Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
 Route::get('/eventcopy/{slug}', 'EventController@event_copy');
+Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');       // Ajax
 
 // Routes that circumvent AUTH and mCentric navigation, etc.
 Route::get('/eventlist/{orgID}/{etID}', 'EventController@listing');

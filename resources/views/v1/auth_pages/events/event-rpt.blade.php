@@ -36,17 +36,19 @@ $notreg_headers = ['RegID', 'Status', 'First Name', 'Last Name', 'Ticket', 'Code
 $reg_rows = []; $notreg_rows = []; $tag_rows = [];
 
 if($event->eventTypeID == 5) {
-    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Chapter', 'Role', 'Food Allergens'];
+    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Email', 'Ticket', 'Chapter', 'Role', 'Food Allergens'];
     foreach($regs as $r){
         $p = Person::find($r->personID);
-        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel,
+        array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
+                               $p->prefName, $p->lastName, $p->login, $r->ticket->ticketLabel,
                                $p->affiliation, $p->chapterRole, $p->allergenInfo]);
     }
 } else {
-    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Ticket', 'Company', 'Title', 'Industry', 'Food Allergens'];
+    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'Email', 'Ticket', 'Company', 'Title', 'Industry', 'Food Allergens'];
     foreach($regs as $r){
         $p = Person::find($r->personID);
-        array_push($tag_rows, [$r->regID, $p->prefName, $p->lastName, $r->ticket->ticketLabel,
+        array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
+                               $p->prefName, $p->lastName, $p->login, $r->ticket->ticketLabel,
                                $p->compName, $p->title, $p->indName, $p->allergenInfo]);
     }
 }

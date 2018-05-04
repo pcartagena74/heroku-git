@@ -19,7 +19,7 @@
             </div>
             <div id="dynamic-modal-body" class="modal-body">
                 <div class="container">
-                    <div class="panel-body">
+                    <div class="panel-body" id="modal-content">
 {{--                    Content goes here.                          --}}
 
                     </div>
@@ -31,3 +31,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $("#dynamic_modal").on("show.bs.modal", function(e){
+            var id = $(e.relatedTarget).data('target-id');
+            $.get("{!! env('APP_URL') !!}/activity/"+id, function(d){
+                var data = JSON.parse(d);
+                //console.log(data.html);
+                $("#modal-content").html(data.html);
+            });
+        });
+    });
+</script>
