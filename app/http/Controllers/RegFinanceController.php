@@ -774,7 +774,7 @@ class RegFinanceController extends Controller
         $person = Person::find($rf->personID);
         $org = Org::find($event->orgID);
 
-        return view('v1.auth_pages.events.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+        return view('v1.auth_pages.events.registration.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
     }
 
     public function destroy($id)
