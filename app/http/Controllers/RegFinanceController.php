@@ -12,6 +12,7 @@ use App\Registration;
 use Illuminate\Http\Request;
 use App\Org;
 use App\Person;
+use App\OrgPerson;
 use App\User;
 use App\Event;
 use App\Ticket;
