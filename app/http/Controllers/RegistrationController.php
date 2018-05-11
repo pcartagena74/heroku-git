@@ -258,6 +258,7 @@ class RegistrationController extends Controller
             $person->login = $checkEmail;
             if ($event->hasFood && $allergenInfo !== null) {
                 $person->allergenInfo = implode(",", (array)$allergenInfo);
+                $person->allergenNote = $eventNotes;
             }
             $person->affiliation = implode(",", $affiliation);
             $person->save();
@@ -344,6 +345,7 @@ class RegistrationController extends Controller
             if ($event->hasFood) {
                 if ($allergenInfo) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    $person->allergenNote = $eventNotes;
                 }
             }
             if ($affiliation) {
@@ -399,6 +401,7 @@ class RegistrationController extends Controller
             if ($event->hasFood) {
                 if ($allergenInfo) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    $person->allergenNote = $eventNotes;
                 }
             }
             if ($affiliation) {
@@ -426,6 +429,7 @@ class RegistrationController extends Controller
             $person->chapterRole = $chapterRole;
             if ($event->hasFood) {
                 $person->allergenInfo = implode(",", (array)$allergenInfo);
+                $person->allergenNote = $eventNotes;
             }
             $person->affiliation = implode(",", $affiliation);
             $person->creatorID = $this->currentPerson->personID;
@@ -540,6 +544,7 @@ class RegistrationController extends Controller
                 $person->login = $checkEmail;
                 if ($event->hasFood) {
                     $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    $person->allergenNote = $eventNotes;
                 }
                 $person->affiliation = implode(",", $affiliation);
                 $person->save();
@@ -614,6 +619,7 @@ class RegistrationController extends Controller
                 if ($event->hasFood) {
                     if ($allergenInfo) {
                         $person->allergenInfo = implode(",", (array)$allergenInfo);
+                        $person->allergenNote = $eventNotes;
                     }
                 }
                 if ($affiliation) {
@@ -663,6 +669,7 @@ class RegistrationController extends Controller
                 if ($event->hasFood) {
                     if ($allergenInfo) {
                         $person->allergenInfo = implode(",", (array)$allergenInfo);
+                        $person->allergenNote = $eventNotes;
                     }
                 }
                 if ($affiliation) {
@@ -770,9 +777,14 @@ class RegistrationController extends Controller
         }
         $value = request()->input('value');
 
-        // Because allergenInfo and Industry are reported in registrations and saved to the profile...
+        // Because allergenInfo, allergenNote (as eventNotes) and Industry are reported
+        // in registrations and saved to the profile...
         if ($name == 'allergenInfo' && $value !== null) {
             $value = implode(",", (array)$value);
+            $person->allergenInfo = $value;
+            $person->updaterID = $updater;
+            $person->save;
+        } elseif ($name == 'eventNotes') {
             $person->allergenInfo = $value;
             $person->updaterID = $updater;
             $person->save;

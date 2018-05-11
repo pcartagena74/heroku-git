@@ -132,8 +132,8 @@ foreach ($array as $chap) {
                         <th style="text-align: left;">PM Experience</th>
                         <th style="text-align: left;">Chapter Role</th>
                         <th style="text-align: left;">Chapter Affiliation</th>
-                        <th style="text-align: left;">Food Allergens</th>
-                        <th style="text-align: left;"></th>
+                        <th style="text-align: left;">Dietary Restrictions</th>
+                        <th style="text-align: left;">Restriction Comments</th>
                     </tr>
                     <tr>
                         <td style="text-align: left;">
@@ -146,8 +146,8 @@ foreach ($array as $chap) {
                         <td style="text-align: left;">
                             <a href="#" id="affiliation" data-title="Chapter Affiliation">{{ $profile->affiliation }}</a>
                         </td>
-                        <td style="text-align: left;"><a href="#" id="allergenInfo", data-tile="Food Allergens">{{ $profile->allergenInfo }}</a></td>
-                        <td style="text-align: left;"></td>
+                        <td style="text-align: left;"><a href="#" id="allergenInfo", data-tile="Dietary Restrictions">{{ $profile->allergenInfo }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="allergenNote", data-tile="Restriction Comments">{{ $profile->allergenNote }}</a></td>
                     </tr>
                     </tbody>
                 </table>
@@ -595,6 +595,12 @@ foreach ($array as $chap) {
 ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
+            });
+
+            $('#allergenNote').editable({
+                type: 'text',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}'
             });
 
             @for($j=1;$j<=$ad_cnt;$j++)
