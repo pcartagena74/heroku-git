@@ -749,7 +749,7 @@ class RegFinanceController extends Controller
             ],
             'region' => env('AWS_REGION'),
             'version' => 'latest',
-        ]);
+        ]);  
 
         $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
         $s3fs = new Filesystem($adapter);
