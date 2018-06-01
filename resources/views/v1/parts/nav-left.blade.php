@@ -83,9 +83,11 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                                 <li><a href="{{ env('APP_URL') }}/orgsettings">Custom Field Labels</a></li>
                                 <li><a href="{{ env('APP_URL') }}/eventdefaults">Event Defaults</a></li>
                                 @if(Entrust::hasRole('Developer'))
-                                    <li><a href="{{ env('APP_URL') }}/load_data">Upload Data</a></li>
+                                <li><a href="{{ env('APP_URL') }}/load_data">Upload Data</a></li>
                                 @endif
+                                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 <li><a href="{{ env('APP_URL') }}/role_mgmt">Roles & Permissions</a></li>
+                                @endif
                             </ul>
                         </li>
                     @endif
@@ -120,10 +122,12 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
                         <li><a><i class="fa fa-user"></i> Member Management<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/members" id="mem">Member List</a></li>
+                                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 <li><a href="{{ env('APP_URL') }}/merge/p">Merge Members <span
                                                 class="label label-success pull-right">New</span></a></li>
+                                @endif
                                 <li><a href="{{ env('APP_URL') }}/mbrreport">Member Report</a>
-                                    <span class="label label-success pull-right">IN DEV</span>
+                                    <span class="label label-success pull-right">NEW</span>
                                 </li>
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                     <li><a href="{{ env('APP_URL') }}/force">Change Password</a></li>
