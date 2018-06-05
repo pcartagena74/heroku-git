@@ -733,7 +733,7 @@ class RegFinanceController extends Controller
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
-        $pdf = PDF::loadView('v1.auth_pages.events.group_receipt', $x)
+        $pdf = PDF::loadView('v1.auth_pages.events.registration.group_receipt', $x)
             ->setOption('disable-javascript', false)
             ->setOption('javascript-delay', 20)
             ->setOption('encoding', 'utf-8');

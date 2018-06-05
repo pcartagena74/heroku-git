@@ -56,7 +56,7 @@ foreach($array as $chap) {
 
 // Determine if Early Bird Pricing should be in effect
 $today = Carbon\Carbon::now();
-if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)){
+if($ticket->valid_earlyBird()){
     $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
 } else {

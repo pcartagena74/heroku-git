@@ -95,7 +95,7 @@ $soldout = 0;
         <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
             Category: {{ $category->catTXT }}</div>
 
-        @if($event->earlyBirdDate !== null && $event->earlyBirdDate->gte($today))
+        @if($event->valid_earlyBird())
             <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
                 <div class="col-md-2 col-sm-2 col-xs-2">
                     <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
@@ -172,7 +172,7 @@ $soldout = 0;
                                         @endif
                                     </td>
                                     <td data-title="Member Price"><i class="fa fa-dollar"></i>
-                                        @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
+                                        @if($bundle->valid_earlyBird())
                                             <strike style="color:red;">{{ number_format($bundle->memberBasePrice, 2, '.', ',') }}</strike>
                                             <br>
                                             <i class="fa fa-dollar"></i>
@@ -182,7 +182,7 @@ $soldout = 0;
                                         @endif
                                     </td>
                                     <td data-title="Non-Member Price"><i class="fa fa-dollar"></i>
-                                        @if(($bundle->earlyBirdEndDate !== null) && $bundle->earlyBirdEndDate->gt($today))
+                                        @if($bundle->valid_earlyBird())
                                             <strike style="color:red;">{{ number_format($bundle->nonmbrBasePrice, 2, '.', ',') }}</strike>
                                             <br>
                                             <i class="fa fa-dollar"></i>
@@ -206,7 +206,7 @@ $soldout = 0;
                                         @endif
                                     </td>
                                     <td data-title="Member Price"><i class="fa fa-dollar"></i>
-                                        @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
+                                        @if($ticket->valid_earlyBird())
                                             <strike style="color:red;">{{ number_format($ticket->memberBasePrice, 2, '.', ',') }}</strike>
                                             <br>
                                             <i class="fa fa-dollar"></i>
@@ -217,7 +217,7 @@ $soldout = 0;
                                     </td>
                                     <td data-title="Non-Member Price">
                                         <i class="fa fa-dollar"></i>
-                                        @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
+                                        @if($ticket->valid_earlyBird())
                                             <strike style="color:red;">{{ number_format($ticket->nonmbrBasePrice, 2, '.', ',') }}</strike>
                                             <br>
                                             <i class="fa fa-dollar"></i>
@@ -307,7 +307,7 @@ $soldout = 0;
                                     </tr>
 
                                     @for($x=1;$x<=5;$x++)
-                                        <?php
+<?php
                                         // Check to see if there are any events for $x (this row)
                                         $check = EventSession::where([
                                             ['eventID', $event->eventID],
@@ -316,18 +316,18 @@ $soldout = 0;
                                         ])->first();
 
                                         // As long as there are any sessions, the row will be displayed
-                                        ?>
+?>
                                         @if($check !== null)
                                             <tr>
                                                 @foreach($tracks as $track)
-                                                    <?php
+<?php
                                                     $s = EventSession::where([
                                                         ['trackID', $track->trackID],
                                                         ['eventID', $event->eventID],
                                                         ['confDay', $i],
                                                         ['order', $x]
                                                     ])->first();
-                                                    ?>
+?>
                                                     @if($s !== null)
                                                         @if($tracks->first() == $track || !$event->isSymmetric)
                                                             <td data-title="Times" rowspan="3" style="text-align:left;">

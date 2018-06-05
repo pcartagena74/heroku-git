@@ -51,8 +51,8 @@ $default = Org::find($event->orgID);
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>
-        If you need to create a "bundle" ticket, do so after adding all other non-bundle tickets.<br/>
-        <b style="color:red;">Note:</b> Creating additional tickets is typically only necessary for PD Day Events.
+        If you need to create a "bundle" ticket, do so after adding all of its component (non-bundle) tickets.<br/>
+        <b style="color:red;">Note:</b> Creating additional tickets is typically only necessary for Professional Development Day events.
     </p>
 
     <table id="ticket_table" class="table table-striped dataTable">
@@ -76,6 +76,10 @@ $default = Org::find($event->orgID);
             <th style="width: 20%">
                 Max Attendees
                 @include('v1.parts.tooltip', ['title' => "Set to 0 if there is no maximum."])
+            </th>
+            <th style="width: 20%">
+                Suppress?
+                @include('v1.parts.tooltip', ['title' => "Change to 'Yes' if this component ticket should NOT be individually purchasable."])
             </th>
         </tr>
         </thead>
@@ -141,6 +145,10 @@ $default = Org::find($event->orgID);
                 <td><a href="#" id="maxAttendees{{ $tc }}" data-value="{{ $ticket->maxAttendees }}"
                        data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->maxAttendees }}</a>
+                </td>
+                <td><a href="#" id="isSuppressed{{ $tc }}" data-value="{{ $ticket->isSuppressed }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                       data-pk="{{ $ticket->ticketID }}"></a>
                 </td>
             </tr>
         @endforeach
@@ -313,7 +321,7 @@ $default = Org::find($event->orgID);
 
     @for ($i = 1; $i <= $tc; $i++)
 
-            $("#ticketLabel{{ $i }}").editable({type: 'text'});
+        $("#ticketLabel{{ $i }}").editable({type: 'text'});
         $("#availabilityEndDate{{ $i }}").editable({
             type: 'combodate',
             combodate: {
@@ -337,11 +345,21 @@ $default = Org::find($event->orgID);
         $('#memberBasePrice{{ $i }}').editable({type: 'text'});
         $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
         $('#maxAttendees{{ $i }}').editable({type: 'text'});
+
+        $('#isSuppressed{{ $i }}').editable({
+            type: 'select',
+            // autotext: auto,
+            source: [
+                { value: 0, text: 'No'},
+                { value: 1, text: 'Yes'}
+            ]
+        });
+
         @endfor
 
         @for ($i = $tc + 1; $i <= $tc + $bc; $i++)
 
-            $("#ticketLabel{{ $i }}").editable({type: 'text'});
+        $("#ticketLabel{{ $i }}").editable({type: 'text'});
         $('#availabilityEndDate{{ $i }}').editable({
             type: 'combodate',
             combodate: {
@@ -368,7 +386,6 @@ $default = Org::find($event->orgID);
         $('#earlyBirdPercent{{ $i }}').editable({type: 'text'});
         $('#memberBasePrice{{ $i }}').editable({type: 'text'});
         $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
-
         @endfor
     });
 </script>

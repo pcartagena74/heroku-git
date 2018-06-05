@@ -54,4 +54,13 @@ class Event extends Model
             ->select('eventID')
             ->get();
     }
+
+    public function valid_earlyBird() {
+        $today = \Carbon\Carbon::now();
+        if($this->earlyBirdDate !== null && $this->earlyBirdDate->gte($today)){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

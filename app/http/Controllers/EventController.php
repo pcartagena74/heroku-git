@@ -200,6 +200,7 @@ class EventController extends Controller
         $tickets =
             Ticket::where([
                 ['isaBundle', 0],
+                ['isSuppressed', 0],
                 ['isDeleted', 0],
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
