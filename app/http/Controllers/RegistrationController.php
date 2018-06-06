@@ -492,6 +492,8 @@ class RegistrationController extends Controller
         }
         $reg->save();
 
+        $start_reg = $reg->regID;
+
         // ----------------------------------------------------------
 
         for ($i = 2; $i <= $quantity; $i++) {
@@ -717,7 +719,7 @@ class RegistrationController extends Controller
         // ----------------------------------------------------------
         if ($subcheck != $total) {
             request()->session()->flash('alert-warning', "Something funky happened with the math. 
-                Don't hack the form!  subcheck: $subcheck, total: $total");
+                The form may have been inadvertantly hacked.  subcheck: $subcheck, total: $total");
             return Redirect::back()->withErrors();
 //                ['warning' => "Something funky happened with the math.  Don't hack the form!  subcheck: $subcheck, total: $total"]);
         } else {
@@ -743,6 +745,16 @@ class RegistrationController extends Controller
                 $rf->status = 'Wait List';
             }
             $rf->save();
+
+            // This is the attempt to repair the parent/child relationship between
+            // event-registration and reg-finance prior to overhaul
+            
+            for ($i = 1; $i <= $quantity; $i++) {
+                $start_reg = $start_reg + $i - 1;
+                $reg = Registration::find($start_reg);
+                $reg->rfID = $rf->regID;
+                $reg->save();
+            }
 
             // Everything is saved and updated and such, now display the data back for review
             return redirect('/confirm_registration/' . $reg->regID);
