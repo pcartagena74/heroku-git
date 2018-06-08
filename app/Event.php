@@ -63,4 +63,17 @@ class Event extends Model
             return 0;
         }
     }
+
+    public function ok_to_display() {
+        $today = \Carbon\Carbon::now();
+        $max = Ticket::select('availabilityEndDate')
+            ->where('eventID', $this->eventID)
+            ->orderBy('availabilityEndDate', 'desc')
+            ->first();
+        if($this->isActive && $max->availabilityEndDate->gte($today)){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }
