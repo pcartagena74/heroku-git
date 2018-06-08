@@ -748,7 +748,7 @@ class RegistrationController extends Controller
 
             // This is the attempt to repair the parent/child relationship between
             // event-registration and reg-finance prior to overhaul
-            
+
             for ($i = 1; $i <= $quantity; $i++) {
                 $start_reg = $start_reg + $i - 1;
                 $reg = Registration::find($start_reg);

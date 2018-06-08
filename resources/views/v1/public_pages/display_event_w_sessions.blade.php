@@ -78,7 +78,7 @@ $soldout = 0;
 ?>
 @extends('v1.layouts.no-auth')
 
-@if($event->isActive)
+@if($event->ok_to_display())
 @section('content')
     @include('v1.parts.not-table_header')
     <style>
@@ -591,6 +591,6 @@ $soldout = 0;
 @endsection
 @else
 @section('content')
-    This event is inactive.
+    This event is no longer active.
 @endsection
 @endif
