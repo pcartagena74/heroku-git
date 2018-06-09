@@ -36,38 +36,58 @@ $notreg_headers = ['RegID', 'Status', 'First Name', 'Last Name', 'Ticket', 'Code
 $reg_rows = []; $notreg_rows = []; $tag_rows = [];
 
 if($event->eventTypeID == 5) {
-    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'First Time', 'Email', 'Ticket', 'Chapter', 'Role', 'Food Allergens'];
+    if($event->hasFood){
+        $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'First Time', 'Email', 'Ticket', 'Code', 'Chapter', 'Role', 'Food Allergens'];
+    } else {
+        $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'First Time', 'Email', 'Ticket', 'Code', 'Chapter', 'Role'];
+    }
     foreach($regs as $r){
         $p = Person::find($r->personID);
-        if(strpos($p->allergenInfo, 'Other') !== false){
-            if($p->allergenNote !== null){
-                $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+        if($event->hasFood){
+            if(strpos($p->allergenInfo, 'Other') !== false){
+                if($p->allergenNote !== null){
+                    $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+                } else {
+                    $allergies = $p->allergenInfo;
+                }
             } else {
                 $allergies = $p->allergenInfo;
             }
+            array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
+                $p->prefName, $p->lastName, $r->isFirstEvent==1?"Yes":"No", $p->login, $r->ticket->ticketLabel,
+                $r->discountCode, $p->affiliation, $p->chapterRole, $allergies]);
         } else {
-            $allergies = $p->allergenInfo;
+            array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
+                $p->prefName, $p->lastName, $r->isFirstEvent==1?"Yes":"No", $p->login, $r->ticket->ticketLabel,
+                $r->discountCode, $p->affiliation, $p->chapterRole]);
         }
-        array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
-                               $p->prefName, $p->lastName, $r->isFirstEvent==1?"Yes":"No", $p->login, $r->ticket->ticketLabel,
-                               $p->affiliation, $p->chapterRole, $allergies]);
     }
 } else {
-    $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'First Time', 'Email', 'Ticket', 'Company', 'Title', 'Industry', 'Food Allergens'];
+    if($event->hasFood){
+        $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'First?', 'Email', 'Ticket', 'Code', 'Company', 'Title', 'Industry', 'Food Allergens'];
+    } else {
+        $tag_headers = ['RegID', 'Pref Name', 'Last Name', 'First?', 'Email', 'Ticket', 'Code', 'Company', 'Title', 'Industry'];
+    }
     foreach($regs as $r){
         $p = Person::find($r->personID);
-        if(strpos($p->allergenInfo, 'Other') !== false){
-            if($p->allergenNote !== null){
-                $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+        if($event->hasFood){
+            if(strpos($p->allergenInfo, 'Other') !== false){
+                if($p->allergenNote !== null){
+                    $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+                } else {
+                    $allergies = $p->allergenInfo;
+                }
             } else {
                 $allergies = $p->allergenInfo;
             }
+            array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
+                $p->prefName, $p->lastName, $r->isFirstEvent==1?"Yes":"No", $p->login, $r->ticket->ticketLabel,
+                $r->discountCode, $p->compName, $p->title, $p->indName, $allergies]);
         } else {
-            $allergies = $p->allergenInfo;
+            array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
+                $p->prefName, $p->lastName, $r->isFirstEvent==1?"Yes":"No", $p->login, $r->ticket->ticketLabel,
+                $r->discountCode, $p->compName, $p->title, $p->indName]);
         }
-        array_push($tag_rows, ["<a href='". env('APP_URL') . "/profile/". $p->personID . "'>" . $r->regID . "</a>",
-                               $p->prefName, $p->lastName, $r->isFirstEvent==1?"Yes":"No", $p->login, $r->ticket->ticketLabel,
-                               $p->compName, $p->title, $p->indName, $allergies]);
     }
 }
 
