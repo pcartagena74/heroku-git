@@ -101,6 +101,9 @@ class RegistrationController extends Controller
             ['isaBundle', '=', 0]
         ])->get();
 
+        /*
+         * transformed to use event-registration, not reg-finance due to seat multiplication logic failure
+         *
         $discPie = DB::table('reg-finance')
             ->select(DB::raw('discountCode, sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
@@ -116,9 +119,12 @@ class RegistrationController extends Controller
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
+        */
 
-        $discountCounts = DB::table('event-registration')
-            ->select(DB::raw('discountCode, count(origcost) as cnt'))
+        $discPie = DB::table('event-registration')
+            ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
+                                    sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
                 ['regStatus', '!=', 'pending'],
@@ -130,13 +136,31 @@ class RegistrationController extends Controller
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
-        
+
+        $discountCounts = DB::table('event-registration')
+            ->select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
+                                    sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
+            ->where([
+                ['eventID', '=', $event->eventID],
+                ['regStatus', '!=', 'pending'],
+                ['regStatus', '!=', 'In Progress'],
+                ['regStatus', '!=', 'Cancelled'],
+                ['regStatus', '!=', 'Wait List'],
+                ['regStatus', '!=', 'Canceled']
+            ])
+            ->whereNull('deleted_at')
+            ->groupBy('discountCode')
+            ->orderBy('cnt', 'desc')->get();
+
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
                 $d->discountCode = 'N/A';
             }
         }
 
+        /*
+         * transformed to use event-registration, not reg-finance due to seat multiplication logic failure
+         *
         $total = DB::table('reg-finance')
             ->select(DB::raw('"discountCode", sum(seats) as cnt, sum(orgAmt) as orgAmt,
                                        sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
@@ -148,6 +172,22 @@ class RegistrationController extends Controller
                 ['status', '!=', 'Wait List'],
                 ['status', '!=', 'Cancelled'],
                 ['status', '!=', 'Canceled']
+            ])
+            ->whereNull('deleted_at')
+            ->first();
+        */
+
+        $total = DB::table('event-registration')
+            ->select(DB::raw('"discountCode", count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
+                                    sum(ccFee) as ccFee, sum(subtotal) as cost'))
+            ->where([
+                ['eventID', '=', $event->eventID],
+                ['regStatus', '!=', 'pending'],
+                ['regStatus', '!=', 'In Progress'],
+                ['regStatus', '!=', 'Wait List'],
+                ['regStatus', '!=', 'Cancelled'],
+                ['regStatus', '!=', 'Canceled']
             ])
             ->whereNull('deleted_at')
             ->first();

@@ -19,6 +19,14 @@ use App\Ticket;
 use App\RegFinance;
 use App\Location;
 use Stripe\Stripe;
+use Stripe\Charge;
+use Stripe\Customer;
+use Stripe\Error\Base;
+use Stripe\Error\Card;
+use Stripe\Error\InvalidRequest;
+use Stripe\Error\ApiConnection;
+use Stripe\Error\Authentication;
+use Stripe\Error\Permission;
 use Illuminate\Support\Facades\DB;
 use App\Track;
 use App\Bundle;
@@ -275,19 +283,22 @@ class RegFinanceController extends Controller
                         'description' => "$org->orgName Event Registration: $event->eventName",
                         'customer' => $user->stripe_id,
                     ));
-                } catch(\Stripe\Error\Card $e) {
+                } catch(Card $e) {
                     request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
                     return back()->withInput();
-                } catch(\Stripe\Error\InvalidRequest $e) {
+                } catch(InvalidRequest $e) {
                     request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
                     return back()->withInput();
-                } catch(\Stripe\Error\Authentication $e) {
+                } catch(Authentication $e) {
                     request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
                     return back()->withInput();
-                } catch(\Stripe\Error\ApiConnection $e) {
+                } catch(ApiConnection $e) {
                     request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
                     return back()->withInput();
-                } catch(\Stripe\Error\Base $e) {
+                } catch(Permission $e) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                    return back()->withInput();
+                } catch(Base $e) {
                     request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
                     return back()->withInput();
                 } catch(\Exception $e) {

@@ -147,7 +147,7 @@ foreach ($array as $chap) {
                             <a href="#" id="affiliation" data-title="Chapter Affiliation">{{ $profile->affiliation }}</a>
                         </td>
                         <td style="text-align: left;"><a href="#" id="allergenInfo", data-tile="Dietary Restrictions">{{ $profile->allergenInfo }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="allergenNote", data-tile="Restriction Comments">{{ $profile->allergenNote }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="allergenNote", data-tile="Dietary Notes">{{ $profile->allergenNote }}</a></td>
                     </tr>
                     </tbody>
                 </table>
