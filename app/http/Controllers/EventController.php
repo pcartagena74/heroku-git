@@ -161,7 +161,7 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
     }
 
-    public function show($param)
+    public function show($param, $override = null)
     {
         // responds to GET /events/{param}
         // $param is either an ID or slug
@@ -205,8 +205,15 @@ class EventController extends Controller
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
 
-        if ($event->hasTracks > 0) {
-            $tracks = Track::where('eventID', $event->eventID)->get();
+        $tracks = Track::where('eventID', $event->eventID)->get();
+
+        return view(
+            'v1.public_pages.display_event_w_sessions',
+            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks',
+                    'currentOrg', 'override'));
+
+        if (0) {
+        //if ($event->hasTracks > 0) {
             return view(
                 'v1.public_pages.display_event_w_sessions',
                 compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg')

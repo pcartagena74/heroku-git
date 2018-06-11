@@ -58,7 +58,7 @@ Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_i
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');
 
 // Public Event-related Routes
-Route::get('/events/{eventslug}', 'EventController@show')->name('display_event');
+Route::get('/events/{eventslug}/{override?}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
 
