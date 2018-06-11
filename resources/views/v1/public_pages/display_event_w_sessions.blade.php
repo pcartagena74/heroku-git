@@ -23,21 +23,22 @@ $category = DB::table('event-category')->where([
 // 3. Calculate new price and display
 
 $today = Carbon\Carbon::now();
-
-if ($event->isSymmetric) {
-    $columns = ($event->hasTracks * 2) + 1;
-    $width = (integer)85 / $event->hasTracks;
-    $mw = (integer)90 / $event->hasTracks;
-} else {
-    $columns = $event->hasTracks * 3;
-    $width = (integer)80 / $event->hasTracks;
-    $mw = (integer)85 / $event->hasTracks;
+if($event->hasTracks){
+    if ($event->isSymmetric) {
+        $columns = ($event->hasTracks * 2) + 1;
+        $width = (integer)85 / $event->hasTracks;
+        $mw = (integer)90 / $event->hasTracks;
+    } else {
+        $columns = $event->hasTracks * 3;
+        $width = (integer)80 / $event->hasTracks;
+        $mw = (integer)85 / $event->hasTracks;
+    }
 }
 
 // This is a rejiggering of the order by which tracks/sessions could be displayed.
 // I don't think I ever made use of it.
 //
-if (!$event->isSymmetric) {
+if ($event->hasTracks && !$event->isSymmetric) {
     $mda = array('days' => $event->confDays, 'sym' => $event->isSymmetric, 'tracks' => count($tracks));
     for ($d = 1; $d <= $event->confDays; $d++) {
         $t = 0;
@@ -75,10 +76,12 @@ $s3fs = new Filesystem($adapter);
 $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
 
 $soldout = 0;
+
+$mbr_price = 'Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.';
 ?>
 @extends('v1.layouts.no-auth')
 
-@if($event->ok_to_display())
+@if($event->ok_to_display() || $override)
 @section('content')
     @include('v1.parts.not-table_header')
     <style>
@@ -106,6 +109,8 @@ $soldout = 0;
                 </div>
             </div>
         @endif
+
+        @if($event->hasTracks)
         <div class="col-md-12 col-sm-12 col-xs-12">
             <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
                 <li class="active"><a href="#tab_content1" id="ticketing-tab" data-toggle="tab"
@@ -116,13 +121,18 @@ $soldout = 0;
             <div id="tab-content" class="tab-content">
                 <div class="tab-pane active" id="tab_content1" aria-labelledby="ticketing-tab">
                     <br/>
+        @else
+            <div class="col-md-12 col-sm-12 col-xs-12">
+        @endif
 
                     <div id="not" class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                         <table id="datatable" class="table table-striped jambo_table">
                             <thead id="cf">
                             <tr>
                                 <th style="width: 40%" colspan="2">Ticket</th>
-                                <th style="width: 20%">PMI Member Cost<SUP style="color: red">*</SUP></th>
+                                <th style="width: 20%">PMI Member Cost
+                                    @include('v1.parts.tooltip', ['title' => $mbr_price, 'c' => 'text-warning'])
+                                </th>
                                 <th style="width: 20%">Non-Member Cost</th>
                                 <th style="width: 20%">Available Until</th>
                             </tr>
@@ -140,7 +150,10 @@ $soldout = 0;
                                         </div>
                                     </td>
                                     <td data-title="Ticket">
-                                        {{ $bundle->ticketLabel }}<SUP style='color: red'>**</SUP>
+                                        {{ $bundle->ticketLabel }}
+                                        @include('v1.parts.tooltip',
+                                        ['title' => "Bundles include multiple tickets so you do not need to manually purchase multiple tickets.",
+                                         'c' => 'text-danger'])
 <?php
                                         $b_tkts = DB::table('event-tickets')
                                             ->join('bundle-ticket', function ($join) use ($bundle) {
@@ -259,8 +272,6 @@ $soldout = 0;
                     </div>
 
                     &nbsp;<br/>
-                    <SUP style="color: red">*</SUP> Member pricing is applied automatically when you are 1)
-                    logged in and 2) have a PMI ID associated with your account.<br/>
                     <SUP style='color: red'>**</SUP>Bundles include multiple tickets so you do not have to
                     manually purchase multiple tickets.
 
@@ -268,6 +279,8 @@ $soldout = 0;
                         @include('v1.parts.error')
                     @endif
                 </div>
+
+                @if($event->hasTracks)
                 <div class="tab-pane fade" id="tab_content2" aria-labelledby="sessions-tab">
                     <br/>
 
@@ -453,6 +466,7 @@ $soldout = 0;
                 </div>
             </div>
         </div>
+                @endif
     </div>
     {!! Form::close() !!}
     @include('v1.parts.end_content')
@@ -461,7 +475,7 @@ $soldout = 0;
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <table class="table" style="border: none;">
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h4>From:</h4></td>
+                <td style="text-align: right; border: none;"><h4 class="red">From:</h4></td>
                 <td style="border: none;">
                     <nobr>
                         <h4>{{ $event->eventStartDate->format('n/j/Y') }}</h4>
@@ -472,7 +486,7 @@ $soldout = 0;
                 </td>
             </tr>
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h4>To:</h4></td>
+                <td style="text-align: right; border: none;"><h4 class="red">To:</h4></td>
                 <td style="border: none;">
                     <nobr>
                         <h4>{{ $event->eventEndDate->format('n/j/Y') }}</h4>
@@ -496,7 +510,7 @@ $soldout = 0;
                         marginheight="0" marginwidth="0"
                         src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&output=embed"></iframe>
             </div>
-            {{ $event_loc->locName }}<br>
+            <b>{{ $event_loc->locName }}</b><br>
             {{ $event_loc->addr1 }}<br>{!! $event_loc->addr2 !!}
             @if($event_loc->addr2)
                 <br>
