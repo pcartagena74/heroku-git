@@ -251,7 +251,7 @@ class RegFinanceController extends Controller
         }
 
         // user can hit "at door" or "credit" buttons.
-        // if the cost is $0, the pay button won't show on the form
+        // if the cost is $0, the 'pay with card' button won't show on the form
 
         if ($rf->status != 'Processed') {
             // if cost > $0 AND payment details were given ($stripeToken isset),
@@ -265,12 +265,20 @@ class RegFinanceController extends Controller
                 $stripeTokenType = $request->input('stripeTokenType');
                 Stripe::setApiKey(env('STRIPE_SECRET'));
 
-                // Check if a customer id exists, and retrieve or create
-                if (!$user->stripe_id) {
+                // Get customer handle for this transaction
+                try {
                     $customer = \Stripe\Customer::create(array(
                         'email' => $user->email,
                         'source' => $stripeToken,
                     ));
+                } catch (\Exception $exception){
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    return back()->withInput();
+                }
+
+                // If customer handle is different from a saved stripe_id (or stripe_id is null)
+                if ($user->stripe_id != $customer->id) {
+                    // Save the customer data as we'll always save the latest info
                     $user->stripeEmail = $customer->email;
                     $user->stripe_id = $customer->id;
                     $user->save();
@@ -283,26 +291,26 @@ class RegFinanceController extends Controller
                         'description' => "$org->orgName Event Registration: $event->eventName",
                         'customer' => $user->stripe_id,
                     ));
-                } catch(Card $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(Card $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
-                } catch(InvalidRequest $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(InvalidRequest $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
-                } catch(Authentication $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(Authentication $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
-                } catch(ApiConnection $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(ApiConnection $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
-                } catch(Permission $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(Permission $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
-                } catch(Base $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(Base $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
-                } catch(\Exception $e) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $e->getMessage());
+                } catch(\Exception $exception) {
+                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
                     return back()->withInput();
                 }
                 $rf->stripeChargeID = $charge->id;
