@@ -14,13 +14,19 @@ function truncate_saw($string, $limit, $break = ".", $pad = "...") {
     return $string;
 }
 
+if($etID == 99){
+    $event_tag = 'All Events';
+} else {
+    $event_tag = $tag->etName;
+}
+
 ?>
 @extends('v1.layouts.no-auth_no-nav_simple')
 @section('content')
     @if($cnt > 0)
     <table class="table table-bordered table-striped condensed jambo_table" width="100%" id="eventlisting">
         <thead>
-        <tr><td><b>{{ $org->orgName }} Events tagged as '{{ $tag->etName }}'</b></td></tr>
+        <tr><td><b>{{ $org->orgName }} Events tagged as '{{ $event_tag }}'</b></td></tr>
         </thead>
         <tbody>
         @foreach($events as $e)
