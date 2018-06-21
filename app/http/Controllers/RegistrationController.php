@@ -73,22 +73,42 @@ class RegistrationController extends Controller
     /**
      * Shows a report of registrations for a specific event
      *
-     * @param $param: the slug or eventID for an event
+     * @param $param : the slug or eventID for an event
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($param)
     {
         // Responds to GET /eventreport/{slug]
-        $event = Event::where('eventID', '=', $param)
-            ->orWhere('slug', '=', $param)
-            ->firstOrFail();
 
+        try {
+            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function ($query) use ($param) {
+                    return $query->where('eventID', $param);
+                },
+                function ($query) use ($param) {
+                    return $query->where('slug', $param);
+                }
+            )->firstOrFail();
+        } catch (\Exception $exception) {
+            $message = "The event ID used is not valid.";
+            return view('v1.public_pages.error_display', compact('message'));
+        }
+
+        // list of attendees who have registered, including payment pendings so they are listed everywhere needed
         $regs = Registration::where('eventID', '=', $event->eventID)
             ->where(function ($q) {
                 $q->where('regStatus', '=', 'Active')
-                    ->orWhere('regStatus', '=', 'Processed');
-            })->with('regfinance', 'ticket')->get();
+                    ->orWhere('regStatus', '=', 'Processed')
+                    ->orWhere('regStatus', '=', 'Payment Pending');
+            })->with('regfinance', 'ticket', 'person')->get();
 
+        // list of attendees who are payment pendings so they are displayed separately
+        $deadbeats = Registration::where([
+            ['eventID', '=', $event->eventID],
+            ['regStatus', '=', 'Payment Pending'],
+            ])->with('regfinance', 'ticket')->get();
+
+        // list of wait-listed or interrupted registrations
         $notregs = Registration::where('eventID', '=', $event->eventID)
             ->where(function ($q) {
                 $q->where('regStatus', '=', 'Wait List')
@@ -101,37 +121,13 @@ class RegistrationController extends Controller
             ['isaBundle', '=', 0]
         ])->get();
 
-        /*
-         * transformed to use event-registration, not reg-finance due to seat multiplication logic failure
-         *
-        $discPie = DB::table('reg-finance')
-            ->select(DB::raw('discountCode, sum(seats) as cnt, sum(orgAmt) as orgAmt,
-                                       sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
-                                       sum(ccFee) as ccFee, sum(cost) as cost'))
-            ->where([
-                ['eventID', '=', $event->eventID],
-                ['status', '!=', 'pending'],
-                ['status', '!=', 'In Progress'],
-                ['status', '!=', 'Cancelled'],
-                ['status', '!=', 'Wait List'],
-                ['status', '!=', 'Canceled']
-            ])
-            ->whereNull('deleted_at')
-            ->groupBy('discountCode')
-            ->orderBy('cnt', 'desc')->get();
-        */
-
         $discPie = DB::table('event-registration')
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '!=', 'pending'],
-                ['regStatus', '!=', 'In Progress'],
-                ['regStatus', '!=', 'Cancelled'],
-                ['regStatus', '!=', 'Wait List'],
-                ['regStatus', '!=', 'Canceled']
+                ['regStatus', '=', 'Processed']
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -142,11 +138,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '!=', 'pending'],
-                ['regStatus', '!=', 'In Progress'],
-                ['regStatus', '!=', 'Cancelled'],
-                ['regStatus', '!=', 'Wait List'],
-                ['regStatus', '!=', 'Canceled']
+                ['regStatus', '=', 'Processed']
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -158,36 +150,13 @@ class RegistrationController extends Controller
             }
         }
 
-        /*
-         * transformed to use event-registration, not reg-finance due to seat multiplication logic failure
-         *
-        $total = DB::table('reg-finance')
-            ->select(DB::raw('"discountCode", sum(seats) as cnt, sum(orgAmt) as orgAmt,
-                                       sum(discountAmt) as discountAmt, sum(handleFee) as  handleFee,
-                                       sum(ccFee) as ccFee, sum(cost) as cost'))
-            ->where([
-                ['eventID', '=', $event->eventID],
-                ['status', '!=', 'pending'],
-                ['status', '!=', 'In Progress'],
-                ['status', '!=', 'Wait List'],
-                ['status', '!=', 'Cancelled'],
-                ['status', '!=', 'Canceled']
-            ])
-            ->whereNull('deleted_at')
-            ->first();
-        */
-
         $total = DB::table('event-registration')
             ->select(DB::raw('"discountCode", count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '!=', 'pending'],
-                ['regStatus', '!=', 'In Progress'],
-                ['regStatus', '!=', 'Wait List'],
-                ['regStatus', '!=', 'Cancelled'],
-                ['regStatus', '!=', 'Canceled']
+                ['regStatus', '=', 'Processed']
             ])
             ->whereNull('deleted_at')
             ->first();
@@ -196,14 +165,15 @@ class RegistrationController extends Controller
 
         $discPie->put(count($discPie), $total);
 
-        $refs = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('cancelDate')->get();
+        $refunds = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('deleted_at')->get();
 
         if ($event->hasTracks) {
             $tracks = Track::where('eventID', $event->eventID)->get();
-            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refs', 'discPie', 'tracks', 'discountCounts'));
         } else {
-            return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refs', 'discPie', 'discountCounts'));
+            $tracks = null;
         }
+        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refunds',
+                                                        'deadbeats', 'discPie', 'tracks', 'discountCounts'));
     }
 
     public function create()
@@ -319,7 +289,7 @@ class RegistrationController extends Controller
             $op = new OrgPerson;
             $op->orgID = $event->orgID;
             $op->personID = $person->personID;
-            if($pmiID){
+            if ($pmiID) {
                 $op->OrgStat1 = $pmiID;
             }
             $op->save();
@@ -488,7 +458,7 @@ class RegistrationController extends Controller
             $op = new OrgPerson;
             $op->orgID = $event->orgID;
             $op->personID = $person->personID;
-            if($pmiID){
+            if ($pmiID) {
                 $op->OrgStat1 = $pmiID;
             }
             $op->save();
@@ -594,7 +564,7 @@ class RegistrationController extends Controller
                 $op = new OrgPerson;
                 $op->orgID = $event->orgID;
                 $op->personID = $person->personID;
-                if($pmiID){
+                if ($pmiID) {
                     $op->OrgStat1 = $pmiID;
                 }
                 $op->save();
@@ -808,7 +778,7 @@ class RegistrationController extends Controller
 
     public function update(Request $request, Registration $reg)
     {
-        // responds to PATCH /blah/id
+        // responds to POST /reg_verify/{regID}
         // This is the person record for the registration
         $person = Person::find($reg->personID);
 

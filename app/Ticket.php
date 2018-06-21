@@ -41,6 +41,9 @@ class Ticket extends Model
         return $this->hasMany(RegFinance::class, 'ticketID');
     }
 
+    /**
+     * week_sales() returns count of sales for this ticket's sales based on this ticket's (or its members') sales
+     */
     public function week_sales(){
         $tickets = array($this->ticketID);
         if(!$this->isaBundle){
@@ -48,16 +51,18 @@ class Ticket extends Model
             foreach($bundles as $b){
                 array_push($tickets, $b->bundleID);
             }
-            // $tickets = implode(",", (array)$tickets);
+
         }
         return Registration::whereDate('updateDate', '>=', Carbon::now()->subWeek(1))
             ->whereIn('ticketID', $tickets)
             ->whereNull('deleted_at')
             ->where('regStatus', '=', 'Processed')
             ->count();
-
     }
 
+    /**
+     * waitlisting() returns true/false based on ticket's maxAttendee limit and tickets sold
+     */
     public function waitlisting()
     {
         if ($this->isaBundle) {
@@ -77,12 +82,27 @@ class Ticket extends Model
         }
     }
 
-    public function valid_earlyBird() {
+    /**
+     * valid_earlyBird() returns true/false based on current date and ticket's earlyBirdEndDate
+     */
+    public function valid_earlyBird(){
         $today = \Carbon\Carbon::now();
         if($this->earlyBirdDate !== null && $this->earlyBirdDate->gte($today)){
             return 1;
         } else {
             return 0;
         }
+    }
+
+    /**
+     * bundle_members() returns the members of a bundle ticket
+     */
+    public function bundle_members(){
+        return Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+            ->where([
+                ['bt.bundleID', '=', $this->ticketID],
+                ['event-tickets.eventID', '=', $this->eventID]
+            ])
+            ->get();
     }
 }
