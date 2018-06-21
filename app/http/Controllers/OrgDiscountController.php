@@ -42,10 +42,10 @@ class OrgDiscountController extends Controller
         ])->first();
 
         if ($discounts > 0) {
-            $message = '<span><i class="fa fa-trophy fa-2x text-success mid_align">&nbsp;</i>' . "Code: '" . $code . "'" . " provides a " . $discount->percent . "% discount.</span>";
+            $message = '<span><i class="far fa-trophy fa-2x text-success mid_align">&nbsp;</i>' . "Code: '" . $code . "'" . " provides a " . $discount->percent . "% discount.</span>";
             return json_encode(array('status' => 'success', 'message' => $message, 'percent' => $discount->percent));
         } else {
-            $message = '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code ."'</span>";
+            $message = '<span><i class="far fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code ."'</span>";
             return json_encode(array('status' => 'error','message' => $message));
         }
     }

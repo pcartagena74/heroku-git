@@ -327,6 +327,7 @@ class RegFinanceController extends Controller
                     $rf->pmtType = 'At Door';
                 }
             } else {
+                //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
                 $rf->status = 'Processed';
                 $rf->pmtType = 'No Charge';
@@ -334,16 +335,27 @@ class RegFinanceController extends Controller
 
             $discountAmt = 0;
             $end = $rf->seats - 1;
+
+            // Cycle through event-registrations and update regStatus based on rf->status
             for ($i = $id - $end; $i <= $id; $i++) {
                 $reg = Registration::find($i);
                 if ($ticket->waitlisting()) {
                     $reg->regStatus = 'Wait List';
+                } elseif($rf->status = 'Payment Pending') {
+                    $reg->regStatus = 'Payment Pending';
                 } else {
                     $reg->regStatus = 'Processed';
                 }
                 // No one is actually, necessarily, logged in...
                 //$reg->updaterID = auth()->user()->id;
                 $discountAmt += ($reg->origcost - $reg->subtotal);
+                if($reg->subtotal > 0){
+                    $reg->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
+                    $reg->mcentricFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
+                    if($reg->mcentricFee > 5){
+                        $reg->mcentricFee = 5;
+                    }
+                }
                 $reg->save();
             }
             // Confirmation code is:  personID-regFinance->regID/seats

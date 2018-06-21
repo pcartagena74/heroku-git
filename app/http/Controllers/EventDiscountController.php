@@ -67,11 +67,11 @@ class EventDiscountController extends Controller
                 $discount_text = $discount->percent . "%";
             }
             $message =
-                '<span><i class="fa fa-trophy fa-2x text-success mid_align">&nbsp;</i>' . "Code: '" . $code . "'" . " provides a " . $discount_text . " discount.</span>";
+                '<span><i class="far fa-trophy fa-2x text-success mid_align">&nbsp;</i>' . "Code: '" . $code . "'" . " provides a " . $discount_text . " discount.</span>";
             return json_encode(array('status' => 'success', 'message' => $message, 'percent' => $discount->percent, 'flatAmt' => $discount->flatAmt));
         } else {
             $message =
-                '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code . "'</span>";
+                '<span><i class="far fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code . "'</span>";
             return json_encode(array('status' => 'error', 'message' => $message, 'percent' => 0, 'flatAmt' => 0));
         }
     }

@@ -165,9 +165,26 @@ class EventController extends Controller
     {
         // responds to GET /events/{param}
         // $param is either an ID or slug
-        $event = Event::where('eventID', '=', $param)
-            ->orWhere('slug', '=', $param)
+
+        /*
+        $event = Event::where('slug', '=', $param)
+            ->orWhere('eventID', '=', $param)
             ->firstOrFail();
+        */
+
+        try {
+            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function($query) use ($param){
+                    return $query->where('eventID', $param);
+                },
+                function($query) use ($param){
+                    return $query->where('slug', $param);
+                }
+            )->firstOrFail();
+        } catch (\Exception $exception) {
+            $message = "The event URL used no longer exists.";
+            return view('v1.public_pages.error_display', compact('message'));
+        }
 
         if (auth()->guest()) {
             $current_person = 0;
@@ -657,6 +674,16 @@ class EventController extends Controller
                 ['isPrivate', 0],
             ])
                 ->whereIn('eventTypeID', [3, $etID])
+                ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
+                ->with('location')
+                ->orderBy('eventStartDate')
+                ->get();
+        } elseif($etID==99) {
+            $events = Event::where([
+                ['orgID', $orgID],
+                ['isActive', 1],
+                ['isPrivate', 0],
+            ])
                 ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
                 ->with('location')
                 ->orderBy('eventStartDate')
