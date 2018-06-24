@@ -26,7 +26,6 @@
     <div class="form-group">
         {!! Form::submit('Change Password', array('class' => 'btn btn-primary btn-sm')) !!}
     </div>
-    {{-- current, new, verify --}}
     {!! Form::close() !!}
 
 </div>

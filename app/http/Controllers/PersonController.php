@@ -135,10 +135,7 @@ class PersonController extends Controller
                                             person.experience, person.chapterRole, person.defaultOrgID, person.affiliation,
                                             person.allergenInfo, person.allergenNote,
                 OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
-                date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
-                    date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
-                    date_format(RelDate7, '%c/%e/%Y') as RelDate7, date_format(RelDate8, '%c/%e/%Y') as RelDate8, date_format(RelDate9, '%c/%e/%Y') as RelDate9, 
-                    date_format(RelDate10, '%c/%e/%Y') as RelDate10,
+                RelDate1, RelDate2, RelDate3, RelDate4, RelDate5, RelDate6, RelDate7, RelDate8, RelDate9, RelDate10,
                     OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10, 
                     ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, person.personID"))->first();
         } catch (\Exception $exception) {
@@ -263,6 +260,29 @@ class PersonController extends Controller
             $person->updaterID = auth()->user()->id;
             $person->save();
         }
+        return json_encode(array('status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $personID));
+    }
+
+    public function update_op(Request $request, $id){
+        // responds to POST /op/{id} and is an AJAX call
+        $personID = request()->input('pk');
+        $updater = auth()->user()->id;
+
+        $name = request()->input('name');
+        if (strpos($name, '-')) {
+            // if passed from the registration receipt, the $name will have a dash
+            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+        }
+        $value = request()->input('value');
+        $person = Person::find($personID);
+        $op = OrgPerson::where([
+            ['personID', '=', $person->personID],
+            ['orgID', '=', $person->defaultOrgID]
+        ])->first();
+
+        $op->updaterID = $updater;
+        $op->$name = $value;
+        $op->save();
         return json_encode(array('status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $personID));
     }
 
