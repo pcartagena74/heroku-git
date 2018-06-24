@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 $currentPerson = App\Person::find(auth()->user()->id);
 $string = '';
 $profile_script_url = env('APP_URL') . "/profile/$profile->personID";
+$op_script_url = env('APP_URL') . "/op/$profile->personID";
 $addrURL = env('APP_URL') . "/address/";
 $emailURL = env('APP_URL') . "/email/";
 $phoneURL = env('APP_URL') . "/phone/";
@@ -34,7 +35,8 @@ $array = explode(',', $chapters->regionChapters);
 
 $i = 0;
 foreach ($array as $chap) {
-    $i++; $chap = trim($chap);
+    $i++;
+    $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 ?>
@@ -75,9 +77,8 @@ foreach ($array as $chap) {
                                                          data-title="Enter prefix">{{ $profile->prefix }}</a>
                         </td>
                         <td style="text-align: left;">
-                            {{-- Check OrgStat2 (PMI Type) to verify that PMI provided the first & last name --}}
-                            {{-- Chose OrgStat2 because we might populate OrgStat1 --}}
-                            @if($profile->OrgStat2)
+                            {{-- Check OrgStat1 (PMI ID) to check that PMI provided the first & last name --}}
+                            @if($profile->OrgStat1)
                                 {!! $profile->firstName or "<i style='color:red;'>Empty</i>" !!}
                                 @include('v1.parts.tooltip', ['title' => "You need to contact PMI to change your name."])
                             @else
@@ -90,7 +91,7 @@ foreach ($array as $chap) {
                             <a href="#" id="midName" data-title="Enter middle name">{{ $profile->midName }}</a>
                         </td>
                         <td style="text-align: left;">
-                            @if($profile->OrgStat2)
+                            @if($profile->OrgStat1)
                                 {{ $profile->lastName or "<i style='color:red;'>Empty</i>" }}
                                 @include('v1.parts.tooltip', ['title' => "You need to contact PMI to change your name."])
                             @else
@@ -144,31 +145,55 @@ foreach ($array as $chap) {
                             <a href="#" id="chapterRole" data-title="Chapter Role">{{ $profile->chapterRole }}</a>
                         </td>
                         <td style="text-align: left;">
-                            <a href="#" id="affiliation" data-title="Chapter Affiliation">{{ $profile->affiliation }}</a>
+                            <a href="#" id="affiliation"
+                               data-title="Chapter Affiliation">{{ $profile->affiliation }}</a>
                         </td>
-                        <td style="text-align: left;"><a href="#" id="allergenInfo", data-tile="Dietary Restrictions">{{ $profile->allergenInfo }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="allergenNote", data-tile="Dietary Notes">{{ $profile->allergenNote }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="allergenInfo" ,
+                                                         data-title="Dietary Restrictions">{{ $profile->allergenInfo }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="allergenNote" ,
+                                                         data-title="Dietary Notes">{{ $profile->allergenNote }}</a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
                 @include('v1.parts.end_content')
 
-                @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                <table id='date_fields' class='table table-striped table-condensed'>
-                    @for($i=1;$i<=10;$i++)
-                        @if(isset($profile->{'ODN'.$i}))
-                            <tr>
-                                <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
-                                <td style="text-align: left;">{!! $profile->{'RelDate'.$i} or "<i style='color:red;'>Empty</i>" !!}</td>
-                            </tr>
-                        @elseif($i == 1)
-                            If this is empty, you do not have a PMI ID on file.
-                        @endif
-                    @endfor
-                </table>
+                @if(Entrust::hasRole('Admin'))
+                    @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '<b class="red">(Editable for Admins)</b>', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    <table id='date_fields' class='table table-striped table-condensed'>
+                        @for($i=1;$i<=10;$i++)
+                            @if(isset($profile->{'ODN'.$i}))
+                                <tr>
+                                    <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
+                                    <td style="text-align: left;">
+                                        <a href="#" id="RelDate{{$i}}" data-value="{!! $profile->{'RelDate'.$i} !!}"></a>
+                                    </td>
+                                </tr>
+                            @elseif($i == 1)
+                                If this is empty, you may not have a PMI ID on file.
+                            @endif
+                        @endfor
+                    </table>
+                    @include('v1.parts.end_content')
+                @else
+                    @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    <table id='date_fields' class='table table-striped table-condensed'>
+                        @for($i=1;$i<=10;$i++)
+                            @if(isset($profile->{'ODN'.$i}))
+                                <tr>
+                                    <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
+                                    <td style="text-align: left;">{!! $profile->{'RelDate'.$i} or "<i style='color:red;'>Empty</i>" !!}</td>
+                                </tr>
+                            @elseif($i == 1)
+                                If this is empty, you may not have a PMI ID on file.
+                            @endif
+                        @endfor
+                    </table>
+                    @include('v1.parts.end_content')
+                @endif
 
-                @include('v1.parts.end_content')
                 @include('v1.parts.start_min_content', ['header' => 'Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                 @if(count($addresses) == 0)
@@ -241,10 +266,25 @@ foreach ($array as $chap) {
                 <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
                 @include('v1.parts.end_content')
 
-                @if(isset($profile->OSN1))
-
+                @if(Entrust::hasRole('Admin'))
+                    @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '<b class="red">(Editable for Admins)</b>', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    <table id='date_fields' class='table table-striped table-condensed'>
+                        @for($i=1;$i<=10;$i++)
+                            @if(isset($profile->{'OSN'.$i}))
+                                <tr>
+                                    <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
+                                    <td style="text-align: left;">
+                                        <a href="#" id="OrgStat{{$i}}" data-value="{!! $profile->{'OrgStat'.$i} !!}"></a>
+                                    </td>
+                                </tr>
+                            @elseif($i == 1)
+                                If this is empty, you may not have a PMI ID on file.
+                            @endif
+                        @endfor
+                    </table>
+                    @include('v1.parts.end_content')
+                @else
                     @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-
                     <table id='date_fields' class='table table-striped table-condensed'>
                         @for($i=1;$i<=10;$i++)
                             @if(isset($profile->{'OSN'.$i}))
@@ -252,10 +292,11 @@ foreach ($array as $chap) {
                                     <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
                                     <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} or "<i style='color:red;'>Empty</i>" !!}</td>
                                 </tr>
+                            @elseif($i == 1)
+                                If this is empty, you may not have a PMI ID on file.
                             @endif
                         @endfor
                     </table>
-
                     @include('v1.parts.end_content')
                 @endif
 
@@ -386,24 +427,50 @@ foreach ($array as $chap) {
                 &nbsp;<br/>
                 <div class="col-sm-12">
 
-                    {!! Form::open(array('url' => env('APP_URL')."/password", 'method' => 'POST')) !!}
-                    <div class="form-group">
-                        {!! Form::label('curPass', 'Current Password', array('class' => 'control-label')) !!}
-                        {!! Form::password('curPass', $attributes = array('class' => 'form-control', 'required')) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('newPass', 'New Password', array('class' => 'control-label')) !!}
-                        {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('password_confirmation', 'Verify Password', array('class' => 'control-label')) !!}
-                        {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::submit('Change Password', array('class' => 'btn btn-primary btn-sm')) !!}
-                    </div>
-                    {{-- current, new, verify --}}
-                    {!! Form::close() !!}
+
+                    @if(Entrust::hasRole('Admin'))
+                        @include('v1.parts.start_content', ['header' => 'Changing ' . $display . ' Password',
+                            'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+
+                        {!! Form::open(array('url' => env('APP_URL')."/force_password", 'method' => 'POST')) !!}
+                        <div class="form-group">
+                            {!! Form::label('userid', 'User ID', array('class' => 'control-label')) !!}
+                            {!! Form::number('userid', $profile->personID, $attributes = array('class' => 'form-control', 'required')) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('newPass', 'New Password', array('class' => 'control-label')) !!}
+                            {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('password_confirmation', 'Verify Password', array('class' => 'control-label')) !!}
+                            {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::submit('Change Password', array('class' => 'btn btn-primary btn-sm')) !!}
+                        </div>
+                        {!! Form::close() !!}
+
+                        @include('v1.parts.end_content')
+                    @else
+                        {!! Form::open(array('url' => env('APP_URL')."/password", 'method' => 'POST')) !!}
+                        <div class="form-group">
+                            {!! Form::label('curPass', 'Current Password', array('class' => 'control-label')) !!}
+                            {!! Form::password('curPass', $attributes = array('class' => 'form-control', 'required')) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('newPass', 'New Password', array('class' => 'control-label')) !!}
+                            {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('password_confirmation', 'Verify Password', array('class' => 'control-label')) !!}
+                            {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::submit('Change Password', array('class' => 'btn btn-primary btn-sm')) !!}
+                        </div>
+                        {{-- current, new, verify --}}
+                        {!! Form::close() !!}
+                    @endif
 
                 </div>
             </div>
@@ -450,11 +517,11 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+                <?php
                     if ($profile->experience <> "") {
                         echo("value: '$profile->experience',\n");
                     }
-?>
+                    ?>
                 source: [
                     {value: '1-4', text: '1-4 Years'},
                     {value: '5-9', text: '5-9 Years'},
@@ -483,7 +550,7 @@ foreach ($array as $chap) {
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
-            @if(!isset($profile->OrgStat2))
+            @if(!isset($profile->OrgStat1))
             $('#firstName').editable({
                 type: 'text',
                 pk: '{{ $profile->personID }}',
@@ -518,17 +585,17 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+                <?php
                     if ($profile->indName <> "") {
                         echo("value: '$profile->indName', \n");
                     }
-?>
+                    ?>
                 source: [
-<?php
+                    <?php
                     foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -564,21 +631,21 @@ foreach ($array as $chap) {
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 value: '{{ $profile->affiliation }}',
-            {{--
-                success: function (response, data) {
-                    console.log(response);
-                    if(!response){
-                        alert('no response');
-                    }
-                    console.log(data);
-                },
-            --}}
+                {{--
+                    success: function (response, data) {
+                        console.log(response);
+                        if(!response){
+                            alert('no response');
+                        }
+                        console.log(data);
+                    },
+                --}}
                 source: [
-<?php
+                    <?php
                     for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -588,11 +655,11 @@ foreach ($array as $chap) {
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 source: [
-<?php
-                    foreach($allergen_array as $x) {
+                    <?php
+                    foreach ($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -608,11 +675,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($addrTypes as $row) {
                         $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -625,11 +692,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($countries as $row) {
                         $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -640,11 +707,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($emailTypes as $row) {
                         $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -656,11 +723,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+                    <?php
                     foreach ($phoneTypes as $row) {
                         $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -702,6 +769,55 @@ foreach ($array as $chap) {
                 }
             });
         });
+    </script>
+    <script>
+        @if(Entrust::hasRole('Admin'))
+            @for($i=1;$i<=10;$i++)
+                @if(null !== $profile->{'ODN'.$i})
+                    $('#RelDate{{ $i }}').editable({
+                        type: 'combodate',
+                        pk: '{{ $profile->personID }}',
+                        url: '{{ $op_script_url }}',
+                        template: 'MMM DD YYYY',
+                        format: 'YYYY-MM-DD 00:00:00',
+                        viewformat: 'MMM DD, YYYY',
+                        placement: 'left',
+                        //viewformat: 'h:mm A',
+                        combodate: {
+                            //minYear: '{{ date("Y") }}',
+                            maxYear: '{{ date("Y")+3 }}',
+                            minuteStep: 15
+                        },
+                    });
+                @endif
+            @endfor
+
+            @for($i=1;$i<=10;$i++)
+                @if(null !== $profile->{'OSN'.$i})
+                    @if($i == 2)
+                $('#OrgStat{{ $i }}').editable({
+                    type: 'select',
+                    source: [
+                        {value: 'Individual', text: 'Individual'},
+                        {value: 'Retiree', text: 'Retiree'},
+                        {value: 'Student', text: 'Student'}
+                    ],
+                    pk: '{{ $profile->personID }}',
+                    url: '{{ $op_script_url }}',
+                    placement: 'left',
+                });
+                    @else
+                $('#OrgStat{{ $i }}').editable({
+                    type: 'text',
+                    pk: '{{ $profile->personID }}',
+                    url: '{{ $op_script_url }}',
+                    placement: 'left',
+                });
+                    @endif
+                @endif
+            @endfor
+        @endif
+
     </script>
     <script>
         $(document).ready(function () {

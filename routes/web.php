@@ -94,7 +94,8 @@ Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
 Route::get('/profile/{id}/{modal?}', 'PersonController@show')->name('showMemberProfile');
-Route::post('/profile/{id}', 'PersonController@update');
+Route::post('/profile/{id}', 'PersonController@update');                        // Ajax
+Route::post('/op/{id}', 'PersonController@update_op');                          // Ajax
 Route::post('/address/{id}', 'AddressController@update');
 Route::post('/addresses/create', 'AddressController@store');
 Route::post('/address/{id}/delete', 'AddressController@destroy');
