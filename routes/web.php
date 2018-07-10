@@ -183,8 +183,8 @@ Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');       // Ajax
 
 // Routes that circumvent AUTH and mCentric navigation, etc.
-Route::get('/eventlist/{orgID}/{etID}', 'EventController@listing');
-Route::get('/ticketlist/{eventslug}', 'EventController@ticket_listing');
+Route::get('/eventlist/{orgID}/{etID}/{override?}', 'EventController@listing');
+Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
 
 // Group Registration
 Route::get('/group/{event?}', 'EventController@showGroup');

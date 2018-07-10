@@ -695,7 +695,7 @@ class EventController extends Controller
         //return view('v1.auth_pages.events.group-registration', compact('event'));
     }
 
-    public function listing($orgID, $etID) {
+    public function listing($orgID, $etID, $override = null) {
         try {
             $org = Org::find($orgID);
         } catch (\Exception $exception) {
@@ -738,10 +738,15 @@ class EventController extends Controller
                 ->get();
         }
         $cnt = count($events);
-        return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+        if($override){
+            $view =  View::make('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+            return json_encode(array('status' => 'success', 'message' => $view->render()));
+        } else {
+            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+        }
     }
 
-    public function ticket_listing($param) {
+    public function ticket_listing($param, $override = null) {
         try {
             $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
                 function($query) use ($param){
