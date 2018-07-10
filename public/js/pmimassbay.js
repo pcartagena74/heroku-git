@@ -5,6 +5,9 @@
 // 1. embed jquery
 // 2. have a div with id="output"
 
+document.writeln('<iframe id="mCentric_frame" src="https://www.mCentric.org/10/99" width="100%" scrolling="no" border="0" frameBorder="0" style="border:0px;position:relative;">Your browser does not support Iframes. Please upgrade to a newer version.</iframe>');
+
+/*
 $(document).ready(function() {
     $.ajax({
         type: 'GET',
@@ -22,3 +25,4 @@ $(document).ready(function() {
         }
     });
 });
+*/
