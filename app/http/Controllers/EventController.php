@@ -26,6 +26,7 @@ use App\ReferLink;
 use App\Other\ics_calendar;
 use Spatie\Referer\Referer;
 use App\EventSession;
+use Stripe\Card;
 
 class EventController extends Controller
 {
@@ -158,11 +159,11 @@ class EventController extends Controller
                 $ed->save();
             }
         }
-        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
+        //return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
+        return redirect('/event/' . $event->eventID . '/edit');
     }
 
-    public function show($param, $override = null)
-    {
+    public function show($param, $override = null) {
         // responds to GET /events/{param}
         // $param is either an ID or slug
 
@@ -184,6 +185,10 @@ class EventController extends Controller
         } catch (\Exception $exception) {
             $message = "The event URL used no longer exists.";
             return view('v1.public_pages.error_display', compact('message'));
+        }
+        if($override){
+            $message = '<b>Note:</b> You are previewing an event that is not yet active OR is in the past.';
+            request()->session()->flash('alert-warning', $message);
         }
 
         if (auth()->guest()) {
@@ -243,8 +248,7 @@ class EventController extends Controller
         }
     }
 
-    public function create()
-    {
+    public function create() {
         // responds to /events/create and shows add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
@@ -254,16 +258,15 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         // responds to POST to /events and creates, adds, stores the event
         $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
         $event = new Event;
         $label = Org::find($this->currentPerson->defaultOrgID);
         $slug = request()->input('slug');
-        $slug_not_unique = Event::where('slug', $slug)->first();
-        if ($slug_not_unique) {
+        $slug_not_unique = Event::where('slug', $slug)->withTrashed()->first();
+        if ($slug_not_unique !== null) {
             request()->session()->flash('alert-danger', "Please set a custom URL and validate it before proceeding.");
             return back()->withInput();
         }
@@ -406,8 +409,7 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function edit(Event $event)
-    {
+    public function edit(Event $event) {
         // responds to GET /events/id/edit and shows the add/edit form
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -418,22 +420,21 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }
 
-    public function checkSlugUniqueness(Request $request, $id)
-    {
+    public function checkSlugUniqueness(Request $request, $id) {
         $slug = request()->input('slug');
         if ($id == 0) {
-            if (Event::whereSlug($slug)->exists()) {
+            if (Event::whereSlug($slug)->withTrashed()->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
-            } elseif (Event::whereSlug($slug)->exists()) {
-                $message = $slug . ' is available';
+//            } elseif (Event::whereSlug($slug)->exists()) {
+//                $message = $slug . ' is available';
             } else {
                 $message = $slug . ' is available';
             }
         } else {
-            if (Event::whereSlug($slug)->where('eventID', '!=', $id)->exists()) {
+            if (Event::whereSlug($slug)->withTrashed()->where('eventID', '!=', $id)->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
-            } elseif (Event::whereSlug($slug)->exists()) {
-                $message = $slug . ' is available';
+//            } elseif (Event::whereSlug($slug)->exists()) {
+//                $message = $slug . ' is available';
             } else {
                 $message = $slug . ' is available';
             }
@@ -444,7 +445,18 @@ class EventController extends Controller
     public function update(Request $request, Event $event)
     {
         // responds to PATCH /event/id
-        // $event               = Event::find($id);
+
+        $slug = request()->input('slug');
+        $slug_not_unique = Event::where([
+            ['slug', '=', $slug],
+            ['eventID', '!=', $event->eventID]
+        ])->withTrashed()->first();
+        if ($slug_not_unique !== null) {
+            request()->session()->flash('alert-danger', "The URL you chose is not unique.  Please change and validate it before proceeding.");
+            return back()->withInput();
+        }
+
+
         $this->currentPerson = Person::find(auth()->user()->id);
         $input_loc = request()->input('locationID');
         // check to see if form loc == saved loc
@@ -528,6 +540,33 @@ class EventController extends Controller
             $event->hasTracks = 0;
         }
         $event->updaterID = $this->currentPerson->personID;
+        $today = Carbon::now();
+
+        // Edit the default ticket for the event
+        $tkt = Ticket::where('eventID', $event->eventID)->first();
+        $tkt->availabilityEndDate = $event->eventStartDate;
+        $tkt->earlyBirdEndDate = $today;
+        $tkt->save();
+
+        $event_discounts = EventDiscount::where('eventID', $event->eventID)->get();
+        if ($event->eventStartDate > $today && !$event_discounts) {
+            $orgDiscounts = OrgDiscount::where([
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['discountCODE', "<>", '']])
+                ->orWhere('discountCODE', '!=', 0)
+                ->whereNotNull('discountCODE')->get();
+
+            foreach ($orgDiscounts as $od) {
+                $ed = new EventDiscount;
+                $ed->orgID = $od->orgID;
+                $ed->eventID = $event->eventID;
+                $ed->discountCODE = $od->discountCODE;
+                $ed->percent = $od->percent;
+                $ed->creatorID = $this->currentPerson->personID;
+                $ed->updaterID = $this->currentPerson->personID;
+                $ed->save();
+            }
+        }
 
         if ($event->mainSession === null) {
             $mainSession = new EventSession;
@@ -559,8 +598,7 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function destroy(Event $event)
-    {
+    public function destroy(Event $event) {
         // responds to DELETE /events/id
 
         $event->delete();
@@ -657,8 +695,7 @@ class EventController extends Controller
         //return view('v1.auth_pages.events.group-registration', compact('event'));
     }
 
-    public function listing($orgID, $etID)
-    {
+    public function listing($orgID, $etID, $override = null) {
         try {
             $org = Org::find($orgID);
         } catch (\Exception $exception) {
@@ -701,17 +738,26 @@ class EventController extends Controller
                 ->get();
         }
         $cnt = count($events);
-        return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+        if($override){
+            $view =  View::make('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+            return json_encode(array('status' => 'success', 'message' => $view->render()));
+        } else {
+            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+        }
     }
 
-    public function ticket_listing($param)
-    {
+    public function ticket_listing($param, $override = null) {
         try {
-            $event = Event::where('eventID', '=', $param)
-                ->orWhere('slug', '=', $param)
-                ->firstOrFail();
+            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function($query) use ($param){
+                    return $query->where('eventID', $param);
+                },
+                function($query) use ($param){
+                    return $query->where('slug', $param);
+                }
+            )->firstOrFail();
         } catch (\Exception $exception) {
-            $message = "$param is not a valid event identifier.";
+            $message = "$param is not a valid event URL or identifier.";
             return view('v1.public_pages.error_display', compact('message'));
         }
 
