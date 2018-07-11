@@ -151,7 +151,9 @@ $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgL
                     @foreach($tickets as $ticket)
                         <tr>
                             <td style="text-align: center;">
-                                <input type="radio" name="ticketID" value="{{ $ticket->ticketID }}">
+                                <input type="radio" name="ticketID" value="{{ $ticket->ticketID }}"
+                                required data-error="Please select an option.">
+                                <div class="help-block with-errors"></div>
                             </td>
                             <td data-title="Ticket">{{ $ticket->ticketLabel }}
                                 @if($ticket->maxAttendees > 0 && $ticket->regCount >= $ticket->maxAttendees)
