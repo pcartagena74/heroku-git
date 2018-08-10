@@ -456,7 +456,6 @@ class EventController extends Controller
             return back()->withInput();
         }
 
-
         $this->currentPerson = Person::find(auth()->user()->id);
         $input_loc = request()->input('locationID');
         // check to see if form loc == saved loc
@@ -738,9 +737,12 @@ class EventController extends Controller
                 ->get();
         }
         $cnt = count($events);
+
         if($override){
-            $view =  View::make('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
-            return json_encode(array('status' => 'success', 'message' => $view->render()));
+            $view =  view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'))->render();
+            $view = trim(preg_replace('/\r\n/', ' ', $view));
+
+            return json_encode(array('status' => 'success', 'message' => $view));
         } else {
             return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
         }
@@ -800,5 +802,19 @@ class EventController extends Controller
             'v1.public_pages.display_tickets_only',
             compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg')
         );
+    }
+
+    public function ics_listing($orgID, $etID = null, $override = null) {
+        $events = Event::where([
+            ['orgID', '=', $orgID],
+            ['eventStartDate', '>=', Carbon::now()],
+            ['isActive', '=', 1]
+        ])->get();
+        $output = '';
+        foreach ($events as $e){
+            $ical = new ics_calendar($e);
+            $output .= $ical->get();
+        }
+        return $output;
     }
 }

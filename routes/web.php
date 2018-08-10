@@ -59,7 +59,9 @@ Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkReque
 
 // Public Event-related Routes
 Route::get('/events/{eventslug}/{override?}', 'EventController@show')->name('display_event');
-Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');
+Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');   // Ajax
+Route::post('/eLookup/{email}', 'EmailController@show')->name('lookup_email');                      // Ajax
+Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid');                  // Ajax
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
 
 // Public Session-related Routes
@@ -140,7 +142,7 @@ Route::get('/mbrreport', 'ReportController@member_report')->name('member_report'
 Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete'); // Ajax
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
-Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');    // Ajax
+Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');      // Ajax
 
 // Speaker Routes
 // ---------------------
@@ -149,7 +151,7 @@ Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
 
 // Event Routes
 // ---------------------
-// No-Longer-Public Event-Registration Routes
+// Event-Registration Routes
 Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
 Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
@@ -185,6 +187,7 @@ Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');       
 // Routes that circumvent AUTH and mCentric navigation, etc.
 Route::get('/eventlist/{orgID}/{etID}/{override?}', 'EventController@listing');
 Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
+Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 
 // Group Registration
 Route::get('/group/{event?}', 'EventController@showGroup');
