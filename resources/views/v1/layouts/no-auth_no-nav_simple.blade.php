@@ -17,6 +17,7 @@
     @include('v1.parts.footer_script')
 --}}
 @yield('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.1/iframeResizer.contentWindow.min.js"></script>
 @yield('modals')
 </body>
 </html>
