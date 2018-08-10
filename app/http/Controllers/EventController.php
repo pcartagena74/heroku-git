@@ -32,7 +32,7 @@ class EventController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing']]);
+        $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing']]);
     }
 
     public function index()
