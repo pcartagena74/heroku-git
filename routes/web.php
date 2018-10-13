@@ -62,7 +62,6 @@ Route::get('/events/{eventslug}/{override?}', 'EventController@show')->name('dis
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');   // Ajax
 Route::post('/eLookup/{email}', 'EmailController@show')->name('lookup_email');                      // Ajax
 Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid');                  // Ajax
-Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
 
 // Public Session-related Routes
 Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
@@ -82,7 +81,7 @@ Route::get('/storage/events/{filename}', function ($filename) {
 // ---------------------
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
-Route::post('/networking', 'ActivityController@networking');                     // Ajax
+Route::post('/networking', 'ActivityController@networking');                                               // Ajax
 Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
@@ -96,8 +95,8 @@ Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
 Route::get('/profile/{id}/{modal?}', 'PersonController@show')->name('showMemberProfile');
-Route::post('/profile/{id}', 'PersonController@update');                        // Ajax
-Route::post('/op/{id}', 'PersonController@update_op');                          // Ajax
+Route::post('/profile/{id}', 'PersonController@update');                                                   // Ajax
+Route::post('/op/{id}', 'PersonController@update_op');                                                     // Ajax
 Route::post('/address/{id}', 'AddressController@update');
 Route::post('/addresses/create', 'AddressController@store');
 Route::post('/address/{id}/delete', 'AddressController@destroy');
@@ -119,19 +118,19 @@ Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogi
 // Settings
 Route::get('/orgsettings', 'OrgController@index');
 Route::get('/orgsettings/{id}', 'OrgController@show');
-Route::post('/orgsettings/{id}', 'OrgController@update');                       // Ajax
+Route::post('/orgsettings/{id}', 'OrgController@update');                                                  // Ajax
 Route::get('/eventdefaults', 'OrgController@event_defaults');
-Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');              // Ajax
+Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');                                         // Ajax
 
 Route::get('/load_data', 'UploadController@index');
 Route::post('/load_data', 'UploadController@store');
 
 Route::get('/role_mgmt', 'RoleController@index');
-Route::post('/role/{person}/{role}', 'RoleController@update');                  // Ajax
+Route::post('/role/{person}/{role}', 'RoleController@update');                                             // Ajax
 
 Route::post('/eventtype/create', 'EventTypeController@store');
 Route::delete('/eventtype/{etID}/delete', 'EventTypeController@destroy');
-Route::post('/eventtype/{etID}', 'EventTypeController@update');                 // Ajax
+Route::post('/eventtype/{etID}', 'EventTypeController@update');                                            // Ajax
 
 // Member Routes
 // ---------------------
@@ -139,10 +138,10 @@ Route::get('/members', 'PersonController@index')->name('manageMembers');
 Route::get('/merge/{model_code}/{id1?}/{id2?}', 'MergeController@show')->name('showMergeModel');
 //Route::get('/find', 'MergeController@find')->name('search');
 Route::get('/mbrreport', 'ReportController@member_report')->name('member_report');
-Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete'); // Ajax
+Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete');               // Ajax
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
-Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');      // Ajax
+Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');                    // Ajax
 
 // Speaker Routes
 // ---------------------
@@ -152,8 +151,9 @@ Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
 // Event Routes
 // ---------------------
 // Event-Registration Routes
+Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
 Route::get('/regstep2/{event}/{ticket}/{quantity}/{discount?}', 'RegistrationController@showRegForm');
-Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
+Route::post('/regstep3/{event}/create', 'RegistrationController@store2')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');
@@ -162,8 +162,9 @@ Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy
 
 // Event & Ticket Routes
 Route::get('/events', 'EventController@index')->name('manageEvents');
-Route::post('/activate/{event}', 'EventController@activate');                   // Ajax
-Route::post('/eventajax/{event}', 'EventController@ajax_update');               // Ajax
+Route::post('/activate/{event}', 'EventController@activate');                                              // Ajax
+Route::post('/eventajax/{event}', 'EventController@ajax_update');                                          // Ajax
+Route::post('/tix/{event}/{ticket}', 'EventController@get_tix');                                           // Ajax
 Route::get('/event/create', 'EventController@create')->name('add_edit_form');
 Route::post('/event/create', 'EventController@store')->name('save_event');
 Route::get('/event/{event}/edit', 'EventController@edit');
@@ -171,18 +172,19 @@ Route::patch('/event/{event}', 'EventController@update')->name('event_update');
 Route::delete('/event/{event}', 'EventController@destroy');
 Route::get('/eventdiscount/{event}', 'EventDiscountController@show');
 Route::post('/eventdiscount', 'EventDiscountController@store');
+Route::post('/eventdiscountfix/{event}', 'EventDiscountController@fix_defaults');                          // Ajax
 Route::delete('/eventdiscount/{id}/delete', 'EventDiscountController@destroy');
-Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');          // Ajax
+Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');                                     // Ajax
 Route::get('/tracks/{event}', 'TrackController@show');
-Route::post('/track/{track}', 'TrackController@update');                        // Ajax
-Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');            // Ajax
-Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');          // Ajax
-Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');        // Ajax
+Route::post('/track/{track}', 'TrackController@update');                                                   // Ajax
+Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');                                       // Ajax
+Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');                                     // Ajax
+Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');                                   // Ajax
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
 Route::get('/eventcopy/{slug}', 'EventController@event_copy');
-Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');       // Ajax
+Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');                                  // Ajax
 
 // Routes that circumvent AUTH and mCentric navigation, etc.
 Route::get('/eventlist/{orgID}/{etID}/{override?}', 'EventController@listing');
@@ -191,7 +193,7 @@ Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing
 
 // Group Registration
 Route::get('/group/{event?}', 'EventController@showGroup');
-Route::post('/getperson', 'MergeController@getperson');                         // Ajax
+Route::post('/getperson', 'MergeController@getperson');                                                    // Ajax
 Route::post('/group-reg1', 'RegFinanceController@group_reg1');
 Route::get('/groupreg/{rf}', 'RegFinanceController@edit')->name('group_reg1');
 Route::patch('/group_reg2/{rf}', 'RegFinanceController@group_reg2');
@@ -199,9 +201,9 @@ Route::get('/show_group_receipt/{rf}', 'RegFinanceController@show_group_receipt'
 
 
 // Ticket & Bundle Routes
-Route::post('/bundle/{id}', 'BundleController@update');                         // Ajax
+Route::post('/bundle/{id}', 'BundleController@update');                                                    // Ajax
 Route::delete('/bundle/{id}/delete', 'BundleController@destroy')->name('delete_bundle');
-Route::post('/ticket/{id}', 'TicketController@update');                         // Ajax
+Route::post('/ticket/{id}', 'TicketController@update');                                                    // Ajax
 Route::post('/tickets/create', 'TicketController@store');
 Route::delete('/ticket/{id}/delete', 'TicketController@destroy')->name('delete_ticket');
 Route::get('/event-tickets/{id}', 'TicketController@show');
@@ -210,7 +212,7 @@ Route::post('/event-tickets/{id}', 'TicketController@show');
 
 // Location Routes
 Route::get('/locations', 'LocationController@index');
-Route::post('/location/update', 'LocationController@update');                   // Ajax
+Route::post('/location/update', 'LocationController@update');                                              // Ajax
 Route::get('/locations/{id}', 'LocationController@show');
 
 // Mail Test

@@ -31,6 +31,11 @@ class Event extends Model
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
     }
 
+    public function event_type()
+    {
+        return $this->hasOne(EventType::class, 'etID', 'eventTypeID');
+    }
+
     public function bundles()
     {
         return $this->hasMany(Bundle::class, 'eventID', 'eventID');

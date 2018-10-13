@@ -12,7 +12,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dynamic_label">{!! $header or 'Default Title' !!}</h5>
+                <h5 class="modal-title" id="dynamic_label">{!! $header or trans('messages.modals.default') !!}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -20,13 +20,12 @@
             <div id="dynamic-modal-body" class="modal-body">
                 <div class="container">
                     <div class="panel-body" id="modal-content">
-{{--                    Content goes here.                          --}}
-
+                        {{--    Content would go here.    --}}
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
             </div>
         </div>
     </div>

@@ -36,9 +36,8 @@ class RegistrationController extends Controller
     public function processRegForm(Request $request, Event $event)
     {
         // Initiating registration for an event from /event/{id}
-        $ticket = Ticket::find(request()->input('ticketID'));
-        $quantity = request()->input('quantity');
         $discount_code = request()->input('discount_code');
+        $tq = []; $quantity = 0;
 
         if ($discount_code === null) {
             $discount_code = '';
@@ -46,12 +45,39 @@ class RegistrationController extends Controller
             $discount_code = "/" . $discount_code;
         }
 
-        // Finish the route variables needed here and add the route
-        return redirect("/regstep2/$event->eventID/$ticket->ticketID/$quantity" . $discount_code);
+        if(1){
+            $tkts = Ticket::where([
+                ['eventID', '=', $event->eventID],
+                ['isSuppressed', '=', 0],
+                ['isDeleted', '=', 0]
+            ])->get();
+
+            foreach ($tkts as $ticket){
+                $q = request()->input('q-' . $ticket->ticketID);
+                if($q !== null && $q > 0){
+                    array_push($tq, ['t' => $ticket->ticketID, 'q' => $q]);
+                    $quantity += $q;
+                }
+            }
+
+            $member = strtoupper(trans('registration.member'));
+            $nonmbr = strtoupper(trans('registration.nonmbr'));
+            return view('v1.public_pages.varTKT_register',
+                   compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
+
+            // return json_encode(['tq' => $tq]);
+
+        } else {
+            $ticket = Ticket::find(request()->input('ticketID'));
+            $quantity = request()->input('quantity');
+
+            // Finish the route variables needed here and add the route
+            return redirect("/regstep2/$event->eventID/$ticket->ticketID/$quantity/" . $discount_code);
+        }
+
     }
 
-    public function showRegForm(Event $event, Ticket $ticket, $quantity, $discount_code = null)
-    {
+    public function showRegForm(Event $event, Ticket $ticket, $quantity, $discount_code = null) {
         //    public function showRegForm (Request $request, Event $event) {
         // Registering for an event from /register/{tkt}/{q}/{dCode?}
         /*
@@ -60,14 +86,18 @@ class RegistrationController extends Controller
         $discount_code = request()->input('discount_code');
         $event         = Event::find($ticket->eventID);
         */
-        return view('v1.public_pages.register', compact('ticket', 'event', 'quantity', 'discount_code'));
 
-        /*
-        if ($event->hasFood) {
-        } else {
-            return view('v1.public_pages.register-no-food', compact('ticket', 'event', 'quantity', 'discount_code'));
-        }
-        */
+        $member = strtoupper(trans('registration.member'));
+        $nonmbr = strtoupper(trans('registration.nonmbr'));
+
+        $tkts = Ticket::where([
+            ['eventID', '=', $event->eventID],
+            ['isSuppressed', '=', 0]
+        ])
+        ->get();
+
+        return view('v1.public_pages.register_new',
+                    compact('ticket','event', 'quantity', 'discount_code', 'member', 'nonmbr', 'tkts'));
     }
 
     /**
@@ -127,7 +157,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '=', 'Processed']
+               // ['regStatus', '=', 'Processed']
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -138,7 +168,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '=', 'Processed']
+               // ['regStatus', '=', 'Processed']
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -156,7 +186,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '=', 'Processed']
+               // ['regStatus', '=', 'Processed']
             ])
             ->whereNull('deleted_at')
             ->first();
@@ -183,11 +213,249 @@ class RegistrationController extends Controller
 
     /**
      * @param Request $request
+     * @param Event $event
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
+
+    public function store2 (Request $request, Event $event) {
+
+        $show_pass_fields = 0; $set_new_user = 0; $set_secondary_email = 0; $subcheck = 0; $sumtotal = 0;
+        $quantity = request()->input('quantity');
+        $total = request()->input('total');
+        $token = request()->input('_token');
+        $resubmit = RegFinance::where('token', $token)->first();
+
+        if (Auth::check()) {
+            $this->currentPerson = Person::find(auth()->user()->id)->load('orgperson');
+            $authorID = $this->currentPerson->personID;
+            $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
+        } else {
+            // No user logged in; checking to see if first email is in the database;
+            // Should force a login -- return to form with input saved.  Assumptive RISK re: first
+            $authorID = 1;
+            $email = request()->input('login');
+            $chk = Email::where('emailADDR', '=', $email)->first();
+            if(null !== $chk) {
+                $p = Person::find($chk->personID);
+                request()->session()->flash(
+                    'alert-warning',
+                    "You have an account that we've created for you. Please click the login button. 
+                     mCentric has emailed you instructions to reset your password if necessary."
+                );
+                $p->notify(new SetYourPassword($p));
+                return back()->withInput();
+            }
+        }
+
+        // Create or re-open the stub reg-finance record
+        if(null !== $resubmit){
+            $rf = $resubmit;
+            $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
+            // if there was a resubmit, delete the old registration records and redo later...
+            foreach ($resubmitted_regs as $reg) {
+                $reg->delete();
+            }
+            $resubmitted_regs = null;
+        } else {
+            $rf = new RegFinance();
+            $resubmitted_regs = null;
+        }
+        // $rf->regID = $reg->regID;
+        // $rf->ticketID = $ticketID;
+        $rf->creatorID = $authorID;
+        $rf->updaterID = $authorID;
+        $rf->personID = $authorID;
+        $rf->eventID = $event->eventID;
+        $rf->seats = $quantity;
+        $rf->token = $token;
+        $rf->cost = $total;
+        $rf->save();
+
+        $tkts = Ticket::where([
+            ['eventID', '=', $event->eventID],
+            ['isSuppressed', '=', 0],
+            ['isDeleted', '=', 0]
+            ])->get();
+
+        // Set $regBy to the first ticket's person info unless someone was already logged in
+        if(null === $regBy){
+            $firstName = ucwords(request()->input('firstName'));
+            $lastName = ucwords(request()->input('lastName'));
+            $regBy = $firstName . " " . $lastName;
+        }
+
+        // For each of the registrations
+        for($i = 1; $i <= $quantity; $i++){
+            $person = null; $set_new_user = 0;
+            if($i>1){ $i_cnt = '_'.$i; } else { $i_cnt = ''; }
+
+            // Grab the passed variables for the person and registration info
+            $prefix = ucwords(request()->input('prefix'.$i_cnt));
+            $firstName = ucwords(request()->input('firstName'.$i_cnt));
+            $middleName = ucwords(request()->input('middleName'.$i_cnt));
+            $lastName = ucwords(request()->input('lastName'.$i_cnt));
+            $login = request()->input('login'.$i_cnt);
+            $pmiID = ucwords(request()->input('OrgStat1'.$i_cnt));
+            $suffix = ucwords(request()->input('suffix'.$i_cnt));
+            $prefName = ucwords(request()->input('prefName'.$i_cnt));
+            $compName = ucwords(request()->input('compName'.$i_cnt));
+            $indName = ucwords(request()->input('indName'.$i_cnt));
+            $title = ucwords(request()->input('title'.$i_cnt));
+            $chapterRole = ucwords(request()->input('chapterRole'.$i_cnt));
+            $eventQuestion = request()->input('eventQuestion'.$i_cnt);
+            $eventTopics = request()->input('eventTopics'.$i_cnt);
+            $affiliation = request()->input('affiliation'.$i_cnt);
+            $experience = request()->input('experience'.$i_cnt);
+            $dCode = request()->input('discount_code'.$i_cnt);
+            if ($dCode === null || $dCode == " ") { $dCode = 'N/A'; }
+            $ticketID = request()->input('ticketID-'.$i);
+            $t = Ticket::find($ticketID);
+            $flatamt = request()->input('flatamt'.$i_cnt);
+            $percent = request()->input('percent'.$i_cnt);
+            $subtotal = request()->input('sub'.$i);
+            $origcost = request()->input('cost'.$i);
+            // strip out , from $ figure over $1,000
+            $origcost = str_replace(',', '', $origcost);
+            if ($event->hasFood) {
+                $specialNeeds = request()->input('specialNeeds'.$i_cnt);
+                $eventNotes = request()->input('eventNotes'.$i_cnt);
+                $allergenInfo = request()->input('allergenInfo'.$i_cnt);
+                $cityState = request()->input('cityState'.$i_cnt);
+            }
+
+            // Try to assign $p via OrgStat1
+            $person = Person::whereHas('orgperson', function($q) use($pmiID) {
+                $q->where('OrgStat1', '=', $pmiID);
+            })->first();
+            // If not set, try to assign $p via login (email address)
+            if(null === $person) {
+                $person = Person::whereHas('emails', function($q) use($login) {
+                    $q->where('emailADDR', '=', $login);
+                })->first();
+            } else {
+                // PMI ID was set; quick check to see if email should be a secondary
+               if($person->login != $login) {
+                   $set_secondary_email = 1;
+               }
+            }
+            if(null === $person) {
+                $person = new Person;
+            }
+
+            $subcheck += $subtotal;
+            $sumtotal += $origcost;
+
+            // We have either found the appropriate person record ($p) or have created a new one
+            $person->prefix = $prefix;
+            $person->firstName = $firstName;
+            $person->midName = $middleName;
+            $person->lastName = $lastName;
+            $person->suffix = $suffix;
+            $person->defaultOrgID = $event->orgID;
+            $person->prefName = $prefName;
+            $person->compName = $compName;
+            $person->indName = $indName;
+            $person->title = $title;
+            $person->experience = $experience;
+            $person->chapterRole = $chapterRole;
+            $person->login = $login;
+            if ($event->hasFood && $allergenInfo !== null) {
+                $person->allergenInfo = implode(",", (array)$allergenInfo);
+                $person->allergenNote = $eventNotes;
+            }
+            $person->affiliation = implode(",", (array)$affiliation);
+            $person->save();
+
+            if (null === $pmiID) {
+                $regMem = 'Non-Member';
+            } else {
+                $regMem = 'Member';
+            }
+
+            if($set_new_user) {
+                $user = new User();
+                $user->id = $person->personID;
+                $user->login = $login;
+                $user->email = $login;
+                $user->save();
+                if($i==1 && !Auth::check()) {
+                    // log the first ticket's user in if no one is logged in -- ASSUMPTION RISK
+                    Auth::loginUsingId($user->id);
+                    $show_pass_fields = 1;
+                }
+
+                $op = new OrgPerson;
+                $op->orgID = $event->orgID;
+                $op->personID = $person->personID;
+                if ($pmiID) {
+                    $op->OrgStat1 = $pmiID;
+                }
+                $op->save();
+
+                $email = new Email;
+                $email->personID = $person->personID;
+                $email->emailADDR = $login;
+                $email->isPrimary = 1;
+                $email->save();
+            }
+
+            if($set_secondary_email){
+                $email = new Email;
+                $email->personID = $person->personID;
+                $email->emailADDR = $login;
+                $email->save();
+            }
+
+            $reg = new Registration;
+            $reg->rfID = $rf->regID;
+            $reg->eventID = $event->eventID;
+            $reg->ticketID = $ticketID;
+            $reg->personID = $person->personID;
+            $reg->reportedIndustry = $indName;
+            $reg->eventTopics = $eventTopics;
+            $reg->isFirstEvent = request()->input('isFirstEvent'.$i_cnt) !== null ? 1 : 0;
+            $reg->isAuthPDU = request()->input('isAuthPDU'.$i_cnt) !== null ? 1 : 0;
+            $reg->eventQuestion = $eventQuestion;
+            $reg->canNetwork = request()->input('canNetwork'.$i_cnt) !== null ? 1 : 0;
+            $reg->affiliation = implode(",", $affiliation);
+            $reg->regStatus = 'In Progress';
+            if ($t->waitlisting()) {
+                $reg->regStatus = 'Wait List';
+            }
+            $reg->registeredBy = $regBy;
+            $reg->token = $token;
+            $reg->subtotal = $subtotal;
+            $reg->discountCode = $dCode;
+            $reg->origcost = $origcost;
+            $reg->membership = $regMem;
+            if ($event->hasFood) {
+                $reg->specialNeeds = $specialNeeds;
+                $reg->allergenInfo = implode(",", (array)$allergenInfo);
+                $reg->cityState = $cityState;
+                $reg->eventNotes = $eventNotes;
+            }
+            $reg->creatorID = $authorID;
+            $reg->updaterID = $authorID;
+            $reg->save();
+        }
+
+        if($subcheck == $total){
+            $rf->discountAmt = $sumtotal - $subcheck;
+            $rf->save();
+        } else {
+            request()->session()->flash('alert-warning', "Something funky happened with the math. 
+                The form may have been inadvertantly corrupted. subtotal: $total, validation_check: $subcheck");
+            return Redirect::back()->withErrors(
+                ['warning' => "Something funky happened with the math.  Corruption occured: subcheck: $subcheck, subtotal: $total"]);
+        }
+
+        // Everything is saved and updated and such, now display the data back for review
+        return redirect('/confirm_registration/' . $rf->regID);
+    }
+
     public function store(Request $request, Event $event)
     {
-        // responds to POST to /regstep3/{event}/create and creates, adds, stores the event
+        // responds to POST to /regstep3/{event}/create and creates, adds, stores the registration record(s)
         // check if someone logged in
         // if so, get person record and update
         // if not, check to see if email matches any person record and update
@@ -222,8 +490,6 @@ class RegistrationController extends Controller
         $eventTopics = request()->input('eventTopics');
         $affiliation = request()->input('affiliation');
         $experience = request()->input('experience');
-        $flatamt = request()->input('flatamt');
-        $percent = request()->input('percent');
         $dCode = request()->input('discount_code');
         if ($dCode === null || $dCode == " ") {
             $dCode = 'N/A';

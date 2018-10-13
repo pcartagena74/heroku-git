@@ -54,7 +54,7 @@ if($event->isSymmetric && $event->hasTracks) {
         <div class="myrow col-md-12 col-sm-12">
 
             <div class="col-md-2 col-sm-2" style="text-align:center;">
-                <h1 class="fa fa-5x fa-calendar"></h1>
+                <h1 class="far fa-5x fa-calendar-alt"></h1>
             </div>
             <div class="col-md-6 col-sm-6">
                 <h2><b>{{ $event->eventName }}</b></h2>
@@ -63,7 +63,7 @@ if($event->isSymmetric && $event->hasTracks) {
                     - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
                     <br>
                     {{ $loc->locName }}<br>
-                    {{ $loc->addr1 }} <i class="fa fa-circle fa-tiny-circle"></i> {{ $loc->city }}
+                    {{ $loc->addr1 }} <i class="far fa-circle fa-tiny-circle"></i> {{ $loc->city }}
                     , {{ $loc->state }} {{ $loc->zip }}
                 </div>
                 <br/>
@@ -85,16 +85,20 @@ if($event->isSymmetric && $event->hasTracks) {
             </div>
         </div>
 
+        {{--
         @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
+            $reg = Registration::find($i);
+        --}}
+        @foreach($rf->registrations as $reg)
 <?php
-            $reg = Registration::find($i); $tcount++;
+            $tcount++;
             $person = Person::find($reg->personID);
             $ticket = Ticket::find($reg->ticketID);
 ?>
 
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
-                    <h1 class="fa fa-5x fa-user"></h1>
+                    <h1 class="fas fa-5x fa-user"></h1>
                 </div>
                 <div class="col-md-10 col-sm-10">
                     <table class="table table-bordered table-condensed table-striped jambo_table">
@@ -113,7 +117,7 @@ if($event->isSymmetric && $event->hasTracks) {
                         <tr>
                             <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
 
-                            <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                            <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
                                 @if($reg->membership == 'Member')
                                     {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                 @else
@@ -134,7 +138,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                     <td style="text-align: left;"> --</td>
                                 @endif
                             @endif
-                            <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                            <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
                                 {{ number_format($reg->subtotal, 2, ".", ",") }}
                             </td>
                         </tr>
@@ -242,11 +246,11 @@ if($event->isSymmetric && $event->hasTracks) {
                 </div>
             </div>
 
-        @endfor  {{-- closes $rf loop --}}
+        @endforeach  {{-- closes $rf loop --}}
 
         <div class="myrow col-md-12 col-sm-12" style="display: table-row; vertical-align: top;">
             <div class="col-md-2 col-sm-2" style="display: table-cell; text-align:center;">
-                <h1 class="fa fa-5x fa-dollar"></h1>
+                <h1 class="far fa-5x fa-dollar-sign"></h1>
             </div>
             <div class="col-md-7 col-sm-7" style="display: table-cell;">
                 @if($rf->cost > 0)
@@ -271,7 +275,7 @@ if($event->isSymmetric && $event->hasTracks) {
                     </thead>
                     <tr>
                         <td style="text-align: center;"><b><i
-                                        class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                                        class="far fa-dollar-sign"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
                         </td>
                     </tr>
                 </table>

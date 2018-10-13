@@ -30,15 +30,15 @@ $currentOrg    = $currentPerson->defaultOrg;
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => 'Event Defaults for ' . $org->orgName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.defs') . $org->orgName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <table id="demographics" class="table table-striped table-condensed">
         <tr>
             <th style="text-align: left; width: 33%;">
-                Default Ticket Label
-                @include('v1.parts.tooltip', ['title' => "This is the label that will be given to the default ticket that is automatically created when events are created."])
+                @lang('messages.headers.def_label')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.def_label')])
             </th>
-            <th style="text-align: left; width: 33%;">Time Zone</th>
-            <th style="text-align: left; width: 33%;">Event Category</th>
+            <th style="text-align: left; width: 33%;">@lang('messages.headers.tz')</th>
+            <th style="text-align: left; width: 33%;">@lang('messages.headers.cat')</th>
         </tr>
         <tr>
             <td style="text-align: left;"><a href="#" id="defaultTicketLabel"
@@ -48,11 +48,11 @@ $currentOrg    = $currentPerson->defaultOrg;
             <td style="text-align: left;"><a href="#" id="orgCategory" data-value="{{ $org->orgCategory }}"></a></td>
         </tr>
         <tr>
-            <th style="text-align: left;">Early Bird Percent</th>
-            <th style="text-align: left;">Event Contact Email</th>
+            <th style="text-align: left;">@lang('messages.headers.early')</th>
+            <th style="text-align: left;">@lang('messages.headers.ref_days')</th>
             <th style="text-align: left;">
-                Nearby Chapters
-                @include('v1.parts.tooltip', ['title' => "We suggest putting your chapter first, followed by other chapters, and ending with 'Other' and 'None of the above'"])
+                @lang('messages.headers.near_chap')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.near_chap')])
             </th>
         </tr>
         <tr>
@@ -64,15 +64,15 @@ $currentOrg    = $currentPerson->defaultOrg;
         </tr>
         <tr>
             <th style="text-align: left;">
-                Event Refund Days
-                @include('v1.parts.tooltip', ['title' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible."])
+                @lang('messages.headers.ref_days')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.ref_days')])
             </th>
             <th style="text-align: left;"></th>
-            <th style="text-align: left;">Region Chapters</th>
+            <th style="text-align: left;">@lang('messages.headers.reg_chap')</th>
         </tr>
         <tr>
             <td style="text-align: left;">
-                <a href="#" id="refundDays" data-value="{{ $org->refundDays }}"></a> &nbsp; Days
+                <a href="#" id="refundDays" data-value="{{ $org->refundDays }}"></a> &nbsp; @lang('messages.headers.days')
             </td>
             <td style="text-align: left;"></td>
             <td style="text-align: left;"><a href="#" id="regionChapters" data-value="{{ $org->regionChapters }}"></a></td>
@@ -84,19 +84,18 @@ $currentOrg    = $currentPerson->defaultOrg;
 
     @include('v1.parts.start_content', ['header' => 'Organizational Discount Codes' , 'subheader' => '',
              'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    The <b style="color: red;">non-empty discount codes</b> here will be applied to all new events as they are created.
-    <br>
-    Changes made here <b class="red">do not</b> affect existing events. <br>&nbsp;<br>
+    @lang('messages.instructions.org_disc')
+    <br /> &nbsp; <br />
 
-    <?php
+<?php
     // @include('v1.parts.datatable', ['headers'=>$discount_headers, 'data'=>$discount_codes, 'scroll'=>0])
-    ?>
+?>
     <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
             <th style="text-align: left;">#</th>
-            <th style="text-align: left;">Discount Code</th>
-            <th style="text-align: left;">Discount Percent</th>
+            <th style="text-align: left;">@lang('messages.headers.disc_code')</th>
+            <th style="text-align: left;">@lang('messages.headers.disc_percent')</th>
         </tr>
         </thead>
         <tbody>
@@ -121,13 +120,13 @@ $currentOrg    = $currentPerson->defaultOrg;
     </table>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Default & Custom Event Types' , 'subheader' => '',
+    @include('v1.parts.start_content', ['header' =>  trans('messages.headers.def_cust_et'), 'subheader' => '',
              'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
-            <th colspan="2" style="text-align: left;">Event Types</th>
+            <th colspan="3" style="text-align: left;">{{ trans_choice('messages.headers.et', 2) }}</th>
         </tr>
         </thead>
         <tbody>
@@ -137,7 +136,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                     <td style="text-align: left; width: 15px;">
                         {!! Form::open(array('url' => env('APP_URL')."/eventtype/" . $et->etID . "/delete", 'method' => 'delete')) !!}
                         <input type="hidden" name="personID" value="{{ $current_person->personID }}">
-                        <button class="btn btn-danger btn-xs"
+                        <button class="btn btn-danger btn-sm"
                                 {{--
                                 data-toggle="confirmation"
                                 --}}
@@ -148,10 +147,11 @@ $currentOrg    = $currentPerson->defaultOrg;
                                 data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
                                 data-btn-cancel-class="btn-danger btn-sm"
                                 data-title="Are you sure?" data-content="This cannot be undone.">
-                            <i class="fa fa-trash"></i>
+                            <i class="far fa-trash-alt fa-fw"></i>
                         </button>
                         {{ Form::close() }}
                     </td>
+                    <td style="text-align: left;"><b>{{ $et->etID }}</b></td>
                     <td style="text-align: left;">
                         <a data-pk="{{ $et->etID }}" id="etName-{{ $et->etID }}"
                            data-value="{{ $et->etName }}"
@@ -159,16 +159,16 @@ $currentOrg    = $currentPerson->defaultOrg;
                            data-type="text" data-placement="top"></a>
                     </td>
                 @else
-                    <td colspan="2" style="text-align: left;">
+                    <td colspan="3" style="text-align: left;">
                     {{ $et->etName }}
-                    @include('v1.parts.tooltip', ['title' => "This value cannot be edited or removed."])
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.nope')])
                     </td>
                 @endif
             </tr>
         @endforeach
         </tbody>
     </table>
-    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#et_modal">Add Event Type</button>
+    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#et_modal">{{ trans_choice('messages.headers.add', 1) }}</button>
     @include('v1.parts.end_content')
 
 @endsection
@@ -202,7 +202,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             });
             $('#defaultTicketLabel').editable({
                 type: 'text',
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
@@ -210,7 +210,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             $('#orgZone').editable({
                 type: 'select',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 source: [
                     @foreach($tz as $zone)
                     {!! "{ value: '" . $zone->zoneOffset . "', text: '" . $zone->zoneName . "' }," !!}
@@ -219,7 +219,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             });
             $('#orgCategory').editable({
                 type: 'select',
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 source: [
                     @foreach($cats as $category)
@@ -230,20 +230,20 @@ $currentOrg    = $currentPerson->defaultOrg;
 
             $('#earlyBirdPercent').editable({
                 type: 'text',
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
 
             $('#eventEmail').editable({
                 type: 'text',
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
 
             $("#nearbyChapters").editable({
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 placement: 'top',
                 url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
                 select2: {
@@ -254,7 +254,8 @@ $currentOrg    = $currentPerson->defaultOrg;
             });
 
             $("#regionChapters").editable({
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
+                type: 'text',
                 placement: 'top',
                 url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
                 select2: {
@@ -264,10 +265,9 @@ $currentOrg    = $currentPerson->defaultOrg;
                 maximumInputLength: 5
             });
 
-
             $('#refundDays').editable({
                 type: 'number',
-                pk:  {{ $org->orgID }},
+                pk:  '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}'
             });
@@ -294,7 +294,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                     i++;
                 }
                 if (i >= 3) {
-                    $('#et_submit').text("Save Event Types");
+                    $('#et_submit').text("{{ trans_choice('messages.buttons.save_et', 2) }}");
                 }
                 if (i == 6) {
                     $('#add_row').prop('disabled', true);
@@ -310,7 +310,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                 }
 
                 if (i <= 2) {
-                    $('#et_submit').text("Save Event Type");
+                    $('#et_submit').text("{{ trans_choice('messages.buttons.save_et', 1) }}");
                     $('#delete_row').hide();
                 }
             });
@@ -324,7 +324,7 @@ $currentOrg    = $currentPerson->defaultOrg;
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="et_label">Add Additional Event Types</h5>
+                    <h5 class="modal-title" id="et_label">{{ trans_choice('messages.headers.add', 2) }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -350,17 +350,17 @@ $currentOrg    = $currentPerson->defaultOrg;
                             </tbody>
                         </table>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
+                            <button type="button" id="add_row" class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
                             <button type="button" style="display: none" id="delete_row" class="btn btn-sm btn-danger">
-                                Delete
+                                @lang('messages.buttons.delete')
                             </button>
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                    <button type="submit" id="et_submit" class="btn btn-sm btn-success">Save Event Type</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
+                    <button type="submit" id="et_submit" class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_et', 1) }}</button>
                     </form>
                 </div>
             </div>

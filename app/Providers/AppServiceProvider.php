@@ -18,8 +18,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Blade::directive('dd', function ($expression) {
-            return "<?php dd(with{$expression}); ?>";
+            return "<?php dd({$expression}); ?>";
         });
+
         if (!\App::environment('local')) {
             \URL::forceScheme('https');
         }

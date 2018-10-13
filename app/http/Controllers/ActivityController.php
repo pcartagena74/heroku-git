@@ -42,7 +42,7 @@ class ActivityController extends Controller
             'event', function($q) {
             $q->where('eventStartDate', '>=', Carbon::now());
         })
-                          ->with('event', 'ticket', 'person', 'registration')
+                          ->with('event', 'person', 'registrations')
                           ->where('personID', '=', $this->currentPerson->personID)
                           ->whereIn('status', ['Active', 'Processed'])
                           ->get()->sortBy('event.eventStartDate');
@@ -52,7 +52,7 @@ class ActivityController extends Controller
                                 'event', function($q) {
                                 $q->where('eventStartDate', '>=', Carbon::now());
                             })
-                            ->with('event', 'ticket', 'person', 'registration')
+                            ->with('event', 'person', 'registrations')
                             ->whereIn('status', ['Payment Pending'])
                             ->get()->sortBy('event.eventStartDate');
 
@@ -61,7 +61,7 @@ class ActivityController extends Controller
             $q->where('eventStartDate', '>=', Carbon::now())
               ->orderBy('eventStartDate');
         })
-                             ->with('event', 'ticket', 'person', 'registration')
+                             ->with('event', 'person', 'registrations')
                              ->where('personID', '=', $this->currentPerson->personID)
                              ->whereIn('status', ['pending', 'In Progress'])
                              ->get()->sortBy('event.eventStartDate');

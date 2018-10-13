@@ -23,20 +23,20 @@ $today = \Carbon\Carbon::now();
 @section('content')
 
     @if(count($paid) + count($unpaid) + count($pending) + count($bought) == 0)
-        <b>You have not registered for any upcoming events.</b>
+        <b>@lang('messages.instructions.no_fut_events')</b>
     @else
         @if(count($bought)>0)
-            @include('v1.parts.reg_bit', ['header' => 'Events Purchased On Your Behalf', 'reg_array' => $bought])
+            @include('v1.parts.reg_bit', ['header' => trans('messages.headers.fut_behalf'), 'reg_array' => $bought])
         @endif
 
         @if(count($paid)>0)
-            @include('v1.parts.rf_bit', ['header' => 'Your Paid Registered Events', 'rf_array' => $paid])
+            @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_paid'), 'rf_array' => $paid])
         @endif
         @if(count($unpaid)>0)
-            @include('v1.parts.rf_bit', ['header' => 'Registered Events with Unpaid Balances', 'rf_array' => $unpaid])
+            @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_unpaid'), 'rf_array' => $unpaid])
         @endif
         @if(count($pending)>0)
-            @include('v1.parts.rf_bit', ['header' => '<b class="red">Your Incomplete Registrations</b>', 'rf_array' => $pending])
+            @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_inc'), 'rf_array' => $pending])
         @endif
     @endif
 

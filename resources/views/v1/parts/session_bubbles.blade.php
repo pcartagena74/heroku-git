@@ -2,8 +2,18 @@
 /**
  * Comment: This is a DIV version of the session selection form
  * Created: 7/12/2017
+ * Updated: 9/29/2018
  *
  * Passing in $event, $ticket, $rf, $reg
+ * @param $event: the event for which sessions will be displayed
+ * @param $ticket: the ticket (bundle or otherwise) for which sessions will be displayed
+ *                 in the event a ticket is a bundle, sessions will be displayed for the appropriate component ticket(s)
+ * @param $rf: the regFinance record associated with the registration
+ * @param $reg: the individual registration instance for which the sessions will be displayed
+ *
+ * Update requires this form to be modularized in a way that allows or suppresses an individual selection form
+ *
+ * @param $suppress: if 1, the form pieces (open, close, submit button) will be suppressed
  *
  */
 
@@ -12,12 +22,35 @@ use App\Track;
 use App\EventSession;
 use App\RegSession;
 
-        // Determining whether picking sessions is required is complex.
-        // If an event has tracks, there will be sessions associated with 1 or more tickets
+        // If an event has tracks, there could be sessions associated with 1 or more tickets
         // (depending on the number of days that have sessions)
-$needSessionPick = 0;
+
+        // Assumption will be that session_bubbles.blade is included when sessions are needed w/ $ticket->has_sessions()
+
+if(!isset($suppress)) { $suppress = 0; }
+
+//$needSessionPick = $reg->ticket->has_sessions();
+
 if($event->hasTracks > 0) {
     $tracks = Track::where('eventID', $event->eventID)->get();
+
+    if($event->hasTracks == 2) {
+        if($event->isSymmetric){
+            $time_column = 'col-sm-2';
+            $track_column = 'col-sm-5';
+        } else {
+            $time_column = 'col-sm-1';
+            $track_column = 'col-sm-5';
+        }
+    } else {
+        if($event->isSymmetric){
+            $time_column = 'col-sm-2';
+            $track_column = 'col-sm-3';
+        } else {
+            $time_column = 'col-sm-1';
+            $track_column = 'col-sm-3';
+        }
+    }
 } else {
     $tracks = null;
 }
@@ -27,64 +60,44 @@ if($event->hasTracks > 0) {
 // 1. Get the child tickets of the bundle (parent)
 // 2. Get all session records that were created for the event
 // 3. Check if the ticketID associated with the sessions appears in #1 collection, and set $needSessionPick = 1
-if($reg->ticket->isaBundle) {
-    $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                     ->where([
-                         ['bt.bundleID', '=', $ticket->ticketID],
-                         ['event-tickets.eventID', '=', $event->eventID]
-                     ])
-                     ->get();
 
-    $s = EventSession::where('eventID', '=', $event->eventID)
-                     ->select(DB::raw('distinct ticketID'))
-                     ->get();
 
-    foreach($s as $t) {
-        if($tickets->contains('ticketID', $t->ticketID)) {
-            $needSessionPick = 1;
-            break;
-        }
-    }
 
-} else {
-    // Setting a collection of 1 ticket and the 1 ticket.
-    $tickets  = Ticket::where('ticketID', '=', $reg->ticketID)->get();
-    $ticket  = Ticket::where('ticketID', '=', $reg->ticketID)->first();
-    $s       = EventSession::where([
-        ['eventID', '=', $event->eventID],
-        ['ticketID', '=', $ticket->ticketID]
-    ])->get();
+// Retrieve the session data associated with any previously-selected sessions
+$regSessions = RegSession::where([
+    ['regID', '=', $reg->regID],
+    ['eventID', '=', $event->eventID]
+])->get();
 
-    // Check if there's more than 1 session associated with the ticket
-    // Every ticket has a default session (for registration purposes)
-    if(count($s) > 1) {
-        $needSessionPick = 1;
-    }
-}
+// Retrieve the member tickets of a bundle if appropriate
+$tickets = $ticket->bundle_members();
+
 ?>
-@if($needSessionPick == 1)
+@if(1)
     @if(count($regSessions)==0)
-        <b>You have not yet registered for sessions. You can do so below. </b><br/>
+        <b>@lang('messages.instructions.no_reg_sess')</b><br/>
     @else
-        <b>You can review and modify your session registrations below. </b><br/>
+        <b>@lang('messages.instructions.reg_sess')</b><br/>
     @endif
 
+    @if(!$suppress)
     {!! Form::open(['url' => '/update_sessions/'.$reg->regID, 'method' => 'post',
                     'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    @endif
 
     @if($event->hasTracks > 0)
         <div class="col-sm-12 well-sm" style="text-align: left; color: yellow; background-color: #2a3f54;">
-            <b>Track Selection</b>
+            <b>@lang('messages.fields.track_select')</b>
         </div>
 
         <div class="col-sm-12">
             @foreach($tracks as $track)
                 @if($tracks->first() == $track || !$event->isSymmetric)
-                    <div class="col-sm-1" style="text-align: left;">
-                        <b>Session Times</b>
+                    <div class="{{ $time_column }}" style="text-align: left;">
+                        <b>@lang('messages.fields.sess_times')</b>
                     </div>
                 @endif
-                <div class="col-sm-3" style="text-align: left;">
+                <div class="{{ $track_column }}" style="text-align: left;">
                     <b>{{ $track->trackName }}</b>
                 </div>
             @endforeach
@@ -103,7 +116,7 @@ if($reg->ticket->isaBundle) {
                 @if($tickets->contains('ticketID', $z->ticketID))
                     <div class="col-sm-12">&nbsp;<br/></div>
                     <div class="col-sm-12 well-sm" style="text-align:center; color: yellow; background-color: #2a3f54;">
-                        <b>Day {{ $j }}: {{ $y->ticketLabel  }}</b>
+                        <b>@lang('messages.headers.day') {{ $j }}: {{ $y->ticketLabel  }}</b>
                     </div>
                     <div class="col-sm-12">&nbsp;<br/></div>
 
@@ -136,7 +149,7 @@ if($reg->ticket->isaBundle) {
                                     @if($s !== null)
                                         @if($tracks->first() == $track || !$event->isSymmetric)
 
-                                            <div class="col-sm-1" style="text-align:left;">
+                                            <div class="{{ $time_column }}" style="text-align:left;">
                                                 <nobr> {{ $s->start->format('g:i A') }} </nobr>
                                                 &dash;
                                                 <nobr> {{ $s->end->format('g:i A') }} </nobr>
@@ -144,10 +157,10 @@ if($reg->ticket->isaBundle) {
                                         @else
 
                                         @endif
-                                        <div class="col-sm-3" style="text-align:left;">
+                                        <div class="{{ $track_column }}" style="text-align:left;">
                                             @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
                                                 <b>{{ $s->sessionName }}</b><br />
-                                            <span class="red">Maximum attendees reached.</span>
+                                            <span class="red">@lang('messages.instructions.max_reached')</span>
                                                 <br/>
                                             @else
                                                 <b>{{ $s->sessionName }}</b><br/>
@@ -155,18 +168,18 @@ if($reg->ticket->isaBundle) {
                                             <center>
                                                 @if($regSessions->contains('sessionID', $s->sessionID))
                                                     @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
-                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, true,
+                                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
                                                             $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @else
-                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, true,
+                                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
                                                             $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @endif
                                                 @else
                                                     @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
-                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
                                                             $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @else
-                                                        {!! Form::radio('sess-'. $j . '-'.$x, $s->sessionID, false,
+                                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
                                                             $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @endif
                                                 @endif
@@ -178,9 +191,9 @@ if($reg->ticket->isaBundle) {
                                         </div>
                                     @else
                                         @if($tracks->first() == $track || !$event->isSymmetric)
-                                            <div class="col-sm-4" style="text-align:left;">
+                                            <div class="{{ $track_column }}" style="text-align:left;">
                                         @else
-                                            <div class="col-sm-3" style="text-align:left;">
+                                            <div class="{{ $track_column }}" style="text-align:left;">
                                         @endif
 <?php
                                         $t = EventSession::where([
@@ -194,28 +207,28 @@ if($reg->ticket->isaBundle) {
                                              $myTess = $t->sessionID;
                                         }
 ?>
-                                        {!! Form::radio('sess-'. $j . '-'.$x, '', false,
+                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, '', false,
                                         $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
                                         <script>
-                                                            $(document).ready(function () {
-                                                                $("input:radio[name='{{ 'sess-'. $j . '-'.$x }}']").on('change', function () {
-                                                                    console.log("{{ 'sess-'. $j . '-'.$x .'-x' }}  changed.");
-                                                                    if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {
-                                                                        $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
-                                                                    } else {
-                                                                        $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').removeAttr('checked');
-                                                                    }
-                                                                });
-                                                                $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) }}']").on('change', function () {
-                                                                    console.log("{{ 'sess-'.$j.'-'.($x-1) . '-' . $myTess }}  changed.");
-                                                                    if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")) {
-                                                                        $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
-                                                                    } else {
-                                                                        $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').removeAttr('checked');
-                                                                    }
-                                                                });
-                                                            });
-                                                        </script>
+                                            $(document).ready(function () {
+                                                $("input:radio[name='{{ 'sess-'. $j . '-'.$x . '-' . $reg->regID }}']").on('change', function () {
+                                                    console.log("{{ 'sess-'. $j . '-'.$x .'-x' }}  changed.");
+                                                    if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {
+                                                        $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
+                                                    } else {
+                                                        $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').removeAttr('checked');
+                                                    }
+                                                });
+                                                $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) }}']").on('change', function () {
+                                                    console.log("{{ 'sess-'.$j.'-'.($x-1) . '-' . $myTess }}  changed.");
+                                                    if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")) {
+                                                        $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
+                                                    } else {
+                                                        $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').removeAttr('checked');
+                                                    }
+                                                });
+                                            });
+                                        </script>
                                             </div>
                                   @endif
                              @endforeach
@@ -230,10 +243,10 @@ if($reg->ticket->isaBundle) {
 
    <div class="col-sm-12"><p>&nbsp;</p></div>
 
-   <button type="submit" class="btn btn-primary btn-sm">Submit Session Registration
-       Changes
-   </button>
+    @if(!$suppress)
+   <button type="submit" class="btn btn-primary btn-sm">@lang('messages.buttons.sess_reg')</button>
    {!! Form::close() !!}
+    @endif
 @else
     {{--
    <b>This event does not have sessions. </b><br/>

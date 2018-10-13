@@ -12,6 +12,7 @@
  */
 
 use App\RegSession;
+use App\RegFinance;
 use App\Registration;
 use App\Person;
 use App\Ticket;
@@ -20,7 +21,6 @@ use App\Event;
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
-
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();
@@ -56,7 +56,7 @@ $s3fs = new Filesystem($adapter);
                     ['regID', '=', $reg->regID],
                     ['eventID', '=', $event->eventID]
                 ])->get();
-                $rf    = \App\RegFinance::where('token', $reg->token)->first();
+                $rf    = RegFinance::where('regID', $reg->rfID)->first();
                 $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
                 $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 ?>

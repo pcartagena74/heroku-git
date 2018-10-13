@@ -16,7 +16,8 @@ use App\Ticket;
 $today = Carbon\Carbon::now();
 
 // $rf, $loc, $event, $org
-$ticketLabel = $rf->ticket->ticketLabel;
+// $ticketLabel will need to be set individually per registration
+// $ticketLabel = $rf->ticket->ticketLabel;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();
@@ -82,7 +83,7 @@ $deletion = 0;
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => "Registration Receipt: $ticketLabel", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => "Registration Receipt: $event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="whole">
 
         <div style="float: right;" class="col-md-5 col-sm-5">
@@ -105,6 +106,7 @@ $deletion = 0;
                     </div>
                     <br/>
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
+{{--
                         <h1 style="color:red;">
                             @if($ticket->waitlisting())
                                 WAIT LIST ONLY - Not a Ticket
@@ -127,19 +129,23 @@ $deletion = 0;
                             <b style="color:red;">Updated on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
                             <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
                         @endif
+--}}
                     @endif
                 </div>
                 <div class="col-md-3 col-sm-3">
                 </div>
             </div>
 
-            @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
+            @foreach($rf->registrations as $reg)
 <?php
+// @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
+/*
                 try {
                     $reg = Registration::where('regID', $i)->withTrashed()->first();
                 } catch(Exception $e) {
                     next;
                 }
+*/
                 $tcount++;
                 if($reg->deleted_at){
                     $deletion = 1;
@@ -150,9 +156,9 @@ $deletion = 0;
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
                         @if($reg->deleted_at)
-                            <h1 class="fa fa-5x fa-user red"></h1>
+                            <h1 class="far fa-5x fa-user red"></h1>
                         @else
-                            <h1 class="fa fa-5x fa-user"></h1>
+                            <h1 class="far fa-5x fa-user"></h1>
                         @endif
                     </div>
                     <div class="col-md-10 col-sm-10">
@@ -363,7 +369,7 @@ $deletion = 0;
 
                 </div>
 
-            @endfor
+            @endforeach
 
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">

@@ -34,34 +34,27 @@ $tickets = Ticket::where([
     @include('v1.parts.start_content', ['header' => 'Session Setup Questions and Instructions', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
     <div class="col-sm-6">
         <ol>
-            <li>If the majority of your times are standard for the event tracks, choose Yes for now. <br/>
-                You can change this later to edit any unique track/session times.
-            </li>
-            <li>Edit the number of days the event will run.</li>
-            <li>Edit the times and other information for each session where attendees have a choice. No need to enter
-                Keynotes, lunches, etc. A Delete unnecessary sessions.
-            </li>
-            <li>PDU values are calculated based on the end date/time - start date/time.</li>
-            <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
+            {!! trans('messages.instructions.track_setup') !!}
         </ol>
     </div>
     <div class="col-sm-3">
         {!! Form::open(array('url' => env('APP_URL').'/tracksymmetry/'.$event->eventID, 'method' => 'post')) !!}
-        {!! Form::label('isSymmetric', 'Are the session times standard (the same) for all tracks?', array('class' => 'control-label',
-        'data-toggle'=>'tooltip', 'title'=>'If most sessions are, say yes for now.  You can change this later (after setting up the similar sessions) to adjust the times of individual differences.')) !!}
+        <label for="isSymmetric" class="control-label">@lang('messages.headers.std_times')
+        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.std_times')])
+        </label>
         @if($event->isSymmetric !== null && $event->isSymmetric != 1)
-            <div class="col-sm-4"> {!! Form::label('isSymmetric', 'No', array('class' => 'control-label')) !!} </div>
+            <div class="col-sm-4"> {!! Form::label('isSymmetric', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} </div>
             <div class="col-sm-4">{!! Form::checkbox('isSymmetric', '1', false, array('class' => 'js-switch', 'onchange' => 'javascript:submit()')) !!}</div>
-            <div class="col-sm-4">{!! Form::label('isSymmetric', 'Yes', array('class' => 'control-label')) !!}</div>
+            <div class="col-sm-4">{!! Form::label('isSymmetric', trans('messages.yesno_check.yes'), array('class' => 'control-label')) !!}</div>
         @else
-            <div class="col-sm-4"> {!! Form::label('isSymmetric', 'No', array('class' => 'control-label')) !!} </div>
+            <div class="col-sm-4"> {!! Form::label('isSymmetric', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} </div>
             <div class="col-sm-4">{!! Form::checkbox('isSymmetric', '1', true, array('class' => 'js-switch', 'onchange' => 'javascript:submit();')) !!}</div>
-            <div class="col-sm-4">{!! Form::label('isSymmetric', 'Yes', array('class' => 'control-label')) !!}</div>
+            <div class="col-sm-4">{!! Form::label('isSymmetric', trans('messages.yesno_check.yes'), array('class' => 'control-label')) !!}</div>
         @endif
         {!! Form::close() !!}
     </div>
     <div class="col-sm-3">
-        {!! Form::label('confDays', 'How many days of sessions require planning for this event?', array('class' => 'control-label')) !!}
+        {!! Form::label('confDays', trans('messages.headers.confDays'), array('class' => 'control-label')) !!}
         <div class="col-sm-12 col-md-12 col-xs-12">
             <b><a style="color:red;" id="confDays" data-pk="{{ $event->eventID }}"
                   data-url="{{ env('APP_URL') }}/eventDays/{{ $event->eventID }}" data-value="{{ $event->confDays }}"></a></b>
@@ -78,7 +71,7 @@ $tickets = Ticket::where([
                 <tr>
                     @foreach($tracks as $track)
                         @if($tracks->first() == $track || !$event->isSymmetric)
-                            <th style="text-align:left;">Session Times</th>
+                            <th style="text-align:left;">@lang('messages.fields.sess_times')</th>
                         @endif
                         <th colspan="2" style="text-align:center;">
                             <a id="trackName{{ $track->trackID }}"
@@ -102,7 +95,7 @@ $tickets = Ticket::where([
                         ])->first();
 ?>
                         <th style="text-align:center; color: white; background-color: #2a3f54;"
-                            colspan="{{ $columns }}">Day {{ $i }} Sessions using Ticket:
+                            colspan="{{ $columns }}">@lang('messages.headers.day') {{ $i }} @lang('messages.headers.sess_tkt'):
                             <a style="color:yellow;" id="ticketLabel-{{ $i}}"
                                data-pk="{{ $track->trackID }}"
                                data-url="{{ env('APP_URL') }}/trackticket/{{ $i }}"
@@ -169,7 +162,8 @@ $tickets = Ticket::where([
                                         <td colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
                                             @if($s !== null)
                                                 <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                       style="color: #2a3f54;" class="control-label">Session Title</label><br/>
+                                                       style="color: #2a3f54;" class="control-label">@lang('messages.headers.sess_title')</label>
+                                                       <small>({{ $s->sessionID }})</small><br />
                                                 <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                    data-pk="{{ $s->sessionID }}"
                                                    data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
@@ -210,7 +204,7 @@ $tickets = Ticket::where([
                                 <td colspan="2" style="text-align:left;">
                                 @if($s !== null)
                                         <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">Session Speaker(s)</label><br/>
+                                               style="color: #2a3f54;" class="control-label">@lang('messages.headers.sess_spk')</label><br/>
                                         <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
@@ -257,7 +251,7 @@ $tickets = Ticket::where([
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->leadAmt }}"></a>
                                         <label style="color: #2a3f54;"
-                                               for="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> Leadership
+                                               for="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.lead')
                                             {{ $s->event->org->creditLabel }}<?php
                                             if($s->leadAmt != 1) {
                                                 echo('s');
@@ -269,7 +263,7 @@ $tickets = Ticket::where([
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->stratAmt }}"></a>
                                         <label style="color: #2a3f54;"
-                                               for="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> Strategy
+                                               for="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.strat')
                                             {{ $s->event->org->creditLabel }}<?php
                                             if($s->stratAmt != 1) {
                                                 echo('s');
@@ -281,7 +275,7 @@ $tickets = Ticket::where([
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                            data-value="{{ $s->techAmt }}"></a>
                                         <label style="color: #2a3f54;"
-                                               for="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> Technical Skills
+                                               for="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.tech')
                                             {{ $s->event->org->creditLabel }}<?php
                                             if($s->techAmt != 1) {
                                                 echo('s');
@@ -290,7 +284,7 @@ $tickets = Ticket::where([
                                         </label><br />
                                         <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                style="color: #2a3f54;" class="control-label">
-                                            {{ $s->creditAmt }} Total {{ $s->event->org->creditLabel }}<?php
+                                            {{ $s->creditAmt }} @lang('messages.fields.total') {{ $s->event->org->creditLabel }}<?php
                                         if($s->creditAmt != 1) {
                                             echo('s');
                                         }
@@ -300,7 +294,7 @@ $tickets = Ticket::where([
                                     <td style="text-align:left;">
                                         <label style="color: #2a3f54;"
                                                for="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
-                                            Attendee Limit: </label>
+                                            @lang('messages.headers.att_limit'): </label>
                                         <a id="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
@@ -337,7 +331,7 @@ $tickets = Ticket::where([
                                 <td colspan="2" style="text-align:left;">
                                 @if($s !== null)
                                         <label for="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">Abstract</label><br/>
+                                               style="color: #2a3f54;" class="control-label">@lang('messages.fields.abstract')</label><br/>
                                         <a id="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                            data-pk="{{ $s->sessionID }}"
                                            data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"

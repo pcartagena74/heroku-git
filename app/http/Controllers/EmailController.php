@@ -80,4 +80,14 @@ class EmailController extends Controller
             return redirect("/profile/" . $this->currentPerson->personID);
         }
     }
+
+    public function show($email){
+        $e = Email::where('emailADDR', '=', $email)->first();
+        if(null !== $e){
+            $p = Person::with('orgperson')->where('personID', '=', $e->personID)->first();
+            return json_encode(array('status' => 'success', 'p' => $p, 'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()])));
+        } else {
+            return json_encode(array('status' => 'error', 'p' => null, 'e' => $e, 'email' => $email));
+        }
+    }
 }

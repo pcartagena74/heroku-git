@@ -35,8 +35,7 @@ class EventController extends Controller
         $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing']]);
     }
 
-    public function index()
-    {
+    public function index() {
         // responds to GET /events
         $topBits = '';
         $today = Carbon::now();
@@ -144,21 +143,21 @@ class EventController extends Controller
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
 
-        if ($event->eventStartDate > $today) {
-            $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
-                ['discountCODE', "<>", '']])->get();
+        // A copied event should always get the discount codes.
+        $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
+            ['discountCODE', "<>", '']])->get();
 
-            foreach ($orgDiscounts as $od) {
-                $ed = new EventDiscount;
-                $ed->orgID = $od->orgID;
-                $ed->eventID = $event->eventID;
-                $ed->discountCODE = $od->discountCODE;
-                $ed->percent = $od->percent;
-                $ed->creatorID = $this->currentPerson->personID;
-                $ed->updaterID = $this->currentPerson->personID;
-                $ed->save();
-            }
+        foreach ($orgDiscounts as $od) {
+            $ed = new EventDiscount;
+            $ed->orgID = $od->orgID;
+            $ed->eventID = $event->eventID;
+            $ed->discountCODE = $od->discountCODE;
+            $ed->percent = $od->percent;
+            $ed->creatorID = $this->currentPerson->personID;
+            $ed->updaterID = $this->currentPerson->personID;
+            $ed->save();
         }
+
         //return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
         return redirect('/event/' . $event->eventID . '/edit');
     }
@@ -216,6 +215,7 @@ class EventController extends Controller
             Ticket::where([
                 ['isaBundle', 1],
                 ['isDeleted', 0],
+                ['isSuppressed', 0],
                 ['eventID', $event->eventID],
             ])->get()->sortByDesc('availableEndDate');
 
@@ -230,7 +230,7 @@ class EventController extends Controller
         $tracks = Track::where('eventID', $event->eventID)->get();
 
         return view(
-            'v1.public_pages.display_event_w_sessions',
+            'v1.public_pages.display_event_w_sessions2',
             compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks',
                     'currentOrg', 'override'));
 
@@ -322,6 +322,9 @@ class EventController extends Controller
         $event->hasFood = request()->input('hasFood');
         $event->slug = request()->input('slug');
         $event->postRegInfo = request()->input('postRegInfo');
+
+        // Intentionally set to 0 so that track selection works without issue
+        $event->confDays = 0;
 
         if (request()->input('hasFood')) {
             $event->hasFood = 1;
@@ -618,8 +621,7 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
-    public function ajax_update(Request $request, Event $event)
-    {
+    public function ajax_update(Request $request, Event $event) {
         // this function is just for the quick update of the Early Bird End Date
         // and Percent Discount associated with the eventID $id from /event-tickets/{id}
         //$event               = Event::find($id);
@@ -816,5 +818,17 @@ class EventController extends Controller
             $output .= $ical->get();
         }
         return $output;
+    }
+
+
+    /*
+     * get_tix: AJAX - returns the tickets for an event
+     */
+    public function get_tix(Event $event, Ticket $ticket){
+        $tix = Ticket::where([
+            ['eventID', '=', $event->eventID],
+            ['isSuppressed', '=', 0]
+        ])->get();
+        return json_encode(array('status' => 'success', 'tix' => $tix, 'def_tick' => $ticket));
     }
 }

@@ -35,7 +35,7 @@ class Registration extends Model
 
     public function regfinance()
     {
-        return $this->hasOne(RegFinance::class, 'token', 'token');
+        return $this->hasOne(RegFinance::class, 'regID', 'regID');
     }
 
     public function regsession()

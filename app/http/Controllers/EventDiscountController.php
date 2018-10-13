@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Event;
 use App\EventDiscount;
+use App\OrgDiscount;
 use App\Person;
 use App\Org;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ class EventDiscountController extends Controller
         // responds to GET /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person      = $this->currentPerson;
-        $org                 = Org::find($this->currentPerson->defaultOrgID);
+        $org                 = Org::find($event->orgID);
 
         $discount_codes = DB::table('event-discounts')
                             ->where([
@@ -48,6 +49,9 @@ class EventDiscountController extends Controller
         // responds to POST /blah/id
         $eventID   = $id;
         $code      = request()->input('discount_code');
+        if($code == ''){
+            return;
+        }
         $event     = Event::find($eventID);
         $discounts = EventDiscount::where([
             ['discountCode', $code],
@@ -66,12 +70,12 @@ class EventDiscountController extends Controller
             } else {
                 $discount_text = $discount->percent . "%";
             }
-            $message =
-                '<span><i class="far fa-trophy fa-2x text-success mid_align">&nbsp;</i>' . "Code: '" . $code . "'" . " provides a " . $discount_text . " discount.</span>";
+            $txt = trans('messages.codes.valid', ['code' => $code, 'disc' => $discount_text]);
+            $message = "<span><i class='fas fa-trophy-alt fa-2x text-success mid_align'>&nbsp;</i> $txt.</span>";
             return json_encode(array('status' => 'success', 'message' => $message, 'percent' => $discount->percent, 'flatAmt' => $discount->flatAmt));
         } else {
-            $message =
-                '<span><i class="far fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code . "'</span>";
+            $txt = trans('messages.codes.invalid', ['code' => $code]);
+            $message = "<span><i class='fas fa-exclamation-triangle fa-2x text-warning mid_align'>&nbsp;</i>" . " $txt </span>";
             return json_encode(array('status' => 'error', 'message' => $message, 'percent' => 0, 'flatAmt' => 0));
         }
     }
@@ -115,6 +119,23 @@ class EventDiscountController extends Controller
         return redirect("/eventdiscount/$event->eventID");
     }
 
+    public function fix_defaults(Event $event){
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $orgDiscounts = OrgDiscount::where([['orgID', $event->orgID],
+            ['discountCODE', "<>", '']])->get();
+
+        foreach ($orgDiscounts as $od) {
+            $ed = new EventDiscount;
+            $ed->orgID = $od->orgID;
+            $ed->eventID = $event->eventID;
+            $ed->discountCODE = $od->discountCODE;
+            $ed->percent = $od->percent;
+            $ed->creatorID = $this->currentPerson->personID;
+            $ed->updaterID = $this->currentPerson->personID;
+            $ed->save();
+        }
+        return redirect("/eventdiscount/".$event->eventID);
+    }
     public function edit($id)
     {
         // responds to GET /blah/id/edit and shows the add/edit form

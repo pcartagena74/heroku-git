@@ -88,7 +88,7 @@ $experience_choices = [
         <div class="col-md-6 col-sm-6 col-xs-12">
             {{ $event->eventStartDate->format('n/j/Y g:i A') }} - {{ $event->eventEndDate->format('n/j/Y g:i A') }}<br>
             {{ $loc->locName }}<br>
-            {{ $loc->addr1 }} <i class="fa fa-circle fa-tiny-circle"></i> {{ $loc->city }}
+            {{ $loc->addr1 }} <i class="far fa-circle fa-tiny-circle"></i> {{ $loc->city }}
             , {{ $loc->state }} {{ $loc->zip }}
         </div>
         <div class="col-md-3 col-sm-3 col-xs-12">
@@ -159,7 +159,7 @@ $experience_choices = [
             </th>
             </tr>
             <tr>
-                <td style="width: 11%"><b>Ticket Cost:</b> <i class="fa fa-dollar"></i> <span id="tcost{{ $i }}">
+                <td style="width: 11%"><b>Ticket Cost:</b> <i class="far fa-dollar"></i> <span id="tcost{{ $i }}">
                         @if($isMember)
                                 {{ $earlymbr }}
                         @else
@@ -170,7 +170,7 @@ $experience_choices = [
                 </td>
                 <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span
                             class="status_msg">---</span></td>
-                <td style="width: 11%; text-align: right;"><b>Final Cost:</b> <i class="fa fa-dollar"></i>
+                <td style="width: 11%; text-align: right;"><b>Final Cost:</b> <i class="far fa-dollar"></i>
                     <span id="final{{ $i }}">---</span></td>
             </tr>
         </table>
@@ -179,14 +179,14 @@ $experience_choices = [
             <tr>
                 <th style="width:20%;">Prefix</th>
                 <th style="width:20%;">
-                        First Name<sup>*</sup>
+                        First Name<sup class="red">*</sup>
                     @if($i == 1 && $isMember)
                         @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here."])
                     @endif
                 </th>
                 <th style="width:20%;">Middle Name</th>
                 <th style="width:20%;">
-                        Last Name<sup>*</sup>
+                        Last Name<sup class="red">*</sup>
                     @if($i == 1 && $isMember)
                         @include('v1.parts.tooltip', ['title' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here."])
                     @endif
@@ -223,7 +223,7 @@ $experience_choices = [
                 @endif
             </tr>
             <tr>
-                <th style="width:20%;">Preferred Name<sup>*</sup></th>
+                <th style="width:20%;">Preferred First Name<sup class="red">*</sup></th>
                 <th style="width:20%;">Industry</th>
                 <th style="width:20%;">Company</th>
                 @if($event->eventTypeID == 5)
@@ -232,7 +232,7 @@ $experience_choices = [
                     <th style="width:20%;">Title</th>
                 @endif
                 <th style="width:20%;">
-                        Email Address<sup>*</sup>
+                        Email Address<sup class="red">*</sup>
                     @if($i == 1 && Auth::check())
                         @include('v1.parts.tooltip', ['title' => "Changing your email address can only be done via your profile page."])
                     @endif
@@ -380,7 +380,7 @@ $experience_choices = [
                 <th style="width:20%;"><b>List any special arrangements you may need.</b><br><small>We'll do our best to accommodate you.</small></th>
                 @endif
                 <th style="width:20%;">List any questions for the speaker(s).</th>
-                <th style="width:20%;"><b>Please select your chapter affiliation(s).<sup>*</sup></b>
+                <th style="width:20%;"><b>Please select your chapter affiliation(s).<sup class="red">*</sup></b>
                     @include('v1.parts.tooltip', ['title' => "Ctrl-Click to select more than one affiliation."])
                     <br></td>
                 <th style="width:20%;">Do you want to be added to a participant roster?</th>
@@ -397,13 +397,13 @@ $experience_choices = [
                         <td>
                             <div class="form-group col-md-12">
                                 {!! Form::text("specialNeeds", old("specialNeeds"), array('class' => 'form-control has-feedback-left')) !!}
-                                <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
+                                <span class="far fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </td>
                     @else
                         <td>
                             <div class="form-group col-md-12">
-                                <span class="fa fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
+                                <span class="far fa-wheelchair form-control-feedback left" aria-hidden="true"></span>
                                 {!! Form::text("specialNeeds_$i", old("specialNeeds_$i"), array('class' => 'form-control')) !!}
                             </div>
                         </td>
@@ -445,7 +445,7 @@ $experience_choices = [
         <tr>
             <th style="text-align: right; width: 85%; vertical-align: top;">Total
             </td>
-            <th style="text-align: left; vertical-align: top;"><i class="fa fa-dollar"></i> <span id="total">0.00</span>
+            <th style="text-align: left; vertical-align: top;"><i class="far fa-dollar"></i> <span id="total">0.00</span>
             </td>
         </tr>
     </table>
@@ -514,7 +514,7 @@ $experience_choices = [
         function validateCode(eventID) {
             var codeValue = $("#discount_code").val();
             if (FieldIsEmpty(codeValue)) {
-                var message = '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>Enter a discount code.</span>';
+                var message = '<span><i class="far fa-warning fa-2x text-warning mid_align">&nbsp;</i>Enter a discount code.</span>';
                 $('.status_msg').html(message).fadeIn(500).fadeOut(3000);
 
             } else {

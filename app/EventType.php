@@ -14,4 +14,10 @@ class EventType extends Model
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'updateDate'];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'eventTypeID', 'eventID');
+    }
+
 }
