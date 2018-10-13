@@ -19,10 +19,12 @@ return [
         'cash' => 'Cash',
         'ccpay' => 'Pay Now by Credit Card',
         'check' => 'Check',
+        'chk_att' => "Checkin Attendees",
         'close' => 'Close',
         'comp_reg' => 'Complete Registration',
         'door' => 'Pay by Cash/Check at Door',
         'delete' => 'Delete',
+        'edit_tkt' => "Edit Tickets",
         't&s_edit' => "Edit Tracks & Sessions",
         'ex_register' => 'R E G I S T E R',
         'pay_bal' => 'Pay Balance Due Now',
@@ -98,6 +100,7 @@ return [
         'detail' => 'Event Detail',
         'diet_info' => 'Dietary Info',
         'disc' => 'Discount',
+        'discs' => 'Discounts',
         'edit_event' => "Edit Event",
         'email' => 'Email Address',
         'enter_disc' => 'Enter discount code',
@@ -266,8 +269,11 @@ return [
         'email' => 'Email',
         'employed' => 'Employed',
         'et' => 'Event Type|Event Types',
+        'ev_copy' => "Copy Event",
         'event_info' => 'Event-Specific Info',
         'ev_logo' => "Event Logo",
+        'ev_prev' => "Preview Event",
+        'ev_rpt' => "Event Report",
         'fut_behalf' => "Events Purchased On Your Behalf'",
         'fut_paid' => "Your Paid Registered Events",
         'fut_unpaid' => "Registered Events with <b class='red'>Unpaid Balances</b>",
@@ -450,12 +456,12 @@ return [
     ],
 
     'symbols' => [
-        'cash' => "<i class='fas fa-money-bill-alt'></i>",          // currency symbol
-        'check' => "<i class='fas fa-money-check'></i>",          // currency symbol
-        'cur' => "<i class='far fa-dollar-sign'></i>",          // currency symbol
-        'cur_class' => "class='far fa-dollar-sign'",            // currency symbol - class only (when tips are embedded)
-        'trash' => "<i class='far fa-trash-alt'></i>",          // delete symbol
-        'trash_class' => "class='far fa-trash-alt'",    // delete symbol - class only (when tips are embedded)
+        'cash' => "<i class='fas fa-money-bill-alt fa-fw'></i>",          // currency symbol
+        'check' => "<i class='fas fa-money-check fa-fw'></i>",          // currency symbol
+        'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",          // currency symbol
+        'cur_class' => "class='far fa-dollar-sign fa-fw'",            // currency symbol - class only (when tips are embedded)
+        'trash' => "<i class='far fa-trash-alt fa-fw'></i>",          // delete symbol
+        'trash_class' => "class='far fa-trash-alt fa-fw'",    // delete symbol - class only (when tips are embedded)
     ],
 
     'tabs' => [

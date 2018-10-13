@@ -26,10 +26,7 @@ try{
     $currentPerson->save();
 }
 ?>
-{{--
-    // small green nav button
-    <span class="label label-success pull-right">Coming Soon</span>
---}}
+
 <div class="col-md-3 left_col menu_fixed">
     <div class="left_col scroll-view">
 

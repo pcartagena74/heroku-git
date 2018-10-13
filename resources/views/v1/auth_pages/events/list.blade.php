@@ -43,24 +43,25 @@ foreach($current_events as $event) {
     $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
     $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 
-    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event'><i class='far fa-fw fa-pencil'></i></a>";
-    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tracks & Sessions'><i class='far fa-fw fa-pencil'></i></a>";
+    $edit_link_button    = "<a href='$editURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='".trans('messages.fields.edit_event')."'><i class='far fa-fw fa-pencil'></i></a>";
+    $track_link_button    = "<a href='$trackURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.buttons.t&s_edit') . "'><i class='far fa-fw fa-pencil'></i></a>";
     if($event->hasTracks == 0){
         $track_link_button = '';
     }
-    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='Event Report'><i class='far fa-fw fa-chart-bar'></i></a>";
-    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top' title='Copy Event'><i class='far fa-fw fa-copy'></i></a>";
+    $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_rpt') . "'><i class='far fa-fw fa-chart-bar'></i></a>";
+    $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_copy') . "'><i class='far fa-fw fa-copy'></i></a>";
     if($event->isActive){
         $display_link_button =
-            "<a target='_new' href='$displayURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='Preview Event'><i class='far fa-fw fa-eye'></i></a>";
+            "<a target='_new' href='$displayURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_prev') . "'><i class='far fa-fw fa-eye'></i></a>";
     } else {
         $display_link_button =
-            "<a target='_new' href='$displayURL/1' class='btn btn-yellow btn-sm' data-toggle='tooltip' data-placement='top' title='Preview Event'><i class='far fa-fw fa-eye'></i></a>";
+            "<a target='_new' href='$displayURL/1' class='btn btn-yellow btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_prev') . "'><i class='far fa-fw fa-eye'></i></a>";
     }
     $eventDiscount_button =
-       "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Event Discounts'><i class='far fa-fw fa-dollar-sign'></i></a>";
+       "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='".
+        trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') ."'>" . trans('messages.symbols.cur') . "</i></a>";
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
-        '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="far fa-fw fa-trash-alt"></i></button>
+        '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="'. trans('messages.buttons.delete') .'">' . trans('messages.symbols.trash') . '</button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
     // Deletion should not be possible when 1. event is active 2. event has registrations.
     if($event->isActive || $event->cnt > 0) {
@@ -68,8 +69,10 @@ foreach($current_events as $event) {
     }
 
     $ticket_button =
-        "<a href='$tktURL' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top' title='Edit Tickets'><i class='far fa-fw fa-ticket-alt'></i></a>";
-    $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='CheckIn Attendees'><i class='far fa-fw fa-check-square-o'></i></a>";
+        "<a href='$tktURL' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top' title='".
+                          trans('messages.buttons.edit_tkt') . "'><i class='far fa-fw fa-ticket-alt'></i></a>";
+    $checkin_button    = "<a href='$checkinURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top'
+                          title='" . trans('messages.buttons.chk_att') . "'><i class='far fa-fw fa-check-square-o'></i></a>";
 
     if($today < $event->eventStartDate){
         $checkin_button = '';

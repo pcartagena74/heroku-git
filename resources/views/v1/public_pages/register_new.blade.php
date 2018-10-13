@@ -30,13 +30,13 @@ if (Auth::check()) {
 $loc = Location::find($event->locationID);
 
 $prefixes = DB::table('prefixes')->select('prefix', 'prefix')->get();
-$prefix_array = ['' => trans('registration.prefixes.select')] +
+$prefix_array = ['' => trans('messages.fields.prefixes.select')] +
                 $prefixes->pluck('prefix', 'prefix')->map(function($item, $key) {
                     return trans('messages.fields.prefixes.'.$item);
                 })->toArray();
 dd($prefix_array);
 $industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
-$industry_array = ['' => trans('registration.industries.select')] + $industries->pluck('industryName', 'industryName')->toArray();
+$industry_array = ['' => trans('messages.fields.industries.select')] + $industries->pluck('industryName', 'industryName')->toArray();
 
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
@@ -67,12 +67,12 @@ if ($ticket->valid_earlyBird()) {
 }
 
 $experience_choices = [
-    '0' => '0 ' . trans('registration.years'),
-    '1-4' => '1-4 ' . trans('registration.years'),
-    '5-9' => '5-9 ' . trans('registration.years'),
-    '10-14' => '10-14 ' . trans('registration.years'),
-    '15-19' => '15-19 ' . trans('registration.years'),
-    '20+' => '20+ ' . trans('registration.years'),
+    '0' => '0 ' . trans('messages.fields.years'),
+    '1-4' => '1-4 ' . trans('messages.fields.years'),
+    '5-9' => '5-9 ' . trans('messages.fields.years'),
+    '10-14' => '10-14 ' . trans('messages.fields.years'),
+    '15-19' => '15-19 ' . trans('messages.fields.years'),
+    '20+' => '20+ ' . trans('messages.fields.years'),
 ];
 
 //var_dump(Session::all());
@@ -100,7 +100,7 @@ $experience_choices = [
         <div class="col-md-3 col-sm-3 col-xs-12">
             @if(!Auth::check())
                 <button class='btn btn-primary btn-sm' id='loginButton' data-toggle="modal" data-target="#login_modal">
-                    <i class='far fa-user'>&nbsp;</i> @lang('registration.auth.account')
+                    <i class='far fa-user'>&nbsp;</i> @lang('messages.auth.account')
                 </button>
             @endif
         </div>
@@ -127,7 +127,7 @@ $experience_choices = [
     @if($ticket->waitlisting())
         <div class="clearfix"><p></div>
         <b class="red">
-            @lang('registration.waitlist', $quantity)
+            @lang('messages.instructions.waitlist', $quantity)
         </b>
         <div class="clearfix"></div>
     @endif
@@ -150,14 +150,14 @@ $experience_choices = [
                 #{{ $i }} <span id="ticket_type{{ $i }}">
                     @if($i == 1)
                         @if($isMember)
-                            {{ strtoupper(__('registration.member')) }}
+                            {{ strtoupper(__('messages.fields.member')) }}
                         @else
-                            {{ strtoupper(__('registration.nonmbr')) }}
+                            {{ strtoupper(__('messages.fields.nonmbr')) }}
                         @endif
                     @else
-                        {{ strtoupper(__('registration.nonmbr')) }}
+                        {{ strtoupper(__('messages.fields.nonmbr')) }}
                     @endif </span>
-                {{ strtoupper(__('registration.ticket')) }}:
+                {{ strtoupper(__('messages.fields.ticket')) }}:
                 @if($i == 1)
                     {{ $ticket->ticketLabel }}
                 @else
@@ -165,7 +165,7 @@ $experience_choices = [
                         <a id="ticketID-{{ $i }}" data-pk="{{ $event->eventID }}"
                            data-value="{{ $ticket->ticketID }}"
                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                        @include('v1.parts.tooltip', ['title' => trans('registration.change_ticket')])
+                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
                     @else
                         {{ $ticket->ticketLabel }}
                     @endif
@@ -178,11 +178,11 @@ $experience_choices = [
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right; vertical-align: middle;">
                             {!! Form::text("discount_code$i_cnt", $discount_code ?: old($discount_code . $i_cnt),
                                 array('size' => '25', 'class' => 'form-control input-sm', 'id' => "discount_code$i_cnt",
-                                'placeholder' => trans('registration.enter_disc'))) !!}
+                                'placeholder' => trans('messages.fields.enter_disc'))) !!}
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-12" style="text-align: left; vertical-align: middle;">
                             <a class="btn btn-sm btn-primary"
-                               id="btn-apply{{ $i_cnt }}">@lang('registration.buttons.apply')</a></div>
+                               id="btn-apply{{ $i_cnt }}">@lang('messages.buttons.apply')</a></div>
                     @else
                         <div class="col-md-6 col-sm-6 col-xs-12"></div>
                         <div class="col-md-3 col-sm-3 col-xs-12"></div>
@@ -191,7 +191,7 @@ $experience_choices = [
             </th>
             </tr>
             <tr>
-                <td style="width: 11%"><b>@lang('registration.tCost'):</b> <i class="far fa-dollar-sign"></i>
+                <td style="width: 11%"><b>@lang('messages.fields.tCost'):</b> @lang('messages.symbols.cur')
                     <span id="tcost{{ $i }}">
                         @if($isMember && $i == 1)
                             {{ $earlymbr }}
@@ -200,10 +200,10 @@ $experience_choices = [
                         @endif
                         </span></td>
                 <td colspan="2" style="width: 22%; text-align: right; vertical-align: middle;">
-                    <b>@lang('registration.app_disc'):</b>
+                    <b>@lang('messages.fields.app_disc'):</b>
                 </td>
                 <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span class="status_msg{{ $i_cnt }}">---</span></td>
-                <td style="width: 11%; text-align: right;"><b>@lang('registration.fCost'):</b> <i class="far fa-dollar-sign"></i>
+                <td style="width: 11%; text-align: right;"><b>@lang('messages.fields.fCost'):</b> @lang('messages.symbols.cur')
                     <span id="final{{ $i }}">---</span></td>
             </tr>
         </table>
@@ -211,14 +211,14 @@ $experience_choices = [
         @if($i == 1)
             <div class="col-sm-12">
                 <div class="col-sm-3">
-                    <b id="notself">@lang('registration.not_mine')<br>Not Today!</b>
+                    <b id="notself">@lang('messages.fields.not_mine')<br>Not Today!</b>
                 </div>
                 <div class="col-sm-1">
                     <input id="selfcheck" onclick="ticket1();" class="flat js-switch input-sm" type="checkbox" checked
                            name="self" value="1">
                 </div>
                 <div class="col-sm-3">
-                    <b id="self">@lang('registration.my_ticket')</b>
+                    <b id="self">@lang('messages.fields.my_ticket')</b>
                 </div>
                 <p>&nbsp;</p>
             </div>
@@ -226,10 +226,10 @@ $experience_choices = [
 
         <div class="col-sm-3">
             <div class="col-sm-12">
-                <label class="control-label" for="login{{ $i_cnt }}">@lang('registration.login') <sup
+                <label class="control-label" for="login{{ $i_cnt }}">@lang('messages.fields.login') <sup
                             class='red'>*</sup></label>
                 @if($i == 1 && $isMember)
-                    @include('v1.parts.tooltip', ['title' => trans('registration.email_tip')])
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.email_tip')])
                     {!! Form::email("login$i_cnt", old("login$i_cnt"), array('class' => 'form-control input-sm', 'id' => "login$i_cnt",
                         Auth::check() ? 'onfocus="blur();"' : '', 'required')) !!}
                 @else
@@ -238,16 +238,16 @@ $experience_choices = [
                 @endif
                 <br/>
 
-                {!! Form::label("prefix$i_cnt", trans('registration.prefix'), array('class' => 'control-label')) !!}
+                {!! Form::label("prefix$i_cnt", trans('messages.fields.prefix'), array('class' => 'control-label')) !!}
                 {!! Form::select("prefix$i_cnt", $prefix_array, old("prefix$i_cnt"), array('class' => 'form-control input-sm', 'id' => "prefix$i_cnt")) !!}
                 <br/>
             </div>
 
             <div class="col-sm-6">
-                <label class="control-label" for="firstName{{ $i_cnt }}">@lang('registration.firstName') <sup
+                <label class="control-label" for="firstName{{ $i_cnt }}">@lang('messages.fields.firstName') <sup
                             class='red'>*</sup></label>
                 @if($i == 1 && $isMember)
-                    @include('v1.parts.tooltip', ['title' => trans('registration.pmi_tip')])
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.pmi_tip')])
                     {!! Form::text("firstName$i_cnt", old("firstName$i_cnt"), $attributes =
                               array('class' => 'form-control input-sm', 'id' => "firstName$i_cnt", 'required', 'readonly')) !!}
                 @else
@@ -258,16 +258,16 @@ $experience_choices = [
             </div>
 
             <div class="col-sm-6">
-                {!! Form::label("middleName$i_cnt", trans('registration.midName'), array('class' => 'control-label')) !!}
+                {!! Form::label("middleName$i_cnt", trans('messages.fields.midName'), array('class' => 'control-label')) !!}
                 {!! Form::text("middleName$i_cnt", old("middleName$i_cnt"), array('class' => 'form-control input-sm', 'id' => "middleName$i_cnt")) !!}
                 <br/>
 
             </div>
 
             <div class="col-sm-6">
-                <label class="control-label" for="lastName{{ $i_cnt }}">@lang('registration.lastName') <sup class='red'>*</sup></label>
+                <label class="control-label" for="lastName{{ $i_cnt }}">@lang('messages.fields.lastName') <sup class='red'>*</sup></label>
                 @if($i == 1 && $isMember)
-                    @include('v1.parts.tooltip', ['title' => trans('registration.pmi_tip')])
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.pmi_tip')])
                     {!! Form::text("lastName$i_cnt", old("lastName$i_cnt"),
                             array('class' => 'form-control input-sm', 'required', 'readonly', 'id' => "lastName$i_cnt")) !!}
                 @else
@@ -278,13 +278,13 @@ $experience_choices = [
             </div>
 
             <div class="col-sm-6">
-                {!! Form::label("suffix$i_cnt", trans('registration.suffix'), array('class' => 'control-label', 'for' => 'suffix_'.$i)) !!}
+                {!! Form::label("suffix$i_cnt", trans('messages.fields.suffix'), array('class' => 'control-label', 'for' => 'suffix_'.$i)) !!}
                 {!! Form::text("suffix$i_cnt", old("suffix$i_cnt"), array('class' => 'form-control input-sm', 'id' => "suffix$i_cnt")) !!}
                 <br/>
             </div>
 
             <div class="col-sm-12">
-                <label class="control-label" for="prefName{{ $i_cnt }}">@lang('registration.prefName') <sup
+                <label class="control-label" for="prefName{{ $i_cnt }}">@lang('messages.fields.prefName') <sup
                             class='red'>*</sup></label>
                 {!! Form::text("prefName$i_cnt", old("prefName$i_cnt"),
                         array('class' => 'form-control input-sm', 'required', 'id' => "prefName$i_cnt")) !!}
@@ -294,43 +294,43 @@ $experience_choices = [
 
         <div class="col-sm-3">
             <div class="col-sm-12">
-                {!! Form::label("compName$i_cnt", trans('registration.compName'), array('class' => 'control-label')) !!}
+                {!! Form::label("compName$i_cnt", trans('messages.fields.compName'), array('class' => 'control-label')) !!}
                 {!! Form::text("compName$i_cnt", old("compName$i_cnt"), array('class' => 'form-control input-sm', 'id' => "compName$i_cnt")) !!}
                 <br/>
 
-                {!! Form::label("title$i_cnt", trans('registration.title'), array('class' => 'control-label')) !!}
+                {!! Form::label("title$i_cnt", trans('messages.fields.title'), array('class' => 'control-label')) !!}
                 {!! Form::text("title$i_cnt", old("title$i_cnt"), array('class' => 'form-control input-sm', 'id' => "title$i_cnt")) !!}
                 <br/>
             </div>
 
             <div class="col-sm-6">
-                {!! Form::label("indName$i_cnt", trans('registration.indName'), array('class' => 'control-label')) !!}
+                {!! Form::label("indName$i_cnt", trans('messages.fields.indName'), array('class' => 'control-label')) !!}
                 {!! Form::select("indName$i_cnt", $industry_array, old("indName$i_cnt"), array('class' => 'form-control input-sm', 'id' => "indName$i_cnt")) !!}
                 <br/>
             </div>
 
             <div class="col-sm-6">
-                {!! Form::label("experience$i_cnt", trans('registration.experience'), array('class' => 'control-label')) !!}
-                @include('v1.parts.tooltip', ['title' => trans('registration.experience_tip')])
+                {!! Form::label("experience$i_cnt", trans('messages.fields.experience'), array('class' => 'control-label')) !!}
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.experience_tip')])
                 {!! Form::select("experience$i_cnt", $experience_choices, old("experience$i_cnt"),
                           array('class' =>'form-control input-sm', 'id' => "experience$i_cnt")) !!}
                 <br/>
             </div>
 
             <div class="col-sm-12">
-                {!! Form::label("eventTopics$i_cnt", trans('registration.eventTopics'), array('class' => 'control-label')) !!}
+                {!! Form::label("eventTopics$i_cnt", trans('messages.fields.eventTopics'), array('class' => 'control-label')) !!}
                 {!! Form::text("eventTopics$i_cnt", old("eventTopics$i_cnt"), array('class' => 'form-control input-sm', 'id' => "eventTopics$i_cnt")) !!}
                 <br/>
 
-                {!! Form::label("cityState$i_cnt", trans('registration.cityState'), array('class' => 'control-label')) !!}
+                {!! Form::label("cityState$i_cnt", trans('messages.fields.cityState'), array('class' => 'control-label')) !!}
                 {!! Form::text("cityState$i_cnt", old("cityState$i_cnt"), array('class' => 'form-control input-sm', 'id' => "cityState$i_cnt")) !!}
                 <br/>
 
-                {!! Form::label("canNetwork$i_cnt", trans('registration.canNetwork'), array('class' => 'control-label')) !!}
+                {!! Form::label("canNetwork$i_cnt", trans('messages.fields.canNetwork'), array('class' => 'control-label')) !!}
                 <div class="container row col-sm-3">
-                    <div class="col-sm-1"><b>@lang('registration.yesno_check.no')</b></div>
+                    <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
                     <div class="col-sm-2">{!! Form::checkbox("canNetwork$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "canNetwork$i_cnt")) !!}</div>
-                    <div class="col-sm-1"><b>@lang('registration.yesno_check.yes')</b></div>
+                    <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
                 </div>
                 <br/>
                 <p>&nbsp;</p>
@@ -338,8 +338,8 @@ $experience_choices = [
         </div>
 
         <div class="col-sm-3">
-            {!! Form::label("OrgStat1$i_cnt", trans('registration.orgStat1'), array('class' => 'control-label')) !!}
-            @include('v1.parts.tooltip', ['title' => trans('registration.orgStat1_tip')])
+            {!! Form::label("OrgStat1$i_cnt", trans('messages.fields.orgStat1'), array('class' => 'control-label')) !!}
+            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.orgStat1_tip')])
             @if($i == 1 && $isMember)
                 {!! Form::number("OrgStat1$i_cnt", old("OrgStat1$i_cnt"),
                         array('class' => 'form-control input-sm', 'readonly', 'id' => "OrgStat1$i_cnt")) !!}
@@ -350,64 +350,64 @@ $experience_choices = [
             <br/>
 
             @if($event->eventTypeID == 5)
-                {!! Form::label("chapterRole$i_cnt", trans('registration.chapterRole', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
+                {!! Form::label("chapterRole$i_cnt", trans('messages.fields.chapterRole', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
                 {!! Form::text("chapterRole$i_cnt", old("chapterRole$i_cnt"), array('class' => 'form-control input-sm', 'id' => "chapterRole$i_cnt")) !!}
                 <br/>
             @endif
 
             @if($event->eventTypeID == 5)
-                {!! Form::label("isFirstEvent$i_cnt", trans('registration.isFirstRegional'), array('class' => 'control-label')) !!}
+                {!! Form::label("isFirstEvent$i_cnt", trans('messages.fields.isFirstRegional'), array('class' => 'control-label')) !!}
             @else
-                {!! Form::label("isFirstEvent$i_cnt", trans('registration.isFirstEvent', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
+                {!! Form::label("isFirstEvent$i_cnt", trans('messages.fields.isFirstEvent', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
             @endif
 
             <div class="container row col-sm-3">
-                <div class="col-sm-1"><b>@lang('registration.yesno_check.no')</b></div>
+                <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
                 <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "isFirstEvent$i_cnt")) !!} </div>
-                <div class="col-sm-1"><b>@lang('registration.yesno_check.yes')</b></div>
+                <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
             </div>
 
             <p>&nbsp;</p>
-            {!! Form::label("isAuthPDU$i_cnt", trans('registration.isAuthPDU', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
+            {!! Form::label("isAuthPDU$i_cnt", trans('messages.fields.isAuthPDU', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
             <div class="container row col-sm-3">
-                <div class="col-sm-1"><b>@lang('registration.yesno_check.no')</b></div>
+                <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
                 <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU$i_cnt", '1', true, array('class' => 'flat js-switch', 'id' => "isAuthPDU$i_cnt")) !!} </div>
-                <div class="col-sm-1"><b>@lang('registration.yesno_check.yes')</b></div>
+                <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
             </div>
             <p>&nbsp;</p>
 
-            @if($event->event_type->etName == trans('registration.nmw'))
-                {!! Form::label("eventQuestion$i_cnt", trans('registration.nmwQuestion'), array('class' => 'control-label')) !!}
+            @if($event->event_type->etName == trans('messages.fields.nmw'))
+                {!! Form::label("eventQuestion$i_cnt", trans('messages.fields.eventQuestion'), array('class' => 'control-label')) !!}
             @else
-                {!! Form::label("eventQuestion$i_cnt", trans('registration.eventQuestion'), array('class' => 'control-label')) !!}
+                {!! Form::label("eventQuestion$i_cnt", trans('messages.fields.eventQuestion'), array('class' => 'control-label')) !!}
             @endif
             {!! Form::textarea("eventQuestion$i_cnt", old("eventQuestion$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventQuestion$i_cnt")) !!}
             <br/>
 
-            <label class="control-label" for="login_{{ $i }}">@lang('registration.affiliation')<sup
+            <label class="control-label" for="login_{{ $i }}">@lang('messages.fields.affiliation')<sup
                         class='red'>*</sup></label>
-            @include('v1.parts.tooltip', ['title' => trans('registration.affiliation_tip')])
+            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.affiliation_tip')])
             {!! Form::select("affiliation$i_cnt" . "[]", $affiliation_array, old("affiliation") ?: reset($affiliation_array), array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "affiliation$i_cnt")) !!}
         </div>
 
         <div class="col-sm-3">
             @if($event->hasFood || 1)
                 <div class="col-sm-12">
-                    {!! Form::label("allergenInfo$i_cnt", trans('registration.allergenInfo'), array('class' => 'control-label')) !!}
-                    @include('v1.parts.tooltip', ['title' => trans('registration.allergenInfo_tip')])
+                    {!! Form::label("allergenInfo$i_cnt", trans('messages.fields.allergenInfo'), array('class' => 'control-label')) !!}
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.allergenInfo_tip')])
                     <br/>
-                    <small>@lang('registration.accommodate')</small>
+                    <small>@lang('messages.fields.accommodate')</small>
                     {!! Form::select("allergenInfo$i_cnt" .'[]', $allergen_array, old("allergenInfo_$i") ?: reset($allergen_array),
                         array('required', 'class' => 'form-control input-sm', 'multiple' => 'multiple', 'size' => '3', 'id' => "allergenInfo$i_cnt")) !!}
                     <br/>
 
-                    {!! Form::label("eventNotes$i_cnt", trans('registration.eventNotes'), array('class' => 'control-label')) !!}
+                    {!! Form::label("eventNotes$i_cnt", trans('messages.fields.eventNotes'), array('class' => 'control-label')) !!}
                     {!! Form::textarea("eventNotes$i_cnt", old("eventNotes$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventNotes$i_cnt")) !!}
                     <br/>
 
-                    {!! Form::label("specialNeeds$i_cnt", trans('registration.specialNeeds'), array('class' => 'control-label')) !!}
+                    {!! Form::label("specialNeeds$i_cnt", trans('messages.fields.specialNeeds'), array('class' => 'control-label')) !!}
                     <br/>
-                    <small>@lang('registration.accommodate')</small>
+                    <small>@lang('messages.fields.accommodate')</small>
                 </div>
 
                 <div class="col-sm-12 form-group">
@@ -429,7 +429,7 @@ $experience_choices = [
 
     <table class="table table-striped">
         <tr>
-            <th style="text-align: right; width: 85%; vertical-align: top;">@lang('registration.total')</th>
+            <th style="text-align: right; width: 85%; vertical-align: top;">@lang('messages.fields.total')</th>
             <th style="text-align: left; vertical-align: top;"><i class="far fa-dollar-sign"></i> <span id="total">0.00</span></th>
         </tr>
     </table>
@@ -437,7 +437,7 @@ $experience_choices = [
     <div class="col-md-9 col-sm-9 col-xs-12"></div>
     <div class="col-md-3 col-sm-3 col-xs-12">
         {!! Form::reset('Reset', array('class' => 'btn btn-info')) !!}
-        {!! Form::submit(trans('registration.buttons.rev&pay'), array('class' => 'btn btn-primary')) !!}
+        {!! Form::submit(trans('messages.buttons.rev&pay'), array('class' => 'btn btn-primary')) !!}
     </div>
     @include('v1.parts.end_content')
     {!! Form::close() !!}
