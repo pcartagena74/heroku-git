@@ -36,7 +36,10 @@ $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
                 })->toArray();
 dd($prefix_array);
 $industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
-$industry_array = ['' => trans('messages.fields.industries.select')] + $industries->pluck('industryName', 'industryName')->toArray();
+$industry_array = ['' => trans('messages.fields.industries.select')] +
+    $industries->pluck('industryName', 'industryName')->map(function($item, $key) {
+        return trans('messages.fields.industries.'.$item);
+    })->toArray();
 
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
