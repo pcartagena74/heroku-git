@@ -23,7 +23,7 @@ class PersonController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['oLookup']]);
     }
 
     // Shows member management page
