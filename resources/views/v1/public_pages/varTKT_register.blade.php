@@ -2,6 +2,7 @@
 /**
  * Comment: Registration form (multiple ticket quantities)
  * Created: 8/24/2017
+ * Updated: October 2018 - This is the one in use (not register_new)
  */
 
 use Illuminate\Support\Facades\DB;
@@ -108,18 +109,6 @@ $i = 0;
         </div>
     </div>
     &nbsp;<br/>
-    {{-- Possibly Redundant
-    <div class="flash-message">
-        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-            @if(Session::has('alert-' . $msg))
-                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                </p>
-            @endif
-        @endforeach
-    </div>
-    {!! Form::hidden('ticketID', $ticket->ticketID, array('id' => 'ticketID')) !!}
-    --}}
 
     {!! Form::model($person->toArray() + $registration->toArray() + $op->toArray(),
                     ['route' => ['register_step2', $event->eventID], 'method' => 'post', 'id' => 'regForm']) !!}
@@ -395,7 +384,7 @@ $i = 0;
             {!! Form::label("isAuthPDU$i_cnt", trans('messages.fields.isAuthPDU', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
             <div class="container row col-sm-3">
                 <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
-                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "isAuthPDU$i_cnt")) !!} </div>
+                <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU$i_cnt", '1', true, array('class' => 'flat js-switch', 'id' => "isAuthPDU$i_cnt")) !!} </div>
                 <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
             </div>
             <p>&nbsp;</p>
@@ -714,7 +703,6 @@ $i = 0;
                         url: '{{ env('APP_URL') }}/oLookup/' + pmi_id,
                         dataType: 'json',
                         success: function (data) {
-                            //console.log(data);
                             var result = eval(data);
                             if (result.status == 'success') {
                                {{--
@@ -775,6 +763,14 @@ $i = 0;
                                         }
                                     }
                                 });
+                            } else {
+                                j = which.replace('_', '');
+                                if(j=='') j = 1;
+                                var pmi_id = $('#OrgStat1' + which).val();
+                                if(pmi_id > 0){
+                                    $("#ticket_type"+j).html(member);
+                                    fix_pricing(j, which);
+                                }
                             }
                         }
                     });

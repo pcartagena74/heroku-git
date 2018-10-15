@@ -506,7 +506,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                 </td>
             </tr>
             <tr style="border: none;">
-                <td style="text-align: right; border: none;"><h4 class="red">@lang('messages.fields.to'):</h4></td>
+                <td style="text-align: right; border: none;"><h4 class="red">{{ ucwords(__('messages.headers.to')) }}:</h4></td>
                 <td style="border: none;">
                     <nobr>
                         <h4>{{ $event->eventEndDate->format('n/j/Y') }}</h4>

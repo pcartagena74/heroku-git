@@ -72,7 +72,7 @@ if($event->isSymmetric && $event->hasTracks) {
                 <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
 
-                    @if($rf->cost > 0 && $rf->status != 'Wait List')
+                    @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>@lang('messages.buttons.ccpay')</b>
@@ -84,9 +84,9 @@ if($event->isSymmetric && $event->hasTracks) {
                     @endif
 
                     <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
-                        @if($rf->cost > 0 && $rf->status != 'Wait List')
+                        @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
                             <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
-                        @elseif($rf->status == 'Wait List')
+                        @elseif($rf->status == trans('messages.headers.wait'))
                             <b>@lang('messages.buttons.wait')</b>
                         @else
                             <b>@lang('messages.buttons.comp_reg')</b>
@@ -135,8 +135,8 @@ if($event->isSymmetric && $event->hasTracks) {
                             <tr>
                                 <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
 
-                                <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
-                                    @if($reg->membership == 'Member')
+                                <td style="text-align: left;">@lang('messages.symbols.cur')
+                                    @if($reg->membership == trans('messages.fields.member'))
                                         {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                     @else
                                         {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
@@ -156,7 +156,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                         <td style="text-align: left;"> --</td>
                                     @endif
                                 @endif
-                                <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
+                                <td style="text-align: left;">@lang('messages.symbols.cur')
                                     {{ number_format($reg->subtotal, 2, ".", ",") }}
                                 </td>
                             </tr>
@@ -171,7 +171,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                            data-value="{{ $person->prefix }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
-                                    @if($reg->membership == 'Non-Member')
+                                    @if($reg->membership == trans('messages.fields.nonmbr'))
                                         <a id="firstName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->firstName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -188,7 +188,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                            data-value="{{ $person->midName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
-                                    @if($reg->membership == 'Non-Member')
+                                    @if($reg->membership == trans('messages.fields.nonmbr'))
                                         <a id="lastName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->lastName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -328,10 +328,10 @@ if($event->isSymmetric && $event->hasTracks) {
 
             <div class="myrow col-md-12 col-sm-12" style="display: table-row; vertical-align: top;">
                 <div class="col-md-2 col-sm-2" style="display: table-cell; text-align:center;">
-                    <h1 class="far fa-5x fa-dollar-sign"></h1>
+                    <h1 @lang('messages.symbols.cur_class')></h1>
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
-                    @if($rf->cost > 0 && $rf->status != 'Wait List')
+                    @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>@lang('messages.buttons.ccpay')</b>
@@ -339,9 +339,9 @@ if($event->isSymmetric && $event->hasTracks) {
                     @endif
                     <br />
                     <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                        @if($rf->cost > 0 && $rf->status != 'Wait List')
+                        @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
                             <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
-                        @elseif($rf->status == 'Wait List')
+                        @elseif($rf->status == trans('messages.headers.wait'))
                             <b>@lang('messages.buttons.wait')</b>
                         @else
                             <b>@lang('messages.buttons.comp_reg')</b>
@@ -358,7 +358,7 @@ if($event->isSymmetric && $event->hasTracks) {
                         </thead>
                         <tr>
                             <td style="text-align: center;">
-                                <b><i class="far fa-dollar-sign"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                                <b>@lang('messages.symbols.cur') {{ number_format($rf->cost, 2, '.', ',') }}</b>
                             </td>
                         </tr>
                     </table>

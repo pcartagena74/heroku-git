@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment: Registration form
+ * Comment: Registration form - No longer in use. See varTKT_register
  * Created: 2/25/2017
  */
 
@@ -16,7 +16,7 @@ if (Auth::check()) {
     $person = Person::find(auth()->user()->id);
     $op = OrgPerson::where('personID', $person->personID)->first();
     $registration = new Registration;
-    if ($person->orgperson->OrgStat1) {
+    if ($person->is_member($event->orgID)) {
         $isMember = 1;
     } else {
         $isMember = 0;
@@ -34,7 +34,7 @@ $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
                 $prefixes->pluck('prefix', 'prefix')->map(function($item, $key) {
                     return trans('messages.fields.prefixes.'.$item);
                 })->toArray();
-dd($prefix_array);
+
 $industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
 $industry_array = ['' => trans('messages.fields.industries.select')] +
     $industries->pluck('industryName', 'industryName')->map(function($item, $key) {
@@ -83,7 +83,7 @@ $experience_choices = [
 @extends('v1.layouts.no-auth')
 
 @section('content')
-
+<h1>This One</h1>
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @if($errors->any())
         @foreach($errors as $error)
@@ -690,6 +690,7 @@ $experience_choices = [
 
             function findID(pmi_id, which) {
                 if (!FieldIsEmpty(pmi_id)) {
+                    console.log('starting search');
                     $.ajax({
                         type: 'POST',
                         cache: false,
@@ -700,6 +701,7 @@ $experience_choices = [
                             //console.log(data);
                             var result = eval(data);
                             if (result.status == 'success') {
+                                console.log(data);
                                {{--
                                // prompt user with modal (email points to user x) and ask if that's correct
                                // and if they want to auto-populate the form, yes/no.
@@ -746,11 +748,24 @@ $experience_choices = [
                                             {{--
                                                Change the cost of the ticket from non-member to member
                                             --}}
-                                            fix_pricing(j, which);
                                             $("#ticket_type"+j).html(member);
+                                            fix_pricing(j, which);
+                                        }
+                                    } else {
+                                        var pmi_id = $('#OrgStat1' + which).val();
+                                        if(pmi_id > 0){
+                                            $("#ticket_type"+j).html(member);
+                                            fix_pricing(j, which);
                                         }
                                     }
                                 });
+                            } else {
+                                console.log('not success');
+                                var pmi_id = $('#OrgStat1' + which).val();
+                                if(pmi_id > 0){
+                                    $("#ticket_type"+j).html(member);
+                                    fix_pricing(j, which);
+                                }
                             }
                         }
                     });

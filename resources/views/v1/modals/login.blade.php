@@ -69,7 +69,7 @@ if(!isset($msg)){
                     <div class="form-group">
                         <div class="col-md-8 col-md-offset-4">
                             <button type="submit" class="btn btn-primary">
-                                @lang('messages.fields.login')
+                                @lang('messages.buttons.login')
                             </button>
 
                             <a href="#reset_modal" class="btn btn-link" data-toggle="modal" data-dismiss="modal" data-target="#reset_modal">

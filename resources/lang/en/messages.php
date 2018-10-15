@@ -25,6 +25,7 @@ return [
         'door' => 'Pay by Cash/Check at Door',
         'delete' => 'Delete',
         'edit_tkt' => "Edit Tickets",
+        'login' => "Login",
         't&s_edit' => "Edit Tracks & Sessions",
         'ex_register' => 'R E G I S T E R',
         'pay_bal' => 'Pay Balance Due Now',
@@ -52,6 +53,7 @@ return [
     'errors' => [
         'numeric' => 'Please enter a value from 1 - 5.',
         'options' => 'Please select an option.',
+        'unexpected' => 'An unexpected error occurred.',
     ],
 
     'email_txt' => [
@@ -103,12 +105,13 @@ return [
         'discs' => 'Discounts',
         'edit_event' => "Edit Event",
         'email' => 'Email Address',
+        'empty' => 'Empty',
         'enter_disc' => 'Enter discount code',
         'event' => "Event",
         'eventNotes' => 'Dietary or Other Comments',
         'eventTopics' => 'What future event topics would interest you?',
         'eventQuestion' => 'List any questions you may have for the speaker(s)?',
-        'expr' => 'Experation',
+        'expr' => 'Expiration',
         'experience' => 'PM Experience',
         'firstName' => 'First Name',
         'fCost' => 'Final Cost',
@@ -337,6 +340,7 @@ return [
 
     'instructions' => [
         'bundle_setup' => "If you need to create a 'bundle' ticket, do so after adding <b>all</b> of its component (non-bundle) tickets.",
+        'card_error' => "There was an error with the card used.  ",
         'customURL' => "Please enter a custom URL.",
         'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect",
         'early_values' => "Changing the date or discount percent will apply to all associated tickets shown below or created.",
@@ -353,6 +357,8 @@ return [
                         The event will no longer be listed in the add/edit event form.
                     </li></ul>",
         'inactive' => "This event is no longer active.",
+        'login' => "You have an account that we've created for you. Please click the login button. 
+                     mCentric has emailed you instructions to reset your password if necessary.",
         'max_reached' => "Maximum attendees reached.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
         'no_deadbeats' => "There are no pending payments for this event at this time.",
@@ -452,6 +458,31 @@ return [
         'lead' => 'Leadership',
         'strat' => 'Strategy',
         'tech' => 'Technical Skills'
+    ],
+
+    'profile' => [
+        'add_addr' => 'Add Address',
+        'addr1' => 'Enter address 1',
+        'addr2' => 'Enter address 2',
+        'city' => 'Enter city',
+        'country' => 'Enter country',
+        'custom' => 'Custom Fields',
+        'emails' => "There are no emails associated with this profile.|These email addresses are those that you may have used to register for an event.",
+        'no_id' => "If this is empty, you may not have a PMI ID on file.",
+        'state' => 'Enter state',
+        'type' => 'Enter address type',
+        'uneditable' => 'uneditable',
+        'zip' => 'Enter zip',
+    ],
+
+    'reg_status' => [
+        'door' => 'At Door',
+        'mail_broken' => "Mail is not working at the moment.  PMI Mass Bay will email you a receipt. 
+                          See it now by going to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
+        'no_charge' => 'No Charge',
+        'pending' => 'Payment Pending',
+        'processed' => 'Processed',
+        'progress' => 'In Progress',
     ],
 
     'symbols' => [

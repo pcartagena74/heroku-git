@@ -60,19 +60,22 @@ class RegistrationController extends Controller
                 }
             }
 
-            $member = strtoupper(trans('registration.member'));
-            $nonmbr = strtoupper(trans('registration.nonmbr'));
+            $member = strtoupper(trans('messages.fields.member'));
+            $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
             return view('v1.public_pages.varTKT_register',
                    compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
 
             // return json_encode(['tq' => $tq]);
 
         } else {
+            // This is no longer run given above
+            /*
             $ticket = Ticket::find(request()->input('ticketID'));
             $quantity = request()->input('quantity');
 
             // Finish the route variables needed here and add the route
             return redirect("/regstep2/$event->eventID/$ticket->ticketID/$quantity/" . $discount_code);
+            */
         }
 
     }
@@ -87,8 +90,10 @@ class RegistrationController extends Controller
         $event         = Event::find($ticket->eventID);
         */
 
-        $member = strtoupper(trans('registration.member'));
-        $nonmbr = strtoupper(trans('registration.nonmbr'));
+        // NO LONGER IN USE
+
+        $member = strtoupper(trans('messages.fields.member'));
+        $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
@@ -237,11 +242,7 @@ class RegistrationController extends Controller
             $chk = Email::where('emailADDR', '=', $email)->first();
             if(null !== $chk) {
                 $p = Person::find($chk->personID);
-                request()->session()->flash(
-                    'alert-warning',
-                    "You have an account that we've created for you. Please click the login button. 
-                     mCentric has emailed you instructions to reset your password if necessary."
-                );
+                request()->session()->flash('alert-warning', trans('messages.instructions.login'));
                 $p->notify(new SetYourPassword($p));
                 return back()->withInput();
             }
@@ -287,9 +288,10 @@ class RegistrationController extends Controller
         // For each of the registrations
         for($i = 1; $i <= $quantity; $i++){
             $person = null; $set_new_user = 0;
+            $change_to_member = 0;
             if($i>1){ $i_cnt = '_'.$i; } else { $i_cnt = ''; }
 
-            // Grab the passed variables for the person and registration info
+            // 1. Grab the passed variables for the person and registration info
             $prefix = ucwords(request()->input('prefix'.$i_cnt));
             $firstName = ucwords(request()->input('firstName'.$i_cnt));
             $middleName = ucwords(request()->input('middleName'.$i_cnt));
@@ -367,9 +369,9 @@ class RegistrationController extends Controller
             $person->save();
 
             if (null === $pmiID) {
-                $regMem = 'Non-Member';
+                $regMem = trans('messages.fields.nonmbr');
             } else {
-                $regMem = 'Member';
+                $regMem = trans('messages.fields.member');
             }
 
             if($set_new_user) {
@@ -389,6 +391,7 @@ class RegistrationController extends Controller
                 $op->personID = $person->personID;
                 if ($pmiID) {
                     $op->OrgStat1 = $pmiID;
+                    $change_to_member = 1;
                 }
                 $op->save();
 
@@ -397,6 +400,18 @@ class RegistrationController extends Controller
                 $email->emailADDR = $login;
                 $email->isPrimary = 1;
                 $email->save();
+            } else {
+                $op = OrgPerson::where([
+                    ['personID', '=', $person->personID],
+                    ['orgID', '=', $event->orgID]
+                ])->first();
+                // If not already a member and a PMI ID was provided, update and flag to change ticket price
+                if(!$person->is_member($event->orgID) && $pmiID){
+                    $op->OrgStat1 = $pmiID;
+                    $op->updaterID = $person->personID;
+                    $op->save();
+                    $change_to_member = 1;
+                }
             }
 
             if($set_secondary_email){
@@ -567,17 +582,13 @@ class RegistrationController extends Controller
             $email->save();
 
             $regBy = $person->firstName . " " . $person->lastName;
-            $regMem = 'Non-Member';
+            $regMem = trans('messages.fields.nonmbr');
         } elseif (!Auth::check() && $email !== null) {
             // Not logged in and email is in the database;
             // Should force a login -- return to form with input saved.
             //dd('No one logged in but main email is in DB');
             $person = Person::find($email->personID);
-            request()->session()->flash(
-                'alert-warning',
-                "You have an account that we've created for you. Please click the login button. 
-                 mCentric has emailed you instructions to reset your password if necessary."
-            );
+            request()->session()->flash('alert-warning', trans('messages.instructions.login'));
             $person->notify(new SetYourPassword($person));
             return back()->withInput();
         } elseif (Auth::check() && ($email->personID == $this->currentPerson->personID)) {
@@ -585,13 +596,13 @@ class RegistrationController extends Controller
             // This is where a change would be made for a provided PMI ID
             $person = $this->currentPerson;
             if ($person->orgperson->OrgStat1 === null) {
-                $regMem = 'Non-Member';
+                $regMem = trans('messages.fields.nonmbr');
             } else {
-                $regMem = 'Member';
+                $regMem = trans('messages.fields.member');
             }
             $person->prefix = $prefix;
             // only non-members can edit first & last name
-            if ($regMem == 'Non-Member') {
+            if ($regMem == trans('messages.fields.nonmbr')) {
                 $person->firstName = $firstName;
                 $person->lastName = $lastName;
             }
@@ -638,21 +649,18 @@ class RegistrationController extends Controller
 
             $person = Person::find($email->personID);
             if ($person->orgperson->OrgStat1 === null) {
-                $regMem = 'Non-Member';
+                $regMem = trans('messages.fields.nonmbr');
             } else {
-                $regMem = 'Member';
+                $regMem = trans('messages.fields.member');
             }
             $person->prefix = $prefix;
             // only non-members can edit first & last name
-            if ($regMem == 'Non-Member') {
+            if ($regMem == trans('messages.fields.nonmbr')) {
                 $person->firstName = $firstName;
+                $person->lastName = $lastName;
             }
             if ($middleName) {
                 $person->midName = $middleName;
-            }
-            // only non-members can edit first & last name
-            if ($regMem == 'Non-Member') {
-                $person->lastName = $lastName;
             }
             if ($suffix) {
                 $person->suffix = $suffix;
@@ -686,9 +694,6 @@ class RegistrationController extends Controller
             $person->save();
         } else {
             // someone logged in is registering for someone else NOT in the DB
-
-            // this is AFU b/c CAMI (or anyone else) wouldn't be able to put in first/last/email that isn't theirs
-            // into first position of registration.
 
             $person = new Person;
             $person->prefix = $prefix;
@@ -736,7 +741,7 @@ class RegistrationController extends Controller
             $email->save();
 
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
-            $regMem = 'Non-Member';
+            $regMem = trans('messages.fields.nonmbr');
         }
 
         $reg = new Registration;
@@ -852,27 +857,24 @@ class RegistrationController extends Controller
                 $email->save();
 
                 $regBy = $person->firstName . " " . $person->lastName;
-                $regMem = 'Non-Member';
+                $regMem = trans('messages.fields.nonmbr');
             } elseif (Auth::check() && ($email->personID == $this->currentPerson->personID)) {
                 // the email entered belongs to the person logged in; ergo in DB
                 // addresses #2 - whatever should NOT be the same as the first
                 $person = $this->currentPerson;
                 if ($person->orgperson->OrgStat1 === null) {
-                    $regMem = 'Non-Member';
+                    $regMem = trans('messages.fields.nonmbr');
                 } else {
-                    $regMem = 'Member';
+                    $regMem = trans('messages.fields.member');
                 }
                 $person->prefix = $prefix;
                 // only non-members can edit first & last name
-                if ($regMem == 'Non-Member') {
+                if ($regMem == trans('messages.fields.nonmbr')) {
                     $person->firstName = $firstName;
+                    $person->lastName = $lastName;
                 }
                 if ($middleName) {
                     $person->midName = $middleName;
-                }
-                // only non-members can edit first & last name
-                if ($regMem == 'Non-Member') {
-                    $person->lastName = $lastName;
                 }
                 if ($suffix) {
                     $person->suffix = $suffix;
@@ -908,21 +910,18 @@ class RegistrationController extends Controller
                 // someone logged in is registering someone else in the DB (usually CAMI)
                 $person = Person::find($email->personID);
                 if ($person->orgperson->OrgStat1 === null) {
-                    $regMem = 'Non-Member';
+                    $regMem = trans('messages.fields.nonmbr');
                 } else {
-                    $regMem = 'Member';
+                    $regMem = trans('messages.fields.member');
                 }
                 $person->prefix = $prefix;
                 // only non-members can edit first & last name
-                if ($regMem == 'Non-Member') {
+                if ($regMem == trans('messages.fields.nonmbr')) {
                     $person->firstName = $firstName;
+                    $person->lastName = $lastName;
                 }
                 if ($middleName) {
                     $person->midName = $middleName;
-                }
-                // only non-members can edit first & last name
-                if ($regMem == 'Non-Member') {
-                    $person->lastName = $lastName;
                 }
                 if ($suffix) {
                     $person->suffix = $suffix;

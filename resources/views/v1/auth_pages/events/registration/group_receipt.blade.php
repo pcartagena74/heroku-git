@@ -78,7 +78,7 @@ http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru
 an email url to a form
 */
 
-$header = trans('messages.headers.group_reg') . " ";
+$header = trans('messages.headers.reg') . " ";
 if($rf->pmtRecd){
     $header .= trans('messages.headers.receipt');
 } else {

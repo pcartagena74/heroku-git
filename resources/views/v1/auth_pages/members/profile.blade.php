@@ -223,35 +223,35 @@ foreach ($array as $chap) {
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs">
-                                            <i class="fa fa-trash"></i>
+                                            @lang('messages.symbols.trash')
                                         </button>
                                     </form>
                                 </td>
                                 <td><a href="#" id="addrTYPE{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="Enter address type"
+                                       data-title="{{ trans('messages.profile.type') }}"
                                        data-value="{{ $address->addrTYPE }}">{{ $address->addrTYPE }}</a></td>
                                 <td><a href="#" id="addr1{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="Enter address 1" data-value="{{ $address->addr1 }}"></a></td>
+                                       data-title="{{ trans('messages.profile.addr1') }}" data-value="{{ $address->addr1 }}"></a></td>
                                 <td><a href="#" id="addr2{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="Enter address 2" data-value="{{ $address->addr2 }}"></a></td>
+                                       data-title="{{ trans('messages.profile.addr2') }}" data-value="{{ $address->addr2 }}"></a></td>
                                 <td><a href="#" id="city{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                       data-title="Enter city"
+                                       data-title="{{ trans('messages.profile.city') }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
                                        data-value="{{ $address->city }}"></a></td>
                                 <td><a href="#" id="state{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                       data-title="Enter state"
+                                       data-title="{{ trans('messages.profile.state') }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
                                        data-value="{{ $address->state }}"></a></td>
                                 <td><a href="#" id="zip{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
-                                       data-title="Enter zip code"
+                                       data-title="{{ trans('messages.profile.zip') }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
                                        data-value="{{ $address->zip }}"></a></td>
                                 <td><a href="#" id="cntryID{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="Enter country" data-value="{{ $address->cntryID }}"></a></td>
+                                       data-title="{{ trans('messages.profile.country') }}" data-value="{{ $address->cntryID }}"></a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -259,7 +259,7 @@ foreach ($array as $chap) {
                 @endif
                 <div class="col-md-4 col-sm-9 col-xs-12">
                     <button type="button" id="add_address" class="btn btn-sm btn-success"
-                            data-toggle="modal" data-target="#address_modal">Add Address
+                            data-toggle="modal" data-target="#address_modal"> @lang('messages.profile.add_addr')
                     </button>
                 </div>
                 <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
@@ -267,7 +267,7 @@ foreach ($array as $chap) {
                 @include('v1.parts.end_content')
 
                 @if(Entrust::hasRole('Admin'))
-                    @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '<b class="red">(Editable for Admins)</b>', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    @include('v1.parts.start_content', ['header' => trans('messages.profile.custom'), 'subheader' => '<b class="red">(Editable for Admins)</b>', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
                     <table id='date_fields' class='table table-striped table-condensed'>
                         @for($i=1;$i<=10;$i++)
                             @if(isset($profile->{'OSN'.$i}))
@@ -278,33 +278,34 @@ foreach ($array as $chap) {
                                     </td>
                                 </tr>
                             @elseif($i == 1)
-                                If this is empty, you may not have a PMI ID on file.
+                                @lang('messages.profile.no_id')
                             @endif
                         @endfor
                     </table>
                     @include('v1.parts.end_content')
                 @else
-                    @include('v1.parts.start_content', ['header' => 'Custom Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    @include('v1.parts.start_content', ['header' => trans('messages.profile.custom'),
+                             'subheader' => '(' . trans('messages.profile.uneditable') . ')', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
                     <table id='date_fields' class='table table-striped table-condensed'>
                         @for($i=1;$i<=10;$i++)
                             @if(isset($profile->{'OSN'.$i}))
                                 <tr>
                                     <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
-                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} or "<i style='color:red;'>Empty</i>" !!}</td>
+                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
                                 </tr>
                             @elseif($i == 1)
-                                If this is empty, you may not have a PMI ID on file.
+                                @lang('messages.profile.no_id')
                             @endif
                         @endfor
                     </table>
                     @include('v1.parts.end_content')
                 @endif
 
-                @include('v1.parts.start_min_content', ['header' => 'Email Addresses', 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_min_content', ['header' => trans('messages.fields.email'), 'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
                 @if(count($emails) == 0)
-                    There are no emails associated with this profile.
+                    {{ trans_choice('messages.profile.emails', 1) }}
                 @else
-                    These email addresses are those that you may have used to register for an event.  <p>
+                    {{ trans_choice('messages.profile.emails', 1) }} <p>
 
                     <table id="email_fields" class="table table-striped table-condensed">
                         <tr>

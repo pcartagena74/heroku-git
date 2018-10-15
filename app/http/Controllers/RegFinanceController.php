@@ -81,37 +81,6 @@ class RegFinanceController extends Controller
 
             // $ticket = Ticket::find($rf->ticketID);
 
-/*
-            if(0){
-                if ($ticket->isaBundle) {
-                    $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                        ->where([
-                            ['bt.bundleID', '=', $ticket->ticketID],
-                            ['event-tickets.eventID', '=', $event->eventID]
-                        ])
-                        ->get();
-                    $s = EventSession::where('eventID', '=', $event->eventID)
-                        ->select(DB::raw('distinct ticketID'))
-                        ->get();
-                    foreach ($s as $t) {
-                        if ($tickets->contains('ticketID', $t->ticketID)) {
-                            $needSessionPick = 1;
-                            break;
-                        }
-                    }
-                } else {
-                    $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
-                    $s = EventSession::where([
-                        ['eventID', '=', $event->eventID],
-                        ['ticketID', '=', $ticket->ticketID]
-                    ])->get();
-
-                    if (count($s) > 1) {
-                        $needSessionPick = 1;
-                    }
-                }
-            }
-*/
             $loc = Location::find($event->locationID);
             $quantity = $rf->seats;
             //$discount_code = $rf->discountCode;
@@ -128,7 +97,7 @@ class RegFinanceController extends Controller
                 compact( 'event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs',
                          'prefixes', 'industries', 'tracks', 'tickets', 'show_pass_fields'));
         } catch (\Exception $exception) {
-            $message = "An unexpected error occurred. ";
+            $message = trans('messages.errors.unexpected');
             return view('v1.public_pages.error_display', compact('message'));
         }
     }
@@ -205,26 +174,11 @@ class RegFinanceController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $needSessionPick = $request->input('needSessionPick');
         $stripeToken = $request->input('stripeToken');
-/*
- *  Removed because tickets are not relevant to regFinance records
- *
-        if ($ticket->isaBundle) {
-            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                ->where([
-                    ['bt.bundleID', '=', $ticket->ticketID],
-                    ['event-tickets.eventID', '=', $event->eventID]
-                ])
-                ->get();
-        } else {
-            $tickets = null;
-        }
 
-        $tickets = $ticket->bundle_members();
-*/
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the 'pay with card' button won't show on the form
 
-        if ($rf->status != 'Processed') {
+        if ($rf->status != trans('messages.reg_status.processed')) {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if ($rf->cost > 0 && $stripeToken !== null) {
@@ -243,7 +197,7 @@ class RegFinanceController extends Controller
                         'source' => $stripeToken,
                     ));
                 } catch (\Exception $exception){
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 }
 
@@ -259,44 +213,44 @@ class RegFinanceController extends Controller
                     $charge = \Stripe\Charge::create(array(
                         'amount' => $rf->cost * 100,
                         'currency' => 'usd',
-                        'description' => "$org->orgName Event Registration: $event->eventName",
-                        'customer' => $user->stripe_id,
+                        'description' => "$org->orgName " . trans('messages.fields.event') . " " .
+                                          trans('messages.headers.reg') . ": $event->eventName", 'customer' => $user->stripe_id,
                     ));
                 } catch(Card $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch(InvalidRequest $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch(Authentication $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch(ApiConnection $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch(Permission $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch(Base $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch(\Exception $exception) {
-                    request()->session()->flash('alert-danger', "There was an error with the card used.  " . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 }
                 $rf->stripeChargeID = $charge->id;
-                $rf->status = 'Processed';
+                $rf->status = trans('messages.reg_status.processed');
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
             } elseif ($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                $rf->status = 'Payment Pending';
-                $rf->pmtType = 'At Door';
+                $rf->status = trans('messages.reg_status.pending');
+                $rf->pmtType = trans('messages.reg_status.door');
             } else {
                 //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
-                $rf->status = 'Processed';
-                $rf->pmtType = 'No Charge';
+                $rf->status = trans('messages.reg_status.processed');
+                $rf->pmtType = trans('messages.reg_status.no_charge');
             }
 
             $discountAmt = 0;
@@ -307,11 +261,11 @@ class RegFinanceController extends Controller
             //for ($i = $id - $end; $i <= $id; $i++)  {
 
                 if ($reg->ticket->waitlisting()) {
-                    $reg->regStatus = 'Wait List';
-                } elseif($rf->status = 'Payment Pending') {
-                    $reg->regStatus = 'Payment Pending';
+                    $reg->regStatus = trans('messages.headers.wait');
+                } elseif($rf->status = trans('messages.reg_status.pending')) {
+                    $reg->regStatus = trans('messages.reg_status.pending');
                 } else {
-                    $reg->regStatus = 'Processed';
+                    $reg->regStatus = trans('messages.reg_status.processed');
                 }
                 // No one is actually, necessarily, logged in...
                 //$reg->updaterID = auth()->user()->id;
@@ -423,16 +377,12 @@ class RegFinanceController extends Controller
         $s3fs = new Filesystem($adapter);
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
-        //return $pdf->download('invoice.pdf');
         try {
-            //request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
             Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.");
+            request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
         }
-        //return view('v1.public_pages.event_receipt', compact('rf', 'event', 'loc', 'ticket'));
 
-        //return view('v1.public_pages.event_receipt', $x);
         return redirect('/show_receipt/' . $rf->regID);
     }
 
@@ -528,9 +478,9 @@ class RegFinanceController extends Controller
                 $reg->registeredBy = $this->currentPerson->showFullName();
                 $reg->discountCode = $code;
                 if ($pmiid) {
-                    $reg->membership = "Member";
+                    $reg->membership = trans('messages.fields.member');
                 } else {
-                    $reg->membership = "Non-Member";
+                    $reg->membership = trans('messages.fields.nonmbr');
                 }
                 $reg->token = request()->input('_token');
                 $reg->creatorID = $this->currentPerson->personID;
@@ -545,7 +495,7 @@ class RegFinanceController extends Controller
                 // subtotal
                 if ($t->earlyBirdEndDate !== null && $today->lte($t->earlyBirdEndDate)) {
                     // Use earlybird discount pricing as base
-                    if ($reg->membership == 'Member') {
+                    if ($reg->membership == trans('messages.fields.member')) {
                         $reg->origcost = $t->memberBasePrice;
                         $reg->subtotal = $t->memberBasePrice - ($t->memberBasePrice * $t->earlyBirdPercent / 100);
                     } else {
@@ -554,7 +504,7 @@ class RegFinanceController extends Controller
                     }
                 } else {
                     // Use non-discount pricing
-                    if ($reg->membership == 'Member') {
+                    if ($reg->membership == trans('messages.fields.member')) {
                         $reg->origcost = $t->memberBasePrice;
                         $reg->subtotal = $t->memberBasePrice;
                     } else {
@@ -579,7 +529,7 @@ class RegFinanceController extends Controller
                         $reg->subtotal = 0;
                     }
                 }
-                $reg->regStatus = 'In Progress';
+                $reg->regStatus = trans('messages.reg_status.progress');
                 $reg->save();
                 $total_orig = $total_orig + $reg->origcost;
                 $total_cost = $total_cost + $reg->subtotal;
@@ -596,7 +546,7 @@ class RegFinanceController extends Controller
         $rf->seats = $seats;
         $rf->personID = $this->currentPerson->personID;
         $rf->cost = $total_cost;
-        $rf->status = 'In Progress';
+        $rf->status = trans('messages.reg_status.progress');
         $rf->handleFee = $total_handle;
         $rf->token = request()->input('_token');
         $rf->save();
@@ -620,7 +570,7 @@ class RegFinanceController extends Controller
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
 
-        if ($rf->status != 'Processed') {
+        if ($rf->status != trans('messages.reg_status.processed')) {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if ($rf->cost > 0 && $stripeToken !== null) {
@@ -642,21 +592,21 @@ class RegFinanceController extends Controller
                 $charge = \Stripe\Charge::create(array(
                     'amount' => $rf->cost * 100,
                     'currency' => 'usd',
-                    'description' => "$org->orgName Group Registration: $event->eventName",
+                    'description' => "$org->orgName " . trans('messages.headers.reg') .": $event->eventName",
                     'customer' => $user->stripe_id,
                 ));
                 $rf->stripeChargeID = $charge->id;
-                $rf->status = 'Processed';
+                $rf->status = trans('messages.reg_status.processed');
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
             } elseif ($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                $rf->status = 'Payment Pending';
-                $rf->pmtType = 'At Door';
+                $rf->status = trans('messages.reg_status.pending');
+                $rf->pmtType = trans('messages.reg_status.door');
             } else {
                 $rf->pmtRecd = 1;
-                $rf->status = 'Processed';
-                $rf->pmtType = 'No Charge';
+                $rf->status = trans('messages.reg_status.processed');
+                $rf->pmtType = trans('messages.reg_status.no_charge');
             }
 
             $discountAmt = 0;
@@ -665,7 +615,7 @@ class RegFinanceController extends Controller
             foreach ($rf->registrations() as $reg){
             //for ($i = $rf->regID - $end; $i <= $rf->regID; $i++) {
             //    $reg = Registration::find($i);
-                $reg->regStatus = 'Processed';
+                $reg->regStatus = trans('messages.reg_status.processed');
                 // No one is actually, necessarily, logged in...
                 //$reg->updaterID = auth()->user()->id;
                 $discountAmt += ($reg->origcost - $reg->subtotal);
@@ -723,7 +673,6 @@ class RegFinanceController extends Controller
             ->setOption('disable-javascript', false)
             ->setOption('javascript-delay', 20)
             ->setOption('encoding', 'utf-8');
-        //->save($receipt_filename);
 
         //Storage::put($receipt_filename, $pdf->output());
         Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
@@ -744,9 +693,8 @@ class RegFinanceController extends Controller
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
             Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
-            //request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
         } catch(\Exception $exception) {
-            request()->session()->flash('alert-danger', "Mail is not working at the moment.  PMI Mass Bay will email you a receipt.  See it now: go to: <a class='white' href='{{ env('APP_URL').'/upcoming' }}'>My Settings -> Future Events</a>.");
+            request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
         }
 
         return view('v1.auth_pages.events.registration.group_receipt', $x);
