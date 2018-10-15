@@ -168,16 +168,11 @@ $i = 0;
                     @endif </span>
                 {{ strtoupper(__('messages.fields.ticket')) }}:
                     @if(count($tkts) > 1)
-                        {{--
-                        <a id="ticketID-{{ $i }}" data-pk="{{ $event->eventID }}"
-                           data-value="{{ $ticket->ticketID }}"
-                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                        --}}
-
                         {{ Form::select('ticketID-'.$i, $tix_dropdown, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
                     @else
                         {{ $ticket->ticketLabel }}
+                        {{ Form::hidden('ticketID-'.$i, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
                     @endif
             </th>
             <th colspan="3" style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
