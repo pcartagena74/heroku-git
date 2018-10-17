@@ -335,7 +335,7 @@ class RegistrationController extends Controller
                     $q->where('emailADDR', '=', $login);
                 })->first();
             } else {
-                // PMI ID was set; quick check to see if email should be a secondary
+                // $person was set from PMI ID; quick check to see if email should be a secondary
                if($person->login != $login) {
                    $set_secondary_email = 1;
                }
@@ -407,6 +407,12 @@ class RegistrationController extends Controller
                     ['personID', '=', $person->personID],
                     ['orgID', '=', $event->orgID]
                 ])->first();
+                // Slight chance of not getting an $op record from above, so create if needed.
+                if(null === $op){
+                    $op = new OrgPerson;
+                    $op->orgID = $event->orgID;
+                    $op->personID = $person->personID;
+                }
                 // If not already a member and a PMI ID was provided, update and flag to change ticket price
                 if(!$person->is_member($event->orgID) && isset($pmiID)){
                     $op->OrgStat1 = $pmiID;
