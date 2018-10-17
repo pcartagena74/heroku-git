@@ -340,8 +340,10 @@ class RegistrationController extends Controller
                    $set_secondary_email = 1;
                }
             }
+            // if we need to create a new $person record, flag for the creation of the other new objects too
             if(null === $person) {
                 $person = new Person;
+                $set_new_user = 1;
             }
 
             $subcheck += $subtotal;
