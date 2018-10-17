@@ -348,24 +348,24 @@ class RegistrationController extends Controller
             $sumtotal += $origcost;
 
             // We have either found the appropriate person record ($p) or have created a new one
-            $person->prefix = $prefix;
-            $person->firstName = $firstName;
-            $person->midName = $middleName;
-            $person->lastName = $lastName;
-            $person->suffix = $suffix;
+            isset($prefix) ? $person->prefix = $prefix :1;
+            isset($firstName) ? $person->firstName = $firstName :1;
+            isset($middleName) ? $person->midName = $middleName :1;
+            isset($lastName) ? $person->lastName = $lastName :1;
+            isset($suffix) ? $person->suffix = $suffix :1;
             $person->defaultOrgID = $event->orgID;
-            $person->prefName = $prefName;
-            $person->compName = $compName;
-            $person->indName = $indName;
-            $person->title = $title;
-            $person->experience = $experience;
-            $person->chapterRole = $chapterRole;
-            $person->login = $login;
+            isset($prefName) ? $person->prefName = $prefName :1;
+            isset($compName) ? $person->compName = $compName :1;
+            isset($indName) ? $person->indName = $indName :1;
+            isset($title) ? $person->title = $title :1;
+            isset($experience) ? $person->experience = $experience :1;
+            isset($chapterRole) ? $person->chapterRole = $chapterRole :1;
+            isset($login) ? $person->login = $login :1;
             if ($event->hasFood && $allergenInfo !== null) {
                 $person->allergenInfo = implode(",", (array)$allergenInfo);
-                $person->allergenNote = $eventNotes;
+                isset($eventNotes) ? $person->allergenNote = $eventNotes :1;
             }
-            $person->affiliation = implode(",", (array)$affiliation);
+            isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) :1;
             $person->save();
 
             if (null === $pmiID) {
@@ -406,7 +406,7 @@ class RegistrationController extends Controller
                     ['orgID', '=', $event->orgID]
                 ])->first();
                 // If not already a member and a PMI ID was provided, update and flag to change ticket price
-                if(!$person->is_member($event->orgID) && $pmiID){
+                if(!$person->is_member($event->orgID) && isset($pmiID)){
                     $op->OrgStat1 = $pmiID;
                     $op->updaterID = $person->personID;
                     $op->save();
