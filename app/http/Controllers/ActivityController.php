@@ -74,36 +74,23 @@ class ActivityController extends Controller
     public function index () {
         // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
-        /*
-                // This is deprecated code because withCount is not available with DB::table()
-                $attendance = DB::table('org-event as oe')
-                                ->join('org-event_types as oet', function($join) {
-                                    $join->on('oet.etID', '=', 'oe.eventTypeID');
-                                })->join('event-registration as er', 'er.eventID', '=', 'oe.eventID')
-                                ->where('er.personID', '=', $this->currentPerson->personID)
-                                ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
-                                ->where('oe.orgID', '=', $this->currentPerson->defaultOrgID)
-                                ->where(function($w) {
-                                    $w->where('er.regStatus', '=', 'Active')
-                                      ->orWhere('er.regStatus', '=', 'In Progress');
-                                })
-                                ->select('oe.eventID', 'oe.eventName', 'oet.etName', 'oe.eventStartDate', 'oe.eventEndDate')
-                                ->orderBy('oe.eventStartDate', 'DESC')->paginate(20);
-        */
+
         $attendance = Event::where('er.personID', '=', $this->currentPerson->personID)
                            ->join('org-event_types as oet', function($join) {
                                $join->on('oet.etID', '=', 'org-event.eventTypeID');
                            })->join('event-registration as er', 'er.eventID', '=', 'org-event.eventID')
                            ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
                            ->where('org-event.orgID', '=', $this->currentPerson->defaultOrgID)
+                           ->whereNull('er.deleted_at')
                            ->where(function($w) {
                                $w->where('er.regStatus', '=', 'Active')
-                                 ->orWhere('er.regStatus', '=', 'In Progress');
+                                 ->orWhere('er.regStatus', '=', 'Processed');
                            })
                            ->select('org-event.eventID', 'org-event.eventName', 'oet.etName',
                                'org-event.eventStartDate', 'org-event.eventEndDate',
                                DB::raw('(select count(*) from `event-registration` er2
                                         where er2.eventID = `org-event`.eventID and er2.canNetwork=1) as cnt2'))
+                           ->distinct()
                            ->withCount('registrations')
                            ->orderBy('org-event.eventStartDate', 'DESC')->get(20);
 
@@ -167,15 +154,17 @@ class ActivityController extends Controller
         // responds to POST to /networking
         $eventID   = request()->input('eventID');
         $eventName = request()->input('eventName');
-        $r         = DB::table('event-registration as er')
-                       ->where([
-                           ['er.eventID', $eventID],
-                           ['er.canNetwork', 1]
-                       ])
-                       ->join('person as p', 'er.personID', '=', 'p.personID')
-                       ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'indName')
-                       ->get();
-        return json_encode(array('event' => $eventName, 'data' => $r->toArray()));
+
+        $er = Registration::where([
+            ['eventID', '=', $eventID],
+            ['canNetwork', '=', 1]
+        ])
+            ->join('person as p', 'event-registration.personID', '=', 'p.personID')
+        //    ->distinct()
+            ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'p.indName')
+            ->orderBy('p.lastName', 'asc')
+            ->get();
+        return json_encode(array('event' => $eventName, 'data' => $er->toArray()));
     }
 
     public function create () {

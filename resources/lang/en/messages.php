@@ -35,6 +35,8 @@ return [
         'reg_ref' => 'Refund Registration',
         'return' => "Return to Event Listing",
         'rev&pay' => 'Next: Review & Payment',
+        'save_ad' => 'Save Address|Save Addresses',
+        'save_em' => 'Save Email|Save Emails',
         'save_et' => 'Save Event Type|Save Event Types',
         'save_tkt' => 'Save Ticket|Save Tickets',
         'sess_reg' => 'Submit Session Registration Changes',
@@ -47,7 +49,9 @@ return [
         'valid' => "Code: ':code' provides a :disc discount.",
         'empty' => "Enter a discount code.",
         'etID99' => "All Events",
+        'eventID' => 'event ID',
         'img' => "Event Image",
+        'invalid' => "The :id is not valid.",
     ],
 
     'errors' => [
@@ -101,6 +105,8 @@ return [
         'd&t' => 'Date &amp; Time',
         'detail' => 'Event Detail',
         'diet_info' => 'Dietary Info',
+        'diet_com' => 'Dietary Comments',
+        'diet_res' => 'Dietary Restrictions',
         'disc' => 'Discount',
         'discs' => 'Discounts',
         'edit_event' => "Edit Event",
@@ -228,6 +234,7 @@ return [
     'headers' => [
         'add' => 'Add Event Type|Add Additional Event Types',
         'add_to_cal' => 'Add this event to your calendar program of choice.',
+        'affiliation' => "Chapter Affiliation",
         'aff_with' => 'Affiliated with',
         'allergens' => 'Food Allergens',
         'at' => 'at',
@@ -295,6 +302,7 @@ return [
         'max' => "Max Attendees",
         'mList' => 'Member List',
         'mAct' => 'Member Activity',
+        'my' => "My",
         'nametags' => "Name Tag Data",
         'near_chap' => 'Nearby Chapters',
         'net' => 'Net',
@@ -304,10 +312,14 @@ return [
         'organizer' => "Organizer",
         'org_disc' => 'Organizational Discount Codes',
         'opt' => "Optional",
+        'pass_new' => "New Password",
+        'pass_ver' => "Verify Password",
         'percent' => "Percent",
+        'phone_nums' => "Phone Number|Phone Numbers",
         'pmt' => 'Payment',
         'post-reg' => "Post Registration",
         'prefName' => 'Pref Name',
+        'primary' => "Primary",
         'purchased' => 'Purchased on',
         'receipt' => 'Receipt',
         'ref_days' => 'Event Refund Days',
@@ -334,8 +346,10 @@ return [
         'tot_regs' => 'Total Regs',
         'tracks' => "Tracks",
         'tz' => 'Time Zone',
-        'virtual' => "Events with tracks require session setup.",
+        'userid' => "User ID",
+        'virtual' => "Is this a virtual event?",
         'wait' => 'Wait List',
+        'your' => 'Your',
     ],
 
     'instructions' => [
@@ -361,6 +375,7 @@ return [
                      mCentric has emailed you instructions to reset your password if necessary.",
         'max_reached' => "Maximum attendees reached.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
+        'name_change' => "You need to contact PMI directly to change this data.",
         'no_deadbeats' => "There are no pending payments for this event at this time.",
         'no_fut_events' => "You have not registered for any upcoming events.",
         'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to this event.  If you wish to add them, do it now via the button below.",
@@ -391,6 +406,7 @@ return [
             <li>PDU values are calculated based on the end date/time - start date/time.</li>
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
         ",
+        'userid' => "This has been autopopulated and cannot be edited.",
         'waitlist' => 'Registering will secure a spot on the wait list. You will not be charged at this time.|
                    Registering will secure :count spots on the wait list. You will not be charged at this time.',
     ],
@@ -416,6 +432,7 @@ return [
             'ms_dash' => "My Dashboard",
             'ms_fut' => "My Future Events",
             'ms_profile' => "My Profile",
+            'ms_edit' => "Edit Member Profile",
             'ms_become' => "Become",
         'help' => "Help Desk",
             'h_dash' => "Dashboard",
@@ -462,36 +479,62 @@ return [
 
     'profile' => [
         'add_addr' => 'Add Address',
-        'addr1' => 'Enter address 1',
-        'addr2' => 'Enter address 2',
-        'city' => 'Enter city',
-        'country' => 'Enter country',
+        'add_email' => 'Add Email',
+        'add_number' => 'Add Phone Number',
+        'addr' => 'Address|Addresses',
+        'addr1' => 'Address 1',
+        'addr1&2' => 'Address 1 & 2',
+        'addr2' => 'Address 2',
+        'addrs' => "There are no addresses associated with this profile.|These addresses are those that you may have used to register for an event.",
+        'cant_delete' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first.",
+        'change' => 'Change ',
+        'city' => 'City',
+        'country' => 'Country',
         'custom' => 'Custom Fields',
+        'date_f' => 'Date Fields',
+        'directions' => [
+            'addr1' => 'Enter address 1',
+            'addr2' => 'Enter address 2',
+            'city' => 'Enter city',
+            'country' => 'Enter country',
+            'state' => 'Enter state',
+            'type' => 'Enter address type',
+            'zip' => 'Enter zip',
+        ],
+        'ed_ad' => 'Editable for Admins',
         'emails' => "There are no emails associated with this profile.|These email addresses are those that you may have used to register for an event.",
         'no_id' => "If this is empty, you may not have a PMI ID on file.",
-        'state' => 'Enter state',
-        'type' => 'Enter address type',
+        'no_phone' => "There are no phone numbers associated with this profile.",
+        'pass' => " Password",
+        'pass_cur' => "Current Password",
+        'pass_mgmt' => "Password Management",
+        'primary' => "The primary address is the only one we'll use to contact you. It is also one used for your login above.",
+        'prof_info' => "Profile Information",
+        'spk_tab' => "Speaker Information",
+        'state' => 'State',
+        'type' => 'Type',
         'uneditable' => 'uneditable',
-        'zip' => 'Enter zip',
+        'zip' => 'Zip',
     ],
 
     'reg_status' => [
         'door' => 'At Door',
         'mail_broken' => "Mail is not working at the moment.  PMI Mass Bay will email you a receipt. 
-                          See it now by going to: <a href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
+                          See it now by going to: <a class='yellow'aref='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
         'no_charge' => 'No Charge',
         'pending' => 'Payment Pending',
         'processed' => 'Processed',
         'progress' => 'In Progress',
     ],
 
+    // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
     'symbols' => [
-        'cash' => "<i class='fas fa-money-bill-alt fa-fw'></i>",          // currency symbol
-        'check' => "<i class='fas fa-money-check fa-fw'></i>",          // currency symbol
-        'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",          // currency symbol
-        'cur_class' => "class='far fa-dollar-sign fa-fw'",            // currency symbol - class only (when tips are embedded)
-        'trash' => "<i class='far fa-trash-alt fa-fw'></i>",          // delete symbol
-        'trash_class' => "class='far fa-trash-alt fa-fw'",    // delete symbol - class only (when tips are embedded)
+        'cash' => "<i class='fas fa-money-bill-alt fa-fw'></i>",            // physical currency
+        'check' => "<i class='fas fa-money-check fa-fw'></i>",              // physical direction to draw on an account
+        'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",                // currency symbol
+        'cur_class' => "class='far fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
+        'trash' => "<i class='far fa-trash-alt fa-fw'></i>",                // delete symbol
+        'trash_class' => "class='far fa-trash-alt fa-fw'",                  // delete symbol - class only (when tips are embedded)
     ],
 
     'tabs' => [
@@ -517,6 +560,7 @@ return [
         'experience_tip' => 'Please select the number of years of Project Management experience you possess.',
         'hasFood' => "Events with food have additional questions asked of attendees.",
         'hasTracks' => "Events with tracks require session setup.",
+        'login' => "If you want your login to be a new email address, first add it to your account by clicking 'Add Email' below.",
         'max_set' => "Set to 0 if there is no maximum.",
         'mr' => 'Merge Record',
         'near_chap' => "We suggest putting your chapter first, followed by other chapters, and ending with 'Other' and 'None of the above.'",
@@ -526,8 +570,8 @@ return [
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",
         'ref_days' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible.",
         'sales_end' => "When should ticket sales end for this event?",
-        'std_times' => "If most sessions are similar, choose Yes.  You can change this later
-                        (after setting up the similar sessions) to adjust the times that require differentiation.",
+        'std_times' => "If most sessions follow the same schedule, choose Yes.  You can change this later
+                        (after setting up the similar sessions) to adjust the times that are different.",
         'suppress' => "Change to 'Yes' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.",
         'sure' => "Are you sure?",
         'tkt_avail' => "Tickets cannot be purchased after this date.  Default value: Event Start Date",

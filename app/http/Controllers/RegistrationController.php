@@ -125,7 +125,7 @@ class RegistrationController extends Controller
                 }
             )->firstOrFail();
         } catch (\Exception $exception) {
-            $message = "The event ID used is not valid.";
+            $message = trans('messages.codes.invalid', [trans('messages.codes.eventID')]);
             return view('v1.public_pages.error_display', compact('message'));
         }
 
@@ -379,6 +379,7 @@ class RegistrationController extends Controller
             if($set_new_user) {
                 $user = new User();
                 $user->id = $person->personID;
+                $user->name = $login;
                 $user->login = $login;
                 $user->email = $login;
                 $user->save();

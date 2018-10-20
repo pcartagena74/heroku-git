@@ -166,8 +166,19 @@ class PersonController extends Controller
         $topBits = '';
 
         $prefixes = DB::table('prefixes')->get();
+        $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
+            $prefixes->pluck('prefix', 'prefix')->map(function($item, $key) {
+                return trans('messages.fields.prefixes.'.$item);
+            })->toArray();
+        $prefixes = $prefix_array;
 
         $industries = DB::table('industries')->orderBy('industryName')->get();
+        $industry_array = ['' => trans('messages.fields.industries.select')] +
+            $industries->pluck('industryName', 'industryName')->map(function($item, $key) {
+                return trans('messages.fields.industries.'.$item);
+            })->toArray();
+        $industries = $industry_array;
+
         $addrTypes  = DB::table('address-type')->get();
         $emailTypes = DB::table('email-type')->get();
         $phoneTypes = DB::table('phone-type')->get();
