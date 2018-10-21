@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
 use App\EventSession;
 use App\Notifications\SetYourPassword;
+use Session;
 
 class RegistrationController extends Controller
 {
@@ -37,7 +38,7 @@ class RegistrationController extends Controller
     {
         // Initiating registration for an event from /event/{id}
         $discount_code = request()->input('discount_code');
-        $tq = []; $quantity = 0; $tq_string ='?';
+        $tq = []; $quantity = 0;
 
         if ($discount_code === null) {
             $discount_code = '';
@@ -56,21 +57,18 @@ class RegistrationController extends Controller
                 if($q !== null && $q > 0){
                     array_push($tq, ['t' => $ticket->ticketID, 'q' => $q]);
                     $quantity += $q;
-                    $tq_string .= "tq[]=$ticket->ticketID&";
                 }
             }
 
-            // $member = strtoupper(trans('messages.fields.member'));
-            // $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
+            Session::put('req', $request->all());
+            Session::save();
 
-            // return view('v1.public_pages.varTKT_register',
-            //       compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
-        return redirect("/regstep2/$event->eventID/$quantity$discount_code$tq_string");
-
+        return redirect("/regstep2/$event->eventID/$quantity" . $discount_code);
     }
 
     public function showRegForm(Event $event, $quantity, $discount_code = null) {
-        // Registering for an event from /register/{tkt}/{q}/{dCode?}
+        // 2-part form so that login popup can redirect->back() without going to dashboard
+        $tq = [];
 
         $member = strtoupper(trans('messages.fields.member'));
         $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
@@ -80,6 +78,16 @@ class RegistrationController extends Controller
             ['isSuppressed', '=', 0],
             ['isDeleted', '=', 0]
         ])->get();
+
+        if($req = Session::get('req')){
+            foreach ($tkts as $ticket){
+                $t = $ticket->ticketID;
+                $q = $req['q-' . $t];
+                if($q !== null && $q > 0){
+                    array_push($tq, ['t' => $t, 'q' => $q]);
+                }
+            }
+        }
 
          return view('v1.public_pages.varTKT_register',
               compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
