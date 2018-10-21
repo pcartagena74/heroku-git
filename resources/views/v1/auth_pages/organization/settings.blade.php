@@ -4,14 +4,13 @@
  * Created: 3/11/2017
  */
 
-$title = '"You can change the Organization\'s name. Click it."';
 $orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$org->orgName'></a>" .
-    " &nbsp; <a data-toggle='tooltip' title=" . $title .
-    " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
-$title = '"Adding a new field label here does NOT introduce new data for your members.  Work with mCentric on incorporating new workflow."';
+    " &nbsp; <a data-toggle='tooltip' title=" . '"' . trans('messages.tooltips.orgName') .
+    '"'. " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
+
 $fieldnames =
-    " &nbsp; <a data-toggle='tooltip' title=" . $title .
-    " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
+    " &nbsp; <a data-toggle='tooltip' title=" . '"' . trans('messages.tooltips.not_new') .
+    '"' . " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
 
 $currentPerson = App\Person::find(auth()->user()->id);
 $currentOrg    = $currentPerson->defaultOrg;
@@ -23,15 +22,18 @@ $currentOrg    = $currentPerson->defaultOrg;
     || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => 'Organizational Settings for: ' . $orgHeader, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.nav.org_set') . " " . trans('messages.headers.for')
+             . ': ' . $orgHeader, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    @include('v1.parts.start_content', ['header' => 'Demographics & Contact Information', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.demos'), 'subheader' => '',
+             'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+
     <table id="demographics" class="table table-striped table-condensed">
         <tr>
-            <th colspan="2" style="text-align: left;">Address</th>
-            <th style="text-align: left;">City</th>
-            <th style="text-align: left;">State</th>
-            <th style="text-align: left;">Zip</th>
+            <th colspan="2" style="text-align: left;">@trans_choice('messages.fields.addr', 2)</th>
+            <th style="text-align: left;">@lang('messages.fields.city')</th>
+            <th style="text-align: left;">@lang('messages.fields.state')</th>
+            <th style="text-align: left;">@lang('messages.fields.zip')</th>
         </tr>
         <tr>
             <td colspan="2" style="text-align: left;">
@@ -43,9 +45,9 @@ $currentOrg    = $currentPerson->defaultOrg;
             <td style="text-align: left;"><a href="#" id="orgZip" data-value="{{ $org->orgZip }}"></a></td>
         </tr>
         <tr>
-            <th colspan="2" style="text-align: left;">Main Email</th>
-            <th style="text-align: left;">Main Number</th>
-            <th colspan="2" style="text-align: left;">Fax</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.headers.main') @lang('messages.headers.email')</th>
+            <th style="text-align: left;">@lang('messages.headers.main') @lang('messages.headers.number')</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.headers.fax')</th>
         </tr>
         <tr>
             <td colspan="2" style="text-align: left;"><a href="#" id="orgEmail" data-value="{{ $org->orgEmail }}"></a>
@@ -54,10 +56,10 @@ $currentOrg    = $currentPerson->defaultOrg;
             <td colspan="2" style="text-align: left;"><a href="#" id="orgFax" data-value="{{ $org->orgFax }}"></a></td>
         </tr>
         <tr>
-            <th colspan="2" style="text-align: left;">Admin Email</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.headers.admin') @lang('messages.headers.email')</th>
             <th colspan="1" style="text-align: left;"></th>
             <th colspan="2" style="text-align: left;"><a data-toggle="tooltip" data-placement="top"
-                                                         title="The bit after fb.com/">Facebook URL</a></th>
+                                                         title="{{ trans('messages.tooltips.fb') }}">@lang('messages.headers.facebook') @lang('messages.headers.url')</a></th>
         </tr>
         <tr>
             <td colspan="2" style="text-align: left;"><a href="#" id="adminEmail"
@@ -67,9 +69,9 @@ $currentOrg    = $currentPerson->defaultOrg;
                                                          data-value="{{ $org->facebookURL }}"></a></td>
         </tr>
         <tr>
-            <th colspan="2" style="text-align: left;">Website URL</th>
-            <th colspan="1" style="text-align: left;">Credit Label</th>
-            <th colspan="2" style="text-align: left;">Twitter Handle</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.headers.website')</th>
+            <th colspan="1" style="text-align: left;">@lang('messages.headers.credit')</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.headers.twitter')</th>
         </tr>
         <tr>
             <td colspan="2" style="text-align: left;"><a href="#" id="orgURL" data-value="{{ $org->orgURL }}"></a></td>
@@ -79,8 +81,8 @@ $currentOrg    = $currentPerson->defaultOrg;
             </td>
         </tr>
         <tr>
-            <th colspan="3" style="text-align: left;">LinkedIn URL</th>
-            <th colspan="2" style="text-align: left;">Google URL</th>
+            <th colspan="3" style="text-align: left;">@lang('messages.headers.linkedin')</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.headers.google')</th>
         </tr>
         <tr>
             <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL"
@@ -89,7 +91,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             </td>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: left;">Admin Contact Statement</th>
+            <th colspan="5" style="text-align: left;">@lang('messages.headers.admin_stmt')</th>
         </tr>
         <tr>
             <td colspan="5" style="text-align: left;"><a href="#" id="adminStatement"
@@ -100,7 +102,7 @@ $currentOrg    = $currentPerson->defaultOrg;
     Need to add a logo upload/validation here.
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Custom Data Field Names' . $fieldnames, 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.cdata') . $fieldnames, 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <table id="data_fields" class="table table-striped table-condensed">
         <tbody>
         @for($i=1; $i<=10; $i++)
@@ -113,7 +115,7 @@ $currentOrg    = $currentPerson->defaultOrg;
     </table>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Custom Date Field Names' . $fieldnames, 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.cdate') . $fieldnames, 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <table id="date_fields" class="table table-striped table-condensed">
         <tbody>
         @for($i=1; $i<=10; $i++)
@@ -146,41 +148,41 @@ $currentOrg    = $currentPerson->defaultOrg;
             };
             $('#orgName').editable({
                 type: 'text',
-                pk:  {{ $org->orgID }},
                 placement: 'right',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}',
                 title: "Edit Org Name.  This cannot be blank."
             });
 
             $('#orgAddr1').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgAddr2').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgCity').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgState').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgZip').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgPhone').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgFax').editable({
                 type: 'text',
@@ -189,64 +191,64 @@ $currentOrg    = $currentPerson->defaultOrg;
             });
             $('#orgEmail').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgURL').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#creditLabel').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#orgHandle').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#adminEmail').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#facebookURL').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#adminStatement').editable({
                 type: 'textarea',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#linkedinURL').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             $('#googleURL').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk:  {{ $org->orgID }},
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
 
 
             @for($i=1; $i<=10; $i++)
                 $('#OSN{{ $i }}').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk: {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             @endfor
 
             @for($i=1; $i<=10; $i++)
                 $('#ODN{{ $i }}').editable({
                 type: 'text',
-                url: '{{ env('APP_URL') }}/orgsettings/' + {{ $org->orgID }},
-                pk: {{ $org->orgID }}
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
             });
             @endfor
         });

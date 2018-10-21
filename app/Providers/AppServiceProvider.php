@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
             return "<?php dd({$expression}); ?>";
         });
 
+        Blade::directive('trans_choice', function ($expression) {
+            return "<?php trans_choice({$expression}); ?>";
+        });
+
         if (!\App::environment('local')) {
             \URL::forceScheme('https');
         }

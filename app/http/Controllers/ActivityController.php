@@ -33,7 +33,7 @@ class ActivityController extends Controller
                               ->whereHas(
                                   'regfinance', function($q) {
                                   $q->where('personID', '!=', $this->currentPerson->personID);
-                                  $q->where('regStatus', '!=', 'In Progress');
+                                  $q->where('pmtRecd', '=', 1);
                               })
                               ->with('event', 'ticket', 'person', 'regfinance')
                               ->get()->sortBy('event.eventStartDate');
@@ -43,8 +43,11 @@ class ActivityController extends Controller
             $q->where('eventStartDate', '>=', Carbon::now());
         })
                           ->with('event', 'person', 'registrations')
-                          ->where('personID', '=', $this->currentPerson->personID)
-                          ->whereIn('status', ['Active', 'Processed'])
+                          ->where([
+                              ['personID', '=', $this->currentPerson->personID],
+                              ['pmtRecd', '=', 1]
+                          ])
+                          //->whereIn('status', [trans('messages.reg_status.active'), trans('messages.reg_status.processed')])
                           ->get()->sortBy('event.eventStartDate');
 
         $unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
@@ -53,7 +56,11 @@ class ActivityController extends Controller
                                 $q->where('eventStartDate', '>=', Carbon::now());
                             })
                             ->with('event', 'person', 'registrations')
-                            ->whereIn('status', ['Payment Pending'])
+                            ->whereHas(
+                                'registrations', function($q) {
+                                    $q->where('pmtRecd', '=', 0);
+                            })
+                            ->whereIn('status', [trans('messages.reg_status.pending')])
                             ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(
@@ -63,7 +70,7 @@ class ActivityController extends Controller
         })
                              ->with('event', 'person', 'registrations')
                              ->where('personID', '=', $this->currentPerson->personID)
-                             ->whereIn('status', ['pending', 'In Progress'])
+                             ->whereIn('status', ['pending', trans('messages.reg_status.progress')])
                              ->get()->sortBy('event.eventStartDate');
 
         $topBits = '';
@@ -83,8 +90,8 @@ class ActivityController extends Controller
                            ->where('org-event.orgID', '=', $this->currentPerson->defaultOrgID)
                            ->whereNull('er.deleted_at')
                            ->where(function($w) {
-                               $w->where('er.regStatus', '=', 'Active')
-                                 ->orWhere('er.regStatus', '=', 'Processed');
+                               $w->where('er.regStatus', '=', trans('messages.reg_status.active'))
+                                 ->orWhere('er.regStatus', '=', trans('messages.reg_status.processed'));
                            })
                            ->select('org-event.eventID', 'org-event.eventName', 'oet.etName',
                                'org-event.eventStartDate', 'org-event.eventEndDate',
@@ -118,7 +125,7 @@ class ActivityController extends Controller
             if($there == 1) {
                 array_push($myevents, $label);
             }
-            $datastring .= "{ ChMtg: '" . $label . "', Attendees: " . $attend . "},";
+            $datastring .= "{ ChMtg: '" . $label . "', " . trans_choice('messages.headers.att', 2) . ": " . $attend . "},";
         }
         rtrim($datastring, ",");
 
