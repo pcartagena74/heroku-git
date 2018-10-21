@@ -105,7 +105,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6"
                      style="margin-top: auto; word-break: break-all;">
-                    <h2>@lang('messages.instructions.early_bird')</h2>
+                    <h2>@lang('messages.instructions.early_bird') {{ $event->earlyBirdDate->format('M d') }}</h2>
                 </div>
             </div>
         @endif
@@ -142,14 +142,6 @@ $mbr_price = trans('messages.instructions.mbr_price');
                             @foreach($bundles as $bundle)
                                 <tr>
                                     <td style="text-align: center;">
-                                        {{--
-                                        <div class="form-group">
-                                            <input type="radio" name="ticketID"
-                                                   value="{{ $bundle->ticketID }}"
-                                                   required data-error="{{ trans('messages.errors.options') }}">
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                        --}}
                                         <div class="form-group">
                                             <input type="number" pattern="[0-5]" name="q-{{ $bundle->ticketID }}"
                                                    id="q-{{ $bundle->ticketID }}" style="width:30px" size="2"

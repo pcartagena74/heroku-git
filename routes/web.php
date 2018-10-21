@@ -152,7 +152,7 @@ Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
 // ---------------------
 // Event-Registration Routes
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
-// No longer in use...
+Route::get('/regstep2/{event}/{quantity}/{dCode?}', 'RegistrationController@processRegForm');
 Route::post('/regstep3/{event}/create', 'RegistrationController@store2')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::patch('/complete_registration/{id}', 'RegFinanceController@update');

@@ -328,7 +328,7 @@ if($event->isSymmetric && $event->hasTracks) {
 
             <div class="myrow col-md-12 col-sm-12" style="display: table-row; vertical-align: top;">
                 <div class="col-md-2 col-sm-2" style="display: table-cell; text-align:center;">
-                    <h1 @lang('messages.symbols.cur_class')></h1>
+                    <h1 @lang('messages.symbols.cur_class_5x')></h1>
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))

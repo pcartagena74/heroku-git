@@ -189,7 +189,6 @@ foreach ($array as $chap) {
                     </table>
                     @include('v1.parts.end_content')
                 @else
-                    @include('v1.parts.start_content', ['header' => 'Date Fields', 'subheader' => '(uneditable)', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
                     @include('v1.parts.start_content', ['header' => trans('messages.profile.date_f'),
                              'subheader' => '(' . trans('messages.profile.uneditable') . ')',
                              'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
@@ -320,7 +319,7 @@ foreach ($array as $chap) {
 
                 @include('v1.parts.start_min_content', ['header' => trans('messages.fields.email'),
                          'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-                @if(count($emails) ==0)
+                @if(count($emails) == 0)
                     {{ trans_choice('messages.profile.emails', count($emails)) }}
                 @else
                     {{ trans_choice('messages.profile.emails', count($emails)) }}
@@ -339,8 +338,7 @@ foreach ($array as $chap) {
                             <tr>
                                 <td style="text-align: left;">
                                     @if($email->isPrimary)
-                                        <button class="btn btn-danger btn-xs" disabled>@lang('messages.symbols.trash')
-                                        </button>
+                                        <button class="btn btn-danger btn-xs" disabled>@lang('messages.symbols.trash')</button>
                                         @include('v1.parts.tooltip', ['title' => trans('messages.profile.cant_delete')])
                                     @else
                                         <form method="post"

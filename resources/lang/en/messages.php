@@ -237,6 +237,7 @@ return [
         'add' => 'Add Event Type|Add Additional Event Types',
         'add_to_cal' => 'Add this event to your calendar program of choice.',
         'admin' => "Admin",
+        'admin_func' => "Admin Function: ",
         'admin_stmt' => "Admin Contact Statement",
         'affiliation' => "Chapter Affiliation",
         'aff_with' => 'Affiliated with',
@@ -319,6 +320,7 @@ return [
         'mList' => 'Member List',
         'mAct' => 'Member Activity',
         'my' => "My",
+        'N/A' => 'N/A',
         'nametags' => "Name Tag Data",
         'near_chap' => 'Nearby Chapters',
         'net' => 'Net',
@@ -332,6 +334,7 @@ return [
         'pass_new' => "New Password",
         'pass_ver' => "Verify Password",
         'percent' => "Percent",
+        'person_sim' => "Person Simulation",
         'phone_nums' => "Phone Number|Phone Numbers",
         'pmt' => 'Payment',
         'post-reg' => "Post Registration",
@@ -373,10 +376,12 @@ return [
     ],
 
     'instructions' => [
+        'become_instr' => "Find a person by searching by that person's first or last name, email address, or PMI ID",
+        'become_id' => "Enter the left-most number from the field above. ",
         'bundle_setup' => "If you need to create a 'bundle' ticket, do so after adding <b>all</b> of its component (non-bundle) tickets.",
         'card_error' => "There was an error with the card used.  ",
         'customURL' => "Please enter a custom URL.",
-        'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect",
+        'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect until ",
         'early_values' => "Changing the date or discount percent will apply to all associated tickets shown below or created.",
         'ev_defaults' => "Default values for this event only.",
         'ev_discounts' => "The <b style='color: red;'>non-empty discount codes</b> here are active for this event.<br>
@@ -410,6 +415,7 @@ return [
         'pw_set' => "Set a password",
         'quantity' => "The quantity for at least one ticket must be greater than 0.",
         'reg_sess' => "You can review and/or modify your session registrations below.",
+        'role_toggle' => 'The role :role was toggled for :person.',
         'role_txt' => "The values in these tables are not editable and are here for informational purposes only.",
         'sold_out' => "This ticket is sold out. Add yourself to the wait list.",
         'tkt_setup' => "Creating additional tickets is typically only necessary for Professional Development Day events.",
@@ -506,7 +512,7 @@ return [
         'addr1' => 'Address 1',
         'addr1&2' => 'Address 1 & 2',
         'addr2' => 'Address 2',
-        'addrs' => "There are no addresses associated with this profile.|These addresses are those that you may have used to register for an event.",
+        'addrs' => "{0} There are no addresses associated with this profile.|[1,Inf] These addresses are those that you may have used to register for an event.",
         'cant_delete' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first.",
         'change' => 'Change ',
         'city' => 'City',
@@ -523,7 +529,7 @@ return [
             'zip' => 'Enter zip',
         ],
         'ed_ad' => 'Editable for Admins',
-        'emails' => "There are no emails associated with this profile.|These email addresses are those that you may have used to register for an event.",
+        'emails' => "{0} There are no emails associated with this profile.|[1,Inf] These email addresses are those that you may have used to register for an event.",
         'no_id' => "If this is empty, you may not have a PMI ID on file.",
         'no_phone' => "There are no phone numbers associated with this profile.",
         'pass' => " Password",
@@ -558,6 +564,7 @@ return [
         'check' => "<i class='fas fa-money-check fa-fw'></i>",              // physical direction to draw on an account
         'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",                // currency symbol
         'cur_class' => "class='far fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
+        'cur_class_5x' => "class='far fa-5x fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
         'trash' => "<i class='far fa-trash-alt fa-fw'></i>",                // delete symbol
         'trash_class' => "class='far fa-trash-alt fa-fw'",                  // delete symbol - class only (when tips are embedded)
     ],

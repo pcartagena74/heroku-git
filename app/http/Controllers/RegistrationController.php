@@ -37,7 +37,7 @@ class RegistrationController extends Controller
     {
         // Initiating registration for an event from /event/{id}
         $discount_code = request()->input('discount_code');
-        $tq = []; $quantity = 0;
+        $tq = []; $quantity = 0; $tq_string ='?';
 
         if ($discount_code === null) {
             $discount_code = '';
@@ -45,7 +45,6 @@ class RegistrationController extends Controller
             $discount_code = "/" . $discount_code;
         }
 
-        if(1){
             $tkts = Ticket::where([
                 ['eventID', '=', $event->eventID],
                 ['isSuppressed', '=', 0],
@@ -57,52 +56,33 @@ class RegistrationController extends Controller
                 if($q !== null && $q > 0){
                     array_push($tq, ['t' => $ticket->ticketID, 'q' => $q]);
                     $quantity += $q;
+                    $tq_string .= "tq[]=$ticket->ticketID&";
                 }
             }
 
-            $member = strtoupper(trans('messages.fields.member'));
-            $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
-            return view('v1.public_pages.varTKT_register',
-                   compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
+            // $member = strtoupper(trans('messages.fields.member'));
+            // $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
 
-            // return json_encode(['tq' => $tq]);
-
-        } else {
-            // This is no longer run given above
-            /*
-            $ticket = Ticket::find(request()->input('ticketID'));
-            $quantity = request()->input('quantity');
-
-            // Finish the route variables needed here and add the route
-            return redirect("/regstep2/$event->eventID/$ticket->ticketID/$quantity/" . $discount_code);
-            */
-        }
+            // return view('v1.public_pages.varTKT_register',
+            //       compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
+        return redirect("/regstep2/$event->eventID/$quantity$discount_code$tq_string");
 
     }
 
-    public function showRegForm(Event $event, Ticket $ticket, $quantity, $discount_code = null) {
-        //    public function showRegForm (Request $request, Event $event) {
+    public function showRegForm(Event $event, $quantity, $discount_code = null) {
         // Registering for an event from /register/{tkt}/{q}/{dCode?}
-        /*
-        $ticket        = Ticket::find(request()->input('ticketID'));
-        $quantity      = request()->input('quantity');
-        $discount_code = request()->input('discount_code');
-        $event         = Event::find($ticket->eventID);
-        */
-
-        // NO LONGER IN USE
 
         $member = strtoupper(trans('messages.fields.member'));
         $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
-            ['isSuppressed', '=', 0]
-        ])
-        ->get();
+            ['isSuppressed', '=', 0],
+            ['isDeleted', '=', 0]
+        ])->get();
 
-        return view('v1.public_pages.register_new',
-                    compact('ticket','event', 'quantity', 'discount_code', 'member', 'nonmbr', 'tkts'));
+         return view('v1.public_pages.varTKT_register',
+              compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
     }
 
     /**
@@ -132,23 +112,28 @@ class RegistrationController extends Controller
         // list of attendees who have registered, including payment pendings so they are listed everywhere needed
         $regs = Registration::where('eventID', '=', $event->eventID)
             ->where(function ($q) {
-                $q->where('regStatus', '=', 'Active')
-                    ->orWhere('regStatus', '=', 'Processed')
-                    ->orWhere('regStatus', '=', 'Payment Pending');
+                $q->where('regStatus', '=', trans('messages.reg_status.active'))
+                    ->orWhere('regStatus', '=', trans('messages.reg_status.processed'))
+                    ->orWhere('regStatus', '=', trans('messages.reg_status.pending'));
             })->with('regfinance', 'ticket', 'person')->get();
 
         // list of attendees who are payment pendings so they are displayed separately
         $deadbeats = Registration::where([
             ['eventID', '=', $event->eventID],
-            ['regStatus', '=', 'Payment Pending'],
-            ])->with('regfinance', 'ticket')->get();
+            // ['regStatus', '=', trans('messages.reg_status.pending')],
+            ])->with('regfinance', 'ticket')
+            ->whereHas('regfinance', function($q){
+                $q->where('pmtRecd', '=', 0);
+            })
+            ->get();
 
         // list of wait-listed or interrupted registrations
         $notregs = Registration::where('eventID', '=', $event->eventID)
             ->where(function ($q) {
-                $q->where('regStatus', '=', 'Wait List')
-                    ->orWhere('regStatus', '=', 'pending')
-                    ->orWhere('regStatus', '=', 'In Progress');
+                $q->where('regStatus', '=', trans('messages.headers.wait'))
+                    // Even if Payment Pending is the status, they are still registered
+                    //->orWhere('regStatus', '=', trans('messages.reg_status.pending'))
+                    ->orWhere('regStatus', '=', trans('messages.reg_status.progress'));
             })->with('regfinance', 'ticket')->get();
 
         $tkts = Ticket::where([
@@ -181,7 +166,7 @@ class RegistrationController extends Controller
 
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
-                $d->discountCode = 'N/A';
+                $d->discountCode = trans('messages.headers.N/A');
             }
         }
 

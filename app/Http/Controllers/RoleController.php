@@ -74,22 +74,30 @@ class RoleController extends Controller
     public function update(Request $request, Person $person, Role $role)
     {
         // responds to POST /role/{person}/{id}
+        $orgID_needed = 0;
 
         // toggle the role selected
         $person->roles()->toggle($role->id);
 
-        // Check to ensure that a role for the orgName is in the DB if user has any assigned roles...
-        // ONLY add it if it's not already there...
-        if (count($person->roles)>1) {
-            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
-                $person->roles()->toggle($person->org_role_id()->id);
-            }
-        } else {
+        // Check to see if a role for the orgName is in the DB...
+        if (!$person->roles->contains('id', $person->org_role_id()->id)) {
+            $orgID_needed = 1;
+        }
+
+        // Remove the orgName role if it's the only one...
+        if (count($person->roles) == 1 && !$orgID_needed) {
             $person->roles->forget('id', $person->org_role_id()->id);
         }
 
+        // ...or add the orgName role if it's needed.
+        if ($orgID_needed) {
+            $person->roles()->toggle($person->org_role_id()->id);
+        }
+
         $message =
-            '<div class="well bg-blue"> The role "' . $role->display_name . '" was toggled for ' . $person->showFullName() . "</div>";
+            '<div class="well bg-blue">' . trans('messages.instructions.role_toggle',
+            ['role' => $role->display_name, 'person' => $person->showFullName()]) . "</div>";
+
         return json_encode(array('status' => 'success', 'message' => $message));
     }
 
