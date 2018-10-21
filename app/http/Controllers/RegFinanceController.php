@@ -380,7 +380,7 @@ class RegFinanceController extends Controller
         try {
             Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
-            request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
+            request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
         }
 
         return redirect('/show_receipt/' . $rf->regID);

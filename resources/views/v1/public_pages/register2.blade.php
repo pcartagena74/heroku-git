@@ -64,7 +64,7 @@ if($event->isSymmetric && $event->hasTracks) {
                         - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
                         <br>
                         {{ $loc->locName }}<br>
-                        {{ $loc->addr1 }} <i class="far fa-circle fa-tiny-circle"></i> {{ $loc->city }}
+                        {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }}
                         , {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
@@ -260,7 +260,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                                              data-pk="{{ $reg->regID }}"
                                                              data-value="{{ $reg->canNetwork }}"
                                                              data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
-                                            @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array($org->orgName))])
+                                            @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
                                         <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
                                                                     data-pk="{{ $reg->regID }}"
                                                                     data-value="{{ $reg->isAuthPDU }}"

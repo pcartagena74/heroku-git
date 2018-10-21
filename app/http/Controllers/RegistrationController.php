@@ -68,6 +68,8 @@ class RegistrationController extends Controller
 
     public function showRegForm(Event $event, $quantity, $discount_code = null) {
         // 2-part form so that login popup can redirect->back() without going to dashboard
+        // requires use of Session to pass the request object along
+        // RISK: the session variables will only survive one redirection
         $tq = [];
 
         $member = strtoupper(trans('messages.fields.member'));

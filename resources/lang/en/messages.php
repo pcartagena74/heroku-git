@@ -547,8 +547,8 @@ return [
     'reg_status' => [
         'active' => 'Active',
         'door' => 'At Door',
-        'mail_broken' => "Mail is not working at the moment.  PMI Mass Bay will email you a receipt. 
-                          See it now by going to: <a class='yellow' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
+        'mail_broken' => "Mail is not working at the moment.  :org will email you a receipt. 
+                          See it now by going to: <a style='color:yellow;' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
         'no_charge' => 'No Charge',
         'partial' => 'Partially Refunded',
         'p_canceled' => 'Partially Canceled',
