@@ -242,23 +242,24 @@ class RegFinanceController extends Controller
                 $rf->status = trans('messages.reg_status.processed');
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
+                $rf->save();
             } elseif ($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
                 $rf->status = trans('messages.reg_status.pending');
                 $rf->pmtType = trans('messages.reg_status.door');
+                $rf->save();
             } else {
                 //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
                 $rf->status = trans('messages.reg_status.processed');
                 $rf->pmtType = trans('messages.reg_status.no_charge');
+                $rf->save();
             }
 
             $discountAmt = 0;
-            //$end = $rf->seats - 1;
 
             // Cycle through event-registrations and update regStatus based on rf->status
             foreach ($rf->registrations as $reg) {
-            //for ($i = $id - $end; $i <= $id; $i++)  {
 
                 if ($reg->ticket->waitlisting()) {
                     $reg->regStatus = trans('messages.headers.wait');
@@ -315,7 +316,6 @@ class RegFinanceController extends Controller
             // inserted code below into this loop to be able to process for each registered person
             // need $reg->personID to save into RegSession record.
             foreach($rf->registrations as $reg) {
-            //for ($i = $id - $end; $i <= $id; $i++) {
 
                 for ($j = 1; $j <= $event->confDays; $j++) {
                     $z = EventSession::where([

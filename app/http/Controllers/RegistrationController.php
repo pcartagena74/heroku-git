@@ -386,6 +386,8 @@ class RegistrationController extends Controller
                 if($i==1 && !Auth::check()) {
                     // log the first ticket's user in if no one is logged in -- ASSUMPTION RISK
                     Auth::loginUsingId($user->id);
+                    $rf->personID = $person->personID;
+                    $rf->save();
                     $show_pass_fields = 1;
                 }
 
@@ -442,9 +444,9 @@ class RegistrationController extends Controller
             $reg->eventQuestion = $eventQuestion;
             $reg->canNetwork = request()->input('canNetwork'.$i_cnt) !== null ? 1 : 0;
             $reg->affiliation = implode(",", $affiliation);
-            $reg->regStatus = 'In Progress';
+            $reg->regStatus = trans('messages.reg_status.progress');
             if ($t->waitlisting()) {
-                $reg->regStatus = 'Wait List';
+                $reg->regStatus = trans('messages.headers.wait');
             }
             $reg->registeredBy = $regBy;
             $reg->token = $token;
@@ -467,10 +469,10 @@ class RegistrationController extends Controller
             $rf->discountAmt = $sumtotal - $subcheck;
             $rf->save();
         } else {
-            request()->session()->flash('alert-warning', "Something funky happened with the math. 
-                The form may have been inadvertantly corrupted. subtotal: $total, validation_check: $subcheck");
+            request()->session()->flash('alert-warning',
+                    trans('messages.errors.corruption', ['total' => $total, 'check' => $subcheck]));
             return Redirect::back()->withErrors(
-                ['warning' => "Something funky happened with the math.  Corruption occured: subcheck: $subcheck, subtotal: $total"]);
+                ['warning' => trans('messages.errors.corruption', ['total' => $total, 'check' => $subcheck])]);
         }
 
         // Everything is saved and updated and such, now display the data back for review
@@ -1109,7 +1111,7 @@ class RegistrationController extends Controller
         // 3. Decrement registration count on ticket(s), sessions as needed
 
         $needSessionPick = 0;
-        $verb = 'canceled';
+        $verb = strtolower(trans('messages.headers.canceled'));
         $event = Event::find($reg->eventID);
         $org = Org::find($event->orgID);
 
@@ -1126,14 +1128,15 @@ class RegistrationController extends Controller
                     \Stripe\Refund::create(array(
                         "charge" => $rf->stripeChargeID,
                     ));
-                    $reg->regStatus = 'Refunded';
-                    $rf->status = 'Refunded';
+                    $reg->regStatus = trans('messages.headers.refunded');
+                    $rf->status = trans('messages.headers.refunded');
                     $rf->save();
                     $reg->save();
 
                     // Generate Refund Email
                 } catch (Exception $e) {
-                    request()->session()->flash('alert-danger', 'The attempt to get a refund failed with order: ' . $rf->regID . '.' . $org->adminContactStatement);
+                    request()->session()->flash('alert-danger',
+                        trans('messages.errors.refund_failed', ['rest' => $rf->regID . '.  ' . $org->adminContactStatement]));
                 }
                 $rf->delete();
                 $reg->delete();
@@ -1144,9 +1147,9 @@ class RegistrationController extends Controller
                         "charge" => $rf->stripeChargeID,
                         "amount" => $reg->subtotal * 100,
                     ));
-                    $reg->regStatus = 'Refunded';
-                    $rf->status = 'Partially Refunded';
-                    $verb = 'refunded';
+                    $reg->regStatus = trans('messages.headers.refunded');
+                    $rf->status = trans('messages.reg_status.partial');
+                    $verb = strtolower(trans('messages.headers.refunded'));
                     $rf->save();
                     $reg->save();
 
@@ -1157,52 +1160,37 @@ class RegistrationController extends Controller
                 $reg->delete();
             }
         } elseif ($rf->seats > 1) {
-            $reg->regStatus = 'Canceled';
-            $rf->status = 'Partially Canceled';
             // decided against decrementing original seat count
-            // $rf->seats      = $rf->seats - 1;
+            $reg->regStatus = trans('messages.headers.canceled');
+            $rf->status = trans('messages.reg_status.p_canceled');
             $rf->save();
             $reg->save();
             $reg->delete();
-            $verb = 'canceled';
+            $verb = strtolower(trans('messages.headers.canceled'));
         } else {
-            $reg->regStatus = 'Canceled';
-            $rf->status = 'Canceled';
+            $reg->regStatus = trans('messages.headers.canceled');
+            $rf->status = trans('messages.headers.canceled');
             $rf->save();
             $reg->save();
             $reg->delete();
             $rf->delete();
-            $verb = 'canceled';
+            $verb = strtolower(trans('messages.headers.canceled'));
         }
 
         // Set a warning message to call the organization if there was an issue...
         // but only if someone paid an amount > $0 and there's no stripeChargeID
         if ($reg->subtotal > 0 && $rf->pmtRecd && $rf->stripeChargeID === null) {
-            request()->session()->flash('alert-danger', 'The attempt to get a refund failed. ' . $org->adminContactStatement);
+            request()->session()->flash('alert-danger',
+            trans('messages.errors.refund_failed', ['rest' => $rf->regID . '.  ' . $org->adminContactStatement]));
         }
 
         // Now, decrement registration counts where required
         $ticket = Ticket::find($reg->ticketID);
 
-        // Check the tickets associated with this registration and see if there are sessions
-        if ($ticket->isaBundle) {
-            $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                ->where([
-                    ['bt.bundleID', '=', $ticket->ticketID],
-                    ['event-tickets.eventID', '=', $reg->eventID]
-                ])
-                ->get();
-        } else {
-            // Collection of 1 ticket (when not a bundle) for code uniformity
-            $tickets = Ticket::where('ticketID', '=', $rf->ticketID)->get();
-        }
-
         // Decrement the regCount on the ticket if ticket was paid OR 'At Door'
-        if ($rf->pmtRecd || $rf->pmtType == 'At Door') {
-            foreach ($tickets as $t) {
-                $t->regCount = $t->regCount - 1;
-                $t->save();
-            }
+        // Also decrement the attendance of any sessions
+        if ($rf->pmtRecd || $rf->pmtType == trans('messages.reg_status.door')) {
+            $ticket->update_count(-1);
 
             $sessions = RegSession::where('regID', '=', $reg->regID)->get();
             foreach ($sessions as $s) {
@@ -1215,7 +1203,7 @@ class RegistrationController extends Controller
             }
         }
 
-        request()->session()->flash('alert-success', 'The registration with id ' . $reg->regID . ' has been ' . $verb);
+        request()->session()->flash('alert-success', trans('messages.reg_status.msg_status', ['id' => $reg->regID, 'verb' => $verb]));
         //return redirect('/upcoming');
         return redirect()->back()->withInput();
     }

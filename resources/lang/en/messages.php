@@ -55,8 +55,10 @@ return [
     ],
 
     'errors' => [
+        'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'numeric' => 'Please enter a value from 1 - 5.',
         'options' => 'Please select an option.',
+        'refund_failed' => 'The attempt to get a refund failed with order: :rest',
         'unexpected' => 'An unexpected error occurred.',
     ],
 
@@ -520,11 +522,14 @@ return [
     'reg_status' => [
         'door' => 'At Door',
         'mail_broken' => "Mail is not working at the moment.  PMI Mass Bay will email you a receipt. 
-                          See it now by going to: <a class='yellow'aref='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
+                          See it now by going to: <a class='yellow' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
         'no_charge' => 'No Charge',
+        'partial' => 'Partially Refunded',
+        'p_canceled' => 'Partially Canceled',
         'pending' => 'Payment Pending',
         'processed' => 'Processed',
         'progress' => 'In Progress',
+        'msg_status' => 'The registration with id: :id has been :verb',
     ],
 
     // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
