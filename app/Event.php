@@ -85,4 +85,14 @@ class Event extends Model
             return 0;
         }
     }
+
+    public function checkin_time() {
+        $today = \Carbon\Carbon::now();
+        if($this->eventStartDate->diffInDays($today) <= 2){
+            return 1;
+        } else {
+            return 0;
+        }
+
+    }
 }

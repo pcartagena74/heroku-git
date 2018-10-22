@@ -29,9 +29,17 @@ $tickets = Ticket::where([
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => 'Track & Session Setup: ' . $event->eventName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    <div class="col-xs-12">
+        <div class="col-xs-6">
+            @include('v1.parts.event_buttons', ['event' => $event])
+        </div>
+    </div>
 
-    @include('v1.parts.start_content', ['header' => 'Session Setup Questions and Instructions', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.t&ss'). ': ' . $event->eventName,
+             'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.sess_setup'), 'subheader' => '',
+             'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
     <div class="col-sm-6">
         <ol>
             {!! trans('messages.instructions.track_setup') !!}

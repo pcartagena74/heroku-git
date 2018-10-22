@@ -253,7 +253,7 @@ class EventController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
         $org = Org::find($current_person->defaultOrgID);
-        $page_title = 'Create New Event';
+        $page_title = trans('messages.headers.event_new');
 
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
     }
@@ -419,7 +419,7 @@ class EventController extends Controller
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
         $org = Org::find($current_person->defaultOrgID);
         $exLoc = Location::find($event->locationID);
-        $page_title = 'Edit Event';
+        $page_title = trans('messages.headers.event_edit');
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }
 

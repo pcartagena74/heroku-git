@@ -164,7 +164,7 @@ foreach ($deadbeats as $r) {
             $f = Form::open(['method' => 'post', 'route' => ['accept_payment', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
             $f .= '<button type="submit" name="' . trans('messages.buttons.check') . '" class="btn btn-success btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.cash') . '">';
             $f .= trans('messages.symbols.cash').'</button>';
-            // $f .= Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
+
             $f .= '<button type="submit" name="'. trans('messages.buttons.check') . '" class="btn btn-primary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
             $f .= trans('messages.symbols.check').'</button></form>';
             $f .= Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
@@ -178,7 +178,6 @@ foreach ($deadbeats as $r) {
         }
         array_push($dead_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
             '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
-
     }
 }
 
@@ -188,7 +187,8 @@ foreach ($notregs as $r) {
     $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel this registration attempt.">';
     $f .= '<i class="far fa-trash-alt"></i></button></form>';
 
-    array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+    array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName,
+        $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
@@ -240,6 +240,13 @@ if ($event->hasTracks && $event->isSymmetric) {
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
+
+    <div class="col-xs-12">
+        <div class="col-xs-6">
+            @include('v1.parts.event_buttons', ['event' => $event])
+        </div>
+    </div>
+
     @include('v1.parts.start_content', ['header' => $event->eventName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @include('v1.parts.start_content', ['header' => $stats, 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])

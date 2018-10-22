@@ -19,8 +19,14 @@ $default = Org::find($event->orgID);
 
 @section('content')
 
+    <div class="col-xs-12">
+        <div class="col-xs-6">
+            @include('v1.parts.event_buttons', ['event' => $event])
+        </div>
+    </div>
 
-    @include('v1.parts.start_content', ['header' => 'Tickets for "' . $event->eventName . '"', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.tkt4') . $event->eventName . '"',
+             'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <p>@lang('messages.instructions.ev_defaults')<br>
     <b style="color:red;">@lang('messages.headers.note'): </b> @lang('messages.instructions.early_values') </p>
@@ -95,7 +101,7 @@ $default = Org::find($event->orgID);
                         </a>
                     @else
                         {!! Form::open(['url'=>env('APP_URL').'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
+                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => "return confirm(" . trans('messages.tooltips.sure') . ")"]) !!}
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
                         <input type="hidden" name="function" value="delete">
                         <button class="btn btn-danger btn-xs" id="launchConfirm">
@@ -114,20 +120,6 @@ $default = Org::find($event->orgID);
                        data-viewformat="MMM D, YYYY h:mm A"
                        data-title="{{ trans('messages.tooltips.sales_end') }}"
                        data-pk="{{ $ticket->ticketID }}"></a></td>
-                {{--
-                // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
-                <td><a href="#" id="earlyBirdEndDate{{ $tc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                       data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
-                       data-viewformat="MMM D, YYYY h:mm A"
-                       data-title="When should Early Bird pricing end for this event?"
-                       data-pk="{{ $ticket->ticketID }}"></a></td>
-                <td>
-                    <a href="#" id="earlyBirdPercent{{ $tc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                       data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
-                </td>
-                --}}
                 <td>
                     @lang('messages.symbols.cur')
                     <a href="#" id="memberBasePrice-{{ $tc }}" data-value="{{ $ticket->memberBasePrice }}"
@@ -183,10 +175,6 @@ $default = Org::find($event->orgID);
                 <th style="width: 5%">#</th>
                 <th style="width: 20%">@lang('messages.headers.label')</th>
                 <th>@lang('messages.fields.availability')</th>
-                {{--
-                <th>Early Bird Date</th>
-                <th>Early Bird Percent</th>
-                --}}
                 <th>@lang('messages.fields.memprice')</th>
                 <th>@lang('messages.fields.nonprice')</th>
             </tr>
@@ -218,20 +206,6 @@ $default = Org::find($event->orgID);
                            data-viewformat="MMM D, YYYY h:mm A"
                            data-title="{{ trans('messages.tooltips.sales_end') }}"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
-        {{--
-        // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
-            <td><a href="#" id="earlyBirdEndDate{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                   data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
-                   data-viewformat="MMM D, YYYY h:mm A"
-                   data-title="When should Early Bird pricing end for this event?"
-                   data-pk="{{ $ticket->ticketID }}"></a></td>
-            <td>
-                <a href="#" id="earlyBirdPercent{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                   data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
-            </td>
-            --}}
             <td>
                 @lang('messages.symbols.cur')
                 <a href="#" id="memberBasePrice-{{ $tc+$bc }}" data-value="{{ $ticket->memberBasePrice }}"
@@ -336,25 +310,13 @@ $default = Org::find($event->orgID);
                 minuteStep: 15
             }
         });
-        {{--
-            // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
-        //$("#earlyBirdEndDate{{ $i }}").editable({
-        //    type: 'combodate',
-        //    combodate: {
-        //        minYear: '{{ date("Y") }}',
-        //        maxYear: '{{ date("Y")+3 }}',
-        //        minuteStep: 15
-        //    }
-        // });
-        // $("#earlyBirdPercent{{ $i }}").editable({type: 'text'});
-        --}}
+
         $('#memberBasePrice-{{ $i }}').editable({type: 'text'});
         $('#nonmbrBasePrice-{{ $i }}').editable({type: 'text'});
         $('#maxAttendees-{{ $i }}').editable({type: 'text'});
 
         $('#isSuppressed-{{ $i }}').editable({
             type: 'select',
-            // autotext: auto,
             source: [
                 { value: 0, text: '{{ trans('messages.yesno_check.no') }}'},
                 { value: 1, text: '{{ trans('messages.yesno_check.yes') }}'}
@@ -382,8 +344,6 @@ $default = Org::find($event->orgID);
                 minuteStep: 15
             },
             error: function (xhr, ajaxOptions, e) {
-                //alert(xhr.status);
-                //alert(e);
             },
             success: function (data) {
                 //alert(data);
@@ -481,8 +441,7 @@ $default = Org::find($event->orgID);
 @endsection
 
 @section('modals')
-<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
-     aria-hidden="true">
+<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

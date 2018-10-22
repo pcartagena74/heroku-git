@@ -9,14 +9,15 @@
 $loc_headers = ['#', trans('messages.fields.loc_name'), trans('messages.fields.street'), trans('messages.fields.addr2'),
                 trans('messages.fields.city'), trans('messages.fields.state'), trans('messages.fields.zip'),
                 trans('messages.fields.count')];
-//$hidecol['1'] = 1;
+
 count($locations) > 15 ? $location_scroll = 1 : $location_scroll = 0;
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => 'Event Locations Available in Add/Edit Event Form', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.locations'), 'subheader' => '',
+             'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @lang('messages.instructions.ev_loc')
     @include('v1.parts.datatable', ['headers'=>$loc_headers, 'data'=>$locations, 'scroll'=>$location_scroll])

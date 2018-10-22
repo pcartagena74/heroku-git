@@ -7,8 +7,8 @@
  *
  */
 
-$current_headers =
-    ['Event Dates', 'Event Name', 'Event Type', 'Event Status', 'Attendee Count', 'Event Management'];
+$current_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
+    trans('messages.headers.status'), trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
 $current_data    = [];
 
 $today = \Carbon\Carbon::now();
@@ -55,7 +55,7 @@ foreach($current_events as $event) {
             "<a target='_new' href='$displayURL' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_prev') . "'><i class='far fa-fw fa-eye'></i></a>";
     } else {
         $display_link_button =
-            "<a target='_new' href='$displayURL/1' class='btn btn-yellow btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_prev') . "'><i class='far fa-fw fa-eye'></i></a>";
+            "<a target='_new' style='color:black;' href='$displayURL/1' class='btn btn-yellow btn-sm' data-toggle='tooltip' data-placement='top' title='" . trans('messages.headers.ev_prev') . "'><i class='far fa-fw fa-eye'></i></a>";
     }
     $eventDiscount_button =
        "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='".
@@ -86,9 +86,9 @@ foreach($current_events as $event) {
 
 count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
 
-$past_headers =
-['Event Dates', 'Event Name', 'Event Type', 'Attendee Count', 'Event Management'];
-//['#', 'Event Name', 'Event Type', 'Event Dates', 'Attendee Count', 'Event Management'];
+$past_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
+                 trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
+
 $past_data    = [];
 
 foreach($past_events as $event) {
@@ -129,9 +129,8 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             <li class="active"><a href="#tab_content1" id="current_events-tab" data-toggle="tab"
-                                  aria-expanded="true"><b>Upcoming Events</b></a></li>
-            <li class=""><a href="#tab_content2" id="past_events-tab" data-toggle="tab" aria-expanded="false"><b>Past
-                        Events</b></a></li>
+                                  aria-expanded="true"><b>@lang('messages.fields.up_event')</b></a></li>
+            <li class=""><a href="#tab_content2" id="past_events-tab" data-toggle="tab" aria-expanded="false"><b>@lang('messages.fields.past_events')</b></a></li>
         </ul>
         <div id="tab-content" class="tab-content">
             <div class="tab-pane active" id="tab_content1" aria-labelledby="current_events-tab">
@@ -142,7 +141,7 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
                     'id' => 'current_events',
                     'scroll' => $current_scroll])
                 @else
-                    There are no future events in the system.
+                    @lang('messages.messages.no_events')
                 @endif
             </div>
             <div class="tab-pane fade" id="tab_content2" aria-labelledby="past_events-tab">
