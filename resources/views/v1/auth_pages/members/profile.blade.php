@@ -236,7 +236,8 @@ foreach ($array as $chap) {
                                           action="{{ env('APP_URL') . "/address/" . $address->addrID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                        <button class="btn btn-danger btn-xs">
+                                        <button class="btn btn-danger btn-xs"
+                                            onclick="confirm('{{ trans('messages.tooltips.sure') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
                                     </form>
@@ -346,11 +347,7 @@ foreach ($array as $chap) {
                                             {{ csrf_field() }}
                                             <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                             <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                                    data-btn-ok-label="Continue"
-                                                    data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                                    data-btn-cancel-label="Stop!" data-id="em-{{ $em_cnt }}"
-                                                    data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                                    data-title="Are you sure?" data-content="This cannot be undone.">
+                                                    onclick="confirm('{{ trans('messages.tooltips.sure') }}');">
                                                 @lang('messages.symbols.trash')
                                             </button>
                                         </form>
@@ -410,11 +407,7 @@ foreach ($array as $chap) {
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                                data-btn-ok-label="Continue"
-                                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                                data-btn-cancel-label="Stop!" data-id="ph-{{ $ph_cnt }}"
-                                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                                data-title="Are you sure?" data-content="This cannot be undone.">
+                                                onclick="confirm('{{ trans('messages.tooltips.sure') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
                                     </form>
