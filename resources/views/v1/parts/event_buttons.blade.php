@@ -12,6 +12,7 @@ $trackURL = env('APP_URL').'/tracks/' . $event->eventID;
 $rptURL = env('APP_URL').'/eventreport/' . $event->slug;
 $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
 $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
+
 ?>
 
 @if($event->ok_to_display())
@@ -55,13 +56,15 @@ $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 
 <div class="col-xs-1">
     <a href='{{ $copyURL }}' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top'
+       onclick="return confirm('{{ trans('messages.tooltips.sure_copy') }}');"
        title='{{ trans('messages.headers.ev_copy') }}'><i class='far fa-fw fa-copy'></i></a>
 </div>
 
-@if(!($event->isActive || $event->cnt > 0))
+@if(!$event->isActive && $event->regCount() == 0)
 <div class="col-xs-1">
     {!! Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) !!}
     <button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top"
+            onclick="return confirm('{{ trans('messages.tooltips.sure') }}');"
             title="{{ trans('messages.buttons.delete') }}"> {!! trans('messages.symbols.trash') !!}</button>
     <input id="myDelete" type="submit" value="Go" class="hidden" />
     {!! Form::close() !!}

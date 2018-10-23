@@ -132,29 +132,29 @@ foreach ($regs as $r) {
     if ($r->subtotal > 0) {
         if (Entrust::hasRole('Admin')) {
             $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" class="btn btn-danger btn-sm">';
-            $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" title="'.
+            $f .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(' . trans('messages.tooltips.sure') . ');">';
+            $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" data-placement="top" title="'.
                 trans('messages.tooltips.click_cancel_reg') .'"></i></button></form>';
         } else {
             $f .= '<button type="submit" class="btn btn-secondary btn-sm">';
-            $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" title="'.
+            $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" data-placement="top" title="'.
                 trans('messages.tooltips.cant_cancel_reg') .'"></i></button>';
         }
     } else {
         if (Entrust::hasRole('Admin')) {
             $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" class="btn btn-danger btn-sm">';
-            $f .= '<i ' . trans('messages.symbols.trash_class') . ' data-toggle="tooltip" title="'.
+            $f .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(' . trans('messages.tooltips.sure') . ');">';
+            $f .= '<i ' . trans('messages.symbols.trash_class') . ' data-toggle="tooltip" data-placement="top" title="'.
                    trans('messages.tooltips.click_cancel_reg') .'"></i></button></form>';
         } else {
             $f .= '<button type="submit" class="btn btn-secondary btn-sm">';
-            $f .= '<i ' . trans('messages.symbols.trash_class') . ' data-toggle="tooltip" title="'.
+            $f .= '<i ' . trans('messages.symbols.trash_class') . ' data-toggle="tooltip" data-placement="top" title="'.
                 trans('messages.tooltips.cant_cancel_reg') .'"></i></button>';
         }
     }
 
-    array_push($reg_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
+    array_push($reg_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
+               $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $f]);
 }
 
 foreach ($deadbeats as $r) {
@@ -184,7 +184,7 @@ foreach ($deadbeats as $r) {
 foreach ($notregs as $r) {
     $f = '';
     $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-    $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel this registration attempt.">';
+    $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="'. trans('messages.tooltips.reg_cancel') . '">';
     $f .= '<i class="far fa-trash-alt"></i></button></form>';
 
     array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName,

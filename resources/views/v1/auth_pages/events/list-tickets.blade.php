@@ -101,10 +101,10 @@ $default = Org::find($event->orgID);
                         </a>
                     @else
                         {!! Form::open(['url'=>env('APP_URL').'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => "return confirm(" . trans('messages.tooltips.sure') . ")"]) !!}
+                                'class'=>'form-horizontal', 'role'=>'form']) !!}
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
                         <input type="hidden" name="function" value="delete">
-                        <button class="btn btn-danger btn-xs" id="launchConfirm">
+                        <button class="btn btn-danger btn-xs" id="launchConfirm" onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
                             @lang('messages.symbols.trash')
                         </button>
                         {!! Form::close() !!}
@@ -186,9 +186,9 @@ $default = Org::find($event->orgID);
                 <tr>
                     <td>
                         {!! Form::open(['url'=>env('APP_URL').'/bundle/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("' . trans('messages.tooltips.sure') . '")']) !!}
+                                'class'=>'form-horizontal', 'role'=>'form']) !!}
 
-                        <button class="btn btn-danger btn-xs" id="launchConfirm">
+                        <button class="btn btn-danger btn-xs" id="launchConfirm" onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
                             @lang('messages.symbols.trash')
                         </button>
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">

@@ -320,11 +320,11 @@ class RegistrationController extends Controller
                 $cityState = request()->input('cityState'.$i_cnt);
             }
 
-            // Try to assign $p via OrgStat1
+            // Try to assign $person via OrgStat1
             $person = Person::whereHas('orgperson', function($q) use($pmiID) {
                 $q->where('OrgStat1', '=', $pmiID);
             })->first();
-            // If not set, try to assign $p via login (email address)
+            // If not set, try to assign $person via login (email address)
             if(null === $person) {
                 $person = Person::whereHas('emails', function($q) use($login) {
                     $q->where('emailADDR', '=', $login);

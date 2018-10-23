@@ -31,8 +31,8 @@ if(!isset($content)){
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success btn-sm" id="modal-btn-yes">@lang('registration.yesno_check.yes')</button>
-                <button type="button" class="btn btn-danger btn-sm" id="modal-btn-no">@lang('registration.yesno_check.no')</button>
+                <button type="button" class="btn btn-success btn-sm" id="modal-btn-yes">@lang('messages.yesno_check.yes')</button>
+                <button type="button" class="btn btn-danger btn-sm" id="modal-btn-no">@lang('messages.yesno_check.no')</button>
             </div>
         </div>
     </div>

@@ -95,7 +95,7 @@ $i = 0;
         <div class="col-md-6 col-sm-6 col-xs-12">
             {{ $event->eventStartDate->format('n/j/Y g:i A') }} - {{ $event->eventEndDate->format('n/j/Y g:i A') }}<br>
             <b>{{ $loc->locName }}</b><br>
-            {{ $loc->addr1 }} <i class="far fa-circle fa-tiny-circle"></i> {{ $loc->city }}
+            {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }}
             , {{ $loc->state }} {{ $loc->zip }}
         </div>
         <div class="col-md-3 col-sm-3 col-xs-12">
@@ -143,7 +143,6 @@ $i = 0;
 <?php
         $i++;
         $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-        //{!! Form::hidden('tickID'.$i_cnt, $ticket->ticketID, array('id' => 'tickID'.$i_cnt)) !!}
 ?>
         {!! Form::hidden("percent".$i_cnt, 0, array('id' => "i_percent".$i_cnt)) !!}
         {!! Form::hidden("flatamt".$i_cnt, 0, array('id' => "i_flatamt".$i_cnt)) !!}
@@ -219,7 +218,7 @@ $i = 0;
                         <span class="red" id="notself">@lang('messages.fields.not_mine')</span>
                     </div>
                     <div class="col-sm-1">
-                        <input id="selfcheck" onclick="ticket1();" class="flat js-switch input-sm" type="checkbox" checked
+                        <input id="selfcheck" class="flat js-switch input-sm" type="checkbox" checked
                                name="self" value="1">
                     </div>
                     <div class="col-sm-3">
@@ -496,26 +495,31 @@ $i = 0;
         var myForm = document.getElementById('regForm');
         $('#selfcheck').change(function () {
             if (checkbox.checked != true) {
-                // alert('Unclicked');
-                $('#firstName').val('');
-                $('#prefName').val('');
-                $('#middleName').val('');
-                $('#lastName').val('');
-                $('#suffix').val('');
-                $('#login').val('');
-                $('#compName').val('');
-                $('#title').val('');
-                $('#suffix').val('');
-                $('#OrgStat1').val('');
-                $('#firstName').attr('readonly', false);
-                $('#lastName').attr('readonly', false);
-                $('#OrgStat1').attr('readonly', false);
-                $('#login').attr('readonly', false);
-                $('#login').attr('onfocus', false);
-                $('#indName').val('');
-                $('#prefix').val('');
-                $('#experience').val('0');
-                $('#tkt1st').hide();
+                // setting from checked to unchecked
+                if(!{{ Auth::check() ? 1 : 0 }}){
+                    alert("{{ trans('messages.instructions.not_self') }}");
+                    checkbox.checked = true;
+                } else {
+                    $('#firstName').val('');
+                    $('#prefName').val('');
+                    $('#middleName').val('');
+                    $('#lastName').val('');
+                    $('#suffix').val('');
+                    $('#login').val('');
+                    $('#compName').val('');
+                    $('#title').val('');
+                    $('#suffix').val('');
+                    $('#OrgStat1').val('');
+                    $('#firstName').attr('readonly', false);
+                    $('#lastName').attr('readonly', false);
+                    $('#OrgStat1').attr('readonly', false);
+                    $('#login').attr('readonly', false);
+                    $('#login').attr('onfocus', false);
+                    $('#indName').val('');
+                    $('#prefix').val('');
+                    $('#experience').val('0');
+                    $('#tkt1st').hide();
+                }
             } else {
                 myForm.reset();
                 $('#firstName').attr('readonly', true);

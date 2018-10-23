@@ -425,6 +425,7 @@ return [
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
         'no_regs' => "There are no attendees registered for this event at this time.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",
+        'not_self' => "If you are not logged in, and do not already have an account, this first ticket must be for you.",
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created." .
                       "<br>Changes made here <b class='red'>do not</b> affect existing events.",
         'postRegInfo' => "Anything added here will displayed to attendees AFTER they've registered.",
@@ -625,11 +626,13 @@ return [
         'orgStat1_tip' => 'If you do not know the PMI Member ID, leave it empty.',
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",
         'ref_days' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible.",
+        'reg_cancel' => "Cancel this registration attempt.",
         'sales_end' => "When should ticket sales end for this event?",
         'std_times' => "If most sessions follow the same schedule, choose Yes.  You can change this later
                         (after setting up the similar sessions) to adjust the times that are different.",
         'suppress' => "Change to 'Yes' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.",
         'sure' => "Are you sure?",
+        'sure_copy' => "Are you sure you want to make a copy of this event?",
         'tkt_avail' => "Tickets cannot be purchased after this date.  Default value: Event Start Date",
         'tkt_label' => "This is the label users will see when purchasing a ticket. It will also appear on receipts.",
         'tkt_no_del' => "The original ticket cannot be deleted. Please edit as needed.",

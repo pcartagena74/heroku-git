@@ -95,4 +95,8 @@ class Event extends Model
         }
 
     }
+
+    public function regCount() {
+        return Registration::where('eventID', '=', $this->eventID)->count();
+    }
 }
