@@ -1,4 +1,3 @@
 function FieldIsEmpty (fValue) {
-	    var field = new RegExp(/\S/);
-	    return !field.test(fValue)
+	    return (fValue == null || fValue == "" || fValue.length == 0);
 }

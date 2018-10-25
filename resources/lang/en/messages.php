@@ -57,6 +57,7 @@ return [
 
     'errors' => [
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
+        'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'numeric' => 'Please enter a value from 1 - 5.',
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
@@ -599,7 +600,7 @@ return [
     'tooltips' => [
         'accommodate' => 'We will do our best to accommodate you.',
         'affiliation_tip' => 'Ctrl-Click to select more than one affiliation.',
-        'allergenInfo_tip' => 'Ctrl-Click to select more than one affiliation.',
+        'allergenInfo_tip' => 'Ctrl-Click to select more than one dietary restriction.',
         'bundle_include' => "Change to 'Yes' to add each corresponding ticket to this bundle.",
         'bundles' => "Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.",
         'cant_cancel_reg' => "You cannot cancel this registration. Find an admin.",
@@ -608,11 +609,12 @@ return [
         'check' => "Click to acknowledge payment by check.",
         'click_cancel_reg' => "Click to cancel this registration.",
         'def_label' => "This is the label that will be given to the default ticket that is automatically created when events are created.",
+        'delete' => "Click to delete this item.",
         'eb_enddate' => "Upon event creation, this value is set to today(). If you do NOT want an early bird date, leave it alone and it will be ignored.
                          Otherwise, edit this date so that it is in the future, but prior to the event start date.",
         'email_tip' => "Changing your email address can only be done via your profile page.",
         'experience_tip' => 'Please select the number of years of Project Management experience you possess.',
-        'fb' => "The bit after fb.com/",
+        'fb' => "Enter the portion after fb.com/",
         'hasFood' => "Events with food have additional questions asked of attendees.",
         'hasTracks' => "Events with tracks require session setup.",
         'login' => "If you want your login to be a new email address, first add it to your account by clicking 'Add Email' below.",
@@ -632,7 +634,10 @@ return [
                         (after setting up the similar sessions) to adjust the times that are different.",
         'suppress' => "Change to 'Yes' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.",
         'sure' => "Are you sure?",
+        'sure_cancel' => "Are you sure you want to cancel this registration?",
         'sure_copy' => "Are you sure you want to make a copy of this event?",
+        'sure_del' => "Are you sure you want to delete this?",
+        'sure_refund' => "Are you sure you want to cancel this registration and issue a refund?",
         'tkt_avail' => "Tickets cannot be purchased after this date.  Default value: Event Start Date",
         'tkt_label' => "This is the label users will see when purchasing a ticket. It will also appear on receipts.",
         'tkt_no_del' => "The original ticket cannot be deleted. Please edit as needed.",

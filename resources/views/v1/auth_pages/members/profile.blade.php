@@ -236,8 +236,8 @@ foreach ($array as $chap) {
                                           action="{{ env('APP_URL') . "/address/" . $address->addrID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                        <button class="btn btn-danger btn-xs"
-                                            onclick="confirm('{{ trans('messages.tooltips.sure') }}');">
+                                        <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
+                                            onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
                                     </form>
@@ -346,8 +346,8 @@ foreach ($array as $chap) {
                                               action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                            <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                                    onclick="confirm('{{ trans('messages.tooltips.sure') }}');">
+                                            <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
+                                                    onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
                                                 @lang('messages.symbols.trash')
                                             </button>
                                         </form>
@@ -406,8 +406,8 @@ foreach ($array as $chap) {
                                           action="{{ env('APP_URL') . "/phone/" . $phone->phoneID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                                onclick="confirm('{{ trans('messages.tooltips.sure') }}');">
+                                        <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
+                                                onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
                                     </form>

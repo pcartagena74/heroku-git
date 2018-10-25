@@ -139,28 +139,15 @@ class PersonController extends Controller
                     OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10, 
                     ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, person.personID"))->first();
         } catch (\Exception $exception) {
-            request()->session()->flash('alert-danger', "There is no id: " . $id . ".  " . $exception->getMessage());
-            $id = $this->currentPerson->personID;
+            request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id, 'errormsg' => $exception->getMessage()]));
+            return redirect(env('APP_URL').'/profile/my');
 
-            // Return logged in person's profile instead of nothing / inconsistently-filled out profile
+        }
 
-            $profile = Person::where('person.personID', $id)
-                ->join('users as u', 'u.id', '=', 'person.personID')
-                ->join('org-person as op', function ($join) {
-                    $join->on('op.personID', '=', 'person.personID');
-                    $join->on('op.orgID', '=', 'person.defaultOrgID');
-                })
-                ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
-                ->select(DB::raw("person.prefix, person.firstName, person.midName, person.lastName, person.suffix,
-                                            person.prefName, u.login, person.title, person.compName, person.indName,
-                                            person.experience, person.chapterRole, person.defaultOrgID, person.affiliation, person.allergenInfo,
-                OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
-                date_format(RelDate1, '%c/%e/%Y') as RelDate1, date_format(RelDate2, '%c/%e/%Y') as RelDate2, date_format(RelDate3, '%c/%e/%Y') as RelDate3,
-                    date_format(RelDate4, '%c/%e/%Y') as RelDate4, date_format(RelDate5, '%c/%e/%Y') as RelDate5, date_format(RelDate6, '%c/%e/%Y') as RelDate6, 
-                    date_format(RelDate7, '%c/%e/%Y') as RelDate7, date_format(RelDate8, '%c/%e/%Y') as RelDate8, date_format(RelDate9, '%c/%e/%Y') as RelDate9, 
-                    date_format(RelDate10, '%c/%e/%Y') as RelDate10,
-                    OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10, 
-                    ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, person.personID"))->first();
+        if($profile === null){
+            request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id,
+                                        'modifier' => trans('messages.fields.member'), 'errormsg' => null]));
+            return redirect(env('APP_URL').'/profile/my');
         }
 
         $topBits = '';

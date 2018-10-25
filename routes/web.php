@@ -268,7 +268,7 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 
 Auth::routes();
 
-/*
+
 Route::get('ste2', function(){
     Mail::raw('Sending email is easy from ' . env('APP_ENV'), function($message){
         $message->subject('Test Email');
@@ -276,7 +276,7 @@ Route::get('ste2', function(){
         $message->to('pcartagena@partners.org');
     });
 });
-*/
+
 
 Route::any('{all}', function () {
     return view('errors.404');

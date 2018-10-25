@@ -85,11 +85,11 @@ if ($event->eventTypeID == 5) {
                 $allergies = $p->allergenInfo;
             }
             array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? "Yes" : "No", $p->login, $r->ticket->ticketLabel,
+                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
                 $r->discountCode, $p->affiliation, $p->chapterRole, $allergies]);
         } else {
             array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? "Yes" : "No", $p->login, $r->ticket->ticketLabel,
+                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
                 $r->discountCode, $p->affiliation, $p->chapterRole]);
         }
     }
@@ -117,44 +117,21 @@ if ($event->eventTypeID == 5) {
                 $allergies = $p->allergenInfo;
             }
             array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? "Yes" : "No", $p->login, $r->ticket->ticketLabel,
+                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
                 $r->discountCode, $p->compName, $p->title, $p->indName, $allergies]);
         } else {
             array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? "Yes" : "No", $p->login, $r->ticket->ticketLabel,
+                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
                 $r->discountCode, $p->compName, $p->title, $p->indName]);
         }
     }
 }
 
 foreach ($regs as $r) {
-    $f = '';
-    if ($r->subtotal > 0) {
-        if (Entrust::hasRole('Admin')) {
-            $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(' . trans('messages.tooltips.sure') . ');">';
-            $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" data-placement="top" title="'.
-                trans('messages.tooltips.click_cancel_reg') .'"></i></button></form>';
-        } else {
-            $f .= '<button type="submit" class="btn btn-secondary btn-sm">';
-            $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" data-placement="top" title="'.
-                trans('messages.tooltips.cant_cancel_reg') .'"></i></button>';
-        }
-    } else {
-        if (Entrust::hasRole('Admin')) {
-            $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(' . trans('messages.tooltips.sure') . ');">';
-            $f .= '<i ' . trans('messages.symbols.trash_class') . ' data-toggle="tooltip" data-placement="top" title="'.
-                   trans('messages.tooltips.click_cancel_reg') .'"></i></button></form>';
-        } else {
-            $f .= '<button type="submit" class="btn btn-secondary btn-sm">';
-            $f .= '<i ' . trans('messages.symbols.trash_class') . ' data-toggle="tooltip" data-placement="top" title="'.
-                trans('messages.tooltips.cant_cancel_reg') .'"></i></button>';
-        }
-    }
 
+    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
     array_push($reg_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
-               $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $f]);
+               $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
 }
 
 foreach ($deadbeats as $r) {
@@ -168,7 +145,7 @@ foreach ($deadbeats as $r) {
             $f .= '<button type="submit" name="'. trans('messages.buttons.check') . '" class="btn btn-primary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
             $f .= trans('messages.symbols.check').'</button></form>';
             $f .= Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
+            $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.reg_cancel') . '">';
             $f .= trans('messages.symbols.trash') .'</button></form>';
         } else {
             $f .= '<button type="submit" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.no_auth') . '">';
@@ -182,14 +159,15 @@ foreach ($deadbeats as $r) {
 }
 
 foreach ($notregs as $r) {
-    $f = '';
-    $f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-    $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="'. trans('messages.tooltips.reg_cancel') . '">';
-    $f .= '<i class="far fa-trash-alt"></i></button></form>';
+    //$f = '';
+    //$f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
+    //$f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="'. trans('messages.tooltips.reg_cancel') . '">';
+    //$f .= '<i class="far fa-trash-alt"></i></button></form>';
 
+    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
     array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName,
         $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
+        '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $c]);
 }
 
 if (count($reg_rows) >= 15) {

@@ -569,8 +569,10 @@ $i = 0;
                 });
 
                 $('#OrgStat1{{ $i_cnt }}').on('change', function (e) {
-                    if(!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}"))){
+                    if(!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}").val())){
                         findID($('#OrgStat1{{ $i_cnt }}').val(), '{{ $i_cnt }}');
+                    } else {
+                        change_tick('{{ $i }}', '{{ $i_cnt }}')
                     }
                 });
 
@@ -802,7 +804,6 @@ $i = 0;
 
             function change_tick(i, which) {
                 tktID = document.getElementById('ticketID-'+i).value;
-                //console.log('Called from ticketID-'+i);
                 tc = document.getElementById('tcost'+i);
                 fc = document.getElementById('final'+i);
                 os = document.getElementById('OrgStat1'+which);
@@ -816,6 +817,7 @@ $i = 0;
                                 fc.innerHTML = new_price.toFixed(2);
                             } else {
                                 //console.log('Retrieving non-member pricing...');
+                                $("#ticket_type"+i).html(nonmbr);
                                 var new_price = ticket['nonmbrBasePrice'];
                                 tc.innerHTML = new_price.toFixed(2);
                                 fc.innerHTML = new_price.toFixed(2);

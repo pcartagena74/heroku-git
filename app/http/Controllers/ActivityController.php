@@ -103,7 +103,7 @@ class ActivityController extends Controller
 
         // withCount above does nothing.  See about adding the count of Networking=1 here.
         $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, et.etName as 'label',
-                        (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=?) as 'attended'
+                        (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=? and er2.deleted_at is null) as 'attended'
                     FROM `org-event` oe
                     LEFT JOIN `event-registration` er on er.eventID=oe.eventID
                     JOIN `org-event_types` et on et.etID = oe.eventTypeID AND oe.eventTypeID in (1, 9)
