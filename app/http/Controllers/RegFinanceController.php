@@ -111,7 +111,7 @@ class RegFinanceController extends Controller
         $person = Person::find($rf->personID);
 
         // return view('v1.public_pages.event_receipt', $x);
-        return view('v1.auth_pages.events.registration.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+        return view('v1.auth_pages.events.registration.group_receipt_authnav', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
     }
 
     public function create()
