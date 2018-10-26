@@ -47,7 +47,7 @@ class ics_calendar
         $this->summary     = "For details, visit: " . env('APP_URL') . "/events/" . $event->slug;
         $this->description = $org->orgName . " " . $etype->etName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
-        $this->tzid        = $this->tzid->tzid;
+        $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
         $this->location    = $loc->locName . " " . $loc->addr1 . ", " . $loc->addr2 . ", " . $loc->city . ", " . $loc->state . " " . $loc->zip;
         $this->uri         = env('APP_URL') . "/events/" . $event->slug;
         $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
