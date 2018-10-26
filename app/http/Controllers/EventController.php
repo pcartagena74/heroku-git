@@ -817,10 +817,10 @@ class EventController extends Controller
             $ical = new ics_calendar($e);
             $output .= $ical->get();
         }
-        header("Content-type: text/calendar");
-        header("Cache-Control: no-cache, must-revalidate");
-        header("Pragma: no-cache");
-        return $output;
+        return response($output)
+            ->header("Content-type", "text/calendar")
+            ->header("Cache-Control", "no-cache, must-revalidate")
+            ->header("Pragma", "no-cache");
     }
 
 
