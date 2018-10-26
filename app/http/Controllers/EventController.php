@@ -812,7 +812,7 @@ class EventController extends Controller
             ['eventStartDate', '>=', Carbon::now()],
             ['isActive', '=', 1]
         ])->get();
-        $output = '';
+        $output = 'Content-type: text/calendar\r\n';
         foreach ($events as $e){
             $ical = new ics_calendar($e);
             $output .= $ical->get();

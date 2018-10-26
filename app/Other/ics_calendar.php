@@ -70,7 +70,7 @@ class ics_calendar
     {
 
         $this->o_string = "BEGIN:VCALENDAR\r\n".
-            "PRODID:-//mCentric-Hosted Event" ."\r\n".
+            "PRODID:-//mCentric-hosted " . $this->org . " Event" ."\r\n".
             "VERSION:2.0\r\n".
             "METHOD:REQUEST\r\n".
             "BEGIN:VEVENT\r\n".
