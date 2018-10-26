@@ -812,11 +812,14 @@ class EventController extends Controller
             ['eventStartDate', '>=', Carbon::now()],
             ['isActive', '=', 1]
         ])->get();
-        $output = 'Content-type: text/calendar\r\n';
+        $output = '';
         foreach ($events as $e){
             $ical = new ics_calendar($e);
             $output .= $ical->get();
         }
+        header("Content-type: text/calendar");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
         return $output;
     }
 
