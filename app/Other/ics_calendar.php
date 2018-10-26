@@ -69,34 +69,34 @@ class ics_calendar
     private function _generate()
     {
 
-        $this->o_string = "BEGIN:VCALENDAR\n".
-            "PRODID:-//mCentric-Hosted Event" ."\n".
-            "VERSION:2.0\n".
-            "METHOD:REQUEST\n".
-            "BEGIN:VEVENT\n".
-            "SUBJECT:".$this->_escapeString($this->description)."\n".
-            "CLASS:PUBLIC"."\n".
-            "CREATED:".$this->created->format('Ymd\THis')."\n".
-            "DTSTART;TZID=" . $this->tzid . ":".$this->start->format('Ymd\THis')."\n".
-            "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\n".
-            "LOCATION:".$this->_escapeString($this->location)."\n".
-            "SUMMARY:".$this->_escapeString($this->description)."\n".
-            "DESCRIPTION:".$this->_escapeString($this->summary)."\n".
-            "URL;VALUE=URI:".$this->_escapeString($this->uri)."\n".
-            "UID:". $this->uid ."\n".
-            "SEQUENCE:0\n".
-            "TRANSP:OPAQUE"."\n".
-            "DTSTAMP:". $this->stamp ."\n".
-            "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\n".
-            "ORGANIZER;CN=".$this->_escapeString($this->org).":mailto:" . $this->contact . "\n".
-            "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed"."\n".
-            "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed"."\n".
-            "END:VEVENT\n".
-            "END:VCALENDAR\n";
+        $this->o_string = "BEGIN:VCALENDAR\r\n".
+            "PRODID:-//mCentric-Hosted Event" ."\r\n".
+            "VERSION:2.0\r\n".
+            "METHOD:REQUEST\r\n".
+            "BEGIN:VEVENT\r\n".
+            "SUBJECT:".$this->_escapeString($this->description)."\r\n".
+            "CLASS:PUBLIC"."\r\n".
+            "CREATED:".$this->created->format('Ymd\THis')."\r\n".
+            "DTSTART;TZID=" . $this->tzid . ":".$this->start->format('Ymd\THis')."\r\n".
+            "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\r\n".
+            "LOCATION:".$this->_escapeString($this->location)."\r\n".
+            "SUMMARY:".$this->_escapeString($this->description)."\r\n".
+            "DESCRIPTION:".$this->_escapeString($this->summary)."\r\n".
+            "URL;VALUE=URI:".$this->_escapeString($this->uri)."\r\n".
+            "UID:". $this->uid ."\r\n".
+            "SEQUENCE:0\r\n".
+            "TRANSP:OPAQUE"."\r\n".
+            "DTSTAMP:". $this->stamp ."\r\n".
+            "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\r\n".
+            "ORGANIZER;CN=".$this->_escapeString($this->org).":mailto:" . $this->contact . "\r\n".
+            "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed"."\r\n".
+            "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed"."\r\n".
+            "END:VEVENT\r\n".
+            "END:VCALENDAR\r\n";
     }
     /*
 
-            "X-ALT-DESC;FMTTYPE=text/html:".$this->_escapeString($this->html)."\n" . $this->uri . "\n".
+            "X-ALT-DESC;FMTTYPE=text/html:".$this->_escapeString($this->html)."\r\n" . $this->uri . "\n".
 
 BEGIN:VCALENDAR
 PRODID:-//mCentric-Hosted Events
