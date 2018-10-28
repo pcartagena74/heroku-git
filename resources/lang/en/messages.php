@@ -64,6 +64,10 @@ return [
         'unexpected' => 'An unexpected error occurred.',
     ],
 
+    'flashes' => [
+        'password_success' => "The password for the account with the login: :login was set successfully.",
+    ],
+
     'email_txt' => [
         'for_det_visit' => 'For details, visit',
     ],
@@ -265,6 +269,7 @@ return [
         'cdata' => "Custom Data Field Names",
         'cdate' => "Custom Date Field Names",
         'chap' => 'Chapter',
+        'chapterRole' => 'Chapter Role',
         'code' => 'Code',
         'comp' => 'Company',
         'confDays' => "How many conference days with sessions are part of this event?",
@@ -363,6 +368,7 @@ return [
         'reg_chap' => 'Region Chapters',
         'reg_con' => 'Registration Confirmation',
         'reg_date' => 'Register Date',
+        'reset_pass' => 'Reset Your mCentric Account Password',
         'ret_sess_list' => "Return to Session List",
         'role' => 'Role',
         'roster_add' => 'Add to Roster',
@@ -422,7 +428,12 @@ return [
         'no_deadbeats' => "There are no pending payments for this event at this time.",
         'no_events' => "There are no <b class='red'>active</b> future events at this time.",
         'no_fut_events' => "You have not registered for any upcoming events.",
-        'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to this event.  If you wish to add them, do it now via the button below.",
+        'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to
+                          this event.  If you wish to add them, do it now via the button below.",
+        'no_password' => "An mCentric account was found for you and its password has not been set. 
+                          You will need to set it and login to complete your registration.
+                          Click to <a style='color: red;' href='" . env('APP_URL')."/password/reset'>reset it now.</a>",
+
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
         'no_regs' => "There are no attendees registered for this event at this time.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",

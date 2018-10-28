@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Email;
 use App\Person;
@@ -83,9 +84,12 @@ class EmailController extends Controller
 
     public function show($email){
         $e = Email::where('emailADDR', '=', $email)->first();
+        $u = User::where('id', '=', $e->personID)->first();
+
         if(null !== $e){
             $p = Person::with('orgperson')->where('personID', '=', $e->personID)->first();
-            return json_encode(array('status' => 'success', 'p' => $p, 'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()])));
+            return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,
+                               'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()])));
         } else {
             return json_encode(array('status' => 'error', 'p' => null, 'e' => $e, 'email' => $email));
         }

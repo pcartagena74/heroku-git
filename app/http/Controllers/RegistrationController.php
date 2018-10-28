@@ -134,6 +134,7 @@ class RegistrationController extends Controller
             ])->with('regfinance', 'ticket')
             ->whereHas('regfinance', function($q){
                 $q->where('pmtRecd', '=', 0);
+                $q->where('status', '=', trans('messages.reg_status.processed'));
             })
             ->get();
 
@@ -157,7 +158,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
-               // ['regStatus', '=', 'Processed']
+                ['regStatus', '=', trans('messages.reg_status.processed')]
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -1049,14 +1050,17 @@ class RegistrationController extends Controller
 
     public function update(Request $request, Registration $reg)
     {
-        // responds to POST /reg_verify/{regID}
+        // responds to Ajax request via POST /reg_verify/{regID}
         // This is the person record for the registration
         $person = Person::find($reg->personID);
 
         if (auth()->check()) {
             $updater = auth()->user()->id;
         } else {
+            // This should never happen.
             $updater = 1;
+            // I don't think this will ever end up displaying due to trigger from Ajax event
+            request()->session()->flash('alert-danger', trans('messages.errors.unexpected'));
         }
 
         $name = request()->input('name');

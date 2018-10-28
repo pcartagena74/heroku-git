@@ -4,9 +4,17 @@
  * Created: 10/22/2017
  *
  * @params:
- *        $header: a header for the modal
- *        $body: a variable to hold the content to be displayed
+ * @param $header: a header for the modal
+ * @param $body: a variable to hold the content to be displayed
+ * @param $show_past: 1 or 0 to show the script below or not
+ * @param $content: if passed, it will display below
+ *
  */
+
+if(!isset($show_past)){
+    $show_past = 0;
+}
+
 ?>
 <div class="modal fade" id="dynamic_modal" tabindex="-1" role="dialog" aria-labelledby="dynamic_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -21,6 +29,7 @@
                 <div class="container">
                     <div class="panel-body" id="modal-content">
                         {{--    Content would go here.    --}}
+                        {!! $content or '' !!}
                     </div>
                 </div>
             </div>
@@ -31,6 +40,7 @@
     </div>
 </div>
 
+@if($show_past)
 <script>
     $(document).ready(function(){
         $("#dynamic_modal").on("show.bs.modal", function(e){
@@ -43,3 +53,5 @@
         });
     });
 </script>
+@endif
+

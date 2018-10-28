@@ -356,3 +356,6 @@ $deletion = 0;
 @include('v1.parts.end_content')
 @endsection
 
+@section('scripts')
+    @include('v1.parts.menu-fix', array('path' => '/upcoming'))
+@endsection

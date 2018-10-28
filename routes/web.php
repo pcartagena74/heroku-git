@@ -59,9 +59,9 @@ Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkReque
 
 // Public Event-related Routes
 Route::get('/events/{eventslug}/{override?}', 'EventController@show')->name('display_event');
-Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');   // Ajax
-Route::post('/eLookup/{email}', 'EmailController@show')->name('lookup_email');                      // Ajax
-Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid');                  // Ajax
+Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');    // Ajax
+Route::post('/eLookup/{email}', 'EmailController@show')->name('lookup_email');                       // Ajax
+Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid');                   // Ajax
 
 // Public Session-related Routes
 Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
@@ -157,7 +157,7 @@ Route::post('/regstep3/{event}/create', 'RegistrationController@store2')->name('
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
 Route::patch('/update_payment/{id}', 'RegFinanceController@update_payment')->name('accept_payment');
-Route::post('/reg_verify/{reg}', 'RegistrationController@update');
+Route::post('/reg_verify/{reg}', 'RegistrationController@update');                                         // Ajax
 Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 

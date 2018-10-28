@@ -125,7 +125,7 @@ try{
                         || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                         <li><a><i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')<span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/members" id="mem">@lang('messages.nav.ev_manage')</a></li>
+                                <li><a href="{{ env('APP_URL') }}/members" id="mem">@lang('messages.nav.m_list')</a></li>
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 <li><a href="{{ env('APP_URL') }}/merge/p">@lang('messages.nav.m_merge') <span
                                                 class="label label-success pull-right">New</span></a></li>

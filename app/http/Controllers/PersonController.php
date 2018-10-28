@@ -418,9 +418,12 @@ class PersonController extends Controller
 
     public function oLookup($pmi_id){
         $op = OrgPerson::where('OrgStat1', '=', $pmi_id)->first();
+        $u = User::where('id', '=', $op->personID)->first();
+
         if(null !== $op){
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
-            return json_encode(array('status' => 'success', 'p' => $p, 'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
+            return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,
+                               'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
         } else {
             return json_encode(array('status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id));
         }

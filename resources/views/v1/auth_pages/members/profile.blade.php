@@ -140,7 +140,7 @@ foreach ($array as $chap) {
                         {{-- Adding new fields to person for profile display will require the update of the show() query --}}
 
                         <th style="text-align: left;">@lang('messages.fields.experience')</th>
-                        <th style="text-align: left;">@lang('messages.headers.reg_chap') @lang('messages.headers.role')</th>
+                        <th style="text-align: left;">@lang('messages.headers.chapterRole')</th>
                         <th style="text-align: left;">@lang('messages.headers.affiliation')</th>
                         <th style="text-align: left;">@lang('messages.fields.diet_res')</th>
                         <th style="text-align: left;">@lang('messages.fields.diet_com')</th>
@@ -151,7 +151,7 @@ foreach ($array as $chap) {
                                data-title="{{ trans('messages.fields.experience') }} ({{ trans('messages.fields.years') }})">{{ $profile->experience }}</a>
                         </td>
                         <td style="text-align: left;">
-                            <a href="#" id="chapterRole" data-title="{{ trans('messages.fields.chapterRole') }}">{{ $profile->chapterRole }}</a>
+                            <a href="#" id="chapterRole" data-title="{{ trans('messages.headers.chapterRole') }}">{{ $profile->chapterRole }}</a>
                         </td>
                         <td style="text-align: left;">
                             <a href="#" id="affiliation"

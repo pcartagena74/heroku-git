@@ -564,17 +564,31 @@ $i = 0;
                     $('#prefName{{ $i_cnt }}').val($('#firstName{{ $i_cnt }}').val());
                 });
 
-                $('#login{{ $i_cnt }}').on('change', function (e) {
-                    findUser($('#login{{ $i_cnt }}').val(), '{{ $i_cnt }}');
-                });
+                @if($i == 1)
+                    $('#login{{ $i_cnt }}').on('change', function (e) {
+                        findUser($('#login{{ $i_cnt }}').val(), '{{ $i_cnt }}');
+                    });
 
-                $('#OrgStat1{{ $i_cnt }}').on('change', function (e) {
-                    if(!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}").val())){
-                        findID($('#OrgStat1{{ $i_cnt }}').val(), '{{ $i_cnt }}');
-                    } else {
-                        change_tick('{{ $i }}', '{{ $i_cnt }}')
-                    }
-                });
+                    $('#OrgStat1{{ $i_cnt }}').on('change', function (e) {
+                        if(!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}").val())){
+                            findID($('#OrgStat1{{ $i_cnt }}').val(), '{{ $i_cnt }}');
+                        } else {
+                            change_tick('{{ $i }}', '{{ $i_cnt }}')
+                        }
+                    });
+                @else
+                    $('#login{{ $i_cnt }}').on('change', function (e) {
+                        findUser($('#login{{ $i_cnt }}').val(), '{{ $i_cnt }}');
+                    });
+
+                    $('#OrgStat1{{ $i_cnt }}').on('change', function (e) {
+                        if(!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}").val())){
+                            findID($('#OrgStat1{{ $i_cnt }}').val(), '{{ $i_cnt }}');
+                        } else {
+                            change_tick('{{ $i }}', '{{ $i_cnt }}')
+                        }
+                    });
+                @endif
 
                 $('#ticketID-{{ $i }}').on('change', function(e){
                     change_tick('{{ $i }}','{{ $i_cnt }}' );
@@ -637,9 +651,10 @@ $i = 0;
                             var result = eval(data);
                             if (result.status == 'success') {
                                 {{--
-                                // prompt user with modal (email points to user x) and ask if that's correct
+                                // prompt user with modal (email addr indicates user x) and ask if that's correct
                                 // and if they want to auto-populate the form, yes/no.
                                 --}}
+
                                 var p = result.p;
 
                                 $('#confirm_modal-content').html(result.msg);
@@ -683,6 +698,9 @@ $i = 0;
                                             $('#OrgStat1' + which).attr('readonly', true);
                                             $('#login' + which).attr('readonly', true);
                                             $('#login' + which).attr('onfocus', true);
+                                        }
+                                        if(which == '' && result.pass == 0){
+                                            $('#dynamic_modal').modal('show');
                                         }
                                     } else {
                                         $('#login' + which).val('');
@@ -761,6 +779,9 @@ $i = 0;
                                             --}}
                                             fix_pricing(j, which);
                                             $("#ticket_type"+j).html(member);
+                                        }
+                                        if(which == '' && result.pass == 0){
+                                            $('#dynamic_modal').modal('show');
                                         }
                                     }
                                 });
@@ -869,4 +890,5 @@ $i = 0;
         @include('v1.modals.forgot')
     @endif
     @include('v1.modals.yesno_confirm', ['id' => 'confirm_modal', 'content' => trans('messages.modals.confirm')])
+    @include('v1.modals.dynamic', ['header' => trans('messages.headers.reset_pass'), 'content' => trans('messages.instructions.no_password')])
 @endsection

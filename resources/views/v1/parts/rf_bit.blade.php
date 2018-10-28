@@ -61,7 +61,7 @@ $s3fs = new Filesystem($adapter);
                         ['eventID', '=', $event->eventID]
                     ])->get();
 ?>
-                    @include('v1.parts.start_min_content', ['header' => trans('messages.fields.'. strtolower($reg->membership)) .
+                    @include('v1.parts.start_min_content', ['header' => $reg->membership .
                     " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() . "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")",
                     'subheader' => trans('messages.symbols.cur'). ' ' . number_format($reg->subtotal, 2),
                     'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])

@@ -263,13 +263,13 @@ class RegFinanceController extends Controller
 
                 if ($reg->ticket->waitlisting()) {
                     $reg->regStatus = trans('messages.headers.wait');
-                } elseif($rf->status = trans('messages.reg_status.pending')) {
+                } elseif($rf->status == trans('messages.reg_status.pending')) {
                     $reg->regStatus = trans('messages.reg_status.pending');
                 } else {
                     $reg->regStatus = trans('messages.reg_status.processed');
                 }
-                // No one is actually, necessarily, logged in...
-                //$reg->updaterID = auth()->user()->id;
+                // The first registrant should be logged in
+
                 $discountAmt += ($reg->origcost - $reg->subtotal);
                 if($reg->subtotal > 0){
                     $reg->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');

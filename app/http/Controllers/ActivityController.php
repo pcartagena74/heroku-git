@@ -169,6 +169,7 @@ class ActivityController extends Controller
             ->join('person as p', 'event-registration.personID', '=', 'p.personID')
         //    ->distinct()
             ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'p.indName')
+            ->distinct()
             ->orderBy('p.lastName', 'asc')
             ->get();
         return json_encode(array('event' => $eventName, 'data' => $er->toArray()));
