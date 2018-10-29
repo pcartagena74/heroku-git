@@ -346,7 +346,12 @@ $i = 0;
 
         <div class="col-sm-3">
             {!! Form::label("OrgStat1$i_cnt", trans('messages.fields.orgStat1'), array('class' => 'control-label')) !!}
-            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.orgStat1_tip')])
+            @if($isMember)
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.orgStat1_tip2', ['acs' => strtolower($org->adminContactStatement)])])
+            @else
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.orgStat1_tip')])
+            @endif
+
             @if($i == 1 && $isMember)
                 {!! Form::number("OrgStat1$i_cnt", old("OrgStat1$i_cnt"),
                         array('class' => 'form-control input-sm', 'readonly', 'id' => "OrgStat1$i_cnt")) !!}
@@ -699,7 +704,14 @@ $i = 0;
                                             $('#login' + which).attr('readonly', true);
                                             $('#login' + which).attr('onfocus', true);
                                         }
+                                        var popup_text = '';
                                         if(which == '' && result.pass == 0){
+                                            popup_text = "{!! trans('messages.instructions.no_password') !!}";
+                                            $('#modal-content').html(popup_text);
+                                            $('#dynamic_modal').modal('show');
+                                        } else if(which == '' && result.pass == 1){
+                                            popup_text = "{!! trans('messages.instructions.need_to_login') !!}";
+                                            $('#modal-content').html(popup_text);
                                             $('#dynamic_modal').modal('show');
                                         }
                                     } else {

@@ -6,6 +6,7 @@ use App\Address;
 use App\Email;
 use App\OrgPerson;
 use App\PersonSocialite;
+use App\Phone;
 use App\RegFinance;
 use App\Registration;
 use App\User;
@@ -184,12 +185,12 @@ class MergeController extends Controller
 
         // add phone numbers
         $model1 = Person::where('personID', $id1)
-                        ->with('orgperson', 'emails', 'addresses', 'registrations', 'socialites', 'regfinances')
+                        ->with('orgperson', 'emails', 'addresses', 'registrations', 'socialites', 'regfinances', 'phones')
                         ->first();
 
         // add phone numbers
         $model2 = Person::where('personID', $id2)
-                        ->with('orgperson', 'emails', 'addresses', 'registrations', 'socialites', 'regfinances')
+                        ->with('orgperson', 'emails', 'addresses', 'registrations', 'socialites', 'regfinances', 'phones')
                         ->first();
 
         $columns      = explode(',', request()->input('columns'));
@@ -233,15 +234,37 @@ class MergeController extends Controller
             $m2->updaterID = $this->currentPerson->personID;
             $m2->save();
         }
+        foreach ($model2->phones as $e) {
+            $m2            = Phone::find($e->phoneID);
+            $m2->personID  = $model1->personID;
+            $m2->updaterID = $this->currentPerson->personID;
+            $m2->save();
+        }
         $model1->save();
 
-        $o = OrgPerson::where([
+        $o1 = OrgPerson::where([
+            ['personID', $model1->personID],
+            ['orgID', $this->currentPerson->defaultOrgID]
+        ])->first();
+
+        $o2 = OrgPerson::where([
             ['personID', $model2->personID],
             ['orgID', $this->currentPerson->defaultOrgID]
         ])->first();
 
-        if (isset($o)) {
-            $o->delete();
+        if(($o1->OrgStat1 === null || $o1->OrgStat1 == '') && isset($o2)){
+            if($o2->OrgStat1) {
+                $o1->OrgStat1 = $o2->OrgStat1;
+                $o1->OrgStat2 = $o2->OrgStat2;
+                $o1->RelDate1 = $o2->RelDate1;
+                $o1->RelDate2 = $o2->RelDate2;
+                $o1->RelDate3 = $o2->RelDate3;
+                $o1->RelDate4 = $o2->RelDate4;
+                $o1->save();
+            }
+        }
+        if (isset($o2)) {
+            $o2->delete();
         }
 
         // change any permissions that might be set
@@ -250,9 +273,17 @@ class MergeController extends Controller
         request()->session()->flash('alert-success', $this->models[$letter] .
             " record: " . $model2->personID . " was successfully merged into " . $model1->personID . '.');
 
-        $u = User::find($model2->personID);
-        if (isset($u)) {
-            $u->delete();
+        // If a password is set for a user record that will not survive and survivor password is null, copy it.
+        // Then delete non-surviving user record
+        $u1 = User::find($model1->personID);
+        $u2 = User::find($model2->personID);
+        if($u1->password === null){
+            if($u2->password !== null){
+                $u1->password = $u2->password;
+            }
+        }
+        if (isset($u2)) {
+            $u2->delete();
         }
 
         // Trigger Notification

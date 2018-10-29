@@ -425,15 +425,15 @@ return [
         'max_reached' => "Maximum attendees reached.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
         'name_change' => "You need to contact PMI directly to change this data.",
+        'need_to_login' => "An mCentric account was found for you. <b style='color:red;'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.",
         'no_deadbeats' => "There are no pending payments for this event at this time.",
         'no_events' => "There are no <b class='red'>active</b> future events at this time.",
         'no_fut_events' => "You have not registered for any upcoming events.",
         'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to
                           this event.  If you wish to add them, do it now via the button below.",
-        'no_password' => "An mCentric account was found for you and its password has not been set. 
-                          You will need to set it and login to complete your registration.
-                          Click to <a style='color: red;' href='" . env('APP_URL')."/password/reset'>reset it now.</a>",
-
+        'no_password' => "An mCentric account was found for you and its password has not been set. " .
+                          "You will need to set it and login to complete your registration. " .
+                          "Click to <a style='color: red;' href='" . env('APP_URL')."/password/reset'>reset it now.</a>",
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
         'no_regs' => "There are no attendees registered for this event at this time.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",
@@ -637,6 +637,7 @@ return [
         'not_new' => "Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.",
         'orgName' => "You can change the organization's name. Click it.",
         'orgStat1_tip' => 'If you do not know the PMI Member ID, leave it empty.',
+        'orgStat1_tip2' => 'If your PMI Member ID is incorrect, :acs',
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",
         'ref_days' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible.",
         'reg_cancel' => "Cancel this registration attempt.",
