@@ -58,7 +58,8 @@ return [
     'errors' => [
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
-        'no_receipt' => 'The system cannot produce the PDF receipt at this time.',
+        'no_receipt' => "The system cannot produce the PDF receipt at this time. See a web version here:
+                         <a style='color:black;' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
         'numeric' => 'Please enter a value from 1 - 5.',
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
