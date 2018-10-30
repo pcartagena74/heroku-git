@@ -103,6 +103,18 @@ class RegFinanceController extends Controller
     }
 
     public function show_receipt(RegFinance $rf)
+{
+    $event = Event::find($rf->eventID);
+    $quantity = $rf->seats;
+    $org = Org::find($event->orgID);
+    $loc = Location::find($event->locationID);
+    $person = Person::find($rf->personID);
+
+    // return view('v1.public_pages.event_receipt', $x);
+    return view('v1.auth_pages.events.registration.group_receipt_authnav', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+}
+
+    public function show_receipt_orig(RegFinance $rf)
     {
         $event = Event::find($rf->eventID);
         $quantity = $rf->seats;
@@ -111,7 +123,7 @@ class RegFinanceController extends Controller
         $person = Person::find($rf->personID);
 
         // return view('v1.public_pages.event_receipt', $x);
-        return view('v1.auth_pages.events.registration.group_receipt_authnav', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+        return view('v1.auth_pages.events.registration.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
     }
 
     public function create()
