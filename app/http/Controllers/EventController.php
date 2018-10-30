@@ -182,11 +182,11 @@ class EventController extends Controller
                 }
             )->firstOrFail();
         } catch (\Exception $exception) {
-            $message = "The event URL used no longer exists.";
+            $message = trans('messages.warning.inactive_event_url');
             return view('v1.public_pages.error_display', compact('message'));
         }
         if($override){
-            $message = '<b>Note:</b> You are previewing an event that is not yet active OR is in the past.';
+            $message = "<b>" . trans('messages.headers.note') . "</b> " . trans('messages.warning.inactive_event');
             request()->session()->flash('alert-warning', $message);
         }
 

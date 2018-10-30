@@ -115,7 +115,7 @@ class RegistrationController extends Controller
                 }
             )->firstOrFail();
         } catch (\Exception $exception) {
-            $message = trans('messages.codes.invalid', [trans('messages.codes.eventID')]);
+            $message = trans('messages.codes.invalid_id', ['id' => trans('messages.codes.eventID')]);
             return view('v1.public_pages.error_display', compact('message'));
         }
 

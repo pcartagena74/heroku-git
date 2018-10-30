@@ -806,6 +806,15 @@ $i = 0;
                                     fix_pricing(j, which);
                                 }
                             }
+                        },
+                        error: function(data){
+                            j = which.replace('_', '');
+                            if(j=='') j = 1;
+                            var pmi_id = $('#OrgStat1' + which).val();
+                            if(pmi_id > 0){
+                                $("#ticket_type"+j).html(member);
+                                fix_pricing(j, which);
+                            }
                         }
                     });
                 }

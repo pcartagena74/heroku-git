@@ -46,13 +46,13 @@ return [
     ],
 
     'codes' => [
-        'invalid' => "Invalid Code: ':code'",
+        'invalid_code' => "Invalid Code: ':code'",
+        'invalid_id' => "The :id is not valid.",
         'valid' => "Code: ':code' provides a :disc discount.",
         'empty' => "Enter a discount code.",
         'etID99' => "All Events",
         'eventID' => 'event ID',
         'img' => "Event Image",
-        'invalid' => "The :id is not valid.",
     ],
 
     'errors' => [
@@ -638,7 +638,7 @@ return [
         'nope' => "This value cannot be edited or removed.",
         'not_new' => "Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.",
         'orgName' => "You can change the organization's name. Click it.",
-        'orgStat1_tip' => 'If you do not know the PMI Member ID, leave it empty.',
+        'orgStat1_tip' => 'If you do not know or do not have a PMI Member ID, leave empty.',
         'orgStat1_tip2' => 'If your PMI Member ID is incorrect, :acs',
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",
         'ref_days' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible.",
@@ -661,7 +661,8 @@ return [
 
     'warning' => [
         'inactive_event' => "Note: You are previewing an event that is not yet active OR is in the past.",
-        'inactive_event_url' => "This event's URL will be: :url",
+        'inactive_event_url' => "This event's URL is no longer active.",
+        'slug_event_url' => "This event's URL will be: :url",
     ],
 
     'yesno_check' => [
