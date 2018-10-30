@@ -96,7 +96,7 @@ $deletion = 0;
 {{--        <div class="left col-md-7 col-sm-7">            --}}
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
-                    <h1 class="far fa-5x fa-calendar-alt"></h1>
+                    <h1 class="fa fa-5x fa-calendar"></h1>
                 </div>
                 <div class="col-md-7 col-sm-7">
                     <h2><b>{{ $event->eventName }}</b></h2>
@@ -105,7 +105,7 @@ $deletion = 0;
                         - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
                         <br>
                         {{ $loc->locName }}<br>
-                        {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }},
+                        {{ $loc->addr1 }} <i class="fa fa-circle fa-xs"></i> {{ $loc->city }},
                         {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
@@ -128,9 +128,9 @@ $deletion = 0;
         <div class="myrow col-md-12 col-sm-12">
             <div class="col-md-2 col-sm-2" style="text-align:center;">
                 @if($reg->deleted_at)
-                    <h1 class="fas fa-5x fa-user red"></h1>
+                    <h1 class="fa fa-5x fa-user red"></h1>
                 @else
-                    <h1 class="fas fa-5x fa-user"></h1>
+                    <h1 class="fa fa-5x fa-user"></h1>
                 @endif
             </div>
             <div class="col-md-10 col-sm-10">
@@ -170,7 +170,7 @@ $deletion = 0;
                     <tr>
                         <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
 
-                        <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
+                        <td style="text-align: left;"><i class="fa fa-dollar"></i>
                             @if($reg->membership == 'Member')
                                 {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                             @else
@@ -191,7 +191,7 @@ $deletion = 0;
                                 <td style="text-align: left;"> --</td>
                             @endif
                         @endif
-                        <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
+                        <td style="text-align: left;"><i class="fa fa-dollar"></i>
                             {{ number_format($reg->subtotal, 2, ".", ",") }}
                         </td>
                     </tr>
@@ -268,7 +268,7 @@ $deletion = 0;
 
 <div class="myrow col-md-12 col-sm-12">
 <div class="col-md-2 col-sm-2" style="text-align:center;">
-<h1 class="far fa-5x fa-dollar-sign"></h1>
+<h1 class="fa fa-5x fa-dollar"></h1>
 </div>
 <div class="col-md-7 col-sm-7">
 @if($deletion)
@@ -284,7 +284,7 @@ $deletion = 0;
 </thead>
 <tr>
 <td style="text-align: center;">
-    <b><i class="far fa-dollar-sign"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+    <b><i class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
 </td>
 </tr>
 </table>
@@ -298,9 +298,9 @@ $deletion = 0;
 <table class="table borderless">
 <tr>
 <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
-    <h2 style="color: gold;" class="fal fa-4x fa-calendar-alt"></h2></a></td>
+    <h2 style="color: gold;" class="fa fa-4x fa-calendar"></h2></a></td>
 <td style="text-align: center;"><a target="_new" href="{{ $google_url }}">
-    <span class="far fa-stack fa-lg fa-2x">
+    <span class="fa fa-stack fa-lg fa-2x">
     <h1 style="color: red;" class="far fa-4x fa-square fa-stack-2x"></h1>
     <h1 style="color: white;" class="far fa-1x fa-google fa-stack-1x"></h1>
     </span>

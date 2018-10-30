@@ -134,7 +134,7 @@ class RegistrationController extends Controller
             ])->with('regfinance', 'ticket')
             ->whereHas('regfinance', function($q){
                 $q->where('pmtRecd', '=', 0);
-                $q->where('status', '=', trans('messages.reg_status.processed'));
+                $q->where('status', '=', trans('messages.reg_status.pending'));
             })
             ->get();
 
