@@ -22,7 +22,7 @@
         "graham-campbell/flysystem": "^4.1",
         "guzzlehttp/guzzle": "^6.2",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
-        "h4cc/wkhtmltopdf-amd64": "0.12.x",
+        "h4cc/wkhtmltopdf-amd64": "dev-master",
         "jdavidbakr/mail-tracker": "~2.1",
         "jenssegers/agent": "^2.5",
         "knplabs/knp-snappy": "^1.0",

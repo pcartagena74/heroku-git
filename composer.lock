@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a617cfd1793e81ea1eb66be3f3e21cca",
+    "content-hash": "956b7c11ce37e30aa2a18d60903dc0c5",
     "packages": [
         {
             "name": "airbrake/phpbrake",
@@ -2248,7 +2248,7 @@
         },
         {
             "name": "h4cc/wkhtmltopdf-amd64",
-            "version": "0.12.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/h4cc/wkhtmltopdf-amd64.git",
@@ -9040,6 +9040,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "h4cc/wkhtmltopdf-amd64": 20,
         "socialiteproviders/linkedin": 20,
         "spatie/laravel-activitylog": 20,
         "true/punycode": 20,
