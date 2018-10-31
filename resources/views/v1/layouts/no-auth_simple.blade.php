@@ -7,6 +7,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 @include('v1.parts.header_simple_no-auth')
 </head>
 <body class="nav-md footer_fixed">

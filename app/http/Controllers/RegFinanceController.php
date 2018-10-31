@@ -366,10 +366,32 @@ class RegFinanceController extends Controller
             'person', 'prefixes', 'industries', 'org', 'tickets');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+
+        Flysystem::connection('s3_receipts')->put(
+            $receipt_filename,
+            $pdf->output(),
+            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+        );
+
+        $client = new S3Client([
+            'credentials' => [
+                'key' => env('AWS_KEY'),
+                'secret' => env('AWS_SECRET')
+            ],
+            'region' => env('AWS_REGION'),
+            'version' => 'latest',
+        ]);
+
+        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+        $s3fs = new Filesystem($adapter);
+        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+        /*
         try{
-            $pdf = PDF::loadView('v1.events.registration.group_receipt', $x)
-                ->setOption('disable-javascript', false)
-                ->setOption('encoding', 'utf-8');
+            $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+            //$pdf = PDF::loadView('v1.events.registration.group_receipt', $x)
+            //    ->setOption('disable-javascript', false)
+            //    ->setOption('encoding', 'utf-8');
 
             Flysystem::connection('s3_receipts')->put(
                 $receipt_filename,
@@ -392,7 +414,7 @@ class RegFinanceController extends Controller
         } catch (\Exception $exception) {
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
         }
-
+*/
         try {
             Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {

@@ -158,16 +158,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.69.16",
+            "version": "3.70.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "eda89d207e40f3abb0b5e2fb1fabcebe668116fb"
+                "reference": "49c563dfdf890ac510f441c9ae5537ffc2de8ccf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/eda89d207e40f3abb0b5e2fb1fabcebe668116fb",
-                "reference": "eda89d207e40f3abb0b5e2fb1fabcebe668116fb",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/49c563dfdf890ac510f441c9ae5537ffc2de8ccf",
+                "reference": "49c563dfdf890ac510f441c9ae5537ffc2de8ccf",
                 "shasum": ""
             },
             "require": {
@@ -237,7 +237,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-10-26T20:05:18+00:00"
+            "time": "2018-10-30T20:50:23+00:00"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -7175,16 +7175,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v8.9.1",
+            "version": "v8.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "851c4d4d307a66a4f8ab5c12444c1eb0104ecc80"
+                "reference": "3b084b9b7b4aac46f0bfc2d71b9b3a67d794f4e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/851c4d4d307a66a4f8ab5c12444c1eb0104ecc80",
-                "reference": "851c4d4d307a66a4f8ab5c12444c1eb0104ecc80",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/3b084b9b7b4aac46f0bfc2d71b9b3a67d794f4e9",
+                "reference": "3b084b9b7b4aac46f0bfc2d71b9b3a67d794f4e9",
                 "shasum": ""
             },
             "require": {
@@ -7242,7 +7242,7 @@
                 "jquery",
                 "laravel"
             ],
-            "time": "2018-10-05T06:10:33+00:00"
+            "time": "2018-10-30T14:23:18+00:00"
         },
         {
             "name": "zizaco/entrust",
