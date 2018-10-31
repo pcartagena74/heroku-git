@@ -494,6 +494,7 @@ $i = 0;
         });
     </script>
     <script>
+        $(document).ready(function () {
         var member = "{{ $member }}";
         var nonmbr = "{{ $nonmbr }}";
         var checkbox = document.getElementById('selfcheck');
@@ -524,6 +525,8 @@ $i = 0;
                     $('#prefix').val('');
                     $('#experience').val('0');
                     $('#tkt1st').hide();
+                    change_tick(1, '');
+                    fix_pricing(1, '');
                 }
             } else {
                 myForm.reset();
@@ -535,7 +538,6 @@ $i = 0;
             }
         });
 
-        $(document).ready(function () {
             var subtotal = 0;
 
             @for($i=1;$i<=$quantity; $i++)
@@ -845,11 +847,13 @@ $i = 0;
             }
 
             function change_tick(i, which) {
+                //console.log('change_tick called.');
                 tktID = document.getElementById('ticketID-'+i).value;
                 tc = document.getElementById('tcost'+i);
                 fc = document.getElementById('final'+i);
                 os = document.getElementById('OrgStat1'+which);
                 if(tix.length > 0){
+                    //console.log('change_tick > 0');
                     tix.forEach((ticket) => {
                         if(ticket['ticketID'] == tktID){
                             if(os.value > 0){

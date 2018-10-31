@@ -479,8 +479,9 @@ return [
         'default' => 'Default Title',
         'confirm' => 'The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
         'confirm2' => 'The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
-        'login_msg' => 'If registering resulted in mCentric telling you that an account exists for you, login or
-                        click on the "Forgot Your Password?" link above and enter the email you used to register.',
+        'login_msg' => "If registering resulted in mCentric telling you that an account exists for you, login or
+                        click on the 'Forgot Your Password?' link above and enter the email you used to register.<br>" .
+                        "If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.",
         'login_msg2' => "If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.",
         'loginform' => 'Login Form',
         'remember' => 'Remember Me',

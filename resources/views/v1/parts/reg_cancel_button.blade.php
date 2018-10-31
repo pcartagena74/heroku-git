@@ -39,7 +39,7 @@ if (Entrust::hasRole('Admin')) {
     {!! Form::close() !!}
 @else
     <button class="btn {{ $button_class }}btn-sm" data-toggle="tooltip" title="{{ $button_tooltip }}">
-        {!! $button_symbol !!}>
+        {!! $button_symbol !!}
     </button>
 @endif
 

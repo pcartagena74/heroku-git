@@ -29,6 +29,8 @@ Route::get('/linkedin2', function()
 });
 */
 
+use Knp\Snappy\Pdf;
+
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 
@@ -278,6 +280,12 @@ Route::get('ste2', function(){
     });
 });
 
+Route::get('snaptest', function(){
+    // $snap = App::make('snappy.pdf');
+    // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
+    // return $snap->inline();
+    return PDF::loadFile(env('APP_URL')."/show_orig/159")->inline('blah.pdf');
+});
 
 Route::any('{all}', function () {
     return view('errors.404');
