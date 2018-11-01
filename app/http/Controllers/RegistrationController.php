@@ -84,9 +84,11 @@ class RegistrationController extends Controller
         if($req = Session::get('req')){
             foreach ($tkts as $ticket){
                 $t = $ticket->ticketID;
-                $q = $req['q-' . $t];
-                if($q !== null && $q > 0){
-                    array_push($tq, ['t' => $t, 'q' => $q]);
+                if(isset($req['q-' . $t])) {
+                    $q = $req['q-' . $t];
+                    if($q > 0){
+                        array_push($tq, ['t' => $t, 'q' => $q]);
+                    }
                 }
             }
         }

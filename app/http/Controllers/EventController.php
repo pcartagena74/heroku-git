@@ -166,12 +166,6 @@ class EventController extends Controller
         // responds to GET /events/{param}
         // $param is either an ID or slug
 
-        /*
-        $event = Event::where('slug', '=', $param)
-            ->orWhere('eventID', '=', $param)
-            ->firstOrFail();
-        */
-
         try {
             $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
                 function($query) use ($param){
@@ -189,6 +183,8 @@ class EventController extends Controller
             $message = "<b>" . trans('messages.headers.note') . "</b> " . trans('messages.warning.inactive_event');
             request()->session()->flash('alert-warning', $message);
         }
+
+        $today = Carbon::now();
 
         if (auth()->guest()) {
             $current_person = 0;
@@ -217,15 +213,17 @@ class EventController extends Controller
                 ['isDeleted', 0],
                 ['isSuppressed', 0],
                 ['eventID', $event->eventID],
-            ])->get()->sortByDesc('availableEndDate');
+                ['availabilityEndDate', '>=', $today]
+            ])->get()->sortByDesc('availabilityEndDate');
 
         $tickets =
             Ticket::where([
                 ['isaBundle', 0],
                 ['isSuppressed', 0],
                 ['isDeleted', 0],
-                ['eventID', $event->eventID]
-            ])->get()->sortByDesc('availableEndDate');
+                ['eventID', $event->eventID],
+                ['availabilityEndDate', '>=', $today]
+            ])->get()->sortByDesc('availabilityEndDate');
 
         $tracks = Track::where('eventID', $event->eventID)->get();
 
@@ -233,19 +231,6 @@ class EventController extends Controller
             'v1.public_pages.display_event_w_sessions2',
             compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks',
                     'currentOrg', 'override'));
-
-        if (0) {
-        //if ($event->hasTracks > 0) {
-            return view(
-                'v1.public_pages.display_event_w_sessions',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg')
-            );
-        } else {
-            return view(
-                'v1.public_pages.display_event',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg')
-            );
-        }
     }
 
     public function create() {

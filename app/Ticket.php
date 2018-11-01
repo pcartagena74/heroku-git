@@ -153,4 +153,9 @@ class Ticket extends Model
         ])->get();
         return (count($es)> 1);
     }
+
+    public function ok_to_display(){
+        $today = Carbon::now();
+        return ($this->availabilityEndDate->gte($today) && $this->isSuppressed == 0);
+    }
 }

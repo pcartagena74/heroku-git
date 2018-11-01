@@ -106,11 +106,11 @@ foreach($past_events as $event) {
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="far fa-fw fa-trash-alt"></i></button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
-    if($event->cnt > 0 && $current_person->personID != 357) {
+    if($event->cnt > 0 && !Entrust::hasRole('Development')) {
         $delete_button = '';
     }
 
-    if($current_person->personID != 357){
+    if(!Entrust::hasRole('Development')){
         $edit_link_button = '';
     }
 
