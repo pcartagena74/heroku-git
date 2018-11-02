@@ -8,14 +8,18 @@ $topBits = '';  // remove this if this was set in the controller
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
-@section('content')
+@section('header')
     @include('v1.parts.typeahead')
+@endsection
 
-    @include('v1.parts.start_content', ['header' => 'Admin Function: Member Simulation', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+@section('content')
+
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.admin_func').trans('messages.headers.person_sim'),
+             'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
     <!-- stuff -->
 
     <div id="custom-template" class="col-sm-12">
-        {!! Form::label('helper', "Find an ID by searching for a user's first or last name, email address, or PMI ID:") !!}<br/>
+        {!! Form::label('helper', trans('messages.instructions.become_instr'). ":") !!}<br/>
         {!! Form::text('helper', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}<br />
         <div id="search-results"></div>
     </div>
@@ -24,9 +28,13 @@ $topBits = '';  // remove this if this was set in the controller
 
     <div class="col-sm-12">
         {!! Form::open(array('url' => env('APP_URL')."/become", 'method' => 'POST')) !!}
-        {!! Form::label('new_id', "Enter the user ID from above:") !!}<br/>
-        {!! Form::text('new_id', '', array('class' => 'form-control', 'required')) !!}
-        {!! Form::submit('Become!', array('class' => 'btn btn-primary btn-xs')) !!}
+        <div class="form-group col-sm-12">
+            {!! Form::label('new_id', trans('messages.instructions.become_id')) !!}<br/>
+            {!! Form::text('new_id', '', array('class' => 'form-control', 'required')) !!}
+        </div>
+        <div class="form-group col-sm-1">
+            {!! Form::submit('Become!', array('class' => 'btn btn-primary btn-xs form-control')) !!}
+        </div>
         {!! Form::close() !!}
     </div>
 

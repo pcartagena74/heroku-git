@@ -31,6 +31,11 @@ class Event extends Model
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
     }
 
+    public function event_type()
+    {
+        return $this->hasOne(EventType::class, 'etID', 'eventTypeID');
+    }
+
     public function bundles()
     {
         return $this->hasMany(Bundle::class, 'eventID', 'eventID');
@@ -79,5 +84,19 @@ class Event extends Model
         } else {
             return 0;
         }
+    }
+
+    public function checkin_time() {
+        $today = \Carbon\Carbon::now();
+        if($this->eventStartDate->diffInDays($today) <= 2){
+            return 1;
+        } else {
+            return 0;
+        }
+
+    }
+
+    public function regCount() {
+        return Registration::where('eventID', '=', $this->eventID)->count();
     }
 }

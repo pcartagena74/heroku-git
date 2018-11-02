@@ -6,7 +6,7 @@
 
 $topBits = '';  // remove this if this was set in the controller
 $counter = 0;
-$headers = ['Last Name', 'First Name', 'Email', 'PMI ID'];
+$headers = [trans('messages.fields.lastName'), trans('messages.fields.firstName'), trans('messages.headers.email'), trans('messages.fields.pmi_id')];
 set_time_limit(100);
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -17,7 +17,7 @@ set_time_limit(100);
     'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
     <div>
         <div class="col-sm-12 well-sm">
-            These values in these tables are not editable and are here for informational purposes only.
+            @lang('messages.instructions.role_txt')
         </div>
 
         <div class="col-sm-6">
@@ -26,9 +26,9 @@ set_time_limit(100);
             </div>
 
             <div class="col-sm-12">
-                <div class="col-sm-3" style="background-color:yellow;">Name</div>
-                <div class="col-sm-3" style="background-color:yellow;">Display Name</div>
-                <div class="col-sm-6" style="background-color:yellow;">Description</div>
+                <div class="col-sm-3" style="background-color:yellow;">@lang('messages.fields.name')</div>
+                <div class="col-sm-3" style="background-color:yellow;">@lang('messages.headers.disp_name')</div>
+                <div class="col-sm-6" style="background-color:yellow;">@lang('messages.headers.desc')</div>
             </div>
 
             @foreach($roles as $r)
@@ -45,12 +45,6 @@ set_time_limit(100);
                     <div class="col-sm-6 well-sm {{ $bg }}">{{ $r->description }} <br/>
                         Permissions:
                     </div>
-                    {{--
-                                    <div class="col-sm-3 well-sm {{ $bg }}">
-                                        <a href="#" id="role-name-{{ $r->id }}" data-pk="{{ $r->id }}"
-                                           data-url="/role/{{ $org->orgID }}" data-value="{{ $r->name }}"></a>
-                                    </div>
-                    --}}
                 </div>
             @endforeach
 
@@ -62,9 +56,9 @@ set_time_limit(100);
             </div>
 
             <div class="col-sm-12">
-                <div class="col-sm-3" style="background-color:yellow;">Name</div>
-                <div class="col-sm-3" style="background-color:yellow;">Display Name</div>
-                <div class="col-sm-6" style="background-color:yellow;">Description</div>
+                <div class="col-sm-3" style="background-color:yellow;">@lang('messages.fields.name')</div>
+                <div class="col-sm-3" style="background-color:yellow;">@lang('messages.headers.disp_name')</div>
+                <div class="col-sm-6" style="background-color:yellow;">@lang('messages.headers.desc')</div>
             </div>
 
             <?php $counter = 0 ?>
@@ -101,19 +95,19 @@ set_time_limit(100);
             <thead>
             <tr>
                 <th width="15%" style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%;">
-                    Last Name
+                    @lang('messages.fields.lastName')
                 </th>
                 <th width="15%" style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%;">
-                    First Name
+                    @lang('messages.fields.firstName')
                 </th>
                 <th width="15%" style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%;">
-                    Email
+                    @lang('messages.headers.email')
                 </th>
                 <th width="15%" style="vertical-align: top; text-align: left; min-width: 1px; max-width: 20%;">
-                    PMI ID
+                    @lang('messages.fields.pmi_id')
                 </th>
                 <th width="40%" style="vertical-align: top; text-align: left; min-width: 1px;">
-                    Assign Roles
+                    @lang('messages.headers.ass_roles')
                 </th>
             </tr>
             </thead>
@@ -141,7 +135,7 @@ set_time_limit(100);
                 }
                 $speaker =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '2)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-microphone"></i></a>';
+                    . '<i class="fas fa-microphone"></i></a>';
 
                 if($p->roles->contains('id', 3)) {
                     $board_color = 'btn-deep-purple';
@@ -152,7 +146,7 @@ set_time_limit(100);
                 }
                 $event =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '3)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-calendar"></i></a>';
+                    . '<i class="far fa-calendar-alt"></i></a>';
 
                 if($p->roles->contains('id', 4)) {
                     $board_color = 'btn-blue';
@@ -163,7 +157,7 @@ set_time_limit(100);
                 }
                 $volunteer =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '4)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-thumbs-o-up"></i></a>';
+                    . '<i class="fas fa-thumbs-up"></i></a>';
 
                 if($p->roles->contains('id', 6)) {
                     $board_color = 'btn-cyan';
@@ -174,7 +168,7 @@ set_time_limit(100);
                 }
                 $spkvol =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '6)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-microphone-slash"></i></a>';
+                    . '<i class="fas fa-microphone-slash"></i></a>';
 
                 if($p->roles->contains('id', 7)) {
                     $board_color = 'btn-teal';
@@ -185,7 +179,7 @@ set_time_limit(100);
                 }
                 $rtvol =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '7)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-circle-o"></i></a>';
+                    . '<i class="fas fa-circle"></i></a>';
 
                 if($p->roles->contains('id', 8)) {
                     $board_color = 'btn-green';
@@ -196,7 +190,7 @@ set_time_limit(100);
                 }
                 $admin =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '8)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-dashboard"></i></a>';
+                    . '<i class="fas fa-tachometer-alt"></i></a>';
 
                 if($p->roles->contains('id', 9)) {
                     $board_color = 'btn-amber';
@@ -207,7 +201,7 @@ set_time_limit(100);
                 }
                 $dev =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-file-archive-o"></i></a>';
+                    . '<i class="fas fa-archive"></i></a>';
 
                 if($p->roles->contains('id', 10)) {
                     $board_color = 'btn-brown';
@@ -218,7 +212,7 @@ set_time_limit(100);
                 }
                 $mktg =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '10)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fa fa-bar-chart"></i></a>';
+                    . '<i class="fas fa-chart-bar"></i></a>';
                 ?>
                 <tr>
                     <td style="vertical-align: top; text-align: left;">{!! $p->lastName !!}</td>

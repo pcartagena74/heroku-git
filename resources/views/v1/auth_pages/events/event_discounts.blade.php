@@ -19,15 +19,26 @@ $currentOrg    = $currentPerson->defaultOrg;
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => "Event Discounts: " . $event->eventName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    <div class="col-xs-12">
+        <div class="col-xs-6">
+            @include('v1.parts.event_buttons', ['event' => $event])
+        </div>
+    </div>
+
+    @include('v1.parts.start_content',
+            ['header' => trans('messages.fields.event'). " " . trans('messages.fields.discs').": " . $event->eventName,
+             'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-10 col-sm-10 col-xs-12">
-    The <b style="color: red;">non-empty discount codes</b> here are active for this event.<br>
-    Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.
+        @if(count($discount_codes)==0)
+            @lang('messages.instructions.no_org_disc')
+            <p>&nbsp;</p>
+        @endif
+        @lang('messages.instructions.ev_discounts')
     <br>&nbsp;<br>
     </div>
     <div class="col-md-2 col-sm-2 col-xs-12">
         <button type="button" id="add_discount" class="btn btn-sm btn-success" data-toggle="modal"
-                data-target="#discount_modal">Add Discount
+                data-target="#discount_modal">@lang('messages.buttons.add_disc')
         </button>
     </div>
 
@@ -38,20 +49,20 @@ $currentOrg    = $currentPerson->defaultOrg;
         <thead>
         <tr>
             <th style="text-align: left;">#</th>
-            <th style="text-align: left;">Discount Code</th>
-            <th style="text-align: left;">Discount Percent</th>
-            <th style="text-align: left;">Discount Amount</th>
+            <th style="text-align: left;">@lang('messages.headers.disc_code')</th>
+            <th style="text-align: left;">@lang('messages.headers.disc_percent')</th>
+            <th style="text-align: left;">@lang('messages.headers.disc_amt')</th>
         </tr>
         </thead>
         <tbody>
         @foreach($discount_codes as $dCode)
             <tr>
                 <td style="text-align: left;"> {!! Form::open(['url'=>env('APP_URL').'/eventdiscount/'.$dCode->discountID.'/delete','method'=>'DELETE','id'=>"formConfirm-$dCode->discountID",
-        'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
+        'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("' .  trans('messages.tooltips.sure') .'")']) !!}
                     <input type="hidden" name="pk" value="{{ $dCode->discountID }}">
                     <input type="hidden" name="function" value="delete">
                     <button class="btn btn-danger btn-sm">
-                        <i class="fa fa-trash"></i>
+                        @lang('messages.symbols.trash')
                     </button> {!! Form::close() !!} </td>
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="discountCODE{{ $dCode->discountID }}"
@@ -61,9 +72,9 @@ $currentOrg    = $currentPerson->defaultOrg;
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="percent{{ $dCode->discountID }}"
                        data-value="{{ $dCode->percent }}" data-url="{{ env('APP_URL') }}/eventdiscounts/{{ $dCode->discountID }}"
-                       data-type="text" data-placement="top"></a> <i class="fa fa-percent"></i>
+                       data-type="text" data-placement="top"></a> <i class="far fa-percent"></i>
                 </td>
-                <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
                     <a data-pk="{{ $dCode->discountID }}" id="flatAmt{{ $dCode->discountID }}"
                        data-value="{{ $dCode->flatAmt }}" data-url="{{ env('APP_URL') }}/eventdiscounts/{{ $dCode->discountID }}"
                        data-type="text" data-placement="top"></a>
@@ -73,9 +84,14 @@ $currentOrg    = $currentPerson->defaultOrg;
         </tbody>
     </table>
     <div class="col-md-4 col-sm-9 col-xs-12">
-        <button type="button" id="add_discount" class="btn btn-sm btn-success" data-toggle="modal"
-                data-target="#discount_modal">Add Discount
-        </button>
+        @if(count($discount_codes) == 0)
+            {!! Form::open(array('url' => '/eventdiscountfix/'.$event->eventID)) !!}
+            {!! Form::submit(trans('messages.buttons.add_def_disc'), array('class' => 'btn btn-sm btn-warning', 'id' => 'add_defaults')) !!}
+            {!! Form::close() !!}
+        @endif
+            <button type="button" id="add_discount" class="btn btn-sm btn-success" data-toggle="modal"
+                    data-target="#discount_modal">@lang('messages.buttons.add_disc')
+            </button>
     </div>
     <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
     <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
@@ -91,7 +107,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             <div class="modal-content">
                 {!! Form::open(['url' => env('APP_URL').'/eventdiscount', 'method' => 'post']) !!}
                 <div class="modal-header">
-                    <h5 class="modal-title" id="discount_label">Add Additional Discount</h5>
+                    <h5 class="modal-title" id="discount_label">@lang('messages.headers.add_disc')</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -102,9 +118,9 @@ $currentOrg    = $currentPerson->defaultOrg;
                         <table id="new_discounts" class="table table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 50%">Discount Code</th>
-                                <th style="width: 25%">Percent</th>
-                                <th style="width: 25%">Dollar Amount</th>
+                                <th style="width: 50%">@lang('messages.headers.disc_code')</th>
+                                <th style="width: 25%">@lang('messages.headers.disc_percent')</th>
+                                <th style="width: 25%">@lang('messages.headers.disc_amt')</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -128,17 +144,19 @@ $currentOrg    = $currentPerson->defaultOrg;
                             </tbody>
                         </table>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <button type="button" id="add_erow" class="btn btn-sm btn-warning">Add Another</button>
+                            <button type="button" id="add_erow" class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
                             <button type="button" style="display: none" id="delete_erow" class="btn btn-sm btn-danger">
-                                Delete
+                                @lang('messages.buttons.delete')
                             </button>
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                    <button type="submit" id="disc_submit" class="btn btn-sm btn-success">Save Discount</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
+                    <button type="submit" id="disc_submit" class="btn btn-sm btn-success">
+                        {{ trans_choice('messages.buttons.save_disc', 1) }}
+                    </button>
                 </div>
                 {!! Form::close() !!}
             </div>
@@ -156,6 +174,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
             $('[data-toggle="tooltip"]').tooltip({'placement': 'top'});
             //$.fn.editable.defaults.mode = 'inline';
             $.fn.editable.defaults.params = function (params) {
@@ -171,7 +190,8 @@ $currentOrg    = $currentPerson->defaultOrg;
 
         });
     </script>
-@include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => 'Event Discounts'))
+@include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add',
+         'newTxt' => trans('messages.fields.event') . " " . trans('messages.fields.disc')))
     <script>
         $(document).ready(function () {
             var i = 2;
@@ -185,7 +205,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                     i++;
                 }
                 if (i >= 3) {
-                    $('#email_submit').text("Save Discounts");
+                    $('#email_submit').text("{{ trans_choice('messages.buttons.save_disc', 2) }}");
                 }
                 if (i == 6) {
                     $('#add_erow').prop('disabled', true);
@@ -201,7 +221,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                 }
 
                 if (i <= 2) {
-                    $('#email_submit').text("Save Discount");
+                    $('#email_submit').text("{{ trans_choice('messages.buttons.save_disc', 1) }}");
                     $('#delete_erow').hide();
                 }
             });

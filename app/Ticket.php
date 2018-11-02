@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 use App\Bundle;
+use App\EventSession;
 
 class Ticket extends Model
 {
@@ -104,5 +105,57 @@ class Ticket extends Model
                 ['event-tickets.eventID', '=', $this->eventID]
             ])
             ->get();
+    }
+
+    /**
+     * update_count($amt)   Increment / Decrement Function for Ticket Counts
+     *                      count is updated for bundle member tickets OR the ticket itself
+     * @param: $amt is the amount passed to update the count - allows for +1 and -1
+     */
+    public function update_count($amt){
+        $bundle_members = $this->bundle_members();
+        if($bundle_members) {
+            foreach ($bundle_members as $m) {
+                if($m->waitlisting()){
+                    $m->waitCount += $amt;
+                } else {
+                    $m->regCount += $amt;
+                }
+                $m->save();
+            }
+        } else {
+            if($this->waitlisting()){
+                $this->waitCount += $amt;
+            } else {
+                $this->regCount += $amt;
+            }
+            $this->save();
+        }
+    }
+
+    /**
+     * has_sessions()   Determines if a ticket has been connected with EventSessions
+     */
+    public function has_sessions() {
+        $bundles = $this->bundle_members();
+        foreach ($bundles as $m) {
+            $es = EventSession::where([
+                ['eventID', '=', $this->eventID],
+                ['ticketID', '=', $m->ticketID]
+            ])->get();
+            if(count($es) > 1) {
+                return 1;
+            }
+        }
+        $es = EventSession::where([
+            ['eventID', '=', $this->eventID],
+            ['ticketID', '=', $this->ticketID]
+        ])->get();
+        return (count($es)> 1);
+    }
+
+    public function ok_to_display(){
+        $today = Carbon::now();
+        return ($this->availabilityEndDate->gte($today) && $this->isSuppressed == 0);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment:
+ * Comment: This is the output of tickets for an event that would be available via API for display on non-mCentric sites
  * Created: 11/29/2017
  */
 

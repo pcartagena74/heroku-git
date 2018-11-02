@@ -6,6 +6,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class Person extends Model
 {
@@ -24,7 +25,7 @@ class Person extends Model
     //protected static $logAttributes = ['login', 'defaultOrgID', 'title', 'compName', 'indName', 'allergenInfo', 'affiliation'];
     //protected static $ignoreChangedAttributes = ['createDate'];
 
-    protected $hidden = [ 'remember_token' ];
+    protected $hidden = ['remember_token'];
 
     public function roles()
     {
@@ -92,7 +93,11 @@ class Person extends Model
 
     public function showFullName()
     {
-        return $this->firstName . " " . $this->lastName;
+        if ($this->prefName) {
+            return $this->prefName . " " . $this->lastName;
+        } else {
+            return $this->firstName . " " . $this->lastName;
+        }
     }
 
     public function routeNotificationForMail()
@@ -103,5 +108,24 @@ class Person extends Model
     public function org_role_id()
     {
         return Role::where('name', $this->defaultOrg->orgName)->select('id')->first();
+    }
+
+    // returns the OrgStat1 associated with $orgID if populated or null
+    public function is_member($orgID)
+    {
+//        return $this->whereHas('orgperson', $filter = function($q) use ($orgID) {
+//            $q->where('orgID', '=', $orgID);
+//            $q->whereNotNull('OrgStat1');
+//        })->with(['orgperson'])->pluck('OrgStat1');
+
+        $personID = $this->personID;
+        return DB::table('person')
+            ->join('org-person', function ($join) use ($orgID, $personID) {
+                $join->on('person.personID', '=', 'org-person.personID')
+                    ->where([
+                        ['org-person.orgID', '=', $orgID],
+                        ['person.personID', '=', $personID]
+                    ])->whereNotNull('OrgStat1');
+            })->select('OrgStat1')->first();
     }
 }

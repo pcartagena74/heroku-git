@@ -26,12 +26,20 @@ try {
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => "Register Attendee", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+
+    <div class="col-xs-12">
+        <div class="col-xs-6">
+            @include('v1.parts.event_buttons', ['event' => $event])
+        </div>
+    </div>
+
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_att'), 'subheader' => '',
+             'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @if($logo_url)
         <img src="{{ $logo_url }}" height="50">
     @endif
-    <h2>Event: {{ $event->eventName }}</h2>
+    <h2>@lang('messages.fields.event'): {{ $event->eventName }}</h2>
 
     <p>&nbsp;</p>
 
@@ -49,29 +57,29 @@ try {
             <div class="form-group col-sm-12 col-xs-12">
                 <div style="background-color:#2a3f54; color:yellow;"
                      class="col-sm-{{ 3 * count($track) }} col-xs-{{ 3 * count($track) }}">
-                    Day {{ $i }} Sessions
+                    @lang('messages.headers.day') {{ $i }} @lang('messages.fields.sessions')
                 </div>
             </div>
 
             @for($x=1;$x<=5;$x++)
-                <?php
+<?php
                 $s = EventSession::where([
                     ['eventID', $event->eventID],
                     ['confDay', $i],
                     ['order', $x]
                 ])->first();
-                ?>
+?>
                 @if($s !== null)
                     <div class="form-group col-sm-12 col-xs-12">
                         @foreach($track as $t)
-                            <?php
+<?php
                             $s = EventSession::where([
                                 ['trackID', $t->trackID],
                                 ['eventID', $event->eventID],
                                 ['confDay', $i],
                                 ['order', $x]
                             ])->first();
-                            ?>
+?>
                             @if($s !== null)
                                 <div class="col-sm-3 col-xs-3">
                                     <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
@@ -98,13 +106,15 @@ try {
         <b>Session: {{ $session->sessionName }}</b>
         <p>&nbsp;</p>
         <div class="form-group has-feedback col-md-12 col-xs-12">
-            {!! Form::label('regID', 'Please enter registration id number', array('class' => 'control-label')) !!}
+            {!! Form::label('regID', trans('messages.headers.regID'), array('class' => 'control-label')) !!}
             {!! Form::text('regID', '', $attributes = array('class'=>'form-control has-feedback-left', 'required')) !!}
             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
         </div>
         <div class="form-group col-md-12 col-xs-12">
-            {!! Form::submit('Submit & Return to Session List', array('class' => 'btn btn-primary', 'name' => 'list', 'value' => '1')) !!}
-            {!! Form::submit('Submit & Register Another', array('class' => 'btn btn-success', 'name' => 'return', 'value' => '1')) !!}
+            {!! Form::submit(trans('messages.headers.sub&').trans('messages.headers.ret_sess_list'),
+                array('class' => 'btn btn-primary', 'name' => 'list', 'value' => '1')) !!}
+            {!! Form::submit(trans('messages.headers.sub&').trans('messages.headers.reg_another'),
+                array('class' => 'btn btn-success', 'name' => 'return', 'value' => '1')) !!}
         </div>
         {!! Form::close() !!}
     @endif

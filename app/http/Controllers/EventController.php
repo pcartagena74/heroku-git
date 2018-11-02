@@ -32,11 +32,10 @@ class EventController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing']]);
+        $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing', 'get_tix']]);
     }
 
-    public function index()
-    {
+    public function index() {
         // responds to GET /events
         $topBits = '';
         $today = Carbon::now();
@@ -144,21 +143,21 @@ class EventController extends Controller
         $event->updaterID = $this->currentPerson->personID;
         $event->save();
 
-        if ($event->eventStartDate > $today) {
-            $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
-                ['discountCODE', "<>", '']])->get();
+        // A copied event should always get the discount codes.
+        $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
+            ['discountCODE', "<>", '']])->get();
 
-            foreach ($orgDiscounts as $od) {
-                $ed = new EventDiscount;
-                $ed->orgID = $od->orgID;
-                $ed->eventID = $event->eventID;
-                $ed->discountCODE = $od->discountCODE;
-                $ed->percent = $od->percent;
-                $ed->creatorID = $this->currentPerson->personID;
-                $ed->updaterID = $this->currentPerson->personID;
-                $ed->save();
-            }
+        foreach ($orgDiscounts as $od) {
+            $ed = new EventDiscount;
+            $ed->orgID = $od->orgID;
+            $ed->eventID = $event->eventID;
+            $ed->discountCODE = $od->discountCODE;
+            $ed->percent = $od->percent;
+            $ed->creatorID = $this->currentPerson->personID;
+            $ed->updaterID = $this->currentPerson->personID;
+            $ed->save();
         }
+
         //return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
         return redirect('/event/' . $event->eventID . '/edit');
     }
@@ -166,12 +165,6 @@ class EventController extends Controller
     public function show($param, $override = null) {
         // responds to GET /events/{param}
         // $param is either an ID or slug
-
-        /*
-        $event = Event::where('slug', '=', $param)
-            ->orWhere('eventID', '=', $param)
-            ->firstOrFail();
-        */
 
         try {
             $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
@@ -183,13 +176,15 @@ class EventController extends Controller
                 }
             )->firstOrFail();
         } catch (\Exception $exception) {
-            $message = "The event URL used no longer exists.";
+            $message = trans('messages.warning.inactive_event_url');
             return view('v1.public_pages.error_display', compact('message'));
         }
         if($override){
-            $message = '<b>Note:</b> You are previewing an event that is not yet active OR is in the past.';
+            $message = "<b>" . trans('messages.headers.note') . "</b> " . trans('messages.warning.inactive_event');
             request()->session()->flash('alert-warning', $message);
         }
+
+        $today = Carbon::now();
 
         if (auth()->guest()) {
             $current_person = 0;
@@ -216,36 +211,26 @@ class EventController extends Controller
             Ticket::where([
                 ['isaBundle', 1],
                 ['isDeleted', 0],
+                ['isSuppressed', 0],
                 ['eventID', $event->eventID],
-            ])->get()->sortByDesc('availableEndDate');
+                ['availabilityEndDate', '>=', $today]
+            ])->get()->sortByDesc('availabilityEndDate');
 
         $tickets =
             Ticket::where([
                 ['isaBundle', 0],
                 ['isSuppressed', 0],
                 ['isDeleted', 0],
-                ['eventID', $event->eventID]
-            ])->get()->sortByDesc('availableEndDate');
+                ['eventID', $event->eventID],
+                ['availabilityEndDate', '>=', $today]
+            ])->get()->sortByDesc('availabilityEndDate');
 
         $tracks = Track::where('eventID', $event->eventID)->get();
 
         return view(
-            'v1.public_pages.display_event_w_sessions',
+            'v1.public_pages.display_event_w_sessions2',
             compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks',
                     'currentOrg', 'override'));
-
-        if (0) {
-        //if ($event->hasTracks > 0) {
-            return view(
-                'v1.public_pages.display_event_w_sessions',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks', 'currentOrg')
-            );
-        } else {
-            return view(
-                'v1.public_pages.display_event',
-                compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg')
-            );
-        }
     }
 
     public function create() {
@@ -253,7 +238,7 @@ class EventController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
         $org = Org::find($current_person->defaultOrgID);
-        $page_title = 'Create New Event';
+        $page_title = trans('messages.headers.event_new');
 
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
     }
@@ -322,6 +307,9 @@ class EventController extends Controller
         $event->hasFood = request()->input('hasFood');
         $event->slug = request()->input('slug');
         $event->postRegInfo = request()->input('postRegInfo');
+
+        // Intentionally set to 0 so that track selection works without issue
+        $event->confDays = 0;
 
         if (request()->input('hasFood')) {
             $event->hasFood = 1;
@@ -416,7 +404,7 @@ class EventController extends Controller
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
         $org = Org::find($current_person->defaultOrgID);
         $exLoc = Location::find($event->locationID);
-        $page_title = 'Edit Event';
+        $page_title = trans('messages.headers.event_edit');
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }
 
@@ -618,8 +606,7 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
-    public function ajax_update(Request $request, Event $event)
-    {
+    public function ajax_update(Request $request, Event $event) {
         // this function is just for the quick update of the Early Bird End Date
         // and Percent Discount associated with the eventID $id from /event-tickets/{id}
         //$event               = Event::find($id);
@@ -815,6 +802,21 @@ class EventController extends Controller
             $ical = new ics_calendar($e);
             $output .= $ical->get();
         }
-        return $output;
+        return response($output)
+            ->header("Content-type", "text/calendar")
+            ->header("Cache-Control", "no-cache, must-revalidate")
+            ->header("Pragma", "no-cache");
+    }
+
+
+    /*
+     * get_tix: AJAX - returns the tickets for an event
+     */
+    public function get_tix(Event $event, Ticket $ticket){
+        $tix = Ticket::where([
+            ['eventID', '=', $event->eventID],
+            ['isSuppressed', '=', 0]
+        ])->get();
+        return json_encode(array('status' => 'success', 'tix' => $tix, 'def_tick' => $ticket));
     }
 }

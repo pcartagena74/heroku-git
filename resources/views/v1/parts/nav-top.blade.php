@@ -8,6 +8,12 @@
 
 $currentPerson = App\Person::find(auth()->user()->id);
 
+try{
+    $x = getimagesize($currentPerson->avatarURL);
+} catch (Exception $exception) {
+    $currentPerson->avatarURL = null;
+    $currentPerson->save();
+}
 ?>
 <div class="top_nav">
     <div class="nav_menu">
@@ -24,9 +30,8 @@ $currentPerson = App\Person::find(auth()->user()->id);
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
-                        <li><a href="/profile/my"> Profile</a></li>
+                        <li><a href="/profile/my"> @lang('messages.nav.ms_profile')</a></li>
 
-                        @if(Entrust::hasRole('Developer'))
                             <li>
                                 <a href="/profile/linkedin">
                                     @if($currentPerson->avatarURL !== null)
@@ -34,15 +39,10 @@ $currentPerson = App\Person::find(auth()->user()->id);
                                     @else
                                         <span class="badge bg-red pull-right">&nbsp;</span>
                                     @endif
-                                    <span>Connect Linked In</span>
+                                    <span>@lang('messages.nav.con_link')</span>
                                 </a>
                             </li>
-                        @endif
-                        {{--
-                        // Add this back when context-help is added
-                        <li><a href="javascript:;">Help</a></li>
-                        --}}
-                        <li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> Logout</a></li>
+                        <li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> @lang('messages.nav.c_log')</a></li>
                     </ul>
                 </li>
             </ul>

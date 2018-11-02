@@ -108,10 +108,16 @@ class TicketController extends Controller
         // responds to PATCH /blah/id
         $ticket              = Ticket::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
-
-        // shaving off number at the end to match fieldname
-        $name              = substr(request()->input('name'), 0, -1);
+        $name                = request()->input('name');
         $value             = request()->input('value');
+
+        // if passed from the event report (and other pages) the $name will have a dash
+        if (strpos($name, '-')) {
+            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+        } else {
+            // Otherwise, shave off number at the end to match fieldname
+            $name              = substr(request()->input('name'), 0, -1);
+        }
 
         if ($name == 'availabilityEndDate' or $name == 'earlyBirdEndDate' and $value !== null) {
             $date = date("Y-m-d H:i:s", strtotime(trim($value)));
@@ -121,6 +127,7 @@ class TicketController extends Controller
         $ticket->{$name}   = $value;
         $ticket->updaterID = $this->currentPerson->personID;
         $ticket->save();
+        return json_encode(array('status' => 'success', 'msg' => $name, 'val' => $value));
     }
 
     public function destroy($id)

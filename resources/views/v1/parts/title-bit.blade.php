@@ -16,28 +16,28 @@ if(!isset($up)){
 }
 switch ($icon) {
     case 1:
-        $itxt = "fa-user";
+        $itxt = "fas fa-user";
         break;
     case 2:
-        $itxt = "fa-bar-chart";
+        $itxt = "fas fa-chart-bar";
         break;
     case 3:
-        $itxt = "fa-calendar";
+        $itxt = "far fa-calendar-alt";
         break;
     case 4:
-        $itxt = "fa-clock-o";
+        $itxt = "far fa-clock-o";
         break;
     case 5:
-        $itxt = "fa-home";
+        $itxt = "far fa-home";
         break;
     case 6:
-        $itxt = "fa-heart";
+        $itxt = "fas fa-heart";
         break;
     case 7:
-        $itxt = "fa-star-o";
+        $itxt = "fas fa-star";
         break;
     case 8:
-        $itxt = "fa-cog";
+        $itxt = "fas fa-cog";
         break;
 }
 
@@ -52,7 +52,7 @@ switch($up){
 }
 ?>
 <div class="col-md-2 col-sm-2 col-xs-3 tile_stats_count">
-    <span style="text-align: center;" class="animated flipInY count_top"><i class="fa {{ $itxt }}">&nbsp;</i>{{ $label }}</span>
+    <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
     @if($ctext <> "")
         <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fa fa-sort-{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>

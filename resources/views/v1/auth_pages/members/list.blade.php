@@ -5,7 +5,9 @@
  */
 
 
-$headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'Industry', 'Expiration', 'Buttons'];
+$headers = ['#', 'Name', trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
+            trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.title'),
+            trans('messages.fields.indName'), trans('messages.fields.expr'), trans('messages.fields.buttons')];
 
 count($mbr_list) > 15 ? $scroll = 1 : $scroll = 0;
 
@@ -15,18 +17,19 @@ foreach($mbr_list as $mbr) {
     $csrf = csrf_field();
 
     $profile_form = "<a href='". env('APP_URL') . "/profile/$mbr->personID' type='button' data-toggle='tooltip' data-placement='top'
-                     title='View/Edit Profile' class='btn btn-xs btn-primary'><i class='fa fa-edit'></i></a>";
+                     title='" . trans('messages.tooltips.vep') . "' class='btn btn-xs btn-primary'><i class='far fa-fw fa-edit'></i></a>";
 
     if($mbr->cnt >0) {
-        $activity_form = "<div data-toggle='tooltip' data-placement='top' title='View Activity'>
-        <button data-toggle='modal' class='btn btn-xs btn-success'
-        data-target='#dynamic_modal' data-target-id='" . $mbr->personID . "'><i class='fa fa-book'></i></button></div>";
+        $activity_form = "<div data-toggle='tooltip' data-placement='top' title='" . trans('messages.tooltips.va') . "'>
+                          <button data-toggle='modal' class='btn btn-xs btn-success' data-target='#dynamic_modal'
+                           data-target-id='" . $mbr->personID . "'><i class='far fa-fw fa-book'></i></button></div>";
     } else {
         $activity_form = '';
     }
 
-    $merge_form = "<a href='" . env('APP_URL') . "/merge/p/$mbr->personID' data-toggle='tooltip' data-placement='top' title='Merge Record' class='btn btn-xs btn-warning'>
-                   <i class='fa fa-code-fork'></i></a>";
+    $merge_form = "<a href='" . env('APP_URL') . "/merge/p/$mbr->personID' data-toggle='tooltip' data-placement='top'
+                    title='" . trans('messages.tooltips.mr') . "' class='btn btn-xs btn-warning'>
+                   <i class='far fa-fw fa-code-branch'></i></a>";
 
     $mbr->cnt = $profile_form . $merge_form . $activity_form;
     // fullName, OrgStat1, OrgStat2, compName, title, indName, 'RelDate4' (now named 'Expire') - 7/20/17
@@ -38,7 +41,8 @@ $data = collect($mbr_list);
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => 'Member List', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.mList'), 'subheader' => '',
+             'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
     @include('v1.parts.datatable', ['headers' => $headers,
         'data' => $data->toArray(),
@@ -62,5 +66,5 @@ $data = collect($mbr_list);
 @endsection
 
 @section('modals')
-    @include('v1.modals.dynamic', ['header' => 'Member Activity'])
+    @include('v1.modals.dynamic', ['header' => trans('messages.headers.mAct'), 'show_past' => 1])
 @endsection

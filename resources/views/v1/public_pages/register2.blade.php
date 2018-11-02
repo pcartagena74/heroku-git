@@ -43,7 +43,7 @@ if($event->isSymmetric && $event->hasTracks) {
 ?>
 @extends('v1.layouts.no-auth')
 @section('content')
-    @include('v1.parts.start_content', ['header' => "Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_con'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     {!! Form::open(['url' => env('APP_URL').'/complete_registration/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
 
     <div class="whole">
@@ -55,7 +55,7 @@ if($event->isSymmetric && $event->hasTracks) {
             <div class="myrow col-md-12 col-sm-12">
 
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
-                    <h1 class="fa fa-5x fa-calendar"></h1>
+                    <h1 class="far fa-5x fa-calendar-alt"></h1>
                 </div>
                 <div class="col-md-6 col-sm-6">
                     <h2><b>{{ $event->eventName }}</b></h2>
@@ -64,7 +64,7 @@ if($event->isSymmetric && $event->hasTracks) {
                         - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
                         <br>
                         {{ $loc->locName }}<br>
-                        {{ $loc->addr1 }} <i class="fa fa-circle fa-tiny-circle"></i> {{ $loc->city }}
+                        {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }}
                         , {{ $loc->state }} {{ $loc->zip }}
                     </div>
                     <br/>
@@ -72,10 +72,10 @@ if($event->isSymmetric && $event->hasTracks) {
                 <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
 
-                    @if($rf->cost > 0 && $rf->status != 'Wait List')
+                    @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
-                            <b>Pay Now by Credit Card</b>
+                            <b>@lang('messages.buttons.ccpay')</b>
                         </button>
                         {{--
                         <div id="payment-request-button" class="card">
@@ -84,12 +84,12 @@ if($event->isSymmetric && $event->hasTracks) {
                     @endif
 
                     <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
-                        @if($rf->cost > 0 && $rf->status != 'Wait List')
-                            <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
-                        @elseif($rf->status == 'Wait List')
-                            <b>Join the Wait List</b>
+                        @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                            <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
+                        @elseif($rf->status == trans('messages.headers.wait'))
+                            <b>@lang('messages.buttons.wait')</b>
                         @else
-                            <b>Complete Registration</b>
+                            <b>@lang('messages.buttons.comp_reg')</b>
                         @endif
                     </button>
 
@@ -98,44 +98,45 @@ if($event->isSymmetric && $event->hasTracks) {
             @if($show_pass_fields)
             <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
                 <div class="col-sm-6 form-group">
-                    {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => 'Set a password')) !!}
+                    {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_set'))) !!}
                 </div>
                 <div class="col-sm-6 form-group">
-                    {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => 'Confirm your password')) !!}
+                    {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_conf'))) !!}
                 </div>
             </div>
             @endif
 
-            @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
+            @foreach($regs as $reg)
 <?php
-                $reg = Registration::find($i); $tcount++;
+                $tcount++;
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
 ?>
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
-                        <h1 class="fa fa-5x fa-user"></h1>
+                        <h1 class="far fa-5x fa-user"></h1>
                     </div>
                     <div class="col-md-10 col-sm-10">
                         <table class="table table-bordered table-condensed table-striped jambo_table">
                             <thead>
                             <tr>
-                                <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
+                                <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }}
+                                    {{ strtoupper(__('messages.fields.ticket')) }}:
                                     #{{ $tcount }}</th>
                             </tr>
                             </thead>
                             <tr>
-                                <th style="text-align: left; color:darkgreen;">Ticket</th>
-                                <th style="text-align: left; color:darkgreen;">Original Cost</th>
-                                <th style="text-align: left; color:darkgreen;">Discounts</th>
-                                <th style="text-align: left; color:darkgreen;">Subtotal</th>
+                                <th style="text-align: left; color:darkgreen;">@lang('messages.fields.ticket')</th>
+                                <th style="text-align: left; color:darkgreen;">@lang('messages.fields.oCost')</th>
+                                <th style="text-align: left; color:darkgreen;">@lang('messages.fields.disc')</th>
+                                <th style="text-align: left; color:darkgreen;">@lang('messages.fields.subtotal')</th>
                             </tr>
                             <tr>
                                 <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
 
-                                <td style="text-align: left;"><i class="fa fa-dollar"></i>
-                                    @if($reg->membership == 'Member')
+                                <td style="text-align: left;">@lang('messages.symbols.cur')
+                                    @if($reg->membership == trans('messages.fields.member'))
                                         {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                     @else
                                         {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
@@ -144,9 +145,9 @@ if($event->isSymmetric && $event->hasTracks) {
 
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     @if($reg->discountCode)
-                                        <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
+                                        <td style="text-align: left;">@lang('messages.headers.earlybird'), {{ $rf->discountCode }}</td>
                                     @else
-                                        <td style="text-align: left;">Early Bird</td>
+                                        <td style="text-align: left;">@lang('messages.headers.earlybird')</td>
                                     @endif
                                 @else
                                     @if($reg->discountCode)
@@ -155,13 +156,13 @@ if($event->isSymmetric && $event->hasTracks) {
                                         <td style="text-align: left;"> --</td>
                                     @endif
                                 @endif
-                                <td style="text-align: left;"><i class="fa fa-dollar"></i>
+                                <td style="text-align: left;">@lang('messages.symbols.cur')
                                     {{ number_format($reg->subtotal, 2, ".", ",") }}
                                 </td>
                             </tr>
                             <tr>
-                                <th colspan="2" style="width: 50%; text-align: left;">Attendee Info</th>
-                                <th colspan="2" style="width: 50%; text-align: left;">Event-Specific Info</th>
+                                <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.att_info')</th>
+                                <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.event_info')</th>
                             </tr>
                             <tr>
                                 <td colspan="2" style="text-align: left;">
@@ -170,7 +171,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                            data-value="{{ $person->prefix }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
-                                    @if($reg->membership == 'Non-Member')
+                                    @if($reg->membership == trans('messages.fields.nonmbr'))
                                         <a id="firstName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->firstName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -187,7 +188,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                            data-value="{{ $person->midName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
-                                    @if($reg->membership == 'Non-Member')
+                                    @if($reg->membership == trans('messages.fields.nonmbr'))
                                         <a id="lastName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->lastName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -220,9 +221,9 @@ if($event->isSymmetric && $event->hasTracks) {
                                                        data-value="{{ $person->title }}"
                                                        data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                                 @else
-                                                    Employed
+                                                    @lang('messages.headers.employed')
                                                 @endif
-                                                at <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                @lang('messages.headers.at') <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                       data-value="{{ $person->compName }}"
                                                       data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                             @else
@@ -231,16 +232,16 @@ if($event->isSymmetric && $event->hasTracks) {
                                                        data-value="{{ $person->title }}"
                                                        data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                                 @else($person->indName !== null)
-                                                    Employed
+                                                    @lang('messages.headers.employed')
                                                 @endif
                                                     @if($person->indName !== null)
-                                                        in the <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                        @lang('messages.headers.inthe') <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                                                   data-value="{{ $person->indName }}"
-                                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> industry <br/>
+                                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> @lang('messages.headers.ind') <br/>
                                                     @endif
                                             @endif
                                                 @if($person->affiliation)
-                                                    <br/>Affiliated with: <a id="affiliation-{{ $tcount }}"
+                                                    <br/>@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
                                                                              data-pk="{{ $person->personID }}"
                                                                              data-value="{{ $person->affiliation }}"
                                                                              data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -249,23 +250,23 @@ if($event->isSymmetric && $event->hasTracks) {
                                 </td>
                                 <td colspan="2" style="text-align: left;">
                                     @if($reg->isFirstEvent)
-                                        <b>First Event?</b> <a id="firstEvent-{{ $tcount }}"
+                                        <b>@lang('messages.headers.isFirst')</b> <a id="firstEvent-{{ $tcount }}"
                                                                data-pk="{{ $reg->regID }}"
                                                                data-value="{{ $reg->isFirstEvent }}"
                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @endif
 
-                                    <b>Add to Roster:</b> <a id="canNetwork-{{ $tcount }}"
+                                    <b>@lang('messages.headers.roster_add'):</b> <a id="canNetwork-{{ $tcount }}"
                                                              data-pk="{{ $reg->regID }}"
                                                              data-value="{{ $reg->canNetwork }}"
                                                              data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
-                                            @include('v1.parts.tooltip', ['title' => "Do you authorize PMI to submit your PDUs?"])
-                                        <b>PDU Submission :</b> <a id="isAuthPDU-{{ $tcount }}"
+                                            @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
+                                        <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
                                                                     data-pk="{{ $reg->regID }}"
                                                                     data-value="{{ $reg->isAuthPDU }}"
                                                                     data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @if($reg->eventQuestion)
-                                        <p><b>Speaker Questions:</b> <a id="eventQuestion-{{ $tcount }}"
+                                        <p><b>@lang('messages.fields.spk_question'):</b> <a id="eventQuestion-{{ $tcount }}"
                                                                         data-pk="{{ $reg->regID }}"
                                                                         data-value="{{ $reg->eventQuestion }}"
                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
@@ -273,7 +274,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                     @endif
 
                                     @if($reg->eventTopics)
-                                        <p><b>Future Topics:</b><br/> <a id="eventTopics-{{ $tcount }}"
+                                        <p><b>@lang('messages.fields.future_topics'):</b><br/> <a id="eventTopics-{{ $tcount }}"
                                                                          data-pk="{{ $reg->regID }}"
                                                                          data-value="{{ $reg->eventTopics }}"
                                                                          data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
@@ -281,21 +282,21 @@ if($event->isSymmetric && $event->hasTracks) {
                                     @endif
 
                                     @if($reg->cityState)
-                                        <br/><b>Commuting From:</b> <a id="cityState-{{ $tcount }}"
+                                        <br/><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
                                                                        data-pk="{{ $reg->regID }}"
                                                                        data-value="{{ $reg->cityState }}"
                                                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a></br>
                                     @endif
 
                                     @if($reg->specialNeeds)
-                                        <b>Special Needs:</b> <a id="specialNeeds-{{ $tcount }}"
+                                        <b>@lang('messages.fields.spc_needs'):</b> <a id="specialNeeds-{{ $tcount }}"
                                                                  data-pk="{{ $reg->regID }}"
                                                                  data-value="{{ $reg->specialNeeds }}"
                                                                  data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @endif
 
                                     @if($reg->allergenInfo)
-                                        <b>Dietary Info:</b> <a id="allergenInfo-{{ $tcount }}"
+                                        <b>@lang('messages.fields.diet_info'):</b> <a id="allergenInfo-{{ $tcount }}"
                                                                 data-pk="{{ $reg->regID }}"
                                                                 data-value="{{ $reg->allergenInfo }}"
                                                                 data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
@@ -305,7 +306,7 @@ if($event->isSymmetric && $event->hasTracks) {
                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                         @endif
                                     @elseif($reg->eventNotes)
-                                        <b>Other Comments/Notes:</b> <a id="eventNotes-{{ $tcount }}"
+                                        <b>@lang('messages.fields.other'):</b> <a id="eventNotes-{{ $tcount }}"
                                                                         data-pk="{{ $reg->regID }}"
                                                                         data-value="{{ $reg->eventNotes }}"
                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
@@ -315,183 +316,35 @@ if($event->isSymmetric && $event->hasTracks) {
                             </tr>
                         </table>
 
-                        {{-- Do something here to set needSessionPick=0 if $discountCode in ['Sponsor%', 'Board%', 'Volunteer%', etc.] --}}
+                        {{-- Display session selection stuff if sessions are attached to the ticket attached to $reg --}}
 
-                        {!! Form::hidden('needSessionPick', $needSessionPick) !!}
-
-                        @if($event->hasTracks > 0 && $needSessionPick == 1)
-                            <table class="table table-bordered jambo_table table-striped">
-                                <thead>
-                                <tr>
-                                    <th colspan="{{ $columns }}" style="text-align: left;">
-                                        Track Selection
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    @foreach($tracks as $track)
-                                        @if($tracks->first() == $track || !$event->isSymmetric)
-                                            <th style="text-align:left;">Session Times</th>
-                                        @endif
-                                        <th colspan="2" style="text-align:center;"> {{ $track->trackName }} </th>
-                                    @endforeach
-                                </tr>
-                                @for($j=1;$j<=$event->confDays;$j++)
-<?php
-                                    $z = EventSession::where([
-                                        ['confDay', '=', $j],
-                                        ['eventID', '=', $event->eventID]
-                                    ])->first();
-                                    $y = Ticket::find($z->ticketID);
-?>
-                                    @if($tickets->contains('ticketID', $z->ticketID))
-                                        <tr>
-                                            <th style="text-align:center; color: yellow; background-color: #2a3f54;"
-                                                colspan="{{ $columns }}">Day {{ $j }}:
-                                                {{ $y->ticketLabel  }}
-                                            </th>
-                                        </tr>
-                                        @for($x=1;$x<=5;$x++)
-<?php
-                                            // Check to see if there are any events for $x (this row)
-                                            $s = EventSession::where([
-                                                ['eventID', $event->eventID],
-                                                ['confDay', $j],
-                                                ['order', $x]
-                                            ])->first();
-                                            if($s !== null){
-                                                $cs = count($s);
-                                            }
-                                            if($cs==1){
-                                                $selected = true;
-                                            } else {
-                                                $selected = false;
-                                            }
-                                            // As long as there are any sessions, the row will be displayed
-?>
-                                            @if($s !== null)
-                                                <tr>
-                                                    @foreach($tracks as $track)
-<?php
-                                                        $s = EventSession::where([
-                                                            ['trackID', $track->trackID],
-                                                            ['eventID', $event->eventID],
-                                                            ['confDay', $j],
-                                                            ['order', $x]
-                                                        ])->first();
-
-                                                        if($s !== null) {
-                                                            $mySess = $s->sessionID;
-                                                        }
-?>
-                                                        @if($s !== null)
-                                                            @if($tracks->first() == $track || !$event->isSymmetric)
-
-                                                                <td rowspan="1" style="text-align:left;">
-                                                                    <nobr> {{ $s->start->format('g:i A') }} </nobr>
-                                                                    &dash;
-                                                                    <nobr> {{ $s->end->format('g:i A') }} </nobr>
-                                                                </td>
-                                                            @else
-
-                                                            @endif
-                                                            <td colspan="2" style="text-align:left; min-width:150px;
-                                                                    width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                                                @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
-                                                                    <b>{{ $s->sessionName }}</b><br/>
-                                                                    @include('v1.parts.tooltip', ['title' => "Maximum attendance reached.", 'c' => 'red'])
-                                                                    {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
-                                                                        $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
-                                                                @else
-                                                                    <b>{{ $s->sessionName }}</b><br/>
-                                                                    {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, $selected,
-                                                                        $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
-                                                                @endif
-
-                                                                {{--  Need to connect to 'sess-'.$j.'-'.$x-1 and 'sess-'.$j.'-'.$x
-                                                                      and have jquery set it to clicked and vice versa;
-                                                                      if selection moves from x or x-1, it unselects the other
-                                                                      if selection moves onto 1, it moves onto the other --}}
-                                                            </td>
-                                                        @else
-                                                            @if($tracks->first() == $track || !$event->isSymmetric)
-                                                                <td colspan="3" style="text-align:left;">
-                                                            @else
-                                                                <td colspan="2" style="text-align:left;">
-                                                            @endif
-<?php
-                                                                    $t = EventSession::where([
-                                                                        ['trackID', $track->trackID],
-                                                                        ['eventID', $event->eventID],
-                                                                        ['confDay', $j],
-                                                                        ['order', $x - 1]
-                                                                    ])->first();
-
-                                                                    if($t !== null) {
-                                                                        $myTess = $t->sessionID;
-                                                                    }
-?>
-                                                                    @if($s->maxAttendees > 0 && $s->regCount > $s->maxAttendees)
-                                                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, '', $selected,
-                                                                            $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
-                                                                    @else
-                                                                        {!! Form::radio('sess-'. $j . '-'.$x, '', $selected,
-                                                                            $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
-                                                                    @endif
-                                                                        <script>
-
-                                                                            {{-- There is likely a bug here that will be experienced with an uneven track --}}
-                                                                        $(document).ready(function () {
-                                                                            $("input:radio[name='{{ 'sess-'. $j . '-'.$x . '-' . $reg->regID }}']").on('change', function () {
-                                                                                if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {
-                                                                                    $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
-                                                                                } else {
-                                                                                    $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').removeAttr('checked');
-                                                                                }
-                                                                            });
-                                                                            $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) . '-'. $reg->regID }}']").on('change', function () {
-                                                                                if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")) {
-                                                                                    $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
-                                                                                } else {
-                                                                                    $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').removeAttr('checked');
-                                                                                }
-                                                                            });
-                                                                        });
-                                                                    </script>
-                                                                </td>
-                                                            @endif
-                                                            @endforeach
-                                                </tr>
-                                            @endif
-                                        @endfor
-                                    @endif  {{-- if included ticket --}}
-                                @endfor  {{-- this closes confDays loop --}}
-                            </table>
-                        @endif  {{-- closes hasTracks loop --}}
+                        @if($event->hasTracks > 0 && $ticket->has_sessions())
+                        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg, 'suppress' => 1])
+                        @endif
                     </div>
                 </div>
 
-            @endfor  {{-- closes $rf loop --}}
+            @endforeach  {{-- closes $rf loop --}}
 
             <div class="myrow col-md-12 col-sm-12" style="display: table-row; vertical-align: top;">
                 <div class="col-md-2 col-sm-2" style="display: table-cell; text-align:center;">
-                    <h1 class="fa fa-5x fa-dollar"></h1>
+                    <h1 @lang('messages.symbols.cur_class_5x')></h1>
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
-                    @if($rf->cost > 0 && $rf->status != 'Wait List')
+                    @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
-                            <b>Pay Now by Credit Card</b>
+                            <b>@lang('messages.buttons.ccpay')</b>
                         </button>
                     @endif
                     <br />
                     <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                        @if($rf->cost > 0 && $rf->status != 'Wait List')
-                            <b>{{ $rf->cost > 0 ? 'Pay by Cash/Check at Door' : 'Complete Registration' }}</b>
-                        @elseif($rf->status == 'Wait List')
-                            <b>Join the Wait List</b>
+                        @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                            <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
+                        @elseif($rf->status == trans('messages.headers.wait'))
+                            <b>@lang('messages.buttons.wait')</b>
                         @else
-                            <b>Complete Registration</b>
+                            <b>@lang('messages.buttons.comp_reg')</b>
                         @endif
                     </button>
 
@@ -500,12 +353,12 @@ if($event->isSymmetric && $event->hasTracks) {
                     <table class="table table-striped table-condensed jambo_table">
                         <thead>
                         <tr>
-                            <th style="text-align: center;">Total</th>
+                            <th style="text-align: center;">@lang('messages.fields.total')</th>
                         </tr>
                         </thead>
                         <tr>
-                            <td style="text-align: center;"><b><i
-                                            class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                            <td style="text-align: center;">
+                                <b>@lang('messages.symbols.cur') {{ number_format($rf->cost, 2, '.', ',') }}</b>
                             </td>
                         </tr>
                     </table>

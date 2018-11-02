@@ -19,6 +19,7 @@
                         <div class="mid_center" style="display:none">
                             <h3>Report Issue</h3>
                             {{ Form::open(['url' => env('APP_URL').'/reportissue', 'method' => 'post']) }}
+                            <div class="g-recaptcha" data-sitekey="{{env('RECAPTCHA_PUBLIC_KEY')}}"></div>
                             {{-- Add Captcha --}}
                                 <div class="col-xs-12 form-group pull-right top_search">
                                     <div class="input-group">
@@ -41,4 +42,5 @@
            $('.mid_center').toggle();
         }
     </script>
+    <script src='https://www.google.com/recaptcha/api.js' async defer></script>
 @stop

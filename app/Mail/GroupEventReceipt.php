@@ -51,7 +51,7 @@ class GroupEventReceipt extends Mailable
         //dd($this->array);
         return $this
             ->subject("$orgName Group Registration Confirmation")
-            ->view('v1.auth_pages.events.group_receipt')
+            ->view('v1.auth_pages.events.registration.group_receipt')
             ->with([
                 'event' => $this->array['event'] , 'quantity' => $this->array['quantity'],
                  'loc' => $this->array['loc'],

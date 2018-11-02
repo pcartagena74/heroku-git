@@ -18,6 +18,7 @@ class TrackController extends Controller
     public function show(Event $event)
     {
         $tracks = Track::where('eventID', $event->eventID)->get();
+
         return view('v1.auth_pages.events.track-session', compact('event', 'tracks'));
     }
 

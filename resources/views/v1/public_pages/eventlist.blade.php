@@ -15,7 +15,7 @@ function truncate_saw($string, $limit, $break = ".", $pad = "...") {
 }
 
 if($etID == 99){
-    $event_tag = 'All Events';
+    $event_tag = trans('messages.codes.edID99');
 } else {
     $event_tag = $tag->etName;
 }
@@ -26,14 +26,14 @@ if($etID == 99){
     @if($cnt > 0)
     <table class="table table-bordered table-striped condensed jambo_table" width="100%" id="eventlisting">
         <thead>
-        <tr><td><b>{{ $org->orgName }} Events tagged as '{{ $event_tag }}'</b></td></tr>
+        <tr><td><b>{{ $org->orgName }} @lang('messages.headers.tagged') '{{ $event_tag }}'</b></td></tr>
         </thead>
         <tbody>
         @foreach($events as $e)
             <tr>
                 <td>
                     <div class="col-sm-1" style="float: left;">
-                        <img src="{{ env('APP_URL') }}/images/eventlist.jpg" alt='Event Image' height='79'
+                        <img src="{{ env('APP_URL') }}/images/eventlist.jpg" alt='{{ trans('messages.codes.img') }}' height='79'
                              width='90' border='0'/>
                     </div>
                     <div class="col-sm-11" style="text-align: left;">
@@ -50,7 +50,7 @@ if($etID == 99){
                             <b>Location: </b>{{ $e->location->locName }}
                         </div>
                         <div class="col-sm-3" style="text-align: center;">
-                            <a class="btn btn-danger btn-sm" href="https://www.mcentric.org/events/{{ $e->slug }}">R E G I S T E R</a>
+                            <a class="btn btn-danger btn-sm" href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
                         </div>
                     </div>
                 </td>
@@ -59,7 +59,7 @@ if($etID == 99){
         </tbody>
     </table>
     @else
-        There are no <b class="red">active</b> future events at this time.
+        @lang('messages.instructions.no_events')
     @endif
 @endsection
 

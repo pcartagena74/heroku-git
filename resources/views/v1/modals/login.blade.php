@@ -9,8 +9,7 @@ if(!isset($id)){
     $id = 'login_modal';
 }
 if(!isset($msg)){
-    $msg = 'If registering resulted in mCentric telling you that an account exists for you, login or
-    click on the "Forgot Your Password?" link above and enter the email you used to register.';
+    $msg = trans('messages.modals.login_msg');
 }
 ?>
 
@@ -18,7 +17,7 @@ if(!isset($msg)){
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="login_label">mCentric Login Form</h5>
+                <h5 class="modal-title" id="login_label">mCentric @lang('messages.modals.loginform')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -28,7 +27,7 @@ if(!isset($msg)){
                 <form class="form-horizontal" role="form" method="POST" action="{{ route('login') }}">
                     {{ csrf_field() }}
                     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                        <label  for="email" class="col-md-4 control-label">E-Mail Address</label>
+                        <label  for="email" class="col-md-4 control-label">@lang('messages.fields.email')</label>
 
                         <div class="col-md-6">
                             <input id="email" type="email" class="form-control" name="email"
@@ -43,7 +42,7 @@ if(!isset($msg)){
                     </div>
 
                     <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                        <label for="password" class="col-md-4 control-label">Password</label>
+                        <label for="password" class="col-md-4 control-label">@lang('messages.fields.password')</label>
 
                         <div class="col-md-6">
                             <input id="password" type="password" class="form-control" name="password" required>
@@ -60,8 +59,8 @@ if(!isset($msg)){
                         <div class="col-md-6 col-md-offset-4">
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox"
-                                           name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
+                                    <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                                           @lang('messages.modals.remember')
                                 </label>
                             </div>
                         </div>
@@ -70,11 +69,11 @@ if(!isset($msg)){
                     <div class="form-group">
                         <div class="col-md-8 col-md-offset-4">
                             <button type="submit" class="btn btn-primary">
-                                Login
+                                @lang('messages.buttons.login')
                             </button>
 
                             <a href="#reset_modal" class="btn btn-link" data-toggle="modal" data-dismiss="modal" data-target="#reset_modal">
-                                Forgot Your Password?
+                                @lang('messages.modals.forgot')
                             </a>
                         </div>
                     </div>
@@ -86,7 +85,7 @@ if(!isset($msg)){
                     {!! $msg !!}
                 </div>
                 <div class="col-sm-1">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
                 </div>
                 </div>
             </div>

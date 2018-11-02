@@ -82,38 +82,68 @@ class UploadController extends Controller
                                 // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
                                 // if found, get $person, $org-person, $email, $address, $phone records and update, else create
 
-                                $op     = OrgPerson::where('OrgStat1', '=', (integer)$row->pmi_id)->first();
+                                $pmi_id = trim($row->pmi_id);
+                                $prefix       = trim(ucwords($row->prefix));
+
+                                // First & Last Name string detection of all-caps.  But do not ucwords all entries just in case "DeFrancesco" type names exist
+                                $f = trim($row->first_name);
+                                if($f == strtoupper($f)){
+                                    $first = trim(ucwords($row->first_name));
+                                } else {
+                                    $first = $f;
+                                }
+                                $l = trim(ucwords($row->last_name));
+                                if($l == strtoupper($l)){
+                                    $last = trim(ucwords($row->last_name));
+                                } else {
+                                    $last = $l;
+                                }
+                                $midName      = trim(ucwords($row->middle_name));
+                                $suffix       = trim(ucwords($row->suffix));
+                                $title        = trim(ucwords($row->title));
+                                $compName     = trim(ucwords($row->company));
+
+                                $op     = OrgPerson::where('OrgStat1', '=', (integer)$pmi_id)->first();
                                 $em1  = trim(strtolower($row->primary_email));
                                 $em2  = trim(strtolower($row->alternate_email));
-                                $emchk1 = Email::where('emailADDR', '=', $em1)->first();
+                                if($em1 == 'marcdefrancesco@columbiatech.com' || $em2 == 'marcdefrancesco@columbiatech.com'){
+                                    1;
+                                }
+                                $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->first();
                                 if ($emchk1 !== null) {
                                     $emchk1 = $emchk1->emailADDR;
                                 }
-                                $emchk2 = Email::where('emailADDR', '=', $em2)->first();
+                                $emchk2 = Email::whereRaw('lower(emailADDR) = ?', [$em2])->first();
                                 if ($emchk2 !== null) {
                                     $emchk2 = $emchk2->emailADDR;
                                 }
                                 $pchk = Person::where([
-                                    ['firstName', '=', $row->first_name],
-                                    ['lastName', '=', $row->last_name]
+                                    ['firstName', '=', $first],
+                                    ['lastName', '=', $last]
                                 ])->first();
 
+                                if($em1 === null && $em2 === null){
+                                    // If no email addresses are provided, a user account cannot be creatable.
+                                    next;
+                                }
                                 if ($op === null && $emchk1 === null && $emchk2 === null && $pchk === null) {
                                     // PMI ID, emails, first/last name are not found so person is completely new; create all records
 
                                     $p               = new Person;
                                     $u               = new User;
-                                    $p->prefix       = trim(ucwords($row->prefix));
-                                    $p->firstName    = trim(ucwords($row->first_name));
-                                    $p->midName      = trim(ucwords($row->middle_name));
-                                    $p->lastName     = trim(ucwords($row->last_name));
-                                    $p->suffix       = trim(ucwords($row->suffix));
-                                    $p->title        = trim(ucwords($row->title));
-                                    $p->compName     = trim(ucwords($row->company));
+                                    $p->prefix       = $prefix;
+                                    $p->firstName    = $first;
+                                    $p->prefName    = $first;
+                                    $p->midName      = $midName;
+                                    $p->lastName     = $last;
+                                    $p->suffix       = $suffix;
+                                    $p->title        = $title;
+                                    $p->compName     = $compName;
                                     $p->creatorID    = auth()->user()->id;
                                     $p->defaultOrgID = $this->currentPerson->defaultOrgID;
 
-                                    if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1 && $em1 != $emchk2) {
+                                    // If email1 is not null, use it as primary to login, etc.
+                                    if ($em1 !== null && $em1 != "" && $em1 != " ") {
                                         $p->login = $em1;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -128,7 +158,9 @@ class UploadController extends Controller
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
                                         $e->save();
-                                    } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && $em2 != $emchk2 && $em2 != $emchk1) {
+
+                                    // Otherwise, try with email #2
+                                    } elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
                                         $p->login = $em2;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -146,6 +178,7 @@ class UploadController extends Controller
                                     } else {
                                         // This is a last resort when there are no email addresses associated with the record
                                         // Better to abandon; avoid $p->save();
+                                        // Technically, should not ever get here because we check ahead of time.
                                         next;
                                     }
 
@@ -173,7 +206,7 @@ class UploadController extends Controller
                                         $addr->addr1    = trim(ucwords($row->preferred_address));
                                         $addr->city     = trim(ucwords($row->city));
                                         $addr->state    = trim(ucwords($row->state));
-                                        $z              = (integer)trim(ucwords($row->zip));
+                                        $z              = (integer)trim($row->zip);
                                         if (strlen($z) == 4) {
                                             $z = "0" . $z;
                                         } elseif (strlen($z) == 8) {
@@ -194,13 +227,18 @@ class UploadController extends Controller
                                         $addr->save();
                                     }
 
-                                    if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " ") {
+                                    // If email 1 existed and was used as primary but email 2 was also provided, add it.
+                                    if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $emchk2) {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em2;
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
-                                        $e->save();
+                                        try{
+                                            $e->save();
+                                        } catch(\Exception $exception) {
+                                            // There was an error with saving the email -- likely an integrity constraint.
+                                        }
                                     }
 
                                     if ($row->home_phone !== null) {
@@ -346,13 +384,13 @@ class UploadController extends Controller
                                         $addr->save();
 
                                         $p               = new PersonStaging;
-                                        $p->prefix       = trim(ucwords($row->prefix));
-                                        $p->firstName    = trim(ucwords($row->first_name));
-                                        $p->midName      = trim(ucwords($row->middle_name));
-                                        $p->lastName     = trim(ucwords($row->last_name));
-                                        $p->suffix       = trim(ucwords($row->suffix));
-                                        $p->title        = trim(ucwords($row->title));
-                                        $p->compName     = trim(ucwords($row->company));
+                                        $p->prefix       = $prefix;
+                                        $p->firstName    = $first;
+                                        $p->midName      = $midName;
+                                        $p->lastName     = $last;
+                                        $p->suffix       = $suffix;
+                                        $p->title        = $title;
+                                        $p->compName     = $compName;
                                         $p->defaultOrgID = $this->currentPerson->defaultOrgID;
                                         $p->creatorID    = auth()->user()->id;
                                         $p->save();

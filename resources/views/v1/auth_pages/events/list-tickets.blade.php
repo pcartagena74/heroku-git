@@ -19,21 +19,25 @@ $default = Org::find($event->orgID);
 
 @section('content')
 
+    <div class="col-xs-12">
+        <div class="col-xs-6">
+            @include('v1.parts.event_buttons', ['event' => $event])
+        </div>
+    </div>
 
-    @include('v1.parts.start_content', ['header' => 'Tickets for "' . $event->eventName . '"', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.tkt4') . $event->eventName . '"',
+             'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <p>Defaults for this event only. <b style="color:red;">Note: </b>changing either of these will affect all associated
-        tickets shown below.</p>
+    <p>@lang('messages.instructions.ev_defaults')<br>
+    <b style="color:red;">@lang('messages.headers.note'): </b> @lang('messages.instructions.early_values') </p>
     <div class="col-sm-8 col-md-8">
         <table class="table table-bordered table-striped table-condensed">
             <tr>
                 <th style="text-align: left;">
-                    Early Bird End Date
-                    @include('v1.parts.tooltip', ['title' => "Upon event creation, this value is set to today().
-                                                              If you do NOT want an early bird date, leave it alone and it will be ignored.
-                                                              Otherwise, edit the date so that it is in the future."])
+                    @lang('messages.headers.earlybird') @lang('messages.headers.end') {{ trans_choice('messages.headers.date', 1) }}
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.eb_enddate')])
                 </th>
-                <th style="text-align: left;">Early Bird Percent Discount</th>
+                <th style="text-align: left;">@lang('messages.headers.earlybird') @lang('messages.headers.percent') @lang('messages.fields.disc')</th>
             </tr>
             <tr>
                 <td style="text-align: left;"><a id="earlyBirdDate" data-value="{{ $event->earlyBirdDate }}"
@@ -51,8 +55,8 @@ $default = Org::find($event->orgID);
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>
-        If you need to create a "bundle" ticket, do so after adding all of its component (non-bundle) tickets.<br/>
-        <b style="color:red;">Note:</b> Creating additional tickets is typically only necessary for Professional Development Day events.
+        @lang('messages.instructions.bundle_setup')<br/>
+        <b style="color:red;">@lang('messages.headers.note'):</b> @lang('messages.instructions.tkt_setup')
     </p>
 
     <table id="ticket_table" class="table table-striped dataTable">
@@ -60,26 +64,26 @@ $default = Org::find($event->orgID);
         <tr>
             <th style="width: 5%">#</th>
             <th style="width: 20%">
-                    Ticket Label
-                    @include('v1.parts.tooltip', ['title' => "This is what users will see when purchasing a ticket and on receipts."])
+                @lang('messages.headers.label')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.tkt_label')])
             </th>
             <th style="width: 20%">
-                Available Until
-                @include('v1.parts.tooltip', ['title' => "Tickets cannot be purchased after this date.  Default value: Event Start Date"])
+                @lang('messages.fields.availability')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.tkt_avail')])
             </th>
             {{--
             <th>Early Bird Date</th>
             <th>Early Bird Percent</th>
             --}}
-            <th>Member Price</th>
-            <th>Non-Member Price</th>
+            <th>@lang('messages.fields.memprice')</th>
+            <th>@lang('messages.fields.nonprice')</th>
             <th style="width: 20%">
-                Max Attendees
-                @include('v1.parts.tooltip', ['title' => "Set to 0 if there is no maximum."])
+                @lang('messages.headers.max')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.max_set')])
             </th>
             <th style="width: 20%">
-                Suppress?
-                @include('v1.parts.tooltip', ['title' => "Change to 'Yes' if this component ticket should NOT be individually purchasable."])
+                @lang('messages.headers.suppress')?
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.suppress')])
             </th>
         </tr>
         </thead>
@@ -91,64 +95,55 @@ $default = Org::find($event->orgID);
                 <td>
                     @if($tickets->first() == $ticket)
                         <a class="btn btn-danger btn-xs" data-toggle="tooltip"
-                                title="The original ticket cannot be deleted. Please edit as needed."
+                                title="{{ trans('messages.tooltips.tkt_no_del') }}"
                                 data-placement="right" disabled>
-                            <i class="fa fa-trash"></i>
+                            @lang('messages.symbols.trash')
                         </a>
                     @else
                         {!! Form::open(['url'=>env('APP_URL').'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
+                                'class'=>'form-horizontal', 'role'=>'form']) !!}
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
                         <input type="hidden" name="function" value="delete">
-                        <button class="btn btn-danger btn-xs" id="launchConfirm">
-                            <i class="fa fa-trash"></i>
+                        <button class="btn btn-danger btn-xs" id="launchConfirm" onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
+                            @lang('messages.symbols.trash')
                         </button>
                         {!! Form::close() !!}
                     @endif
                 </td>
-                <td><a href="#" id="ticketLabel{{ $tc }}" data-value="{{ $ticket->ticketLabel }}"
+                <td><a href="#" id="ticketLabel-{{ $tc }}" data-value="{{ $ticket->ticketLabel }}"
                        data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}"></a>
                 </td>
-                <td><a href="#" id="availabilityEndDate{{ $tc }}" data-value="{{ $ticket->availabilityEndDate }}"
+                <td><a href="#" id="availabilityEndDate-{{ $tc }}" data-value="{{ $ticket->availabilityEndDate }}"
                        data-url="{{ env('APP_URL') }}{{ "/ticket/" . $ticket->ticketID }}"
                        data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
                        data-viewformat="MMM D, YYYY h:mm A"
-                       data-title="When should ticket sales end for this event?"
-                       data-pk="{{ $ticket->ticketID }}"></a></td>
-                {{--
-                // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
-                <td><a href="#" id="earlyBirdEndDate{{ $tc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                       data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
-                       data-viewformat="MMM D, YYYY h:mm A"
-                       data-title="When should Early Bird pricing end for this event?"
+                       data-title="{{ trans('messages.tooltips.sales_end') }}"
                        data-pk="{{ $ticket->ticketID }}"></a></td>
                 <td>
-                    <a href="#" id="earlyBirdPercent{{ $tc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                       data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
-                </td>
-                --}}
-                <td>
-                    <i class="fa fa-dollar"></i>
-                    <a href="#" id="memberBasePrice{{ $tc }}" data-value="{{ $ticket->memberBasePrice }}"
+                    @lang('messages.symbols.cur')
+                    <a href="#" id="memberBasePrice-{{ $tc }}" data-value="{{ $ticket->memberBasePrice }}"
                        data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->memberBasePrice }}</a>
                 </td>
                 <td>
-                    <i class="fa fa-dollar"></i>
-                    <a href="#" id="nonmbrBasePrice{{ $tc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
+                    @lang('messages.symbols.cur')
+                    <a href="#" id="nonmbrBasePrice-{{ $tc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
                        data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->nonmbrBasePrice }}</a>
                 </td>
-                <td><a href="#" id="maxAttendees{{ $tc }}" data-value="{{ $ticket->maxAttendees }}"
+                <td><a href="#" id="maxAttendees-{{ $tc }}" data-value="{{ $ticket->maxAttendees }}"
                        data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                        data-pk="{{ $ticket->ticketID }}">{{ $ticket->maxAttendees }}</a>
                 </td>
-                <td><a href="#" id="isSuppressed{{ $tc }}" data-value="{{ $ticket->isSuppressed }}"
-                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                       data-pk="{{ $ticket->ticketID }}"></a>
+                <td>
+                    @if($tickets->first() == $ticket && count($tickets) == 1)
+                        @lang('messages.yesno_check.no')
+                    @else
+                        <a href="#" id="isSuppressed-{{ $tc }}" data-value="{{ $ticket->isSuppressed }}"
+                           data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                           data-pk="{{ $ticket->ticketID }}"></a>
+                    @endif
                 </td>
             </tr>
         @endforeach
@@ -158,32 +153,30 @@ $default = Org::find($event->orgID);
     <br/>
     <div class="col-md-4 col-sm-6 col-xs-12">
         <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
-                data-target="#ticket_modal">Add Tickets
+                data-target="#ticket_modal">@lang('messages.buttons.add_tkt')
         </button>
-        <a href="/events" class="btn btn-default">Return to Event Listing</a>
+        <a href="{{ env('APP_URL') }}/events" class="btn btn-default">@lang('messages.buttons.return')</a>
     </div>
     <div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
         @if($event->hasTracks > 0)
-            <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">Edit Tracks &amp; Sessions</a>
+            <a href="{{ env('APP_URL') }}/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">@lang('messages.buttons.t&s_edit')</a>
         @endif
     </div>
     @include('v1.parts.end_content')
 
     @if(count($bundles)>0)
-        @include('v1.parts.start_content', ['header' => 'Bundle Tickets for "' . $event->eventName . '"', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+        @include('v1.parts.start_content',
+                 ['header' => trans_choice('messages.headers.bundles', count($bundles)) . '"' . $event->eventName . '"',
+                  'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
         <table id="ticket_table" class="table table-striped dataTable">
             <thead>
             <tr>
                 <th style="width: 5%">#</th>
-                <th style="width: 20%">Ticket Label</th>
-                <th>Available Until</th>
-                {{--
-                <th>Early Bird Date</th>
-                <th>Early Bird Percent</th>
-                --}}
-                <th>Member Price</th>
-                <th>Non-Member Price</th>
+                <th style="width: 20%">@lang('messages.headers.label')</th>
+                <th>@lang('messages.fields.availability')</th>
+                <th>@lang('messages.fields.memprice')</th>
+                <th>@lang('messages.fields.nonprice')</th>
             </tr>
             </thead>
             <tbody>
@@ -193,48 +186,35 @@ $default = Org::find($event->orgID);
                 <tr>
                     <td>
                         {!! Form::open(['url'=>env('APP_URL').'/bundle/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("Are you sure?")']) !!}
+                                'class'=>'form-horizontal', 'role'=>'form']) !!}
 
-                        <button class="btn btn-danger btn-xs" id="launchConfirm">
-                            <i class="fa fa-trash"></i></button>
+                        <button class="btn btn-danger btn-xs" id="launchConfirm" onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
+                            @lang('messages.symbols.trash')
+                        </button>
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
                         <input id="myDelete" type="submit" value="Go" class="hidden"/>
                         {!! Form::close() !!}
                     </td>
-                    <td><a href="#" id="ticketLabel{{ $tc+$bc }}" data-value="{{ $ticket->ticketLabel }}"
+                    <td><a href="#" id="ticketLabel-{{ $tc+$bc }}" data-value="{{ $ticket->ticketLabel }}"
                            data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-pk="{{ $ticket->ticketID }}">{{ $ticket->ticketLabel }}</a>
                     </td>
-                    <td><a href="#" id="availabilityEndDate{{ $tc+$bc }}"
+                    <td><a href="#" id="availabilityEndDate-{{ $tc+$bc }}"
                            data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-value="{{ $ticket->availabilityEndDate }}"
                            data-template="MMM DD YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
                            data-viewformat="MMM D, YYYY h:mm A"
-                           data-title="When should ticket sales end for this event?"
+                           data-title="{{ trans('messages.tooltips.sales_end') }}"
                            data-pk="{{ $ticket->ticketID }}"></a></td>
-        {{--
-        // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
-            <td><a href="#" id="earlyBirdEndDate{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdEndDate }}"
-                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                   data-template="MMM D YYYY h:mm A" data-format="YYYY-MM-DD HH:mm"
-                   data-viewformat="MMM D, YYYY h:mm A"
-                   data-title="When should Early Bird pricing end for this event?"
-                   data-pk="{{ $ticket->ticketID }}"></a></td>
             <td>
-                <a href="#" id="earlyBirdPercent{{ $tc+$bc }}" data-value="{{ $ticket->earlyBirdPercent }}"
-                   data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
-                   data-pk="{{ $ticket->ticketID }}">{{ $ticket->earlyBirdPercent }}</a>
-            </td>
-            --}}
-            <td>
-                <i class="fa fa-dollar"></i>
-                <a href="#" id="memberBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->memberBasePrice }}"
+                @lang('messages.symbols.cur')
+                <a href="#" id="memberBasePrice-{{ $tc+$bc }}" data-value="{{ $ticket->memberBasePrice }}"
                    data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                    data-pk="{{ $ticket->ticketID }}">{{ $ticket->memberBasePrice }}</a>
             </td>
             <td>
-                <i class="fa fa-dollar"></i>
-                <a href="#" id="nonmbrBasePrice{{ $tc+$bc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
+                @lang('messages.symbols.cur')
+                <a href="#" id="nonmbrBasePrice-{{ $tc+$bc }}" data-value="{{ $ticket->nonmbrBasePrice }}"
                    data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                    data-pk="{{ $ticket->ticketID }}">{{ $ticket->nonmbrBasePrice }}</a>
             </td>
@@ -243,10 +223,10 @@ $default = Org::find($event->orgID);
         <tr>
             <td></td>
             <th>
-                Include?
-                @include('v1.parts.tooltip', ['title' => "Change to 'Yes' to add tickets to bundle."])
+                @lang('messages.headers.include')?
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.bundle_include')])
             </th>
-            <th colspan="5">Ticket</th>
+            <th colspan="5">@lang('messages.fields.ticket')</th>
         </tr>
 
 <?php
@@ -257,7 +237,7 @@ $default = Org::find($event->orgID);
         $b_tkts = DB::select($sql);
 ?>
         @foreach($b_tkts as $tkt)
-            <?php $bi++; $bid[$bi] = $ticket->ticketID; // $tkt->ticketID ?>
+<?php $bi++; $bid[$bi] = $ticket->ticketID; // $tkt->ticketID ?>
             <tr>
                 <td></td>
                 <td><a id="eventID-{{ $ticket->ticketID }}-{{ $tktIDs[$bi]=$tkt->ticketID }}"
@@ -274,14 +254,14 @@ $default = Org::find($event->orgID);
 <br/>
 <div class="col-md-4 col-sm-6 col-xs-12">
     <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
-            data-target="#ticket_modal">Add Tickets
+            data-target="#ticket_modal">@lang('messages.buttons.add_tkt')
     </button>
-    <a href="/events" class="btn btn-default">Return to Event Listing</a>
+    <a href="/events" class="btn btn-default">@lang('messages.buttons.return')</a>
 
 </div>
 <div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
     @if($event->hasTracks > 0)
-    <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">Edit Tracks &amp; Sessions</a>
+    <a href="/tracks/{{ $event->eventID }}" class="btn btn-default btn-primary">@lang('messages.buttons.t&s_edit')</a>
     @endif
 </div>
 
@@ -321,8 +301,8 @@ $default = Org::find($event->orgID);
 
     @for ($i = 1; $i <= $tc; $i++)
 
-        $("#ticketLabel{{ $i }}").editable({type: 'text'});
-        $("#availabilityEndDate{{ $i }}").editable({
+        $("#ticketLabel-{{ $i }}").editable({type: 'text'});
+        $("#availabilityEndDate-{{ $i }}").editable({
             type: 'combodate',
             combodate: {
                 minYear: '{{ date("Y") }}',
@@ -330,28 +310,16 @@ $default = Org::find($event->orgID);
                 minuteStep: 15
             }
         });
-        {{--
-            // Removed to ensure that the above fields (on Event) are used to adjust the event and its tickets
-        //$("#earlyBirdEndDate{{ $i }}").editable({
-        //    type: 'combodate',
-        //    combodate: {
-        //        minYear: '{{ date("Y") }}',
-        //        maxYear: '{{ date("Y")+3 }}',
-        //        minuteStep: 15
-        //    }
-        // });
-        // $("#earlyBirdPercent{{ $i }}").editable({type: 'text'});
-        --}}
-        $('#memberBasePrice{{ $i }}').editable({type: 'text'});
-        $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
-        $('#maxAttendees{{ $i }}').editable({type: 'text'});
 
-        $('#isSuppressed{{ $i }}').editable({
+        $('#memberBasePrice-{{ $i }}').editable({type: 'text'});
+        $('#nonmbrBasePrice-{{ $i }}').editable({type: 'text'});
+        $('#maxAttendees-{{ $i }}').editable({type: 'text'});
+
+        $('#isSuppressed-{{ $i }}').editable({
             type: 'select',
-            // autotext: auto,
             source: [
-                { value: 0, text: 'No'},
-                { value: 1, text: 'Yes'}
+                { value: 0, text: '{{ trans('messages.yesno_check.no') }}'},
+                { value: 1, text: '{{ trans('messages.yesno_check.yes') }}'}
             ]
         });
 
@@ -359,8 +327,8 @@ $default = Org::find($event->orgID);
 
         @for ($i = $tc + 1; $i <= $tc + $bc; $i++)
 
-        $("#ticketLabel{{ $i }}").editable({type: 'text'});
-        $('#availabilityEndDate{{ $i }}').editable({
+        $("#ticketLabel-{{ $i }}").editable({type: 'text'});
+        $('#availabilityEndDate-{{ $i }}').editable({
             type: 'combodate',
             combodate: {
                 minYear: '{{ date("Y") }}',
@@ -368,7 +336,7 @@ $default = Org::find($event->orgID);
                 minuteStep: 15
             }
         });
-        $('#earlyBirdEndDate{{ $i }}').editable({
+        $('#earlyBirdEndDate-{{ $i }}').editable({
             type: 'combodate',
             combodate: {
                 minYear: '{{ date("Y") }}',
@@ -376,16 +344,14 @@ $default = Org::find($event->orgID);
                 minuteStep: 15
             },
             error: function (xhr, ajaxOptions, e) {
-                //alert(xhr.status);
-                //alert(e);
             },
             success: function (data) {
                 //alert(data);
             }
         });
-        $('#earlyBirdPercent{{ $i }}').editable({type: 'text'});
-        $('#memberBasePrice{{ $i }}').editable({type: 'text'});
-        $('#nonmbrBasePrice{{ $i }}').editable({type: 'text'});
+        $('#earlyBirdPercent-{{ $i }}').editable({type: 'text'});
+        $('#memberBasePrice-{{ $i }}').editable({type: 'text'});
+        $('#nonmbrBasePrice-{{ $i }}').editable({type: 'text'});
         @endfor
     });
 </script>
@@ -403,7 +369,7 @@ $default = Org::find($event->orgID);
                 i++;
             }
             if (i >= 3) {
-                $('#tkt_submit').text("Save Tickets");
+                $('#tkt_submit').text("{{ trans_choice('messages.buttons.save_tkt', 2) }}");
             }
             if (i == 6) {
                 $('#add_row').prop('disabled', true);
@@ -419,7 +385,7 @@ $default = Org::find($event->orgID);
             }
 
             if (i <= 2) {
-                $('#tkt_submit').text("Save Ticket");
+                $('#tkt_submit').text("{{ trans_choice('messages.buttons.save_tkt', 1) }}");
                 $('#delete_row').hide();
             }
         });
@@ -468,19 +434,18 @@ $default = Org::find($event->orgID);
             setContentHeight();
         }).parent().addClass('active');
 
-        $("#add").text('Manage Event Tickets');
+        $("#add").text('{{ trans('messages.nav.ev_mt') }}');
     });
 </script>
 
 @endsection
 
 @section('modals')
-<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label"
-     aria-hidden="true">
+<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ticket_label">Add Additional Tickets</h5>
+                <h5 class="modal-title" id="ticket_label">@lang('messages.buttons.add_tkt')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -493,62 +458,62 @@ $default = Org::find($event->orgID);
                         @for($n=1;$n<=5;$n++)
                         <tr id="tkt{{ $n }}_row"<?php if($n > 1) echo(' style="display: none;"'); ?>>
                             <td class="col-md-4 col-md-offset-4">
-                                <label class="control-label">Ticket Label</label>
+                                <label class="control-label">@lang('messages.headers.label')</label>
                                 <input id='ticketLabel-{{ $n }}' name='ticketLabel-{{ $n }}' type='text'
                                        class='form-control input-sm'>
                                 <p>&nbsp;</p>
-                                <label>Max Attendees</label>
+                                <label>@lang('messages.headers.max')</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id="basic_user{{ $n }}"><i
-                                                class="fa fa-user"></i></span>
+                                                class="fas fa-user"></i></span>
                                     <input name='maxAttendees-{{ $n }}' type='text' size="5" placeholder='0'
                                            class='form-control input-sm col-md-1'
                                            aria-describedby="basic_user{{ $n }}"></div>
                                 <br>
-                                <p><label class="control-label">Bundle</label>
+                                <p><label class="control-label">@lang('messages.headers.bundle')</label>
                                     <input name='isaBundle-{{ $n }}' type='checkbox' value="1"
                                            class='form-control input-sm js-switch'></p>
                             </td>
                             <td class="col-md-4 col-md-offset-4">
-                                <label>Available Until</label>
+                                <label>@lang('messages.fields.availability')</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id="basic_cal"><i
-                                                class="fa fa-calendar"></i></span>
+                                                class="far fa-calendar"></i></span>
                                     <input name='availabilityEndDate-{{ $n }}' type='text'
                                            value="{{ $event->eventStartDate }}" class='form-control input-sm'
                                            required></div>
                                 <br/>
-                                <label>Early Bird End Date</label>
+                                <label>@lang('messages.headers.earlybird') @lang('messages.headers.end') {{ trans_choice('messages.headers.date', 1) }}</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id="basic_cal2"><i
-                                                class="fa fa-calendar"></i></span>
+                                                class="far fa-calendar"></i></span>
                                     <input type="text" id="earlyBirdEndDate-{{ $n }}"
                                            value="{{ $event->earlyBirdDate }}"
                                            name="earlyBirdEndDate-{{ $n }}" class="form-control input-sm"
                                            placeholder=""></div>
                                 <br/>
-                                <label>Early Bird Percent</label>
+                                <label>@lang('messages.headers.earlybird') @lang('messages.headers.percent')</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id="basic_cal2"><i
-                                                class="fa fa-percent"></i></span>
+                                                class="far fa-percent"></i></span>
                                     <input type="text" id="earlyBirdPercent-{{ $n }}"
                                            value="{{ $default->earlyBirdPercent }}"
                                            name="earlyBirdPercent-{{ $n }}" class="form-control input-sm"
                                            placeholder=""></div>
                             </td>
                             <td class="col-md-4 col-md-offset-4">
-                                <label>Member Price</label>
+                                <label>@lang('messages.fields.memprice')</label>
                                 <div class="input-group">
-                                    <span class="input-group-addon" id="basic_dollar{{ $n }}">$</span>
+                                    <span class="input-group-addon" id="basic_dollar{{ $n }}">@lang('messages.symbols.cur')</span>
                                     <input name='memberBasePrice-{{ $n }}'
                                            id='memberBasePrice-{{ $n }}' type='text' value='0.00'
                                            class='form-control input-sm'
                                            aria-describedby="basic_dollar{{ $n }}">
                                 </div>
                                 <br/>
-                                <label>Non-Member Price</label>
+                                <label>@lang('messages.fields.nonprice')</label>
                                 <div class="input-group">
-                                    <span class="input-group-addon" id="basic_dollar{{ $n }}2">$</span><input
+                                    <span class="input-group-addon" id="basic_dollar{{ $n }}2">@lang('messages.symbols.cur')</span><input
                                             name='nonmbrBasePrice-{{ $n }}' id='nonmbrBasePrice-{{ $n }}'
                                             type='text' value='0.00'
                                             class='form-control input-sm'
@@ -560,7 +525,7 @@ $default = Org::find($event->orgID);
 
                     </table>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <button type="button" id="add_row" class="btn btn-sm btn-warning">Add Another</button>
+                        <button type="button" id="add_row" class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
                         <button type="button" style="display: none" id="delete_row"
@@ -570,8 +535,8 @@ $default = Org::find($event->orgID);
                     </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                <button type="submit" id="tkt_submit" class="btn btn-sm btn-success">Save Ticket</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
+                <button type="submit" id="tkt_submit" class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_tkt', 1) }}</button>
                 </form>
             </div>
 

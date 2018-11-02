@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Email;
 use App\Person;
@@ -10,7 +11,7 @@ class EmailController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['show']]);
     }
 
     public function store(Request $request)
@@ -78,6 +79,19 @@ class EmailController extends Controller
             return redirect("/profile/my");
         } else {
             return redirect("/profile/" . $this->currentPerson->personID);
+        }
+    }
+
+    public function show($email){
+        $e = Email::where('emailADDR', '=', $email)->first();
+
+        if(null !== $e){
+            $u = User::where('id', '=', $e->personID)->first();
+            $p = Person::with('orgperson')->where('personID', '=', $e->personID)->first();
+            return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,
+                               'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()])));
+        } else {
+            return json_encode(array('status' => 'error', 'p' => null, 'e' => $e, 'email' => $email));
         }
     }
 }
