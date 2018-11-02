@@ -268,90 +268,96 @@ $deletion = 0;
 
 @endforeach
 
-<div class="myrow col-md-12 col-sm-12">
-<div class="col-md-2 col-sm-2" style="text-align:center;">
-<h1 class="far fa-5x fa-dollar-sign"></h1>
-</div>
-<div class="col-md-7 col-sm-7">
-@if($deletion)
-<p class="red"><b>@lang('messages.headers.note'):</b> @lang('messages.instructions.total_caveat') </p>
-@endif
-</div>
-<div class="col-md-3 col-sm-3">
-<table class="table table-striped table-condensed jambo_table">
-<thead>
-<tr>
-<th style="text-align: center;">@lang('messages.fields.total')</th>
-</tr>
-</thead>
-<tr>
-<td style="text-align: center;">
-    <b><i class="far fa-dollar-sign"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
-</td>
-</tr>
-</table>
-</div>
-</div>
+        <div class="myrow col-md-12 col-sm-12">
+            <div class="col-md-2 col-sm-2" style="text-align:center;">
+                <h1 class="far fa-5x fa-dollar-sign"></h1>
+            </div>
+            <div class="col-md-7 col-sm-7">
+                @if($deletion)
+                    <p class="red"><b>@lang('messages.headers.note'):</b> @lang('messages.instructions.total_caveat') </p>
+                @endif
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <table class="table table-striped table-condensed jambo_table">
+                    <thead>
+                    <tr>
+                        <th style="text-align: center;">@lang('messages.fields.total')</th>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td style="text-align: center;">
+                            <b><i class="far fa-dollar-sign"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr>
+        @if($event->postRegInfo)
+            <div class="col-sm-offset-2 col-sm-10">
+                @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
+                         'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+                {!! $event->postRegInfo or '' !!}
+                @include('v1.parts.end_content')
+            </div>
+        @endif
+        <hr>
 
-<hr>
-<div class="col-sm-offset-2 col-sm-10">
-<h4>@lang('messages.headers.add_to_cal')</h4>
-@if(0)
-<table class="table borderless">
-<tr>
-<td style="text-align: center;"><a target="_new" href="{{ $ics }}">
-    <h2 style="color: gold;" class="fal fa-4x fa-calendar-alt"></h2></a></td>
-<td style="text-align: center;"><a target="_new" href="{{ $google_url }}">
+        <div class="col-sm-offset-2 col-sm-10">
+            <h4>@lang('messages.headers.add_to_cal')</h4>
+            @if(0)
+                <table class="table borderless">
+                    <tr>
+                        <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
+                                <h2 style="color: gold;" class="fal fa-4x fa-calendar-alt"></h2></a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $google_url }}">
     <span class="far fa-stack fa-lg fa-2x">
     <h1 style="color: red;" class="far fa-4x fa-square fa-stack-2x"></h1>
     <h1 style="color: white;" class="far fa-1x fa-google fa-stack-1x"></h1>
     </span>
-</a></td>
-<td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}">
+                            </a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}">
     <span class="far fa-stack fa-lg fa-2x">
     <h1 style="color: rebeccapurple;" class="far fa-3x fa-square fa-stack-2x"></h1>
     <h1 style="color: white;" class="far fa-1x fa-yahoo fa-stack-1x"></h1>
     </span>
-</a></td>
-<td style="text-align: center;"><a target="_new" href="{{ $ics }}">
+                            </a></td>
+                        <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
     <span class="far fa-stack fa-lg fa-2x">
     <h2 style="color: red;" class="fal fa-3x fa-calendar-alt fa-stack-2x"></h2>
     <h2 class="fa-stack-1x" style="text-align: center; color: black; margin-top:1em;">ICS</h2>
     </span>
-</a></td>
-</tr>
-</table>
-@else
-<table class="table borderless">
-<tr valign="middle">
-<td style="text-align: center;">
-<a target="_new" href="{{ $ics }}">
-    <img height="50" width="50" src="{{ env('APP_URL') }}/images/outlook.jpg">
-</a>
-</td>
-<td style="text-align: center;">
-<a target="_new" href="{{ $google_url }}">
-    <img height="50" width="50" src="{{ env('APP_URL') }}/images/google.jpg">
-</a>
-</td>
-<td style="text-align: center;">
-<a target="_new" href="{{ $yahoo_url }}">
-    <img height="50" width="50" src="{{ env('APP_URL') }}/images/yahoo.jpg">
-</a>
-</td>
-<td style="text-align: center;">
-<a target="_new" href="{{ $ics }}">
-    <img height="50" width="50" src="{{ env('APP_URL') }}/images/ical.jpg">
-</a>
-</td>
-</tr>
-</table>
-@endif
-</div>
-<div class="col-sm-offset-2 col-sm-10">
-{!! $event->postRegInfo or '' !!}
-</div>
-</div>
+                            </a></td>
+                    </tr>
+                </table>
+            @else
+                <table class="table borderless">
+                    <tr valign="middle">
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $ics }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/outlook.jpg">
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $google_url }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/google.jpg">
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $yahoo_url }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/yahoo.jpg">
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a target="_new" href="{{ $ics }}">
+                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/ical.jpg">
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            @endif
+        </div>
+    </div>
 
 @include('v1.parts.end_content')
 @endsection
