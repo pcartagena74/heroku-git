@@ -421,8 +421,13 @@ class PersonController extends Controller
 
         if(null !== $op){
             $u = User::where('id', '=', $op->personID)->first();
+            if(null !== $u){
+                $x = $u->password ? 1: 0;
+            } else {
+                $x = 1;
+            }
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
-            return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,
+            return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $x,
                                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
         } else {
             return json_encode(array('status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id));
