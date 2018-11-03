@@ -489,7 +489,6 @@ $i = 0;
                 var result = eval(data);
                 tix = result.tix;
                 def_tick = result.def_tick;
-                //console.log(result);
             }
         });
     </script>
@@ -526,7 +525,6 @@ $i = 0;
                     $('#experience').val('0');
                     $('#tkt1st').hide();
                     change_tick(1, '');
-                    fix_pricing(1, '');
                 }
             } else {
                 myForm.reset();
@@ -832,7 +830,7 @@ $i = 0;
 {{--
                 Check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
 --}}
-                    if(tix.length > 1){
+                    if(tix.length > 0){
                         var new_price = ticket['memberBasePrice'];
                         if(ticket['ticketID'] == compare){
                             tc.innerHTML = new_price.toFixed(2);
@@ -847,7 +845,6 @@ $i = 0;
             }
 
             function change_tick(i, which) {
-                //console.log('change_tick called.');
                 tktID = document.getElementById('ticketID-'+i).value;
                 tc = document.getElementById('tcost'+i);
                 fc = document.getElementById('final'+i);
@@ -857,12 +854,10 @@ $i = 0;
                     tix.forEach((ticket) => {
                         if(ticket['ticketID'] == tktID){
                             if(os.value > 0){
-                                //console.log('Retrieving member pricing...');
                                 var new_price = ticket['memberBasePrice'];
                                 tc.innerHTML = new_price.toFixed(2);
                                 fc.innerHTML = new_price.toFixed(2);
                             } else {
-                                //console.log('Retrieving non-member pricing...');
                                 $("#ticket_type"+i).html(nonmbr);
                                 var new_price = ticket['nonmbrBasePrice'];
                                 tc.innerHTML = new_price.toFixed(2);
