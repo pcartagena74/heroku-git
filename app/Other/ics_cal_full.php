@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Org;
 use App\Location;
 
-class ics_calendar
+class ics_cal_full
 {
     private $start;
     private $end;
@@ -45,6 +45,7 @@ class ics_calendar
         $this->html        = $event->eventDescription;
         $this->org         = $org->orgName;
         $this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
+        $this->categories  = $etype->etName;
         $this->description = $org->orgName . " " . $etype->etName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
@@ -70,27 +71,28 @@ class ics_calendar
     {
 
         $this->o_string = "BEGIN:VCALENDAR\r\n".
-            "PRODID:-//mCentric-hosted " . $this->org . " Event" ."\r\n".
             "VERSION:2.0\r\n".
+            "PRODID:-//mCentric-hosted " . $this->org . " Event" ."\r\n".
             "METHOD:REQUEST\r\n".
             "BEGIN:VEVENT\r\n".
             "SUBJECT:".$this->_escapeString($this->description)."\r\n".
+            "SUMMARY:".$this->_escapeString($this->description)."\r\n".
+            "UID:". $this->uid ."\r\n".
+            "SEQUENCE:0\r\n".
             "CLASS:PUBLIC"."\r\n".
             "CREATED:".$this->created->format('Ymd\THis')."\r\n".
             "DTSTART;TZID=" . $this->tzid . ":".$this->start->format('Ymd\THis')."\r\n".
             "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\r\n".
+            "CATEGORIES:".$this->_escapeString($this->categories)."\r\n".
             "LOCATION:".$this->_escapeString($this->location)."\r\n".
-            "SUMMARY:".$this->_escapeString($this->description)."\r\n".
-            "DESCRIPTION:".$this->_escapeString($this->summary)."\r\n".
             "URL;VALUE=URI:".$this->_escapeString($this->uri)."\r\n".
-            "UID:". $this->uid ."\r\n".
-            "SEQUENCE:0\r\n".
             "TRANSP:OPAQUE"."\r\n".
             "DTSTAMP:". $this->stamp ."\r\n".
             "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\r\n".
             "ORGANIZER;CN=".$this->_escapeString($this->org).":MAILTO:" . $this->contact . "\r\n".
             "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed"."\r\n".
             "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed"."\r\n".
+            "DESCRIPTION:".$this->_escapeString($this->html)."\r\n".
             "END:VEVENT\r\n".
             "END:VCALENDAR\r\n";
     }

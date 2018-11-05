@@ -289,6 +289,11 @@ class RegFinanceController extends Controller
                     if($reg->mcentricFee > 5){
                         $reg->mcentricFee = 5;
                     }
+                } else if($reg->origcost > 0){
+                    $reg->mcentricFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
+                    if($reg->mcentricFee > 5){
+                        $reg->mcentricFee = 5;
+                    }
                 }
                 $reg->save();
                 $reg->ticket->update_count(1);
