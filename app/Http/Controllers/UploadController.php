@@ -65,7 +65,7 @@ class UploadController extends Controller
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == 'Select an event...')) {
             // go back with message
-            return Redirect::back()->with('alert-warning', 'You must select an event.');
+            return Redirect::back()->with('alert-warning', trans('messages.errors.event'));
         }
 
         switch ($what) {
@@ -148,6 +148,7 @@ class UploadController extends Controller
                                         $p->save();
                                         $u->id    = $p->personID;
                                         $u->login = $em1;
+                                        $u->name = $em1;
                                         $u->email = $em1;
                                         $u->save();
 
@@ -165,6 +166,7 @@ class UploadController extends Controller
                                         $p->save();
                                         $u->id    = $p->personID;
                                         $u->login = $em2;
+                                        $u->name = $em2;
                                         $u->email = $em2;
                                         $u->save();
 

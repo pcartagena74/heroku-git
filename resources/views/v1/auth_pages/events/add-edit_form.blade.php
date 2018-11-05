@@ -142,7 +142,7 @@ try {
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', trans('messages.headers.desc').'*', array('class' => 'control-label')) !!}
-        {!! Form::textarea('eventDescription', old('eventDescription'), array('class'=>'form-control', 'id'=>'summernote')) !!}
+        {!! Form::textarea('eventDescription', old('eventDescription'), array('class'=>'form-control rich', 'id'=>'snote')) !!}
     </div>
 
     <div class="form-group col-md-12">

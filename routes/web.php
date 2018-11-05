@@ -155,7 +155,7 @@ Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
 // Event-Registration Routes
 Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name('register_step1');
 Route::get('/regstep2/{event}/{quantity}/{dCode?}', 'RegistrationController@showRegForm');
-Route::post('/regstep3/{event}/create', 'RegistrationController@store2')->name('register_step2');
+Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
 Route::patch('/update_payment/{id}', 'RegFinanceController@update_payment')->name('accept_payment');
@@ -203,6 +203,8 @@ Route::get('/groupreg/{rf}', 'RegFinanceController@edit')->name('group_reg1');
 Route::patch('/group_reg2/{rf}', 'RegFinanceController@group_reg2');
 Route::get('/show_group_receipt/{rf}', 'RegFinanceController@show_group_receipt');
 
+// Data Download Routes
+Route::get('/excel/nametags/{event}', 'DownloadController@nametags');
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', 'BundleController@update');                                                    // Ajax

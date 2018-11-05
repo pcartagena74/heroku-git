@@ -22,8 +22,9 @@ return [
         'chk_att' => "Checkin Attendees",
         'close' => 'Close',
         'comp_reg' => 'Complete Registration',
-        'door' => 'Pay by Cash/Check at Door',
         'delete' => 'Delete',
+        'door' => 'Pay by Cash/Check at Door',
+        'down_name_tags' => 'Download Name Tag Data',
         'edit_tkt' => "Edit Tickets",
         'login' => "Login",
         't&s_edit' => "Edit Tracks & Sessions",
@@ -57,6 +58,7 @@ return [
 
     'errors' => [
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
+        'event' => 'Please select an event.',
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'no_receipt' => "The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
                          <a style='color:black;' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",

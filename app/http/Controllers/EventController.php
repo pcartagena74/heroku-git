@@ -6,6 +6,7 @@ ini_set('max_execution_time', 0);
 
 use App\Email;
 use App\OrgPerson;
+use App\Other\ics_cal_full;
 use App\RegFinance;
 use App\Registration;
 use App\User;
@@ -799,7 +800,7 @@ class EventController extends Controller
         ])->get();
         $output = '';
         foreach ($events as $e){
-            $ical = new ics_calendar($e);
+            $ical = new ics_cal_full($e);
             $output .= $ical->get();
         }
         return response($output)
@@ -807,7 +808,6 @@ class EventController extends Controller
             ->header("Cache-Control", "no-cache, must-revalidate")
             ->header("Pragma", "no-cache");
     }
-
 
     /*
      * get_tix: AJAX - returns the tickets for an event

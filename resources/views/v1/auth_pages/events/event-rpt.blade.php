@@ -154,7 +154,7 @@ foreach ($deadbeats as $r) {
             $f .= '<i class="far fa-money-check-alt"></i></button>';
         }
         array_push($dead_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-            '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $f]);
+            trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $f]);
     }
 }
 
@@ -167,7 +167,7 @@ foreach ($notregs as $r) {
     $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
     array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName,
         $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        '<i class="far fa-dollar-sign"></i> ' . number_format($r->subtotal, 2, '.', ''), $c]);
+        trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
 }
 
 if (count($reg_rows) >= 15) {
@@ -240,6 +240,11 @@ if ($event->hasTracks && $event->isSymmetric) {
     </div>
 
     @include('v1.parts.end_content')
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-sm-2">
+            <a href="{{ env('APP_URL') }}/excel/nametags/{{ $event->eventID }}" class="btn btn-primary btn-md">@lang('messages.buttons.down_name_tags')</a>
+        </div>
+    </div>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
