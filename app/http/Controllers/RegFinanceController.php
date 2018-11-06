@@ -226,8 +226,10 @@ class RegFinanceController extends Controller
                         'amount' => $rf->cost * 100,
                         'currency' => 'usd',
                         'description' => "$org->orgName " . trans('messages.fields.event') . " " .
-                                          trans('messages.headers.reg') . ": $event->eventName", 'customer' => $user->stripe_id,
-                    ));
+                                          trans('messages.headers.reg') . ": $event->eventName",
+                        'customer' => $user->stripe_id),
+                        array('idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats)
+                    );
                 } catch(Card $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
@@ -271,6 +273,7 @@ class RegFinanceController extends Controller
             $discountAmt = 0;
 
             // Cycle through event-registrations and update regStatus based on rf->status
+            // Also update full cost and fee information
             foreach ($rf->registrations as $reg) {
 
                 if ($reg->ticket->waitlisting()) {

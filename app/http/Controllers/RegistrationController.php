@@ -131,6 +131,10 @@ class RegistrationController extends Controller
                     ->orWhere('regStatus', '=', trans('messages.reg_status.pending'));
             })->with('regfinance', 'ticket', 'person')->get();
 
+        // Separating out the query because name tags should be printed even if paying 'At Door'
+        $nametags = Registration::where('eventID', '=', $event->eventID)
+            ->with('regfinance', 'ticket', 'person')->get();
+
         // list of attendees who are payment pendings so they are displayed separately
         $deadbeats = Registration::where([
             ['eventID', '=', $event->eventID],
@@ -147,7 +151,6 @@ class RegistrationController extends Controller
             ->where(function ($q) {
                 $q->where('regStatus', '=', trans('messages.headers.wait'))
                     // Even if Payment Pending is the status, they are still registered
-                    //->orWhere('regStatus', '=', trans('messages.reg_status.pending'))
                     ->orWhere('regStatus', '=', trans('messages.reg_status.progress'));
             })->with('regfinance', 'ticket')->get();
 
@@ -168,16 +171,12 @@ class RegistrationController extends Controller
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
 
-        $discountCounts = DB::table('event-registration')
+        $discountCounts = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
-            ->where([
-                ['eventID', '=', $event->eventID],
-               // ['regStatus', '=', 'Processed']
-            ])
-            ->whereNull('deleted_at')
-            ->groupBy('discountCode')
-            ->orderBy('cnt', 'desc')->get();
+            ->whereHas('regfinance', function($q) {
+                $q->where('pmtRecd', '=', 1);
+            })->groupBy('discountCode')->orderBy('cnt', 'desc')->get();
 
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
@@ -185,16 +184,14 @@ class RegistrationController extends Controller
             }
         }
 
-        $total = DB::table('event-registration')
+        //$total = DB::table('event-registration')
+        $total = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('"discountCode", count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
-            ->where([
-                ['eventID', '=', $event->eventID],
-               // ['regStatus', '=', 'Processed']
-            ])
-            ->whereNull('deleted_at')
-            ->first();
+            ->whereHas('regfinance', function($q) {
+                $q->where('pmtRecd', '=', 1);
+            })->first();
 
         $total->discountCode = 'Total';
 
@@ -207,7 +204,7 @@ class RegistrationController extends Controller
         } else {
             $tracks = null;
         }
-        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refunds',
+        return view('v1.auth_pages.events.event-rpt', compact('event', 'regs', 'notregs', 'tkts', 'refunds', 'nametags',
                                                         'deadbeats', 'discPie', 'tracks', 'discountCounts'));
     }
 
