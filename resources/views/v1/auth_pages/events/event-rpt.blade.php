@@ -72,7 +72,7 @@ if ($event->eventTypeID == 5) {
             trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
             trans('messages.headers.chap'), trans('messages.headers.role')];
     }
-    foreach ($regs as $r) {
+    foreach ($nametags as $r) {
         $p = Person::find($r->personID);
         if ($event->hasFood) {
             if (strpos($p->allergenInfo, 'Other') !== false) {
@@ -104,7 +104,7 @@ if ($event->eventTypeID == 5) {
             trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
             trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind'))];
     }
-    foreach ($regs as $r) {
+    foreach ($nametags as $r) {
         $p = Person::find($r->personID);
         if ($event->hasFood) {
             if (strpos($p->allergenInfo, 'Other') !== false) {
