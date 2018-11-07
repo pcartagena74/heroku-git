@@ -644,6 +644,7 @@ return [
         'orgStat1_tip' => 'If you do not know or do not have a PMI Member ID, leave empty.',
         'orgStat1_tip2' => 'If your PMI Member ID is incorrect, :acs',
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",
+        'pmt_msg' => "Are you sure you want to accept :method as payment?",
         'ref_days' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible.",
         'reg_cancel' => "Cancel this registration attempt.",
         'sales_end' => "When should ticket sales end for this event?",

@@ -138,11 +138,13 @@ foreach ($deadbeats as $r) {
     $f = '';
     if ($r->subtotal > 0) {
         if (Entrust::hasRole('Admin')) {
-            $f = Form::open(['method' => 'post', 'route' => ['accept_payment', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" name="' . trans('messages.buttons.check') . '" class="btn btn-success btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.cash') . '">';
+            $f = Form::open(['method' => 'patch', 'route' => ['accept_payment', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
+            $f .= '<button type="submit" value="1" name="' . trans('messages.buttons.cash') . '" onclick="return confirm(\'' . trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.cash'))]);
+            $f .= '\');" class="btn btn-success btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.cash') . '">';
             $f .= trans('messages.symbols.cash').'</button>';
 
-            $f .= '<button type="submit" name="'. trans('messages.buttons.check') . '" class="btn btn-primary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
+            $f .= '<button type="submit" value="1" name="' . trans('messages.buttons.check') . '" onclick="return confirm(\'' . trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.check'))]);
+            $f .= '\');" class="btn btn-primary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
             $f .= trans('messages.symbols.check').'</button></form>';
             $f .= Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
             $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.reg_cancel') . '">';

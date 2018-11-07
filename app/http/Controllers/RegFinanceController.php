@@ -42,6 +42,7 @@ use Carbon\Carbon;
 use App\EventDiscount;
 use App\Email;
 use Illuminate\Support\Facades\Validator;
+use Redirect;
 
 set_time_limit(0);
 
@@ -434,6 +435,29 @@ class RegFinanceController extends Controller
         }
 
         return redirect('/show_receipt/' . $rf->regID);
+    }
+
+    public function update_payment(Request $request, Registration $reg, RegFinance $rf){
+        $now = Carbon::now();
+        if($request->input('Cash')){
+            $pmt = 'cash';
+        } else {
+            $pmt = 'check';
+        }
+
+        $rf->pmtRecd = 1;
+        $rf->pmtType = strtolower($pmt);
+        $rf->status = trans('messages.reg_status.processed');
+        $rf->cancelDate = $now;
+        $rf->updaterID = Auth()->user()->id;
+        $rf->save();
+
+        $reg->regStatus = trans('messages.reg_status.processed');
+        $reg->updaterID = Auth()->user()->id;
+        $reg->updateDate = $now;
+        $reg->save();
+
+        return Redirect::back();
     }
 
     public function group_reg1(Request $request) {
