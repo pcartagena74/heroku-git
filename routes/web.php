@@ -158,7 +158,7 @@ Route::get('/regstep2/{event}/{quantity}/{dCode?}', 'RegistrationController@show
 Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
 Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
-Route::patch('/update_payment/{id}', 'RegFinanceController@update_payment')->name('accept_payment');
+Route::patch('/update_payment/{reg}/{rf}', 'RegFinanceController@update_payment')->name('accept_payment');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');                                         // Ajax
 Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
 Route::get('/show_orig/{rf}', 'RegFinanceController@show_receipt_orig');
