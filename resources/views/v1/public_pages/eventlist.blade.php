@@ -15,7 +15,7 @@ function truncate_saw($string, $limit, $break = ".", $pad = "...") {
 }
 
 if($etID == 99){
-    $event_tag = trans('messages.codes.edID99');
+    $event_tag = trans('messages.codes.etID99');
 } else {
     $event_tag = $tag->etName;
 }
@@ -32,25 +32,29 @@ if($etID == 99){
         @foreach($events as $e)
             <tr>
                 <td>
-                    <div class="col-sm-1" style="float: left;">
+                    <div class="col-xs-1" style="float: left;">
                         <img src="{{ env('APP_URL') }}/images/eventlist.jpg" alt='{{ trans('messages.codes.img') }}' height='79'
                              width='90' border='0'/>
                     </div>
-                    <div class="col-sm-11" style="text-align: left;">
-                        <div class="col-sm-9">
-                            <b>{!! $e->eventName !!}</b>
+                    <div class="col-xs-11" style="text-align: left;">
+                        <div class="col-xs-12">
+                            <div class="col-xs-9">
+                                <b>{!! $e->eventName !!}</b>
+                            </div>
+                            <div class="col-xs-3">
+                                on {{ $e->eventStartDate->toFormattedDateString() }}
+                            </div>
                         </div>
-                        <div class="col-sm-3">
-                            on {{ $e->eventStartDate->toFormattedDateString() }}
-                        </div>
-                        <div class="col-sm-12">
+                        <div class="col-xs-12 container">
                             {!! truncate_saw($e->eventDescription, 400) !!}
                         </div>
-                        <div class="col-sm-9">
-                            <b>Location: </b>{{ $e->location->locName }}
-                        </div>
-                        <div class="col-sm-3" style="text-align: center;">
-                            <a class="btn btn-danger btn-sm" href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
+                        <div class="col-xs-12">
+                            <div class="col-xs-9">
+                                <b>Location: </b>{{ $e->location->locName }}
+                            </div>
+                            <div class="col-xs-3" style="text-align: center;">
+                                <a class="btn btn-danger btn-sm" href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
+                            </div>
                         </div>
                     </div>
                 </td>
