@@ -26,7 +26,7 @@ class RegistrationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['showRegForm', 'store2', 'update', 'processRegForm']]);
+        $this->middleware('auth', ['except' => ['showRegForm', 'store', 'update', 'processRegForm']]);
     }
 
     public function index()
