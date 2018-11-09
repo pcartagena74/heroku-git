@@ -220,15 +220,16 @@ class RegistrationController extends Controller
      */
 
     public function store (Request $request, Event $event) {
+        // called by /regstep3/{event}/create
 
         $show_pass_fields = 0; $set_new_user = 0; $set_secondary_email = 0; $subcheck = 0; $sumtotal = 0;
         $quantity = request()->input('quantity');
         $total = request()->input('total');
         $token = request()->input('_token');
-        $resubmit = RegFinance::where('token', $token)->first();
 
         if (Auth::check()) {
-            $this->currentPerson = Person::find(auth()->user()->id)->load('orgperson');
+            $id = auth()->user()->id;
+            $this->currentPerson = Person::find($id)->load('orgperson');
             $authorID = $this->currentPerson->personID;
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
         } else {
@@ -244,6 +245,13 @@ class RegistrationController extends Controller
                 return back()->withInput();
             }
         }
+
+        // $resubmit set based on "unknown user" of 1 or the logged in user.
+        //  Then if the $token is already in the database, under the same personID, it's likely a dupe
+        $resubmit = RegFinance::where([
+            ['token', '=', $token],
+            ['personID', '=', $authorID]
+        ])->first();
 
         // Create or re-open the stub reg-finance record
         if(null !== $resubmit){
