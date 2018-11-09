@@ -98,7 +98,7 @@ $s3fs = new Filesystem($adapter);
                         @if($rf->cost > 0)
                             <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
-                        @else
+                        @endif
                             {!! Form::open(['method'  => 'delete',
                                             'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
                                             'data-toggle' => 'validator' ]) !!}
@@ -106,7 +106,6 @@ $s3fs = new Filesystem($adapter);
                                 @lang('messages.buttons.reg_can')
                             </button>
                             {!! Form::close() !!}
-                        @endif
 
                     @endif
 
