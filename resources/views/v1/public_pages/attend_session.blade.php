@@ -7,14 +7,25 @@
  *  - what if the sessionID is somehow incorrect... show options?
  *
  */
+
+use GrahamCampbell\Flysystem\Facades\Flysystem;
+
+try {
+    if ($org->orgLogo !== null) {
+        $s3m = Flysystem::connection('s3_media');
+        $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
+    }
+} catch (\League\Flysystem\Exception $exception) {
+    $logo = '';
+}
 ?>
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Record Your Session Attendance", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    @if($event->showLogo && $org->orgLogo !== null)
-        <img src="{{ $org->orgPath . "/" . $org->orgLogo }}" height="50">
+    @if($event->showLogo && $logo)
+        <img src="{{ $logo }}" height="50">
     @endif
     <h2>Event: {{ $event->eventName }}</h2>
     <b>Session: {{ $session->sessionName }}</b>

@@ -183,10 +183,11 @@ class RegSessionController extends Controller
         return redirect('/upcoming');
     }
 
-    public function update(Request $request, EventSession $session)
+    public function store_session (Request $request, EventSession $session)
     {
         // 1) Receive the check-in with $regID
-        // 2) Update the RegSession instance, and
+        // 2) Update the RegSession instance,
+        //    OR create it if it doesn't exist, and
         // 3) Return the individual survey
 
         $regID = request()->input('regID');
@@ -196,6 +197,18 @@ class RegSessionController extends Controller
             ['eventID', '=', request()->input('eventID')],
             ['sessionID', '=', $session->sessionID]
         ])->first();
+
+        if(null === $rs){
+            // Create the RegSession
+            $reg = Registration::find($regID);
+            $rs = new RegSession;
+            $rs->regID = $regID;
+            $rs->eventID = $session->eventID;
+            $rs->sessionID = $session->sessionID;
+            $rs->personID = $reg->personID;
+            $rs->creatorID = $reg->personID;
+            $rs->updaterID = $reg->personID;
+        }
         $rs->hasAttended = 1;
         $rs->save();
 

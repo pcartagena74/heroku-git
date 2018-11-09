@@ -323,10 +323,12 @@ class RegistrationController extends Controller
             }
 
             // Try to assign $person via OrgStat1
-            $person = Person::whereHas('orgperson', function($q) use($pmiID) {
-                $q->where('OrgStat1', '=', $pmiID);
-            })->first();
-            // If not set, try to assign $person via login (email address)
+            if($pmiID){
+                $person = Person::whereHas('orgperson', function($q) use($pmiID) {
+                    $q->where('OrgStat1', '=', $pmiID);
+                })->first();
+            }
+            // If $person is not set, try to assign $person via login (email address)
             if(null === $person) {
                 $person = Person::whereHas('emails', function($q) use($login) {
                     $q->where('emailADDR', '=', $login);
