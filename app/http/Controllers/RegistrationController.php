@@ -294,7 +294,8 @@ class RegistrationController extends Controller
             $middleName = ucwords(request()->input('middleName'.$i_cnt));
             $lastName = ucwords(request()->input('lastName'.$i_cnt));
             $login = request()->input('login'.$i_cnt);
-            $pmiID = ucwords(request()->input('OrgStat1'.$i_cnt));
+            $pmiID = trim(request()->input('OrgStat1'.$i_cnt));
+            $pmiID > 0 ?: $pmiID = null;
             $suffix = ucwords(request()->input('suffix'.$i_cnt));
             $prefName = ucwords(request()->input('prefName'.$i_cnt));
             $compName = ucwords(request()->input('compName'.$i_cnt));
