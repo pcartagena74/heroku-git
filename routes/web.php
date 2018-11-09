@@ -67,7 +67,7 @@ Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid'
 
 // Public Session-related Routes
 Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
-Route::post('/rs/{session}/edit', 'RegSessionController@update');
+Route::post('/rs/{session}/edit', 'RegSessionController@store_session');
 Route::get('/rs_survey/{rs}', 'RegSessionController@show_session_survey');
 Route::post('/rs_survey', 'RegSessionController@store');
 
@@ -79,14 +79,18 @@ Route::get('/storage/events/{filename}', function ($filename) {
     return redirect($filePath);
 });
 
-// Individual Page Routes
-// ---------------------
+// Individual Public Page Routes
+// -----------------------------
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
 Route::post('/networking', 'ActivityController@networking');                                               // Ajax
 Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
+
+
+// Private Admin Page Routes
+// -------------------------
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 
@@ -144,6 +148,9 @@ Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomple
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
 Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');                    // Ajax
+
+Route::get('/search/{string?}', 'PersonController@index2');
+Route::post('/search', 'PersonController@search');
 
 // Speaker Routes
 // ---------------------

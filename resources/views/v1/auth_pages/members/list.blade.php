@@ -6,8 +6,8 @@
 
 
 $headers = ['#', 'Name', trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
-            trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.title'),
-            trans('messages.fields.indName'), trans('messages.fields.expr'), trans('messages.fields.buttons')];
+            trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.indName'),
+            trans('messages.fields.expr'), trans('messages.fields.buttons')];
 
 count($mbr_list) > 15 ? $scroll = 1 : $scroll = 0;
 

@@ -94,6 +94,35 @@ class PersonController extends Controller
         return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
     }
 
+    public function index2($query = null) {
+
+        if($query !== null){
+            $res = Person::where('firstName', 'LIKE', "%$query%")
+                ->orWhere('personID', 'LIKE', "%$query%")
+                ->orWhere('lastName', 'LIKE', "%$query%")
+                ->orWhere('login', 'LIKE', "%$query%")
+                ->orWhereHas('orgperson', function ($q) use ($query) {
+                    $q->where('OrgStat1', 'LIKE', "%$query%");
+                })
+                ->orWhereHas('emails', function ($q) use ($query) {
+                    $q->where('emailADDR', 'LIKE', "%$query%");
+                })
+                ->whereHas('orgs', function ($q) {
+                    $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+                })
+                ->with('orgperson')
+                ->select('personID', 'firstName', 'lastName', 'login')
+                ->get();
+        }
+
+        return view('v1.auth_pages.members.member_search');
+    }
+
+    public function search(Request $request) {
+        $string = $request->input('string');
+        return redirect('/search/'.$string);
+    }
+
     // Shows profile information for chosen person (or self)
     public function show($id, $modal = null)
     {
