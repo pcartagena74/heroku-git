@@ -24,4 +24,5 @@ class EventSession extends Model
     {
         return $this->belongsTo(Event::class, 'eventID');
     }
+
 }

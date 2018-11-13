@@ -130,6 +130,42 @@ class RegSessionController extends Controller
         }
     }
 
+    public function store (Request $request, Event $event){
+
+        $esID = $request->input('sessionID');
+        $id = auth()->user()->id;
+        $count = 0;
+
+        // First, delete all RegistrationSession records that were saved
+        $old_regs = RegSession::where([
+            ['eventID', '=', $event->eventID],
+            ['sessionID', '=', $esID]
+        ])->get();
+        foreach($old_regs as $o){
+            $o->delete();
+        }
+
+        // Then, cycle through all p-#-# registrants to enter record
+        foreach ($request->all() as $key => $value) {
+            if(preg_match('/^p-/', $key)){
+                list($field, $personID, $regID) = array_pad(explode("-", $key, 3), 3, null);
+                $rs = new RegSession;
+                $rs->regID = $regID;
+                $rs->eventID = $event->eventID;
+                $rs->sessionID = $esID;
+                $rs->personID = $personID;
+                $rs->hasAttended = 1;
+                $rs->creatorID = $id;
+                $rs->updaterID = $id;
+                $rs->save();
+                $count++;
+            }
+        }
+
+        request()->session()->flash('alert-success', trans_choice('messages.headers.count_updated', $count, ['count' => $count]));
+        return back()->withInput(['tab' => 'tab_content7']);
+    }
+
     public function update_sessions(Request $request, Registration $reg)
     {
         // Update or create session records, set a display message, and re-display list
@@ -224,7 +260,7 @@ class RegSessionController extends Controller
         return view('v1.public_pages.session_survey', compact('rs', 'session', 'event', 'org'));
     }
 
-    public function store(Request $request)
+    public function store_survey (Request $request)
     {
         // Response from /rs_survey post
 

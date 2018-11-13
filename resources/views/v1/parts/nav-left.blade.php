@@ -79,8 +79,9 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-                        || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                    @if((Entrust::hasRole($currentOrg->orgName) &&
+                            (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('settings-management')))
+                        || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-university"></i> @lang('messages.nav.org_set')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -96,8 +97,8 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
-                        || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                    @if((Entrust::hasRole($currentOrg->orgName) && (Entrust::hasRole('Board')|| Entrust::can('event-management')))
+                        || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-calendar-alt"></i> @lang('messages.nav.ev_mgmt')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -109,8 +110,9 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('speaker-management'))
-                        || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                    @if((Entrust::hasRole($currentOrg->orgName) &&
+                            (Entrust::hasRole('Board') || Entrust::can('event-management') || Entrust::can('speaker-management')))
+                        || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-microphone"></i> @lang('messages.nav.spk_mgmt')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -121,11 +123,12 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('member-management'))
-                        || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                    @if((Entrust::hasRole($currentOrg->orgName) && (Entrust::hasRole('Board')|| Entrust::can('member-management')))
+                        || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')<span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/members" id="mem">@lang('messages.nav.m_list')</a></li>
+                                <li><a href="{{ env('APP_URL') }}/search">@lang('messages.nav.m_sch')</a></li>
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 <li><a href="{{ env('APP_URL') }}/merge/p">@lang('messages.nav.m_merge') <span
                                                 class="label label-success pull-right">New</span></a></li>

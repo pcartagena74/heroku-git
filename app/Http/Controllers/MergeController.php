@@ -171,6 +171,7 @@ class MergeController extends Controller
      * 2. foreach $column variable with a 2, take the $model2 value
      * 3. update $model1->updaterID
      * 4. Take all emails, addresses, reg->regID, rf->regID on $model2 and move to $model1
+     * 4b. Change the model2->person->login to "merged_$login" to avoid key conflicts
      * 5. Remove duplicates:  $model2, $orgPerson, $user
      *
      */

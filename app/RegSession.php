@@ -31,4 +31,9 @@ class RegSession extends Model
     {
         return $this->hasOne(Registration::class, 'regID', 'regID');
     }
+
+    public function person()
+    {
+        return $this->belongsTo(Person::class, 'personID', 'personID');
+    }
 }

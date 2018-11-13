@@ -21,18 +21,18 @@ $topBits = ''; // there should be topBits for this
 $rows = []; $reg_rows = []; $notreg_rows = []; $tag_rows = []; $dead_rows = []; $i = 0;
 if ($event->eventEndDate->gte($today)) {
     $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'), trans('messages.headers.this'),
-                trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
-    if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin')){
+        trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
+    if (Entrust::hasRole('Developer') || Entrust::hasRole('Admin')) {
         foreach ($tkts as $t) {
 
-            $rc = '<form action="' . env('APP_URL') . '/ticket/' .$t->ticketID.'" method="post">' . csrf_field();
+            $rc = '<form action="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" method="post">' . csrf_field();
             $rc .= '<input type="hidden" name="value" value="1">';
             $rc .= '<input type="hidden" name="name" value="regCount-' . $t->ticketID . '">';
             $rc .= '<button class="btn btn-danger btn-xs" id="launchConfirm">Go</button></form>';
 
-            $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' .$t->ticketID.'" data-value="'.$t->regCount.
-                '" data-url="' . env('APP_URL') . '/ticket/' .$t->ticketID.
-                '" data-pk="'.$t->ticketID.'"></a>';
+            $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
+                '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID .
+                '" data-pk="' . $t->ticketID . '"></a>';
 
             $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
                 "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
@@ -47,20 +47,20 @@ if ($event->eventEndDate->gte($today)) {
     }
 } else {
     $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'),
-                trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
+        trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
     foreach ($tkts as $t) {
         array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
     }
 }
 
 $reg_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'), trans('messages.fields.ticket'),
-                trans('messages.headers.disc_code'), trans('messages.headers.reg_date'), trans('messages.headers.cost'), trans('messages.headers.reg_can')];
+    trans('messages.headers.disc_code'), trans('messages.headers.reg_date'), trans('messages.headers.cost'), trans('messages.headers.reg_can')];
 $dead_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
-                trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
-                trans('messages.headers.cost'), trans('messages.headers.pmt')];
+    trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
+    trans('messages.headers.cost'), trans('messages.headers.pmt')];
 $notreg_headers = ['RegID', trans('messages.headers.status'), trans('messages.fields.firstName'), trans('messages.fields.lastName'),
-                 trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
-                 trans('messages.headers.cost'), trans('messages.headers.reg_can')];
+    trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
+    trans('messages.headers.cost'), trans('messages.headers.reg_can')];
 
 if ($event->eventTypeID == 5) {
     if ($event->hasFood) {
@@ -127,12 +127,17 @@ if ($event->eventTypeID == 5) {
     }
 }
 
+$p = null;
+
 foreach ($regs as $r) {
 
-    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
+    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
+    $c = $v->render();
     array_push($reg_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
-               $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
+        $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
 }
+
+$c = null;
 
 foreach ($deadbeats as $r) {
     $f = '';
@@ -141,14 +146,14 @@ foreach ($deadbeats as $r) {
             $f = Form::open(['method' => 'patch', 'route' => ['accept_payment', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
             $f .= '<button type="submit" value="1" name="' . trans('messages.buttons.cash') . '" onclick="return confirm(\'' . trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.cash'))]);
             $f .= '\');" class="btn btn-success btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.cash') . '">';
-            $f .= trans('messages.symbols.cash').'</button>';
+            $f .= trans('messages.symbols.cash') . '</button>';
 
             $f .= '<button type="submit" value="1" name="' . trans('messages.buttons.check') . '" onclick="return confirm(\'' . trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.check'))]);
             $f .= '\');" class="btn btn-primary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
-            $f .= trans('messages.symbols.check').'</button></form>';
+            $f .= trans('messages.symbols.check') . '</button></form>';
             $f .= Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
             $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.reg_cancel') . '">';
-            $f .= trans('messages.symbols.trash') .'</button></form>';
+            $f .= trans('messages.symbols.trash') . '</button></form>';
         } else {
             $f .= '<button type="submit" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.no_auth') . '">';
             $f .= '<i class="far fa-money-bill-wave"></i></button>';
@@ -166,7 +171,8 @@ foreach ($notregs as $r) {
     //$f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="'. trans('messages.tooltips.reg_cancel') . '">';
     //$f .= '<i class="far fa-trash-alt"></i></button></form>';
 
-    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
+    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
+    $c = $v->render();
     array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName,
         $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
@@ -191,7 +197,7 @@ if (count($tag_rows) >= 15) {
 }
 
 $disc_headers = [trans('messages.headers.code'), trans('messages.fields.count'), trans('messages.headers.cost'),
-                 trans('messages.headers.ccfee'), trans('messages.headers.handling'), trans('messages.headers.net')];
+    trans('messages.headers.ccfee'), trans('messages.headers.handling'), trans('messages.headers.net')];
 $disc_rows = [];
 
 foreach ($discPie as $d) {
@@ -207,15 +213,17 @@ if ($event->hasTracks && $event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
     $width = (integer)85 / $event->hasTracks;
     $mw = (integer)90 / $event->hasTracks;
-    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') .'</a>';
+    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') . '</a>';
 } elseif ($event->hasTracks) {
     $columns = $event->hasTracks * 3;
     $width = (integer)80 / $event->hasTracks;
     $mw = (integer)85 / $event->hasTracks;
-    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') .'</a>';
+    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') . '</a>';
 } else {
     $stats = trans('messages.fields.ticket') . " " . trans('messages.headers.stats');
 }
+
+$es = $event->default_session();
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -244,30 +252,43 @@ if ($event->hasTracks && $event->isSymmetric) {
     @include('v1.parts.end_content')
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="col-sm-2">
-            <a href="{{ env('APP_URL') }}/excel/nametags/{{ $event->eventID }}" class="btn btn-primary btn-md">@lang('messages.buttons.down_name_tags')</a>
+            <a href="{{ env('APP_URL') }}/excel/nametags/{{ $event->eventID }}"
+               class="btn btn-primary btn-md">@lang('messages.buttons.down_name_tags')</a>
+        </div>
+        <div class="col-sm-2">
+            <a href="{{ env('APP_URL') }}/excel/pdudata/{{ $event->eventID }}"
+               class="btn btn-primary btn-md">@lang('messages.buttons.down_PDU_list')</a>
         </div>
     </div>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             <li class="active"><a href="#tab_content1" id="attendees-tab" data-toggle="tab"
-                                  aria-expanded="true"><b>@lang('messages.headers.reged') {{ trans_choice('messages.headers.att', 2) }}</b></a></li>
+                                  aria-expanded="true"><b>@lang('messages.headers.reged') {{ trans_choice('messages.headers.att', 2) }}</b></a>
+            </li>
             @if(count($deadbeats) > 0)
-            <li class=""><a href="#tab_content6" id="pending-tab" data-toggle="tab"
-                                  aria-expanded="true"><b>@lang('messages.headers.doored')</b></a></li>
+                <li class=""><a href="#tab_content6" id="pending-tab" data-toggle="tab"
+                                aria-expanded="true"><b>@lang('messages.headers.doored')</b></a></li>
             @endif
             @if(count($notregs) > 0)
-            <li class=""><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
-                            aria-expanded="false"><b>@lang('messages.headers.wait') {{ strtolower(__('messages.headers.or')) }} @lang('messages.headers.int_reg')</b></a></li>
+                <li class=""><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
+                                aria-expanded="false"><b>@lang('messages.headers.wait') {{ strtolower(__('messages.headers.or')) }} @lang('messages.headers.int_reg')</b></a>
+                </li>
             @endif
-            <li class=""><a href="#tab_content2" id="finances-tab" data-toggle="tab"
-                            aria-expanded="false"><b>@lang('messages.headers.det_fd')</b></a></li>
+            @if(Entrust::hasRole('Board') || Entrust::hasRole('Development') || Entrust::hasRole('Admin'))
+                <li class=""><a href="#tab_content2" id="finances-tab" data-toggle="tab"
+                                aria-expanded="false"><b>@lang('messages.headers.det_fd')</b></a></li>
+            @endif
             @if($event->hasTracks)
                 <li class=""><a href="#tab_content3" id="sessions-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.buttons.sess_reg')</b></a></li>
             @endif
             <li class=""><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
+            @if((Entrust::hasRole('Board') || Entrust::hasRole('Development') || Entrust::hasRole('Admin')) && $event->checkin_time())
+                <li class=""><a href="#tab_content7" id="checkin-tab" data-toggle="tab"
+                                aria-expanded="false"><b>@lang('messages.headers.check_tab')</b></a></li>
+            @endif
         </ul>
 
         <div id="tab-content" class="tab-content">
@@ -327,13 +348,13 @@ if ($event->hasTracks && $event->isSymmetric) {
                             @endforeach
                         </tr>
                         @for($j=1;$j<=$event->confDays;$j++)
-<?php
+                            <?php
                             $z = EventSession::where([
                                 ['confDay', '=', $j],
                                 ['eventID', '=', $event->eventID]
                             ])->first();
                             $y = Ticket::find($z->ticketID);
-?>
+                            ?>
 
                             <tr>
                                 <th style="text-align:center; color: yellow; background-color: #2a3f54;"
@@ -342,7 +363,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                                 </th>
                             </tr>
                             @for($x=1;$x<=5;$x++)
-<?php
+                                <?php
                                 // Check to see if there are any events for $x (this row)
                                 $s = EventSession::where([
                                     ['eventID', $event->eventID],
@@ -351,18 +372,18 @@ if ($event->hasTracks && $event->isSymmetric) {
                                 ])->first();
 
                                 // As long as there are any sessions, the row will be displayed
-?>
+                                ?>
                                 @if($s !== null)
                                     <tr>
                                         @foreach($tracks as $track)
-<?php
+                                            <?php
                                             $s = EventSession::where([
                                                 ['trackID', $track->trackID],
                                                 ['eventID', $event->eventID],
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
-?>
+                                            ?>
                                             @if($s !== null)
                                                 @if($tracks->first() == $track || !$event->isSymmetric)
 
@@ -376,7 +397,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                                                 @endif
                                                 <td colspan="2" style="text-align:left; min-width:150px;
                                                         width: {{ $width }}%; max-width: {{ $mw }}%;">
-<?php
+                                                    <?php
                                                     // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
                                                     $sTotal = 0;
                                                     $sRegs =
@@ -386,7 +407,7 @@ if ($event->hasTracks && $event->isSymmetric) {
                                                                 ['er.eventID', $event->eventID]
                                                             ])->select(DB::raw('er.discountCode, count(*) as cnt'))
                                                             ->groupBy('er.discountCode')->get();
-?>
+                                                    ?>
                                                     <ul>
                                                         @foreach($sRegs as $sr)
                                                             <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
@@ -426,6 +447,55 @@ if ($event->hasTracks && $event->isSymmetric) {
                 @endif
 
             </div>
+            <div class="tab-pane fade" id="tab_content7" aria-labelledby="checkin-tab">
+                &nbsp;<br/>
+
+                @if(count($nametags)>0 && $event->hasTracks == 0)
+                    {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
+                    {!! Form::hidden('sessionID', $es->sessionID) !!}
+                    <div class="col-xs-12">
+                        <div class="col-xs-2" style="text-align: right;">
+                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.select_all')])
+                            {!! Form::checkbox('', 1, 0, array('id' => 'select_all')) !!}
+                        </div>
+                        <div class="col-xs-2">
+                            <b>@lang('messages.fields.pmi_id')</b>
+                        </div>
+                        <div class="col-xs-8">
+                            <b>{{ trans_choice('messages.headers.att', 1) }}</b>
+                        </div>
+                    </div>
+                    @foreach($nametags as $row)
+                        <div class="col-xs-12">
+                            <div class="col-xs-2" style="text-align: right;">
+<?php
+                                $checked = '';
+                                if (null !== $row->regsession->first()) {
+                                    if ($row->regsession->first()->hasAttended) {
+                                        $checked = 'checked';
+                                    }
+                                }
+?>
+                                {!! Form::checkbox('p-'.$row->person->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked)) !!}
+                            </div>
+                            <div class="col-xs-2">
+                                {{ $row->person->orgperson->OrgStat1 or 'N/A' }}
+                            </div>
+                            <div class="col-xs-8">
+                                {{ $row->person->prefName }} {{ $row->person->lastName }}
+                            </div>
+                        </div>
+                    @endforeach
+                    <div class="col-xs-10 col-xs-offset-2">
+                        {{ Form::submit(trans('messages.buttons.chk_att', array('class' => 'btn btn-primary btn-xs'))) }}
+                    </div>
+                    {!! Form::close() !!}
+
+                @else
+                    @lang('messages.instructions.no_regs')
+                @endif
+
+            </div>
         </div>
     </div>
 
@@ -456,21 +526,40 @@ include('v1.parts.ajax_console')
     @endif
 
     <script>
-            $(document).ready(function () {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.fn.editable.defaults.mode = 'popup';
-
-                @foreach ($tkts as $t)
-                $('#regCount-{{ $t->ticketID }}').editable({ type: 'text', url: '/post' });
-                $('#waitCount-{{ $t->ticketID }}').editable({type: 'text'});
-                @endforeach
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                }
             });
-        </script>
+            $.fn.editable.defaults.mode = 'popup';
 
+            @foreach ($tkts as $t)
+            $('#regCount-{{ $t->ticketID }}').editable({type: 'text', url: '/post'});
+            $('#waitCount-{{ $t->ticketID }}').editable({type: 'text'});
+            @endforeach
+        });
+    </script>
+
+    <script>
+        //redirection to a specific tab
+        $(document).ready(function () {
+            $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
+        });
+    </script>
+    <script>
+        $("#select_all").change(function () {
+            $(".allcheckbox").prop("checked", $(this).prop("checked"))
+        });
+        $(".allcheckbox").change(function () {
+            if ($(this).prop("checked") == false) {
+                $("#select-all").prop("checked", false)
+            }
+            if ($(".allcheckbox:checked").length == $(".allcheckbox").length) {
+                $("#select-all").prop("checked", true)
+            }
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
     <script>
         var ctx = document.getElementById("discPie").getContext('2d');
