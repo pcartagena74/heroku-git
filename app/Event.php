@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\EventSession;
 
 class Event extends Model
 {
@@ -88,7 +89,7 @@ class Event extends Model
 
     public function checkin_time() {
         $today = \Carbon\Carbon::now();
-        if($this->eventStartDate->diffInDays($today) <= 2){
+        if($this->eventStartDate->diffInDays($today) <= 2 || $this->eventStartDate->diffInDays($today) >= 5){
             return 1;
         } else {
             return 0;
@@ -98,5 +99,12 @@ class Event extends Model
 
     public function regCount() {
         return Registration::where('eventID', '=', $this->eventID)->count();
+    }
+
+    public function default_session() {
+        return EventSession::where([
+            ['eventID', '=', $this->eventID],
+            ['sessionName', '=', trans('messages.headers.def_sess')]
+        ])->first();
     }
 }

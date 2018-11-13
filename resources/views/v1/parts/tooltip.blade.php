@@ -14,5 +14,5 @@ if(!isset($c)){
 }
 ?>
 <a data-toggle="tooltip" title="{{ $title }}" data-placement="{{ $p }}">
-    <i class="fa fa-info-circle {{ $c }}"></i>
+    <i class="fas fa-info-square {{ $c }}"></i>
 </a>

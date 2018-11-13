@@ -94,6 +94,10 @@ class PersonController extends Controller
         return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
     }
 
+   /*
+    *  index2: placeholder for member search function
+    */
+
     public function index2($query = null) {
 
         if($query !== null){
@@ -117,6 +121,10 @@ class PersonController extends Controller
 
         return view('v1.auth_pages.members.member_search');
     }
+
+    /*
+     *  search: display for member search function
+     */
 
     public function search(Request $request) {
         $string = $request->input('string');
@@ -282,9 +290,16 @@ class PersonController extends Controller
             $person->updaterID = $updater;
             $person->save();
 
+        } elseif ($name == 'prefix') {
+            if(strlen($value) > 10) {
+                $value = substr($value, 0, 10);
+            }
+            $person->prefix = $value;
+            $person->updaterID = $updater;
+            $person->save();
         } else {
             $person->{$name}   = $value;
-            $person->updaterID = auth()->user()->id;
+            $person->updaterID = $updater;
             $person->save();
         }
         return json_encode(array('status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $personID));
@@ -319,6 +334,7 @@ class PersonController extends Controller
         $user = User::find($person->personID);
         $user->login = $email;
         $user->email = $email;
+        $user->name  = $email;
         $user->save();
 
         $e = Email::where('emailADDR', $person->login)->first();
@@ -334,8 +350,8 @@ class PersonController extends Controller
 
         $person->notify(new UndoLoginChange($person));
 
-        $header = "Success";
-        $message = "Your login was successfully changed back to $email.  A confirmation email has been sent.";
+        $header = trans('messages.headers.success');
+        $message = trans('messages.messages.undo_login', ['email' => $email]);
         return view('v1.public_pages.thanks', compact('header', 'message'));
     }
 
@@ -364,7 +380,7 @@ class PersonController extends Controller
             // update password
             $user->password = bcrypt($password);
             $user->save();
-            request()->session()->flash('alert-success', "The password was changed successfully.");
+            request()->session()->flash('alert-success', trans('messages.messages.pass_change'));
 
             // send notification
             // $person->notify(new PasswordChange($person));
@@ -372,7 +388,7 @@ class PersonController extends Controller
 
             return back()->withInput(['tab' => 'tab_content2']);
         } else {
-            request()->session()->flash('alert-danger', "Current password did not match.");
+            request()->session()->flash('alert-danger', trans('messages.messages.no_curr_pass_match'));
             return back()
                 ->withErrors($validator)
                 ->withInput(['tab' => 'tab_content2']);
@@ -415,11 +431,11 @@ class PersonController extends Controller
         // update password
         $user->password = bcrypt($password);
         $user->save();
-        request()->session()->flash('alert-success', $person->showFullName() . "'s password was changed successfully.");
+        request()->session()->flash('alert-success', trans('messages.messages.pass_change_for', ['name' => $person->showFullName()]));
 
         // send notification
-        //$person->notify(new PasswordChange($person));
-        //request()->session()->flash('alert-info', "A confirmation email was sent to $person->login.");
+        $person->notify(new PasswordChange($person));
+        request()->session()->flash('alert-info', trans('messages.messages.confirm_msg', ['name' => $person->login]));
 
         return back(); //->withInput(['tab' => 'tab_content2']);
     }

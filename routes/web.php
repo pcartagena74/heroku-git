@@ -69,7 +69,7 @@ Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid'
 Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
 Route::post('/rs/{session}/edit', 'RegSessionController@store_session');
 Route::get('/rs_survey/{rs}', 'RegSessionController@show_session_survey');
-Route::post('/rs_survey', 'RegSessionController@store');
+Route::post('/rs_survey', 'RegSessionController@store_survey');
 
 Route::get('/checkin/{event}/{session?}', 'RegSessionController@volunteer_checkin');
 Route::post('/process_checkin', 'RegSessionController@process_checkin');
@@ -87,6 +87,7 @@ Route::post('/networking', 'ActivityController@networking');                    
 Route::get('/home', 'ActivityController@index');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
+Route::post('/event_checkin/{event}', 'RegSessionController@store')->name('default_sess_checkin');
 
 
 // Private Admin Page Routes
@@ -212,6 +213,7 @@ Route::get('/show_group_receipt/{rf}', 'RegFinanceController@show_group_receipt'
 
 // Data Download Routes
 Route::get('/excel/nametags/{event}', 'DownloadController@nametags');
+Route::get('/excel/pdudata/{event}', 'DownloadController@pdu_list');
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', 'BundleController@update');                                                    // Ajax

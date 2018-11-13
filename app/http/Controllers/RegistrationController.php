@@ -133,7 +133,9 @@ class RegistrationController extends Controller
 
         // Separating out the query because name tags should be printed even if paying 'At Door'
         $nametags = Registration::where('eventID', '=', $event->eventID)
-            ->with('regfinance', 'ticket', 'person')->get();
+            ->with('regfinance', 'ticket', 'person', 'person.orgperson', 'regsession', 'event')
+            ->orderBy('registeredBy')
+            ->get();
 
         // list of attendees who are payment pendings so they are displayed separately
         $deadbeats = Registration::where([
