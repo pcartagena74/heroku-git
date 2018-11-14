@@ -231,6 +231,10 @@ class RegistrationController extends Controller
 
         if (Auth::check()) {
             $id = auth()->user()->id;
+            $u = User::find($id);
+            if($u->password === null){
+                $show_pass_fields = 1;
+            }
             $this->currentPerson = Person::find($id)->load('orgperson');
             $authorID = $this->currentPerson->personID;
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;

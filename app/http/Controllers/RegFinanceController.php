@@ -65,7 +65,7 @@ class RegFinanceController extends Controller
         $show_pass_fields = 0;
         $today = Carbon::now()->format('n/j/Y');
         $u = User::find(auth()->user()->id);
-        if ($u->createDate->format('n/j/Y') == $today && $u->password === null) {
+        if ($u->password === null) {
             $show_pass_fields = 1;
         }
         try {
