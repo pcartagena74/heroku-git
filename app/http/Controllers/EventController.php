@@ -55,22 +55,24 @@ class EventController extends Controller
                         GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                         ORDER BY e.eventStartDate ASC";
 
-        /*
-
-        This is the equivalent of the sql script above.  Just need to add 7-10 days to the start date
+/*
+        //This is the equivalent of the sql script above.  Just need to add 7-10 days to the start date
         $cs = Event::where([
             ['org-event.orgID', $this->currentPerson->defaultOrgID],
-            ['eventStartDate', '>=', $today]
         ])
+            ->where(function($q) use ($today) {
+                $q->orWhere('eventEndDate', '>=', $today);
+                $q->orWhereBetween('eventStartDate', [$today->addDays(-5), $today]);
+            })
             ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
-            ->with('registrations')
-            ->select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive', 'hasTracks', 'etName', 'slug')
+            ->with('registrations', 'event_type')
+            ->select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks')
             ->withCount('registrations')
             ->orderBy('eventStartDate', 'ASC')
             ->get();
 
-        */
-
+        dd($cs);
+*/
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
                             count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
@@ -474,7 +476,7 @@ class EventController extends Controller
 
             // otherwise, the ID is empty but there might be data or not
         } elseif (empty($input_loc)) {
-            if (str_len(request()->input('locName') . request()->input('addr1')) > 3) {
+            if (strlen(request()->input('locName') . request()->input('addr1')) > 3) {
                 $loc = new Location;
                 $loc->locName = request()->input('locName');
                 $loc->addr1 = request()->input('addr1');
