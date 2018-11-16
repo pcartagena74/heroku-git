@@ -469,6 +469,7 @@ class EventController extends Controller
             // if not and also not empty, grab location and save data
         } elseif ($input_loc != $event->locationID && !empty($input_loc)) {
             $loc = Location::find(request()->input('locationID'));
+            $loc->orgID = $event->orgID;
             $loc->locName = request()->input('locName');
             $loc->addr1 = request()->input('addr1');
             $loc->addr2 = request()->input('addr2');
@@ -483,6 +484,7 @@ class EventController extends Controller
         } elseif (empty($input_loc)) {
             if (strlen(request()->input('locName') . request()->input('addr1')) > 3) {
                 $loc = new Location;
+                $loc->orgID = $event->orgID;
                 $loc->locName = request()->input('locName');
                 $loc->addr1 = request()->input('addr1');
                 $loc->addr2 = request()->input('addr2');
