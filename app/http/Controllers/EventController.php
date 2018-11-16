@@ -55,7 +55,7 @@ class EventController extends Controller
                         GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                         ORDER BY e.eventStartDate ASC";
 
-/*
+
         //This is the equivalent of the sql script above.  Just need to add 7-10 days to the start date
         $cs = Event::where([
             ['org-event.orgID', $this->currentPerson->defaultOrgID],
@@ -71,8 +71,6 @@ class EventController extends Controller
             ->orderBy('eventStartDate', 'ASC')
             ->get();
 
-        dd($cs);
-*/
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
                             count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
@@ -86,11 +84,17 @@ class EventController extends Controller
                      GROUP BY e.eventStartDate, e.eventID, e.eventName, e.eventEndDate, e.isActive, e.eventStartDate
                      ORDER BY eventStartDateF DESC";
 
+        /*
+        $past = Event::where([
+                ['org-event.orgID', $this->currentPerson->defaultOrgID],
+        ]);
+        */
+
         $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
 
         $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
 //dd($past_events);
-        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
+        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person', 'cs'));
     }
 
     public function event_copy($param)
@@ -453,6 +457,7 @@ class EventController extends Controller
         // if so, grab location item and save data.
         if ($input_loc == $event->locationID) {
             $loc = Location::find($event->locationID);
+            $loc->orgID = $event->orgID;
             $loc->locName = request()->input('locName');
             $loc->addr1 = request()->input('addr1');
             $loc->addr2 = request()->input('addr2');
