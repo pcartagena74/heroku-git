@@ -281,7 +281,7 @@ $es = $event->default_session();
             @endif
             @if($event->hasTracks)
                 <li class=""><a href="#tab_content3" id="sessions-tab" data-toggle="tab"
-                                aria-expanded="false"><b>@lang('messages.buttons.sess_reg')</b></a></li>
+                                aria-expanded="false"><b>@lang('messages.tabs.sessions')</b></a></li>
             @endif
             <li class=""><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
