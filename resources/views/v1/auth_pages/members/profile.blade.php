@@ -30,9 +30,9 @@ if(Entrust::hasRole('Admin')){
 }
 
 $address_type = DB::select("select addrType as 'text', addrType as 'value' from `address-type`");
+$state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
 $email_type = DB::select("select emailType as 'text', emailType as 'value' from `email-type`");
 $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from countries");
-$state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
 $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from `phone-type`");
 
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
@@ -759,7 +759,7 @@ foreach ($array as $chap) {
                     i++;
                 }
                 if (i >= 3) {
-                    $('#addr_submit').text("Save Addresses");
+                    $('#addr_submit').text("{{ trans('messages.buttons.save_ad', 2) }}");
                 }
                 if (i == 6) {
                     $('#add_row').prop('disabled', true);
@@ -910,7 +910,7 @@ foreach ($array as $chap) {
             <div class="modal-content">
                 <form name="addresses" method="post" action="/addresses/create">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="address_label">Add Additional Addresses</h5>
+                        <h5 class="modal-title" id="address_label">@lang('messages.profile.add_addr')</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

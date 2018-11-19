@@ -39,6 +39,7 @@ return [
         'rev&pay' => 'Next: Review & Payment',
         'save_ad' => 'Save Address|Save Addresses',
         'save_disc' => 'Save Discount|Save Discounts',
+        'save_loc' => 'Save Location|Save Locations',
         'save_em' => 'Save Email|Save Emails',
         'save_et' => 'Save Event Type|Save Event Types',
         'save_tkt' => 'Save Ticket|Save Tickets',
@@ -62,7 +63,7 @@ return [
         'event' => 'Please select an event.',
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'no_receipt' => "The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
-                         <a style='color:black;' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
+                         <a style='color:black;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
         'numeric' => 'Please enter a value from 1 - 5.',
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
@@ -250,6 +251,7 @@ return [
     'headers' => [
         'add' => 'Add Event Type|Add Additional Event Types',
         'add_disc' => 'Add Additional Discount',
+        'add_loc' => 'Add Location',
         'add_to_cal' => 'Add this event to your calendar program of choice.',
         'admin' => "Admin",
         'admin_func' => "Admin Function: ",
@@ -285,6 +287,7 @@ return [
         'contact_email' => 'Event Contact Email',
         'cost' => 'Cost',
         'count' => 'Count',
+        'count_added' => "Added :count record.|Added :count records.",
         'count_updated' => "Updated :count record.|Updated :count records.",
         'credit' => "Credit Label",
         'date' => 'Date|Dates',
@@ -306,7 +309,7 @@ return [
         'early' => 'Early Bird Percent',
         'earlybird' => 'Early Bird',
         'ed&t' => "Event Date & Time",
-        'end'  => 'End',
+        'end' => 'End',
         'email' => 'Email',
         'employed' => 'Employed',
         'et' => 'Event Type|Event Types',
@@ -424,14 +427,18 @@ return [
         'ev_discounts' => "The <b style='color: red;'>non-empty discount codes</b> here are active for this event.<br>
                            Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.",
         'ev_loc' => "This is a listing of locations used for all of the events that have been entered.
-                    <ul><li><b>Note:</b> The 'Count' column shows the number of past or present events that reference this
-                    location.<br/>
-                    Deleting a location with associated events will <b class='red'>NOT</b> cause any data issues.
-                    </li>
+                    <ul>
+                    <li>You can add new locations here <b>OR</b> when adding/editing an event.</li>
                     <li>To edit any field, click on the table cell, edit the value and hit enter.</li>
+                    <li>You can use the 'Note' field to add any info you please.  <br />It will not be displayed anywhere but here.</li>
                     <li>To delete any address (completely), click on the trash can icon, and confirm when prompted. <br/>
-                        The event will no longer be listed in the add/edit event form.
-                    </li></ul>",
+                        The location will no longer be listed in the add/edit event form dropdown. <br />
+                        Deleting a location associated to events will <b class='red'>NOT</b> cause any data issues.
+                    </li>
+                    <li><b>Note:</b> The 'Count' column shows the number of past or present events that reference this
+                    location.<br/>
+                    </li>
+                    </ul>",
         'inactive' => "This event is no longer active.",
         'login' => "You have an account that we've created for you. Please click the login button. 
                      mCentric has emailed you instructions to reset your password if necessary.",
@@ -446,14 +453,14 @@ return [
         'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to
                           this event.  If you wish to add them, do it now via the button below.",
         'no_password' => "An mCentric account was found for you and its password has not been set. " .
-                          "You will need to set it and login to complete your registration. " .
-                          "Click to <a style='color: red;' href='" . env('APP_URL')."/password/reset'>reset it now.</a>",
+            "You will need to set it and login to complete your registration. " .
+            "Click to <a style='color: red;' href='" . env('APP_URL') . "/password/reset'>reset it now.</a>",
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
         'no_regs' => "There are no attendees registered for this event at this time.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",
         'not_self' => "If you are not logged in, and do not already have an account, this first ticket must be for you.",
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created." .
-                      "<br>Changes made here <b class='red'>do not</b> affect existing events.",
+            "<br>Changes made here <b class='red'>do not</b> affect existing events.",
         'postRegInfo' => "Anything added here will displayed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",
@@ -498,7 +505,7 @@ return [
         'confirm2' => 'The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
         'login_msg' => "If registering resulted in mCentric telling you that an account exists for you, login or
                         click on the 'Forgot Your Password?' link above and enter the email you used to register.<br>" .
-                        "If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.",
+            "If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.",
         'login_msg2' => "If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.",
         'loginform' => 'Login Form',
         'remember' => 'Remember Me',
@@ -509,48 +516,48 @@ return [
         'welcome' => "Welcome",
         'con_link' => "Connect Linked-In",
         'my_set' => "My Settings",
-            'ms_org' => "My Organizations",
-            'ms_dash' => "My Dashboard",
-            'ms_fut' => "My Future Events",
-            'ms_profile' => "My Profile",
-            'ms_edit' => "Edit Member Profile",
-            'ms_become' => "Become",
+        'ms_org' => "My Organizations",
+        'ms_dash' => "My Dashboard",
+        'ms_fut' => "My Future Events",
+        'ms_profile' => "My Profile",
+        'ms_edit' => "Edit Member Profile",
+        'ms_become' => "Become",
         'help' => "Help Desk",
-            'h_dash' => "Dashboard",
-            'h_active' => "Active Tickets",
-            'h_tkt' => "New Ticket",
-            'h_rpt' => "Reporting",
+        'h_dash' => "Dashboard",
+        'h_active' => "Active Tickets",
+        'h_tkt' => "New Ticket",
+        'h_rpt' => "Reporting",
         'org_set' => "Organization Settings",
-            'o_labels' => "Custom Field Labels",
-            'o_defaults' => "Event Defaults",
-            'o_upload' => "Upload Data",
-            'o_roles' => "Roles & Permissions",
+        'o_labels' => "Custom Field Labels",
+        'o_defaults' => "Event Defaults",
+        'o_upload' => "Upload Data",
+        'o_roles' => "Roles & Permissions",
         'ev_mgmt' => "Event Management",
-            'ev_manage' => "Manage Events",
-            'ev_add' => "Add Event",
-            'ev_loc' => "Location Management",
-            'ev_mt' => "Manage Event Tickets",
-            'ev_rpt' => "Event Reporting",
-            'ev_grp' => "Group Registration",
+        'ev_manage' => "Manage Events",
+        'ev_add' => "Add Event",
+        'ev_loc' => "Location Management",
+        'ev_mt' => "Manage Event Tickets",
+        'ev_rpt' => "Event Reporting",
+        'ev_grp' => "Group Registration",
         'spk_mgmt' => "Speaker Management",
-            's_list' => "Speakers List",
-            's_new' => "New Report",
+        's_list' => "Speakers List",
+        's_new' => "New Report",
         'mbr_mgmt' => "Member Management",
-            'm_list' => "Member List",
-            'm_merge' => "Merge Members",
-            'm_rpt' => "Member Report",
-            'm_sch' => "Member Search",
-            'm_pass' => "Change Password",
+        'm_list' => "Member List",
+        'm_merge' => "Merge Members",
+        'm_rpt' => "Member Report",
+        'm_sch' => "Member Search",
+        'm_pass' => "Change Password",
         'em_mktg' => "Email Marketing",
-            'e_camp' => "Campaigns",
-            'e_asset' => "Asset Library",
-            'e_list' => "List Maintenance",
-            'e_rpt' => "Reporting",
+        'e_camp' => "Campaigns",
+        'e_asset' => "Asset Library",
+        'e_list' => "List Maintenance",
+        'e_rpt' => "Reporting",
         'coming' => "Coming Soon",
-            'c_set' => "Settings",
-            'c_full' => "Full Screen",
-            'c_lock' => "Lock",
-            'c_log' => "Logout",
+        'c_set' => "Settings",
+        'c_full' => "Full Screen",
+        'c_lock' => "Lock",
+        'c_log' => "Logout",
     ],
 
     'pdus' => [
@@ -603,7 +610,7 @@ return [
         'active' => 'Active',
         'door' => 'At Door',
         'mail_broken' => "Mail is not working at the moment.  :org will email you a receipt. 
-                          See it now by going to: <a style='color:yellow;' href='". env('APP_URL')."/upcoming'>My Settings -> Future Events</a>.",
+                          See it now by going to: <a style='color:yellow;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
         'no_charge' => 'No Charge',
         'partial' => 'Partially Refunded',
         'p_canceled' => 'Partially Canceled',
