@@ -29,7 +29,8 @@ class LocationController extends Controller
                                      'city',
                                      'state',
                                      'zip',
-                                     DB::raw("(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt")
+                                     DB::raw("(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt"),
+                                     'locNote'
                                  )->get();
 
         $topBits = '';
@@ -50,8 +51,46 @@ class LocationController extends Controller
 
     public function store(Request $request)
     {
-        // responds to POST to /blah and creates, adds, stores the event
-        dd(request()->all());
+        // responds to POST to /locations/create and creates, adds, stores the event
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $count = 0;
+
+        for ($i = 1; $i <= 5; $i++) {
+            $locName = "locName-" . $i;
+            $addr1 = "addr1-" . $i;
+            $addr2 = "addr2-" . $i;
+            $city = "city-" . $i;
+            $state = "state-" . $i;
+            $zip = "zip-" . $i;
+            $cntryID = "cntryID-" . $i;
+
+            $loc = request()->input($locName);
+            $ad1 = request()->input($addr1);
+            $ad2 = request()->input($addr2);
+            $cit = request()->input($city);
+            $sta = request()->input($state);
+            $zi = request()->input($zip);
+            $cnt = request()->input($cntryID);
+
+            if (!empty($loc)) {
+                $count++;
+                $l = new Location;
+                $l->orgID = $this->currentPerson->defaultOrgID;
+                $l->locName = $loc;
+                $l->addr1 = $ad1;
+                $l->addr2 = $ad2;
+                $l->city  = $cit;
+                $l->state = $sta;
+                $l->zip   = $zi;
+                $l->countryID = $cnt;
+                $l->creatorID = $this->currentPerson->personID;
+                $l->updaterID = $this->currentPerson->personID;
+                $l->save();
+            }
+        }
+        request()->session()->flash('alert-success', trans_choice('messages.headers.count_added', ['count' => $count]));
+        return redirect(env('APP_URL')."/locations");
+
     }
 
     public function edit($id)

@@ -106,6 +106,7 @@ Route::post('/profile/{id}', 'PersonController@update');                        
 Route::post('/op/{id}', 'PersonController@update_op');                                                     // Ajax
 Route::post('/address/{id}', 'AddressController@update');
 Route::post('/addresses/create', 'AddressController@store');
+Route::post('/locations/create', 'LocationController@store');
 Route::post('/address/{id}/delete', 'AddressController@destroy');
 Route::post('/email/{id}', 'EmailController@update');
 Route::post('/emails/create', 'EmailController@store');
