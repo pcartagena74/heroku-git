@@ -99,10 +99,10 @@ class ics_cal_full
             $this->end         = $event->eventEndDate;
             $this->created     = $event->createDate;
             $this->updated     = $event->updateDate;
-            $this->html        = wordwrap($event->eventDescription, 75, "\r\n", TRUE);
+            $this->html        = $event->eventDescription;
             $this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
             $this->categories  = $etype->etName;
-            $this->description = $event->eventLabel;
+            $this->description = $event->eventName;
             $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
             $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
             $this->location    = $loc->locName . " " . $loc->addr1 . ", " . $loc->addr2 . ", " . $loc->city . ", " . $loc->state . " " . $loc->zip;
@@ -114,7 +114,7 @@ class ics_cal_full
             $this->o_string .=
                 "BEGIN:VEVENT\r\n".
                 "SUBJECT:".$this->_escapeString($this->description)."\r\n".
-                "SUMMARY:".$this->_escapeString($this->description)."\r\n".
+                "SUMMARY:".$this->_escapeString($this->summary)."\r\n".
                 "UID:". $this->uid ."\r\n".
                 "SEQUENCE:0\r\n".
                 "CLASS:PUBLIC"."\r\n".

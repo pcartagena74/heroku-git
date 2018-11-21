@@ -759,7 +759,7 @@ foreach ($array as $chap) {
                     i++;
                 }
                 if (i >= 3) {
-                    $('#addr_submit').text("{{ trans('messages.buttons.save_ad', 2) }}");
+                    $('#addr_submit').text("{{ trans_choice('messages.buttons.save_ad', 2) }}");
                 }
                 if (i == 6) {
                     $('#add_row').prop('disabled', true);

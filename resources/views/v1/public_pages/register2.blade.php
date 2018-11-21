@@ -16,28 +16,29 @@ $string = '';
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-if($event->eventTypeID == 5){ // This is a regional event so do that instead
+if ($event->eventTypeID == 5) { // This is a regional event so do that instead
     $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
-    $array    = explode(',', $chapters->regionChapters);
+    $array = explode(',', $chapters->regionChapters);
 } else {
     $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-    $array    = explode(',', $chapters->nearbyChapters);
+    $array = explode(',', $chapters->nearbyChapters);
 }
 
 $i = 0;
-foreach($array as $chap) {
-    $i++; $chap = trim($chap);
+foreach ($array as $chap) {
+    $i++;
+    $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 
-if($event->isSymmetric && $event->hasTracks) {
+if ($event->isSymmetric && $event->hasTracks) {
     $columns = ($event->hasTracks * 2) + 1;
-    $width   = number_format(85 / $event->hasTracks, 0, '', '');
-    $mw      = number_format(90 / $event->hasTracks, 0, '', '');
-} elseif($event->hasTracks) {
+    $width = number_format(85 / $event->hasTracks, 0, '', '');
+    $mw = number_format(90 / $event->hasTracks, 0, '', '');
+} elseif ($event->hasTracks) {
     $columns = $event->hasTracks * 3;
-    $width   = number_format(80 / $event->hasTracks, 0, '', '');
-    $mw      = number_format(85 / $event->hasTracks, 0, '', '');
+    $width = number_format(80 / $event->hasTracks, 0, '', '');
+    $mw = number_format(85 / $event->hasTracks, 0, '', '');
 }
 
 ?>
@@ -83,35 +84,47 @@ if($event->isSymmetric && $event->hasTracks) {
                         --}}
                     @endif
 
-                    <button id='nocard' type="submit" class="btn btn-success btn-sm">&nbsp;
-                        @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
-                            <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
+                    @if($event->acceptsCash)
+                        <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                            @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                                <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
+                            @elseif($rf->status == trans('messages.headers.wait'))
+                                <b>@lang('messages.buttons.wait')</b>
+                            @else
+                                <b>@lang('messages.buttons.comp_reg')</b>
+                            @endif
+                        </button>
+                    @else
+                        @if($rf->cost == 0)
+                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                                <b>@lang('messages.buttons.comp_reg')</b>
+                            </button>
                         @elseif($rf->status == trans('messages.headers.wait'))
-                            <b>@lang('messages.buttons.wait')</b>
-                        @else
-                            <b>@lang('messages.buttons.comp_reg')</b>
+                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                                <b>@lang('messages.buttons.wait')</b>
+                            </button>
                         @endif
-                    </button>
+                    @endif
 
                 </div>
             </div>
             @if($show_pass_fields)
-            <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
-                <div class="col-sm-6 form-group">
-                    {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_set'))) !!}
+                <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
+                    <div class="col-sm-6 form-group">
+                        {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_set'))) !!}
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_conf'))) !!}
+                    </div>
                 </div>
-                <div class="col-sm-6 form-group">
-                    {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_conf'))) !!}
-                </div>
-            </div>
             @endif
 
             @foreach($regs as $reg)
-<?php
+                <?php
                 $tcount++;
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
-?>
+                ?>
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
@@ -145,7 +158,8 @@ if($event->isSymmetric && $event->hasTracks) {
 
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     @if($reg->discountCode)
-                                        <td style="text-align: left;">@lang('messages.headers.earlybird'), {{ $rf->discountCode }}</td>
+                                        <td style="text-align: left;">@lang('messages.headers.earlybird')
+                                            , {{ $rf->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;">@lang('messages.headers.earlybird')</td>
                                     @endif
@@ -161,8 +175,10 @@ if($event->isSymmetric && $event->hasTracks) {
                                 </td>
                             </tr>
                             <tr>
-                                <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.att_info')</th>
-                                <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.event_info')</th>
+                                <th colspan="2"
+                                    style="width: 50%; text-align: left;">@lang('messages.headers.att_info')</th>
+                                <th colspan="2"
+                                    style="width: 50%; text-align: left;">@lang('messages.headers.event_info')</th>
                             </tr>
                             <tr>
                                 <td colspan="2" style="text-align: left;">
@@ -206,100 +222,108 @@ if($event->isSymmetric && $event->hasTracks) {
                                     </nobr>
                                     <br/>
                                     @if($event->eventTypeID==5)
-                                       <a id="chapterRole-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                            data-value="{{ $person->chapterRole }}"
-                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                       with: PMI
-                                            <a id="affiliation-{{ $tcount }}"
-                                               data-pk="{{ $person->personID }}"
-                                               data-value="{{ $person->affiliation }}"
-                                               data-url="{{ env('APP_URL') }}/reg_verify/{{ $person->personID }}"></a>
+                                        <a id="chapterRole-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                           data-value="{{ $person->chapterRole }}"
+                                           data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        with: PMI
+                                        <a id="affiliation-{{ $tcount }}"
+                                           data-pk="{{ $person->personID }}"
+                                           data-value="{{ $person->affiliation }}"
+                                           data-url="{{ env('APP_URL') }}/reg_verify/{{ $person->personID }}"></a>
                                     @else
-                                            @if($person->compName)
-                                                @if($person->title)
-                                                    <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                                       data-value="{{ $person->title }}"
-                                                       data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                                @else
-                                                    @lang('messages.headers.employed')
-                                                @endif
-                                                @lang('messages.headers.at') <a id="compName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                                      data-value="{{ $person->compName }}"
-                                                      data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        @if($person->compName)
+                                            @if($person->title)
+                                                <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                   data-value="{{ $person->title }}"
+                                                   data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                             @else
-                                                @if($person->title !== null)
-                                                    <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                                       data-value="{{ $person->title }}"
-                                                       data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                                @else($person->indName !== null)
-                                                    @lang('messages.headers.employed')
-                                                @endif
-                                                    @if($person->indName !== null)
-                                                        @lang('messages.headers.inthe') <a id="indName-{{ $tcount }}" data-pk="{{ $person->personID }}"
-                                                                  data-value="{{ $person->indName }}"
-                                                                  data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> @lang('messages.headers.ind') <br/>
-                                                    @endif
+                                                @lang('messages.headers.employed')
                                             @endif
-                                                @if($person->affiliation)
-                                                    <br/>@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
-                                                                             data-pk="{{ $person->personID }}"
-                                                                             data-value="{{ $person->affiliation }}"
-                                                                             data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
-                                                @endif
+                                            @lang('messages.headers.at') <a id="compName-{{ $tcount }}"
+                                                                            data-pk="{{ $person->personID }}"
+                                                                            data-value="{{ $person->compName }}"
+                                                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        @else
+                                            @if($person->title !== null)
+                                                <a id="title-{{ $tcount }}" data-pk="{{ $person->personID }}"
+                                                   data-value="{{ $person->title }}"
+                                                   data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                            @else($person->indName !== null)
+                                                @lang('messages.headers.employed')
+                                            @endif
+                                            @if($person->indName !== null)
+                                                @lang('messages.headers.inthe') <a id="indName-{{ $tcount }}"
+                                                                                   data-pk="{{ $person->personID }}"
+                                                                                   data-value="{{ $person->indName }}"
+                                                                                   data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> @lang('messages.headers.ind')
+                                                <br/>
+                                            @endif
+                                        @endif
+                                        @if($person->affiliation)
+                                            <br/>@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
+                                                                                        data-pk="{{ $person->personID }}"
+                                                                                        data-value="{{ $person->affiliation }}"
+                                                                                        data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
+                                        @endif
                                     @endif
                                 </td>
                                 <td colspan="2" style="text-align: left;">
                                     @if($reg->isFirstEvent)
                                         <b>@lang('messages.headers.isFirst')</b> <a id="firstEvent-{{ $tcount }}"
-                                                               data-pk="{{ $reg->regID }}"
-                                                               data-value="{{ $reg->isFirstEvent }}"
-                                                               data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                                    data-pk="{{ $reg->regID }}"
+                                                                                    data-value="{{ $reg->isFirstEvent }}"
+                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <br/>
                                     @endif
 
                                     <b>@lang('messages.headers.roster_add'):</b> <a id="canNetwork-{{ $tcount }}"
-                                                             data-pk="{{ $reg->regID }}"
-                                                             data-value="{{ $reg->canNetwork }}"
-                                                             data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
-                                            @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
-                                        <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
-                                                                    data-pk="{{ $reg->regID }}"
-                                                                    data-value="{{ $reg->isAuthPDU }}"
-                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                                    data-pk="{{ $reg->regID }}"
+                                                                                    data-value="{{ $reg->canNetwork }}"
+                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                    @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
+                                    <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
+                                                                                data-pk="{{ $reg->regID }}"
+                                                                                data-value="{{ $reg->isAuthPDU }}"
+                                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
                                     @if($reg->eventQuestion)
-                                        <p><b>@lang('messages.fields.spk_question'):</b> <a id="eventQuestion-{{ $tcount }}"
-                                                                        data-pk="{{ $reg->regID }}"
-                                                                        data-value="{{ $reg->eventQuestion }}"
-                                                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <p><b>@lang('messages.fields.spk_question'):</b> <a
+                                                    id="eventQuestion-{{ $tcount }}"
+                                                    data-pk="{{ $reg->regID }}"
+                                                    data-value="{{ $reg->eventQuestion }}"
+                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                         </p>
                                     @endif
 
                                     @if($reg->eventTopics)
-                                        <p><b>@lang('messages.fields.future_topics'):</b><br/> <a id="eventTopics-{{ $tcount }}"
-                                                                         data-pk="{{ $reg->regID }}"
-                                                                         data-value="{{ $reg->eventTopics }}"
-                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <p><b>@lang('messages.fields.future_topics'):</b><br/> <a
+                                                    id="eventTopics-{{ $tcount }}"
+                                                    data-pk="{{ $reg->regID }}"
+                                                    data-value="{{ $reg->eventTopics }}"
+                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                         </p>
                                     @endif
 
                                     @if($reg->cityState)
                                         <br/><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
-                                                                       data-pk="{{ $reg->regID }}"
-                                                                       data-value="{{ $reg->cityState }}"
-                                                                       data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a></br>
+                                                                                         data-pk="{{ $reg->regID }}"
+                                                                                         data-value="{{ $reg->cityState }}"
+                                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a></br>
                                     @endif
 
                                     @if($reg->specialNeeds)
                                         <b>@lang('messages.fields.spc_needs'):</b> <a id="specialNeeds-{{ $tcount }}"
-                                                                 data-pk="{{ $reg->regID }}"
-                                                                 data-value="{{ $reg->specialNeeds }}"
-                                                                 data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                                      data-pk="{{ $reg->regID }}"
+                                                                                      data-value="{{ $reg->specialNeeds }}"
+                                                                                      data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <br/>
                                     @endif
 
                                     @if($reg->allergenInfo)
                                         <b>@lang('messages.fields.diet_info'):</b> <a id="allergenInfo-{{ $tcount }}"
-                                                                data-pk="{{ $reg->regID }}"
-                                                                data-value="{{ $reg->allergenInfo }}"
-                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                                      data-pk="{{ $reg->regID }}"
+                                                                                      data-value="{{ $reg->allergenInfo }}"
+                                                                                      data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <br/>
                                         @if($reg->eventNotes)
                                             <a id="eventNotes-{{ $tcount }}" data-pk="{{ $reg->regID }}"
                                                data-value="{{ $reg->eventNotes }}"
@@ -307,9 +331,9 @@ if($event->isSymmetric && $event->hasTracks) {
                                         @endif
                                     @elseif($reg->eventNotes)
                                         <b>@lang('messages.fields.other'):</b> <a id="eventNotes-{{ $tcount }}"
-                                                                        data-pk="{{ $reg->regID }}"
-                                                                        data-value="{{ $reg->eventNotes }}"
-                                                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                                                                  data-pk="{{ $reg->regID }}"
+                                                                                  data-value="{{ $reg->eventNotes }}"
+                                                                                  data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
                                     @endif
 
                                 </td>
@@ -319,7 +343,7 @@ if($event->isSymmetric && $event->hasTracks) {
                         {{-- Display session selection stuff if sessions are attached to the ticket attached to $reg --}}
 
                         @if($event->hasTracks > 0 && $ticket->has_sessions())
-                        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg, 'suppress' => 1])
+                            @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg, 'suppress' => 1])
                         @endif
                     </div>
                 </div>
@@ -336,17 +360,29 @@ if($event->isSymmetric && $event->hasTracks) {
                                 class="card btn btn-primary btn-md">
                             <b>@lang('messages.buttons.ccpay')</b>
                         </button>
+                        <br/>
                     @endif
-                    <br />
-                    <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                        @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
-                            <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
-                        @elseif($rf->status == trans('messages.headers.wait'))
-                            <b>@lang('messages.buttons.wait')</b>
-                        @else
-                            <b>@lang('messages.buttons.comp_reg')</b>
-                        @endif
-                    </button>
+                    @if($event->acceptsCash)
+                        <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                            @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                                <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
+                            @elseif($rf->status == trans('messages.headers.wait'))
+                                <b>@lang('messages.buttons.wait')</b>
+                            @else
+                                <b>@lang('messages.buttons.comp_reg')</b>
+                            @endif
+                        </button>
+                    @else
+                            @if($rf->cost == 0)
+                                <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                                <b>@lang('messages.buttons.comp_reg')</b>
+                                </button>
+                            @elseif($rf->status == trans('messages.headers.wait'))
+                                <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                                <b>@lang('messages.buttons.wait')</b>
+                                </button>
+                            @endif
+                    @endif
 
                 </div>
                 <div class="col-md-3 col-sm-3">
@@ -394,11 +430,11 @@ if($event->isSymmetric && $event->hasTracks) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
-                    foreach($prefixes as $row) {
+                    <?php
+                    foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -411,11 +447,11 @@ if($event->isSymmetric && $event->hasTracks) {
             $('#indName-{{ $i }}').editable({
                 type: 'select',
                 source: [
-<?php
-                    foreach($industries as $row) {
+                    <?php
+                    foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -428,11 +464,11 @@ if($event->isSymmetric && $event->hasTracks) {
             $('#affiliation-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-<?php
-                    for($j = 1; $j <= count($affiliation_array); $j++) {
+                    <?php
+                    for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-?>
+                    ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -470,10 +506,10 @@ if($event->isSymmetric && $event->hasTracks) {
             $("#allergenInfo-{{ $i }}").editable({
                 type: 'checklist',
                 source: [
-<?php
-                    foreach($allergen_array as $x) {
+                    <?php
+                    foreach ($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
-} ?>
+                    } ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });

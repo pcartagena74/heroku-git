@@ -89,7 +89,7 @@ class Event extends Model
 
     public function checkin_time() {
         $today = \Carbon\Carbon::now();
-        if($this->eventStartDate->diffInDays($today) <= 2 || $this->eventStartDate->diffInDays($today) >= 5){
+        if($this->eventStartDate->diffInDays($today) <= 5 && $this->eventStartDate->diffInDays($today) >= 2){
             return 1;
         } else {
             return 0;

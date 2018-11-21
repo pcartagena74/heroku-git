@@ -16,6 +16,7 @@ use App\RegSession;
  * 2.
  */
 $today = \Carbon\Carbon::now();
+$currentOrg = \App\Org::find($event->orgID);
 $topBits = ''; // there should be topBits for this
 
 $rows = []; $reg_rows = []; $notreg_rows = []; $tag_rows = []; $dead_rows = []; $i = 0;
@@ -177,6 +178,7 @@ foreach ($notregs as $r) {
         $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
 }
+$c = null;
 
 if (count($reg_rows) >= 15) {
     $scroll = 1;
@@ -256,8 +258,10 @@ $es = $event->default_session();
                class="btn btn-primary btn-md">@lang('messages.buttons.down_name_tags')</a>
         </div>
         <div class="col-sm-2">
+            @if($event->checkin_time())
             <a href="{{ env('APP_URL') }}/excel/pdudata/{{ $event->eventID }}"
-               class="btn btn-primary btn-md">@lang('messages.buttons.down_PDU_list')</a>
+               class="btn btn-success btn-md">@lang('messages.buttons.down_PDU_list')</a>
+            @endif
         </div>
     </div>
 
@@ -285,7 +289,10 @@ $es = $event->default_session();
             @endif
             <li class=""><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
-            @if((Entrust::hasRole('Board') || Entrust::hasRole('Development') || Entrust::hasRole('Admin')) && $event->checkin_time())
+            @if($event->checkin_time() && (Entrust::hasRole($currentOrg->orgName) &&
+                    (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management')))
+                || Entrust::hasRole('Developer'))
+
                 <li class=""><a href="#tab_content7" id="checkin-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.headers.check_tab')</b></a></li>
             @endif
@@ -486,8 +493,8 @@ $es = $event->default_session();
                             </div>
                         </div>
                     @endforeach
-                    <div class="col-xs-10 col-xs-offset-2">
-                        {{ Form::submit(trans('messages.buttons.chk_att', array('class' => 'btn btn-primary btn-xs'))) }}
+                    <div class="col-xs-10 col-xs-offset-2 form-group">
+                        {!! Form::submit(trans('messages.buttons.chk_att'), ["class" => "btn btn-success btn-sm"]) !!}
                     </div>
                     {!! Form::close() !!}
 

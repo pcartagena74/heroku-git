@@ -510,6 +510,7 @@ class RegFinanceController extends Controller
                     $u = new User;
                     $u->id = $p->personID;
                     $u->login = $email;
+                    $u->name  = $email;
                     $u->email = $email;
                     $u->save();
 
