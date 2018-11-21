@@ -187,6 +187,13 @@ class PersonController extends Controller
             return redirect(env('APP_URL').'/profile/my');
         }
 
+        if($profile != $this->currentPerson){
+            $u = User::find($profile->personID);
+            if($u->password === null){
+                request()->session()->flash('alert-warning', trans('messages.instructions.no_user_pass'));
+            }
+        }
+
         $topBits = '';
 
         $prefixes = DB::table('prefixes')->get();

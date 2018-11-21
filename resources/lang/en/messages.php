@@ -457,6 +457,7 @@ return [
             "Click to <a style='color: red;' href='" . env('APP_URL') . "/password/reset'>reset it now.</a>",
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
         'no_regs' => "There are no attendees registered for this event at this time.",
+        'no_user_pass' => "This user has not set a password.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",
         'not_self' => "If you are not logged in, and do not already have an account, this first ticket must be for you.",
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created." .
