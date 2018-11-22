@@ -120,11 +120,11 @@ if ($event->isSymmetric && $event->hasTracks) {
             @endif
 
             @foreach($regs as $reg)
-                <?php
+<?php
                 $tcount++;
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
-                ?>
+?>
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">

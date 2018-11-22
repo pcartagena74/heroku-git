@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EventDiscount;
 use App\Org;
 use App\Person;
 use App\OrgPerson;
@@ -260,7 +261,7 @@ class RegistrationController extends Controller
         ])->first();
 
         // Create or re-open the stub reg-finance record
-        if(null !== $resubmit){
+        if(null !== $resubmit && $resubmit->eventID == $event->eventID){
             $rf = $resubmit;
             $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
             // if there was a resubmit, delete the old registration records and redo later...
@@ -321,7 +322,11 @@ class RegistrationController extends Controller
             $affiliation = request()->input('affiliation'.$i_cnt);
             $experience = request()->input('experience'.$i_cnt);
             $dCode = request()->input('discount_code'.$i_cnt);
-            if ($dCode === null || $dCode == " ") { $dCode = 'N/A'; }
+            $dc = EventDiscount::where([
+                ['eventID', '=', $event->eventID],
+                ['discountCODE', '=', $dCode]
+            ])->first();
+            if ($dc === null || $dCode === null || $dCode == " ") { $dCode = 'N/A'; }
             $ticketID = request()->input('ticketID-'.$i);
             $t = Ticket::find($ticketID);
             $flatamt = request()->input('flatamt'.$i_cnt);
