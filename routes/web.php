@@ -151,7 +151,7 @@ Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
 Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');                    // Ajax
 
-Route::get('/search/{string?}', 'PersonController@index2');
+Route::get('/search/{query?}', 'PersonController@index2');
 Route::post('/search', 'PersonController@search');
 
 // Speaker Routes

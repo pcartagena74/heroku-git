@@ -12,7 +12,7 @@ if(isset($id)) {
     $id = "id='$id' ";
 }
 ?>
-<div class="col-md-{{ $w1 }} col-xs-{{ $w2 }}
+<div class="col-md-{{ $w1 }} col-xs-{{ $w1 }}
         @if(isset($o))
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
         @endif
