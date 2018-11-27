@@ -4,7 +4,7 @@
  * Created: 2/2/2017
  */
 ?>
-<p>&nbsp</p>
+<p>&nbsp;</p>
 <footer>
     <div class="pull-right">
         @if(!Auth::check())
