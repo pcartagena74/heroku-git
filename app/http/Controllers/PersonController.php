@@ -6,6 +6,7 @@ use App\OrgPerson;
 use App\PersonSocialite;
 use App\Phone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Address;
 use App\Email;
@@ -24,60 +25,79 @@ class PersonController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['except' => ['oLookup']]);
+
+        $this->middleware(function (Request $request, $next) {
+            if(auth()){
+                $this->currentPerson = Person::find(auth()->user()->id);
+            }
+            return $next($request);
+        });
+    }
+
+
+    // Helper function containing
+    protected function member_bits() {
+        $topBits             = [];
+        $total_people        = Cache::get('total_people', function () {
+            return DB::table('person')
+                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
+                ])->count();
+        });
+        $individual          = trans('messages.headers.p_ind');
+        $individuals         = Cache::get('individual_data', function () use($individual) {
+
+            return DB::table('person')
+                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $individual],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
+                ])->count();
+        });
+        $student             = trans('messages.headers.p_stu');
+        $students            = Cache::get('student_data', function () use($student) {
+
+            return DB::table('person')
+                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $student],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
+                ])->count();
+        });
+        $retiree             = trans('messages.headers.p_ret');
+        $retirees            = Cache::get('retiree_data', function () use($retiree) {
+
+            return DB::table('person')
+                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $retiree],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
+                ])->count();
+        });
+
+        array_push($topBits, [3, trans('messages.headers.tot_peeps'), $total_people, '', '', '']);
+        $inds = implode(' ', array($individual, trans_choice('messages.headers.member', 2)));
+        $rets = implode(' ', array($retiree, trans_choice('messages.headers.member', 2)));
+        $stud = implode(' ', array($student, trans_choice('messages.headers.member', 2)));
+        array_push($topBits, [3, $inds, $individuals, '', '', '']);
+        array_push($topBits, [3, $rets, $retirees, '', '', '']);
+        array_push($topBits, [3, $stud, $students, '', '', '']);
+
+        return($topBits);
     }
 
     // Shows member management page
     public function index()
     {
         // responds to GET /members; This is for member management page
-        $this->currentPerson = Person::find(auth()->user()->id);
-        $topBits             = [];
-        $total_people        = Cache::get('total_people', function () {
-            return DB::table('person')
-                     ->join('org-person', 'org-person.personID', '=', 'person.personID')
-                     ->where([
-                         ['person.personID', '!=', 1],
-                         ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                     ])->count();
-        });
-        $individual          = 'Individual';
-        $individuals         = Cache::get('individual_data', function () {
-            $individual = 'Individual';
-            return DB::table('person')
-                     ->join('org-person', 'org-person.personID', '=', 'person.personID')
-                     ->where([
-                         ['person.personID', '!=', 1],
-                         ['OrgStat2', '=', $individual],
-                         ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                     ])->count();
-        });
-        $student             = 'Student';
-        $students            = Cache::get('student_data', function () {
-            $student = 'Student';
-            return DB::table('person')
-                     ->join('org-person', 'org-person.personID', '=', 'person.personID')
-                     ->where([
-                         ['person.personID', '!=', 1],
-                         ['OrgStat2', '=', $student],
-                         ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                     ])->count();
-        });
-        $retiree             = 'Retiree';
-        $retirees            = Cache::get('retiree_data', function () {
-            $retiree = 'Retiree';
-            return DB::table('person')
-                     ->join('org-person', 'org-person.personID', '=', 'person.personID')
-                     ->where([
-                         ['person.personID', '!=', 1],
-                         ['OrgStat2', '=', $retiree],
-                         ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                     ])->count();
-        });
+        //$this->currentPerson = Person::find(auth()->user()->id);
 
-        array_push($topBits, [3, 'Total People', $total_people, '', '', '']);
-        array_push($topBits, [3, $individual . " Members", $individuals, '', '', '']);
-        array_push($topBits, [3, $retiree . " Members", $retirees, '', '', '']);
-        array_push($topBits, [3, $student . " Members", $students, '', '', '']);
+        $topBits = $this->member_bits();
 
         $mbr_list = Cache::get('mbr_list', function () {
             return OrgPerson::join('person as p', 'p.personID', '=', 'org-person.personID')
@@ -100,9 +120,11 @@ class PersonController extends Controller
 
     public function index2($query = null) {
 
+        $topBits = $this->member_bits();
+
         if($query !== null){
-            $res = Person::where('firstName', 'LIKE', "%$query%")
-                ->orWhere('personID', 'LIKE', "%$query%")
+            $mbr_list = Person::where('firstName', 'LIKE', "%$query%")
+                ->orWhere('person.personID', 'LIKE', "%$query%")
                 ->orWhere('lastName', 'LIKE', "%$query%")
                 ->orWhere('login', 'LIKE', "%$query%")
                 ->orWhereHas('orgperson', function ($q) use ($query) {
@@ -114,12 +136,16 @@ class PersonController extends Controller
                 ->whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                 })
-                ->with('orgperson')
-                ->select('personID', 'firstName', 'lastName', 'login')
+                ->join('org-person as op', 'op.personID', '=', 'person.personID')
+                ->select(DB::raw("person.personID, concat(firstName, ' ', lastName) AS fullName, op.OrgStat1, op.OrgStat2, compName, 
+                           title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
+                           (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
                 ->get();
+dd($mbr_list);
+            return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
         }
 
-        return view('v1.auth_pages.members.member_search');
+        return view('v1.auth_pages.members.member_search', compact('topBits'));
     }
 
     /*

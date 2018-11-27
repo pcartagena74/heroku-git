@@ -127,16 +127,24 @@ try{
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')<span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/members" id="mem">@lang('messages.nav.m_list')</a></li>
                                 <li><a href="{{ env('APP_URL') }}/search">@lang('messages.nav.m_sch')</a></li>
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-                                <li><a href="{{ env('APP_URL') }}/merge/p">@lang('messages.nav.m_merge') <span
-                                                class="label label-success pull-right">New</span></a></li>
+                                    <li><a href="{{ env('APP_URL') }}/merge/p">@lang('messages.nav.m_merge')
+                                            <span class="label label-danger pull-right">@lang('messages.nav.b_admin')</span>
+                                        </a>
+                                    </li>
                                 @endif
-                                <li><a href="{{ env('APP_URL') }}/mbrreport">@lang('messages.nav.m_rpt')</a>
-                                    <span class="label label-success pull-right">NEW</span>
+                                <li><a href="{{ env('APP_URL') }}/members" id="mem">
+                                        @lang('messages.nav.m_list')
+                                        <span class="label label-warning pull-right">@lang('messages.nav.b_slow')</span>
+                                    </a>
                                 </li>
-                                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                                <li><a href="{{ env('APP_URL') }}/mbrreport">
+                                        @lang('messages.nav.m_rpt')
+                                        <span class="label label-success pull-right">NEW</span>
+                                    </a>
+                                </li>
+                                @if(Entrust::hasRole('Deleted') || Entrust::hasRole('Deleted'))
                                     <li><a href="{{ env('APP_URL') }}/force">@lang('messages.nav.m_pass')</a></li>
                                 @endif
                             </ul>

@@ -688,42 +688,27 @@ class RegFinanceController extends Controller
             $end = $rf->seats - 1;
             // update $rf record and each $reg record status
             foreach ($rf->registrations() as $reg){
-            //for ($i = $rf->regID - $end; $i <= $rf->regID; $i++) {
-            //    $reg = Registration::find($i);
                 $reg->regStatus = trans('messages.reg_status.processed');
-                // No one is actually, necessarily, logged in...
-                //$reg->updaterID = auth()->user()->id;
+                $reg->updaterID = auth()->user()->id;
                 $discountAmt += ($reg->origcost - $reg->subtotal);
-                $reg->save();
 
                 // Update ticket purchase on all bundle ticket members by $rf->seat
                 $ticket = Ticket::find($reg->ticketID);
-                if ($ticket->isaBundle) {
-                    $tickets = Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
-                        ->where([
-                            ['bt.bundleID', '=', $ticket->ticketID],
-                            ['event-tickets.eventID', '=', $event->eventID]
-                        ])
-                        ->get();
-                    foreach ($tickets as $t) {
-                        $t->regCount++;
-                        $t->save();
-                    }
-                } else {
-                    $ticket->regCount++;
-                    $ticket->save();
-                }
-                if ($reg->subtotal > 0) {
+                $ticket->update_count(1);
+
+                if ($reg->subtotal > 0 || $reg->cost > 0) {
                     // mCentric Handle fee = 2.9% of $rf->cost + $0.30
                     $handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
                     // capped at $5.00
                     if ($handleFee > 5) {
                         $handleFee = number_format(5, 2, '.', '');
                     }
+                    $reg->mcentricFee = $handleFee;
                     $total_handle += $handleFee;
                 }
+                $reg->save();
             }
-            // Confirmation code is:  personID-regFinance->regID/seats
+            // Confirmation code is:  personID-regID-seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
 
             // Need to set fees IF the cost > $0

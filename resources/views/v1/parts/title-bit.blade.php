@@ -51,7 +51,7 @@ switch($up){
         $color = 'green';
 }
 ?>
-<div class="col-md-2 col-sm-2 col-xs-3 tile_stats_count">
+<div class="col-xs-2 tile_stats_count">
     <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
     @if($ctext <> "")

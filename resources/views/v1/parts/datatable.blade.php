@@ -17,9 +17,9 @@ if(!isset($id)){
     $scroll == 0 ? $id = 'generic_table' : $id = 'datatable-fixed-header';
 }
 $th_count = 0; $tb_count = 0;
-//<link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
-        $width = number_format(100/count($headers), 0, '', '');
-//width: {{ $width }}%; min-width: 1px; max-width: 20%;">
+
+$width = number_format(100/count($headers), 0, '', '');
+
 ?>
 <style>
     @media only screen and (max-width: 800px) {
@@ -77,7 +77,7 @@ $th_count = 0; $tb_count = 0;
         <thead class="cf">
         <tr>
             @foreach ($headers as $header)
-                <?php $th_count++; ?>
+<?php $th_count++; ?>
                 @if(isset($hidecol[$th_count]))
                     <th style="display:none;">{{ $header }}</th>
                 @else
@@ -88,10 +88,10 @@ $th_count = 0; $tb_count = 0;
         </thead>
         <tbody>
         @foreach ($data as $row)
-            <?php $tb_count = 0; ?>
+<?php $tb_count = 0; ?>
             <tr>
                 @foreach ($row as $col)
-                    <?php $tb_count++; ?>
+<?php $tb_count++; ?>
                     @if(isset($hidecol[$tb_count]))
                             <td data-title="{{ $headers[$tb_count-1] }}" style="display: none;">{!! $col !!}</td>
                     @else

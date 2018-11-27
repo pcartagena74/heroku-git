@@ -56,7 +56,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                     @if($model1 !== null && $model2 !== null)
                                     <a href="{{ env('APP_URL') }}/merge/{{ $letter }}/{{ $model2->personID }}/{{ $model1->personID }}"
                                        class="btn btn-xs btn-success pull-right">
-                                        <i data-toggle="tooltip" title="Swap Candidates" class="fa fa-refresh"></i>
+                                        <i data-toggle="tooltip" title="Swap Candidates" class="fas fa-sync-alt"></i>
                                     </a>
                                     @endif
                                 </th>

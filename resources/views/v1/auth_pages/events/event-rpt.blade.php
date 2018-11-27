@@ -279,7 +279,7 @@ $es = $event->default_session();
                                 aria-expanded="false"><b>@lang('messages.headers.wait') {{ strtolower(__('messages.headers.or')) }} @lang('messages.headers.int_reg')</b></a>
                 </li>
             @endif
-            @if(Entrust::hasRole('Board') || Entrust::hasRole('Development') || Entrust::hasRole('Admin'))
+            @if(Entrust::hasRole('Board') || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                 <li class=""><a href="#tab_content2" id="finances-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.headers.det_fd')</b></a></li>
             @endif
