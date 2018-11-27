@@ -8,6 +8,7 @@ if(!isset($topBits)){
     $topBits = '';
 }
 ?>
+<!DOCTYPE html>
 @include('v1.parts.header')
 @yield('header')
 </head>
