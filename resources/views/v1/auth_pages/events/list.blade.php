@@ -59,7 +59,7 @@ foreach($current_events as $event) {
     }
     $eventDiscount_button =
        "<a href='$eventDiscountURL' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top' title='".
-        trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') ."'>" . trans('messages.symbols.cur') . "</i></a>";
+        trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') ."'>" . trans('messages.symbols.cur') . "</a>";
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
         '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="'. trans('messages.buttons.delete') .'">' . trans('messages.symbols.trash') . '</button>
             <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';

@@ -121,6 +121,7 @@ class PersonController extends Controller
     public function index2($query = null) {
 
         $topBits = $this->member_bits();
+        $mbr_list = null;
 
         if($query !== null){
             $mbr_list = Person::where('firstName', 'LIKE', "%$query%")
@@ -141,11 +142,11 @@ class PersonController extends Controller
                            title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
                 ->get();
-dd($mbr_list);
+
             return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
         }
 
-        return view('v1.auth_pages.members.member_search', compact('topBits'));
+        return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
     }
 
     /*
