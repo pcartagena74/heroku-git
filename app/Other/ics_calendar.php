@@ -45,7 +45,7 @@ class ics_calendar
         $this->html        = $event->eventDescription;
         $this->org         = $org->orgName;
         $this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
-        $this->description = $org->orgName . " " . $etype->etName;
+        $this->description = $org->orgName . " - " . $event->eventName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
         $this->location    = $loc->locName . " " . $loc->addr1 . ", " . $loc->addr2 . ", " . $loc->city . ", " . $loc->state . " " . $loc->zip;
