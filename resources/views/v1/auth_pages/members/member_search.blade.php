@@ -17,7 +17,7 @@ if ($mbr_list){
 
     foreach($mbr_list as $mbr) {
 
-        $profile_form = "<a target='_top' href='". env('APP_URL') . "/profile/$mbr->personID' type='button' data-toggle='tooltip' data-placement='top'
+        $profile_form = "<a target='_new' href='". env('APP_URL') . "/profile/$mbr->personID' type='button' data-toggle='tooltip' data-placement='top'
                      title='" . trans('messages.tooltips.vep') . "' class='btn btn-xs btn-primary'><i class='far fa-fw fa-edit'></i></a>";
 
         if($mbr->cnt > 0) {
@@ -96,4 +96,18 @@ if ($mbr_list){
             });
         });
     </script>
+    @include('v1.parts.footer-datatable')
+    <script>
+        $(document).ready(function() {
+            $('#member_table').DataTable({
+                "fixedHeader": true,
+                "order": [[ 0, "asc" ]]
+            });
+        });
+    </script>
+    @include('v1.parts.menu-fix', array('path' => '/search'))
+@endsection
+
+@section('modals')
+    @include('v1.modals.dynamic', ['header' => trans('messages.headers.mAct'), 'show_past' => 1])
 @endsection

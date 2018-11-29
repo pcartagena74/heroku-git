@@ -29,7 +29,7 @@ Route::get('/linkedin2', function()
 });
 */
 
-use Knp\Snappy\Pdf;
+//use Knp\Snappy\Pdf;
 
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
@@ -55,6 +55,11 @@ Route::get('/mail', function () {
 Route::get('/mtgs', function () {
     return view('v1.public_pages.details');
 })->name('mtgs');
+
+Route::get('/pmi_lookup/{org}', 'OrgPersonController@index');
+Route::post('/pmi_lookup', 'OrgPersonController@find');
+Route::get('/pmi_account/{person}', 'OrgPersonController@show');
+
 
 Route::get('/password/resetmodal', 'Auth\ResetPasswordController@showResetForm_inModal');
 Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkRequestForm_inModal');

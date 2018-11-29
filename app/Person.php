@@ -74,7 +74,7 @@ class Person extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id', 'personID');
+        return $this->belongsTo(User::class, 'personID', 'id');
     }
 
     public function defaultOrg()
