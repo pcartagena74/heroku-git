@@ -103,8 +103,8 @@ try{
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/events">@lang('messages.nav.ev_manage')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/locations">@lang('messages.nav.ev_loc')</a></li>
                                 <li><a id="add" href="{{ env('APP_URL') }}/event/create">@lang('messages.nav.ev_add')</a></li>
+                                <li><a href="{{ env('APP_URL') }}/locations">@lang('messages.nav.ev_loc')</a></li>
                                 <li><a id="grp" href="{{ env('APP_URL') }}/group">@lang('messages.nav.ev_grp')</a></li>
                             </ul>
                         </li>

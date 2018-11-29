@@ -249,6 +249,7 @@ return [
     ],
 
     'headers' => [
+        'acc_lookup' => "Account Lookup",
         'add' => 'Add Event Type|Add Additional Event Types',
         'add_disc' => 'Add Additional Discount',
         'add_loc' => 'Add Location',
@@ -376,6 +377,7 @@ return [
         'primary' => "Primary",
         'purchased' => 'Purchased on',
         'receipt' => 'Receipt',
+        'rec_sess_att' => "Record Session Attendance",
         'ref_days' => 'Event Refund Days',
         'refunded' => 'Refunded',
         'reg' => 'Registration',
@@ -401,6 +403,7 @@ return [
         'sess_tkt' => 'Sessions using Ticket',
         'std_times' => "Are the session times standard (the same) for all tracks?",
         'sub&' => "Submit & ",
+        'sub_sess_att' => "Record Session Attendance",
         'success' => "Success",
         'suppress' => "Suppress",
         't&ss' => "Track & Session Setup",
@@ -468,6 +471,16 @@ return [
         'not_self' => "If you are not logged in, and do not already have an account, this first ticket must be for you.",
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created." .
             "<br>Changes made here <b class='red'>do not</b> affect existing events.",
+        'pmiID' => "Please enter your PMI Identification Number.",
+        'pmiID_found' => "<h2>An mCentric account was found for PMI ID: :pmiID.</h2>".
+                         "The name on this account (#:id) is :name with a login of :login. <br />",
+        'pmi_pass' => "{0}The acccount password has been set. <br />" .
+                      "If you don't remember your password, you can <a class='red' href='/password/reset'>reset</a> it.  Otherwise, <a class='red' href='/login'>login</a>." .
+                      "|{1}The account password has <b class='red'>not</b> been set. <br />" .
+                      "You will need to <a class='red' href='/password/reset'>reset</a> your password.",
+        'pmi_emails' => "The following email address(es) are associated with PMI ID: :pmiID: <ul>:emails</ul><p></p>" .
+                        "If you no longer have access to the login address above, email the account id# above and your preferred login email to vpfinance@pmimassbay.org",
+        'pmiID_not_found' => "There is no mCentric account associated with PMI ID: :pmiID.",
         'postRegInfo' => "Anything added here will displayed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",

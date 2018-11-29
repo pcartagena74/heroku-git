@@ -36,7 +36,7 @@ class OrgPerson extends Model
 
     public function myperson()
     {
-        return $this->belongsTo(Person::class, 'orgID');
+        return $this->belongsTo(Person::class, 'personID');
     }
 
     public function myorg()
