@@ -19,14 +19,16 @@ try {
     $logo = '';
 }
 
-$person->user->password === null ? $set_pass = 1: $set_pass = 0;
+if($person){
+    $person->user->password === null ? $set_pass = 1: $set_pass = 0;
 
-if(count($person->emails) > 0){
-    $x = '';
-    foreach($person->emails as $e){
-        $x .= "<li>$e->emailADDR</li>";
+    if(count($person->emails) > 0){
+        $x = '';
+        foreach($person->emails as $e){
+            $x .= "<li>$e->emailADDR</li>";
+        }
+        $email_list = trans('messages.instructions.pmi_emails', ['emails' => $x, 'pmiID' => $person->orgperson->OrgStat1]);
     }
-    $email_list = trans('messages.instructions.pmi_emails', ['emails' => $x, 'pmiID' => $person->orgperson->OrgStat1]);
 }
 
 ?>
