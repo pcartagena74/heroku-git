@@ -20,6 +20,7 @@ return [
         'ccpay' => 'Pay Now by Credit Card',
         'check' => 'Check',
         'chk_att' => "Checkin Attendees",
+        'chk_walk' => "Checkin Attendees &amp; Register Walk-Ins",
         'close' => 'Close',
         'comp_reg' => 'Complete Registration',
         'delete' => 'Delete',
@@ -179,6 +180,7 @@ return [
         'isFirstRegional' => 'Is this your first Regional Event?',
         'limit' => 'Limit',
         'loc' => 'Location',
+        'loc_id' => 'Location ID',
         'loc_name' => 'Location Name',
         'lastName' => 'Last Name',
         'login' => 'Email Address',
@@ -203,6 +205,7 @@ return [
         'past_events' => "Past Events",
         'pdu_sub' => 'PDU Submission',
         'pmi_id' => 'PMI ID',
+        'pmi_type' => 'PMI Type',
         'prefix' => 'Prefix',
 
         'prefixes' => [
@@ -291,6 +294,7 @@ return [
         'count_added' => "Added :count record.|Added :count records.",
         'count_updated' => "Updated :count record.|Updated :count records.",
         'credit' => "Credit Label",
+        'data' => 'Data Field|Data Fields',
         'date' => 'Date|Dates',
         'day' => 'Day',
         'days' => 'Days',
@@ -341,6 +345,7 @@ return [
         'invoice' => 'Invoice',
         'isAuthPDU' => 'Submit PDUs?',
         'isFirst' => 'First Event?',
+        'keep' => 'The Keeper',
         'label' => 'Ticket Label',
         'linkedin' => "Linked-In URL",
         'locations' => "Event Locations Available in Add/Edit Event Form",
@@ -348,6 +353,8 @@ return [
         'main' => "Main",
         'max' => "Max Attendees",
         'member' => "Member|Members",
+        'merge_can' => "Merge Candidate",
+        'merge_notes' => "Merge Notes",
         'mList' => 'Member List',
         'mAct' => 'Member Activity',
         'my' => "My",
@@ -378,6 +385,8 @@ return [
         'purchased' => 'Purchased on',
         'receipt' => 'Receipt',
         'rec_sess_att' => "Record Session Attendance",
+        'rec_merge' => "Merge Records",
+        'rec_retrieve' => "Retrieve Record",
         'ref_days' => 'Event Refund Days',
         'refunded' => 'Refunded',
         'reg' => 'Registration',
@@ -394,14 +403,16 @@ return [
         'ret_sess_list' => "Return to Session List",
         'role' => 'Role',
         'roster_add' => 'Add to Roster',
-        'start' => 'Start',
-        'stats' => 'Statistics',
-        'status' => 'Status',
+        'sel_tkt' => "Select Ticket",
         'sess_setup' => "Session Setup Questions and Instructions",
         'sess_spk' => 'Session Speaker(s)',
         'sess_title' => 'Session Title',
         'sess_tkt' => 'Sessions using Ticket',
+        'start' => 'Start',
+        'stats' => 'Statistics',
+        'status' => 'Status',
         'std_times' => "Are the session times standard (the same) for all tracks?",
+        'swap' => 'Swap Candidates',
         'sub&' => "Submit & ",
         'sub_sess_att' => "Record Session Attendance",
         'success' => "Success",
@@ -448,12 +459,27 @@ return [
                     location.<br/>
                     </li>
                     </ul>",
+        'group_reg' => "You can register up to 15 attendees for this event at a time.<br />
+                        <b>Please keep the following in mind:</b>
+                        <ul>
+                        <li>Attendees will need to have records in this system.  You can find them by typing
+                        <b class=\"red\">any part</b> of the name, email or PMI ID of the desired attendee in the search box.</li>
+                        <li>If a record doesn't already exist, enter the information in the fields and it will be created.</li>
+                        <li>If this event has sessions, you will <b>NOT</b> be able to select them for the attendees.</li>
+                        <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
+                        </ul>",
         'inactive' => "This event is no longer active.",
         'login' => "You have an account that we've created for you. Please click the login button. 
                      mCentric has emailed you instructions to reset your password if necessary.",
         'max_reached' => "Maximum attendees reached.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
         'mbr_search' => "Type a few characters of a first or last name, email address or PMI ID.  Hit enter to display all results.",
+        'merge_dupe' => "{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.",
+        'merge_notes' => "{p}<b class='red'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
+                            <p></p><b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI's records for PDU reconciliation." .
+                          "|{l}<b class='red'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.",
+        'merge_overwrite' => "If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.",
+        'merge_survive' => "{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.",
         'name_change' => "You need to contact PMI directly to change this data.",
         'need_to_login' => "An mCentric account was found for you. <b style='color:red;'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.",
         'no_deadbeats' => "There are no pending payments for this event at this time.",
@@ -488,6 +514,7 @@ return [
         'reg_sess' => "You can review and/or modify your session registrations below.",
         'role_toggle' => 'The role :role was toggled for :person.',
         'role_txt' => "The values in these tables are not editable and are here for informational purposes only.",
+        'select_event' => "Select the event for registration",
         'sold_out' => "This ticket is sold out. Add yourself to the wait list.",
         'tkt_setup' => "Creating additional tickets is typically only necessary for Professional Development Day events.",
         'total_caveat' => "Total does NOT reflect updates due to refunds.",
@@ -511,11 +538,16 @@ return [
 
     'messages' => [
         'confirm_msg' => "A confirmation email was sent to: :name.",
+        'merge_sub' => "Your mCentric account for :name events",
+        'merge_msg1' => "An officer/admin with :orgname recently merged accounts associated with you.",
+        'merge_msg2' => "The account with :email2 was merged into :email1 and the password was swapped as well.",
         'no_curr_pass_match' => "The current password did not match.",
         'no_events' => "There are no future events in the system.",
         'pass_change' => "The password was changed successfully.",
         'pass_change_for' => "The password for :name was changed successfully.",
+        'thanks' => "Thank you for using mCentric with :orgname.",
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
+        'visit_mCentric' => "Visit mCentric",
     ],
 
     'modals' => [
@@ -675,8 +707,10 @@ return [
         'eb_enddate' => "Upon event creation, this value is set to today(). If you do NOT want an early bird date, leave it alone and it will be ignored.
                          Otherwise, edit this date so that it is in the future, but prior to the event start date.",
         'email_tip' => "Changing your email address can only be done via your profile page.",
+        'etID' => "These event type IDs shown here can be referenced for website integration purposes.",
         'experience_tip' => 'Please select the number of years of Project Management experience you possess.',
         'fb' => "Enter the portion after fb.com/",
+        'group_reg' => "Enter a value here to set a price.  If you leave it empty, the price will be automatically determined.",
         'hasFood' => "Events with food have additional questions asked of attendees.",
         'hasTracks' => "Events with tracks require session setup.",
         'login' => "If you want your login to be a new email address, first add it to your account by clicking 'Add Email' below.",

@@ -6,48 +6,35 @@
 
 $currentPerson = \App\Person::find(auth()->user()->id);
 $today = \Carbon\Carbon::now();
-$string = '';
 
 $topBits = '';  // remove this if this was set in the controller
+
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 @section('content')
-    {{--
-    {!! Form::open(array('url' => env('APP_URL')."/getperson", 'method' => 'POST')) !!}
-    {!! Form::hidden('string', '357-blah') !!}
-    {!! Form::submit('test') !!}
-    {!! Form::close() !!}
---}}
+
     @if(!isset($event))
 
         @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         @if(count($events) != 0)
             {!! Form::open(array('url' => env('APP_URL')."/group", 'method' => 'POST')) !!}
-            {!! Form::label('eventID', 'Select the event for registration:', array('class' => 'control-label')) !!}
+            {!! Form::label('eventID', trans('messages.instructions.select_event').':', array('class' => 'control-label')) !!}
             {!! Form::select('eventID', $events, old('$event->eventTypeID'), array('id' => 'eventID', 'class' =>'form-control')) !!}
             {!! Form::close() !!}
         @else
-            <b>There are no future events in the system to engage group registration.</b>
+            <b>@lang('messages.instructions.no_events')</b>
         @endif
     @else
         @include('v1.parts.typeahead')
         @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-        You can register up to 15 attendees for this event at a time.<br />
-        <b>Please keep the following in mind:</b>
-        <ul>
-            <li>Attendees will need to have records in this system.  You can find them by typing
-            <b class="red">any part</b> of the name, email or PMI ID of the desired attendee in the search box.</li>
-            <li>If a record doesn't already exist, enter the information in the fields and it will be created.</li>
-            <li>If this event has sessions, you will <b>NOT</b> be able to select them for the attendees.</li>
-            <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
-        </ul>
+
+        @lang('messages.instructions.group_reg')
 
         {!! Form::open(array('url' => env('APP_URL')."/group-reg1", 'id' => 'grpreg')) !!}
         {!! Form::hidden('eventID', $event->eventID) !!}
 
         @for($i=1;$i<=15;$i++)
 
-            {{-- Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) --}}
             <div id="custom-template" class="form-group col-sm-12">
                 <div class="col-sm-2">
                     <a data-toggle="tooltip" title="Type at least 3 characters.  Unique is better.">
@@ -67,27 +54,43 @@ $topBits = '';  // remove this if this was set in the controller
                     {!! Form::text('lastName-'.$i, null, array('id' => 'lastName-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('email-'.$i, 'Email') !!}<br/>
+                    {!! Form::label('email-'.$i, trans('messages.headers.email')) !!}<br/>
                     {!! Form::text('email-'.$i, null, array('id' => 'email-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
+                @if(is_array($tickets))
+                    <div class="col-sm-1">
+                        {!! Form::label('ticketID-'.$i, trans('messages.fields.ticket')) !!}<br/>
+                        {!! Form::select('ticketID-'.$i, $tickets, old('ticketID-'.$i), array('id' => 'ticketID-'.$i, 'class' =>'input-sm', 'style' => 'width:75px;')) !!}
+                    </div>
+                @else
+                    {!! Form::hidden('ticketID-'.$i, $tickets) !!}
+                @endif
+
+                @if(0)
+                    {!! Form::hidden('override-'.$i, 0) !!}
+                @else
+                    <div class="col-sm-1">
+                        {!! Form::label('override-'.$i, 'Override') !!}
+                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.group_reg')])
+                        <br/>
+                        {!! Form::number('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
+                    </div>
+                @endif
                 <div class="col-sm-1">
-                    {!! Form::label('ticketID-'.$i, 'Ticket') !!}<br/>
-                    {!! Form::select('ticketID-'.$i, $tickets, old('ticketID-'.$i), array('id' => 'ticketID-'.$i, 'class' =>'input-sm', 'style' => 'width:75px;')) !!}
-                </div>
-                <div class="col-sm-1">
-                    {!! Form::label('override-'.$i, 'Override') !!}
-                    @include('v1.parts.tooltip', ['title' => "Enter a value here to set a price.  If you leave it empty, the price will be automatically determined."])
-                    <br/>
-                    {!! Form::number('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
-                </div>
-                <div class="col-sm-1">
-                    {!! Form::label('pmiid-'.$i, 'PMI ID') !!}<br/>
+                    {!! Form::label('pmiid-'.$i, trans('messages.fields.pmi_id')) !!}<br/>
                     {!! Form::number('pmiid-'.$i, null, array('id' => 'pmiid-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
                 </div>
                 <div class="col-sm-1">
-                    {!! Form::label('code-'.$i, 'Discount') !!}<br/>
+                    {!! Form::label('code-'.$i, trans('messages.fields.disc')) !!}<br/>
                     {!! Form::select('code-'.$i, $discounts, array('id' => 'code-'.$i, 'class' => 'input-sm', 'style' => 'width:75px')) !!}<br />
                 </div>
+                @if($check)
+                <div class="col-sm-1">
+                    {!! Form::label('checkin-'.$i, 'CheckIn') !!}<br/>
+                    {!! Form::checkbox('checkin-'.$i, 1, ['checked']) !!}
+                    {!! Form::hidden('check', 1) !!}
+                </div>
+                @endif
                 {{--
                 <div class="col-sm-offset-8 col-sm-4" id="prices-{{ $i }}">
                     Words
@@ -129,7 +132,7 @@ $topBits = '';  // remove this if this was set in the controller
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '{{ env('APP_URL') }}/autocomplete/?{!! $string !!}q=%QUERY',
+                    url: '{{ env('APP_URL') }}/autocomplete/?l=p&q=%QUERY',
                     wildcard: '%QUERY'
                 }
             });

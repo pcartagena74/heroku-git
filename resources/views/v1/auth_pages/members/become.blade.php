@@ -50,7 +50,7 @@ $topBits = '';  // remove this if this was set in the controller
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '{{ env('APP_URL') }}/autocomplete/?q=%QUERY',
+                    url: '{{ env('APP_URL') }}/autocomplete/?l=p&q=%QUERY',
                     wildcard: '%QUERY'
                 }
             });

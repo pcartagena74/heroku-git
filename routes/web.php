@@ -210,7 +210,7 @@ Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listin
 Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 
 // Group Registration
-Route::get('/group/{event?}', 'EventController@showGroup');
+Route::get('/group/{event?}/{override?}', 'EventController@showGroup');
 Route::post('/getperson', 'MergeController@getperson');                                                    // Ajax
 Route::post('/group-reg1', 'RegFinanceController@group_reg1');
 Route::get('/groupreg/{rf}', 'RegFinanceController@edit')->name('group_reg1');

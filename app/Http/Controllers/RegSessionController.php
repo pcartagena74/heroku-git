@@ -133,6 +133,8 @@ class RegSessionController extends Controller
     public function store (Request $request, Event $event){
 
         $esID = $request->input('sessionID');
+        $chk = $request->input('chk_walk');
+        $eventID = $request->input('eventID');
         $id = auth()->user()->id;
         $count = 0;
 
@@ -149,21 +151,18 @@ class RegSessionController extends Controller
         foreach ($request->all() as $key => $value) {
             if(preg_match('/^p-/', $key)){
                 list($field, $personID, $regID) = array_pad(explode("-", $key, 3), 3, null);
-                $rs = new RegSession;
-                $rs->regID = $regID;
-                $rs->eventID = $event->eventID;
-                $rs->sessionID = $esID;
-                $rs->personID = $personID;
-                $rs->hasAttended = 1;
-                $rs->creatorID = $id;
-                $rs->updaterID = $id;
-                $rs->save();
+                $reg = Registration::find($regID);
+                $reg->checkin();
                 $count++;
             }
         }
 
-        request()->session()->flash('alert-success', trans_choice('messages.headers.count_updated', $count, ['count' => $count]));
-        return back()->withInput(['tab' => 'tab_content7']);
+        if($chk){
+            return redirect(env('APP_URL')."/group/$eventID/checkin");
+        } else {
+            request()->session()->flash('alert-success', trans_choice('messages.headers.count_updated', $count, ['count' => $count]));
+            return back()->withInput(['tab' => 'tab_content7']);
+        }
     }
 
     public function update_sessions(Request $request, Registration $reg)

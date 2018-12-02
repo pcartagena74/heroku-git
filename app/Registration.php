@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\RegSession;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -41,5 +42,16 @@ class Registration extends Model
     public function regsession()
     {
         return $this->hasMany(RegSession::class, 'regID', 'regID');
+    }
+
+    public function checkin(){
+        $rs = new RegSession;
+        $e = $this->event()->first();
+        $rs->regID = $this->regID;
+        $rs->eventID = $e->eventID;
+        $rs->sessionID = $e->default_session()->sessionID;
+        $rs->personID = $this->personID;
+        $rs->hasAttended = 1;
+        $rs->save();
     }
 }

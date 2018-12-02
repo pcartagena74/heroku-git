@@ -5,30 +5,47 @@
  */
 
 $topBits = '';  // remove this if this was set in the controller
+$string = 'l='.$letter.'&';
 if($model1) {
     $columns = Schema::getColumnListing($model1->getTable());
 }
-if($model1){
-    $string = 'm='.$model1->personID.'&';
-} else {
-    $string = '';
+
+switch($letter){
+    case 'p':
+        if($model1){
+            $string .= 'm='.$model1->personID.'&';
+            $id1 = $model1->personID;
+        }
+        if($model2){
+            $id2 = $model2->personID;
+        }
+        break;
+    case 'l':
+        if($model1){
+            $string .= 'm='.$model1->locID.'&';
+            $id1 = $model1->locID;
+        }
+        if($model2){
+            $id2 = $model2->locID;
+        }
+        break;
 }
-$ignore_array = array('firstName', 'lastName', 'login', 'defaultOrgID', 'personID');
-$suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'defaultOrgID', 'lastLoginDate', 'deleted_at');
+$ignore_array = array('firstName', 'lastName', 'login', 'defaultOrgID', 'personID', 'locID', 'orgID');
+$suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'defaultOrgID', 'lastLoginDate', 'deleted_at', 'locNote', 'isVirtual', 'isDeleted');
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
 @include('v1.parts.typeahead')
 
-    @include('v1.parts.start_content', ['header' => 'Record Merging', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.rec_merge'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
     @if($collection && !isset($model1))
         {!! Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) !!}
         <div id="custom-template" class="form-group col-sm-12">
-            {!! Form::label('model1', 'Type the name, email or PMI ID of the record that should survive.') !!}<br/>
+            {!! Form::label('model1', trans_choice('messages.instructions.merge_survive', $letter)) !!}<br/>
             {!! Form::text('model1', null, array('id' => 'model', 'class' => 'form-control typeahead input-sm')) !!}
-            {!! Form::submit('Retrieve Record', array('class' => 'btn btn-sm btn-primary')) !!}
+            {!! Form::submit(trans('messages.headers.rec_retrieve'), array('class' => 'btn btn-sm btn-primary')) !!}
             <div id="search-results"></div>
         </div>
         {!! Form::close() !!}
@@ -40,48 +57,70 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
         @endif
                 @if($model2 !== null)
                     {!! Form::open(array('url' => env('APP_URL').'/execute_merge', 'method' => 'post')) !!}
-                    {!! Form::hidden('model1', $model1->personID, array('id' => 'model1')) !!}
-                    {!! Form::hidden('model2', $model2->personID, array('id' => 'model2')) !!}
+                    {!! Form::hidden('model1', $id1, array('id' => 'model1')) !!}
+                    {!! Form::hidden('model2', $id2, array('id' => 'model2')) !!}
                     {!! Form::hidden('letter', $letter, array('id' => 'letter')) !!}
                     {!! Form::hidden('ignore_array', implode(",", $ignore_array), array('id' => 'ignore_array')) !!}
                     {!! Form::hidden('columns', implode(",", $columns), array('id' => 'columns')) !!}
-                    If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.
+                    @lang('messages.instructions.merge_overwrite')
                 @endif
                         <table class="table table-condensed table-striped table-responsive jambo_table">
                             <thead>
                             <tr valign="top">
-                                <th style="text-align: left;">Data Fields</th>
+                                <th style="text-align: left;">{{ trans_choice('messages.headers.data', 2) }}</th>
                                 <th style="text-align: left;">
-                                    The Keeper
+                                    @lang('messages.headers.keep')
                                     @if($model1 !== null && $model2 !== null)
-                                    <a href="{{ env('APP_URL') }}/merge/{{ $letter }}/{{ $model2->personID }}/{{ $model1->personID }}"
+                                    <a href="{{ env('APP_URL') }}/merge/{{ $letter }}/{{ $id2 }}/{{ $id1 }}"
                                        class="btn btn-xs btn-success pull-right">
-                                        <i data-toggle="tooltip" title="Swap Candidates" class="fas fa-sync-alt"></i>
+                                        <i data-toggle="tooltip" title="{{ trans('messages.headers.swap') }}" class="fas fa-sync-alt"></i>
                                     </a>
                                     @endif
                                 </th>
                                 @if($model2 !== null)
-                                    <th style="text-align: left;">Merge Candidate</th>
+                                    <th style="text-align: left;">@lang('messages.headers.merge_can')</th>
                                 @endif
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td style="text-align: right;">
-                                    PMI ID:<br />
-                                    PMI Type:
-                                </td>
-                                <td style="text-align: left;">
-                                    {{ $model1->orgperson->OrgStat1 }}<br />
-                                    {{ $model1->orgperson->OrgStat2 }}
-                                </td>
-                                @if($model2 !== null)
-                                    <td style="text-align: left;">
-                                        {{ $model2->orgperson->OrgStat1 }}<br />
-                                        {{ $model2->orgperson->OrgStat2 }}
+                            @switch($letter)
+                                @case('p')
+                                <tr>
+                                    <td style="text-align: right;">
+                                        @lang('messages.fields.pmi_id'):<br />
+                                        @lang('messages.fields.pmi_type'):
                                     </td>
-                                @endif
-                            </tr>
+                                    <td style="text-align: left;">
+                                        {{ $model1->orgperson->OrgStat1 }}<br />
+                                        {{ $model1->orgperson->OrgStat2 }}
+                                    </td>
+                                    @if($model2 !== null)
+                                        <td style="text-align: left;">
+                                            {{ $model2->orgperson->OrgStat1 }}<br />
+                                            {{ $model2->orgperson->OrgStat2 }}
+                                        </td>
+                                    @endif
+                                </tr>
+                                @break
+
+                                @case('l')
+                                <tr>
+                                    <td style="text-align: right;">
+                                        @lang('messages.fields.loc_id'):
+                                    </td>
+                                    <td style="text-align: left;">
+                                        {{ $model1->locID }}
+                                    </td>
+                                    @if($model2 !== null)
+                                        <td style="text-align: left;">
+                                            {{ $model2->locID }}
+                                        </td>
+                                    @endif
+                                </tr>
+                                @break
+
+                            @endswitch
+
                             @foreach($columns as $c)
                                 @if(!in_array($c, $suppress_array))
                                 <tr>
@@ -110,57 +149,60 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                             </tbody>
                         </table>
                 @if($model2)
-                {!! Form::submit('Merge Record', array('class' => 'btn btn-sm btn-primary')) !!}
+                {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
                 @endif
             </div>
                     @if(isset($model2))
                         <div class="col-sm-3">
                             @include('v1.parts.start_content',
-                            ['header' => 'Merge Notes', 'subheader' => '',
+                            ['header' => trans('messages.headers.merge_notes'), 'subheader' => '',
                             'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                            <b>Note:</b> Records with a PMI Type are ALWAYS the one you should keep UNLESS you know for a fact the record from PMI is wrong.
-
-                            <p></p>
-                            <b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI's records for PDU reconciliation.
+                            {!! trans_choice('messages.instructions.merge_notes', $letter) !!}
 
                             @include('v1.parts.end_content')
 
-                            @include('v1.parts.start_content',
-                            ['header' => 'Email Addresses', 'subheader' => '',
-                            'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                            The following email address are associated with either account.
-                            They will all be associated with <b>"The Keeper"</b> post-merge.
-                            <p></p>
+                            @switch($letter)
+                                @case('p')
+                                @include('v1.parts.start_content',
+                                ['header' => 'Email Addresses', 'subheader' => '',
+                                'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                            @if($model1 !== null)
-                            PersonID {{ $model1->personID }}'s Emails:<br />
-                            @foreach($model1->emails as $e)
-                                {{ $e->emailADDR }},
-                            @endforeach
-                            <p></p>
-                            @endif
+                                The following email address are associated with either account.
+                                They will all be associated with <b>"The Keeper"</b> post-merge.
+                                <p></p>
 
-                            @if($model2 !== null)
-                            PersonID {{ $model2->personID }}'s Emails:<br />
-                            @foreach($model2->emails as $e)
-                                {{ $e->emailADDR }},
-                            @endforeach
-                            @endif
+                                @if($model1 !== null)
+                                    PersonID {{ $model1->personID }}'s Emails:<br />
+                                    @foreach($model1->emails as $e)
+                                        {{ $e->emailADDR }},
+                                    @endforeach
+                                    <p></p>
+                                @endif
 
-                            @include('v1.parts.end_content')
+                                @if($model2 !== null)
+                                    PersonID {{ $model2->personID }}'s Emails:<br />
+                                    @foreach($model2->emails as $e)
+                                        {{ $e->emailADDR }},
+                                    @endforeach
+                                @endif
+                                @include('v1.parts.end_content')
+                                @break
+
+                            @endswitch
+
                         </div>
                     @else
                         <div class="col-sm-6">
                             @if($collection && !isset($model2))
                                 {!! Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) !!}
                                 <div id="custom-template" class="form-group col-sm-12">
-                                    {!! Form::label('model2', 'Type the name, email, or PMI ID associated with any duplicate record.') !!}
+                                    {!! Form::label('model2', trans_choice('messages.instructions.merge_dupe', $letter)) !!}
                                     <br/>
-                                    {!! Form::hidden('model1', $model1->personID, array('id' => 'model1')) !!}
+                                    {!! Form::hidden('model1', $id1, array('id' => 'model1')) !!}
                                     {!! Form::text('model2', null, array('id' => 'model2', 'class' => 'form-control typeahead input-sm')) !!}
-                                    {!! Form::submit('Retrieve Record', array('class' => 'btn btn-sm btn-primary')) !!}
+                                    {!! Form::submit(trans('messages.headers.rec_retrieve'), array('class' => 'btn btn-sm btn-primary')) !!}
                                     <div id="search-results"></div>
                                 </div>
                                 {!! Form::close() !!}
@@ -206,6 +248,16 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                             });
                         });
                     </script>
+
+    @switch($letter)
+        @case('p')
+            @include('v1.parts.menu-fix', array('path' => '/merge/p'))
+            @break
+        @case('l')
+            @include('v1.parts.menu-fix', array('path' => '/locations'))
+            @break
+    @endswitch
+{{--
                     <script>
                         $(document).ready(function () {
                             var setContentHeight = function () {
@@ -229,4 +281,5 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
 
                         });
                     </script>
+--}}
 @endsection
