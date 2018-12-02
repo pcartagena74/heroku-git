@@ -49,15 +49,14 @@ $currentOrg    = $currentPerson->defaultOrg;
         </tr>
         <tr>
             <th style="text-align: left;">@lang('messages.headers.early')</th>
-            <th style="text-align: left;">@lang('messages.headers.ref_days')</th>
+            <th style="text-align: left;">@lang('messages.headers.contact_email')</th>
             <th style="text-align: left;">
                 @lang('messages.headers.near_chap')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.near_chap')])
             </th>
         </tr>
         <tr>
-            <td style="text-align: left;"><a href="#" id="earlyBirdPercent"
-                                             data-value="{{ $org->earlyBirdPercent }}"></a> &nbsp;
+            <td style="text-align: left;"><a href="#" id="earlyBirdPercent" data-value="{{ $org->earlyBirdPercent }}"></a> &nbsp;
                 <i class="fa fa-percent"></i></td>
             <td style="text-align: left;"><a href="#" id="eventEmail" data-value="{{ $org->eventEmail }}"></a></td>
             <td style="text-align: left;"><a href="#" id="nearbyChapters" data-value="{{ $org->nearbyChapters }}"></a></td>
@@ -126,7 +125,9 @@ $currentOrg    = $currentPerson->defaultOrg;
     <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
-            <th colspan="3" style="text-align: left;">{{ trans_choice('messages.headers.et', 2) }}</th>
+            <th colspan="3" style="text-align: left;">{{ trans_choice('messages.headers.et', 2) }}
+            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.etID')])
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -159,7 +160,11 @@ $currentOrg    = $currentPerson->defaultOrg;
                            data-type="text" data-placement="top"></a>
                     </td>
                 @else
-                    <td colspan="3" style="text-align: left;">
+                    <td style="text-align: left;"></td>
+                    <td style="text-align: left;">
+                        <b>{{ $et->etID }}</b>
+                    </td>
+                    <td style="text-align: left;">
                     {{ $et->etName }}
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.nope')])
                     </td>

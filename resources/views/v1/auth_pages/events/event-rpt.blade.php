@@ -460,6 +460,7 @@ $es = $event->default_session();
                 @if(count($nametags)>0 && $event->hasTracks == 0)
                     {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                     {!! Form::hidden('sessionID', $es->sessionID) !!}
+                    {!! Form::hidden('eventID', $event->eventID) !!}
                     <div class="col-xs-12">
                         <div class="col-xs-2" style="text-align: right;">
                             @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.select_all')])
@@ -494,7 +495,8 @@ $es = $event->default_session();
                         </div>
                     @endforeach
                     <div class="col-xs-10 col-xs-offset-2 form-group">
-                        {!! Form::submit(trans('messages.buttons.chk_att'), ["class" => "btn btn-success btn-sm"]) !!}
+                        {!! Form::submit(trans('messages.buttons.chk_att'), ["class" => "btn btn-success btn-sm", 'name' => 'chk_att']) !!}
+                        {!! Form::submit(trans('messages.buttons.chk_walk'), ["class" => "btn btn-primary btn-sm", 'name' => 'chk_walk']) !!}
                     </div>
                     {!! Form::close() !!}
 

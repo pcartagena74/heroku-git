@@ -649,7 +649,7 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function showGroup($event = null)
+    public function showGroup($event = null, $override = null)
     {
         $title = "Group Registration";
         $today = Carbon::now();
@@ -671,12 +671,17 @@ class EventController extends Controller
         } else {
             // Cannot pass object as reference so need to set here
             $event = Event::find($event);
+            $override ? $check = 1 : $check = 0;
             $title = $title . ": $event->eventName";
             $t = Ticket::where('eventID', '=', $event->eventID)->get();
-            $a = $t->pluck('ticketLabel', 'ticketID');
-            $b = array(0 => 'Select Ticket');
-            $c = $a->toArray();
-            $tickets = $b + $c;
+            if(count($t) > 1){
+                $a = $t->pluck('ticketLabel', 'ticketID');
+                $b = array(0 => trans('messages.headers.sel_tkt'));
+                $c = $a->toArray();
+                $tickets = $b + $c;
+            } else {
+                $tickets = $t->first()->ticketID;
+            }
 
             $a = EventDiscount::where('eventID', '=', $event->eventID)->get();
             $b = array(0 => 'Select');
@@ -685,7 +690,7 @@ class EventController extends Controller
 
             $discounts = $b + $d;
 
-            return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'tickets', 'discounts'));
+            return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'tickets', 'discounts', 'check'));
         }
 
         //return view('v1.auth_pages.events.group-registration', compact('event'));

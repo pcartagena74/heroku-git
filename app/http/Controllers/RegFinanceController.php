@@ -399,35 +399,7 @@ class RegFinanceController extends Controller
         $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
         $s3fs = new Filesystem($adapter);
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
-        /*
-        try{
-            $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
-            //$pdf = PDF::loadView('v1.events.registration.group_receipt', $x)
-            //    ->setOption('disable-javascript', false)
-            //    ->setOption('encoding', 'utf-8');
 
-            Flysystem::connection('s3_receipts')->put(
-                $receipt_filename,
-                $pdf->output(),
-                ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
-            );
-
-            $client = new S3Client([
-                'credentials' => [
-                    'key' => env('AWS_KEY'),
-                    'secret' => env('AWS_SECRET')
-                ],
-                'region' => env('AWS_REGION'),
-                'version' => 'latest',
-            ]);
-
-            $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-            $s3fs = new Filesystem($adapter);
-            $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
-        } catch (\Exception $exception) {
-            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
-        }
-*/
         try {
             Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
@@ -478,6 +450,7 @@ class RegFinanceController extends Controller
         // $rf->discountCode = $cr;
         $rf->save();
 
+        $check = request()->input('check');
         // Process up to 15 event-registration entries
         for ($i = 1; $i <= 15; $i++) {
             $personID = request()->input('person-' . $i);
@@ -488,6 +461,7 @@ class RegFinanceController extends Controller
             $ticketID = request()->input('ticketID-' . $i);
             $code = request()->input('code-' . $i);
             $override = request()->input('override-' . $i);
+            $checkin = request()->input('checkin-' . $i);
             if ($code === null || $code == " ") {
                 $code = 'N/A';
             }
@@ -606,6 +580,9 @@ class RegFinanceController extends Controller
                 }
                 $reg->regStatus = trans('messages.reg_status.progress');
                 $reg->save();
+                if($check) {
+                    $reg->checkin();
+                }
                 $total_orig = $total_orig + $reg->origcost;
                 $total_cost = $total_cost + $reg->subtotal;
                 $handle = $reg->subtotal * 0.029;
@@ -757,7 +734,9 @@ class RegFinanceController extends Controller
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
         }
 
-        return view('v1.auth_pages.events.registration.group_receipt', $x);
+        //return view('v1.auth_pages.events.registration.group_receipt', $x);
+        return redirect('/show_receipt/' . $rf->regID);
+
     }
 
     public function show_group_receipt(RegFinance $rf) {

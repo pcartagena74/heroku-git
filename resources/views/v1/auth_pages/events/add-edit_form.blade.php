@@ -78,6 +78,7 @@ try {
 } catch (\League\Flysystem\Exception $exception) {
     $logo = '';
 }
+
 ?>
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -453,6 +454,7 @@ try {
                         url: theurl,
                         dataType: "json",
                         success: function (data) {
+                            console.log(data);
                             $('#locName').val(data.locName);
                             $('#addr1').val(data.addr1);
                             $('#addr2').val(data.addr2);
