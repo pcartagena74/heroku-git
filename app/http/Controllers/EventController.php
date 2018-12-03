@@ -437,11 +437,10 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => $message));
     }
 
-    public function update(Request $request, Event $event)
-    {
+    public function update(Request $request, Event $event) {
         // responds to PATCH /event/id
-
         $slug = request()->input('slug');
+        $skip = request()->input('sub_changes');
         $slug_not_unique = Event::where([
             ['slug', '=', $slug],
             ['eventID', '!=', $event->eventID]
@@ -592,7 +591,11 @@ class EventController extends Controller
         // Think about whether ticket modification should be done here.
         // Maybe catch the auto-created tickets when events are copied
 
-        return redirect('/event-tickets/' . $event->eventID);
+        if($skip === null){
+            return redirect(env('APP_URL').'/event-tickets/' . $event->eventID);
+        } else {
+            return redirect(env('APP_URL')."/events");
+        }
     }
 
     public function destroy(Event $event) {

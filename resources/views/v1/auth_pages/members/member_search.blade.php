@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment: Use 'Become' UI to assist with Member Search Functionality
+ * Comment: Member Search Functionality
  * Created: 11/8/2018
  */
 
@@ -51,13 +51,15 @@ if ($mbr_list){
 
     {!! Form::open(array('url' => env('APP_URL')."/search", 'method' => 'POST')) !!}
     <div id="custom-template" class="col-sm-12 form-group">
-        {!! Form::label('string', trans('messages.instructions.mbr_search')) !!}<br/>
+        <b>{!! trans('messages.instructions.mbr_search') !!}</b>
+        <div class="col-xs-2">
         {!! Form::text('string', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}<br />
+        </div>
         <div id="search-results"></div>
     </div>
-    <div class="col-sm-12 form-group">
-        <div class="col-xs-1">
-    {!! Form::submit(trans('messages.headers.person_search'), array('class' => 'btn btn-primary btn-xs form-control')) !!}
+    <div class="col-sm-12">
+        <div class="col-xs-2">
+            {!! Form::submit(trans('messages.headers.person_search'), array('class' => 'btn btn-primary btn-xs form-control')) !!}
         </div>
     </div>
     {!! Form::close() !!}
@@ -84,7 +86,7 @@ if ($mbr_list){
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '{{ env('APP_URL') }}/autocomplete/?q=%QUERY',
+                    url: '{{ env('APP_URL') }}/autocomplete/?l=p&q=%QUERY',
                     wildcard: '%QUERY'
                 }
             });

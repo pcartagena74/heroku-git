@@ -22,8 +22,13 @@ if(!isset($topBits)){
             @if($topBits)
                 <div class="row tile_count">
                     @foreach($topBits as $tdata)
-                        @include('v1.parts.title-bit', ['icon' => $tdata[0], 'label' => $tdata[1],
-                        'number' => $tdata[2], 'ctext'=> $tdata[3], 'rtext' => $tdata[4], 'up' => $tdata[5]])
+                        @if(count($tdata)>6)
+                            @include('v1.parts.title-bit', ['icon' => $tdata[0], 'label' => $tdata[1],
+                            'number' => $tdata[2], 'ctext'=> $tdata[3], 'rtext' => $tdata[4], 'up' => $tdata[5], 'width' => $tdata[6]])
+                        @else
+                            @include('v1.parts.title-bit', ['icon' => $tdata[0], 'label' => $tdata[1],
+                            'number' => $tdata[2], 'ctext'=> $tdata[3], 'rtext' => $tdata[4], 'up' => $tdata[5]])
+                        @endif
                     @endforeach
                 </div>
             @endif

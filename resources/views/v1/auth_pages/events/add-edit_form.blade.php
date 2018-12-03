@@ -346,10 +346,13 @@ try {
     @include('v1.parts.end_content')
 
     <div class="col-md-12">
-        {!! Form::submit('Submit & Review Tickets', array('class' => 'btn btn-primary')) !!}
+        @if($page_title == trans('messages.headers.event_edit') || $event === null)
+            {!! Form::submit(trans('messages.headers.sub_changes'), array('class' => 'btn btn-primary', 'name' => 'sub_changes')) !!}
+        @else
+            {!! Form::submit(trans('messages.headers.sub&rev'), array('class' => 'btn btn-primary', 'name' => 'sub&rev')) !!}
+        @endif
         <a href="{{ env('APP_URL') }}/events" class="btn btn-default">@lang('messages.headers.cancel')</a>
     </div>
-
 
     @include('v1.parts.start_content', ['header' => strtoupper(trans('messages.headers.opt')).': '. trans('messages.headers.post-reg').' '.trans('messages.headers.info'),
              'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -358,7 +361,6 @@ try {
         {!! Form::textarea('postRegInfo', old('postRegInfo'), array('class'=>'form-control rich')) !!}
     </div>
     @include('v1.parts.end_content')
-
 
     {!! Form::close() !!}
 @endsection
@@ -510,10 +512,10 @@ try {
             });
         });
     </script>
-    @if($event->eventID === null)
-        @include('v1.parts.menu-fix', array('path' => '/event/create'))
-    @else
+    @if($page_title == trans('messages.headers.event_edit') || $event === null)
         @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.fields.edit_event')))
+    @else
+        @include('v1.parts.menu-fix', array('path' => '/event/create'))
     @endif
 @endsection
 

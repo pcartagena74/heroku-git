@@ -1,20 +1,26 @@
 <?php
 /**
- * Comment:
- * Created: 2/9/2017
+ * Comment: Member Search Functionality for Role Management
+ * Created: 11/8/2018
  */
 
-$topBits = '';  // remove this if this was set in the controller
+if($topBits === null){
+    $topBits = '';
+}
 $counter = 0;
-$headers = [trans('messages.fields.lastName'), trans('messages.fields.firstName'), trans('messages.headers.email'), trans('messages.fields.pmi_id')];
-set_time_limit(100);
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
+@section('header')
+    @include('v1.parts.typeahead')
+@endsection
+
 @section('content')
 
+
+
     @include('v1.parts.start_min_content', ['header' => $org->orgName . ': ' . trans('messages.headers.roles&perms'),
-    'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                                            'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
     <div>
         <div class="col-sm-12 well-sm">
             @lang('messages.instructions.role_txt')
@@ -82,11 +88,29 @@ set_time_limit(100);
     </div>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => $org->orgName . ': '. trans('messages.headers.role_ass'),
-    'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.person_search'),
+         'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+
+    {!! Form::open(array('url' => env('APP_URL')."/role_search", 'method' => 'POST')) !!}
+    <div id="custom-template" class="col-sm-12 form-group">
+        <b>{!! trans('messages.instructions.mbr_search') !!}</b>
+        <div class="col-xs-2">
+            {!! Form::text('string', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}<br />
+        </div>
+        <div id="search-results"></div>
+    </div>
+    <div class="col-sm-12">
+        <div class="col-xs-2">
+            {!! Form::submit(trans('messages.headers.person_search'), array('class' => 'btn btn-primary btn-xs form-control')) !!}
+        </div>
+    </div>
+    {!! Form::close() !!}
+
+    @include('v1.parts.end_content')
 
     <div id="role_mgmt_status" class="col-sm-12"></div>
 
+    @if($persons !== null)
     @include('v1.parts.start_content', ['header' => $org->orgName . ': '. trans('messages.headers.mList'),
              'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -213,7 +237,7 @@ set_time_limit(100);
                 $mktg =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '10)" class="btn btn-sm ' . $board_color . '">'
                     . '<i class="fas fa-chart-bar"></i></a>';
-                ?>
+?>
                 <tr>
                     <td style="vertical-align: top; text-align: left;">{!! $p->lastName !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->firstName !!}</td>
@@ -241,13 +265,33 @@ set_time_limit(100);
     </div>
 
     @include('v1.parts.end_content')
-
-    @include('v1.parts.end_content')
+    @endif
 
 @endsection
 
 @section('scripts')
+    <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
+    <script>
+        $(document).ready(function ($) {
+            var people = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '{{ env('APP_URL') }}/autocomplete/?l=p&q=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#custom-template .typeahead').typeahead(null, {
+                name: 'people',
+                display: 'value',
+                source: people
+            });
+        });
+    </script>
     @include('v1.parts.footer-datatable')
+
+    @include('v1.parts.menu-fix', array('path' => '/role_mgmt'))
     <script>
         $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
@@ -281,4 +325,8 @@ set_time_limit(100);
             });
         };
     </script>
+@endsection
+
+@section('modals')
+    @include('v1.modals.dynamic', ['header' => trans('messages.headers.mAct'), 'show_past' => 1])
 @endsection
