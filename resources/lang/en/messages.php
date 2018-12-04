@@ -9,6 +9,11 @@ return [
         'account' => 'Have an account?  Login',
     ],
 
+    'actions' => [
+        'add' => 'Add ',
+        'remove' => 'Remove ',
+    ],
+
     'buttons' => [
         'add_disc' => 'Add Discount',
         'add_def_disc' => 'Add Default Organizational Discount Codes',
@@ -753,6 +758,7 @@ return [
     'topBits' => [
         'admin' => "Admin Role",
         'board' => "Board Role",
+        'dev' => "Developer Role",
         'events' => "Events Role",
         'mktg' => "Marketing Role",
         'rt' => "Roundtable Role",

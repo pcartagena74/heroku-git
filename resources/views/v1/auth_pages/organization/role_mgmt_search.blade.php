@@ -140,10 +140,10 @@ $counter = 0;
 <?php
                 if($p->roles->contains('id', 1)) {
                     $board_color = 'btn-purple';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Board Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.board')."'";
                 } else {
                     $board_color = 'btn-lpurple';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Board Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.board')."'";
                 }
 
                 $board =
@@ -152,10 +152,10 @@ $counter = 0;
 
                 if($p->roles->contains('id', 2)) {
                     $board_color = 'btn-red';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Speaker Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.speaker')."'";
                 } else {
                     $board_color = 'btn-lred';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Speaker Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.speaker')."'";
                 }
                 $speaker =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '2)" class="btn btn-sm ' . $board_color . '">'
@@ -163,10 +163,10 @@ $counter = 0;
 
                 if($p->roles->contains('id', 3)) {
                     $board_color = 'btn-deep-purple';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Events Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.events')."'";
                 } else {
                     $board_color = 'btn-ldeep-purple';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Events Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.events')."'";
                 }
                 $event =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '3)" class="btn btn-sm ' . $board_color . '">'
@@ -174,21 +174,21 @@ $counter = 0;
 
                 if($p->roles->contains('id', 4)) {
                     $board_color = 'btn-blue';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Volunteer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.vol')."'";
                 } else {
                     $board_color = 'btn-lblue';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Volunteer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.vol')."'";
                 }
                 $volunteer =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '4)" class="btn btn-sm ' . $board_color . '">'
-                    . '<i class="fas fa-thumbs-up"></i></a>';
+                    . '<i class="fas fa-hands-helping"></i></a>';
 
                 if($p->roles->contains('id', 6)) {
                     $board_color = 'btn-cyan';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Speaker-Volunteer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.spk_vol')."'";
                 } else {
                     $board_color = 'btn-lcyan';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Speaker-Volunteer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.spk_vol')."'";
                 }
                 $spkvol =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '6)" class="btn btn-sm ' . $board_color . '">'
@@ -196,10 +196,10 @@ $counter = 0;
 
                 if($p->roles->contains('id', 7)) {
                     $board_color = 'btn-teal';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove RoundTable-Volunteer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.rt')."'";
                 } else {
                     $board_color = 'btn-lteal';
-                    $tooltip     = 'data-toggle="tooltip" title="Add RoundTable-Volunteer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.rt')."'";
                 }
                 $rtvol =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '7)" class="btn btn-sm ' . $board_color . '">'
@@ -207,10 +207,10 @@ $counter = 0;
 
                 if($p->roles->contains('id', 8)) {
                     $board_color = 'btn-green';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Admin Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.admin')."'";
                 } else {
                     $board_color = 'btn-lgreen';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Admin Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.admin')."'";
                 }
                 $admin =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '8)" class="btn btn-sm ' . $board_color . '">'
@@ -218,10 +218,10 @@ $counter = 0;
 
                 if($p->roles->contains('id', 9)) {
                     $board_color = 'btn-amber';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Developer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.dev')."'";
                 } else {
                     $board_color = 'btn-lamber';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Developer Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.dev')."'";
                 }
                 $dev =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '9)" class="btn btn-sm ' . $board_color . '">'
@@ -229,10 +229,10 @@ $counter = 0;
 
                 if($p->roles->contains('id', 10)) {
                     $board_color = 'btn-brown';
-                    $tooltip     = 'data-toggle="tooltip" title="Remove Marketing Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.mktg')."'";
                 } else {
                     $board_color = 'btn-lbrown';
-                    $tooltip     = 'data-toggle="tooltip" title="Add Marketing Role" ';
+                    $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.add').trans('messages.topBits.mktg')."'";
                 }
                 $mktg =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '10)" class="btn btn-sm ' . $board_color . '">'

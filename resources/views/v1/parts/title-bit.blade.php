@@ -44,6 +44,9 @@ switch ($icon) {
     case 8:
         $itxt = "fas fa-cog";
         break;
+    case 9:
+        $itxt = "fas fa-users";
+        break;
 }
 
 switch($up){

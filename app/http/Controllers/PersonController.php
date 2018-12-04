@@ -80,13 +80,13 @@ class PersonController extends Controller
                 ])->count();
         });
 
-        array_push($topBits, [3, trans('messages.headers.tot_peeps'), $total_people, '', '', '']);
+        array_push($topBits, [9, trans('messages.headers.tot_peeps'), $total_people, '', '', '', 2]);
         $inds = implode(' ', array($individual, trans_choice('messages.headers.member', 2)));
         $rets = implode(' ', array($retiree, trans_choice('messages.headers.member', 2)));
         $stud = implode(' ', array($student, trans_choice('messages.headers.member', 2)));
-        array_push($topBits, [3, $inds, $individuals, '', '', '']);
-        array_push($topBits, [3, $rets, $retirees, '', '', '']);
-        array_push($topBits, [3, $stud, $students, '', '', '']);
+        array_push($topBits, [1, $inds, $individuals, '', '', '', 2]);
+        array_push($topBits, [1, $rets, $retirees, '', '', '', 2]);
+        array_push($topBits, [1, $stud, $students, '', '', '', 2]);
 
         return($topBits);
     }
@@ -138,7 +138,7 @@ class PersonController extends Controller
                     $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                 })
                 ->join('org-person as op', 'op.personID', '=', 'person.personID')
-                ->select(DB::raw("person.personID, concat(firstName, ' ', lastName) AS fullName, op.OrgStat1, op.OrgStat2, compName, 
+                ->select(DB::raw("person.personID, concat(coalesce(`firstName`, ''), ' ', coalesce(`lastName`, '')) AS fullName, op.OrgStat1, op.OrgStat2, compName, 
                            title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
                 ->get();

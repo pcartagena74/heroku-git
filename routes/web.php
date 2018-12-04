@@ -29,8 +29,6 @@ Route::get('/linkedin2', function()
 });
 */
 
-//use Knp\Snappy\Pdf;
-
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 

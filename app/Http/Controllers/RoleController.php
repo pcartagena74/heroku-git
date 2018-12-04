@@ -17,6 +17,8 @@ class RoleController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        // DB::enableQueryLog();
+        //dd(DB::getQueryLog());
     }
 
     protected function role_bits(){
@@ -96,45 +98,28 @@ class RoleController extends Controller
         $persons = null;
 
         if($query !== null){
-            $persons = Person::where('firstName', 'LIKE', "%$query%")
-                ->orWhere('person.personID', 'LIKE', "%$query%")
-                ->orWhere('lastName', 'LIKE', "%$query%")
-                ->orWhere('login', 'LIKE', "%$query%")
-                ->orWhereHas('orgperson', function ($q) use ($query) {
-                    $q->where('OrgStat1', 'LIKE', "%$query%");
-                })
-                ->orWhereHas('emails', function ($q) use ($query) {
-                    $q->where('emailADDR', 'LIKE', "%$query%");
-                })
-                ->orWhereHas('roles', function ($q) use ($query) {
-                    $q->where('name', 'LIKE', "%query%");
-                })
-                ->whereHas('orgs', function ($q) {
-                    $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+            $persons = Person::whereHas('orgs', function($q){
+                $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+            })
+                ->where(function($q) use($query){
+                    $q->whereHas('roles', function ($q) use ($query) {
+                            $q->where('roles.name', 'LIKE', "%$query%");
+                        })
+                        ->orWhere('person.firstName', 'LIKE', "%$query%")
+                        ->orWhere('login', 'LIKE', "%$query%")
+                        ->orWhere('person.personID', 'LIKE', "%$query%")
+                        ->orWhere('lastName', 'LIKE', "%$query%")
+                        ->orWhereHas('orgperson', function ($q) use ($query) {
+                            $q->where('OrgStat1', 'LIKE', "%$query%");
+                        })
+                        ->orWhereHas('emails', function ($q) use ($query) {
+                            $q->where('emailADDR', 'LIKE', "%$query%");
+                        });
                 })
                 ->join('org-person as op', 'op.personID', '=', 'person.personID')
                 ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
-                ->with('roles', 'emails')->get();
+                ->with('roles')->get();
         }
-
-        /*
-        $persons = Cache::get('all_people', function () {
-            $org = Org::find($this->currentPerson->defaultOrgID);
-            return Person::join('org-person as op', 'op.personID', '=', 'person.personID')
-                         ->with('roles')
-                         ->where([
-                             ['person.personID', '!=', 1],
-                             ['op.orgID', '=', $org->orgID],
-                         ])
-                         ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
-                         ->get();
-            ->select(DB::raw("person.personID, concat(firstName, ' ', lastName) AS fullName, op.OrgStat1, op.OrgStat2, compName,
-                           title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire',
-                           (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
-        });
-        */
-
-        dd($persons);
 
         return view('v1.auth_pages.organization.role_mgmt_search', compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
