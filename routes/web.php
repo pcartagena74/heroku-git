@@ -29,8 +29,6 @@ Route::get('/linkedin2', function()
 });
 */
 
-//use Knp\Snappy\Pdf;
-
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 
@@ -138,7 +136,8 @@ Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');              
 Route::get('/load_data', 'UploadController@index');
 Route::post('/load_data', 'UploadController@store');
 
-Route::get('/role_mgmt', 'RoleController@index');
+Route::get('/role_mgmt/{query?}', 'RoleController@index');
+Route::post('/role_search', 'RoleController@search');
 Route::post('/role/{person}/{role}', 'RoleController@update');                                             // Ajax
 
 Route::post('/eventtype/create', 'EventTypeController@store');

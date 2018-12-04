@@ -206,13 +206,6 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                     <div id="search-results"></div>
                                 </div>
                                 {!! Form::close() !!}
-{{--
-// Quick form to force view of return from autocomplete
-                                {!! Form::open(array('url' => env('APP_URL')."/autocomplete/?" . $string, 'method' => 'get')) !!}
-                                {!! Form::text('query', null, array('id' => 'query', 'class' => 'form-control input-sm')) !!}
-                                {!! Form::submit('Force Query', array('class' => 'btn btn-sm btn-danger')) !!}
-                                {!! Form::close() !!}
---}}
 
                             @endif
                         </div>
@@ -257,29 +250,5 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
             @include('v1.parts.menu-fix', array('path' => '/locations'))
             @break
     @endswitch
-{{--
-                    <script>
-                        $(document).ready(function () {
-                            var setContentHeight = function () {
-                                // reset height
-                                $RIGHT_COL.css('min-height', $(window).height());
 
-                                var bodyHeight = $BODY.outerHeight(),
-                                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                                // normalize content
-                                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                                $RIGHT_COL.css('min-height', contentHeight);
-                            };
-
-                            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/merge/p"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                                setContentHeight();
-                            }).parent().addClass('active');
-
-                        });
-                    </script>
---}}
 @endsection

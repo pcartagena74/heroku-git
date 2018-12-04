@@ -8,9 +8,14 @@
  * @param int $number This is the main statistic (big green number) in the widget
  * @param str $ctext
  * @param str $rtext
+ * @param int $width  override of col-xs-1 if provided
  *
  * icons: fa-user, fa-bar-chart, fa-calendar, fa-clock-o, fa-home, fa-heart
  */
+
+if(!isset($width)){
+    $width = 1;
+}
 if(!isset($up)){
     $up = 1;
 }
@@ -39,6 +44,9 @@ switch ($icon) {
     case 8:
         $itxt = "fas fa-cog";
         break;
+    case 9:
+        $itxt = "fas fa-users";
+        break;
 }
 
 switch($up){
@@ -51,7 +59,7 @@ switch($up){
         $color = 'green';
 }
 ?>
-<div class="col-xs-2 tile_stats_count">
+<div class="col-xs-{{ $width }} tile_stats_count">
     <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
     @if($ctext <> "")

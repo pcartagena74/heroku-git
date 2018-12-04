@@ -9,6 +9,11 @@ return [
         'account' => 'Have an account?  Login',
     ],
 
+    'actions' => [
+        'add' => 'Add ',
+        'remove' => 'Remove ',
+    ],
+
     'buttons' => [
         'add_disc' => 'Add Discount',
         'add_def_disc' => 'Add Default Organizational Discount Codes',
@@ -375,6 +380,7 @@ return [
         'pass_new' => "New Password",
         'pass_ver' => "Verify Password",
         'percent' => "Percent",
+        'perms' => "Permissions",
         'person_search' => "Member Search",
         'person_sim' => "Person Simulation",
         'phone_nums' => "Phone Number|Phone Numbers",
@@ -402,6 +408,9 @@ return [
         'results' => "Results",
         'ret_sess_list' => "Return to Session List",
         'role' => 'Role',
+        'role_ass' => 'Role Assignment',
+        'roles' => 'Roles',
+        'roles&perms' => "Role & Permission Management",
         'roster_add' => 'Add to Roster',
         'sel_tkt' => "Select Ticket",
         'sess_setup' => "Session Setup Questions and Instructions",
@@ -414,6 +423,8 @@ return [
         'std_times' => "Are the session times standard (the same) for all tracks?",
         'swap' => 'Swap Candidates',
         'sub&' => "Submit & ",
+        'sub_changes' => "Submit Changes",
+        'sub&rev' => "Submit & Review Tickets",
         'sub_sess_att' => "Record Session Attendance",
         'success' => "Success",
         'suppress' => "Suppress",
@@ -473,7 +484,7 @@ return [
                      mCentric has emailed you instructions to reset your password if necessary.",
         'max_reached' => "Maximum attendees reached.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
-        'mbr_search' => "Type a few characters of a first or last name, email address or PMI ID.  Hit enter to display all results.",
+        'mbr_search' => "<ol><li>Type a few characters of a first or last name, email address or PMI ID.</li><li>Hit enter to display all results.</li></ol>",
         'merge_dupe' => "{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.",
         'merge_notes' => "{p}<b class='red'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
                             <p></p><b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI's records for PDU reconciliation." .
@@ -742,6 +753,19 @@ return [
         'tkt_no_del' => "The original ticket cannot be deleted. Please edit as needed.",
         'va' => 'View Activity',
         'vep' => 'View/Edit Profile',
+    ],
+
+    'topBits' => [
+        'admin' => "Admin Role",
+        'board' => "Board Role",
+        'dev' => "Developer Role",
+        'events' => "Events Role",
+        'mktg' => "Marketing Role",
+        'rt' => "Roundtable Role",
+        'speaker' => "Speaker Role",
+        'spk_vol' => "Speaker-Volunteer Role",
+        'vol' => "Volunteer Role",
+
     ],
 
     'warning' => [

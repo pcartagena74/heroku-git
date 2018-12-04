@@ -17,11 +17,72 @@ class RoleController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        // DB::enableQueryLog();
+        //dd(DB::getQueryLog());
     }
 
-    public function index()
+    protected function role_bits(){
+        $topBits             = [];
+        $this->currentPerson = Person::find(auth()->user()->id);
+
+        $org = Org::find($this->currentPerson->defaultOrgID);
+
+        $board = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 1], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $speaker = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 2], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $events = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 3], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $vols = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 4], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $spkvol = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 6], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $round = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 7], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $admin = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 8], ['orgID', '=', $org->orgID] ]); })->count();
+
+        $mktg = Person::whereHas('orgperson', function($q) use($org){
+            $q->where('orgID', '=', $org->orgID);
+        })->whereHas('roles', function($q) use($org){
+            $q->where([ ['id', '=', 10], ['orgID', '=', $org->orgID] ]); })->count();
+
+        array_push($topBits, [1, trans('messages.topBits.board'), $board, '', '', '']);
+        array_push($topBits, [1, trans('messages.topBits.mktg'), $mktg, '', '', '']);
+        array_push($topBits, [1, trans('messages.topBits.events'), $events, '', '', '']);
+        array_push($topBits, [1, trans('messages.topBits.rt'), $round, '', '', '', 2]);
+        array_push($topBits, [1, trans('messages.topBits.spk_vol'), $spkvol, '', '', '', 2]);
+        array_push($topBits, [1, trans('messages.topBits.vol'), $vols, '', '', '', 2]);
+        array_push($topBits, [1, trans('messages.topBits.speaker'), $speaker, '', '', '', 2]);
+        array_push($topBits, [1, trans('messages.topBits.admin'), $admin, '', '', '']);
+
+        return($topBits);
+    }
+
+    public function index($query = null)
     {
         // responds to GET /role_mgmt
+        $topBits             = $this->role_bits();
         $this->currentPerson = Person::find(auth()->user()->id);
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         $roles               = Role::where([
@@ -34,21 +95,40 @@ class RoleController extends Controller
                                    ->get();
 
         $permissions = Permission::all();
+        $persons = null;
 
-        $persons = Cache::get('all_people', function () {
-            $org = Org::find($this->currentPerson->defaultOrgID);
-            return Person::join('org-person as op', 'op.personID', '=', 'person.personID')
-                         ->with('roles')
-                         ->where([
-                             ['person.personID', '!=', 1],
-                             ['op.orgID', '=', $org->orgID],
-                         ])
-                         ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
-                         ->get();
-        });
+        if($query !== null){
+            $persons = Person::whereHas('orgs', function($q){
+                $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+            })
+                ->where(function($q) use($query){
+                    $q->whereHas('roles', function ($q) use ($query) {
+                            $q->where('roles.name', 'LIKE', "%$query%");
+                        })
+                        ->orWhere('person.firstName', 'LIKE', "%$query%")
+                        ->orWhere('login', 'LIKE', "%$query%")
+                        ->orWhere('person.personID', 'LIKE', "%$query%")
+                        ->orWhere('lastName', 'LIKE', "%$query%")
+                        ->orWhereHas('orgperson', function ($q) use ($query) {
+                            $q->where('OrgStat1', 'LIKE', "%$query%");
+                        })
+                        ->orWhereHas('emails', function ($q) use ($query) {
+                            $q->where('emailADDR', 'LIKE', "%$query%");
+                        });
+                })
+                ->join('org-person as op', 'op.personID', '=', 'person.personID')
+                ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
+                ->with('roles')->get();
+        }
 
-        return view('v1.auth_pages.organization.role_mgmt', compact('org', 'roles', 'permissions', 'persons'));
+        return view('v1.auth_pages.organization.role_mgmt_search', compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
+
+    public function search(Request $request){
+        $string = $request->input('string');
+        return redirect('/role_mgmt/'.$string);
+    }
+
 
     public function show($id)
     {
