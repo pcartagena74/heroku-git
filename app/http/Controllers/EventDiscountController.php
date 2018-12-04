@@ -74,7 +74,7 @@ class EventDiscountController extends Controller
             $message = "<span><i class='fas fa-trophy-alt fa-2x text-success mid_align'>&nbsp;</i> $txt.</span>";
             return json_encode(array('status' => 'success', 'message' => $message, 'percent' => $discount->percent, 'flatAmt' => $discount->flatAmt));
         } else {
-            $txt = trans('messages.codes.invalid', ['code' => $code]);
+            $txt = trans('messages.codes.invalid_code', ['code' => $code]);
             $message = "<span><i class='fas fa-exclamation-triangle fa-2x text-warning mid_align'>&nbsp;</i>" . " $txt </span>";
             return json_encode(array('status' => 'error', 'message' => $message, 'percent' => 0, 'flatAmt' => 0));
         }

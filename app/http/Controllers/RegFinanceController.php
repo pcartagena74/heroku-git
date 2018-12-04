@@ -577,6 +577,9 @@ class RegFinanceController extends Controller
                     if ($reg->subtotal < 0) {
                         $reg->subtotal = 0;
                     }
+                    if(preg_match("/speaker/i", $code)){
+                        $p->add_speaker_role();
+                    }
                 }
                 $reg->regStatus = trans('messages.reg_status.progress');
                 $reg->save();

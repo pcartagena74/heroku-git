@@ -6,6 +6,7 @@
  */
 
 use Illuminate\Support\Facades\DB;
+use App\Org;
 use App\Person;
 use App\OrgPerson;
 use App\Location;
@@ -13,8 +14,9 @@ use App\Registration;
 use App\Ticket;
 use Illuminate\Support\Facades\Auth;
 
-$org = \App\Org::find($event->orgID);
+$org = Org::find($event->orgID);
 if (Auth::check()) {
+    $auth = 1;
     $person = Person::find(auth()->user()->id);
     $op = OrgPerson::where([
         ['personID', '=', $person->personID],
@@ -27,6 +29,7 @@ if (Auth::check()) {
         $isMember = 0;
     }
 } else {
+    $auth = 0;
     $person = new Person;
     $op = new OrgPerson;
     $registration = new Registration;
@@ -703,13 +706,20 @@ $i = 0;
                                             $('#OrgStat1' + which).attr('readonly', true);
                                             $('#login' + which).attr('readonly', true);
                                             $('#login' + which).attr('onfocus', true);
+                                            {{--
+                                               Change the cost of the ticket from non-member to member
+                                            --}}
+                                            j = which.replace('_', '');
+                                            if(j=='') j = 1;
+                                            fix_pricing(j, which);
+                                            $("#ticket_type"+j).html(member);
                                         }
                                         var popup_text = '';
-                                        if(which == '' && result.pass == 0){
+                                        if(!{{ $auth }} && which == '' && result.pass == 0){
                                             popup_text = "{!! trans('messages.instructions.no_password') !!}";
                                             $('#modal-content').html(popup_text);
                                             $('#dynamic_modal').modal('show');
-                                        } else if(which == '' && result.pass == 1){
+                                        } else if(!{{ $auth }} && which == '' && result.pass == 1){
                                             popup_text = "{!! trans('messages.instructions.need_to_login') !!}";
                                             $('#modal-content').html(popup_text);
                                             $('#dynamic_modal').modal('show');
