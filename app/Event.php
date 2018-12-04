@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\EventSession;
+use App\Person;
 
 class Event extends Model
 {
@@ -106,5 +107,15 @@ class Event extends Model
             ['eventID', '=', $this->eventID],
             ['sessionName', '=', trans('messages.headers.def_sess')]
         ])->first();
+    }
+
+    protected function registered_speakers() {
+        return Person::whereHas('registrations', function($q) {
+            $q->where('eventID', '=', $this->eventID);
+        })
+            ->whereHas('roles', function($q) {
+                $q->where('id', '=', 2);
+            })
+            ->get();
     }
 }

@@ -10,7 +10,7 @@
 
     <div class="col-md-offset-1 col-sm-offset-1 col-md-10 col-sm-10 col-xs-10" style="padding-top: 20px;">
         <div class="container">
-            <p>You can read more about mCentric features available to chapters.</p>
+            <p>Read more about mCentric features available to chapters, associations, and other organizations.</p>
             <ul class="nav nav-tabs">
                 <li><a href="{{ env('APP_URL') }}">Home</a></li>
                 <li class="{{ Route::is('mktg')?'active':'' }}"><a data-toggle="tab" href="#marketing">Marketing</a></li>
@@ -27,10 +27,10 @@
                     <br />
                     <ul>
                         <li><b><i style="color: black;" class="far fa-newspaper"></i> Subscription Management:</b>
-                            For as many lists as you maintain, members have the option of subscribing based on interest
+                            For as many lists as you maintain, members can opt in or out based on interest
                         </li>
                         <br />
-                        <li><b><i style="color: red;" class="far fa-envelope-open-text"></i> Scheduled Notifications:</b>
+                        <li><b><i style="color: red;" class="fas fa-bell"></i> Scheduled Notifications:</b>
                             Setup automatic notifications based on what matters most to your chapter
                         </li>
                         <br />
@@ -43,7 +43,7 @@
 
                 </div>
                 <div id="mailings" class="tab-pane fade in{{ Route::is('mail')?' active':'' }}">
-                    <h2><span class="far fa-envelope-open-text"></span> mCentric-Facilitated Mailings</h2>
+                    <h2><span class="far fa-envelope"></span> mCentric-Facilitated Mailings</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
                     <br />

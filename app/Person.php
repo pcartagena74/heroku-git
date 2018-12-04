@@ -128,4 +128,16 @@ class Person extends Model
                     ])->whereNotNull('OrgStat1');
             })->select('OrgStat1')->first();
     }
+
+    protected function add_speaker_role(){
+
+        $org_role = $this->org_role_id()->id;
+        $speaker_role = 2;
+        if (!$this->roles->contains('id', $speaker_role)) {
+            $this->roles()->toggle($speaker_role);
+        }
+        if (!$this->roles->contains('id', $this->org_role_id()->id)) {
+            $this->roles()->toggle($org_role);
+        }
+    }
 }
