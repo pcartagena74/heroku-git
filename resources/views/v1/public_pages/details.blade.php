@@ -21,20 +21,20 @@
 
             <div class="tab-content">
                 <div id="marketing" class="tab-pane fade in{{ Route::is('mktg')?' active':'' }}">
-                    <h2><span class="fa fa-dashboard"></span> mCentric-Facilitated Marketing</h2>
+                    <h2><span class="fas fa-tachometer-alt"></span> mCentric-Facilitated Marketing</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
                     <br />
                     <ul>
-                        <li><b><i style="color: black;" class="fa fa-newspaper-o"></i> Subscription Management:</b>
+                        <li><b><i style="color: black;" class="far fa-newspaper"></i> Subscription Management:</b>
                             For as many lists as you maintain, members have the option of subscribing based on interest
                         </li>
                         <br />
-                        <li><b><i style="color: red;" class="fa fa-envelope-o"></i> Scheduled Notifications:</b>
+                        <li><b><i style="color: red;" class="far fa-envelope-open-text"></i> Scheduled Notifications:</b>
                             Setup automatic notifications based on what matters most to your chapter
                         </li>
                         <br />
-                        <li><b><i style="color: blue;" class="fa fa-list-ul"></i> Segmentation:</b>
+                        <li><b><i style="color: blue;" class="fas fa-list-ul"></i> Segmentation:</b>
                             Create lists based traits or factors important to your chapter
                         </li>
                         <br />
@@ -43,16 +43,16 @@
 
                 </div>
                 <div id="mailings" class="tab-pane fade in{{ Route::is('mail')?' active':'' }}">
-                    <h2><span class="fa fa-envelope-o"></span> mCentric-Facilitated Mailings</h2>
+                    <h2><span class="far fa-envelope-open-text"></span> mCentric-Facilitated Mailings</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
                     <br />
                     <ul>
-                        <li><b><i style="color: green;" class="fa fa-warning"></i> Notifications:</b>
+                        <li><b><i style="color: green;" class="fas fa-exclamation-triangle"></i> Notifications:</b>
                             Routine notifications can be automatically sent based on actions, timing, etc.
                         </li>
                         <br />
-                        <li><b><i style="color: brown;" class="fa fa-list-ul"></i> List Building:</b>
+                        <li><b><i style="color: brown;" class="fas fa-list-ul"></i> List Building:</b>
                             Send email to people in your database according to event attendance, membership status, etc.
                         </li>
                     </ul>
@@ -60,14 +60,14 @@
 
                 </div>
                 <div id="meetings" class="tab-pane fade in{{ Route::is('mtgs')?' active':'' }}">
-                    <h2><span class="fa fa-calendar"></span> mCentric-Facilitated Meeting &amp; Event Management</h2>
+                    <h2><span class="far fa-calendar-alt"></span> mCentric-Facilitated Meeting &amp; Event Management</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
                     <br/>
 
                     <ul>
                         <li>
-                            <b><i style="color: rebeccapurple;" class="fa fa-ticket"></i> Complex Ticketing Pricing:</b>
+                            <b><i style="color: rebeccapurple;" class="far fa-ticket-alt"></i> Complex Ticketing Pricing:</b>
                             <dd>
                                 Create tickets with member, non-member, early bird, or other complex pricing;<br/>
                                 or bundle tickets together as necessary for particular events
@@ -76,7 +76,7 @@
                         <br />
 
                         <li>
-                            <b><i style="color: blue;" class="fa fa-credit-card"></i> Payment Processing:</b>
+                            <b><i style="color: blue;" class="fas fa-credit-card"></i> Payment Processing:</b>
                             <dd>
                                 Process payments with credit cards or allow attendees to pay at the door with cash or
                                 check
@@ -84,7 +84,7 @@
                         </li>
                         <br />
                         <li>
-                            <b><i style="color: red;" class="fa fa-bar-chart"></i> Real-Time Reporting:</b>
+                            <b><i style="color: red;" class="fas fa-chart-bar"></i> Real-Time Reporting:</b>
                             <dd>
                                 Reporting that provides access to registration and session details
                             </dd>
@@ -93,27 +93,27 @@
                     <br/>
                 </div>
                 <div id="membership" class="tab-pane fade">
-                    <h2><span class="fa fa-users"></span> mCentric-Facilitated Membership Management</h2>
+                    <h2><span class="fas fa-users"></span> mCentric-Facilitated Membership Management</h2>
                     mCentric facilitates the following activities through the data it analyzes on your behalf:
                     <br />
                     <br />
                     <ul>
                         <li>
-                            <b><i style="color: purple;" class="fa fa-bar-chart"></i> Financial Reporting:</b>
+                            <b><i style="color: purple;" class="fas fa-chart-bar"></i> Financial Reporting:</b>
                             <dd>
                                 Track and manage event finances
                             </dd>
                         </li>
                         <br />
                         <li>
-                            <b><i style="color: red;" class="fa fa-pie-chart"></i> Engagement Reporting:</b>
+                            <b><i style="color: red;" class="fas fa-chart-pie"></i> Engagement Reporting:</b>
                             <dd>
                                 Understand how engaged your members are and increase retention
                             </dd>
                         </li>
                         <br />
                         <li>
-                            <b><i style="color: brown;" class="fa fa-users"></i> Contact Management:</b>
+                            <b><i style="color: brown;" class="fas fa-users"></i> Contact Management:</b>
                             <dd>
                                 Track, manage, and connect members and non-members alike
                             </dd>
