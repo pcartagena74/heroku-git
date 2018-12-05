@@ -8,13 +8,22 @@
 //$loc_headers  = ['#', 'Location Name', 'Street', 'Address Line #2', 'City', 'State', 'Zip', 'Admin'];
 $loc_headers = ['#', trans('messages.fields.loc_name'), trans('messages.fields.street'), trans('messages.fields.addr2'),
     trans('messages.fields.city'), trans('messages.fields.state'), trans('messages.fields.zip'),
-    trans('messages.fields.count'), trans('messages.headers.note')];
+    trans('messages.fields.count'), trans('messages.headers.note'), trans('messages.actions.merge')];
 
+$locs = [];
 count($locations) > 15 ? $location_scroll = 1 : $location_scroll = 0;
 
 $address_type = DB::select("select addrType as 'text', addrType as 'value' from `address-type`");
 $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
 $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from countries");
+
+foreach($locations as $l){
+    $m = "<a href='" . env('APP_URL') . "/merge/l/$l->locID' data-toggle='tooltip' data-placement='top'
+             title='" . trans('messages.tooltips.mr') . "' class='btn btn-xs btn-warning'>
+             <i class='far fa-fw fa-code-branch'></i></a>";
+    array_push($locs, [$l->locID, $l->locName, $l->addr1, $l->addr2, $l->city, $l->state, $l->zip, $l->cnt, $l->locNote, $m]);
+}
+
 
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -32,7 +41,7 @@ $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from 
         </button>
     </div>
 
-    @include('v1.parts.datatable', ['headers'=>$loc_headers, 'data'=>$locations, 'scroll'=>$location_scroll])
+    @include('v1.parts.datatable', ['headers'=>$loc_headers, 'data'=>$locs, 'scroll'=>$location_scroll])
 
     @include('v1.parts.end_content')
 
@@ -112,6 +121,7 @@ $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from 
             });
         });
     </script>
+    @include('v1.parts.menu-fix', array('path' => '/locations'))
 @endsection
 
 @section('modals')

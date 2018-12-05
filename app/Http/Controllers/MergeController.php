@@ -240,6 +240,10 @@ class MergeController extends Controller
         $model1->updaterID = $this->currentPerson->personID;
         $model1->save();
 
+        $model2->updaterID = $this->currentPerson->personID;
+        $model2->save();
+        $model2->delete();
+
         switch($letter){
             // Switch to handle relation models associated with the target models
             case 'p':
@@ -340,16 +344,20 @@ class MergeController extends Controller
 
             case 'l':
                 // Find all events with model2's location and update
-                $events = Events::where([
+                $events = Event::where([
                     ['orgID', '=', $this->currentPerson->defaultOrgID],
                     ['locationID', '=', $model2->locID]
                 ])->get();
 
+                $cnt = 0;
                 foreach($events as $e){
                     $e->locationID = $model1->locID;
                     $e->updaterID = $this->currentPerson->personID;
                     $e->save();
+                    $cnt++;
                 }
+                request()->session()->flash('alert-warning', trans('messages.messages.loc_merge',
+                                            ['id' => $model1->locID, 'id2' => $model2->locID, 'count' => $cnt]));
                 $return_model = $model1->locID;
                 break;
         }

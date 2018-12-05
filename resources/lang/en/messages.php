@@ -11,6 +11,7 @@ return [
 
     'actions' => [
         'add' => 'Add ',
+        'merge' => "Merge",
         'remove' => 'Remove ',
     ],
 
@@ -549,6 +550,7 @@ return [
 
     'messages' => [
         'confirm_msg' => "A confirmation email was sent to: :name.",
+        'loc_merge' => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
         'merge_sub' => "Your mCentric account for :name events",
         'merge_msg1' => "An officer/admin with :orgname recently merged accounts associated with you.",
         'merge_msg2' => "The account with :email2 was merged into :email1 and the password was swapped as well.",
