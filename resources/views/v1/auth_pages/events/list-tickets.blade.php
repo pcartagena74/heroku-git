@@ -30,7 +30,7 @@ $default = Org::find($event->orgID);
 
     <p>@lang('messages.instructions.ev_defaults')<br>
     <b style="color:red;">@lang('messages.headers.note'): </b> @lang('messages.instructions.early_values') </p>
-    <div class="col-sm-8 col-md-8">
+    <div class="col-sm-8 col-md-8 col-xs-12">
         <table class="table table-bordered table-striped table-condensed">
             <tr>
                 <th style="text-align: left;">
@@ -38,6 +38,9 @@ $default = Org::find($event->orgID);
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.eb_enddate')])
                 </th>
                 <th style="text-align: left;">@lang('messages.headers.earlybird') @lang('messages.headers.percent') @lang('messages.fields.disc')</th>
+                <th style="text-align: left;">@lang('messages.headers.accept_cash')
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.accept_cash')])
+                </th>
             </tr>
             <tr>
                 <td style="text-align: left;"><a id="earlyBirdDate" data-value="{{ $event->earlyBirdDate }}"
@@ -46,6 +49,9 @@ $default = Org::find($event->orgID);
                                                  data-viewformat="MMM D, YYYY h:mm A"
                                                  data-pk="{{ $event->eventID }}"></a></td>
                 <td style="text-align: left;"><a id="earlyDiscount" data-value="{{ $event->earlyDiscount }}"
+                                                 data-url="{{ env('APP_URL') }}/eventajax/{{ $event->eventID }}"
+                                                 data-pk="{{ $event->eventID }}"></a></td>
+                <td style="text-align: left;"><a id="acceptsCash" data-value="{{ $event->acceptsCash }}"
                                                  data-url="{{ env('APP_URL') }}/eventajax/{{ $event->eventID }}"
                                                  data-pk="{{ $event->eventID }}"></a></td>
             </tr>
@@ -297,6 +303,13 @@ $default = Org::find($event->orgID);
             success: function () {
                 window.location = "{{ env('APP_URL') . '/event-tickets/' . $event->eventID }}";
             }
+        });
+        $("#acceptsCash").editable({
+            type: 'select',
+            source: [
+                { value: 0, text: '{{ trans('messages.yesno_check.no') }}'},
+                { value: 1, text: '{{ trans('messages.yesno_check.yes') }}'}
+            ]
         });
 
     @for ($i = 1; $i <= $tc; $i++)

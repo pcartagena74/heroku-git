@@ -187,7 +187,7 @@ class EventController extends Controller
             return view('v1.public_pages.error_display', compact('message'));
         }
         if($override){
-            $message = "<b>" . trans('messages.headers.note') . "</b> " . trans('messages.warning.inactive_event');
+            $message = trans('messages.warning.inactive_event');
             request()->session()->flash('alert-warning', $message);
         }
 
