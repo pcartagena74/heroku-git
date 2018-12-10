@@ -4,10 +4,12 @@
  * Created: 2/9/2017
  */
 
-
-$headers = ['#', trans('messages.fields.name')]
-$headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'Industry', 'Expiration', 'Buttons'];
-
+/*
+$headers = ['#', trans('messages.fields.name'), trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
+             trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.indName'),
+             trans('messages.fields.expr'), trans('messages.fields.buttons')];
+//$headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'Industry', 'Expiration', 'Buttons'];
+*/
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
