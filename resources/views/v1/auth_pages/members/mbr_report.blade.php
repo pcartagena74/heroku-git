@@ -5,6 +5,7 @@
  */
 
 
+$headers = ['#', trans('messages.fields.name')]
 $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'Industry', 'Expiration', 'Buttons'];
 
 ?>
@@ -14,7 +15,7 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             <li class="active"><a href="#tab_content1" id="member_tab" data-toggle="tab"
-                                  aria-expanded="true"><b>Member Demographics</b></a></li>
+                                  aria-expanded="true"><b>@lang('messages.headers.mem_demo')</b></a></li>
             <li class=""><a href="#tab_content2" id="everyone_tab" data-toggle="tab"
                             aria-expanded="false"><b>Heat Map [Coming Soon]</b></a></li>
 {{--
@@ -84,7 +85,7 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                 data: [
                     {!! $datastring !!}
                 ],
-                xkey: 'Events',
+                xkey: '{{ trans_choice('messages.headers.events', 2) }}',
                 ykeys: [ {!! $labels !!} ],
                 labels: [ {!! $labels !!} ],
                 barRatio: 0.1,
@@ -125,7 +126,7 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
             data: {
                 labels: [
                     @foreach($indPie as $i)
-                        '{{ $i->indName }}',
+                        '% {{ trans('messages.fields.industries.' . $i->indName) }}',
                     @endforeach
                 ],
                 datasets: [{
@@ -146,7 +147,24 @@ $headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'In
                         "#00ff00",
                         "#ccffde",
                         "#ffcccc",
-                        "#0000ff"
+                        "#0000ff",
+                        "#2ecc71",
+                        "#3498db",
+                        "#95a5a6",
+                        "#9b59b6",
+                        "#f1c40f",
+                        "#e74c3c",
+                        "#34495e",
+                        "#b7ad6c",
+                        "#CCFDFF",
+                        "#d7ccff",
+                        "#ffccf3",
+                        "#ff9651",
+                        "#ff0000",
+                        "#00ff00",
+                        "#ccffde",
+                        "#ffcccc",
+                        "#0000ff",
                     ],
 
                     data: [

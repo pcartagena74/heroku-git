@@ -18,8 +18,14 @@ class TrackController extends Controller
     public function show(Event $event)
     {
         $tracks = Track::where('eventID', $event->eventID)->get();
+        $x = $event->registered_speakers();
+        $speakers = [];
 
-        return view('v1.auth_pages.events.track-session', compact('event', 'tracks'));
+        foreach($x as $p){
+            array_push($speakers, [$p->showFullName(), $p->personID]);
+        }
+
+        return view('v1.auth_pages.events.track-session', compact('event', 'tracks', 'speakers'));
     }
 
     public function confDaysUpdate(Request $request, Event $event)

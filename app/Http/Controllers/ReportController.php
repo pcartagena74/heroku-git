@@ -95,13 +95,20 @@ class ReportController extends Controller
             }
         }
 
-        $indPie = DB::select('select indName, count(indName) as cnt
+        $total  = Person::whereNotNull('indName')
+            ->where('indName', '<>', "")
+            ->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID)
+            ->selectRaw("count('indName') as cnt")->first();
+        // DB::select('select count(indName) as total from person p where p.defaultOrgID = ? and indName is not null and indName <> "" ', [$this->currentPerson->defaultOrgID]);
+
+
+        $indPie = DB::select('select indName, round(count(indName)/?*100, 1) as cnt
                                  from person p 
                                  join `org-person` op on op.personID = p.personID
                                  join `organization` o on op.orgID = o.orgID 
                                  where o.orgID = ?
                                        and indName is not null and indName <> ""
-                                 group by indName', [$this->currentPerson->defaultOrgID]);
+                                 group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
 
         return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'datastring', 'labels', 'indPie'));
     }

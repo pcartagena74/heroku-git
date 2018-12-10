@@ -283,6 +283,7 @@ class RegFinanceController extends Controller
                     $reg->regStatus = trans('messages.reg_status.pending');
                 } else {
                     $reg->regStatus = trans('messages.reg_status.processed');
+                    $reg->ticket->update_count(1);
                 }
                 // The first registrant should be logged in
 
@@ -299,8 +300,11 @@ class RegFinanceController extends Controller
                         $reg->mcentricFee = 5;
                     }
                 }
+                if(preg_match("/speaker/i", $reg->discountCode)){
+                    $p = Person::find($reg->personID);
+                    $p->add_speaker_role();
+                }
                 $reg->save();
-                $reg->ticket->update_count(1);
             }
             // Confirmation code is:  personID-regFinance->regID/seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
@@ -665,7 +669,7 @@ class RegFinanceController extends Controller
             }
 
             $discountAmt = 0;
-            $end = $rf->seats - 1;
+
             // update $rf record and each $reg record status
             foreach ($rf->registrations() as $reg){
                 $reg->regStatus = trans('messages.reg_status.processed');

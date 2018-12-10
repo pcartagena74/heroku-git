@@ -88,7 +88,7 @@ class Ticket extends Model
      */
     public function valid_earlyBird(){
         $today = \Carbon\Carbon::now();
-        if($this->earlyBirdDate !== null && $this->earlyBirdDate->gte($today)){
+        if($this->earlyBirdEndDate !== null && $this->earlyBirdEndDate->gte($today) && $this->earlyBirdPercent > 0){
             return 1;
         } else {
             return 0;

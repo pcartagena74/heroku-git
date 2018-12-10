@@ -109,7 +109,7 @@ class Event extends Model
         ])->first();
     }
 
-    protected function registered_speakers() {
+    public function registered_speakers() {
         return Person::whereHas('registrations', function($q) {
             $q->where('eventID', '=', $this->eventID);
         })
