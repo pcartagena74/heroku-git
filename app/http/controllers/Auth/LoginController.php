@@ -42,7 +42,7 @@ class LoginController extends Controller
         if (url()->previous()) {
             $this->redirectTo = url()->previous();
         } else {
-            $this->redirectTo = env('APP_URL').'/dashboard';
+            $this->redirectTo = url('/dashboard', [], true);
         }
         $this->middleware('guest', ['except' => 'logout']);
     }
