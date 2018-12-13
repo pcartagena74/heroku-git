@@ -71,7 +71,7 @@ class ics_cal_full
                                     ->select('etName')
                                     ->first();
 
-            $this->title       = trans('messages.mCentric_text.hosted_event', $org->orgName);
+            $this->title       = trans('messages.mCentric_text.hosted_event', ['org' => $org->orgName]);
             $this->start       = $event->eventStartDate;
             $this->end         = $event->eventEndDate;
             $this->created     = $event->createDate;
