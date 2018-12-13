@@ -39,7 +39,7 @@ class ics_calendar
         $org               = Org::find($event->orgID);
         $loc               = Location::find($event->locationID);
 
-        $this->title       = trans('messages.mCentric_text.hosted_event', $org->orgName);
+        $this->title       = trans('messages.mCentric_text.hosted_event', ['org' => $org->orgName]);
         $this->start       = $event->eventStartDate;
         $this->end         = $event->eventEndDate;
         $this->created     = $event->createDate;
