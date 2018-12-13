@@ -13,6 +13,7 @@ use App\Location;
 
 class ics_calendar
 {
+    private $title;
     private $start;
     private $end;
     private $created;
@@ -38,6 +39,7 @@ class ics_calendar
         $org               = Org::find($event->orgID);
         $loc               = Location::find($event->locationID);
 
+        $this->title       = trans('messages.mCentric_text.hosted_event', $org->orgName);
         $this->start       = $event->eventStartDate;
         $this->end         = $event->eventEndDate;
         $this->created     = $event->createDate;
@@ -48,7 +50,7 @@ class ics_calendar
         $this->description = $org->orgName . " - " . $event->eventName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
-        $this->location    = $loc->locName . " " . $loc->addr1 . ", " . $loc->addr2 . ", " . $loc->city . ", " . $loc->state . " " . $loc->zip;
+        $this->location    = $this->contact . ":" . $loc->locName . "\r\n " . $loc->addr1 . "\r\n " . $loc->addr2 . "\r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n ";
         $this->uri         = env('APP_URL') . "/events/" . $event->slug;
         $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
         $this->stamp       = Carbon::now()->format('Ymd\THis');
@@ -70,7 +72,7 @@ class ics_calendar
     {
 
         $this->o_string = "BEGIN:VCALENDAR\r\n".
-            "PRODID:-//mCentric-hosted " . $this->org . " Event" ."\r\n".
+            "PRODID:-//" . $this->title . "\r\n".
             "VERSION:2.0\r\n".
             "METHOD:REQUEST\r\n".
             "BEGIN:VEVENT\r\n".

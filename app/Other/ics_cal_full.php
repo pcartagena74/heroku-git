@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection as Collection;
 
 class ics_cal_full
 {
+    private $title;
     private $start;
     private $end;
     private $created;
@@ -50,7 +51,7 @@ class ics_cal_full
     public function open(){
         return "BEGIN:VCALENDAR\r\n".
                "VERSION:2.0\r\n".
-               "PRODID:-//mCentric-hosted " . $this->org->orgName . " Event" ."\r\n".
+               "PRODID:-//" . $this->title . "\r\n".
                "METHOD:REQUEST\r\n";
     }
 
@@ -64,16 +65,18 @@ class ics_cal_full
         $this->o_string = '';
         foreach($this->events as $event){
             $loc               = Location::find($event->locationID);
+            $org               = Org::find($event->orgID);
             $etype             = DB::table('org-event_types')
                                     ->where('etID', $event->eventTypeID)
                                     ->select('etName')
                                     ->first();
 
+            $this->title       = trans('messages.mCentric_text.hosted_event', $org->orgName);
             $this->start       = $event->eventStartDate;
             $this->end         = $event->eventEndDate;
             $this->created     = $event->createDate;
             $this->updated     = $event->updateDate;
-            $this->html        = $event->eventDescription;
+            $this->html        = wordwrap($event->eventDescription, 75, "\r\n ", true);
             //$this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
             $this->subject     = $event->eventName;
             $this->summary     = $this->subject;
@@ -81,7 +84,7 @@ class ics_cal_full
             $this->description = $this->html;
             $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
             $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
-            $this->location    = $this->contact . ":" . $loc->locName . "\n" . $loc->addr1 . "\n" . $loc->addr2 . "\n" . $loc->city . ", " . $loc->state . " " . $loc->zip;
+            $this->location    = $this->contact . ":" . $loc->locName . "\r\n " . $loc->addr1 . "\r\n " . $loc->addr2 . "\r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n ";
             $this->uri         = env('APP_URL') . "/events/" . $event->slug;
             $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
             $this->stamp       = Carbon::now()->format('Ymd\THis');

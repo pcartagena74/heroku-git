@@ -150,9 +150,9 @@ return [
         'industries' => [
             'select' => 'Select Industry',
             'Aerospace' => 'Aerospace',
-            'Agriculture' => 'Agriculture/Food/Food Services',
+            'Agriculture' => 'Agriculture/Food & Beverage/Food Services',
             'Automotive' => 'Automotive',
-            'Construction' => 'Construction/Real Estate/Equipment',
+            'Construction' => 'Construction & Equipment/Real Estate',
             'Consulting' => 'Consulting/Professional Services',
             // 'Consumer Goods' => 'Consumer Goods',
             'Defense' => 'Defense',
@@ -167,6 +167,7 @@ return [
             'Hospitality' => 'Hospitality',
             'HR' => 'Human Resources/Recruiting',
             'Insurance' => 'Insurance',
+            'Legal' => 'Legal',
             'Life Sciences' => 'Life Sciences/Pharmaceuticals',
             'Manufacturing' => 'Manufacturing',
             'Marketing' => 'Marketing/Media',
@@ -552,6 +553,10 @@ return [
                    Registering will secure :count spots on the wait list. You will not be charged at this time.',
     ],
 
+    'mCentric_text' => [
+        'hosted_event' => "mCentric-hosted :org Event",
+    ],
+
     'messages' => [
         'confirm_msg' => "A confirmation email was sent to: :name.",
         'loc_merge' => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
@@ -747,6 +752,7 @@ return [
         'reg_cancel' => "Cancel this registration attempt.",
         'sales_end' => "When should ticket sales end for this event?",
         'select_all' => "Click to select all items.",
+        'speaker_choices' => "Register speakers using the 'Speaker' discount to populate this dropdown list with speakers.",
         'std_times' => "If most sessions follow the same schedule, choose Yes.  You can change this later
                         (after setting up the similar sessions) to adjust the times that are different.",
         'suppress' => "Change to 'Yes' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.",

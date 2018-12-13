@@ -21,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
+
         Blade::directive('dd', function ($expression) {
             return "<?php dd({$expression}); ?>";
         });

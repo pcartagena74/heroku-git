@@ -25,4 +25,8 @@ class EventSession extends Model
         return $this->belongsTo(Event::class, 'eventID');
     }
 
+    public function speakers()
+    {
+        return $this->belongsToMany(Speaker::class, 'eventsession_speaker', 'eventsession_id', 'speaker_id');
+    }
 }
