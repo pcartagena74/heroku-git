@@ -129,15 +129,24 @@ class Person extends Model
             })->select('OrgStat1')->first();
     }
 
-    protected function add_speaker_role(){
+    public function speaker(){
+        $this->hasOne(Speaker::class, 'id', 'personID');
+    }
+    public function add_speaker_role(){
 
         $org_role = $this->org_role_id()->id;
         $speaker_role = 2;
         if (!$this->roles->contains('id', $speaker_role)) {
-            $this->roles()->toggle($speaker_role);
+            $this->roles()->attach($speaker_role);
         }
         if (!$this->roles->contains('id', $this->org_role_id()->id)) {
-            $this->roles()->toggle($org_role);
+            $this->roles()->attach($org_role);
+        }
+        $s = Speaker::find($this->personID);
+        if($s === null){
+            $s = new Speaker;
+            $s->id = $this->personID;
+            $s->save();
         }
     }
 }

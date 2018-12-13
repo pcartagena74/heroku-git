@@ -18,20 +18,15 @@ class TrackController extends Controller
     public function show(Event $event)
     {
         $tracks = Track::where('eventID', $event->eventID)->get();
-        $x = $event->registered_speakers();
-        $speakers = [];
+        $spk_list = $event->registered_speakers();
 
-        foreach($x as $p){
-            array_push($speakers, [$p->showFullName(), $p->personID]);
-        }
-
-        return view('v1.auth_pages.events.track-session', compact('event', 'tracks', 'speakers'));
+        return view('v1.auth_pages.events.track-session', compact('event', 'tracks', 'spk_list'));
     }
 
     public function confDaysUpdate(Request $request, Event $event)
     {
         // this function is only to update $event->confDays
-        $value  = request()->input('value');
+        $value = request()->input('value');
         $tracks = Track::where('eventID', $event->eventID)->get();
 
         if ($value < $event->confDays) {
@@ -52,7 +47,7 @@ class TrackController extends Controller
                 }
             }
         }
-        $event->confDays  = $value;
+        $event->confDays = $value;
         $event->updaterID = auth()->user()->id;
         $event->save();
 
@@ -62,14 +57,14 @@ class TrackController extends Controller
         for ($d = 1; $d <= $value; $d++) {
             foreach ($tracks as $t) {
                 for ($i = 1; $i <= 5; $i++) {
-                    $s            = new EventSession;
-                    $s->eventID   = $event->eventID;
-                    $s->trackID   = $t->trackID;
-                    $s->confDay   = $d;
-                    $s->start     = $event->eventStartDate->addDays($d - 1);
-                    $s->end       = $event->eventStartDate->addDays($d - 1);
+                    $s = new EventSession;
+                    $s->eventID = $event->eventID;
+                    $s->trackID = $t->trackID;
+                    $s->confDay = $d;
+                    $s->start = $event->eventStartDate->addDays($d - 1);
+                    $s->end = $event->eventStartDate->addDays($d - 1);
                     $s->creatorID = auth()->user()->id;
-                    $s->order     = $i;
+                    $s->order = $i;
                     $s->save();
                 }
             }
@@ -79,7 +74,7 @@ class TrackController extends Controller
     public function update(Request $request, Track $track)
     {
         // the name that is passed in is trackName + id and we only change trackName
-        $value            = request()->input('value');
+        $value = request()->input('value');
         $track->trackName = $value;
         $track->updaterID = auth()->user()->id;
         $track->save();
@@ -117,8 +112,13 @@ class TrackController extends Controller
                 $s->updaterID = auth()->user()->id;
                 $s->save();
             }
+        } elseif ($name == 'sessionSpeakers') {
+            // Do stuff for sessionSpeaker assignment
+            //dd(request()->all());
+            // $v is an array of personIDs
+            $s->speakers()->sync($value);
         } else {
-            $s->{$name}   = $value;
+            $s->{$name} = $value;
             $s->updaterID = auth()->user()->id;
             $s->save();
         }
@@ -135,7 +135,7 @@ class TrackController extends Controller
             $isSymmetric = 1;
         }
         $event->isSymmetric = $isSymmetric;
-        $event->updaterID   = auth()->user()->id;
+        $event->updaterID = auth()->user()->id;
         $event->save();
         //return json_encode(array('status' => 'success', 'message' => 'Did something...' . $isSymmetric, 'blah' => $checked));
         return redirect('/tracks/' . $event->eventID);
@@ -144,7 +144,7 @@ class TrackController extends Controller
     public function assignTicketSessions(Request $request, $day)
     {
         // pass the day of the event in the URL and $value = ticketID
-        $value  = request()->input('value');
+        $value = request()->input('value');
         $ticket = Ticket::find($value);
         list($name, $day) = array_pad(explode("-", request()->input('name'), 2), 2, null);
         $sessions = EventSession::where([
@@ -153,7 +153,7 @@ class TrackController extends Controller
         ])->get();
 
         foreach ($sessions as $s) {
-            $s->ticketID  = $ticket->ticketID;
+            $s->ticketID = $ticket->ticketID;
             $s->updaterID = auth()->user()->id;
             $s->save();
         }
