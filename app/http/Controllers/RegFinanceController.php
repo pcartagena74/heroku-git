@@ -272,57 +272,65 @@ class RegFinanceController extends Controller
             }
 
             $discountAmt = 0;
+            $totalHandle = 0;
 
             // Cycle through event-registrations and update regStatus based on rf->status
             // Also update full cost and fee information
             foreach ($rf->registrations as $reg) {
+                $handleFee = 0;
 
                 if ($reg->ticket->waitlisting()) {
                     $reg->regStatus = trans('messages.headers.wait');
                 } elseif($rf->status == trans('messages.reg_status.pending')) {
                     $reg->regStatus = trans('messages.reg_status.pending');
+                    $reg->ticket->update_count(1);
                 } else {
                     $reg->regStatus = trans('messages.reg_status.processed');
                     $reg->ticket->update_count(1);
                 }
                 // The first registrant should be logged in
 
-                $discountAmt += ($reg->origcost - $reg->subtotal);
                 if($reg->subtotal > 0){
-                    $reg->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
-                    $reg->mcentricFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
-                    if($reg->mcentricFee > 5){
-                        $reg->mcentricFee = 5;
+                    $reg->ccFee = number_format(($reg->subtotal * .029) + .30, 2, '.', ',');
+                    $handleFee = number_format(($reg->subtotal * .029) + .30, 2, '.', '');
+                    if($handleFee > 5){
+                        $handleFee = 5;
                     }
                 } else if($reg->origcost > 0){
-                    $reg->mcentricFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
-                    if($reg->mcentricFee > 5){
-                        $reg->mcentricFee = 5;
+                    $handleFee = number_format(($reg->origcost * .029) + .30, 2, '.', '');
+                    if($handleFee > 5){
+                        $handleFee = 5;
                     }
                 }
                 if(preg_match("/speaker/i", $reg->discountCode)){
                     $p = Person::find($reg->personID);
                     $p->add_speaker_role();
                 }
+
+                $totalHandle += $handleFee;
+                $discountAmt += ($reg->origcost - $reg->subtotal - $handleFee);
+                $reg->mcentricFee = $handleFee;
                 $reg->save();
             }
             // Confirmation code is:  personID-regFinance->regID/seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
 
-            // Need to set fees IF the cost > $0
+            // Need to set ccFee IF the cost > $0
             if ($rf->cost > 0) {
                 // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
                 $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
 
                 // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $5.00
-                $rf->handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
-                if ($rf->handleFee > 5) {
-                    $rf->handleFee = number_format(5 * $rf->seats, 2, '.', '');
-                } else {
-                    $rf->handleFee = number_format($rf->handleFee * $rf->seats, 2, '.', '');
-                }
+                $rf->handleFee = number_format($totalHandle, 2, '.', '');
                 $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
                 $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+            } else {
+                $rf->handleFee = number_format($totalHandle, 2, '.', '');
+                $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
+                $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+            }
+            if($rf->orgAmt < 0){
+                $rf->orgAmt = 0;
             }
             // fees above are already $0 unless changed so save.
             $rf->save();
@@ -669,20 +677,21 @@ class RegFinanceController extends Controller
             }
 
             $discountAmt = 0;
+            $handleFee = 0;
 
             // update $rf record and each $reg record status
             foreach ($rf->registrations() as $reg){
                 $reg->regStatus = trans('messages.reg_status.processed');
                 $reg->updaterID = auth()->user()->id;
-                $discountAmt += ($reg->origcost - $reg->subtotal);
 
                 // Update ticket purchase on all bundle ticket members by $rf->seat
                 $ticket = Ticket::find($reg->ticketID);
                 $ticket->update_count(1);
 
-                if ($reg->subtotal > 0 || $reg->cost > 0) {
+                if ($reg->subtotal > 0 || $reg->origcost > 0) {
                     // mCentric Handle fee = 2.9% of $rf->cost + $0.30
-                    $handleFee = number_format(($rf->cost * .029) + .30, 2, '.', '');
+                    $reg->subtotal > 0 ? $cost = $reg->subtotal : $cost = $reg->origcost;
+                    $handleFee = number_format(($cost * .029) + .30, 2, '.', '');
                     // capped at $5.00
                     if ($handleFee > 5) {
                         $handleFee = number_format(5, 2, '.', '');
@@ -692,15 +701,20 @@ class RegFinanceController extends Controller
                 }
                 $reg->save();
             }
+            $discountAmt += ($reg->origcost - $reg->subtotal - $handleFee);
             // Confirmation code is:  personID-regID-seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
 
-            // Need to set fees IF the cost > $0
+            // Need to set ccFee if cost > $0 and other fees regardless of the cost
             if ($rf->cost > 0) {
                 // Stripe ccFee = 2.9% of $rf->cost + $0.30, no cap
                 $rf->ccFee = number_format(($rf->cost * .029) + .30, 2, '.', ',');
 
                 // mCentric Handle fee = 2.9% of $rf->cost + $0.30 capped at $5.00
+                $rf->handleFee = $total_handle;
+                $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
+                $rf->discountAmt = number_format($discountAmt, 2, '.', '');
+            } else {
                 $rf->handleFee = $total_handle;
                 $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
                 $rf->discountAmt = number_format($discountAmt, 2, '.', '');
