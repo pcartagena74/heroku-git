@@ -114,7 +114,7 @@ class Ticket extends Model
      */
     public function update_count($amt){
         $bundle_members = $this->bundle_members();
-        if($bundle_members) {
+        if(count($bundle_members) > 0) {
             foreach ($bundle_members as $m) {
                 if($m->waitlisting()){
                     $m->waitCount += $amt;
