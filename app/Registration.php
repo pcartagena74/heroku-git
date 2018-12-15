@@ -39,9 +39,9 @@ class Registration extends Model
         return $this->hasOne(RegFinance::class, 'regID', 'rfID');
     }
 
-    public function regsession()
+    public function regsessions()
     {
-        return $this->hasMany(RegSession::class, 'regID', 'regID');
+        return $this->hasOne(RegSession::class, 'regID', 'regID');
     }
 
     public function checkin(){

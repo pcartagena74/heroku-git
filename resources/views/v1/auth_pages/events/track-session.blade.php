@@ -8,14 +8,14 @@ use App\Ticket;
 
 $topBits = '';
 
-if($event->isSymmetric) {
+if ($event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;
-    $width   = (integer)85 / $event->hasTracks;
-    $mw      = (integer)90 / $event->hasTracks;
+    $width = (integer)85 / $event->hasTracks;
+    $mw = (integer)90 / $event->hasTracks;
 } else {
     $columns = $event->hasTracks * 3;
-    $width   = (integer)80 / $event->hasTracks;
-    $mw      = (integer)85 / $event->hasTracks;
+    $width = (integer)80 / $event->hasTracks;
+    $mw = (integer)85 / $event->hasTracks;
 }
 
 $tickets = Ticket::where([
@@ -48,7 +48,7 @@ $tickets = Ticket::where([
     <div class="col-sm-3">
         {!! Form::open(array('url' => env('APP_URL').'/tracksymmetry/'.$event->eventID, 'method' => 'post')) !!}
         <label for="isSymmetric" class="control-label">@lang('messages.headers.std_times')
-        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.std_times')])
+            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.std_times')])
         </label>
         @if($event->isSymmetric !== null && $event->isSymmetric != 1)
             <div class="col-sm-4"> {!! Form::label('isSymmetric', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} </div>
@@ -65,7 +65,8 @@ $tickets = Ticket::where([
         {!! Form::label('confDays', trans('messages.headers.confDays'), array('class' => 'control-label')) !!}
         <div class="col-sm-12 col-md-12 col-xs-12">
             <b><a style="color:red;" id="confDays" data-pk="{{ $event->eventID }}"
-                  data-url="{{ env('APP_URL') }}/eventDays/{{ $event->eventID }}" data-value="{{ $event->confDays }}"></a></b>
+                  data-url="{{ env('APP_URL') }}/eventDays/{{ $event->eventID }}"
+                  data-value="{{ $event->confDays }}"></a></b>
         </div>
     </div>
 
@@ -103,7 +104,8 @@ $tickets = Ticket::where([
                         ])->first();
 ?>
                         <th style="text-align:center; color: white; background-color: #2a3f54;"
-                            colspan="{{ $columns }}">@lang('messages.headers.day') {{ $i }} @lang('messages.headers.sess_tkt'):
+                            colspan="{{ $columns }}">@lang('messages.headers.day') {{ $i }} @lang('messages.headers.sess_tkt')
+                            :
                             <a style="color:yellow;" id="ticketLabel-{{ $i}}"
                                data-pk="{{ $track->trackID }}"
                                data-url="{{ env('APP_URL') }}/trackticket/{{ $i }}"
@@ -114,115 +116,119 @@ $tickets = Ticket::where([
                     {{-- For each of the potential sessions (in a track)... --}}
                     @for($x=1;$x<=5;$x++)
 <?php
-                                // Check to see if there are any events for $x (this row)
-                                $check = EventSession::where([
-                                    ['eventID', $event->eventID],
-                                    ['confDay', $i],
-                                    ['order', $x]
-                                ])->first();
+                        // Check to see if there are any events for $x (this row)
+                        $check = EventSession::where([
+                            ['eventID', $event->eventID],
+                            ['confDay', $i],
+                            ['order', $x]
+                        ])->first();
 
-                                // As long as there are any sessions, if this is the first track
-                                // or if non symmetric, show the times
+                        // As long as there are any sessions, if this is the first track
+                        // or if non symmetric, show the times
 ?>
-                                @if($check !== null)
-                                    <tr>
-                                    @foreach($tracks as $track)
-                                        {{-- For each of the tracks... --}}
+                        @if($check !== null)
+                            <tr>
+                                @foreach($tracks as $track)
+                                    {{-- For each of the tracks... --}}
 <?php
-                                            $s = EventSession::where([
-                                                ['trackID', $track->trackID],
-                                                ['eventID', $event->eventID],
-                                                ['confDay', $i],
-                                                ['order', $x]
-                                            ])->first();
+                                    $s = EventSession::where([
+                                        ['trackID', $track->trackID],
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $i],
+                                        ['order', $x]
+                                    ])->first();
 
-                                            // If this particular session exists...
-                                            // ...give the option to delete it from DB if  the sessionName is null
+                                    // If this particular session exists...
+                                    // ...give the option to delete it from DB if  the sessionName is null
 ?>
-                                       @if($tracks->first() == $track || !$event->isSymmetric)
-                                            <td rowspan="4" style="text-align:left;">
-                                                @if($s !== null)
-                                                    <nobr>
-                                                        <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
-                                                           data-pk="{{ $s->sessionID }}" data-value="{{ $s->start }}"></a>
-                                                    </nobr>
-                                                    &dash;
-                                                    <nobr>
-                                                        <a id="end-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
-                                                           data-pk="{{ $s->sessionID }}" data-value="{{ $s->end }}"></a>
-                                                    </nobr>
-                                                    <br/>
-                                                    @if($s !== null)
-                                                        @if($s->sessionName === null)
-                                                            {!! Form::open(array('url' => env('APP_URL')."/session/".$s->sessionID, 'method' => 'delete')) !!}
-                                                            <button type="submit" class="btn btn-danger btn-xs"><i
-                                                                    class="fa fa-trash"></i></button>
-                                                            {!! Form::close() !!}
-                                                        @endif
-                                                    @endif
-                                                @else
-                                                    &nbsp;
-                                                @endif
-                                            </td>
-                                        @endif
-                                        <td colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
+                                    @if($tracks->first() == $track || !$event->isSymmetric)
+                                        <td rowspan="4" style="text-align:left;">
                                             @if($s !== null)
-                                                <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                       style="color: #2a3f54;" class="control-label">@lang('messages.headers.sess_title')</label>
-                                                       <small>({{ $s->sessionID }})</small><br />
-                                                <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                   data-pk="{{ $s->sessionID }}"
-                                                   data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                                   data-value="{{ $s->sessionName }}"></a>
+                                                <nobr>
+                                                    <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                       data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
+                                                       data-pk="{{ $s->sessionID }}" data-value="{{ $s->start }}"></a>
+                                                </nobr>
+                                                &dash;
+                                                <nobr>
+                                                    <a id="end-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                       data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
+                                                       data-pk="{{ $s->sessionID }}" data-value="{{ $s->end }}"></a>
+                                                </nobr>
+                                                <br/>
+                                                @if($s !== null)
+                                                    @if($s->sessionName === null)
+                                                        {!! Form::open(array('url' => env('APP_URL')."/session/".$s->sessionID, 'method' => 'delete')) !!}
+                                                        <button type="submit" class="btn btn-danger btn-xs"><i
+                                                                    class="fa fa-trash"></i></button>
+                                                        {!! Form::close() !!}
+                                                    @endif
+                                                @endif
                                             @else
                                                 &nbsp;
                                             @endif
                                         </td>
-                                    @endforeach
-                                </tr>
-                                @else
-                                    &nbsp;
-                                @endif
-{{-- @endfor --}}
+                                    @endif
+                                    <td colspan="2"
+                                        style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
+                                        @if($s !== null)
+                                            <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                   style="color: #2a3f54;"
+                                                   class="control-label">@lang('messages.headers.sess_title')</label>
+                                            <small>({{ $s->sessionID }})</small><br/>
+                                            <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->sessionName }}"></a>
+                                        @else
+                                            &nbsp;
+                                        @endif
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @else
+                            &nbsp;
+                        @endif
+                        {{-- @endfor --}}
 
 <?php
-                                // Check to see if there are any events for $x (this row)
-                                $check = EventSession::where([
-                                    ['eventID', $event->eventID],
-                                    ['confDay', $i],
-                                    ['order', $x]
-                                ])->first();
+                        // Check to see if there are any events for $x (this row)
+                        $check = EventSession::where([
+                            ['eventID', $event->eventID],
+                            ['confDay', $i],
+                            ['order', $x]
+                        ])->first();
 
-                                // As long as there are any sessions, the row will be displayed
+                        // As long as there are any sessions, the row will be displayed
 ?>
                         @if($check !== null)
-                        <tr>
-                            @foreach($tracks as $track)
+                            <tr>
+                                @foreach($tracks as $track)
 
 <?php
-                                $s = EventSession::where([
-                                    ['trackID', $track->trackID],
-                                    ['eventID', $event->eventID],
-                                    ['confDay', $i],
-                                    ['order', $x]
-                                ])->first();
+                                    $s = EventSession::where([
+                                        ['trackID', $track->trackID],
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $i],
+                                        ['order', $x]
+                                    ])->first();
 ?>
-                                <td colspan="2" style="text-align:left;">
-                                @if($s !== null)
-                                        <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">@lang('messages.headers.sess_spk')</label><br/>
-                                        <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->sessionSpeakers }}"></a>
-                                @else
-                                    &nbsp;
-                                @endif
-                                </td>
-                            @endforeach
-                        </tr>
+                                    <td colspan="2" style="text-align:left;">
+                                        @if($s !== null)
+                                            <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                   style="color: #2a3f54;"
+                                                   class="control-label">@lang('messages.headers.sess_spk')</label>
+                                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.speaker_choices')])
+                                            <br/>
+                                            <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"></a>
+                                        @else
+                                            &nbsp;
+                                        @endif
+                                    </td>
+                                @endforeach
+                            </tr>
                         @endif
 
 <?php
@@ -236,83 +242,83 @@ $tickets = Ticket::where([
                         // As long as there are any sessions, the row will be displayed
 ?>
                         @if($check !== null)
-                        <tr>
-                            @foreach($tracks as $track)
+                            <tr>
+                                @foreach($tracks as $track)
 <?php
-                                $s = EventSession::where([
-                                    ['trackID', $track->trackID],
-                                    ['eventID', $event->eventID],
-                                    ['confDay', $i],
-                                    ['order', $x]
-                                ])->first();
+                                    $s = EventSession::where([
+                                        ['trackID', $track->trackID],
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $i],
+                                        ['order', $x]
+                                    ])->first();
 ?>
-                                @if($s !== null)
-                                    <td style="text-align:left;">
-                                        {{--
-                                        <a id="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->creditArea }}"></a>
-                                        --}}
-                                        <a id="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->leadAmt }}"></a>
-                                        <label style="color: #2a3f54;"
-                                               for="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.lead')
-                                            {{ $s->event->org->creditLabel }}<?php
-                                            if($s->leadAmt != 1) {
-                                                echo('s');
-                                            }
+                                    @if($s !== null)
+                                        <td style="text-align:left;">
+                                            {{--
+                                            <a id="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->creditArea }}"></a>
+                                            --}}
+                                            <a id="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->leadAmt }}"></a>
+                                            <label style="color: #2a3f54;"
+                                                   for="leadAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.lead')
+                                                {{ $s->event->org->creditLabel }}<?php
+                                                if ($s->leadAmt != 1) {
+                                                    echo('s');
+                                                }
 ?>
-                                        </label><br />
-                                        <a id="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->stratAmt }}"></a>
-                                        <label style="color: #2a3f54;"
-                                               for="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.strat')
-                                            {{ $s->event->org->creditLabel }}<?php
-                                            if($s->stratAmt != 1) {
-                                                echo('s');
-                                            }
+                                            </label><br/>
+                                            <a id="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->stratAmt }}"></a>
+                                            <label style="color: #2a3f54;"
+                                                   for="stratAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.strat')
+                                                {{ $s->event->org->creditLabel }}<?php
+                                                if ($s->stratAmt != 1) {
+                                                    echo('s');
+                                                }
 ?>
-                                        </label><br />
-                                        <a id="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->techAmt }}"></a>
-                                        <label style="color: #2a3f54;"
-                                               for="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.tech')
-                                            {{ $s->event->org->creditLabel }}<?php
-                                            if($s->techAmt != 1) {
-                                                echo('s');
-                                            }
+                                            </label><br/>
+                                            <a id="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->techAmt }}"></a>
+                                            <label style="color: #2a3f54;"
+                                                   for="techAmt-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"> @lang('messages.pdus.tech')
+                                                {{ $s->event->org->creditLabel }}<?php
+                                                if ($s->techAmt != 1) {
+                                                    echo('s');
+                                                }
 ?>
-                                        </label><br />
-                                        <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">
-                                            {{ $s->creditAmt }} @lang('messages.fields.total') {{ $s->event->org->creditLabel }}<?php
-                                        if($s->creditAmt != 1) {
-                                            echo('s');
-                                        }
+                                            </label><br/>
+                                            <label for="creditArea-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                   style="color: #2a3f54;" class="control-label">
+                                                {{ $s->creditAmt }} @lang('messages.fields.total') {{ $s->event->org->creditLabel }}<?php
+                                                if ($s->creditAmt != 1) {
+                                                    echo('s');
+                                                }
 ?>
-                                        </label>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <label style="color: #2a3f54;"
-                                               for="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
-                                            @lang('messages.headers.att_limit'): </label>
-                                        <a id="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->maxAttendees }}"></a>
-                                    </td>
-                                @else
-                                    <td colspan="2"> &nbsp; </td>
-                                @endif
-                            @endforeach
-                        </tr>
+                                            </label>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <label style="color: #2a3f54;"
+                                                   for="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}">
+                                                @lang('messages.headers.att_limit'): </label>
+                                            <a id="maxAttendees-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->maxAttendees }}"></a>
+                                        </td>
+                                    @else
+                                        <td colspan="2"> &nbsp;</td>
+                                    @endif
+                                @endforeach
+                            </tr>
                         @endif
 
 <?php
@@ -326,30 +332,31 @@ $tickets = Ticket::where([
                         // As long as there are any sessions, the row will be displayed
 ?>
                         @if($check !== null)
-                        <tr>
-                            @foreach($tracks as $track)
+                            <tr>
+                                @foreach($tracks as $track)
 <?php
-                                $s = EventSession::where([
-                                    ['trackID', $track->trackID],
-                                    ['eventID', $event->eventID],
-                                    ['confDay', $i],
-                                    ['order', $x]
-                                ])->first();
+                                    $s = EventSession::where([
+                                        ['trackID', $track->trackID],
+                                        ['eventID', $event->eventID],
+                                        ['confDay', $i],
+                                        ['order', $x]
+                                    ])->first();
 ?>
-                                <td colspan="2" style="text-align:left;">
-                                @if($s !== null)
-                                        <label for="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                               style="color: #2a3f54;" class="control-label">@lang('messages.fields.abstract')</label><br/>
-                                        <a id="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                           data-pk="{{ $s->sessionID }}"
-                                           data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
-                                           data-value="{{ $s->sessionAbstract }}"></a>
-                                @else
-                                    &nbsp;
-                                @endif
-                                </td>
-                            @endforeach
-                        </tr>
+                                    <td colspan="2" style="text-align:left;">
+                                        @if($s !== null)
+                                            <label for="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                   style="color: #2a3f54;"
+                                                   class="control-label">@lang('messages.fields.abstract')</label><br/>
+                                            <a id="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
+                                               data-value="{{ $s->sessionAbstract }}"></a>
+                                        @else
+                                            &nbsp;
+                                        @endif
+                                    </td>
+                                @endforeach
+                            </tr>
                         @endif
 
                     @endfor
@@ -418,7 +425,10 @@ $tickets = Ticket::where([
             @endfor
 
 <?php
-            $sessions = EventSession::where('eventID', $event->eventID)->orderBy('trackID', 'order')->get()
+            $sessions = EventSession::where([
+                ['eventID', $event->eventID],
+                ['sessionID', '!=', 0]
+            ])->orderBy('trackID', 'order')->get();
 ?>
             @foreach($sessions as $s)
             @if($s->deleted_at === null)
@@ -460,11 +470,28 @@ $tickets = Ticket::where([
             $("#maxAttendees-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
 
             $("#sessionSpeakers-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
-                type: 'text',
+                type: 'checklist',
+                @if(count($s->speakers) > 0)
+
+                value: [
+                    @foreach($s->speakers as $p)
+                    '{{ $p->id }}'
+                    @if($s->speakers->last() != $p)
+                    ,
+                    @endif
+                    @endforeach
+                ],
+                @endif
+                source: [
+                    @foreach($spk_list as $sp)
+                        { value: '{!! $sp->personID !!}', text: '{!! $sp->showFullName() !!}' }@if($spk_list->last() != $sp),
+                    @endif
+                    @endforeach
+                ],
                 success: function (data) {
                     //window.location = '{{ env('APP_URL') . "/tracks/" . $event->eventID }}';
                     console.log(data);
-                }
+                },
             });
 
             $("#leadAmt-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
@@ -491,9 +518,10 @@ $tickets = Ticket::where([
 
             @endif
             @endforeach
-        });
+        })
+        ;
     </script>
-        @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => 'Track & Session Setup'))
+    @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => 'Track & Session Setup'))
 @endsection
 
 @section('modal')

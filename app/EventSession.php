@@ -29,4 +29,8 @@ class EventSession extends Model
     {
         return $this->belongsToMany(Speaker::class, 'eventsession_speaker', 'eventsession_id', 'speaker_id');
     }
+
+    public function regsessions(){
+        return $this->hasMany(RegSession::class,'sessionID', 'sessionID');
+    }
 }

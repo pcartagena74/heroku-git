@@ -478,8 +478,8 @@ $es = $event->default_session();
                             <div class="col-xs-2" style="text-align: right;">
 <?php
                                 $checked = '';
-                                if (null !== $row->regsession->first()) {
-                                    if ($row->regsession->first()->hasAttended) {
+                                if (null !== $row->regsession) {
+                                    if ($row->regsession->hasAttended) {
                                         $checked = 'checked';
                                     }
                                 }
