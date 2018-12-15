@@ -7,6 +7,8 @@
 return [
     'auth' => [
         'account' => 'Have an account?  Login',
+        'forgot' => 'Forgot Password?',
+        'remember' => 'Remember Me',
     ],
 
     'actions' => [
@@ -494,7 +496,7 @@ return [
         'merge_dupe' => "{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.",
         'merge_notes' => "{p}<b class='red'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
                             <p></p><b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI's records for PDU reconciliation." .
-                          "|{l}<b class='red'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.",
+            "|{l}<b class='red'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.",
         'merge_overwrite' => "If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.",
         'merge_survive' => "{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.",
         'name_change' => "You need to contact PMI directly to change this data.",
@@ -515,14 +517,14 @@ return [
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created." .
             "<br>Changes made here <b class='red'>do not</b> affect existing events.",
         'pmiID' => "Please enter your PMI Identification Number.",
-        'pmiID_found' => "<h2>An mCentric account was found for PMI ID: :pmiID.</h2>".
-                         "The name on this account (#:id) is :name with a login of :login. <br />",
+        'pmiID_found' => "<h2>An mCentric account was found for PMI ID: :pmiID.</h2>" .
+            "The name on this account (#:id) is :name with a login of :login. <br />",
         'pmi_pass' => "{0}The acccount password has been set. <br />" .
-                      "If you don't remember your password, you can <a class='red' href='/password/reset'>reset</a> it.  Otherwise, <a class='red' href='/login'>login</a>." .
-                      "|{1}The account password has <b class='red'>not</b> been set. <br />" .
-                      "You will need to <a class='red' href='/password/reset'>reset</a> your password.",
+            "If you don't remember your password, you can <a class='red' href='/password/reset'>reset</a> it.  Otherwise, <a class='red' href='/login'>login</a>." .
+            "|{1}The account password has <b class='red'>not</b> been set. <br />" .
+            "You will need to <a class='red' href='/password/reset'>reset</a> your password.",
         'pmi_emails' => "The following email address(es) are associated with PMI ID: :pmiID: <ul>:emails</ul><p></p>" .
-                        "If you no longer have access to the login address above, email the account id# above and your preferred login email to vpfinance@pmimassbay.org",
+            "If you no longer have access to the login address above, email the account id# above and your preferred login email to vpfinance@pmimassbay.org",
         'pmiID_not_found' => "There is no mCentric account associated with PMI ID: :pmiID.",
         'postRegInfo' => "Anything added here will displayed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
@@ -565,6 +567,7 @@ return [
         'merge_msg2' => "The account with :email2 was merged into :email1 and the password was swapped as well.",
         'no_curr_pass_match' => "The current password did not match.",
         'no_events' => "There are no future events in the system.",
+        'partial_fail' => "The attempt to get a partial refund failed with order: :rfid.",
         'pass_change' => "The password was changed successfully.",
         'pass_change_for' => "The password for :name was changed successfully.",
         'thanks' => "Thank you for using mCentric with :orgname.",

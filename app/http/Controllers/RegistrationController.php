@@ -609,7 +609,7 @@ class RegistrationController extends Controller
 
                     // Generate Refund Email
                 } catch (\Exception $e) {
-                    request()->session()->flash('alert-danger', 'The attempt to get a partial refund failed witih order; ' . $rf->regID . '. ' . $org->adminContactStatement);
+                    request()->session()->flash('alert-danger', trans('messages.messages.partial_fail', ['rfid' => $rf->regID]) . $org->adminContactStatement);
                 }
                 $reg->delete();
             }

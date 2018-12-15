@@ -29,7 +29,7 @@ class RegSession extends Model
 
     public function registration()
     {
-        return $this->hasOne(Registration::class, 'regID', 'regID');
+        return $this->belongsTo(Registration::class, 'regID', 'regID');
     }
 
     public function person()

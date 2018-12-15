@@ -44,13 +44,13 @@ class ics_calendar
         $this->end         = $event->eventEndDate;
         $this->created     = $event->createDate;
         $this->updated     = $event->updateDate;
-        $this->html        = $event->eventDescription;
+        $this->html        = str_replace(PHP_EOL, '', $event->eventDescription);
         $this->org         = $org->orgName;
         $this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
         $this->description = $org->orgName . " - " . $event->eventName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
-        $this->location    = $this->contact . ":" . $loc->locName . "\r\n " . $loc->addr1 . "\r\n " . $loc->addr2 . "\r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n ";
+        $this->location    = $this->contact . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2 . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
         $this->uri         = env('APP_URL') . "/events/" . $event->slug;
         $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
         $this->stamp       = Carbon::now()->format('Ymd\THis');
@@ -59,7 +59,7 @@ class ics_calendar
 
     private function _escapeString($string)
     {
-        return preg_replace('/([\,;])/', '\\\$1', ($string) ? $string : '');
+        return wordwrap(preg_replace('/([\,;])/', '\\\$1', ($string) ? $string : ''), 75, "\r\n ", true);
     }
 
     public function get()
