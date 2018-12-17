@@ -9,6 +9,7 @@ namespace App\Other;
 use Carbon\Carbon;
 use App\Location;
 use App\Org;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection as Collection;
 
@@ -23,6 +24,7 @@ class ics_cal_full
     private $summary;
     private $description;
     private $location;
+    private $locale;
     private $stamp;
     private $start;
     private $subject;
@@ -36,9 +38,9 @@ class ics_cal_full
 
     public function __construct(Collection $events)
     {
-
         $this->events = $events;
         $this->org = Org::find($events->first()->orgID);
+        $this->locale = App::getLocale();
     }
 
     private function _escapeString($string)
@@ -65,11 +67,41 @@ class ics_cal_full
         return "END:VCALENDAR\r\n";
     }
 
+    private function _gen_venue(Location $l){
+        if($l->isVirtual){
+            $this->v_string =
+                "BEGIN:VVENUE\r\n" .
+                "UID:" . $this->venue_uid . "\r\n" .
+                "NAME:" . $l->locName . "\r\n" .
+                "END:VVENUE\r\n";
+
+        } else {
+            $cntry = DB::table('countries')->where('cntryID', '=', $l->countryID)->first();
+            $state = DB::table('state')->where('abbrev', '=', $l->state)->first();
+
+            $this->v_string =
+                "BEGIN:VVENUE\r\n" .
+                "UID:" . $this->venue_uid . "\r\n" .
+                "NAME:" . $l->locName . "\r\n" .
+                "STREET-ADDRESS:" . $l->addr1 . "\r\n";
+            if ($l->addr2) {
+                $this->v_string .= "EXTENDED-ADDRESS:" . $l->addr2 . "\r\n";
+            }
+            $this->v_string .=
+                "LOCALITY:" . $l->city . "\r\n" .
+                "REGION;ABBREV:" . $l->state . ":" . $state->stateName . "\r\n" .
+                "COUNTRY;ABBREV:" . $cntry->cntryCode . ":" . $cntry->cntryName . "\r\n" .
+                "POSTAL-CODE:" . $l->zip . "\r\n" .
+                "URL;TYPE=Map:https://maps.google.it/maps?q=" .
+                urlencode($l->addr1 . " " . $l->addr2 . " " . $l->city . ", " . $l->state . " " . $l->zip) . "&hl=$this->locale\r\n" .
+                "END:VVENUE\r\n";
+        }
+        return $this->v_string;
+    }
     private function _generate()
     {
+        $this->o_string = ''; $this->v_string = '';
 
-        $this->o_string = '';
-        $this->v_string = '';
         foreach ($this->events as $event) {
             $loc = Location::find($event->locationID);
             $org = Org::find($event->orgID);
@@ -120,23 +152,7 @@ class ics_cal_full
                 "DESCRIPTION:" . $this->_escapeString($this->description) . "\r\n" .
                 "END:VEVENT\r\n";
 
-            $cntry = DB::table('countries')->where('cntryID', '=', $loc->countryID)->first();
-            $state = DB::table('state')->where('abbrev', '=', $loc->state)->first();
-
-            $this->o_string .=
-                "BEGIN:VVENUE\r\n" .
-                "UID:" . $this->venue_uid . "\r\n" .
-                "NAME:" . $loc->locName . "\r\n" .
-                "STREET-ADDRESS:" . $loc->addr1 . "\r\n";
-            if ($loc->addr2) {
-                $this->o_string .= "EXTENDED-ADDRESS:" . $loc->addr2 . "\r\n";
-            }
-            $this->o_string .=
-                "LOCALITY:" . $loc->city . "\r\n" .
-                "REGION;ABBREV:" . $loc->state . ":" . $state->stateName . "\r\n" .
-                "COUNTRY;ABBREV:" . $cntry->cntryCode . ":" . $cntry->cntryName . "\r\n" .
-                "POSTAL-CODE:" . $loc->zip . "\r\n" .
-                "END:VVENUE\r\n";
+            $this->o_string .= $this->_gen_venue($loc);
         }
     }
 }
