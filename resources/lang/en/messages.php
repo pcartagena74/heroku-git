@@ -76,7 +76,7 @@ return [
         'numeric' => 'Please enter a value from 1 - 5.',
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
-        'unexpected' => 'An unexpected error occurred.',
+        'unexpected' => "An unexpected error occurred. Please logout and attempt to perform your action again.<br />If this persists, contact mCentric@mCentric.org with as much detail as possible.",
     ],
 
     'flashes' => [

@@ -188,8 +188,8 @@ class RegFinanceController extends Controller
         $needSessionPick = $request->input('needSessionPick');
         $stripeToken = $request->input('stripeToken');
 
-        // user can hit "at door" or "credit" buttons.
-        // if the cost is $0, the 'pay with card' button won't show on the form
+        // user can hit "at door", if available, or "credit" buttons.
+        // if the cost is $0, the 'pay with card' button won't show on the form but a "complete registration" will
 
         if ($rf->status != trans('messages.reg_status.processed')) {
             // if cost > $0 AND payment details were given ($stripeToken isset),
@@ -258,17 +258,21 @@ class RegFinanceController extends Controller
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
                 $rf->save();
-            } elseif ($rf->cost > 0) {
-                // cost > 0 and the 'Pay at Door' button was pressed
+            } elseif ($rf->cost > 0 && $event->acceptsCash) {
+                // cost > 0 and the 'Pay at Door' button was pressed (assumes acceptsCash = 1)
                 $rf->status = trans('messages.reg_status.pending');
                 $rf->pmtType = trans('messages.reg_status.door');
                 $rf->save();
-            } else {
+            } elseif($rf->cost == 0) {
                 //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
                 $rf->status = trans('messages.reg_status.processed');
                 $rf->pmtType = trans('messages.reg_status.no_charge');
                 $rf->save();
+            } else {
+                // Some weird error occured
+                request()->session()->flash('alert-danger', trans('messages.errors.unexpected'));
+                return back()->withInput();
             }
 
             $discountAmt = 0;
@@ -700,10 +704,11 @@ class RegFinanceController extends Controller
                     $total_handle += $handleFee;
                 }
                 $reg->save();
+                $discountAmt += ($reg->origcost - $reg->subtotal - $handleFee);
             }
-            $discountAmt += ($reg->origcost - $reg->subtotal - $handleFee);
             // Confirmation code is:  personID-regID-seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
+            if($discountAmt < 0) { $discountAmt = 0; }
 
             // Need to set ccFee if cost > $0 and other fees regardless of the cost
             if ($rf->cost > 0) {
