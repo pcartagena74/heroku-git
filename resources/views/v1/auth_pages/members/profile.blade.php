@@ -488,7 +488,7 @@ foreach ($array as $chap) {
             @if(Entrust::hasRole('Speaker'))
                 <div class="tab-pane fade" id="tab_content3" aria-labelledby="other-tab">
                     &nbsp;<br/>
-                    <b>Speaker features will appear here in the next update.</b>
+                    <b>@lang('messages.profile.spk_info')</b>
                 </div>
             @endif
         </div>

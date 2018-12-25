@@ -136,6 +136,7 @@ class EventDiscountController extends Controller
         }
         return redirect("/eventdiscount/".$event->eventID);
     }
+
     public function edit($id)
     {
         // responds to GET /blah/id/edit and shows the add/edit form

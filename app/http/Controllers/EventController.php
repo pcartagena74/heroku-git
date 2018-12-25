@@ -29,6 +29,7 @@ use Spatie\Referer\Referer;
 use App\EventSession;
 use Stripe\Card;
 
+
 class EventController extends Controller
 {
     public function __construct()
@@ -234,8 +235,7 @@ class EventController extends Controller
 
         $tracks = Track::where('eventID', $event->eventID)->get();
 
-        return view(
-            'v1.public_pages.display_event_w_sessions2',
+        return view('v1.public_pages.display_event_w_sessions2',
             compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks',
                     'currentOrg', 'override'));
     }
@@ -300,10 +300,18 @@ class EventController extends Controller
 
         $event->orgID = $this->currentPerson->defaultOrgID;
         $event->eventName = request()->input('eventName');
-        $event->eventDescription = request()->input('eventDescription');
+        $eventDescription = request()->input('eventDescription');
+        if($eventDescription !== null){
+            $eventDescription = extract_images($eventDescription, $event->orgID);
+        }
+        $event->eventDescription = $eventDescription;
+        $eventInfo = request()->input('eventInfo');
+        if($eventInfo !== null){
+            $eventInfo = extract_images($eventInfo, $event->orgID);
+        }
+        $event->eventInfo = $eventInfo;
         $event->catID = request()->input('catID');
         $event->eventTypeID = request()->input('eventTypeID');
-        $event->eventInfo = request()->input('eventInfo');
         $event->eventStartDate = request()->input('eventStartDate');
         $event->eventEndDate = request()->input('eventEndDate');
         $event->eventTimeZone = request()->input('eventTimeZone');
@@ -446,7 +454,7 @@ class EventController extends Controller
             ['eventID', '!=', $event->eventID]
         ])->withTrashed()->first();
         if ($slug_not_unique !== null) {
-            request()->session()->flash('alert-danger', "The URL you chose is not unique.  Please change and validate it before proceeding.");
+            request()->session()->flash('alert-danger', trans('messages.errors.slug_error'));
             return back()->withInput();
         }
 
@@ -497,10 +505,20 @@ class EventController extends Controller
             }
         }
         $event->eventName = request()->input('eventName');
-        $event->eventDescription = request()->input('eventDescription');
+        $eventDescription = request()->input('eventDescription');
+        if($eventDescription !== null){
+            $eventDescription = extract_images($eventDescription, $event->orgID);
+        }
+        $event->eventDescription = $eventDescription;
+        $eventInfo = request()->input('eventInfo');
+        if($eventInfo !== null){
+            $eventInfo = extract_images($eventInfo, $event->orgID);
+        }
+        $event->eventInfo = $eventInfo;
+        //$event->eventDescription = request()->input('eventDescription');
+        //$event->eventInfo = request()->input('eventInfo');
         $event->catID = request()->input('catID');
         $event->eventTypeID = request()->input('eventTypeID');
-        $event->eventInfo = request()->input('eventInfo');
         $event->eventStartDate = request()->input('eventStartDate');
         $event->eventEndDate = request()->input('eventEndDate');
         $event->eventTimeZone = request()->input('eventTimeZone');

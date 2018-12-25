@@ -16,6 +16,8 @@ $category = DB::table('event-category')->where([
     ['catID', $event->catID]
 ])->select('catTXT')->first();
 
+$locale = App::getLocale();
+
 // -----------------
 // Early Bird-ism
 // 1. Get today's date
@@ -520,7 +522,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
             <div id="map_canvas" class="col-md-12 col-sm-12 col-xs-12" style="padding:15px;">
                 <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="ssss" scrolling="no"
                         marginheight="0" marginwidth="0"
-                        src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&output=embed"></iframe>
+                        src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&hl={{ $locale }}&output=embed"></iframe>
             </div>
             <b>{{ $event_loc->locName }}</b><br>
             {{ $event_loc->addr1 }}<br>{!! $event_loc->addr2 !!}
@@ -533,7 +535,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.fields.org'), 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <p><img src="{{ $logo }}" alt="{!! $currentOrg->orgName !!} Logo"></p>
+    <p><img src="{{ $logo }}" alt="{!! $currentOrg->orgName !!} {{ trans('messages.headers.logo') }}"></p>
     {{ $event->contactOrg }}<br>
     {{ $event->contactEmail }}<br>
     <br>
@@ -625,9 +627,13 @@ $mbr_price = trans('messages.instructions.mbr_price');
                         $('#status_msg').fadeIn(0);
                     },
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         var result = eval(data);
-                        $('#status_msg').html(result.message).fadeIn(0);
+                        $('.status_msg').html(result.message).fadeIn(0);
+                        if(result.status == 'error'){
+                            console.log($("#discount_code" + which).val());
+                            $("#discount_code" + which).val('');
+                        }
                     },
                     error: function (data) {
                         console.log(data);

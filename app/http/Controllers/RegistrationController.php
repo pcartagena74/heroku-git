@@ -132,11 +132,19 @@ class RegistrationController extends Controller
                     ->orWhere('regStatus', '=', trans('messages.reg_status.pending'));
             })->with('regfinance', 'ticket', 'person')->get();
 
+        $regs = $regs->sortBy(function($n){
+            return $n->person->lastName;
+        });
+
         // Separating out the query because name tags should be printed even if paying 'At Door'
         $nametags = Registration::where('eventID', '=', $event->eventID)
             ->with('regfinance', 'ticket', 'person', 'person.orgperson', 'regsessions', 'event')
             ->orderBy('registeredBy')
             ->get();
+
+        $nametags = $nametags->sortBy(function($n){
+            return $n->person->lastName;
+        });
 
         // list of attendees who are payment pendings so they are displayed separately
         $deadbeats = Registration::where([
@@ -225,7 +233,8 @@ class RegistrationController extends Controller
     public function store (Request $request, Event $event) {
         // called by /regstep3/{event}/create
 
-        $show_pass_fields = 0; $set_new_user = 0; $set_secondary_email = 0; $subcheck = 0; $sumtotal = 0;
+        $show_pass_fields = 0; $set_new_user = 0;
+        $set_secondary_email = 0; $subcheck = 0; $sumtotal = 0;
         $quantity = request()->input('quantity');
         $total = request()->input('total');
         $token = request()->input('_token');
@@ -253,12 +262,16 @@ class RegistrationController extends Controller
             }
         }
 
-        // $resubmit set based on "unknown user" of 1 or the logged in user.
+        //  $resubmit set based on "unknown user" of 1 or the logged in user.
         //  Then if the $token is already in the database, under the same personID, it's likely a dupe
-        $resubmit = RegFinance::where([
-            ['token', '=', $token],
-            ['personID', '=', $authorID]
-        ])->first();
+        if($authorID <> 1){
+            $resubmit = RegFinance::where([
+                ['token', '=', $token],
+                ['personID', '=', $authorID]
+            ])->first();
+        } else {
+            $resubmit = null;
+        }
 
         // Create or re-open the stub reg-finance record
         if(null !== $resubmit && $resubmit->eventID == $event->eventID){
@@ -466,6 +479,7 @@ class RegistrationController extends Controller
             $reg->regStatus = trans('messages.reg_status.progress');
             if ($t->waitlisting()) {
                 $reg->regStatus = trans('messages.headers.wait');
+                $rf->status = trans('messages.headers.wait');
             }
             $reg->registeredBy = $regBy;
             $reg->token = $token;
@@ -481,6 +495,13 @@ class RegistrationController extends Controller
             }
             $reg->creatorID = $authorID;
             $reg->updaterID = $authorID;
+
+            // Check for ticket price error (There is a cost, but subtotal == 0 w/o a discount that should make it 0
+            if($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || $dc->percent != 100)){
+                // Set the debugNote field and adjust the subtotal
+                $reg->debugNote = "Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
+                $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost);
+            }
             $reg->save();
         }
 

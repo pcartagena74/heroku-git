@@ -15,6 +15,8 @@ use App\RegSession;
  * 1. Past Event: show a tab that allows for registration confirmations & allows to add registrants (free events only)
  * 2.
  */
+
+
 $today = \Carbon\Carbon::now();
 $currentOrg = \App\Org::find($event->orgID);
 $topBits = ''; // there should be topBits for this
@@ -226,6 +228,8 @@ if ($event->hasTracks && $event->isSymmetric) {
 }
 
 $es = $event->default_session();
+
+
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 

@@ -137,7 +137,7 @@ $i = 0;
     @if($ticket->waitlisting())
         <div class="clearfix"><p></div>
         <b class="red">
-            @lang('messages.instructions.waitlist', $quantity)
+            {!! trans_choice('messages.instructions.waitlist', $quantity) !!}
         </b>
         <div class="clearfix"></div>
     @endif
@@ -217,15 +217,15 @@ $i = 0;
         @if($i == 1)
             <div id="tkt1st" class="col-sm-12">
                 <div  class="container" style="border: 0px red solid;">
-                    <div class="col-sm-3">
-                        <span class="red" id="notself">@lang('messages.fields.not_mine')</span>
-                    </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-1" style="text-align: right;">
                         <input id="selfcheck" class="flat js-switch input-sm" type="checkbox" checked
                                name="self" value="1">
                     </div>
                     <div class="col-sm-3">
-                        <b id="self">@lang('messages.fields.my_ticket')</b>
+                        <span class="red" id="notself"><b>@lang('messages.fields.not_mine')</b></span>
+                    </div>
+                    <div class="col-sm-3">
+                        &nbsp;
                     </div>
                 </div>
                 <div class="col-sm-5"> <p>&nbsp;</p> </div>
@@ -630,12 +630,17 @@ $i = 0;
                             //console.log(data);
                             var result = eval(data);
                             $('.status_msg' + which).html(result.message).fadeIn(0);
-                            $('#discount' + which).text(result.percent);
-                            $('#flatdisc' + which).text(result.flatAmt);
+                            if(result.status == 'error'){
+                                console.log($("#discount_code" + which).val());
+                                $("#discount_code" + which).val('');
+                            } else {
+                                $('#discount' + which).text(result.percent);
+                                $('#flatdisc' + which).text(result.flatAmt);
 
-                            $('#i_percent'+which).val(result.percent);
-                            $('#i_flatamt'+which).val(result.flatAmt);
-                            recalc();
+                                $('#i_percent'+which).val(result.percent);
+                                $('#i_flatamt'+which).val(result.flatAmt);
+                                recalc();
+                            }
                         },
                         error: function (data) {
                             //console.log(data);

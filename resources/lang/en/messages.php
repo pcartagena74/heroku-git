@@ -73,9 +73,10 @@ return [
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'no_receipt' => "The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
                          <a style='color:black;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
-        'numeric' => 'Please enter a value from 1 - 5.',
+        'numeric' => 'Please enter a value between 1 - 5.',
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
+        'slug_error' => "The URL you chose is not unique.  Please change and validate it before proceeding.",
         'unexpected' => "An unexpected error occurred. Please logout and attempt to perform your action again.<br />If this persists, contact mCentric@mCentric.org with as much detail as possible.",
     ],
 
@@ -206,7 +207,7 @@ return [
         'noncost' => 'Non-Member Cost',
         'nonprice' => 'Non-Member Price',
         'nonmbr' => 'Non-Member',
-        'not_mine' => "No, I am buying this ticket for someone else.",
+        'not_mine' => "Click if you are not buying this ticket for yourself.",
         'oCost' => 'Original Cost',
         'org' => 'Organizer Information',
         'orgStat1' => 'PMI Member ID',
@@ -534,7 +535,7 @@ return [
         'role_toggle' => 'The role :role was toggled for :person.',
         'role_txt' => "The values in these tables are not editable and are here for informational purposes only.",
         'select_event' => "Select the event for registration",
-        'sold_out' => "This ticket is sold out. Add yourself to the wait list.",
+        'sold_out' => "Sold Out! Register to add yourself to the wait list.",
         'tkt_setup' => "Creating additional tickets is typically only necessary for Professional Development Day events.",
         'total_caveat' => "Total does NOT reflect updates due to refunds.",
         'tracks' => "Here are this event's :n tracks and its sessions from which attendees can choose
@@ -680,6 +681,7 @@ return [
         'primary' => "The primary address is the only one we'll use to contact you. It is also one used for your login above.",
         'prof_info' => "Profile Information",
         'spk_tab' => "Speaker Information",
+        'spk_info' => "Speaker features will appear here in the next update.  You can see this tab because you have been registered as a speaker at a past (or upcoming) event.",
         'state' => 'State',
         'type' => 'Type',
         'uneditable' => 'uneditable',
