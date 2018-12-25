@@ -143,7 +143,7 @@ try {
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', trans('messages.headers.desc').'*', array('class' => 'control-label')) !!}
-        {!! Form::textarea('eventDescription', old('eventDescription'), array('class'=>'form-control rich', 'id'=>'snote')) !!}
+        {!! Form::textarea('eventDescription', old('eventDescription'), array('class'=>'form-control summernote', 'id'=>'snote')) !!}
     </div>
 
     <div class="form-group col-md-12">
@@ -158,7 +158,7 @@ try {
 
     <div class="form-group col-md-12">
         {!! Form::label('eventInfo', trans('messages.fields.additional'), array('class' => 'control-label')) !!}
-        {!! Form::textarea('eventInfo', old('eventInfo'), array('class'=>'form-control rich')) !!}
+        {!! Form::textarea('eventInfo', old('eventInfo'), array('class'=>'form-control summernote')) !!}
     </div>
 
     <div class="col-sm-5">
@@ -367,7 +367,10 @@ try {
 
 @section('scripts')
     @include('v1.parts.summernote')
+
+    {{--
     @include('v1.parts.footer-tinymce')
+    --}}
 <script>
     $(document).ready(function () {
         $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));

@@ -54,4 +54,5 @@ class Registration extends Model
         $rs->hasAttended = 1;
         $rs->save();
     }
+
 }

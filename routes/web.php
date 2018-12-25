@@ -170,7 +170,7 @@ Route::post('/regstep1/{event}', 'RegistrationController@processRegForm')->name(
 Route::get('/regstep2/{event}/{quantity}/{dCode?}', 'RegistrationController@showRegForm');
 Route::post('/regstep3/{event}/create', 'RegistrationController@store')->name('register_step2');
 Route::get('/confirm_registration/{id}', 'RegFinanceController@show')->name('register_step3');
-Route::patch('/complete_registration/{id}', 'RegFinanceController@update');
+Route::patch('/complete_registration/{id}', 'RegFinanceController@update')->name('register_step4');
 Route::patch('/update_payment/{reg}/{rf}', 'RegFinanceController@update_payment')->name('accept_payment');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');                                         // Ajax
 Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
