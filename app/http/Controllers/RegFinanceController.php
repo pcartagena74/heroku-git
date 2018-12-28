@@ -191,7 +191,12 @@ class RegFinanceController extends Controller
         // user can hit "at door", if available, or "credit" buttons.
         // if the cost is $0, the 'pay with card' button won't show on the form but a "complete registration" will
 
-        if ($rf->status != trans('messages.reg_status.processed')) {
+        if ($rf->status == trans('messages.headers.wait')) {
+            // This transaction, regardless of cost, will increment the waitlist, etc.
+            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
+            $rf->pmtType = trans('messages.headers.wait');
+            $rf->save();
+        } elseif ($rf->status != trans('messages.reg_status.processed')) {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if ($rf->cost > 0 && $stripeToken !== null) {

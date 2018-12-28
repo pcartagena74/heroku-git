@@ -4,7 +4,7 @@
  * Created: 3/11/2017
  */
 
-$orgHeader = "<a href='#' id='orgName' data-title='Enter Org Name' data-value='$org->orgName'></a>" .
+$orgHeader = "<a href='#' id='orgName' data-title='" . trans('messages.directions.org.display') . "' data-value='$org->orgName'></a>" .
     " &nbsp; <a data-toggle='tooltip' title=" . '"' . trans('messages.tooltips.orgName') .
     '"'. " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
 
@@ -25,12 +25,18 @@ $currentOrg    = $currentPerson->defaultOrg;
     @include('v1.parts.start_content', ['header' => trans('messages.nav.org_set') . " " . trans('messages.headers.for')
              . ': ' . $orgHeader, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
+    <div class="col-xs-12">
+        <h4>
+            @lang('messages.headers.formal'): <a href='#' id='formalName' data-title='{{ trans('messages.directions.org.fullname') }}' data-value='{{ $org->formalName }}'></a>
+        </h4>
+    </div>
+
     @include('v1.parts.start_content', ['header' => trans('messages.headers.demos'), 'subheader' => '',
              'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <table id="demographics" class="table table-striped table-condensed">
         <tr>
-            <th colspan="2" style="text-align: left;">@trans_choice('messages.fields.addr', 2)</th>
+            <th colspan="2" style="text-align: left;">@lang('messages.fields.addr')</th>
             <th style="text-align: left;">@lang('messages.fields.city')</th>
             <th style="text-align: left;">@lang('messages.fields.state')</th>
             <th style="text-align: left;">@lang('messages.fields.zip')</th>
@@ -62,11 +68,9 @@ $currentOrg    = $currentPerson->defaultOrg;
                                                          title="{{ trans('messages.tooltips.fb') }}">@lang('messages.headers.facebook') @lang('messages.headers.url')</a></th>
         </tr>
         <tr>
-            <td colspan="2" style="text-align: left;"><a href="#" id="adminEmail"
-                                                         data-value="{{ $org->adminEmail }}"></a></td>
+            <td colspan="2" style="text-align: left;"><a href="#" id="adminEmail" data-value="{{ $org->adminEmail }}"></a></td>
             <td colspan="1" style="text-align: left;"></td>
-            <td colspan="2" style="text-align: left;"><a href="#" id="facebookURL"
-                                                         data-value="{{ $org->facebookURL }}"></a></td>
+            <td colspan="2" style="text-align: left;"><a href="#" id="facebookURL" data-value="{{ $org->facebookURL }}"></a></td>
         </tr>
         <tr>
             <th colspan="2" style="text-align: left;">@lang('messages.headers.website')</th>
@@ -75,8 +79,7 @@ $currentOrg    = $currentPerson->defaultOrg;
         </tr>
         <tr>
             <td colspan="2" style="text-align: left;"><a href="#" id="orgURL" data-value="{{ $org->orgURL }}"></a></td>
-            <td colspan="1" style="text-align: left;"><a href="#" id="creditLabel"
-                                                         data-value="{{ $org->creditLabel }}"></a></td>
+            <td colspan="1" style="text-align: left;"><a href="#" id="creditLabel" data-value="{{ $org->creditLabel }}"></a></td>
             <td colspan="2" style="text-align: left;"><a href="#" id="orgHandle" data-value="{{ $org->orgHandle }}"></a>
             </td>
         </tr>
@@ -85,8 +88,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             <th colspan="2" style="text-align: left;">@lang('messages.headers.google')</th>
         </tr>
         <tr>
-            <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL"
-                                                         data-value="{{ $org->linkedinURL }}"></a></td>
+            <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL" data-value="{{ $org->linkedinURL }}"></a></td>
             <td colspan="2" style="text-align: left;"><a href="#" id="googleURL" data-value="{{ $org->googleURL }}"></a>
             </td>
         </tr>
@@ -94,8 +96,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             <th colspan="5" style="text-align: left;">@lang('messages.headers.admin_stmt')</th>
         </tr>
         <tr>
-            <td colspan="5" style="text-align: left;"><a href="#" id="adminStatement"
-                                                         data-value="{{ $org->adminContactStatement }}"></a></td>
+            <td colspan="5" style="text-align: left;"><a href="#" id="adminStatement" data-value="{{ $org->adminContactStatement }}"></a></td>
         </tr>
 
     </table>
@@ -154,6 +155,11 @@ $currentOrg    = $currentPerson->defaultOrg;
                 title: "Edit Org Name.  This cannot be blank."
             });
 
+            $('#formalName').editable({
+                type: 'text',
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
+            });
             $('#orgAddr1').editable({
                 type: 'text',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
@@ -253,28 +259,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             @endfor
         });
     </script>
-    <script>
-        $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
-
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
-            $SIDEBAR_MENU.find('a[href="{!! env('APP_URL') !!}/orgsettings"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
-
-        });
-    </script>
+    @include('v1.parts.menu-fix', array('path' => '/orgsettings'))
 
 @endsection
 @endif

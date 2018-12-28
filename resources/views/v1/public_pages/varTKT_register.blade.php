@@ -372,17 +372,20 @@ $i = 0;
 
             @if($event->eventTypeID == 5)
                 {!! Form::label("isFirstEvent$i_cnt", trans('messages.fields.isFirstRegional'), array('class' => 'control-label')) !!}
+                <div class="container row col-sm-3">
+                    <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
+                    <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "isFirstEvent$i_cnt")) !!} </div>
+                    <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
+                </div>
+
+                <p>&nbsp;</p>
             @else
+                {{--
                 {!! Form::label("isFirstEvent$i_cnt", trans('messages.fields.isFirstEvent', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
+                --}}
             @endif
 
-            <div class="container row col-sm-3">
-                <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
-                <div class="col-sm-2"> {!! Form::checkbox("isFirstEvent$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "isFirstEvent$i_cnt")) !!} </div>
-                <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
-            </div>
-
-            <p>&nbsp;</p>
+            @if($event->eventTypeID != 4 && $event->eventTypeID != 11)
             {!! Form::label("isAuthPDU$i_cnt", trans('messages.fields.isAuthPDU', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
             <div class="container row col-sm-3">
                 <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
@@ -390,6 +393,7 @@ $i = 0;
                 <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
             </div>
             <p>&nbsp;</p>
+            @endif
 
             @if($event->event_type->etName == trans('messages.fields.nmw'))
                 {!! Form::label("eventQuestion$i_cnt", trans('messages.fields.nmwQuestion'), array('class' => 'control-label')) !!}

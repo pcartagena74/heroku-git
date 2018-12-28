@@ -10,32 +10,41 @@
 
     <div class="col-md-offset-1 col-sm-offset-1 col-md-10 col-sm-10 col-xs-10" style="padding-top: 20px;">
         <div class="container">
-            <p>Read more about mCentric features available to chapters, associations, and other organizations.</p>
+            <p>@lang('messages.public_marketing.main.read_more')</p>
             <ul class="nav nav-tabs">
-                <li><a href="{{ env('APP_URL') }}">Home</a></li>
-                <li class="{{ Route::is('mktg')?'active':'' }}"><a data-toggle="tab" href="#marketing">Marketing</a></li>
-                <li class="{{ Route::is('mail')?'active':'' }}"><a data-toggle="tab" href="#mailings">Mailings</a></li>
-                <li class="{{ Route::is('mtgs')?'active':'' }}"><a data-toggle="tab" href="#meetings">Meetings</a></li>
-                <li><a data-toggle="tab" href="#membership">Integrated Membership Management</a></li>
+                <li><a href="{{ env('APP_URL') }}">@lang('messages.public_marketing.main.home')</a></li>
+                <li class="{{ Route::is('mktg')?'active':'' }}"><a data-toggle="tab" href="#marketing">@lang('messages.public_marketing.main.mktg')</a></li>
+                <li class="{{ Route::is('mail')?'active':'' }}"><a data-toggle="tab" href="#mailings">@lang('messages.public_marketing.main.mail')</a></li>
+                <li class="{{ Route::is('mtgs')?'active':'' }}"><a data-toggle="tab" href="#meetings">@lang('messages.public_marketing.main.meet')</a></li>
+                <li><a data-toggle="tab" href="#membership">@lang('messages.public_marketing.main.imm')</a></li>
             </ul>
 
             <div class="tab-content">
                 <div id="marketing" class="tab-pane fade in{{ Route::is('mktg')?' active':'' }}">
-                    <h2><span class="fas fa-tachometer-alt"></span> mCentric-Facilitated Marketing</h2>
-                    mCentric facilitates the following activities through the data it analyzes on your behalf:
+                    <h2>@lang('messages.public_marketing.marketing.title')</h2>
+                    @lang('messages.public_marketing.intro_line')
                     <br />
                     <br />
                     <ul>
-                        <li><b><i style="color: black;" class="far fa-newspaper"></i> Subscription Management:</b>
-                            For as many lists as you maintain, members can opt in or out based on interest
+                        <li>
+                            @lang('messages.public_marketing.marketing.b1_t')
+                            <dd>
+                                @lang('messages.public_marketing.marketing.b1')
+                            </dd>
                         </li>
                         <br />
-                        <li><b><i style="color: red;" class="fas fa-bell"></i> Scheduled Notifications:</b>
-                            Setup automatic notifications based on what matters most to your chapter
+                        <li>
+                            @lang('messages.public_marketing.marketing.b2_t')
+                            <dd>
+                                @lang('messages.public_marketing.marketing.b2')
+                            </dd>
                         </li>
                         <br />
-                        <li><b><i style="color: blue;" class="fas fa-list-ul"></i> Segmentation:</b>
-                            Create lists based traits or factors important to your chapter
+                        <li>
+                            @lang('messages.public_marketing.marketing.b3_t')
+                            <dd>
+                                @lang('messages.public_marketing.marketing.b3')
+                            </dd>
                         </li>
                         <br />
                     </ul>
@@ -43,79 +52,83 @@
 
                 </div>
                 <div id="mailings" class="tab-pane fade in{{ Route::is('mail')?' active':'' }}">
-                    <h2><span class="far fa-envelope"></span> mCentric-Facilitated Mailings</h2>
-                    mCentric facilitates the following activities through the data it analyzes on your behalf:
+                    <h2>@lang('messages.public_marketing.mailings.title')</h2>
+                    @lang('messages.public_marketing.intro_line')
                     <br />
                     <br />
                     <ul>
-                        <li><b><i style="color: green;" class="fas fa-exclamation-triangle"></i> Notifications:</b>
-                            Routine notifications can be automatically sent based on actions, timing, etc.
+                        <li>
+                            @lang('messages.public_marketing.mailings.b1_t')
+                            <dd>
+                                @lang('messages.public_marketing.mailings.b1')
+                            </dd>
                         </li>
                         <br />
-                        <li><b><i style="color: brown;" class="fas fa-list-ul"></i> List Building:</b>
-                            Send email to people in your database according to event attendance, membership status, etc.
+                        <li>
+                            @lang('messages.public_marketing.mailings.b2_t')
+                            <dd>
+                                @lang('messages.public_marketing.mailings.b2')
+                            </dd>
                         </li>
                     </ul>
                     <br/>
 
                 </div>
                 <div id="meetings" class="tab-pane fade in{{ Route::is('mtgs')?' active':'' }}">
-                    <h2><span class="far fa-calendar-alt"></span> mCentric-Facilitated Meeting &amp; Event Management</h2>
-                    mCentric facilitates the following activities through the data it analyzes on your behalf:
+                    <h2>@lang('messages.public_marketing.meetings.title')</h2>
+                    @lang('messages.public_marketing.intro_line')
                     <br />
                     <br/>
 
                     <ul>
                         <li>
-                            <b><i style="color: rebeccapurple;" class="far fa-ticket-alt"></i> Complex Ticketing Pricing:</b>
+                            @lang('messages.public_marketing.meetings.b1_t')
                             <dd>
-                                Create tickets with member, non-member, early bird, or other complex pricing;<br/>
-                                or bundle tickets together as necessary for particular events
+                                @lang('messages.public_marketing.meetings.b1')
                             </dd>
                         </li>
                         <br />
 
                         <li>
-                            <b><i style="color: blue;" class="fas fa-credit-card"></i> Payment Processing:</b>
+                            @lang('messages.public_marketing.meetings.b2_t')
                             <dd>
-                                Process payments with credit cards or allow attendees to pay at the door with cash or
-                                check
+                                @lang('messages.public_marketing.meetings.b2')
                             </dd>
                         </li>
                         <br />
                         <li>
-                            <b><i style="color: red;" class="fas fa-chart-bar"></i> Real-Time Reporting:</b>
+                            @lang('messages.public_marketing.meetings.b3_t')
                             <dd>
-                                Reporting that provides access to registration and session details
+                                @lang('messages.public_marketing.meetings.b3')
                             </dd>
                         </li>
                     </ul>
                     <br/>
                 </div>
                 <div id="membership" class="tab-pane fade">
-                    <h2><span class="fas fa-users"></span> mCentric-Facilitated Membership Management</h2>
-                    mCentric facilitates the following activities through the data it analyzes on your behalf:
+                    <h2>@lang('messages.public_marketing.management.title')</h2>
+                    @lang('messages.public_marketing.intro_line')
                     <br />
                     <br />
                     <ul>
                         <li>
-                            <b><i style="color: purple;" class="fas fa-chart-bar"></i> Financial Reporting:</b>
+                            @lang('messages.public_marketing.management.b1_t')
                             <dd>
-                                Track and manage event finances
+                                @lang('messages.public_marketing.management.b1')
                             </dd>
                         </li>
                         <br />
                         <li>
-                            <b><i style="color: red;" class="fas fa-chart-pie"></i> Engagement Reporting:</b>
+                            @lang('messages.public_marketing.management.b2_t')
                             <dd>
-                                Understand how engaged your members are and increase retention
+                                @lang('messages.public_marketing.management.b2')
                             </dd>
                         </li>
                         <br />
                         <li>
-                            <b><i style="color: brown;" class="fas fa-users"></i> Contact Management:</b>
+                            @lang('messages.public_marketing.management.b3_t')
                             <dd>
-                                Track, manage, and connect members and non-members alike
+                                @lang('messages.public_marketing.management.b3')
                             </dd>
                         </li>
                         <br />
@@ -130,7 +143,9 @@
 @section('scripts')
     <script>
         // function([string1, string2],target id,[color1,color2])
-        consoleText(['Marketing', 'Mailings', 'Meetings', 'Integrated Membership Management'], 'text', ['black', 'black', 'black']);
+        consoleText(['{{ trans('messages.public_marketing.main.mktg') }}', '{{ trans('messages.public_marketing.main.mail') }}',
+                     '{{ trans('messages.public_marketing.main.meet') }}', '{{ trans('messages.public_marketing.main.imm') }}'],
+                     'text', ['black', 'black', 'black']);
 
         function consoleText(words, id, colors) {
             if (colors === undefined) colors = ['black'];

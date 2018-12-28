@@ -66,6 +66,7 @@ class Ticket extends Model
      */
     public function waitlisting()
     {
+        // For bundles, if any component ticket is waitlisting, the entire bundle is waitlisting.
         if ($this->isaBundle) {
             $members = Bundle::with('ticket')->where('bundleID', $this->ticketID)->get();
             foreach ($members as $m) {

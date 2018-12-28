@@ -27,7 +27,7 @@ if($person){
         foreach($person->emails as $e){
             $x .= "<li>$e->emailADDR</li>";
         }
-        $email_list = trans('messages.instructions.pmi_emails', ['emails' => $x, 'pmiID' => $person->orgperson->OrgStat1]);
+        $email_list = trans('messages.instructions.pmi_emails', ['emails' => $x, 'pmiID' => $person->orgperson->OrgStat1, 'admin_email' => $org->adminEmail]);
     }
 }
 
@@ -47,7 +47,7 @@ if($person){
         <div class="form-group col-xs-12">
             @lang('messages.instructions.pmiID_found', ['pmiID' => $person->orgperson->OrgStat1, 'id' => $person->personID,
                                                         'login' => $person->login, 'name' => $person->showFullName()])
-            {!! trans_choice('messages.instructions.pmi_pass', $set_pass) !!}
+            {!! trans_choice('messages.instructions.pmi_pass', $set_pass, ['admin_email' => $org->adminEmail]) !!}
             <p></p>
             {!! $email_list !!}
         </div>
