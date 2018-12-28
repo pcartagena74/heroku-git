@@ -98,6 +98,15 @@ class ics_cal_full
         }
         return $this->v_string;
     }
+
+    private function _gen_loc_string(Location $loc){
+        $this->location = $this->venue_uid . ":" . $loc->locName . "\n " . $loc->addr1 . "\n ";
+        if($loc->addr2 !== null){
+            $this->location .= $loc->addr2 . "\n ";
+        }
+        $this->location .= $loc->city . ", " . $loc->state . " " . $loc->zip;
+    }
+
     private function _generate()
     {
         $this->o_string = ''; $this->v_string = '';
@@ -125,10 +134,11 @@ class ics_cal_full
             $this->description = $this->html;
             $this->tzid = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
             $this->tzid = str_replace(" ", "_", $this->tzid->tzid);
-            $this->location = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2 . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
             $this->uri = env('APP_URL') . "/events/" . $event->slug;
             $this->uid = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
             $this->stamp = Carbon::now()->format('Ymd\THis');
+            //$this->location = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2 . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
+            $this->_gen_loc_string($loc);
 
             $this->o_string .=
                 "BEGIN:VEVENT\r\n" .
@@ -152,7 +162,7 @@ class ics_cal_full
                 "DESCRIPTION:" . $this->_escapeString($this->description) . "\r\n" .
                 "END:VEVENT\r\n";
 
-            $this->o_string .= $this->_gen_venue($loc);
+            //$this->o_string .= $this->_gen_venue($loc);
         }
     }
 }

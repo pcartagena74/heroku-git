@@ -123,22 +123,13 @@ foreach ($array as $chap) {
                         </th>
                     </tr>
                     <tr>
-                        <td style="text-align: left;"><a href="#" id="prefName"
-                                                         data-title="{{ trans('messages.fields.prefName') }}">{{ $profile->prefName }}</a>
-                        </td>
-                        <td style="text-align: left;"><a href="#" id="indName"
-                                                         data-title="{{ trans('messages.fields.indName') }}">{{ $profile->indName }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="compName"
-                                                         data-title="{{ trans('messages.fields.compName') }}">{{ $profile->compName }}</a>
-                        </td>
-                        <td style="text-align: left;"><a href="#" id="title"
-                                                         data-title="Enter title">{{ $profile->title }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a>
-                        </td>
+                        <td style="text-align: left;"><a href="#" id="prefName" data-title="{{ trans('messages.fields.prefName') }}">{{ $profile->prefName }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="indName" data-title="{{ trans('messages.fields.indName') }}">{{ $profile->indName }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="compName" data-title="{{ trans('messages.fields.compName') }}">{{ $profile->compName }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="title" data-title="{{ trans('messages.profile.directions.title') }}">{{ $profile->title }}</a></td>
+                        <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a></td>
                     </tr>
                     <tr>
-                        {{-- Adding new fields to person for profile display will require the update of the show() query --}}
-
                         <th style="text-align: left;">@lang('messages.fields.experience')</th>
                         <th style="text-align: left;">@lang('messages.headers.chapterRole')</th>
                         <th style="text-align: left;">@lang('messages.headers.affiliation')</th>
@@ -147,21 +138,35 @@ foreach ($array as $chap) {
                     </tr>
                     <tr>
                         <td style="text-align: left;">
-                            <a href="#" id="experience"
-                               data-title="{{ trans('messages.fields.experience') }} ({{ trans('messages.fields.years') }})">{{ $profile->experience }}</a>
+                            <a href="#" id="experience" data-title="{{ trans('messages.fields.experience') }} ({{ trans('messages.fields.years') }})">
+                                {{ $profile->experience }}</a>
                         </td>
                         <td style="text-align: left;">
-                            <a href="#" id="chapterRole" data-title="{{ trans('messages.headers.chapterRole') }}">{{ $profile->chapterRole }}</a>
+                            <a href="#" id="chapterRole" data-title="{{ trans('messages.headers.chapterRole') }}">
+                                {{ $profile->chapterRole }}</a>
                         </td>
                         <td style="text-align: left;">
-                            <a href="#" id="affiliation"
-                               data-title="{{ trans('messages.fields.affiliation') }}">{{ $profile->affiliation }}</a>
+                            <a href="#" id="affiliation" data-title="{{ trans('messages.fields.affiliation') }}">
+                                {{ $profile->affiliation }}</a>
                         </td>
-                        <td style="text-align: left;"><a href="#" id="allergenInfo" ,
-                                                         data-title="{{ trans('messages.fields.diet_res') }}">{{ $profile->allergenInfo }}</a>
+                        <td style="text-align: left;"><a href="#" id="allergenInfo" data-title="{{ trans('messages.fields.diet_res') }}">
+                                {{ $profile->allergenInfo }}</a>
                         </td>
-                        <td style="text-align: left;"><a href="#" id="allergenNote" ,
-                                                         data-title="{{ trans('messages.fields.diet_com') }}">{{ $profile->allergenNote }}</a>
+                        <td style="text-align: left;"><a href="#" id="allergenNote" data-title="{{ trans('messages.fields.diet_com') }}">
+                                {{ $profile->allergenNote }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        {{-- Adding new fields to person for profile display will require the update of the show() query --}}
+                        <th style="text-align: left;">@lang('messages.headers.twitter')</th>
+                        <th style="text-align: left;">@lang('messages.headers.certs')</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;"><a href="#" id="twitterHandle" data-title="">
+                                {{ $profile->twitterHandle }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="certifications" data-title="">
+                                {{ $profile->certifications }}</a>
                         </td>
                     </tr>
                     </tbody>
@@ -564,11 +569,13 @@ foreach ($array as $chap) {
             @if(!isset($profile->OrgStat1))
             $('#firstName').editable({
                 type: 'text',
+                maxlength: 50,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             $('#lastName').editable({
                 type: 'text',
+                maxlength: 50,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
@@ -576,23 +583,27 @@ foreach ($array as $chap) {
 
             $('#midName').editable({
                 type: 'text',
+                maxlength: 50,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
 
             $('#suffix').editable({
                 type: 'text',
+                maxlength: 10,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
             $('#prefName').editable({
                 type: 'text',
+                maxlength: 50,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
 
             $('#indName').editable({
                 type: 'select',
+                maxlength: 100,
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
@@ -613,6 +624,7 @@ foreach ($array as $chap) {
 
             $('#compName').editable({
                 type: 'text',
+                maxlength: 255,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
@@ -633,6 +645,14 @@ foreach ($array as $chap) {
             });
             $('#chapterRole').editable({
                 type: 'text',
+                maxlength: 100,
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}'
+            });
+
+            $('#twitterHandle').editable({
+                type: 'text',
+                maxlength: 50,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });
@@ -677,6 +697,7 @@ foreach ($array as $chap) {
 
             $('#allergenNote').editable({
                 type: 'text',
+                maxlength: 255,
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}'
             });

@@ -52,16 +52,16 @@
                     <input type="password" placeholder="Password" class="form-control input-sm" name="password"
                            id="password" required>
                 </div>
-                <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">Login</button>
+                <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">@lang('messages.buttons.login')</button>
                 <div class="form-group">
                     <div class="col-md-1 col-md-offset-4">
                         <div class="checkbox">
                             <label style="color: white;">
                                 <nobr><input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                                    &nbsp; Remember Me
+                                    &nbsp; @lang('messages.auth.remember')
                                 </nobr>
                                 <br/>
-                                <a style="color: white;" href="/password/reset">Forgot Password?</a>
+                                <a style="color: white;" href="/password/reset">@lang('messages.auth.forgot')</a>
                             </label>
                         </div>
                     </div>
@@ -96,7 +96,9 @@
         @else
             <script>
                 // function([string1, string2],target id,[color1,color2])
-                consoleText(['Marketing', 'Mailings', 'Meetings', 'Integrated Membership Management'], 'text', ['black', 'black', 'black']);
+                consoleText(['{{ trans('messages.public_marketing.main.mktg') }}', '{{ trans('messages.public_marketing.main.mail') }}',
+                             '{{ trans('messages.public_marketing.main.meet') }}', '{{ trans('messages.public_marketing.main.imm') }}'],
+                             'text', ['black', 'black', 'black']);
 
                 function consoleText(words, id, colors) {
                     if (colors === undefined) colors = ['black'];

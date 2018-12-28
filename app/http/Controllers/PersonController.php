@@ -35,7 +35,7 @@ class PersonController extends Controller
     }
 
 
-    // Helper function containing
+    // Helper function containing code to put the member counting bits into a blade template
     protected function member_bits() {
         $topBits             = [];
         $total_people        = Cache::get('total_people', function () {
@@ -155,7 +155,7 @@ class PersonController extends Controller
 
     public function search(Request $request) {
         $string = $request->input('string');
-        return redirect('/search/'.$string);
+        return redirect(env('APP_URL').'/search/'.$string);
     }
 
     // Shows profile information for chosen person (or self)
@@ -195,11 +195,11 @@ class PersonController extends Controller
                 })
                 ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
                 ->select(DB::raw("person.prefix, person.firstName, person.midName, person.lastName, person.suffix,
-                                            person.prefName, u.login, person.title, person.compName, person.indName,
-                                            person.experience, person.chapterRole, person.defaultOrgID, person.affiliation,
-                                            person.allergenInfo, person.allergenNote,
-                OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
-                RelDate1, RelDate2, RelDate3, RelDate4, RelDate5, RelDate6, RelDate7, RelDate8, RelDate9, RelDate10,
+                                        person.prefName, u.login, person.title, person.compName, person.indName,
+                                        person.experience, person.chapterRole, person.defaultOrgID, person.affiliation,
+                                        person.allergenInfo, person.allergenNote, person.twitterHandle, person.certifications,
+                    OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
+                    RelDate1, RelDate2, RelDate3, RelDate4, RelDate5, RelDate6, RelDate7, RelDate8, RelDate9, RelDate10,
                     OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10, 
                     ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, person.personID"))->first();
         } catch (\Exception $exception) {
@@ -241,6 +241,9 @@ class PersonController extends Controller
         $emailTypes = DB::table('email-type')->get();
         $phoneTypes = DB::table('phone-type')->get();
 
+        $certs = DB::table('certifications')->get();
+        $cert_array = $certs->toArray();
+
         $addresses =
             Address::where('personID', $id)->select('addrID', 'addrTYPE', 'addr1', 'addr2', 'city', 'state', 'zip', 'cntryID')->get();
         $countries = DB::table('countries')->select('cntryID', 'cntryName')->get();
@@ -253,7 +256,7 @@ class PersonController extends Controller
 
         return view(
             'v1.auth_pages.members.profile',
-            compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes')
+            compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes', 'cert_array')
         );
     }
 

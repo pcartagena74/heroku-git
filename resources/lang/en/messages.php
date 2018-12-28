@@ -67,6 +67,13 @@ return [
         'img' => "Event Image",
     ],
 
+    'directions' => [
+        'org' => [
+            'fullname' => "Enter complete, formal/corporate name",
+            'display' => "Enter display name",
+        ],
+    ],
+
     'errors' => [
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'event' => 'Please select an event.',
@@ -203,7 +210,7 @@ return [
         'my_ticket' => 'Yes, I am buying this ticket for myself.',
         'name' => 'Name',
         'nmw' => 'New Member Welcome',
-        'nmwQuestion' => 'What do you hope to learn at the New Member Welcome?',
+        'nmwQuestion' => 'What do you hope to learn?',
         'noncost' => 'Non-Member Cost',
         'nonprice' => 'Non-Member Price',
         'nonmbr' => 'Non-Member',
@@ -293,6 +300,7 @@ return [
         'ccfee' => 'CC Fee',
         'cdata' => "Custom Data Field Names",
         'cdate' => "Custom Date Field Names",
+        'certs' => 'Certifications',
         'chap' => 'Chapter',
         'chapterRole' => 'Chapter Role',
         'check_tab' => "Attendee Check-In",
@@ -342,6 +350,7 @@ return [
         'facebook' => "Facebook",
         'fax' => "Fax",
         'for' => "for",
+        'formal' => "Formal/Corporate Name",
         'fut_behalf' => "Events Purchased On Your Behalf'",
         'fut_paid' => "Your Paid Registered Events",
         'fut_unpaid' => "Registered Events with <b class='red'>Unpaid Balances</b>",
@@ -519,15 +528,19 @@ return [
             "<br>Changes made here <b class='red'>do not</b> affect existing events.",
         'pmiID' => "Please enter your PMI Identification Number.",
         'pmiID_found' => "<h2>An mCentric account was found for PMI ID: :pmiID.</h2>" .
-            "The name on this account (#:id) is :name with a login of :login. <br />",
-        'pmi_pass' => "{0}The acccount password has been set. <br />" .
-            "If you don't remember your password, you can <a class='red' href='/password/reset'>reset</a> it.  Otherwise, <a class='red' href='/login'>login</a>." .
-            "|{1}The account password has <b class='red'>not</b> been set. <br />" .
-            "You will need to <a class='red' href='/password/reset'>reset</a> your password.",
+            "The name on this account (<span class='red'>#:id</span>) is :name with a login of <span class='red'>:login</span>. <br />",
+        'pmi_pass' => "{0}<p>The acccount password has been set. <br />" .
+            "If you don't remember your password, you can <a class='red' href='/password/reset'>reset</a> it.  Otherwise, <a class='red' href='/login'>login</a>.<br />" .
+            "<a class='btn btn-primary btn-xs' href='/password/reset'>Reset Password</a> &nbsp; <a class='btn btn-success btn-xs' href='/login'>Login</a> </p>".
+            "|{1}<p>The account password has <b class='red'>not</b> been set. <br />" .
+            "If you have access to the login email, you can <a class='red' href='/password/reset'>begin</a> the password setting process now.<br />
+             <a class='btn btn-primary btn-xs' href='/password/reset'>Set Password</a></p>".
+            "<p>If you do not receive an email with a link to set your password, check your spam folder and/or email
+             :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>",
         'pmi_emails' => "The following email address(es) are associated with PMI ID: :pmiID: <ul>:emails</ul><p></p>" .
-            "If you no longer have access to the login address above, email the account id# above and your preferred login email to vpfinance@pmimassbay.org",
-        'pmiID_not_found' => "There is no mCentric account associated with PMI ID: :pmiID.",
-        'postRegInfo' => "Anything added here will displayed to attendees AFTER they've registered.",
+            "If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email",
+        'pmiID_not_found' => "There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
+        'postRegInfo' => "Anything added here will be displayed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",
         'quantity' => "The quantity for at least one ticket must be greater than 0.",
@@ -545,8 +558,8 @@ return [
                 You can change this later to edit any unique track/session times.
             </li>
             <li>Edit the number of days the event will run.</li>
-            <li>Edit the times and other information for each session where attendees have a choice. No need to enter
-                Keynotes, lunches, etc. A Delete unnecessary sessions.
+            <li>Edit the times and other information for each session where attendees have a choice. <b class='red'>Do not</b> enter
+                keynotes, lunches, etc. as this is not a full schedule. Delete any unnecessary sessions when complete.
             </li>
             <li>PDU values are calculated based on the end date/time - start date/time.</li>
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
@@ -609,7 +622,7 @@ return [
         'h_tkt' => "New Ticket",
         'h_rpt' => "Reporting",
         'org_set' => "Organization Settings",
-        'o_labels' => "Custom Field Labels",
+        'o_labels' => "Org Info &amp; Labels",
         'o_defaults' => "Event Defaults",
         'o_upload' => "Upload Data",
         'o_roles' => "Roles & Permissions",
@@ -641,6 +654,71 @@ return [
         'c_log' => "Logout",
     ],
 
+    'public_marketing' => [
+        'main' => [
+            'home' => 'Home',
+            'imm' => "Integrated Member Management",
+            'mktg' => "Marketing",
+            'mktg_msg' => "<p>mCentric aggregates the data that you keep about your current and prospective members.
+                        Segmenting your members based on the traits that are evident in your data allow for better targeting of your campaigns.</p>
+                        <p>Need to see the list of members that are expiring this month? Next month?</p>",
+            'mail' => "Mailings",
+            'mail_msg' => "<p>With better segmentation capability and targeting, use mCentric's integrated email capabilities to
+                           execute specific campaigns and maintain contact with your constituents. </p>
+                           <p>Why should maintaining lists of members be so difficult?</p>",
+            'meet' => "Meetings",
+            'meet_msg' => "<p>Need to advertise meetings or events regardless of entrance fees? mCentric can help you setup, advertise,
+                           and sell tickets to your events. </p><p>If you're holding a no-fee event and still need these services,
+                           mCentric can accommodate no-fee events that will not impact your bottom line.</p>",
+            'open1' => "mCentric was created with specific customization for organizations like Project Management Institute<sup>&reg;</sup> (PMI) chapters in mind.",
+            'open2' => "Whether your organization holds events, or wants to measure member engagement, mCentric can help.",
+            'read_more' => "Read more about mCentric features available to chapters, associations, and other organizations.",
+            'view' => "View details",
+        ],
+
+        'intro_line' => "mCentric facilitates the following activities through the data it analyzes on your behalf: ",
+
+        'marketing' => [
+            'title' => "<span class='fas fa-tachometer-alt'></span> mCentric-Facilitated Marketing",
+            'b1_t' => "<b><i style=\"color: black;\" class=\"far fa-newspaper\"></i> Subscription Management:</b>",
+            'b1' => "For as many lists as you maintain, members can opt in or out based on interest",
+            'b2_t' => "<b><i style=\"color: red;\" class=\"fas fa-bell\"></i> Scheduled Notifications:</b> ",
+            'b2' => "Setup automatic notifications based on what matters most to your chapter",
+            'b3_t' => "<b><i style=\"color: blue;\" class=\"fas fa-list-ul\"></i> Segmentation:</b>",
+            'b3' => "Create lists based traits or factors important to your chapter",
+        ],
+
+        'mailings' => [
+            'title' => "<span class='far fa-envelope'></span> mCentric-Facilitated Mailings",
+            'b1_t' => "<b><i style=\"color: green;\" class=\"fas fa-exclamation-triangle\"></i> Notifications:</b>",
+            'b1' => "Routine notifications can be automatically sent based on actions, timing, etc.",
+            'b2_t' => "<b><i style=\"color: brown;\" class=\"fas fa-list-ul\"></i> List Building:</b>",
+            'b2' => "Send email to people in your database according to event attendance, membership status, etc.",
+            'b3' => "",
+        ],
+
+        'meetings' => [
+            'title' => "<span class='far fa-calendar-alt'></span> mCentric-Facilitated Meeting &amp; Event Management",
+            'b1_t' => "<b><i style=\"color: rebeccapurple;\" class=\"far fa-ticket-alt\"></i> Complex Ticket Pricing:</b>",
+            'b1' => "Create tickets with member, non-member, early bird, or other complex pricing;<br/>
+                                or bundle tickets together as necessary for particular events",
+            'b2_t' => "<b><i style=\"color: blue;\" class=\"fas fa-credit-card\"></i> Payment Processing:</b>",
+            'b2' => "Process payments with credit cards or allow attendees to pay at the door with cash or check",
+            'b3_t' => "<b><i style=\"color: red;\" class=\"fas fa-chart-bar\"></i> Real-Time Reporting:</b>",
+            'b3' => "Review reports that provide access to registration and session attendance detail",
+        ],
+
+        'management' => [
+            'title' => "<span class='fas fa-users'></span> mCentric-Facilitated Membership Management",
+            'b1_t' => "<b><i style=\"color: purple;\" class=\"fas fa-chart-bar\"></i> Financial Reporting:</b>",
+            'b1' => "Track and manage event finances, including revenue sharing and other arrangements",
+            'b2_t' => "<b><i style=\"color: red;\" class=\"fas fa-chart-pie\"></i> Engagement Reporting:</b>",
+            'b2' => "Understand how engaged your members are and increase retention",
+            'b3_t' => "<b><i style=\"color: brown;\" class=\"fas fa-users\"></i> Contact Management:</b>",
+            'b3' => "Track, manage, and connect members and non-members alike",
+        ],
+    ],
+
     'pdus' => [
         'lead' => 'Leadership',
         'strat' => 'Strategy',
@@ -668,6 +746,7 @@ return [
             'city' => 'Enter city',
             'country' => 'Enter country',
             'state' => 'Enter state',
+            'title' => 'Enter title',
             'type' => 'Enter address type',
             'zip' => 'Enter zip',
         ],
@@ -748,7 +827,7 @@ return [
         'no_auth' => "You must be authorized to perform this function.",
         'nope' => "This value cannot be edited or removed.",
         'not_new' => "Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.",
-        'orgName' => "You can change the organization's name. Click it.",
+        'orgName' => "You can change the organization's display name. Ensure that it fits above.  Click it.",
         'orgStat1_tip' => 'If you do not know or do not have a PMI Member ID, leave empty.',
         'orgStat1_tip2' => 'If your PMI Member ID is incorrect, :acs',
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",

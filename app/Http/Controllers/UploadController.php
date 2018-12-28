@@ -34,11 +34,15 @@ class UploadController extends Controller
     {
         // displays the data upload form
 
+        $today = Carbon::now();
         $user = Person::find(auth()->user()->id);
 
         $events = Event::where([
-            ['orgID', '=', $user->defaultOrgID]
-        ])->withCount('registrations')->get();
+            ['orgID', '=', $user->defaultOrgID],
+            ['eventStartDate', '<', $today]
+        ])->withCount('registrations')
+            ->orderBy('eventStartDate', 'desc')
+            ->get();
 
         return view('v1.auth_pages.organization.data_upload', compact('events'));
     }
@@ -450,6 +454,7 @@ class UploadController extends Controller
                                             break;
                                         case preg_match('/^ticket$/i', $k):
                                             $tktTxt = $row[$k];
+                                            /*
                                             if (preg_match('/Bundle/i', $tktTxt)) {
                                                 $ticketID = 126;
                                             } elseif (preg_match('/Friday Only/i', $tktTxt)) {
@@ -459,8 +464,9 @@ class UploadController extends Controller
                                             } elseif (preg_match('/Friday evening/i', $tktTxt)) {
                                                 $ticketID = 125;
                                             }
+                                            */
                                             break;
-                                        case preg_match('/salutation/i', $k):
+                                        case preg_match('/salutation|prefix/i', $k):
                                             $prefix = trim(substr($row[$k], 0, 5));
                                             break;
                                         case (preg_match('/^first.name$/i', $k)):
@@ -528,7 +534,7 @@ class UploadController extends Controller
                                         case (preg_match('/disc.amount/i', $k)):
                                             $discAmt = $row[$k];
                                             break;
-                                        case (preg_match('/pmi.(number|membership)/i', $k)):
+                                        case (preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k)):
                                             $pmiID = $row[$k];
                                             if (!is_numeric($pmiID)) {
                                                 $pmiID = null;
@@ -636,6 +642,7 @@ class UploadController extends Controller
                                     }
                                 }
                                 //dd(get_defined_vars());
+                                /*
                                 if ($eventID == 97 && ($ticketID == 123 || $ticketID == 126)) {
                                     if (preg_match('/^AGILE/i', $f1)) {
                                         $fs1 = 91;
@@ -694,6 +701,8 @@ class UploadController extends Controller
                                         $ss3 = null;
                                     }
                                 }
+                                */
+
                                 if (!isset($canNtwk)) {
                                     $canNtwk = 0;
                                 }
@@ -748,7 +757,7 @@ class UploadController extends Controller
                                 // 2. perform date formatting to get into database if needed
 
                                 // Then perform these steps:
-                                // 1. Check if $row->email or $row->pmiID is in person-email table
+                                // 1. Check if $row->email or $row->pmiID is in person-email or org-person tables
                                 // 2. If found, get $person and $orgperson record and:
                                 //    a. validate or change defaultOrgID on person
                                 //    b. validate or add an org-person record for the current orgID
@@ -772,7 +781,7 @@ class UploadController extends Controller
                                         }
                                         $p->save();
 
-                                        $e = Email::where('emailADDR', '=', $email)->first();
+                                        $e = Email::where('emailADDR', '=', $email)->withTrashed()->first();
                                         if ($e === null) {
                                             $e            = new Email;
                                             $e->personID  = $p->personID;
@@ -781,7 +790,7 @@ class UploadController extends Controller
                                             $e->save();
                                         }
                                     } elseif ($email !== null) {
-                                        $e = Email::where('emailADDR', '=', $email)->first();
+                                        $e = Email::where('emailADDR', '=', $email)->withTrashed()->first();
                                         if ($e !== null) {
                                             // record of registrant found, by $email, in DB but no $pmiID provided with reg
                                             $create_user = 0;
@@ -810,7 +819,7 @@ class UploadController extends Controller
                                                 if (isset($affiliation)) {
                                                     $ps->affiliation  = $affiliation;
                                                 } else {
-                                                    $ps->affiliation  = 'PMI MassBay';
+                                                    $ps->affiliation  = 'MassBay';
                                                 }
                                                 $ps->allergenInfo = $allergy;
                                                 $ps->creatorID    = $this->currentPerson->personID;
@@ -971,7 +980,7 @@ class UploadController extends Controller
                                             $e->save();
                                         }
                                     } else {
-                                        // $pmiID was null & $email wais null
+                                        // $pmiID was null & $email was null
                                     }
                                 }
                                 if ($create_user) {
