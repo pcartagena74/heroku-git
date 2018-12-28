@@ -10,6 +10,7 @@
 
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 
+$logo = '';
 try {
     if ($org->orgLogo !== null) {
         $s3m = Flysystem::connection('s3_media');
@@ -58,8 +59,13 @@ if($person){
 
         <div class="form-group has-feedback col-md-12 col-xs-12">
             {!! Form::label('pmiID', trans('messages.instructions.pmiID'), array('class' => 'control-label')) !!}
-            {!! Form::number('pmiID', '', $attributes = array('class'=>'form-control has-feedback-left', 'required')) !!}
+            {!! Form::number('pmiID', '', $attributes = array('class'=>'form-control has-feedback-left', 'required', 'placeholder' => trans('messages.instructions.no_pmiID_zero'))) !!}
             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+        </div>
+        <div class="form-group has-feedback col-md-12 col-xs-12">
+            {!! Form::label('email', trans('messages.instructions.no_pmiID'), array('class' => 'control-label')) !!}
+            {!! Form::text('email', '', $attributes = array('class'=>'form-control has-feedback-left')) !!}
+            <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
         </div>
         <div class="form-group col-md-12 col-xs-12">
             {!! Form::submit(trans('messages.headers.acc_lookup'), array('class' => 'btn btn-primary')) !!}

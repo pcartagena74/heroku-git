@@ -519,6 +519,8 @@ return [
         'no_password' => "An mCentric account was found for you and its password has not been set. " .
             "You will need to set it and login to complete your registration. " .
             "Click to <a style='color: red;' href='" . env('APP_URL') . "/password/reset'>reset it now.</a>",
+        'no_pmiID' => "Or, if you do not have a PMI ID, enter your email address.",
+        'no_pmiID_zero' => "Enter 0 if you are not a PMI member",
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
         'no_regs' => "There are no attendees registered for this event at this time.",
         'no_user_pass' => "This user has not set a password.",
@@ -537,9 +539,10 @@ return [
              <a class='btn btn-primary btn-xs' href='/password/reset'>Set Password</a></p>".
             "<p>If you do not receive an email with a link to set your password, check your spam folder and/or email
              :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>",
-        'pmi_emails' => "The following email address(es) are associated with PMI ID: :pmiID: <ul>:emails</ul><p></p>" .
+        'pmi_emails' => "The following email address(es) are associated with this account: <ul>:emails</ul><p></p>" .
             "If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email",
-        'pmiID_not_found' => "There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
+        'pmiID_not_found' => "{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|
+                              [1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
         'postRegInfo' => "Anything added here will be displayed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",

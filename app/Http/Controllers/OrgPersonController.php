@@ -31,16 +31,30 @@ class OrgPersonController extends Controller
     public function find(Request $request) {
         $orgID = $request->input('orgID');
         $pmiID = $request->input('pmiID');
+        $email = $request->input('email');
+        $who = null;
 
-        $who = OrgPerson::where([
-            ['OrgStat1', '=', $pmiID],
-            ['orgID', '=', $orgID]
+        if($pmiID > 0){
+            $who = OrgPerson::where([
+                ['OrgStat1', '=', $pmiID],
+                ['orgID', '=', $orgID]
             ])->with('myperson')->first();
+        } elseif($email !== null) {
+            $who = Person::whereHas('emails', function ($q) use ($email) {
+                $q->where('emailADDR', '=', "$email");
+            })->first();
+        }
 
-        if($who){
+        if($who && $pmiID){
             return redirect(env('APP_URL')."/pmi_account/".$who->myperson->personID);
+        } elseif($who && $email) {
+            return redirect(env('APP_URL')."/pmi_account/".$who->personID);
         } else {
-            request()->session()->flash('alert-danger', trans('messages.instructions.pmiID_not_found', ['pmiID' => $pmiID]));
+            if($pmiID) {
+                request()->session()->flash('alert-danger', trans_choice('messages.instructions.pmiID_not_found', $pmiID, ['pmiID' => $pmiID]));
+            } else {
+                request()->session()->flash('alert-danger', trans_choice('messages.instructions.pmiID_not_found', $pmiID, ['pmiID' => $pmiID, 'email' => $email]));
+            }
             return redirect()->back();
         }
     }
