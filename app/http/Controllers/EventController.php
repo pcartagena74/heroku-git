@@ -302,12 +302,16 @@ class EventController extends Controller
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if($eventDescription !== null){
-            $eventDescription = extract_images($eventDescription, $event->orgID);
+            if(preg_match("/data:image/", $eventDescription)){
+                $eventDescription = extract_images($eventDescription, $event->orgID);
+            }
         }
         $event->eventDescription = $eventDescription;
         $eventInfo = request()->input('eventInfo');
         if($eventInfo !== null){
-            $eventInfo = extract_images($eventInfo, $event->orgID);
+            if(preg_match("/data:image/", $eventInfo)){
+                $eventInfo = extract_images($eventInfo, $event->orgID);
+            }
         }
         $event->eventInfo = $eventInfo;
         $event->catID = request()->input('catID');
@@ -507,12 +511,16 @@ class EventController extends Controller
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if($eventDescription !== null){
-            $eventDescription = extract_images($eventDescription, $event->orgID);
+            if(preg_match("/data:image/", $eventDescription)){
+                $eventDescription = extract_images($eventDescription, $event->orgID);
+            }
         }
         $event->eventDescription = $eventDescription;
         $eventInfo = request()->input('eventInfo');
         if($eventInfo !== null){
-            $eventInfo = extract_images($eventInfo, $event->orgID);
+            if(preg_match("/data:image/", $eventInfo)){
+                $eventInfo = extract_images($eventInfo, $event->orgID);
+            }
         }
         $event->eventInfo = $eventInfo;
         //$event->eventDescription = request()->input('eventDescription');

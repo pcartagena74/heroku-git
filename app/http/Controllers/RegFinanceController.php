@@ -51,7 +51,6 @@ class RegFinanceController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        //$this->middleware('tidy')->only('update');
     }
 
     public function index()
