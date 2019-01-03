@@ -77,6 +77,9 @@ return [
     'errors' => [
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'event' => 'Please select an event.',
+        'exists' => "{p}The person record cannot be created to prevent potential duplication.  See details. <br /> :details|".
+                    "{e}The email address entered already exists.|{op}The PMI ID entered already exists.",
+        'html_error' => "An unexpected HTML error occurred while processing your entry.  Check for a trailing &lt;p&gt;&lt;/p&gt; in the code view and remove before saving when you try again.",
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'no_receipt' => "The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
                          <a style='color:black;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
@@ -589,6 +592,7 @@ return [
         'pass_change_for' => "The password for :name was changed successfully.",
         'thanks' => "Thank you for using mCentric with :orgname.",
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
+        'user_created' => "The new user was created.  Go to the user's profile.",
         'visit_mCentric' => "Visit mCentric",
     ],
 
@@ -619,6 +623,8 @@ return [
         'ms_profile' => "My Profile",
         'ms_edit' => "Edit Member Profile",
         'ms_become' => "Become",
+        'admin' => 'Admin Functions',
+        'ad_new' => 'Create New User',
         'help' => "Help Desk",
         'h_dash' => "Dashboard",
         'h_active' => "Active Tickets",

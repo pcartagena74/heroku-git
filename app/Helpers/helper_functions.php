@@ -4,7 +4,10 @@
  * Created: 8/25/2017
  */
 
+use App\Email;
 use App\Org;
+use App\OrgPerson;
+use App\Person;
 use Intervention\Image\ImageManagerStatic as Image;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use League\Flysystem\AdapterInterface;
@@ -20,40 +23,104 @@ use League\Flysystem\AdapterInterface;
  */
 function extract_images($html, $orgID){
     $dom = new \DOMDocument();
-    $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
-    //$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
-
     $org = Org::find($orgID);
-    $images = $dom->getElementsByTagName('img');
+    $updated = 0;
 
-    foreach($images as $img){
-        $src = $img->getAttribute('src');
+    try {
+        $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
 
-        if(preg_match('/data:image/', $src)){
+        $images = $dom->getElementsByTagName('img');
 
-            // get the mimetype
-            preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
-            $mimetype = $groups['mime'];
+        foreach($images as $img){
+            $src = $img->getAttribute('src');
 
-            // Generating a random filename
-            $filename = $img->getAttribute('data-filename');
-            $filepath = "$org->orgPath/uploads/$filename";
+            if(preg_match('/data:image/', $src)){
+                $updated = 1;
+                // get the mimetype
+                preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
+                $mimetype = $groups['mime'];
 
-            // @see http://image.intervention.io/api/
-            $image = Image::make($src)
-                // resize if required
-                /* ->resize(300, 200) */
-                ->encode($mimetype, 100); 	// encode file to the specified mimetype
+                // Generating a random filename
+                $filename = $img->getAttribute('data-filename');
+                $filepath = "$org->orgPath/uploads/$filename";
 
-            //Flysystem::connection('s3_media')->put($event_filename, $contents);
-            $s3m = Flysystem::connection('s3_media');
-            //$s3m->put($filename, $image, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
-            $s3m->put($filepath, $image->__toString());
-            $new_src = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $filepath);
+                // @see http://image.intervention.io/api/
+                $image = Image::make($src)
+                    // resize if required
+                    /* ->resize(300, 200) */
+                    ->encode($mimetype, 100); 	// encode file to the specified mimetype
 
-            $img->removeAttribute('src');
-            $img->setAttribute('src', $new_src);
+                //Flysystem::connection('s3_media')->put($event_filename, $contents);
+                $s3m = Flysystem::connection('s3_media');
+                //$s3m->put($filename, $image, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+                $s3m->put($filepath, $image->__toString());
+                $new_src = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $filepath);
+
+                $img->removeAttribute('src');
+                $img->removeAttribute('data-filename');
+                $img->setAttribute('src', $new_src);
+            }
         }
+        if($updated){
+            return $dom->saveHTML();
+        } else {
+            return $html;
+        }
+    } catch (Exception $exception) {
+        request()->session()->flash('alert-danger', trans('messages.errors.html_error') . "<br /><pre>$exception</pre>");
+        return $html;
     }
-    return $dom->saveHTML();
+}
+
+/**
+ * Takes a model indicator and an array of variables, usually just 1, and performs a rudimentary existence check
+ *
+ * @param $model        Values: p for Person, e for Email, op for OrgPerson
+ * @param $var_array    Contents:
+ *                      + p:  firstName, lastName, login
+ *                      + e:  login
+ *                      + op: PMI ID
+ */
+function check_exists($model, $var_array){
+    $details = null;
+    switch ($model){
+        case 'p':
+            list($first, $last, $login) = $var_array;
+            $p = Person::where([
+                ['firstName', '=', $first],
+                ['lastName', '=', $last]
+            ])
+                ->orWhere('login', '=', $login)
+                ->orWhereHas('emails', function($q) use($login){
+                    $q->where('emailADDR', '=', $login);
+                })->get();
+            if(count($p) > 0){
+                $details = "<ul>";
+                foreach($p as $x){
+                    $details .= "<li>$x->firstName, $x->lastName, $x->login</li>";
+                }
+                $details .= "</ul>";
+                dd($details);
+                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model), ['details' => $details]);
+                return 1;
+            }
+            break;
+        case 'e':
+            list($email) = $var_array;
+            $e = Email::where('emailADDR', '=', $email)->first();
+            if(null !== $e){
+                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model), ['details' => $details]);
+                return 1;
+            }
+            break;
+        case 'op':
+            list($pmiID) = $var_array;
+            $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
+            if(null !== $op){
+                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model), ['details' => $details]);
+                return 1;
+            }
+            break;
+    }
+    return 0;
 }
