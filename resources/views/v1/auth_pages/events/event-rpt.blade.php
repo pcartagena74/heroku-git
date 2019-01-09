@@ -16,7 +16,6 @@ use App\RegSession;
  * 2.
  */
 
-
 $today = \Carbon\Carbon::now();
 $currentOrg = \App\Org::find($event->orgID);
 $topBits = ''; // there should be topBits for this
@@ -293,8 +292,8 @@ $es = $event->default_session();
             @endif
             <li class=""><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
-            @if($event->checkin_time() && (Entrust::hasRole($currentOrg->orgName) &&
-                    (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management')))
+            @if($event->checkin_time() && ( Entrust::hasRole($currentOrg->orgName) &&
+                    ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
                 || Entrust::hasRole('Developer'))
 
                 <li class=""><a href="#tab_content7" id="checkin-tab" data-toggle="tab"
@@ -482,13 +481,13 @@ $es = $event->default_session();
                             <div class="col-xs-2" style="text-align: right;">
 <?php
                                 $checked = '';
-                                if (null !== $row->regsession) {
-                                    if ($row->regsession->hasAttended) {
+                                if (null !== $row->regsessions) {
+                                    if ($row->regsessions->hasAttended == 1) {
                                         $checked = 'checked';
                                     }
                                 }
 ?>
-                                {!! Form::checkbox('p-'.$row->person->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked)) !!}
+                                {!! Form::checkbox('p-'.$row->person->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked => $checked)) !!}
                             </div>
                             <div class="col-xs-2">
                                 {{ $row->person->orgperson->OrgStat1 or 'N/A' }}
