@@ -9,6 +9,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 /*
   // This is to debug by seeing eloquent --> sql
 \Event::listen('Illuminate\Database\Events\QueryExecuted', function ($query) {
@@ -16,7 +17,7 @@
     var_dump($query->bindings);
     var_dump($query->time);
 });
-*/
+// */
 /*
 Route::get('/linkedin1', 'SocialController@linkedin_login');
 
@@ -95,6 +96,8 @@ Route::post('/event_checkin/{event}', 'RegSessionController@store')->name('defau
 
 // Private Admin Page Routes
 // -------------------------
+Route::get('/newuser/create', 'UserController@create');
+Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 

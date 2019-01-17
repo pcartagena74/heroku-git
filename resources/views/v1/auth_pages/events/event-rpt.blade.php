@@ -26,15 +26,14 @@ if ($event->eventEndDate->gte($today)) {
         trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
     if (Entrust::hasRole('Developer') || Entrust::hasRole('Admin')) {
         foreach ($tkts as $t) {
-
+/*
             $rc = '<form action="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" method="post">' . csrf_field();
             $rc .= '<input type="hidden" name="value" value="1">';
             $rc .= '<input type="hidden" name="name" value="regCount-' . $t->ticketID . '">';
             $rc .= '<button class="btn btn-danger btn-xs" id="launchConfirm">Go</button></form>';
-
+*/
             $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
-                '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID .
-                '" data-pk="' . $t->ticketID . '"></a>';
+                '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
 
             $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
                 "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
@@ -74,6 +73,7 @@ if ($event->eventTypeID == 5) {
             trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
             trans('messages.headers.chap'), trans('messages.headers.role')];
     }
+
     foreach ($nametags as $r) {
         $p = Person::find($r->personID);
         if ($event->hasFood) {
@@ -86,13 +86,13 @@ if ($event->eventTypeID == 5) {
             } else {
                 $allergies = $p->allergenInfo;
             }
-            array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
-                $r->discountCode, $p->affiliation, $p->chapterRole, $allergies]);
+            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                $r->ticket->ticketLabel, $r->discountCode, $p->affiliation, $p->chapterRole, $allergies]);
         } else {
-            array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
-                $r->discountCode, $p->affiliation, $p->chapterRole]);
+            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                $r->ticket->ticketLabel, $r->discountCode, $p->affiliation, $p->chapterRole]);
         }
     }
 } else {
@@ -106,6 +106,7 @@ if ($event->eventTypeID == 5) {
             trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
             trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind'))];
     }
+
     foreach ($nametags as $r) {
         $p = Person::find($r->personID);
         if ($event->hasFood) {
@@ -118,13 +119,13 @@ if ($event->eventTypeID == 5) {
             } else {
                 $allergies = $p->allergenInfo;
             }
-            array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
-                $r->discountCode, $p->compName, $p->title, $p->indName, $allergies]);
+            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                $r->ticket->ticketLabel, $r->discountCode, $p->compName, $p->title, $p->indName, $allergies]);
         } else {
-            array_push($tag_rows, ["<a href='" . env('APP_URL') . "/profile/" . $p->personID . "'>" . $r->regID . "</a>",
-                $p->prefName, $p->lastName, $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login, $r->ticket->ticketLabel,
-                $r->discountCode, $p->compName, $p->title, $p->indName]);
+            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                $r->ticket->ticketLabel, $r->discountCode, $p->compName, $p->title, $p->indName]);
         }
     }
 }
@@ -135,7 +136,7 @@ foreach ($regs as $r) {
 
     $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
     $c = $v->render();
-    array_push($reg_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
+    array_push($reg_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
         $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
 }
 
@@ -144,25 +145,10 @@ $c = null;
 foreach ($deadbeats as $r) {
     $f = '';
     if ($r->subtotal > 0) {
-        if (Entrust::hasRole('Admin')) {
-            $f = Form::open(['method' => 'patch', 'route' => ['accept_payment', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" value="1" name="' . trans('messages.buttons.cash') . '" onclick="return confirm(\'' . trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.cash'))]);
-            $f .= '\');" class="btn btn-success btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.cash') . '">';
-            $f .= trans('messages.symbols.cash') . '</button>';
+        $v = View::make('v1.parts.deadbeat_buttons', ['regID' => $r->regID, 'rfID' => $r->rfID]);
+        $f = $v->render();
 
-            $f .= '<button type="submit" value="1" name="' . trans('messages.buttons.check') . '" onclick="return confirm(\'' . trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.check'))]);
-            $f .= '\');" class="btn btn-primary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.check') . '">';
-            $f .= trans('messages.symbols.check') . '</button></form>';
-            $f .= Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-            $f .= '<button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.reg_cancel') . '">';
-            $f .= trans('messages.symbols.trash') . '</button></form>';
-        } else {
-            $f .= '<button type="submit" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.no_auth') . '">';
-            $f .= '<i class="far fa-money-bill-wave"></i></button>';
-            $f .= '<button type="submit" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="' . trans('messages.tooltips.no_auth') . '">';
-            $f .= '<i class="far fa-money-check-alt"></i></button>';
-        }
-        array_push($dead_rows, [$r->regID, $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+        array_push($dead_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
             trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $f]);
     }
 }
@@ -175,7 +161,8 @@ foreach ($notregs as $r) {
 
     $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
     $c = $v->render();
-    array_push($notreg_rows, [$r->regID, $r->regStatus, $r->person->firstName, $r->person->lastName,
+
+    array_push($notreg_rows, [plink($r->regID, $r->person->personID), $r->regStatus, $r->person->firstName, $r->person->lastName,
         $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
 }
@@ -256,11 +243,11 @@ $es = $event->default_session();
 
     @include('v1.parts.end_content')
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <a href="{{ env('APP_URL') }}/excel/nametags/{{ $event->eventID }}"
                class="btn btn-primary btn-md">@lang('messages.buttons.down_name_tags')</a>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             @if($event->checkin_time())
             <a href="{{ env('APP_URL') }}/excel/pdudata/{{ $event->eventID }}"
                class="btn btn-success btn-md">@lang('messages.buttons.down_PDU_list')</a>

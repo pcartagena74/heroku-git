@@ -16,6 +16,7 @@ use App\Person;
 use App\Location;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\AccountMerge;
 
 class MergeController extends Controller
 {
@@ -53,7 +54,7 @@ class MergeController extends Controller
         $model1 = null;
         $model2 = null;
         $this->currentPerson = Person::find(auth()->user()->id);
-        if ($letter === null) {
+        if($letter === null) {
             // go to a blank merge page
         }
 
@@ -314,8 +315,9 @@ class MergeController extends Controller
                 // change any permissions that might be set
                 DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
 
-                request()->session()->flash('alert-success', $this->models[$letter] .
-                    " record: " . $model2->personID . " was successfully merged into " . $model1->personID . '.');
+                request()->session()->flash('alert-success', trans('messages.messages.merge_succ',
+                        ['model' => $this->models[$letter], 'record1' => $model2->personID,
+                        'record2' => $model1->personID]));
 
                 // If a password is set for a user record that will not survive and survivor password is null, copy it.
                 // Then delete non-surviving user record
@@ -326,12 +328,12 @@ class MergeController extends Controller
                     if ($u1->password === null) {
                         if ($u2->password !== null) {
                             $u1->password = $u2->password;
-                            $u1->save();
                             // Need to notify $model2 it's being merged ONLY if password !== null
                             $model2->notify(new AccountMerge($model1, $model2));
                         }
                     }
                     $u2->delete();
+                    $u1->save();
                 }
 
                 // Person soft-deletes require unique key 'login' to be uniquely modified

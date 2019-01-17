@@ -4,6 +4,7 @@
  * Created: 10/21/2018
  */
 
+$homeURL = env('APP_URL').'/events';
 $editURL    = env('APP_URL').'/event/' . $event->eventID . '/edit';
 $displayURL = env('APP_URL').'/events/' . $event->slug;
 $tktURL = env('APP_URL').'/event-tickets/'. $event->eventID;
@@ -15,6 +16,10 @@ $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 
 ?>
 
+<div class="col-xs-1">
+    <a href='{{ $homeURL }}' class='btn btn-gray btn-sm' data-toggle='tooltip' data-placement='top'
+       title='{{ trans('messages.buttons.return') }}'><i class='fas fa-fw fa-home'></i></a>
+</div>
 @if($event->ok_to_display())
     <div class="col-xs-1">
         <a target='_new' href='{{ $displayURL }}' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top'

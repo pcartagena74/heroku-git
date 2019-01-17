@@ -124,3 +124,14 @@ function check_exists($model, $var_array){
     }
     return 0;
 }
+
+/**
+ * pLink: returns a URL string to a profile on the registration ID
+ *
+ * @param $regID
+ * @param $personID
+ * @return string
+ */
+function plink($regID, $personID){
+    return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . "</a>";
+}

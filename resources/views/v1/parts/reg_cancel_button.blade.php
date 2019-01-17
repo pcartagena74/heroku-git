@@ -14,9 +14,11 @@ $f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" data
 */
 
 if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
+    // currency symbol
     $button_symbol = trans('messages.symbols.cur');
     $confirm_msg = trans('messages.tooltips.sure_refund');
 } else {
+    // trash can (for delete) in lieu of currency symbol
     $button_symbol = trans('messages.symbols.trash');
     $confirm_msg = trans('messages.tooltips.sure_cancel');
 }

@@ -88,7 +88,7 @@ class LocationController extends Controller
                 $l->save();
             }
         }
-        request()->session()->flash('alert-success', trans_choice('messages.headers.count_added', ['count' => $count]));
+        request()->session()->flash('alert-success', trans_choice('messages.headers.count_added', $count, ['count' => $count]));
         return redirect(env('APP_URL')."/locations");
 
     }
