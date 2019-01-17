@@ -501,10 +501,12 @@ class RegistrationController extends Controller
             $reg->updaterID = $authorID;
 
             // Check for ticket price error (There is a cost, but subtotal == 0 w/o a discount that should make it 0
-            if($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || $dc->percent != 100)){
+            if($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || $dc !== null)){
                 // Set the debugNote field and adjust the subtotal
-                $reg->debugNote = "Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
-                $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost);
+                if($dc->percent != 100){
+                    $reg->debugNote = "Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
+                    $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost);
+                }
             }
             $reg->save();
         }
