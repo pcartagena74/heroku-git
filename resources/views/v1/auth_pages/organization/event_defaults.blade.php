@@ -38,17 +38,22 @@ $currentOrg    = $currentPerson->defaultOrg;
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.def_label')])
             </th>
             <th style="text-align: left; width: 33%;">@lang('messages.headers.tz')</th>
-            <th style="text-align: left; width: 33%;">@lang('messages.headers.cat')</th>
+            <th style="text-align: left; width: 33%;">@lang('messages.headers.disc_chap')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.disc_chap')])
+            </th>
         </tr>
         <tr>
             <td style="text-align: left;"><a href="#" id="defaultTicketLabel"
                                              data-value="{{ $org->defaultTicketLabel }}"></a>
                 <p>&nbsp;</p></td>
             <td style="text-align: left;"><a href="#" id="orgZone" data-value="{{ $org->orgZone }}"></a></td>
-            <td style="text-align: left;"><a href="#" id="orgCategory" data-value="{{ $org->orgCategory }}"></a></td>
+            <td style="text-align: left;"><a href="#" id="discountChapters" data-value="{{ $org->discountChapters }}"></a></td>
         </tr>
         <tr>
-            <th style="text-align: left;">@lang('messages.headers.early')</th>
+            <th style="text-align: left;">
+                @lang('messages.headers.early')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.eb_percent')])
+            </th>
             <th style="text-align: left;">@lang('messages.headers.contact_email')</th>
             <th style="text-align: left;">
                 @lang('messages.headers.near_chap')
@@ -66,15 +71,22 @@ $currentOrg    = $currentPerson->defaultOrg;
                 @lang('messages.headers.ref_days')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.ref_days')])
             </th>
-            <th style="text-align: left;"></th>
-            <th style="text-align: left;">@lang('messages.headers.reg_chap')</th>
+            <th style="text-align: left; width: 33%;">
+                @lang('messages.headers.cat')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.event_cat')])
+            </th>
+            <th style="text-align: left;">
+                @lang('messages.headers.reg_chap')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.region_chap')])
+            </th>
         </tr>
         <tr>
             <td style="text-align: left;">
                 <a href="#" id="refundDays" data-value="{{ $org->refundDays }}"></a> &nbsp; @lang('messages.headers.days')
             </td>
-            <td style="text-align: left;"></td>
-            <td style="text-align: left;"><a href="#" id="regionChapters" data-value="{{ $org->regionChapters }}"></a></td>
+            <td style="text-align: left;"><a href="#" id="orgCategory" data-value="{{ $org->orgCategory }}"></a></td>
+            <td style="text-align: left;">
+                <a href="#" id="regionChapters" data-value="{{ $org->regionChapters }}"></a>
             </td>
         </tr>
     </table>
@@ -245,6 +257,17 @@ $currentOrg    = $currentPerson->defaultOrg;
                 pk:  '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
+            });
+
+            $("#discountChapters").editable({
+                pk:  '{{ $org->orgID }}',
+                placement: 'top',
+                url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
+                select2: {
+                    tags: ["None of the above"],
+                    multiple: true
+                },
+                maximumInputLength: 5
             });
 
             $("#nearbyChapters").editable({

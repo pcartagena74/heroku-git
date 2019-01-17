@@ -42,7 +42,7 @@ class EventController extends Controller
         $topBits = '';
         $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
-
+/*
         $current_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF,
                                date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
                                count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
@@ -56,21 +56,25 @@ class EventController extends Controller
                         GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
                         ORDER BY e.eventStartDate ASC";
 
+        $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
+*/
 
         //This is the equivalent of the sql script above.  Just need to add 7-10 days to the start date
-        $cs = Event::where([
-            ['org-event.orgID', $this->currentPerson->defaultOrgID],
-        ])
+        $current_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate',
+                                        'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+            ->where([
+                ['org-event.orgID', $this->currentPerson->defaultOrgID],
+            ])
             ->where(function($q) use ($today) {
                 $q->orWhere('eventEndDate', '>=', $today);
-                $q->orWhereBetween('eventStartDate', [$today->addDays(-5), $today]);
+                $q->orWhereBetween('eventStartDate', [$today->addDays(-1), $today->addDays(1)]);
             })
             ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
             ->with('registrations', 'event_type')
-            ->select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks')
             ->withCount('registrations')
             ->orderBy('eventStartDate', 'ASC')
             ->get();
+
 
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
@@ -91,10 +95,21 @@ class EventController extends Controller
         ]);
         */
 
-        $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
 
         $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
-//dd($past_events);
+
+        $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate',
+            'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+            ->where([
+                ['org-event.orgID', $this->currentPerson->defaultOrgID],
+                ['eventEndDate', '<', $today]
+            ])
+            ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
+            ->with('registrations', 'event_type')
+            ->withCount('registrations')
+            ->orderBy('eventStartDate', 'DESC')
+            ->get();
+
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person', 'cs'));
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
 use App\Event;
+use App\Org;
 use App\Person;
 use App\RegFinance;
 use App\Registration;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class ActivityController extends Controller
 {
@@ -81,13 +83,18 @@ class ActivityController extends Controller
     public function index () {
         // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
+        $orgID = $this->currentPerson->defaultOrgID;
+        $today = Carbon::now();
 
         $attendance = Event::where('er.personID', '=', $this->currentPerson->personID)
                            ->join('org-event_types as oet', function($join) {
                                $join->on('oet.etID', '=', 'org-event.eventTypeID');
                            })->join('event-registration as er', 'er.eventID', '=', 'org-event.eventID')
-                           ->whereIn('oet.orgID', [1, $this->currentPerson->defaultOrgID])
-                           ->where('org-event.orgID', '=', $this->currentPerson->defaultOrgID)
+                           ->whereIn('oet.orgID', [1, $orgID])
+                           ->where([
+                               ['org-event.orgID', '=', $orgID],
+                               ['eventEndDate', '<', $today]
+                           ])
                            ->whereNull('er.deleted_at')
                            ->where(function($w) {
                                $w->where('er.regStatus', '=', trans('messages.reg_status.active'))
@@ -101,25 +108,25 @@ class ActivityController extends Controller
                            ->withCount('registrations')
                            ->orderBy('org-event.eventStartDate', 'DESC')->get(20);
 
-        // withCount above does nothing.  See about adding the count of Networking=1 here.
-        $bar_sql = "SELECT oe.eventID, date_format(oe.eventStartDate, '%b %Y') as startDate, count(er.regID) as cnt, et.etName as 'label',
-                        (select count(*) from `event-registration` er2 where er2.eventID = oe.eventID and er2.personID=? and er2.deleted_at is null) as 'attended'
-                    FROM `org-event` oe
-                    LEFT JOIN `event-registration` er on er.eventID=oe.eventID
-                    JOIN `org-event_types` et on et.etID = oe.eventTypeID AND oe.eventTypeID in (1, 9)
-                    WHERE oe.isDeleted = 0 AND oe.deleted_at is NULL
-                    GROUP BY eventID
-                    ORDER BY oe.eventStartDate DESC
-                    LIMIT 14";
-
-        // $attendance = DB::select($attendance_sql, [$this->currentPerson->defaultOrgID, $this->currentPerson->personID]);
-        $bar = DB::select($bar_sql, [$this->currentPerson->personID]);
+        $bar2 = Event::select('eventID', 'eventStartDate', 'eventTypeID',
+                    DB::raw("(select count(*) from `event-registration` er2 where er2.eventID = `org-event`.eventID and er2.personID="
+                    . $this->currentPerson->personID . " and er2.deleted_at is null) as 'attended'"))
+            ->where([
+                ['orgID', $orgID],
+                ['eventEndDate', '<', $today]
+            ])->whereIn('eventTypeID', [1, 9])
+            ->whereHas('event_type', function($q) use($orgID){
+                $q->whereIn('orgID', array(1, $orgID));
+            })
+            ->withCount('registrations')
+            ->with('event_type')
+            ->orderBy('eventStartDate', 'DESC')->limit(14)->get();
 
         $datastring = "";
         $myevents[] = null;
-        foreach($bar as $bar_row) {
-            $label  = $bar_row->startDate . " " . $bar_row->label;
-            $attend = $bar_row->cnt;
+        foreach($bar2 as $bar_row) {
+            $label  = $bar_row->eventStartDate->format('M Y') . " " . $bar_row->event_type->etName;
+            $attend = $bar_row->registrations_count;
             $there  = $bar_row->attended;
 
             if($there == 1) {

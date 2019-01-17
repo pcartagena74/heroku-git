@@ -76,6 +76,10 @@ class RegistrationController extends Controller
         $member = strtoupper(trans('messages.fields.member'));
         $nonmbr = strtoupper(trans('messages.fields.nonmbr'));
 
+        $org = Org::find($event->orgID);
+
+        $discountChapters = $org->discountChapters;
+
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isSuppressed', '=', 0],
@@ -95,7 +99,7 @@ class RegistrationController extends Controller
         }
 
          return view('v1.public_pages.varTKT_register',
-              compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity'));
+              compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters'));
     }
 
     /**

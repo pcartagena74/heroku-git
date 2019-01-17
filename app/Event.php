@@ -35,7 +35,7 @@ class Event extends Model
 
     public function event_type()
     {
-        return $this->hasOne(EventType::class, 'etID', 'eventTypeID');
+        return $this->belongsTo(EventType::class, 'eventTypeID', 'etID');
     }
 
     public function bundles()

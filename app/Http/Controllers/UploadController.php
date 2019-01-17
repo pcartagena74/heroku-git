@@ -81,6 +81,7 @@ class UploadController extends Controller
                             $results = $reader->get();
                             $orgID = $this->currentPerson->defaultOrgID;
                             foreach ($results as $row) {
+                                $process = 1;
                                 $this->counter++;
                                 // columns in this sheet are fixed; check directly and then add if not found...
                                 // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
@@ -110,16 +111,13 @@ class UploadController extends Controller
                                 $op     = OrgPerson::where('OrgStat1', '=', (integer)$pmi_id)->first();
                                 $em1  = trim(strtolower($row->primary_email));
                                 $em2  = trim(strtolower($row->alternate_email));
-                                if($em1 == 'marcdefrancesco@columbiatech.com' || $em2 == 'marcdefrancesco@columbiatech.com'){
-                                    1;
-                                }
                                 $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->first();
                                 if ($emchk1 !== null) {
-                                    $emchk1 = $emchk1->emailADDR;
+                                    $chk1 = $emchk1->emailADDR;
                                 }
                                 $emchk2 = Email::whereRaw('lower(emailADDR) = ?', [$em2])->first();
                                 if ($emchk2 !== null) {
-                                    $emchk2 = $emchk2->emailADDR;
+                                    $chk2 = $emchk2->emailADDR;
                                 }
                                 $pchk = Person::where([
                                     ['firstName', '=', $first],
@@ -128,10 +126,11 @@ class UploadController extends Controller
 
                                 if($em1 === null && $em2 === null){
                                     // If no email addresses are provided, a user account cannot be creatable.
-                                    next;
+                                    break;
                                 }
+
                                 if ($op === null && $emchk1 === null && $emchk2 === null && $pchk === null) {
-                                    // PMI ID, emails, first/last name are not found so person is completely new; create all records
+                                    // PMI ID, first & last names, and emails are not found so person is likely completely new; create all records
 
                                     $p               = new Person;
                                     $u               = new User;
@@ -145,8 +144,9 @@ class UploadController extends Controller
                                     $p->compName     = $compName;
                                     $p->creatorID    = auth()->user()->id;
                                     $p->defaultOrgID = $this->currentPerson->defaultOrgID;
+                                    $process = 0;
 
-                                    // If email1 is not null, use it as primary to login, etc.
+                                    // If email1 is not null or blank, use it as primary to login, etc.
                                     if ($em1 !== null && $em1 != "" && $em1 != " ") {
                                         $p->login = $em1;
                                         $p->save();
@@ -165,7 +165,8 @@ class UploadController extends Controller
                                         $e->save();
 
                                     // Otherwise, try with email #2
-                                    } elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
+                                    }
+                                    elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
                                         $p->login = $em2;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -180,12 +181,17 @@ class UploadController extends Controller
                                         $e->isPrimary = 1;
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
-                                        $e->save();
-                                    } else {
+                                        try{
+                                            $e->save();
+                                        } catch(\Exception $exception) {
+                                            // There was an error with saving the email -- likely an integrity constraint.
+                                        }
+                                    }
+                                    else {
                                         // This is a last resort when there are no email addresses associated with the record
                                         // Better to abandon; avoid $p->save();
                                         // Technically, should not ever get here because we check ahead of time.
-                                        next;
+                                        break;
                                     }
 
                                     $newOP            = new OrgPerson;
@@ -193,48 +199,15 @@ class UploadController extends Controller
                                     $newOP->personID  = $p->personID;
                                     $newOP->OrgStat1  = (integer)$row->pmi_id;
                                     $newOP->OrgStat2  = trim(ucwords($row->chapter_member_class));
-                                    $newOP->RelDate1  =
-                                        Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
-                                    $newOP->RelDate2  =
-                                        Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
-                                    $newOP->RelDate3  =
-                                        Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
-                                    $newOP->RelDate4  =
-                                        Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
+                                    $newOP->RelDate1  = Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
+                                    $newOP->RelDate2  = Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
+                                    $newOP->RelDate3  = Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
+                                    $newOP->RelDate4  = Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
                                     $newOP->creatorID = auth()->user()->id;
                                     $newOP->save();
 
-
-                                    if ($row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
-                                        $addr           = new Address;
-                                        $addr->personID = $p->personID;
-                                        $addr->addrTYPE = trim(ucwords($row->preferred_address_type));
-                                        $addr->addr1    = trim(ucwords($row->preferred_address));
-                                        $addr->city     = trim(ucwords($row->city));
-                                        $addr->state    = trim(ucwords($row->state));
-                                        $z              = (integer)trim($row->zip);
-                                        if (strlen($z) == 4) {
-                                            $z = "0" . $z;
-                                        } elseif (strlen($z) == 8) {
-                                            $r2 = substr($z, -4);
-                                            $l2 = substr($z, 4);
-                                            $z  = "0" . $l2 . "-" . $r2;
-                                        }
-                                        $addr->zip = $z;
-
-                                        // Need a smarter way to determine country code
-                                        if (trim(ucwords($row->country)) == 'United States') {
-                                            $addr->cntryID = 228;
-                                        } elseif (trim(ucwords($row->country)) == 'Canada') {
-                                            $addr->cntryID = 36;
-                                        }
-                                        $addr->creatorID = auth()->user()->id;
-                                        $addr->updaterID = auth()->user()->id;
-                                        $addr->save();
-                                    }
-
                                     // If email 1 existed and was used as primary but email 2 was also provided, add it.
-                                    if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $emchk2) {
+                                    if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $chk2) {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em2;
@@ -247,60 +220,28 @@ class UploadController extends Controller
                                         }
                                     }
 
-                                    if ($row->home_phone !== null) {
-                                        $fone              = new Phone;
-                                        $fone->personID    = $p->personID;
-                                        $fone->phoneNumber = (integer)$row->home_phone;
-                                        $fone->phoneType   = 'Home';
-                                        $fone->creatorID   = auth()->user()->id;
-                                        $fone->updaterID   = auth()->user()->id;
-                                        $fone->save();
-                                    }
-
-                                    if ($row->work_phone !== null && $row->work_phone != $row->home_phone) {
-                                        $fone              = new Phone;
-                                        $fone->personID    = $p->personID;
-                                        $fone->phoneNumber = (integer)$row->work_phone;
-                                        $fone->phoneType   = 'Work';
-                                        $fone->creatorID   = auth()->user()->id;
-                                        $fone->updaterID   = auth()->user()->id;
-                                        $fone->save();
-                                    }
-
-                                    if ($row->mobile_phone !== null && $row->mobile_phone != $row->work_phone && $row->mobile_phone != $row->home_phone) {
-                                        $fone              = new Phone;
-                                        $fone->personID    = $p->personID;
-                                        $fone->phoneNumber = (integer)$row->mobile_phone;
-                                        $fone->phoneType   = 'Mobile';
-                                        $fone->creatorID   = auth()->user()->id;
-                                        $fone->updaterID   = auth()->user()->id;
-                                        $fone->save();
-                                    }
-                                } elseif ($op !== null) {
+                                }
+                                elseif ($op !== null) {
                                     // There was an org-person record (found by $OrgStat1 == PMI ID)
                                     $newOP            = $op;
                                     $newOP->OrgStat2  = trim(ucwords($row->chapter_member_class));
                                     if (isset($row->pmi_join_date)) {
-                                        $newOP->RelDate1  =
-                                            Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
+                                        $newOP->RelDate1  = Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
                                     }
                                     if (isset($row->chapter_join_date)) {
-                                        $newOP->RelDate2  =
-                                            Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
+                                        $newOP->RelDate2  = Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
                                     }
                                     if (isset($row->pmi_expiration)) {
-                                        $newOP->RelDate3  =
-                                            Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
+                                        $newOP->RelDate3  = Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
                                     }
                                     if (isset($row->pmi_expiration)) {
-                                        $newOP->RelDate4  =
-                                            Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
+                                        $newOP->RelDate4  = Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
                                     }
                                     $newOP->updaterID = auth()->user()->id;
                                     $newOP->save();
 
                                     $p = Person::find($newOP->personID);
-                                    if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $emchk1) {
+                                    if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $chk1) {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em1;
@@ -309,7 +250,7 @@ class UploadController extends Controller
                                         $e->updaterID = auth()->user()->id;
                                         $e->save();
                                     }
-                                    if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != $emchk2 && $em2 != $em1) {
+                                    if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != $chk2 && $em2 != $em1) {
                                         $e            = new Email;
                                         $e->personID  = $p->personID;
                                         $e->emailADDR = $em2;
@@ -319,91 +260,125 @@ class UploadController extends Controller
                                         $e->save();
                                     }
 
-                                    $fone = Phone::where([
-                                        ['phoneNumber', '=', $row->home_phone],
-                                        ['phoneType', '=', 'Home']
-                                    ])->first();
-                                    if ($row->home_phone !== null && $fone === null) {
-                                        $fone              = new Phone;
-                                        $fone->personID    = $p->personID;
-                                        $fone->phoneNumber = (integer)$row->home_phone;
-                                        $fone->phoneType   = 'Home';
-                                        $fone->creatorID   = auth()->user()->id;
-                                        $fone->updaterID   = auth()->user()->id;
-                                        $fone->save();
-                                    }
-
-                                    $fone = Phone::where([
-                                        ['phoneNumber', '=', $row->work_phone],
-                                        ['phoneType', '=', 'Work']
-                                    ])->first();
-                                    if ($row->work_phone !== null && $fone === null && $row->work_phone != $row->home_phone) {
-                                        $fone              = new Phone;
-                                        $fone->personID    = $p->personID;
-                                        $fone->phoneNumber = (integer)$row->work_phone;
-                                        $fone->phoneType   = 'Work';
-                                        $fone->creatorID   = auth()->user()->id;
-                                        $fone->updaterID   = auth()->user()->id;
-                                        $fone->save();
-                                    }
-
-                                    $fone = Phone::where([
-                                        ['phoneNumber', '=', $row->mobile_phone],
-                                        ['phoneType', '=', 'Mobile']
-                                    ])->first();
-                                    if ($row->mobile_phone !== null && $fone === null &&
-                                        $row->mobile_phone != $row->work_phone && $row->mobile_phone != $row->home_phone
-                                    ) {
-                                        $fone              = new Phone;
-                                        $fone->personID    = $p->personID;
-                                        $fone->phoneNumber = (integer)$row->mobile_phone;
-                                        $fone->phoneType   = 'Mobile';
-                                        $fone->creatorID   = auth()->user()->id;
-                                        $fone->updaterID   = auth()->user()->id;
-                                        $fone->save();
-                                    }
-
-                                    $addr = Address::where('addr1', '=', trim(ucwords($row->preferred_address)))->get();
-                                    if ($addr === null && $row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
-                                        $addr           = new Address;
-                                        $addr->personID = $p->personID;
-                                        $addr->addrTYPE = trim(ucwords($row->preferred_address_type));
-                                        $addr->addr1    = trim(ucwords($row->preferred_address));
-                                        $addr->city     = trim(ucwords($row->city));
-                                        $addr->state    = trim(ucwords($row->state));
-                                        $z              = (integer)trim(ucwords($row->zip));
-                                        if (strlen($z) == 4) {
-                                            $z = "0" . $z;
-                                        } elseif (strlen($z) == 8) {
-                                            $r2 = substr($z, -4);
-                                            $l2 = substr($z, 4);
-                                            $z  = "0" . $l2 . "-" . $r2;
-                                        }
-                                        $addr->zip = $z;
-                                        if (trim(ucwords($row->country)) == 'United States') {
-                                            $addr->cntryID = 228;
-                                        } elseif (trim(ucwords($row->country)) == 'Canada') {
-                                            $addr->cntryID = 36;
-                                        }
-                                        $addr->creatorID = auth()->user()->id;
-                                        $addr->updaterID = auth()->user()->id;
-                                        $addr->save();
-
-                                        $p               = new PersonStaging;
-                                        $p->prefix       = $prefix;
-                                        $p->firstName    = $first;
-                                        $p->midName      = $midName;
-                                        $p->lastName     = $last;
-                                        $p->suffix       = $suffix;
-                                        $p->title        = $title;
-                                        $p->compName     = $compName;
-                                        $p->defaultOrgID = $this->currentPerson->defaultOrgID;
-                                        $p->creatorID    = auth()->user()->id;
-                                        $p->save();
-                                    }
-                                } elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
-                                } elseif ($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
                                 }
+                                elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
+                                    // email1 was found in the database
+                                    $p = Person::find($emchk1->personID);
+                                    $op = OrgPerson::where([
+                                        ['personID', $p->personID],
+                                        ['orgID', $p->defaultOrgID]
+                                    ])->first();
+                                }
+                                elseif ($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
+                                    // email2 was found in the database
+                                    $p = Person::find($emchk2->personID);
+                                    $op = OrgPerson::where([
+                                        ['personID', $p->personID],
+                                        ['orgID', $p->defaultOrgID]
+                                    ])->first();
+                                }
+
+                                if($process){
+                                    $p->prefix       = $prefix;
+                                    $p->firstName    = $first;
+                                    $p->prefName    = $first;
+                                    $p->midName      = $midName;
+                                    $p->lastName     = $last;
+                                    $p->suffix       = $suffix;
+                                    $p->title        = $title;
+                                    $p->compName     = $compName;
+                                    $p->updaterID    = auth()->user()->id;
+                                    $p->defaultOrgID = $this->currentPerson->defaultOrgID;
+                                    $p->save();
+                                }
+
+                                // Add the person-specific records
+
+                                $addr = Address::where('addr1', '=', trim(ucwords($row->preferred_address)))->get();
+                                if ($addr === null && $row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
+                                    $addr           = new Address;
+                                    $addr->personID = $p->personID;
+                                    $addr->addrTYPE = trim(ucwords($row->preferred_address_type));
+                                    $addr->addr1    = trim(ucwords($row->preferred_address));
+                                    $addr->city     = trim(ucwords($row->city));
+                                    $addr->state    = trim(ucwords($row->state));
+                                    $z              = (integer)trim($row->zip);
+                                    if (strlen($z) == 4) {
+                                        $z = "0" . $z;
+                                    } elseif (strlen($z) == 8) {
+                                        $r2 = substr($z, -4);
+                                        $l2 = substr($z, 4);
+                                        $z  = "0" . $l2 . "-" . $r2;
+                                    }
+                                    $addr->zip = $z;
+
+                                    // Need a smarter way to determine country code
+                                    if (trim(ucwords($row->country)) == 'United States') {
+                                        $addr->cntryID = 228;
+                                    } elseif (trim(ucwords($row->country)) == 'Canada') {
+                                        $addr->cntryID = 36;
+                                    }
+                                    $addr->creatorID = auth()->user()->id;
+                                    $addr->updaterID = auth()->user()->id;
+                                    $addr->save();
+                                }
+
+                                $fone = Phone::where([
+                                    ['phoneNumber', '=', $row->home_phone],
+                                ])->first();
+
+                                if ($row->home_phone !== null && $fone === null) {
+                                    $fone              = new Phone;
+                                    $fone->personID    = $p->personID;
+                                    $fone->phoneNumber = (integer)$row->home_phone;
+                                    $fone->phoneType   = 'Home';
+                                    $fone->creatorID   = auth()->user()->id;
+                                    $fone->updaterID   = auth()->user()->id;
+                                    $fone->save();
+                                }
+
+                                $fone = Phone::where([
+                                    ['phoneNumber', '=', $row->work_phone],
+                                ])->first();
+
+                                if ($row->work_phone !== null && $row->work_phone != $row->home_phone && $fone === null) {
+                                    $fone              = new Phone;
+                                    $fone->personID    = $p->personID;
+                                    $fone->phoneNumber = (integer)$row->work_phone;
+                                    $fone->phoneType   = 'Work';
+                                    $fone->creatorID   = auth()->user()->id;
+                                    $fone->updaterID   = auth()->user()->id;
+                                    $fone->save();
+                                }
+
+                                $fone = Phone::where([
+                                    ['phoneNumber', '=', $row->mobile_phone],
+                                ])->first();
+
+                                if ($row->mobile_phone !== null && $row->mobile_phone != $row->work_phone
+                                                                && $row->mobile_phone != $row->home_phone && $fone === null) {
+                                    $fone              = new Phone;
+                                    $fone->personID    = $p->personID;
+                                    $fone->phoneNumber = (integer)$row->mobile_phone;
+                                    $fone->phoneType   = 'Mobile';
+                                    $fone->creatorID   = auth()->user()->id;
+                                    $fone->updaterID   = auth()->user()->id;
+                                    $fone->save();
+                                }
+
+                                $ps               = new PersonStaging;
+                                $ps->prefix       = $prefix;
+                                $ps->firstName    = $first;
+                                $ps->midName      = $midName;
+                                $ps->lastName     = $last;
+                                $ps->suffix       = $suffix;
+                                $ps->login        = $p->login;
+                                $ps->title        = $title;
+                                $ps->compName     = $compName;
+                                $ps->defaultOrgID = $this->currentPerson->defaultOrgID;
+                                $ps->creatorID    = auth()->user()->id;
+                                $ps->save();
+
                             }
                         }); // end of Excel chunk
                     }); // end of database transaction
