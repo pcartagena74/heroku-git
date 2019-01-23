@@ -47,6 +47,7 @@ foreach ($array as $chap) {
     $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
+
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -82,17 +83,20 @@ foreach ($array as $chap) {
                     </thead>
                     <tbody>
                     <tr>
-                        <td style="text-align: left;"><a href="#" id="prefix"
-                                                         data-title="{{ trans('messages.fields.prefix') }}">{{ $profile->prefix }}</a>
+                        <td style="text-align: left;">
+                            <a href="#" id="prefix" data-title="{{ trans('messages.fields.prefix') }}">{{ $profile->prefix }}</a>
                         </td>
                         <td style="text-align: left;">
                             {{-- Check OrgStat1 (PMI ID) to check that PMI provided the first & last name --}}
-                            @if($profile->OrgStat1)
+                            @if($profile->OrgStat1 && !Entrust::hasRole('Admin'))
                                 {!! $profile->firstName or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}
                                 @include('v1.parts.tooltip', ['title' => trans('messages.instructions.name_change')])
                             @else
                                 <a href="#" id="firstName" data-title="{{ trans('messages.fields.firstName') }}">
                                     {!! $profile->firstName or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</a>
+                                @if(Entrust::hasRole('Admin'))
+                                    @include('v1.parts.tooltip', ['c' => 'red', 'title' => trans('messages.instructions.name_change_ok')])
+                                @endif
                             @endif
                         </td>
 
@@ -100,12 +104,15 @@ foreach ($array as $chap) {
                             <a href="#" id="midName" data-title="{{ trans('messages.fields.midName') }}">{{ $profile->midName }}</a>
                         </td>
                         <td style="text-align: left;">
-                            @if($profile->OrgStat1)
+                            @if($profile->OrgStat1 && !Entrust::hasRole('Admin'))
                                 {!! $profile->lastName or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}
                                 @include('v1.parts.tooltip', ['title' => trans('messages.instructions.name_change')])
                             @else
                                 <a href="#" id="lastName" data-title="{{ trans('messages.fields.lastName') }}">
                                     {{ $profile->lastName }}</a>
+                                @if(Entrust::hasRole('Admin'))
+                                    @include('v1.parts.tooltip', ['c' => 'red', 'title' => trans('messages.instructions.name_change_ok')])
+                                @endif
                             @endif
                         </td>
                         <td style="text-align: left;">
@@ -566,7 +573,7 @@ foreach ($array as $chap) {
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
-            @if(!isset($profile->OrgStat1))
+            @if(!$profile->OrgStat1 || Entrust::hasRole('Admin'))
             $('#firstName').editable({
                 type: 'text',
                 maxlength: 50,
@@ -679,6 +686,20 @@ foreach ($array as $chap) {
 ?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
+            });
+
+            $("#certifications").editable({
+                type: 'checklist',
+                pk: '{{ $profile->personID }}',
+                url: '{{ $profile_script_url }}',
+                source: [
+<?php
+                    foreach ($cert_array as $x) {
+                        $string .= "{ value: '" . $x->certification . "' , text: '" . $x->certification . "' },";
+                    }
+?>
+                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                ],
             });
 
             $("#allergenInfo").editable({

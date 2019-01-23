@@ -291,11 +291,12 @@ class RegFinanceController extends Controller
                     $reg->regStatus = trans('messages.headers.wait');
                 } elseif($rf->status == trans('messages.reg_status.pending')) {
                     $reg->regStatus = trans('messages.reg_status.pending');
-                    $reg->ticket->update_count(1);
                 } else {
                     $reg->regStatus = trans('messages.reg_status.processed');
-                    $reg->ticket->update_count(1);
                 }
+                // the ticket count gets updated regardless of regStatus
+                $reg->ticket->update_count(1);
+
                 // The first registrant should be logged in
 
                 if($reg->subtotal > 0){
@@ -316,7 +317,7 @@ class RegFinanceController extends Controller
                 }
 
                 $totalHandle += $handleFee;
-                $discountAmt += ($reg->origcost - $reg->subtotal - $handleFee);
+                $discountAmt += ($reg->origcost - $reg->subtotal);
                 $reg->mcentricFee = $handleFee;
                 $reg->save();
             }
@@ -426,7 +427,7 @@ class RegFinanceController extends Controller
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
         }
 
-        return redirect('/show_receipt/' . $rf->regID);
+        return redirect(env('APP_URL').'/show_receipt/' . $rf->regID);
     }
 
     public function update_payment(Request $request, Registration $reg, RegFinance $rf){
@@ -776,7 +777,7 @@ class RegFinanceController extends Controller
         $person = Person::find($rf->personID);
         $org = Org::find($event->orgID);
 
-        return view('v1.auth_pages.events.registration.group_receipt', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+        return view('v1.auth_pages.events.registration.group_receipt_authnav', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
     }
 
     public function destroy($id)

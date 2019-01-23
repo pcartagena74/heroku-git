@@ -8,14 +8,15 @@
 
 use Carbon\Carbon;
 
-$headers      = ['Date', 'Event Type', 'Networking List'];
+$headers      = [trans_choice('messages.headers.date', 1), trans_choice('messages.headers.et', 1), trans('messages.headers.net_list')];
 $data         = [];
 $current_user = auth()->user()->id;
 foreach($attendance as $event) {
     $dt   = Carbon::parse($event->eventStartDate);
     if($event->cnt2 > 0) {
         $nlb  =
-            '<a onclick="getList('. $event->eventID . ", '" . $event->eventName . "'" . ');" class="network btn btn-success btn-xs">View Networking List</a>';
+            '<a onclick="getList('. $event->eventID . ", '" . $event->eventName . "'" . ');" class="network btn btn-success btn-xs">'
+            . trans('messages.headers.view') . " " . trans('messages.headers.net_list') . '</a>';
     } else {
         $nlb  = '<a class="network btn btn-cancel btn-xs" disabled data-toggle="tooltip" data-placement="top" '.
                 'title="This event has no networking list.">View Networking List</a>';
@@ -24,23 +25,23 @@ foreach($attendance as $event) {
 }
 count($data) > 15 ? $scroll = 1 : $scroll = 0;
 
-$tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
+$tbl_header = [trans('messages.fields.first'), trans('messages.fields.last'), trans('messages.headers.email'), trans('messages.headers.comp'), trans('messages.fields.indName')];
 
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => 'Chapter Event Attendance', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-    Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.chap_evt_att'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+    @lang('messages.instructions.bar_chart')
     <div id='canvas'></div>
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Past Event Attendance', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.past_evt_att'), 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.datatable', ['headers' => $headers, 'data' => $data, 'scroll' => $scroll])
     @include('v1.parts.end_content')
 
-    @include('v1.parts.start_content', ['header' => 'Networking List', 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0, 'id' => 'Networking List'])
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.net_list'), 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0, 'id' => 'Networking List'])
     <div id="event_name" class="col-sm-12"></div><p>
     @include('v1.parts.datatable', ['headers' => $tbl_header, 'data' => [], 'scroll' => 1, 'id' => 'network_list'])
     @include('v1.parts.end_content')
@@ -86,11 +87,11 @@ $tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
                         data: result.data,
                         "fixedHeader": true,
                         columns: [
-                            { data: 'firstName', title: 'First' },
-                            { data: 'lastName' , title: 'Last' },
-                            { data: 'login', title: 'Email' },
-                            { data: 'compName', title: 'Company' },
-                            { data: 'indName', title: 'Industry' }
+                            { data: 'firstName', title: '{!! trans('messages.fields.first') !!}' },
+                            { data: 'lastName' , title: '{!! trans('messages.fields.last') !!}' },
+                            { data: 'login', title: '{!! trans('messages.headers.email') !!}' },
+                            { data: 'compName', title: '{!! trans('messages.headers.comp') !!}' },
+                            { data: 'indName', title: '{!! trans('messages.fields.indName') !!}' }
                         ]
                     });
                     {{--
@@ -113,10 +114,12 @@ $tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
                 data: [
                     {!! $datastring !!}
                 ],
+                xLabelMargin: 2,
+                padding: 80,
                 xkey: 'ChMtg',
                 ykeys: ['Attendees'],
                 labels: ['Attendees'],
-                barRatio: 0.1,
+                barRatio: 0.5,
                 barColors: function (row, series, type) {
                     if ({!!  $output !!}) {
                         return "#26B99A";
@@ -124,33 +127,11 @@ $tbl_header = ['First', 'Last', 'Email', 'Company', 'Industry'];
                         return "#f00";
                     }
                 },
-                xLabelAngle: 35,
+                xLabelAngle: 25,
                 hideHover: 'auto',
                 resize: true
             });
         });
     </script>
-    <script>
-        $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
-
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
-
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
-
-            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/dashboard"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
-        });
-    </script>
-
+    @include('v1.parts.menu-fix', ['path' => '/dashboard'])
 @endsection

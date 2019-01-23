@@ -253,7 +253,7 @@ class PersonController extends Controller
 
         $phones =
             Phone::where('personID', $id)->select('phoneID', 'phoneType', 'phoneNumber')->get();
-
+        
         return view(
             'v1.auth_pages.members.profile',
             compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes', 'cert_array')
@@ -324,6 +324,12 @@ class PersonController extends Controller
         } elseif ($name == 'allergenInfo') {
             $value = implode(",", (array)$value);
             $person->allergenInfo = $value;
+            $person->updaterID = $updater;
+            $person->save();
+
+        } elseif ($name == 'certifications') {
+            $value = implode(",", (array)$value);
+            $person->certifications = $value;
             $person->updaterID = $updater;
             $person->save();
 

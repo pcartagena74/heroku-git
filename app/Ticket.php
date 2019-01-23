@@ -76,7 +76,7 @@ class Ticket extends Model
             }
             return 0;
         } else {
-            if ($this->maxAttendees > 0 && $this->regCount > $this->maxAttendees) {
+            if ($this->maxAttendees > 0 && $this->regCount >= $this->maxAttendees) {
                 return 1;
             } else {
                 return 0;

@@ -22,6 +22,7 @@ use Stripe\Stripe;
 use App\EventSession;
 use App\Notifications\SetYourPassword;
 use Session;
+use App\Notifications\WaitListNoMore;
 
 class RegistrationController extends Controller
 {
@@ -382,9 +383,6 @@ class RegistrationController extends Controller
                 $set_new_user = 1;
             }
 
-            $subcheck += $subtotal;
-            $sumtotal += $origcost;
-
             // We have either found the appropriate person record ($p) or have created a new one
             isset($prefix) ? $person->prefix = $prefix :1;
             isset($firstName) ? $person->firstName = $firstName :1;
@@ -501,14 +499,22 @@ class RegistrationController extends Controller
             $reg->updaterID = $authorID;
 
             // Check for ticket price error (There is a cost, but subtotal == 0 w/o a discount that should make it 0
-            if($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || $dc !== null)){
+            if($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || null !== $dc)){
                 // Set the debugNote field and adjust the subtotal
-                if($dc->percent != 100){
-                    $reg->debugNote = "Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
+                if($reg->discountCode == 'N/A'){
+                    $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
+                    $reg->subtotal = $reg->origcost;
+                    $subtotal = $origcost;
+                } elseif($dc->percent != 100){
+                    $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
                     $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost);
+                    $subtotal = $origcost - ($dc->percent * $origcost);
                 }
             }
             $reg->save();
+
+            $subcheck += $subtotal;
+            $sumtotal += $origcost;
         }
 
         if($subcheck == $total){
@@ -582,6 +588,27 @@ class RegistrationController extends Controller
         $reg->{$name} = $value;
         $reg->updaterID = $updater;
         $reg->save();
+    }
+
+    public function promote(Registration $reg){
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $event = Event::find($reg->eventID);
+        $rf = RegFinance::find($reg->rfID);
+
+        $rf->status = trans('messages.reg_status.pending');
+        $rf->pmtType = trans('messages.reg_status.door');
+        $rf->updaterID = $this->currentPerson->personID;
+        $rf->save();
+
+        $reg->regStatus = trans('messages.reg_status.promoted');
+        $reg->updaterID = $this->currentPerson->personID;
+        $reg->save();
+
+        $recipient = Person::find($reg->personID);
+        // Consider a notification
+        $recipient->notify(new WaitListNoMore($reg));
+
+        return redirect(env('APP_URL')."/eventreport/$event->slug");
     }
 
     public function destroy(Registration $reg, RegFinance $rf)

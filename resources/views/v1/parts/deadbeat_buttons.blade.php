@@ -21,6 +21,11 @@
             class="btn btn-primary btn-sm" data-toggle="tooltip" title="{!! trans('messages.tooltips.check') !!}">
         {!! trans('messages.symbols.check') !!}
     </button>
+
+    <a class="btn btn-warning btn-sm" data-toggle="tooltip" title="{!! trans('messages.tooltips.card') !!}"
+            target="_new" href="{!! env('APP_URL') . "/confirm_registration/$rfID" !!}">
+        {!! trans('messages.symbols.card') !!}
+    </a>
     {!! Form::close() !!}
     {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $regID, $rfID], 'data-toggle' => 'validator']) !!}
     <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip"
