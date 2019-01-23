@@ -203,6 +203,7 @@ Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');        
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
+Route::get('/promote/{reg}', 'RegistrationController@promote');
 Route::get('/eventcopy/{slug}', 'EventController@event_copy');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');                                  // Ajax
 

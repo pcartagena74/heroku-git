@@ -66,46 +66,57 @@ $s3fs = new Filesystem($adapter);
                     'subheader' => trans('messages.symbols.cur'). ' ' . number_format($reg->subtotal, 2),
                     'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                    @if($rf->pmtRecd == 1)  {{-- payment received --}}
+                    @if($rf->cost > 0) {{-- There is a fee for event --}}
 
-                        @if($event->eventStartDate->gte($today->subDays($org->refundDays)) && !$event->isNonRefundable)
-                            {!! Form::open(['method'  => 'delete',
-                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                            'data-toggle' => 'validator' ]) !!}
+                        @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
+                            {{-- Payment received and able to display a refund button --}}
+
+                            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
                             <button type="submit" class="btn btn-danger btn-sm">
-                                @if($rf->cost > 0)
-                                    @lang('messages.buttons.reg_ref')
-                                @else
-                                    @lang('messages.buttons.reg_can')
-                                @endif
+                                @lang('messages.buttons.reg_ref')
                             </button>
                             {!! Form::close() !!}
                         @endif
 
-                        <a target="_new"
-                           @if($rf->isGroupReg)
-                           href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
-                           @else
-                           href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                           @endif
-                           class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
-                        <a target="_new" href="{{ $receipt_url }}"
-                           class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
-                        <br/>
+                        @if($rf->pmtRecd == 1)
+                            {{-- Payment received so receipt buttons are appropriate --}}
+                            <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                               class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
-                    @else {{-- payment not received; possibly marked "At the Door" --}}
+                            <a target="_new" href="{{ $receipt_url }}"
+                               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+                            <br/>
+                        @else
 
-                        @if($rf->cost > 0)
                             <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-                               class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
+                                class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
+
                         @endif
-                            {!! Form::open(['method'  => 'delete',
-                                            'route' => [ 'cancel_registration', $reg->regID, $rf->regID ],
-                                            'data-toggle' => 'validator' ]) !!}
+
+                    @else               {{-- There is no fee for event --}}
+
+                        @if($rf->pmtRecd == 1)
+                            {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
+
+                            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
                             <button type="submit" class="btn btn-danger btn-sm">
                                 @lang('messages.buttons.reg_can')
                             </button>
                             {!! Form::close() !!}
+
+                            {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
+                            <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                               class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
+
+                            <a target="_new" href="{{ $receipt_url }}"
+                               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+                            <br/>
+                        @else
+
+
+                        @endif
 
                     @endif
 

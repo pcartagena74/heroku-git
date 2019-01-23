@@ -153,6 +153,7 @@ return [
         'eventQuestion' => 'List any questions you may have for the speaker(s)?',
         'expr' => 'Expiration',
         'experience' => 'PM Experience',
+        'first' => 'First',
         'firstName' => 'First Name',
         'fCost' => 'Final Cost',
         'from' => 'From',
@@ -199,11 +200,12 @@ return [
         'isAuthPDU' => 'Do you authorize :org to submit PDUs on your behalf?',
         'isFirstEvent' => 'Is this your first :org Event?',
         'isFirstRegional' => 'Is this your first Regional Event?',
+        'last' => 'Last',
+        'lastName' => 'Last Name',
         'limit' => 'Limit',
         'loc' => 'Location',
         'loc_id' => 'Location ID',
         'loc_name' => 'Location Name',
-        'lastName' => 'Last Name',
         'login' => 'Email Address',
         //'login' => 'Login',
         'member' => 'Member',
@@ -305,6 +307,8 @@ return [
         'cdate' => "Custom Date Field Names",
         'certs' => 'Certifications',
         'chap' => 'Chapter',
+        'chap_evt_att' => 'Chapter Event Attendance',
+        'past_evt_att' => 'Past Event Attendance',
         'chapterRole' => 'Chapter Role',
         'check_tab' => "Attendee Check-In",
         'code' => 'Code',
@@ -389,6 +393,7 @@ return [
         'nametags' => "Name Tag Data",
         'near_chap' => 'Nearby Chapters',
         'net' => 'Net',
+        'net_list' => 'Networking List',
         'note' => 'Note',
         'number' => "Number",
         'off_by' => "Offered By",
@@ -462,6 +467,7 @@ return [
         'tz' => 'Time Zone',
         'url' => "URL",
         'userid' => "User ID",
+        'view' => "View",
         'virtual' => "Is this a virtual event?",
         'wait' => 'Wait List',
         'website' => "Website",
@@ -469,6 +475,7 @@ return [
     ],
 
     'instructions' => [
+        'bar_chart' => "Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.",
         'become_instr' => "Find a person by searching by that person's first or last name, email address, or PMI ID",
         'become_id' => "Enter the left-most number from the field above. ",
         'bundle_setup' => "If you need to create a 'bundle' ticket, do so after adding <b>all</b> of its component (non-bundle) tickets.",
@@ -514,6 +521,7 @@ return [
         'merge_overwrite' => "If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.",
         'merge_survive' => "{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.",
         'name_change' => "You need to contact PMI directly to change this data.",
+        'name_change_ok' => "You are able to edit these fields as an Admin.  Please only do so if you know PMI's records reflect the change.",
         'need_to_login' => "An mCentric account was found for you. <b style='color:red;'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.",
         'no_deadbeats' => "There are no pending payments for this event at this time.",
         'no_events' => "There are no <b class='red'>active</b> future events at this time.",
@@ -665,6 +673,18 @@ return [
         'c_log' => "Logout",
     ],
 
+    'notifications' => [
+        'thanks' => "",
+
+        'WLNM' => [
+            'subject' => ":org Event: You are off the wait list!",
+            'line1' => "A spot has opened up for :event.",
+            'line2' => "If you didn't already register, you may continue your registration.",
+            'action' => "Continue Registration",
+        ],
+
+    ],
+
     'public_marketing' => [
         'main' => [
             'home' => 'Home',
@@ -785,6 +805,7 @@ return [
                           See it now by going to: <a style='color:yellow;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
         'no_charge' => 'No Charge',
         'partial' => 'Partially Refunded',
+        'promoted' => 'Promoted',
         'p_canceled' => 'Partially Canceled',
         'pending' => 'Payment Pending',
         'processed' => 'Processed',
@@ -794,11 +815,12 @@ return [
 
     // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
     'symbols' => [
+        'card' => "<i class='far fa-credit-card-front fa-fw'></i>",         // credit card
         'cash' => "<i class='fas fa-money-bill-alt fa-fw'></i>",            // physical currency
         'check' => "<i class='fas fa-money-check fa-fw'></i>",              // physical direction to draw on an account
         'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",                // currency symbol
         'cur_class' => "class='far fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
-        'cur_class_5x' => "class='far fa-5x fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
+        'cur_class_5x' => "class='far fa-5x fa-dollar-sign fa-fw'",         // currency symbol - class only (when tips are embedded)
         'trash' => "<i class='far fa-trash-alt fa-fw'></i>",                // delete symbol
         'trash_class' => "class='far fa-trash-alt fa-fw'",                  // delete symbol - class only (when tips are embedded)
     ],
@@ -816,6 +838,7 @@ return [
         'bundle_include' => "Change to 'Yes' to add each corresponding ticket to this bundle.",
         'bundles' => "Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.",
         'cant_cancel_reg' => "You cannot cancel this registration. Find an admin.",
+        'card' => "Click to continue payment by credit card.",
         'cash' => "Click to acknowledge payment by cash.",
         'change_ticket' => "You can change the ticket that will be purchased if desired.",
         'check' => "Click to acknowledge payment by check.",
@@ -865,6 +888,7 @@ return [
         'tkt_no_del' => "The original ticket cannot be deleted. Please edit as needed.",
         'va' => 'View Activity',
         'vep' => 'View/Edit Profile',
+        'wait_cnv' => 'Promote from Wait List',
     ],
 
     'topBits' => [

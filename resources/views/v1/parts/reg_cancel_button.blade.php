@@ -4,14 +4,12 @@
  * Created: 10/23/2018
  *
  * @param $reg: the regID concerned
+ * @param $wait: will be set to 1 if wait list button needed
+ *
  */
 
-/*
-$f = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $r->regID, $r->rfID], 'data-toggle' => 'validator']);
-$f .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\"' . trans('messages.tooltips.sure_refund') . '\");">';
-$f .= '<i ' . trans('messages.symbols.cur_class') . ' data-toggle="tooltip" data-placement="top" title="'.
-    trans('messages.tooltips.click_cancel_reg') .'"></i></button></form>';
-*/
+$wait_tooltip = trans('messages.tooltips.wait_cnv');
+$wait_confirm = trans('messages.tooltips.sure');
 
 if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
     // currency symbol
@@ -33,6 +31,12 @@ if (Entrust::hasRole('Admin')) {
 }
 ?>
 @if(Entrust::hasRole('Admin'))
+
+    @if($reg->regStatus == trans('messages.headers.wait'))
+        <a class="btn btn-primary btn-sm" onclick="return confirm('{{ $wait_confirm }}');"
+           href="{!! env('APP_URL')."/promote/$reg->regID" !!}" data-toggle="tooltip" title="{!! $wait_tooltip !!}"><i class="fas fa-angle-double-right"></i></a>
+    @endif
+
     {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->rfID], 'data-toggle' => 'validator']) !!}
     <button type="submit" class="btn {{ $button_class }} btn-sm" onclick="return confirm('{{ $confirm_msg }}');"
         data-toggle="tooltip" data-placement="top" title="{{ $button_tooltip }}">

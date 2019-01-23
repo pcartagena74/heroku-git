@@ -62,7 +62,10 @@ class ActivityController extends Controller
                                 'registrations', function($q) {
                                     $q->where('pmtRecd', '=', 0);
                             })
-                            ->whereIn('status', [trans('messages.reg_status.pending')])
+                            ->whereIn('status', [
+                                trans('messages.reg_status.pending'),
+                                trans('messages.headers.wait')
+                            ])
                             ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(

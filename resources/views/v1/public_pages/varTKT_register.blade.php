@@ -503,6 +503,8 @@ $i = 0;
         $(document).ready(function () {
         var member = "{{ $member }}";
         var nonmbr = "{{ $nonmbr }}";
+        var disc_chap = '{{ $discountChapters }}';
+        var dc = disc_chap.split(",");
         var checkbox = document.getElementById('selfcheck');
         var myForm = document.getElementById('regForm');
         $('#selfcheck').change(function () {
@@ -576,6 +578,13 @@ $i = 0;
                     $('#prefName{{ $i_cnt }}').val($('#firstName{{ $i_cnt }}').val());
                 });
 
+                $('#affiliation{{ $i_cnt }}').on('change', function (e) {
+                    which = '{{ $i_cnt }}';
+                    j = which.replace('_', '');
+                    if(j=='') j = 1;
+                    fix_pricing(j, which);
+                });
+
                 @if($i == 1)
                     $('#login{{ $i_cnt }}').on('change', function (e) {
                         findUser($('#login{{ $i_cnt }}').val(), '{{ $i_cnt }}');
@@ -607,6 +616,16 @@ $i = 0;
                 });
 
             @endfor
+
+            function check_affiliation_disc(aff_array){
+                mp_ok = 0;
+                aff_array.forEach((aff) => {
+                    if(dc.includes(aff)) {
+                        mp_ok = 1;
+                    }
+                });
+                return mp_ok;
+            }
 
             function validateCode(eventID, which) {
                 var codeValue = $("#discount_code" + which).val();
@@ -841,23 +860,45 @@ $i = 0;
 
             function fix_pricing(j, which){
                 x = document.getElementById('ticketID-'+j);
+                aff_array = $('#affiliation'+which).val();
+                mp_ok = check_affiliation_disc(aff_array);
                 compare = x.value;
                 tc = document.getElementById('tcost'+j);
                 fc = document.getElementById('final'+j);
                 var mbr_price = def_tick['memberBasePrice'];
+                var nmb_price = def_tick['nonmbrBasePrice'];
                 tix.forEach((ticket) => {
 {{--
-                Check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
+                Need to change logic so pricing fix
+                    1. Checks if the PMI ID is present and
+                    2. Checks if the affiliated chapter matches discounted chapter list
+
+                Then for each ticket, check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
 --}}
                     if(tix.length > 0){
-                        var new_price = ticket['memberBasePrice'];
+                        var mem_price = ticket['memberBasePrice'];
+                        var non_price = ticket['nonmbrBasePrice'];
                         if(ticket['ticketID'] == compare){
-                            tc.innerHTML = new_price.toFixed(2);
-                            fc.innerHTML = new_price.toFixed(2);
+                            if(mp_ok){
+                                $("#ticket_type"+j).html(member);
+                                tc.innerHTML = mem_price.toFixed(2);
+                                fc.innerHTML = mem_price.toFixed(2);
+                            } else {
+                                $("#ticket_type"+j).html(nonmbr);
+                                tc.innerHTML = non_price.toFixed(2);
+                                fc.innerHTML = non_price.toFixed(2);
+                            }
                         }
                     } else {
-                        tc.innerHTML = mbr_price.toFixed(2);
-                        fc.innerHTML = mbr_price.toFixed(2);
+                        if(mp_ok){
+                            $("#ticket_type"+j).html(member);
+                            tc.innerHTML = mbr_price.toFixed(2);
+                            fc.innerHTML = mbr_price.toFixed(2);
+                        } else {
+                            $("#ticket_type"+j).html(nonmbr);
+                            tc.innerHTML = nmb_price.toFixed(2);
+                            fc.innerHTML = nmb_price.toFixed(2);
+                        }
                     }
                 recalc();
                 });
@@ -868,24 +909,7 @@ $i = 0;
                 tc = document.getElementById('tcost'+i);
                 fc = document.getElementById('final'+i);
                 os = document.getElementById('OrgStat1'+which);
-                if(tix.length > 0){
-                    //console.log('change_tick > 0');
-                    tix.forEach((ticket) => {
-                        if(ticket['ticketID'] == tktID){
-                            if(os.value > 0){
-                                var new_price = ticket['memberBasePrice'];
-                                tc.innerHTML = new_price.toFixed(2);
-                                fc.innerHTML = new_price.toFixed(2);
-                            } else {
-                                $("#ticket_type"+i).html(nonmbr);
-                                var new_price = ticket['nonmbrBasePrice'];
-                                tc.innerHTML = new_price.toFixed(2);
-                                fc.innerHTML = new_price.toFixed(2);
-                            }
-                        }
-                    });
-                    recalc();
-                }
+                fix_pricing(i, which);
             }
 
             function recalc(){
