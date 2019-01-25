@@ -92,6 +92,13 @@ $s3fs = new Filesystem($adapter);
                             <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                 class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
 
+                            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                                'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        @lang('messages.buttons.reg_ref')
+                                    </button>
+                            {!! Form::close() !!}
+
                         @endif
 
                     @else               {{-- There is no fee for event --}}

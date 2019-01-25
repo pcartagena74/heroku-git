@@ -39,7 +39,7 @@ class DownloadController extends Controller
             $excel->sheet('Name Tag Data', function ($sheet) use ($nametags) {
                 $sheet->fromArray($nametags, null, 'A1', false, false);
             });
-        })->download('xlsx');
+        })->download('csv');
     }
 
     public function pdu_list(Event $event)
@@ -75,6 +75,6 @@ class DownloadController extends Controller
             $excel->sheet('Name Tag Data', function ($sheet) use ($nametags) {
                 $sheet->fromArray($nametags, null, 'A1', false, false);
             });
-        })->download('xlsx');
+        })->download('csv');
     }
 }
