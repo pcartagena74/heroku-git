@@ -422,6 +422,7 @@ class RegFinanceController extends Controller
         $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
         try {
+            // Consider turning this into a notification instead for reliability.
             Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
@@ -449,6 +450,8 @@ class RegFinanceController extends Controller
         $reg->updaterID = Auth()->user()->id;
         $reg->updateDate = $now;
         $reg->save();
+
+        $reg->ticket->update_count(1, 1);
 
         return Redirect::back();
     }

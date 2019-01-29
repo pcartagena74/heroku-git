@@ -113,11 +113,11 @@ class Ticket extends Model
      *                      count is updated for bundle member tickets OR the ticket itself
      * @param: $amt is the amount passed to update the count - allows for +1 and -1
      */
-    public function update_count($amt){
+    public function update_count($amt, $force = 0){
         $bundle_members = $this->bundle_members();
         if(count($bundle_members) > 0) {
             foreach ($bundle_members as $m) {
-                if($m->waitlisting()){
+                if($m->waitlisting() && !$force){
                     $m->waitCount += $amt;
                 } else {
                     $m->regCount += $amt;
@@ -125,7 +125,7 @@ class Ticket extends Model
                 $m->save();
             }
         } else {
-            if($this->waitlisting()){
+            if($this->waitlisting() && !$force){
                 $this->waitCount += $amt;
             } else {
                 $this->regCount += $amt;
