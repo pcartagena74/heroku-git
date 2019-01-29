@@ -390,7 +390,7 @@ class RegistrationController extends Controller
             isset($lastName) ? $person->lastName = $lastName :1;
             isset($suffix) ? $person->suffix = $suffix :1;
             $person->defaultOrgID = $event->orgID;
-            isset($prefName) ? $person->prefName = $prefName :1;
+            isset($prefName) ? $person->prefName = $prefName : $person->prefName = $firstName;
             isset($compName) ? $person->compName = $compName :1;
             isset($indName) ? $person->indName = $indName :1;
             isset($title) ? $person->title = $title :1;
