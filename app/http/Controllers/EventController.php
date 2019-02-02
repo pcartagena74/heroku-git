@@ -660,9 +660,15 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
 
+    /**
+     * This function allows the quick update of the Early Bird End Date and Percent Discount
+     * associated with eventID $id from /event-tickets/{id}
+     *
+     * @param Request $request
+     * @param Event $event
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector
+     */
     public function ajax_update(Request $request, Event $event) {
-        // this function is just for the quick update of the Early Bird End Date
-        // and Percent Discount associated with the eventID $id from /event-tickets/{id}
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 

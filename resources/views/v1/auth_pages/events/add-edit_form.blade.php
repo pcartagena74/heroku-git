@@ -13,6 +13,13 @@ $org = $current_person->defaultOrg;
 if(isset($event)) {
     $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
     $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
+
+    if($exLoc->isVirtual==1){
+        $show_virtual = true;
+    } else {
+        $show_virtual = false;
+    }
+
 } elseif(old('eventStartDate')) {
     //$eventStartDate = DateTime::createFromFormat('m/d/Y h:M A', old('eventStartDate'))->format('Y-m-d');
     $eventStartDate = date($dateFormat, strtotime(old('eventStartDate')));
@@ -232,7 +239,7 @@ try {
 
     <div id="address_info"
     @if($event->eventID !== null)
-        {!! $exLoc->isVirtual==0 ?: 'style="display:none;"' !!}
+        {!! $exLoc->isVirtual==1 ? 'style="display:none;"' : '' !!}
     @endif
     >
         <div class="form-group col-md-12">
@@ -268,7 +275,7 @@ try {
     <div class="form-group col-md-8">
         {!! Form::label('virtual', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} &nbsp;
         @if($event->eventID !== null)
-            {!! Form::checkbox('virtual', 1, ($exLoc->isVirtual?'true':'false'),
+            {!! Form::checkbox('virtual', 1, $show_virtual,
                 $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
         @else
             {!! Form::checkbox('virtual', 1, false,
