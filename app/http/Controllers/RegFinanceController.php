@@ -93,8 +93,11 @@ class RegFinanceController extends Controller
 
             $tickets = $event->tickets();
 
+            $certs = DB::table('certifications')->select('certification')->get();
+            $cert_array = $certs->toArray();
+
             return view('v1.public_pages.register2',
-                compact( 'event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs',
+                compact( 'event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array',
                          'prefixes', 'industries', 'tracks', 'tickets', 'show_pass_fields'));
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');

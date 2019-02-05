@@ -49,12 +49,12 @@ class SetYourPassword extends Notification
     {
         $name = $this->o->orgName;
         return (new MailMessage)
-            ->subject('Your mCentric Account: How to reset your password')
-            ->line('An mCentric account was setup for you by ' . $name . '.')
-            ->line('If you have not yet set its password or do not remember it, you reset it now using the button below.')
-            ->line('If you do not need to reset your password, delete this email.')
-            ->action('Password Reset', url('/password/reset?e='.$this->person->login))
-            ->line("Thank you for using mCentric with $name");
+            ->subject(trans('messages.notifications.SYP.subject'))
+            ->line(trans('messages.notifications.SYP.line1', ['name' => $name]))
+            ->line(trans('messages.notifications.SYP.line1'))
+            ->line(trans('messages.notifications.SYP.line2'))
+            ->action(trans('messages.notifications.SYP.action'), url('/password/reset?e='.$this->person->login))
+            ->line(trans('messages.notifications.thanks', ['org' => $name]));
     }
 
     /**

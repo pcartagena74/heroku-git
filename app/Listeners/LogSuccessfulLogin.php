@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Person;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,5 +36,8 @@ class LogSuccessfulLogin
         activity('lastLogin')
             ->performedOn($this->user)
             ->log("Login of $login @ " . Carbon::now());
+        $p = Person::find($event->user->id);
+        $p->lastLoginDate = Carbon::now();
+        $p->save();
     }
 }

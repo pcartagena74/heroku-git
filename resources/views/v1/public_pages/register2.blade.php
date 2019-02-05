@@ -68,7 +68,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                         {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }}
                         , {{ $loc->state }} {{ $loc->zip }}
                     </div>
-                    <br/>
+                    <br />
                 </div>
                 <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
@@ -220,7 +220,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                                data-value="{{ $person->login }}"
                                                data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> ]
                                     </nobr>
-                                    <br/>
+                                    <br />
                                     @if($event->eventTypeID==5)
                                         <a id="chapterRole-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->chapterRole }}"
@@ -256,11 +256,11 @@ if ($event->isSymmetric && $event->hasTracks) {
                                                                                    data-pk="{{ $person->personID }}"
                                                                                    data-value="{{ $person->indName }}"
                                                                                    data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> @lang('messages.headers.ind')
-                                                <br/>
+                                                <br />
                                             @endif
                                         @endif
                                         @if($person->affiliation)
-                                            <br/>@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
+                                            <br />@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
                                                                                         data-pk="{{ $person->personID }}"
                                                                                         data-value="{{ $person->affiliation }}"
                                                                                         data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -273,18 +273,25 @@ if ($event->isSymmetric && $event->hasTracks) {
                                                                                     data-pk="{{ $reg->regID }}"
                                                                                     data-value="{{ $reg->isFirstEvent }}"
                                                                                     data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
-                                        <br/>
+                                        <br />
                                     @endif
 
                                     <b>@lang('messages.headers.roster_add'):</b> <a id="canNetwork-{{ $tcount }}"
                                                                                     data-pk="{{ $reg->regID }}"
                                                                                     data-value="{{ $reg->canNetwork }}"
-                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
+
+                                    <b>@lang('messages.headers.certs'):</b> <br /><a id="certifications-{{ $tcount }}"
+                                                                               data-pk="{{ $person->personID }}"
+                                                                               data-value="{{ $person->certifications }}"
+                                                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a><br />
+
+
                                     @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
                                     <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
                                                                                 data-pk="{{ $reg->regID }}"
                                                                                 data-value="{{ $reg->isAuthPDU }}"
-                                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
+                                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
                                     @if($reg->eventQuestion)
                                         <p><b>@lang('messages.fields.spk_question'):</b> <a
                                                     id="eventQuestion-{{ $tcount }}"
@@ -295,7 +302,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                     @endif
 
                                     @if($reg->eventTopics)
-                                        <p><b>@lang('messages.fields.future_topics'):</b><br/> <a
+                                        <p><b>@lang('messages.fields.future_topics'):</b><br /> <a
                                                     id="eventTopics-{{ $tcount }}"
                                                     data-pk="{{ $reg->regID }}"
                                                     data-value="{{ $reg->eventTopics }}"
@@ -304,7 +311,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                     @endif
 
                                     @if($reg->cityState)
-                                        <br/><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
+                                        <br /><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
                                                                                          data-pk="{{ $reg->regID }}"
                                                                                          data-value="{{ $reg->cityState }}"
                                                                                          data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a></br>
@@ -315,7 +322,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                                                                       data-pk="{{ $reg->regID }}"
                                                                                       data-value="{{ $reg->specialNeeds }}"
                                                                                       data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
-                                        <br/>
+                                        <br />
                                     @endif
 
                                     @if($reg->allergenInfo)
@@ -323,7 +330,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                                                                       data-pk="{{ $reg->regID }}"
                                                                                       data-value="{{ $reg->allergenInfo }}"
                                                                                       data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
-                                        <br/>
+                                        <br />
                                         @if($reg->eventNotes)
                                             <a id="eventNotes-{{ $tcount }}" data-pk="{{ $reg->regID }}"
                                                data-value="{{ $reg->eventNotes }}"
@@ -360,7 +367,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                 class="card btn btn-primary btn-md">
                             <b>@lang('messages.buttons.ccpay')</b>
                         </button>
-                        <br/>
+                        <br />
                     @endif
                     @if($event->acceptsCash)
                         <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
@@ -447,11 +454,11 @@ if ($event->isSymmetric && $event->hasTracks) {
             $('#indName-{{ $i }}').editable({
                 type: 'select',
                 source: [
-                    <?php
+<?php
                     foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -464,11 +471,23 @@ if ($event->isSymmetric && $event->hasTracks) {
             $('#affiliation-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-                    <?php
+<?php
                     for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-                    ?>
+?>
+                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                ]
+            });
+
+            $('#certifications-{{ $i }}').editable({
+                type: 'checklist',
+                source: [
+<?php
+                    foreach ($cert_array as $row) {
+                        $string .= "{ value: '" . $row->certification . "' , text: '" . $row->certification . "' },";
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
