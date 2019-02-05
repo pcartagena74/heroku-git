@@ -99,8 +99,10 @@ class RegistrationController extends Controller
             }
         }
 
+        $certs = DB::table('certifications')->select('certification')->get();
+
          return view('v1.public_pages.varTKT_register',
-              compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters'));
+              compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters', 'certs'));
     }
 
     /**
@@ -338,6 +340,7 @@ class RegistrationController extends Controller
             $eventQuestion = request()->input('eventQuestion'.$i_cnt);
             $eventTopics = request()->input('eventTopics'.$i_cnt);
             $affiliation = request()->input('affiliation'.$i_cnt);
+            $certification = request()->input('certifications'.$i_cnt);
             $experience = request()->input('experience'.$i_cnt);
             $dCode = request()->input('discount_code'.$i_cnt);
             $dc = EventDiscount::where([
@@ -402,6 +405,7 @@ class RegistrationController extends Controller
                 isset($eventNotes) ? $person->allergenNote = $eventNotes :1;
             }
             isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) :1;
+            isset($certification) ? $person->certifications = implode(",", (array)$certification) :1;
             $person->save();
 
             if (null === $pmiID) {

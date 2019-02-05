@@ -127,6 +127,7 @@ return [
         'buttons' => 'Buttons',
         'canNetwork' => 'Do you want to be added to the participant roster?',
         'category' => 'Category',
+        'certification' => 'Certification(s)',
         'chapterRole' => 'What is your role with :org?',
         'city' => 'City',
         'cityState' => 'From what city/state will you be commuting?',
@@ -674,7 +675,7 @@ return [
     ],
 
     'notifications' => [
-        'thanks' => "",
+        'thanks' => "Thank you for using mCentric with :org.",
 
         'WLNM' => [
             'subject' => ":org Event: You are off the wait list!",
@@ -682,6 +683,14 @@ return [
             'line2' => "If you didn't already register, you may continue your registration.",
             'action' => "Continue Registration",
         ],
+
+        'SYP' => [
+            'subject' => "Your mCentric Account: How to set/reset your password",
+            'line1' => "An mCentric account was setup for you by :name.",
+            'line2' => "If you have not yet set its password or do not remember it, you can reset it now using the button below.",
+            'line3' => "If you do not need to reset your password, you can this delete this email.",
+            'action' => "Reset Password",
+        ]
 
     ],
 
@@ -840,6 +849,7 @@ return [
         'cant_cancel_reg' => "You cannot cancel this registration. Find an admin.",
         'card' => "Click to continue payment by credit card.",
         'cash' => "Click to acknowledge payment by cash.",
+        'certification_tip' => 'Please select the certification(s) you possess.',
         'change_ticket' => "You can change the ticket that will be purchased if desired.",
         'check' => "Click to acknowledge payment by check.",
         'click_cancel_reg' => "Click to cancel this registration.",

@@ -692,6 +692,7 @@ foreach ($array as $chap) {
                 type: 'checklist',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
+                value: '{{ $profile->certifications }}',
                 source: [
 <?php
                     foreach ($cert_array as $x) {

@@ -110,7 +110,7 @@ $deletion = 0;
                         {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }},
                         {{ $loc->state }} {{ $loc->zip }}
                     </div>
-                    <br/>
+                    <br />
                     <b style="color:red;">@lang('messages.headers.purchased'): </b> {{ $rf->createDate->format('n/j/Y') }}
                     <b style="color:red;">@lang('messages.headers.at') </b> {{ $rf->createDate->format('g:i A') }}
                     @if($rf->cost > 0 && $rf->pmtRecd == 0)
@@ -218,7 +218,7 @@ $deletion = 0;
                                 {{ $person->suffix }}
                             @endif
                             <nobr>[ {{ $person->login }} ]</nobr>
-                            <br/>
+                            <br />
                             @if($person->compName)
                                 @if($person->title)
                                     {{ $person->title }}
@@ -234,25 +234,28 @@ $deletion = 0;
                                 @endif
                             @endif
                             @if($person->indName !== null)
-                                @lang('messages.headers.inthe') {{ $person->indName }} @lang('messages.headers.ind') <br/>
+                                @lang('messages.headers.inthe') {{ $person->indName }} @lang('messages.headers.ind') <br />
                             @endif
 
                             @if($person->affiliation)
-                                <br/>@lang('messages.headers.aff_with'): {{ $person->affiliation }}
+                                <br />@lang('messages.headers.aff_with'): {{ $person->affiliation }}
                             @endif
                         </td>
                         <td colspan="2" style="text-align: left;">
 
                             <b>@lang('messages.headers.roster_add'):</b> {{ $reg->canNetwork
                                                                             ? trans('messages.yesno_check.yes')
-                                                                            : trans('messages.yesno_check.no') }}<br/>
+                                                                            : trans('messages.yesno_check.no') }}<br />
+
+                            <b>@lang('messages.headers.certs'):</b>: {{ $person->certifications }} <br />
+
                             <b>@lang('messages.fields.pdu_sub'):</b> {{ $reg->isAuthPDU
                                                                             ? trans('messages.yesno_check.yes')
-                                                                            : trans('messages.yesno_check.no') }}<br/>
+                                                                            : trans('messages.yesno_check.no') }}<br />
                             @if($reg->allergenInfo)
-                                <b>@lang('messages.fields.diet_info'):</b> {{ $reg->allergenInfo }}<br/>
+                                <b>@lang('messages.fields.diet_info'):</b> {{ $reg->allergenInfo }}<br />
                                 @if($reg->eventNotes)
-                                    {{ $reg->eventNotes }}<br/>
+                                    {{ $reg->eventNotes }}<br />
                                 @endif
                             @endif
                         </td>

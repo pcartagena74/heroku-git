@@ -67,6 +67,11 @@ foreach ($array as $chap) {
     $affiliation_array[$chap] = $chap;
 }
 
+foreach($certs as $cert){
+    $cert = trim($cert->certification);
+    $cert_array[$cert] = $cert;
+}
+
 $today = Carbon\Carbon::now();
 
 $tix_dropdown = $tkts->pluck('ticketLabel', 'ticketID');
@@ -297,6 +302,12 @@ $i = 0;
                 {!! Form::text("prefName$i_cnt", old("prefName$i_cnt"),
                         array('class' => 'form-control input-sm', 'required', 'id' => "prefName$i_cnt")) !!}
                 <br/>
+
+                <label class="control-label" for="certifications{{ $i_cnt }}">@lang('messages.fields.certification')<sup
+                            class='red'>*</sup></label>
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.certification_tip')])
+                {!! Form::select("certifications$i_cnt" . "[]", $cert_array, old("certifications") ?: reset($cert_array),
+                    array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
             </div>
         </div>
 
@@ -321,7 +332,7 @@ $i = 0;
             <div class="col-sm-6">
                 <label class="control-label" for="experience{{ $i_cnt }}">@lang('messages.fields.experience')<sup
                             class='red'>*</sup></label>
-                @include('v1.parts.tooltip', ['title' => trans('messages.tooltip.experience_tip')])
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.experience_tip')])
                 {!! Form::select("experience$i_cnt", $experience_choices, old("experience$i_cnt"),
                           array('class' =>'form-control input-sm', 'id' => "experience$i_cnt", 'required')) !!}
                 <br/>
@@ -406,7 +417,8 @@ $i = 0;
             <label class="control-label" for="affiliation{{ $i_cnt }}">@lang('messages.fields.affiliation')<sup
                         class='red'>*</sup></label>
             @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.affiliation_tip')])
-            {!! Form::select("affiliation$i_cnt" . "[]", $affiliation_array, old("affiliation") ?: reset($affiliation_array), array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "affiliation$i_cnt")) !!}
+            {!! Form::select("affiliation$i_cnt" . "[]", $affiliation_array, old("affiliation") ?: reset($affiliation_array),
+                array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "affiliation$i_cnt")) !!}
         </div>
 
         <div class="col-sm-3">
