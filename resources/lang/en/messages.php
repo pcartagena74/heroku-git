@@ -53,6 +53,7 @@ return [
         'save_et' => 'Save Event Type|Save Event Types',
         'save_tkt' => 'Save Ticket|Save Tickets',
         'sess_reg' => 'Submit Session Registration Changes',
+        'unbecome' => 'End This / Resume Your Identity',
         'use_addr' => "Use Address",
         'wait' => 'Join the Wait List',
     ],
@@ -590,6 +591,7 @@ return [
     ],
 
     'messages' => [
+        'become' => "You are emulating the experience for: :name.  ",
         'confirm_msg' => "A confirmation email was sent to: :name.",
         'loc_merge' => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
         'merge_sub' => "Your mCentric account for :name events",

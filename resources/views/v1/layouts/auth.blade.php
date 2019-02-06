@@ -18,7 +18,9 @@ if(!isset($topBits)){
         @include('v1.parts.nav-left')
         @include('v1.parts.nav-top')
         <div class="right_col" role="main">
-            @include('v1.parts.error')
+            @if(Session::has('become'))
+                @include('v1.parts.become_notice')
+            @endif
             @if($topBits)
                 <div class="row tile_count">
                     @foreach($topBits as $tdata)
