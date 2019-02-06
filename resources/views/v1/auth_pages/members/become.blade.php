@@ -33,7 +33,7 @@ $topBits = '';  // remove this if this was set in the controller
             {!! Form::text('new_id', '', array('class' => 'form-control', 'required')) !!}
         </div>
         <div class="form-group col-sm-1">
-            {!! Form::submit('Become!', array('class' => 'btn btn-primary btn-xs form-control')) !!}
+            {!! Form::submit(trans('messages.nav.ms_become'), array('class' => 'btn btn-primary btn-xs form-control')) !!}
         </div>
         {!! Form::close() !!}
     </div>

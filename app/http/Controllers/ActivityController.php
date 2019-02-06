@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use Session;
 
 class ActivityController extends Controller
 {
@@ -192,8 +193,23 @@ class ActivityController extends Controller
 
     public function become (Request $request) {
         // triggered by POST /become
+
         $new_id = request()->input('new_id');
+        $cancel = request()->input('cancel');
+        $prior_id = auth()->user()->id;
+
+        // "Become" by logging in the $new_id
         Auth::loginUsingId($new_id, 0);
+
+        // Store the old and new IDs
+        if($cancel != 1){
+            Session::put('become', $new_id);
+            Session::put('prior_id', $prior_id);
+            Session::save();
+        } else {
+            Session::forget(['become', 'prior_id']);
+        }
+
         return redirect(env('APP_URL') . "/dashboard");
     }
 
