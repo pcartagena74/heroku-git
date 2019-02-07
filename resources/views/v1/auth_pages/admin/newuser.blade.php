@@ -60,6 +60,13 @@ $currentOrg = $org;
 
         <div class="form-group col-xs-12">
             <div class="col-xs-3">
+                {!! Form::label('notify', trans('messages.headers.notify_user'), array('class' => 'control-label')) !!}<br />
+                {!! Form::checkbox('notify', 1, false, ['class' => 'form-control flat input-sm']) !!}
+            </div>
+        </div>
+
+        <div class="form-group col-xs-12">
+            <div class="col-xs-3">
                 {!! Form::submit(trans('messages.nav.ad_new'), array('class' => 'btn btn-primary', 'name' => 'sub_changes')) !!}
             </div>
         </div>

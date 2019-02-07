@@ -10,22 +10,24 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class AccountCreation extends Notification
+class NewUserAcct extends Notification
 {
     use Queueable;
 
     protected $person;
-    protected $event;
+    protected $pass;
+    protected $creator;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Person $person, Event $event)
+    public function __construct(Person $person, $pass, $creator)
     {
         $this->person = $person;
-        $this->event = $event;
+        $this->pass = $pass;
+        $this->creator = Person::find($creator);
     }
 
     /**
@@ -49,11 +51,11 @@ class AccountCreation extends Notification
     {
         $o = Org::find($this->person->defaultOrgID);
         $name = $o->orgName;
-        $ename = $this->event->eventName;
         return (new MailMessage)
-            ->subject(trans('messages.notifications.new_reg_acct.subject', ['org' => $name]))
-            ->line(trans('messages.notifications.new_reg_acct.line1', ['ename' => $ename]))
-            ->line(trans('messages.notifications.new_reg_acct.line2'))
+            ->subject(trans('messages.notifications.new_user_acct.subject', ['org' => $name]))
+            ->line(trans('messages.notifications.new_user_acct.line1', ['name' => $this->creator->showFullName(), 'org' => $name]))
+            ->line(trans('messages.notifications.new_user_acct.line2'))
+            ->line(trans('messages.notifications.new_user_acct.line3', ['pass' => $this->pass]))
             ->action(trans('messages.notifications.login'), env('APP_URL'))
             ->line(trans('messages.notifications.thanks', ['org' => $name]));
     }

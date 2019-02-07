@@ -9,6 +9,7 @@ use App\OrgPerson;
 use App\Email;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\NewUserAcct;
 
 class UserController extends Controller
 {
@@ -94,51 +95,56 @@ class UserController extends Controller
             return back()->withInput();
         }
 
-        $p = new Person;
-        $p->firstName = $firstName;
-        $p->prefName = $firstName;
-        $p->lastName = $lastName;
-        $p->login = $email;
-        $p->defaultOrgID = $orgID;
-        $p->creatorID = $this->currentPerson->personID;
-        $p->updaterID = $this->currentPerson->personID;
-        $p->save();
+        try {
+            $p = new Person;
+            $p->firstName = $firstName;
+            $p->prefName = $firstName;
+            $p->lastName = $lastName;
+            $p->login = $email;
+            $p->defaultOrgID = $orgID;
+            $p->creatorID = $this->currentPerson->personID;
+            $p->updaterID = $this->currentPerson->personID;
+            $p->save();
 
-        $op = new OrgPerson;
-        if($pmiID > 0){
-            $op->OrgStat1 = $pmiID;
+            $op = new OrgPerson;
+            if($pmiID > 0){
+                $op->OrgStat1 = $pmiID;
+            }
+            $op->personID = $p->personID;
+            $op->orgID = $orgID;
+            $op->creatorID = $this->currentPerson->personID;
+            $op->updaterID = $this->currentPerson->personID;
+            $op->save();
+
+            $u = new User;
+            $u->id = $p->personID;
+            $u->login = $email;
+            $u->name = $email;
+            $u->email = $email;
+            if($make_pass){
+                $u->password = bcrypt($password);
+            }
+            $u->save();
+
+            $e = new Email;
+            $e->emailADDR = $email;
+            $e->personID = $p->personID;
+            $e->isPrimary = 1;
+            $e->creatorID = $this->currentPerson->personID;
+            $e->updaterID = $this->currentPerson->personID;
+            $e->save();
+        } catch(\Exception $exception) {
+            request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
+            return back()->withInput();
         }
-        $op->personID = $p->personID;
-        $op->orgID = $orgID;
-        $op->creatorID = $this->currentPerson->personID;
-        $op->updaterID = $this->currentPerson->personID;
-        $op->save();
-
-        $u = new User;
-        $u->id = $p->personID;
-        $u->login = $email;
-        $u->name = $email;
-        $u->email = $email;
-        if($make_pass){
-            $u->password = bcrypt($password);
-        }
-        $u->save();
-
-        $e = new Email;
-        $e->emailADDR = $email;
-        $e->personID = $p->personID;
-        $e->isPrimary = 1;
-        $e->creatorID = $this->currentPerson->personID;
-        $e->updaterID = $this->currentPerson->personID;
-        $e->save();
 
         if($notify){
-            // $p->notify(new AccountCreation($p, null));
+            $p->notify(new NewUserAcct($p, $password, auth()->user()->id));
         }
 
-        // Send somewhere...
+        // Send back to same screen but with success message
         request()->session()->flash('alert-success', trans('messages.messages.user_created'));
-
+        return redirect(env('APP_URL')."/newuser/create");
     }
 
     /**
