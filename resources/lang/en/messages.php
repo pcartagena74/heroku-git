@@ -397,6 +397,7 @@ return [
         'net' => 'Net',
         'net_list' => 'Networking List',
         'note' => 'Note',
+        'notify_user' => 'Notify user at above email address?',
         'number' => "Number",
         'off_by' => "Offered By",
         'or' => "Or",
@@ -606,6 +607,7 @@ return [
         'thanks' => "Thank you for using mCentric with :orgname.",
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
         'user_created' => "The new user was created.  Go to the user's profile.",
+        'user_create_fail' => "An unknown error of some sort occurred.",
         'visit_mCentric' => "Visit mCentric",
     ],
 
@@ -678,7 +680,9 @@ return [
 
     'notifications' => [
         'thanks' => "Thank you for using mCentric with :org.",
+        'login' => "Login to mCentric",
 
+        // Wait List No More
         'WLNM' => [
             'subject' => ":org Event: You are off the wait list!",
             'line1' => "A spot has opened up for :event.",
@@ -686,13 +690,29 @@ return [
             'action' => "Continue Registration",
         ],
 
+        // Set Your Password
         'SYP' => [
             'subject' => "Your mCentric Account: How to set/reset your password",
             'line1' => "An mCentric account was setup for you by :name.",
             'line2' => "If you have not yet set its password or do not remember it, you can reset it now using the button below.",
             'line3' => "If you do not need to reset your password, you can this delete this email.",
             'action' => "Reset Password",
-        ]
+        ],
+
+        // AccountCreation
+        'new_reg_acct' => [
+            'subject' => "Your mCentric account with :org",
+            'line1' => "An mCentric account was created for you during the registration of :ename.",
+            'line2' => "If you initiated this change, you can delete this email.",
+        ],
+
+        // NewUserAcct
+        'new_user_acct' => [
+            'subject' => "Your mCentric account with :org",
+            'line1' => "An mCentric account was setup for you by :name with :org.",
+            'line2' => "Your login is the email address where you are receiving this notification.",
+            'line3' => "The password that was set for you is: ':pass'",
+        ],
 
     ],
 

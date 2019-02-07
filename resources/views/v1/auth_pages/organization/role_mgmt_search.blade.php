@@ -133,6 +133,9 @@ $counter = 0;
                 <th width="40%" style="vertical-align: top; text-align: left; min-width: 1px;">
                     @lang('messages.headers.ass_roles')
                 </th>
+                <th width="40%" style="vertical-align: top; text-align: left; min-width: 1px;">
+                    @lang('messages.actions.merge')
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -237,9 +240,15 @@ $counter = 0;
                 $mktg =
                     '<a ' . $tooltip . 'onclick="javascript:activate(' . $p->personID . ', ' . '10)" class="btn btn-sm ' . $board_color . '">'
                     . '<i class="fas fa-chart-bar"></i></a>';
+
+                $merge_form = "<a href='" . env('APP_URL') . "/merge/p/$p->personID' data-toggle='tooltip' data-placement='top'
+                    title='" . trans('messages.tooltips.mr') . "' class='btn btn-sm btn-warning'>
+                    <i class='far fa-fw fa-code-branch'></i></a>";
+
+                $a = "<a href='" . env('APP_URL')."/profile/$p->personID" . "' target='_new'>";
 ?>
                 <tr>
-                    <td style="vertical-align: top; text-align: left;">{!! $p->lastName !!}</td>
+                    <td style="vertical-align: top; text-align: left;">{!! $a . $p->lastName . "</a>" !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->firstName !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->login !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->OrgStat1 !!}</td>
@@ -257,6 +266,9 @@ $counter = 0;
                         @if((Entrust::hasRole('Developer')))
                             {!! $dev !!}
                         @endif
+                    </td>
+                    <td style="vertical-align: top; text-align: left;">
+                        {!! $merge_form !!}
                     </td>
                 </tr>
             @endforeach
