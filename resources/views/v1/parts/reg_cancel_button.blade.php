@@ -37,12 +37,20 @@ if (Entrust::hasRole('Admin')) {
            href="{!! env('APP_URL')."/promote/$reg->regID" !!}" data-toggle="tooltip" title="{!! $wait_tooltip !!}"><i class="fas fa-angle-double-right"></i></a>
     @endif
 
+    @if($reg->regStatus == trans('messages.reg_status.progress'))
+    <a href="{{ env('APP_URL') }}/confirm_registration/{{ $reg->rfID }}" target="_top" class="btn btn-sm btn-success"
+       data-toggle="tooltip" title="{{ trans('messages.headers.reg_con2') }}" data-placement="top">
+        <i class="fal fa-credit-card"></i>
+    </a>
+    @endif
+
     {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->rfID], 'data-toggle' => 'validator']) !!}
     <button type="submit" class="btn {{ $button_class }} btn-sm" onclick="return confirm('{{ $confirm_msg }}');"
         data-toggle="tooltip" data-placement="top" title="{{ $button_tooltip }}">
         {!! $button_symbol !!}
     </button>
     {!! Form::close() !!}
+
 @else
     <button class="btn {{ $button_class }}btn-sm" data-toggle="tooltip" title="{{ $button_tooltip }}">
         {!! $button_symbol !!}

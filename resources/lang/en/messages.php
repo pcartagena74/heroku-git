@@ -433,6 +433,7 @@ return [
         'reg_can' => 'Cancel Reg',
         'reg_chap' => 'Region Chapters',
         'reg_con' => 'Registration Confirmation',
+        'reg_con2' => 'Continue Registration',
         'reg_date' => 'Register Date',
         'reset_pass' => 'Reset Your mCentric Account Password',
         'results' => "Results",

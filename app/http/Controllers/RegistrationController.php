@@ -274,7 +274,8 @@ class RegistrationController extends Controller
         if($authorID <> 1){
             $resubmit = RegFinance::where([
                 ['token', '=', $token],
-                ['personID', '=', $authorID]
+                ['personID', '=', $authorID],
+                ['status', '!=', trans('messages.reg_status.processed')],
             ])->first();
         } else {
             $resubmit = null;
@@ -477,7 +478,17 @@ class RegistrationController extends Controller
             $reg->personID = $person->personID;
             $reg->reportedIndustry = $indName;
             $reg->eventTopics = $eventTopics;
-            $reg->isFirstEvent = request()->input('isFirstEvent'.$i_cnt) !== null ? 1 : 0;
+
+            // Regional Events show the question so pull from form
+            if($event->eventTypeID == 5){
+                $reg->isFirstEvent = request()->input('isFirstEvent'.$i_cnt) !== null ? 1 : 0;
+            } else {
+                // Otherwise, count whether registrations exist for this user
+                if(count($person->registrations) == 0){
+                    $reg->isFirstEvent = 1;
+                }
+            }
+
             $reg->isAuthPDU = request()->input('isAuthPDU'.$i_cnt) !== null ? 1 : 0;
             $reg->eventQuestion = $eventQuestion;
             $reg->canNetwork = request()->input('canNetwork'.$i_cnt) !== null ? 1 : 0;
