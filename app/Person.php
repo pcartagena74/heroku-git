@@ -113,11 +113,6 @@ class Person extends Model
     // returns the OrgStat1 associated with $orgID if populated or null
     public function is_member($orgID)
     {
-//        return $this->whereHas('orgperson', $filter = function($q) use ($orgID) {
-//            $q->where('orgID', '=', $orgID);
-//            $q->whereNotNull('OrgStat1');
-//        })->with(['orgperson'])->pluck('OrgStat1');
-
         $personID = $this->personID;
         return DB::table('person')
             ->join('org-person', function ($join) use ($orgID, $personID) {
