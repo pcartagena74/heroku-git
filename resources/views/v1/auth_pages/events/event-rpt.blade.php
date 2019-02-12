@@ -243,19 +243,29 @@ $es = $event->default_session();
     @include('v1.parts.end_content')
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="col-sm-3">
-            <a href="{{ env('APP_URL') }}/excel/nametags/{{ $event->eventID }}"
-               class="btn btn-primary btn-md">@lang('messages.buttons.down_name_tags')</a>
+            @include('v1.parts.url_button', [
+                'url' => env('APP_URL')."/excel/nametags/".$event->eventID,
+                'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_name_tags'),
+                'text' => trans('messages.buttons.down_name_tags')
+            ])
         </div>
         <div class="col-sm-3">
             @if($event->checkin_time())
-            <a href="{{ env('APP_URL') }}/excel/pdudata/{{ $event->eventID }}"
-               class="btn btn-success btn-md">@lang('messages.buttons.down_PDU_list')</a>
+                @include('v1.parts.url_button', [
+                    'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
+                    'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
+                    'text' => trans('messages.buttons.down_PDU_list')
+                ])
             @endif
         </div>
         @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
         <div class="col-sm-3">
-            <a href="{{ env('APP_URL') }}/mail_surveys/{{ $event->eventID }}"
-               class="btn btn-warning btn-md">@lang('messages.buttons.mail_surveys')</a>
+            @include('v1.parts.url_button', [
+                'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
+                'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
+                'confirm' => trans('messages.messages.survey_confirm'),
+                'text' => trans('messages.buttons.mail_surveys')
+            ])
         </div>
         @endif
     </div>

@@ -15,11 +15,11 @@
         {!! Form::radio($button_name, '3', false, $attributes = array('class'=>'form-control', 'required')) !!}
     </div>
 
-    <div style="text-align:center;" class="form-group col-xs-2">
+    <div style="text-align:center;" class="form-group col-xs-3">
         {!! Form::radio($button_name, '2', false, $attributes = array('class'=>'form-control', 'required')) !!}
     </div>
 
-    <div style="text-align:center;" class="form-group col-xs-2">
+    <div style="text-align:center;" class="form-group col-xs-3">
         {!! Form::radio($button_name, '1', false, $attributes = array('class'=>'form-control', 'required')) !!}
     </div>
 
@@ -36,11 +36,11 @@
         {!! Form::label($button_name, trans('messages.surveys.responses.g'), array('class' => 'control-label')) !!}
     </div>
 
-    <div style="text-align:center;" class="form-group col-xs-2">
+    <div style="text-align:center;" class="form-group col-xs-3">
         {!! Form::label($button_name, trans('messages.surveys.responses.ni'), array('class' => 'control-label')) !!}
     </div>
 
-    <div style="text-align:center;" class="form-group col-xs-2">
+    <div style="text-align:center;" class="form-group col-xs-3">
         {!! Form::label($button_name, trans('messages.surveys.responses.dne'), array('class' => 'control-label')) !!}
     </div>
 

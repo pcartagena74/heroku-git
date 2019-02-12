@@ -58,24 +58,24 @@ try {
 
     <h2><b>{!! trans('messages.surveys.q5') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
-        <div style="text-align:center;" class="form-group col-xs-5">
+        <div style="text-align:center;" class="form-group col-xs-12">
             {!! Form::textarea('favoriteResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
         </div>
     </div>
 
     <h2><b>{!! trans('messages.surveys.q6') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
-        <div style="text-align:center;" class="form-group col-md-5 col-xs-5">
+        <div style="text-align:center;" class="form-group col-xs-12">
             {!! Form::textarea('suggestResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
         </div>
     </div>
 
     <h2><b>{!! trans('messages.surveys.q7') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
-        <div style="text-align:center;" class="form-group col-xs-1">
+        <div style="text-align:center;" class="form-group col-xs-2">
                 {!! Form::checkbox('wantsContact', 'wantsContact', false, $attributes = array('class' => 'form-control')) !!}
         </div>
-        <div style="text-align:center;" class="form-group col-xs-5">
+        <div style="text-align:center;" class="form-group col-xs-10">
                 {!! Form::textarea('contactResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
         </div>
     </div>
