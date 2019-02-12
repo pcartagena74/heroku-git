@@ -153,7 +153,7 @@ class EventController extends Controller
         $mainSession->trackID = 0;
         $mainSession->eventID = $event->eventID;
         $mainSession->ticketID = $tkt->ticketID;
-        $mainSession->sessionName = 'Default Session';
+        $mainSession->sessionName = 'def_sess';
         $mainSession->confDay = 0;
         $mainSession->start = $event->eventStartDate;
         $mainSession->end = $event->eventEndDate;

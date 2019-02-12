@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\SendSurvey;
 use App\Org;
 use App\Registration;
 use App\RSSurvey;
@@ -42,7 +43,7 @@ class RegSessionController extends Controller
                           ->orWhere('slug', '=', $param)
                           ->firstOrFail();
         } catch (\Exception $exception) {
-            request()->session()->flash('alert-danger', "Unable to find event.");
+            request()->session()->flash('alert-danger', trans('messages.instructions.no_event'));
             return redirect()->back();
         }
 
@@ -69,7 +70,6 @@ class RegSessionController extends Controller
 
     public function process_checkin(Request $request)
     {
-//dd(request()->all());
         // Called as /process_checkin post;  Need to:
         // 1. check if hasTracks > 0 and give options and buttons to re-trigger
         // 2. display the regID request
@@ -86,7 +86,7 @@ class RegSessionController extends Controller
             $session   = EventSession::find($event->mainSession);
             $person    = Person::find($reg->personID);
         } catch (\Exception $exception) {
-            request()->session()->flash('alert-danger', "Invalid registration ID used.");
+            request()->session()->flash('alert-danger', trans('messages.messages.bad_regID'));
             return redirect()->back();
         }
 
@@ -299,7 +299,27 @@ class RegSessionController extends Controller
             $survey->save();
         }
 
-        $message = "Thank you for providing session feedback, $name.";
+        $message = trans('messages.surveys.complete_thanks');
         return view('v1.public_pages.thanks', compact('message'));
+    }
+
+    public function send_surveys(Event $event){
+        $count = 0;
+        foreach ($event->registrations as $reg){
+            $es = $event->default_session();
+            $rs = RegSession::where([
+                ['regID', $reg->regID],
+                ['personID', $reg->personID],
+                ['eventID', $event->eventID],
+                ['sessionID', $es->sessionID]
+            ])->first();
+            if($rs !== null){
+                $p = Person::find($reg->personID);
+                $p->notify(new SendSurvey($p, $event, $rs));
+                $count++;
+            }
+        }
+        request()->session()->flash('alert-success', trans('messages.notifications.SS.post_mail_msg', ['count' => $count]));
+        return redirect()->back();
     }
 }

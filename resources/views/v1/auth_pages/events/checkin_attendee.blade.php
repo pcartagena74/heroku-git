@@ -27,12 +27,6 @@ try {
 
 @section('content')
 
-    <div class="col-xs-12">
-        <div class="col-xs-6">
-            @include('v1.parts.event_buttons', ['event' => $event])
-        </div>
-    </div>
-
     @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_att'), 'subheader' => '',
              'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 

@@ -39,6 +39,7 @@ return [
         'login' => "Login",
         't&s_edit' => "Edit Tracks & Sessions",
         'ex_register' => 'R E G I S T E R',
+        'mail_surveys' => 'Mail Surveys',
         'pay_bal' => 'Pay Balance Due Now',
         'rec_disp' => 'Display Receipt',
         'rec_down' => 'Download Receipt',
@@ -528,6 +529,7 @@ return [
         'name_change_ok' => "You are able to edit these fields as an Admin.  Please only do so if you know PMI's records reflect the change.",
         'need_to_login' => "An mCentric account was found for you. <b style='color:red;'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.",
         'no_deadbeats' => "There are no pending payments for this event at this time.",
+        'no_event' => "Cannot find event",
         'no_events' => "There are no <b class='red'>active</b> future events at this time.",
         'no_fut_events' => "You have not registered for any upcoming events.",
         'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to
@@ -567,6 +569,8 @@ return [
         'role_toggle' => 'The role :role was toggled for :person.',
         'role_txt' => "The values in these tables are not editable and are here for informational purposes only.",
         'select_event' => "Select the event for registration",
+        'survey_instructions' => "Please provide your objective feedback so that we may continuously improve the value
+                                  we provide to our membership. <br> Please rate the speaker/presentation in the following categories.",
         'sold_out' => "Sold Out! Register to add yourself to the wait list.",
         'tkt_setup' => "Creating additional tickets is typically only necessary for Professional Development Day events.",
         'total_caveat' => "Total does NOT reflect updates due to refunds.",
@@ -593,6 +597,7 @@ return [
     ],
 
     'messages' => [
+        'bad_regID' => "Invalid registration ID used.",
         'become' => "You are emulating the experience for: :name.  ",
         'confirm_msg' => "A confirmation email was sent to: :name.",
         'loc_merge' => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
@@ -698,6 +703,16 @@ return [
             'line2' => "If you have not yet set its password or do not remember it, you can reset it now using the button below.",
             'line3' => "If you do not need to reset your password, you can this delete this email.",
             'action' => "Reset Password",
+        ],
+
+        // Send Survey
+        'SS' => [
+            'subject' => "Survey for :org :event_type",
+            'line1' => "Thank you for attending our event.",
+            'line2' => "Please spend 5 minutes to give us your feedback on the event.",
+            'action' => "Take Survey",
+            'line3' => "",
+            'post_mail_msg' => ":count emails with surveys sent to attendees.",
         ],
 
         // AccountCreation
@@ -843,6 +858,26 @@ return [
         'processed' => 'Processed',
         'progress' => 'In Progress',
         'msg_status' => 'The registration with id: :id has been :verb',
+    ],
+
+    'surveys' => [
+        'responses' => [
+            'vg' => 'Very Good',
+            'g' => 'Good',
+            'ni' => 'Needs Improvement',
+            'dne' => 'Speaker Did Not Engage',
+            'nc' => 'No Comment',
+        ],
+        'title' => "Please Record Your Session Feedback",
+        'submit' => "Submit Survey Responses",
+        'q1' => "<b>SPEAKER ENGAGEMENT:</b> speaker encouraged audience comments and participation.",
+        'q2' => "<b>TAKE-AWAYS:</b> speaker provided knowledge/best practices that can be used on your next project.",
+        'q3' => "<b>CONTENT/DEPTH OF PRESENTATION:</b> content at level that met expectations.",
+        'q4' => "<b>SPEAKER STYLE:</b> presentation and speaker delivery encouraged learning.",
+        'q5' => "What was your favorite part of the presentation?",
+        'q6' => "What suggestions do you have to improve the presentation?",
+        'q7' => 'OPTIONAL: Check this box and include your contact info if you would like to speak to a volunteer organizer.',
+        'complete_thanks' => "Thank you for providing session feedback.",
     ],
 
     // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
