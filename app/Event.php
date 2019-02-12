@@ -105,7 +105,7 @@ class Event extends Model
     public function default_session() {
         return EventSession::where([
             ['eventID', '=', $this->eventID],
-            ['sessionName', '=', trans('messages.headers.def_sess')]
+            ['sessionName', '=', 'def_sess']
         ])->first();
     }
 

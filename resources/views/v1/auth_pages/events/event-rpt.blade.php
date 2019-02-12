@@ -215,7 +215,6 @@ if ($event->hasTracks && $event->isSymmetric) {
 
 $es = $event->default_session();
 
-
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
