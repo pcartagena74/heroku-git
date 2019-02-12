@@ -15,13 +15,15 @@
         {!! Form::radio($button_name, '3', false, $attributes = array('class'=>'form-control', 'required')) !!}
     </div>
 
-    <div style="text-align:center;" class="form-group col-xs-3">
+    <div style="text-align:center;" class="form-group col-xs-2">
         {!! Form::radio($button_name, '2', false, $attributes = array('class'=>'form-control', 'required')) !!}
     </div>
+    <div style="text-align:center;" class="form-group col-xs-1"></div>
 
-    <div style="text-align:center;" class="form-group col-xs-3">
+    <div style="text-align:center;" class="form-group col-xs-2">
         {!! Form::radio($button_name, '1', false, $attributes = array('class'=>'form-control', 'required')) !!}
     </div>
+    <div style="text-align:center;" class="form-group col-xs-1"></div>
 
     <div style="text-align:center;" class="form-group col-xs-2">
         {!! Form::radio($button_name, '0', false, $attributes = array('class'=>'form-control', 'required')) !!}
