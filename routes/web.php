@@ -74,6 +74,7 @@ Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
 Route::post('/rs/{session}/edit', 'RegSessionController@store_session');
 Route::get('/rs_survey/{rs}', 'RegSessionController@show_session_survey');
 Route::post('/rs_survey', 'RegSessionController@store_survey');
+Route::get('/mail_surveys/{event}', 'RegSessionController@send_surveys');
 
 Route::get('/checkin/{event}/{session?}', 'RegSessionController@volunteer_checkin');
 Route::post('/process_checkin', 'RegSessionController@process_checkin');

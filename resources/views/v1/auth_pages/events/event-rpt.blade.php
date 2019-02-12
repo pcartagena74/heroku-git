@@ -253,6 +253,12 @@ $es = $event->default_session();
                class="btn btn-success btn-md">@lang('messages.buttons.down_PDU_list')</a>
             @endif
         </div>
+        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+        <div class="col-sm-3">
+            <a href="{{ env('APP_URL') }}/mail_surveys/{{ $event->eventID }}"
+               class="btn btn-warning btn-md">@lang('messages.buttons.mail_surveys')</a>
+        </div>
+        @endif
     </div>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
