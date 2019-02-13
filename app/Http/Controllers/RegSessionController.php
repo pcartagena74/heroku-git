@@ -295,7 +295,7 @@ class RegSessionController extends Controller
             ['sessionID', '=', request()->input('sessionID')]
         ])->get();
 
-        if (!$already_saved) {
+        if (count($already_saved) == 0) {
             $survey->save();
         }
 
