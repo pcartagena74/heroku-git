@@ -517,13 +517,19 @@ class RegistrationController extends Controller
             if($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || null !== $dc)){
                 // Set the debugNote field and adjust the subtotal
                 if($reg->discountCode == 'N/A'){
-                    $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
+                    $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $request->header('user-agent')";
                     $reg->subtotal = $reg->origcost;
                     $subtotal = $origcost;
+                    if($rf->cost == 0){
+                        $rf->cost = $subtotal;
+                    }
                 } elseif($dc->percent != 100){
-                    $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode";
+                    $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $request->header('user-agent')";
                     $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost);
                     $subtotal = $origcost - ($dc->percent * $origcost);
+                    if($rf->cost == 0){
+                        $rf->cost = $subtotal;
+                    }
                 }
             }
             $reg->save();
