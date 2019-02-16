@@ -319,6 +319,7 @@ return [
         'confDays' => "How many conference days with sessions are part of this event?",
         'contact_det' => 'Contact Detail',
         'contact_email' => 'Event Contact Email',
+        'copy_event' => "Edit Copied Event",
         'cost' => 'Cost',
         'count' => 'Count',
         'count_added' => "Added :count record.|Added :count records.",

@@ -95,7 +95,7 @@ try {
 
 @section('content')
     <h3>{{ $page_title }}</h3>
-    @if($page_title == trans('messages.headers.event_edit'))
+    @if($page_title == trans('messages.headers.event_edit') || $page_title == trans('messages.headers.copy_event'))
         <div class="col-xs-12">
             <div class="col-xs-6">
                 @include('v1.parts.event_buttons', ['event' => $event])
@@ -353,7 +353,7 @@ try {
     @include('v1.parts.end_content')
 
     <div class="col-md-12">
-        @if($page_title == trans('messages.headers.event_edit') || $event === null)
+        @if($page_title == trans('messages.headers.event_edit') || $page_title == trans('messages.headers.copy_event') || $event === null)
             {!! Form::submit(trans('messages.headers.sub_changes'), array('class' => 'btn btn-primary', 'name' => 'sub_changes')) !!}
         @else
             {!! Form::submit(trans('messages.headers.sub&rev'), array('class' => 'btn btn-primary', 'name' => 'sub&rev')) !!}
@@ -365,7 +365,7 @@ try {
              'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="form-group col-md-12">
         {!! Form::label('postRegInfo', trans('messages.instructions.postRegInfo'), array('class' => 'control-label red')) !!}
-        {!! Form::textarea('postRegInfo', old('postRegInfo'), array('class'=>'form-control rich')) !!}
+        {!! Form::textarea('postRegInfo', old('postRegInfo'), array('class'=>'form-control summernote')) !!}
     </div>
     @include('v1.parts.end_content')
 
@@ -400,6 +400,20 @@ try {
 
         show = 1;
         hide = 0;
+
+        @if($exLoc->isVirtual)
+            $('#addr1').removeAttr('required');
+            $('#addr2').removeAttr('required');
+            $('#city').removeAttr('required');
+            $('#state').removeAttr('required');
+            $('#zip').removeAttr('required');
+        @else
+            $('#addr1').required = true;
+            $('#addr2').required = true;
+            $('#city').required = true;
+            $('#state').required = true;
+            $('#zip').required = true;
+        @endif
 
         function toggleShow() {
             $("#trackInput").toggle();
@@ -468,11 +482,13 @@ try {
                         success: function (data) {
                             console.log(data);
                             $('#locName').val(data.locName);
-                            $('#addr1').val(data.addr1);
-                            $('#addr2').val(data.addr2);
-                            $('#city').val(data.city);
-                            $('#state').val(data.state);
-                            $('#zip').val(data.zip);
+                            @if(!$event->isVirtual)
+                                $('#addr1').val(data.addr1);
+                                $('#addr2').val(data.addr2);
+                                $('#city').val(data.city);
+                                $('#state').val(data.state);
+                                $('#zip').val(data.zip);
+                            @endif
                         },
                         error: function (data) {
                             alert('error?  url: ' + theurl);
