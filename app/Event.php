@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\EventSession;
@@ -15,6 +16,8 @@ class Event extends Model
     // The table
     protected $table = 'org-event';
     protected $primaryKey = 'eventID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'updateDate', 'eventStartDate', 'eventEndDate', 'deleted_at', 'earlyBirdDate'];
 
     protected $casts = [
