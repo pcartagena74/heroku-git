@@ -258,16 +258,6 @@ $es = $event->default_session();
                 ])
             @endif
         </div>
-        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-        <div class="col-sm-3">
-            @include('v1.parts.url_button', [
-                'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
-                'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
-                'confirm' => trans('messages.messages.survey_confirm'),
-                'text' => trans('messages.buttons.mail_surveys')
-            ])
-        </div>
-        @endif
     </div>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -462,6 +452,19 @@ $es = $event->default_session();
             <div class="tab-pane fade" id="tab_content7" aria-labelledby="checkin-tab">
                 &nbsp;<br/>
 
+                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                    @if(count($event->main_reg_sessions()) > 0)
+                    <div class="col-sm-3 col-xs-offset-2">
+                        @include('v1.parts.url_button', [
+                            'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
+                            'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
+                            'confirm' => trans('messages.messages.survey_confirm'),
+                            'text' => trans('messages.buttons.mail_surveys')
+                        ])
+                        &nbsp; <br />
+                    </div>
+                    @endif
+                @endif
                 @if(count($nametags)>0 && $event->hasTracks == 0)
                     {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                     {!! Form::hidden('sessionID', $es->sessionID) !!}

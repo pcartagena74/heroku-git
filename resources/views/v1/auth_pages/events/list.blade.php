@@ -86,7 +86,7 @@ foreach($current_events as $event) {
         $checkin_button . $delete_button]);
 }
 
-count($current_data) > 15 ? $current_scroll = 1 : $current_scroll = 0;
+count($current_data) >= 15 ? $current_scroll = 1 : $current_scroll = 0;
 
 $past_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
                  trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
@@ -106,8 +106,8 @@ foreach($past_events as $event) {
     $rpt_link_button    = "<a href='$rptURL' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top' title='Event Report'><i class='far fa-fw fa-chart-bar'></i></a>";
     $copy_link_button    = "<a href='$copyURL' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top' title='Copy Event'><i class='far fa-fw fa-copy'></i></a>";
     $delete_button       = Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) .
-        '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="far fa-fw fa-trash-alt"></i></button>
-            <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
+                           '<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="far fa-fw fa-trash-alt"></i></button>
+                            <input id="myDelete" type="submit" value="Go" class="hidden" /></form>';
     if($event->cnt > 0 && !Entrust::hasRole('Developer')) {
         $delete_button = '';
     }
@@ -124,8 +124,11 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
-@section('content')
+@section('header')
     @include('v1.parts.header-datatable')
+@endsection
+
+@section('content')
 
     @include('v1.parts.start_content', ['header' => '', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -173,6 +176,13 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
     </script>
     <script>
         $(document).ready(function() {
+            @if(count($current_data) >= 15)
+            $('#current_events').DataTable({
+                "fixedHeader": true,
+                "order": [[ 0, "desc" ]]
+            });
+            @endif
+
             $('#past_events').DataTable({
                 "fixedHeader": true,
                 "order": [[ 0, "desc" ]]
