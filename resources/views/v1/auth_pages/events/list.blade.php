@@ -78,9 +78,9 @@ foreach($current_events as $event) {
         $checkin_button = '';
     }
 
-    // ->format('D, M d, Y h:i A')
-    array_push($current_data, ["<nobr>" . $event->eventStartDate->toDayDateTimeString() . "  - </nobr><br><nobr>" .
-        $event->eventEndDate->toDayDateTimeString() . "</nobr>",
+    // ->format('D, M d, Y h:i A')  ->toDayDateTimeString()
+    array_push($current_data, ["<nobr>" . $event->eventStartDate->format('Y-m-d') . "  - </nobr><br><nobr>" .
+        $event->eventEndDate->format('Y-m-d') . "</nobr>",
         $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button .
         $eventDiscount_button . $ticket_button . $track_link_button . $rpt_link_button  . $copy_link_button .
         $checkin_button . $delete_button]);
@@ -179,7 +179,7 @@ count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
             @if(count($current_data) >= 15)
             $('#current_events').DataTable({
                 "fixedHeader": true,
-                "order": [[ 0, "desc" ]]
+                "order": [[ 0, "asc" ]]
             });
             @endif
 
