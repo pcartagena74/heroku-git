@@ -118,4 +118,11 @@ class Event extends Model
             })
             ->get();
     }
+
+    public function main_reg_sessions(){
+        return RegSession::where([
+            ['sessionID', $this->mainSession],
+            ['eventID', $this->eventID]
+        ])->get();
+    }
 }
