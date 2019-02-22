@@ -249,15 +249,6 @@ $es = $event->default_session();
                 'text' => trans('messages.buttons.down_name_tags')
             ])
         </div>
-        <div class="col-sm-3">
-            @if($event->checkin_time())
-                @include('v1.parts.url_button', [
-                    'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
-                    'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
-                    'text' => trans('messages.buttons.down_PDU_list')
-                ])
-            @endif
-        </div>
     </div>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -465,6 +456,15 @@ $es = $event->default_session();
                     </div>
                     @endif
                 @endif
+                <div class="col-sm-3">
+                    @if($event->checkin_time() && count($event->main_reg_sessions()) > 0)
+                        @include('v1.parts.url_button', [
+                            'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
+                            'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
+                            'text' => trans('messages.buttons.down_PDU_list')
+                        ])
+                    @endif
+                </div>
                 @if(count($nametags)>0 && $event->hasTracks == 0)
                     {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                     {!! Form::hidden('sessionID', $es->sessionID) !!}

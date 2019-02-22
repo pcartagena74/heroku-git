@@ -64,7 +64,7 @@ return [
         'invalid_id' => "The :id is not valid.",
         'valid' => "Code: ':code' provides a :disc discount.",
         'empty' => "Enter a discount code.",
-        'etID99' => "All Events",
+        'etID99' => "All Upcoming Events",
         'eventID' => 'event ID',
         'img' => "Event Image",
     ],
@@ -98,6 +98,16 @@ return [
 
     'email_txt' => [
         'for_det_visit' => 'For details, visit',
+    ],
+
+    'event_types' => [
+        'Chapter Meeting' => 'Chapter Meeting|Chapter Meetings',
+        'Roundtable' => 'Roundtable|Roundtables',
+        'PD Day' => 'PD Day|PD Days',
+        'Social Gathering' => 'Social Gathering|Social Gatherings',
+        'Region Event' => 'Region Event|Region Events',
+        'Job Fair' => 'Job Fair|Job Fairs',
+        'Annual Meeting' => 'Annual Meeting|Annual Meetings',
     ],
 
     'fields' => [
@@ -271,6 +281,7 @@ return [
         'title' => 'Title',
         'total' => 'Total',
         'track_select' => 'Track Selection',
+        'up' => "Upcoming",
         'up_event' => "Upcoming Events",
         'validate' => 'Validate',
         'years' => 'Years',
@@ -436,6 +447,7 @@ return [
         'reg_con' => 'Registration Confirmation',
         'reg_con2' => 'Continue Registration',
         'reg_date' => 'Register Date',
+        'regs_this_week' => 'registrations this week',
         'reset_pass' => 'Reset Your mCentric Account Password',
         'results' => "Results",
         'ret_sess_list' => "Return to Session List",
