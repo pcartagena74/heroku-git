@@ -28,6 +28,7 @@ use App\Other\ics_calendar;
 use Spatie\Referer\Referer;
 use App\EventSession;
 use Stripe\Card;
+use Illuminate\Support\Facades\Cache;
 
 
 class EventController extends Controller
@@ -35,11 +36,124 @@ class EventController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing', 'get_tix']]);
+
+        $this->middleware(function (Request $request, $next) {
+            if(auth()){
+                $this->currentPerson = Person::find(auth()->user()->id);
+            }
+            return $next($request);
+        });
     }
 
+    // Helper function containing code to put the event counting bits into a blade template
+    protected function event_bits() {
+        $topBits             = [];
+        $today = Carbon::now();
+
+        $upcoming = trans('messages.fields.up') . " ";
+        $rtw = trans('messages.headers.regs_this_week');
+
+        $ch_mtg        = Cache::get('future_cm', function () use($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['eventTypeID', 1]
+            ])->get();
+        });
+
+        $cm_count = 0;
+        foreach($ch_mtg as $cm){
+            $cm_count += $cm->week_sales();
+        }
+
+        $cm_label = trans_choice('messages.event_types.Chapter Meeting', 2);
+
+        $roundtables        = Cache::get('future_roundtables', function () use($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['eventTypeID', 2]
+            ])->get();
+        });
+
+        $rt_count = 0;
+        foreach($roundtables as $rt){
+            $rt_count += $rt->week_sales();
+        }
+
+        $rt_label = trans_choice('messages.event_types.Roundtable', 2);
+
+        $socials        = Cache::get('future_socials', function () use($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['eventTypeID', 4]
+            ])->get();
+        });
+
+        $so_count = 0;
+        foreach($socials as $so){
+            $so_count += $so->week_sales();
+        }
+
+        $so_label = trans_choice('messages.event_types.Social Gathering', 2);
+
+        $pddays        = Cache::get('future_pddays', function () use($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['eventTypeID', 3]
+            ])->get();
+        });
+
+        $pd_count = 0;
+        foreach($pddays as $pd){
+            $pd_count += $pd->week_sales();
+        }
+
+        $pd_label = trans_choice('messages.event_types.PD Day', 2);
+
+        $jobs        = Cache::get('future_job_fairs', function () use($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID],
+                ['eventTypeID', 9]
+            ])->get();
+        });
+
+        $jf_count = 0;
+        foreach($jobs as $jf){
+            $jf_count += $jf->week_sales();
+        }
+
+        $jf_label = trans_choice('messages.event_types.Job Fair', 2);
+
+        $all        = Cache::get('all_future_events', function () use($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID]
+            ])->get();
+        });
+
+        $ae_count = 0;
+        foreach($all as $ae){
+            $ae_count += $ae->week_sales();
+        }
+
+        $ae_label = trans('messages.codes.etID99');
+
+        array_push($topBits, [3, $upcoming.$cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count>0?1:-1, 2]);
+        array_push($topBits, [3, $upcoming.$rt_label, count($roundtables), $rt_count, $rtw, $rt_count>0?1:-1, 2]);
+        array_push($topBits, [3, $upcoming.$so_label, count($socials), $so_count, $rtw, $so_count>0?1:-1, 2]);
+        array_push($topBits, [3, $upcoming.$pd_label, count($pddays), $pd_count, $rtw, $pd_count>0?1:-1, 2]);
+        array_push($topBits, [3, $upcoming.$jf_label, count($jobs), $jf_count, $rtw, $jf_count>0?1:-1, 2]);
+        array_push($topBits, [3, $ae_label, count($all), $ae_count, $rtw, $ae_count>0?1:-1, 2]);
+        return($topBits);
+    }
     public function index() {
         // responds to GET /events
-        $topBits = '';
+        $topBits = $this->event_bits();
+
         $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 /*

@@ -94,7 +94,9 @@ class Event extends Model
     public function checkin_time() {
         $today = \Carbon\Carbon::now();
         //dd($this->eventStartDate->diffInDays($today));
-        if($this->eventStartDate->diffInDays($today) <= 2 && $this->eventStartDate->diffInDays($today) >= 0){
+        if(($this->eventStartDate->diffInDays($today) <= 2
+                && $this->eventStartDate->diffInDays($today) >= 0)
+                || $today->gte($this->eventEndDate)){
             return 1;
         } else {
             return 0;
@@ -127,5 +129,14 @@ class Event extends Model
             ['sessionID', $this->mainSession],
             ['eventID', $this->eventID]
         ])->get();
+    }
+
+    public function week_sales(){
+        $count = 0;
+
+        foreach($this->tickets as $t){
+            $count += $t->week_sales();
+        }
+        return $count;
     }
 }
