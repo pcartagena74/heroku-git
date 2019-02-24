@@ -73,6 +73,6 @@ switch($up){
     <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
     @if($ctext == 0 || $ctext <> "")
-        <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fa fa-sort{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>
+        <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fas fa-sort{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>
     @endif
 </div>
