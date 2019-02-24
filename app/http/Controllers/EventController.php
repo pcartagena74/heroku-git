@@ -36,19 +36,13 @@ class EventController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing', 'get_tix']]);
-
-        $this->middleware(function (Request $request, $next) {
-            if(auth()){
-                $this->currentPerson = Person::find(auth()->user()->id);
-            }
-            return $next($request);
-        });
     }
 
     // Helper function containing code to put the event counting bits into a blade template
     protected function event_bits() {
         $topBits             = [];
         $today = Carbon::now();
+        $this->currentPerson = Person::find(auth()->user()->id);
 
         $upcoming = trans('messages.fields.up') . " ";
         $rtw = trans('messages.headers.regs_this_week');
