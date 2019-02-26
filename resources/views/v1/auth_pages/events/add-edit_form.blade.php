@@ -365,7 +365,7 @@ try {
              'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="form-group col-md-12">
         {!! Form::label('postRegInfo', trans('messages.instructions.postRegInfo'), array('class' => 'control-label red')) !!}
-        {!! Form::textarea('postRegInfo', old('postRegInfo'), array('class'=>'form-control rich')) !!}
+        {!! Form::textarea('postRegInfo', old('postRegInfo'), array('class'=>'form-control summernote')) !!}
     </div>
     @include('v1.parts.end_content')
 
