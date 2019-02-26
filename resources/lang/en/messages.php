@@ -719,6 +719,15 @@ return [
             'action' => "Reset Password",
         ],
 
+        // Notify Registrant with Receipt
+        'RegNote' => [
+            'subject' => "Your mCentric Account: How to set/reset your password",
+            'line1' => "Thank you for registering :event on :datetime at :loc.",
+            'action2' => 'View/Download Your Receipt',
+            'action1' => 'For Event Details...',
+            'line2' => 'See you at the event!',
+        ],
+
         // Send Survey
         'SS' => [
             'subject' => "Survey for :org :event_type",

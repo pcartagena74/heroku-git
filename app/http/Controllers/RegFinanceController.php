@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\EventSession;
 use App\Mail\GroupEventReceipt;
 use App\Mail\EventReceipt;
-use App\Notifications\AccountCreation;
+use App\Notifications\ReceiptNotification;
 use Illuminate\Support\Facades\Mail;
 use App\Registration;
 use Illuminate\Http\Request;
@@ -766,9 +766,11 @@ class RegFinanceController extends Controller
 
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
+            $person->notify(new ReceiptNotification($rf, $event_pdf));
             Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
+            //$person->notify(new ReceiptNotification($rf, $event_pdf));
         }
 
         //return view('v1.auth_pages.events.registration.group_receipt', $x);

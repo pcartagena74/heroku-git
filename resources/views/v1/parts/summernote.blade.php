@@ -25,7 +25,7 @@
                 ['font', ['bold', 'italic', 'underline', 'clear', 'strikethrough', 'superscript', 'subscript']],
                 ['font', ['fontname', 'fontsize', 'color']],
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture', 'video']], // image and doc are customized buttons
+                ['insert', ['table', 'link', 'picture', 'video']], // image and doc are customized buttons
                 ['misc', ['codeview']],
             ],
 
