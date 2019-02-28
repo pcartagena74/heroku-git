@@ -143,6 +143,7 @@ class EventController extends Controller
         array_push($topBits, [3, $ae_label, count($all), $ae_count, $rtw, $ae_count>0?1:-1, 2]);
         return($topBits);
     }
+
     public function index() {
         // responds to GET /events
         $topBits = $this->event_bits();
@@ -736,7 +737,7 @@ class EventController extends Controller
 
     public function showGroup($event = null, $override = null)
     {
-        $title = "Group Registration";
+        $title = trans('messages.headers.group_reg');
         $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
 
@@ -785,7 +786,7 @@ class EventController extends Controller
         try {
             $org = Org::find($orgID);
         } catch (\Exception $exception) {
-            $message = "The requested organization does not exist.";
+            $message = trans('messages.instructions.no_org');
             return view('v1.public_pages.error_display', 'message');
         }
         $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();

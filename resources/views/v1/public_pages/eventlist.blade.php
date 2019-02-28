@@ -53,7 +53,7 @@ if($etID == 99){
                                 <b>Location: </b>{{ $e->location->locName }}
                             </div>
                             <div class="col-xs-3" style="text-align: center;">
-                                <a class="btn btn-danger btn-sm" target="_top" href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
+                                <a class="btn btn-danger btn-sm" target="_new" href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
                             </div>
                         </div>
                     </div>
