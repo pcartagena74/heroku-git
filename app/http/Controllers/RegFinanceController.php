@@ -767,7 +767,7 @@ class RegFinanceController extends Controller
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
             $person->notify(new ReceiptNotification($rf, $event_pdf));
-            Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
+            // Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
             //$person->notify(new ReceiptNotification($rf, $event_pdf));

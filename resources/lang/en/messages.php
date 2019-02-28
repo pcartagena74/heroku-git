@@ -544,6 +544,7 @@ return [
         'no_event' => "Cannot find event",
         'no_events' => "There are no <b class='red'>active</b> future events at this time.",
         'no_fut_events' => "You have not registered for any upcoming events.",
+        'no_org' => "The requested organization does not exist.",
         'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to
                           this event.  If you wish to add them, do it now via the button below.",
         'no_password' => "An mCentric account was found for you and its password has not been set. " .
