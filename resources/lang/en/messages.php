@@ -721,10 +721,10 @@ return [
 
         // Notify Registrant with Receipt
         'RegNote' => [
-            'subject' => "Your mCentric Account: How to set/reset your password",
-            'line1' => "Thank you for registering :event on :datetime at :loc.",
-            'action2' => 'View/Download Your Receipt',
-            'action1' => 'For Event Details...',
+            'subject' => "Your :org Event Receipt",
+            'line1' => "You registered for :event on :datetime at :loc.",
+            'action1' => 'View/Download Your Receipt',
+            'action2' => 'For Event Details...',
             'line2' => 'See you at the event!',
         ],
 
@@ -948,6 +948,7 @@ return [
         'group_reg' => "Enter a value here to set a price.  If you leave it empty, the price will be automatically determined.",
         'hasFood' => "Events with food have additional questions asked of attendees.",
         'hasTracks' => "Events with tracks require session setup.",
+        'linkedIn' => "This will connect to your account and save the URL to your LinkedIn photo for display in the mCentric navigation. No other information is shared at this time.",
         'login' => "If you want your login to be a new email address, first add it to your account by clicking 'Add Email' below.",
         'max_set' => "Set to 0 if there is no maximum.",
         'mr' => 'Merge Record',

@@ -10,8 +10,10 @@ $currentPerson = App\Person::find(auth()->user()->id);
 
 try{
     $x = getimagesize($currentPerson->avatarURL);
+    $badge_color = "bg-success";
 } catch (Exception $exception) {
     $currentPerson->avatarURL = null;
+    $badge_color = "bg-red";
     $currentPerson->save();
 }
 ?>
@@ -34,12 +36,8 @@ try{
 
                             <li>
                                 <a href="/profile/linkedin">
-                                    @if($currentPerson->avatarURL !== null)
-                                        <span class="badge bg-success pull-right">&nbsp;</span>
-                                    @else
-                                        <span class="badge bg-red pull-right">&nbsp;</span>
-                                    @endif
-                                    <span>@lang('messages.nav.con_link')</span>
+                                    <span class="badge {{ $badge_color }} pull-right">&nbsp;</span>
+                                    <span data-toggle="tooltip" title="{!! trans('messages.tooltips.linkedIn') !!}">@lang('messages.nav.con_link')</span>
                                 </a>
                             </li>
                         <li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> @lang('messages.nav.c_log')</a></li>

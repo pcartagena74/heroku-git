@@ -500,8 +500,12 @@ class PersonController extends Controller
      */
     public function handleLinkedInCallback()
     {
-        $user = Socialite::driver('linkedin')->user();
-        //dd($user);
+        try {
+            $user = Socialite::driver('linkedin')->user();
+            //dd($user);
+        } catch(\Exception $exception) {
+            //
+        }
     }
 
     public function oLookup($pmi_id){
