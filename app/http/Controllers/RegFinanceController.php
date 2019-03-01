@@ -426,7 +426,8 @@ class RegFinanceController extends Controller
 
         try {
             // Consider turning this into a notification instead for reliability.
-            Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            $person->notify(new ReceiptNotification($rf, $event_pdf));
+            // Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
         }

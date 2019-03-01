@@ -123,6 +123,8 @@ class LocationController extends Controller
             $location->updaterID = $this->currentPerson->personID;
             $location->save();
         } else {
+            $location->updaterID = $this->currentPerson->personID;
+            $location->save();
             $location->delete();
         }
         return json_encode(array('input' => request()->all(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID));

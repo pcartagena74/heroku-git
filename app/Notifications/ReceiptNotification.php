@@ -17,6 +17,11 @@ class ReceiptNotification extends Notification
     use Queueable;
 
     protected $rf;
+    protected $event;
+    protected $org;
+    protected $person;
+    protected $loc;
+    protected $receipt;
 
     /**
      * Create a new notification instance.
@@ -57,16 +62,37 @@ class ReceiptNotification extends Notification
         $person = $this->person;
         $loc    = $this->loc;
 
+        $line1 = trans('messages.notifications.RegNote.line1',
+            ['event' => $event->eventName,
+             'datetime' => $event->eventStartDate->format('n/j/Y g:i A'),
+             'loc' => $loc->locName ]);
+
+        $action1 = trans('messages.notifications.RegNote.action1');
+        $url1 = $this->receipt;
+        $line2 = trans('messages.notifications.thanks');
+        $action2 = trans('messages.notifications.RegNote.action2');
+        $url2 = env('APP_URL')."/events/".$event->eventID;
+        $line3 = trans('messages.notifications.RegNote.line2');
+
         return (new MailMessage)
             ->subject(trans('messages.notifications.RegNote.subject', ['org' => $org->orgName]))
-            ->line(trans('messages.notifications.RegNote.line1',
-                        ['event' => $event->eventName,
-                         'datetime' => $event->eventStartDate->format('n/j/Y g:i A'),
-                         'loc' => $loc ]))
-            ->action(trans('messages.notifications.RegNote.action2'), $this->receipt)
-            ->line(trans('messages.notifications.thanks'))
-            ->action(trans('messages.notifications.RegNote.action1'), env('APP_URL'."/events/".$event->eventID))
+            ->markdown('vendor.notifications.two_button_note', [
+                'line1' => $line1,
+                'action1' => $action1,
+                'url1' => $url1,
+                'line2' => $line2,
+                'c1' => 'success',
+                'action2' => $action2,
+                'url2' => $url2,
+                'c2' => 'default',
+                'line3' => $line3,
+            ]);
+        /*
+            ->action(trans('messages.notifications.RegNote.action1'), $this->receipt)
+            ->line(trans('messages.notifications.thanks', ['org' => $org->orgName]))
+            ->action(trans('messages.notifications.RegNote.action2'), env('APP_URL'."/events/".$event->eventID))
             ->line(trans('messages.notifications.RegNote.line2'));
+        */
     }
 
     /**
@@ -77,6 +103,12 @@ class ReceiptNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        return [
+            //
+        ];
+    }
+
+    public function toDatabase($notifiable){
         return [
             //
         ];

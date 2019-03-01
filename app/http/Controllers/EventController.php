@@ -243,6 +243,16 @@ class EventController extends Controller
             request()->session()->flash('alert-warning', $message);
         }
 
+        $referrer = app(Referer::class)->get();
+
+        if ($referrer) {
+            $r = new ReferLink;
+            $r->objectType = 'eventID_reg';
+            $r->objectID = $event->eventID;
+            $r->referrerText = $referrer;
+            $r->save();
+        }
+
         $today = Carbon::now();
 
         if (auth()->guest()) {
@@ -253,7 +263,6 @@ class EventController extends Controller
         }
         $currentOrg = Org::find($event->orgID);
 
-        //$referrer = Referer::get();
         $referrer = app(Referer::class)->get();
 
         if ($referrer) {
