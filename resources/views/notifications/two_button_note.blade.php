@@ -52,6 +52,8 @@ if(isset($name)){
 # {!! trans('messages.notifications.RegNote.postRegHeader') !!}
 
 {!! $postRegInfo !!}
+@endcomponent
+@endif
     {{-- Action Button 2 --}}
 @if (isset($action2))
 <?php
@@ -67,12 +69,11 @@ switch ($c2) {
 }
 ?>
 @component('mail::button', ['url' => $url2, 'color' => $color])
-{{ $action2 or '' }}
+    {{ $action2 or '' }}
 @endcomponent
 @endif
 
-@endcomponent
-@endif
+
 
 {!! $line2 or '' !!}<br />
 {!! $line3 or '' !!}
