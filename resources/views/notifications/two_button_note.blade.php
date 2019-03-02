@@ -8,6 +8,10 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 set_error_handler("var_dump");
+
+if(isset($name)){
+    $greeting = "Hello $name!";
+}
 ?>
 @component('mail::message')
 {{-- Greeting --}}
@@ -43,28 +47,36 @@ set_error_handler("var_dump");
 @endcomponent
 @endif
 
-{!! $line2 or '' !!}
+@if(isset($postRegInfo))
+@component('mail::promotion')
+# {!! trans('messages.notifications.RegNote.postRegHeader') !!}
 
-{{-- Action Button 2 --}}
+{!! $postRegInfo !!}
+    {{-- Action Button 2 --}}
 @if (isset($action2))
 <?php
-    switch ($c2) {
-        case 'success':
-            $color = 'green';
-            break;
-        case 'error':
-            $color = 'red';
-            break;
-        default:
-            $color = 'blue';
-    }
+switch ($c2) {
+    case 'success':
+        $color = 'green';
+        break;
+    case 'error':
+        $color = 'red';
+        break;
+    default:
+        $color = 'blue';
+}
 ?>
 @component('mail::button', ['url' => $url2, 'color' => $color])
-    {{ $action2 or '' }}
+{{ $action2 or '' }}
 @endcomponent
 @endif
 
+@endcomponent
+@endif
+
+{!! $line2 or '' !!}<br />
 {!! $line3 or '' !!}
+
 <!-- Salutation -->
 @if (! empty($salutation))
 {{ $salutation }}
@@ -73,13 +85,17 @@ Regards,<br>{{ config('app.name') }}
 @endif
 
 <!-- Subcopy -->
-@if (isset($actionText))
+@if (isset($action1) || isset($action2))
 @component('mail::subcopy')
+@if(isset($action1))
 If you’re having trouble clicking the "{{ $action1 }}" button, copy and paste the URL below
 into your web browser: [{{ $action1 }}]({{ $url1 }})
+@endif
 
+@if(isset($action1))
 If you’re having trouble clicking the "{{ $action2 }}" button, copy and paste the URL below
 into your web browser: [{{ $action2 }}]({{ $url2 }})
+@endif
 @endcomponent
 @endif
 @endcomponent

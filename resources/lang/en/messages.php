@@ -574,7 +574,7 @@ return [
             "If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email",
         'pmiID_not_found' => "{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|
                               [1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
-        'postRegInfo' => "Anything added here will be displayed to attendees AFTER they've registered.",
+        'postRegInfo' => "Anything added here will be displayed and emailed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",
         'quantity' => "The quantity for at least one ticket must be greater than 0.",
@@ -722,10 +722,11 @@ return [
         // Notify Registrant with Receipt
         'RegNote' => [
             'subject' => "Your :org Event Receipt",
-            'line1' => "You registered for :event on :datetime at :loc.",
+            'line1' => "You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.",
             'action1' => 'View/Download Your Receipt',
-            'action2' => 'For Event Details...',
+            'action2' => 'More Event Details...',
             'line2' => 'See you at the event!',
+            'postRegHeader' => "Information for Confirmed Attendees",
         ],
 
         // Send Survey

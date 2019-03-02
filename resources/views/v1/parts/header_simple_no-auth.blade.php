@@ -6,7 +6,7 @@
 ?>
 <head>
     @include('v1.parts.header_meta')
-    <title>m|Centric</title>
+    <title>mCentric</title>
 
 {{--
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">

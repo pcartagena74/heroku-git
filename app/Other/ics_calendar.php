@@ -30,6 +30,7 @@ class ics_calendar
     private $uid;
     private $updated;
     private $uri;
+    private $event;
 
     public function __construct(Event $event)
     {
@@ -53,10 +54,11 @@ class ics_calendar
         $this->description = $org->orgName . " - " . $event->eventName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
-        $this->location    = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2 . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
+        $this->location    = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2  or '' . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
         $this->uri         = env('APP_URL') . "/events/" . $event->slug;
         $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
         $this->stamp       = Carbon::now()->format('Ymd\THis');
+        $this->event       = $event;
     }
 
     private function _escapeString($string)
@@ -85,7 +87,7 @@ class ics_calendar
             "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\r\n".
             "LOCATION:".$this->_escapeString($this->location)."\r\n".
             "SUMMARY:".$this->_escapeString($this->description)."\r\n".
-            "DESCRIPTION:".$this->_escapeString($this->summary)."\r\n".
+            "DESCRIPTION:".$this->_escapeString($this->summary . $this->event->postRegInfo)."\r\n".
             "URL;VALUE=URI:".$this->_escapeString($this->uri)."\r\n".
             "UID:". $this->uid ."\r\n".
             "SEQUENCE:0\r\n".
