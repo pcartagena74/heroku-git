@@ -87,7 +87,7 @@ class ics_calendar
             "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\r\n".
             "LOCATION:".$this->_escapeString($this->location)."\r\n".
             "SUMMARY:".$this->_escapeString($this->description)."\r\n".
-            "DESCRIPTION:".$this->_escapeString($this->summary . $this->event->postRegInfo)."\r\n".
+            "DESCRIPTION:".$this->_escapeString($this->summary . "\r\n \r\n Information for Registerred Attendees:\r\n " . $this->event->postRegInfo)."\r\n".
             "URL;VALUE=URI:".$this->_escapeString($this->uri)."\r\n".
             "UID:". $this->uid ."\r\n".
             "SEQUENCE:0\r\n".
