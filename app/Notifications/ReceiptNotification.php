@@ -75,7 +75,8 @@ class ReceiptNotification extends Notification
         $line3 = trans('messages.notifications.RegNote.line2');
 
         return (new MailMessage)
-            ->subject(trans('messages.notifications.RegNote.subject', ['org' => $org->orgName]))
+            ->subject(trans('messages.notifications.RegNote.subject',
+                           ['org' => $org->orgName, 'event' => $event->eventName]))
             ->markdown('notifications.two_button_note', [
                 'line1' => $line1,
                 'action1' => $action1,

@@ -721,7 +721,7 @@ return [
 
         // Notify Registrant with Receipt
         'RegNote' => [
-            'subject' => "Your :org Event Receipt",
+            'subject' => "Your :org Event Receipt: :event",
             'line1' => "You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.",
             'action1' => 'View/Download Your Receipt',
             'action2' => 'More Event Details...',
