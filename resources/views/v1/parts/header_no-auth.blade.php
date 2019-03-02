@@ -6,7 +6,7 @@
 ?>
 <head>
     @include('v1.parts.header_meta')
-    <title>m|Centric</title>
+    <title>mCentric</title>
 
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/css/ie10-viewport-bug-workaround.css" rel="stylesheet">

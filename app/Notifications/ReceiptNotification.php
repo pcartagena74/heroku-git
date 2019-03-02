@@ -69,14 +69,14 @@ class ReceiptNotification extends Notification
 
         $action1 = trans('messages.notifications.RegNote.action1');
         $url1 = $this->receipt;
-        $line2 = trans('messages.notifications.thanks');
+        $line2 = trans('messages.notifications.thanks', ['org' => $org->orgName]);
         $action2 = trans('messages.notifications.RegNote.action2');
         $url2 = env('APP_URL')."/events/".$event->eventID;
         $line3 = trans('messages.notifications.RegNote.line2');
 
         return (new MailMessage)
             ->subject(trans('messages.notifications.RegNote.subject', ['org' => $org->orgName]))
-            ->markdown('vendor.notifications.two_button_note', [
+            ->markdown('notifications.two_button_note', [
                 'line1' => $line1,
                 'action1' => $action1,
                 'url1' => $url1,
@@ -86,13 +86,9 @@ class ReceiptNotification extends Notification
                 'url2' => $url2,
                 'c2' => 'default',
                 'line3' => $line3,
+                'postRegInfo' => $event->postRegInfo,
+                'name' => $person->showDisplayName()
             ]);
-        /*
-            ->action(trans('messages.notifications.RegNote.action1'), $this->receipt)
-            ->line(trans('messages.notifications.thanks', ['org' => $org->orgName]))
-            ->action(trans('messages.notifications.RegNote.action2'), env('APP_URL'."/events/".$event->eventID))
-            ->line(trans('messages.notifications.RegNote.line2'));
-        */
     }
 
     /**

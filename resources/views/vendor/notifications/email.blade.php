@@ -1,3 +1,16 @@
+<?php
+/**
+ * Comment: Default template for notifications
+ *          Added php below on 3/1/2019
+ */
+
+if(isset($name)){
+    $greeting = "Hello $name!";
+}
+
+?>
+
+
 @component('mail::message')
 {{-- Greeting --}}
 @if (! empty($greeting))
