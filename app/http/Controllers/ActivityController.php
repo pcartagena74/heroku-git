@@ -64,6 +64,7 @@ class ActivityController extends Controller
                                     $q->where('pmtRecd', '=', 0);
                             })
                             ->whereIn('status', [
+                                'progress', 'wait',
                                 trans('messages.reg_status.pending'),
                                 trans('messages.headers.wait')
                             ])

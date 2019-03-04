@@ -875,14 +875,15 @@ return [
         'door' => 'At Door',
         'mail_broken' => "Mail is not working at the moment.  :org will email you a receipt. 
                           See it now by going to: <a style='color:yellow;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
-        'no_charge' => 'No Charge',
-        'partial' => 'Partially Refunded',
+        'free' => 'No Charge',
+        'msg_status' => 'The registration with id: :id has been :verb',
+        'p_refunded' => 'Partially Refunded',
         'promoted' => 'Promoted',
         'p_canceled' => 'Partially Canceled',
         'pending' => 'Payment Pending',
         'processed' => 'Processed',
         'progress' => 'In Progress',
-        'msg_status' => 'The registration with id: :id has been :verb',
+        'wait' => 'Wait List'
     ],
 
     'surveys' => [
