@@ -281,7 +281,7 @@ class RegistrationController extends Controller
             $resubmit = null;
         }
 
-        // Create or re-open the stub reg-finance record
+        // Create new, or re-open the stub (only if the stub is a stub for this event), reg-finance record
         if(null !== $resubmit && $resubmit->eventID == $event->eventID){
             $rf = $resubmit;
             $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
@@ -294,8 +294,8 @@ class RegistrationController extends Controller
             $rf = new RegFinance();
             $resubmitted_regs = null;
         }
-        // $rf->regID = $reg->regID;
-        // $rf->ticketID = $ticketID;
+        // $rf->regID is either set (stub) or will be upon save.
+        // $rf->ticketID is no longer relevant to reg-finance records
         $rf->creatorID = $authorID;
         $rf->updaterID = $authorID;
         $rf->personID = $authorID;
@@ -415,6 +415,13 @@ class RegistrationController extends Controller
                 $regMem = trans('messages.fields.member');
             }
 
+            // Only if we had to set a temporary RF record with system owner
+            if($i ==1){
+                if($rf->personID == 1){
+                    $rf->personID = $person->personID;
+                    $rf->save();
+                }
+            }
             if($set_new_user) {
                 $user = new User();
                 $user->id = $person->personID;
