@@ -274,7 +274,7 @@ class RegFinanceController extends Controller
                 //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
                 $rf->status = trans('messages.reg_status.processed');
-                $rf->pmtType = trans('messages.reg_status.no_charge');
+                $rf->pmtType = trans('messages.reg_status.free');
                 $rf->save();
             } else {
                 // Some weird error occured
@@ -689,7 +689,7 @@ class RegFinanceController extends Controller
             } else {
                 $rf->pmtRecd = 1;
                 $rf->status = trans('messages.reg_status.processed');
-                $rf->pmtType = trans('messages.reg_status.no_charge');
+                $rf->pmtType = trans('messages.reg_status.free');
             }
 
             $discountAmt = 0;

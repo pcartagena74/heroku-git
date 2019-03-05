@@ -416,7 +416,7 @@ class RegistrationController extends Controller
             }
 
             // Only if we had to set a temporary RF record with system owner
-            if($i ==1){
+            if($i == 1){
                 if($rf->personID == 1){
                     $rf->personID = $person->personID;
                     $rf->save();
