@@ -25,6 +25,7 @@ if($ctext == 0){
 if(!isset($up)){
     $up = 1;
 }
+
 switch ($icon) {
     case 1:
         $itxt = "fas fa-user";
@@ -72,7 +73,7 @@ switch($up){
 <div class="col-xs-{{ $width }} tile_stats_count">
     <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
-    @if($ctext == 0 || $ctext <> "")
+    @if(isset($ctext) && isset($rtext))
         <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fas fa-sort{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>
     @endif
 </div>
