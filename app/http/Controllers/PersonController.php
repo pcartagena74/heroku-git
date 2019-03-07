@@ -35,7 +35,10 @@ class PersonController extends Controller
     }
 
 
-    // Helper function containing code to put the member counting bits into a blade template
+    /**
+     * Helper function containing code to put the member count bits into a blade template
+     */
+
     protected function member_bits() {
         $topBits             = [];
         $total_people        = Cache::get('total_people', function () {
@@ -80,13 +83,13 @@ class PersonController extends Controller
                 ])->count();
         });
 
-        array_push($topBits, [9, trans('messages.headers.tot_peeps'), $total_people, '', '', '', 2]);
+        array_push($topBits, [9, trans('messages.headers.tot_peeps'), $total_people, null, '', '', 2]);
         $inds = implode(' ', array($individual, trans_choice('messages.headers.member', 2)));
         $rets = implode(' ', array($retiree, trans_choice('messages.headers.member', 2)));
         $stud = implode(' ', array($student, trans_choice('messages.headers.member', 2)));
-        array_push($topBits, [1, $inds, $individuals, '', '', '', 2]);
-        array_push($topBits, [1, $rets, $retirees, '', '', '', 2]);
-        array_push($topBits, [1, $stud, $students, '', '', '', 2]);
+        array_push($topBits, [1, $inds, $individuals, null, '', '', 2]);
+        array_push($topBits, [1, $rets, $retirees, null, '', '', 2]);
+        array_push($topBits, [1, $stud, $students, null, '', '', 2]);
 
         return($topBits);
     }
@@ -114,7 +117,7 @@ class PersonController extends Controller
         return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
     }
 
-   /*
+   /**
     *  index2: placeholder for member search function
     */
 
@@ -149,7 +152,7 @@ class PersonController extends Controller
         return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
     }
 
-    /*
+    /**
      *  search: display for member search function
      */
 
@@ -444,7 +447,7 @@ class PersonController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show_force(){
-        $topBits = '';
+        $topBits = $this->member_bits();
         return view('v1.auth_pages.members.force_pass_change', compact('topBits'));
     }
     /**
