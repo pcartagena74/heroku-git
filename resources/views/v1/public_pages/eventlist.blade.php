@@ -37,25 +37,21 @@ if($etID == 99){
                              width='90' border='0'/>
                     </div>
                     <div class="col-xs-11" style="text-align: left;">
-                        <div class="col-xs-12">
                             <div class="col-xs-9">
                                 <b>{!! $e->eventName !!}</b>
                             </div>
                             <div class="col-xs-3">
                                 on {{ $e->eventStartDate->toFormattedDateString() }}
                             </div>
-                        </div>
                         <div class="col-xs-12 container">
                             {!! truncate_saw($e->eventDescription, 400) !!}
                         </div>
-                        <div class="col-xs-12">
                             <div class="col-xs-9">
                                 <b>Location: </b>{{ $e->location->locName }}
                             </div>
                             <div class="col-xs-3" style="text-align: center;">
                                 <a class="btn btn-danger btn-sm" target="_new" href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
                             </div>
-                        </div>
                     </div>
                 </td>
             </tr>
@@ -68,14 +64,17 @@ if($etID == 99){
 @endsection
 
 @section('scripts')
-    @if($cnt > 10)
+    {{-- Disabled sorting to prevent alpha-date sort fail
+    @if($cnt == 0)
     @include('v1.parts.footer-datatable')
     <script>
         $(document).ready(function() {
+            $.fn.dataTable.moment('MMM D, YYYY');
             $('#eventlisting').DataTable({
                 "fixedHeader": true
             });
         });
     </script>
     @endif
+    --}}
 @endsection
