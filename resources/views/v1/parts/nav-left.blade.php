@@ -17,7 +17,12 @@
 $currentPerson = App\Person::find(auth()->user()->id);
 $currentOrg    = $currentPerson->defaultOrg;
 
+// This is an Entrust option array that is used when invoking $user->ability(x, y, z)
+// $options is the implied z parameter in above.
 $options = array('validate_all' => true); // , 'return_type' => 'both');
+
+//  LinkedIN image access seems to "timeout" after 2-3 months.
+//  This prevents the display of a broken image
 
 try{
     $x = getimagesize($currentPerson->avatarURL);
@@ -55,7 +60,7 @@ try{
 {{--
         The piece about multiple organizations would go here...
 --}}
-                            @if (0)
+                            @if (count($currentPerson->orgperson)>1)
                                 <li><a href="{{ env('APP_URL') }}/orgs">@lang('messages.nav.ms_org')</a></li>
                             @endif
                             <li><a href="{{ env('APP_URL') }}/dashboard">@lang('messages.nav.ms_dash')</a></li>
@@ -82,13 +87,16 @@ try{
                     @endif
 
                     @if((Entrust::hasRole($currentOrg->orgName) &&
-                            (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('settings-management')))
+                            (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-university"></i> @lang('messages.nav.org_set')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ env('APP_URL') }}/orgsettings">@lang('messages.nav.o_labels')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/eventdefaults">@lang('messages.nav.o_defaults')</a></li>
+
+                                @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+                                    <li><a href="{{ env('APP_URL') }}/eventdefaults">@lang('messages.nav.o_defaults')</a></li>
+                                @endif
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 @endif
                             </ul>
