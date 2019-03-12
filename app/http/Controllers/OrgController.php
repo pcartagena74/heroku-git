@@ -57,8 +57,8 @@ class OrgController extends Controller
         $topBits = [];
         $cData = DB::table('organization')->select(DB::raw('10-( isnull(OSN1) + isnull(OSN2) + isnull(OSN3) + isnull(OSN4) + isnull(OSN5) + isnull(OSN6) + isnull(OSN7) + isnull(OSN8) + isnull(OSN9) + isnull(OSN10)) as cnt'))->where('orgID', $org->orgID)->first();
         $cDate = DB::table('organization')->select(DB::raw('10-( isnull(ODN1) + isnull(ODN2) + isnull(ODN3) + isnull(ODN4) + isnull(ODN5) + isnull(ODN6) + isnull(ODN7) + isnull(ODN8) + isnull(ODN9) + isnull(ODN10)) as cnt'))->where('orgID', $org->orgID)->first();
-        array_push($topBits, [8, 'Custom Fields', $cData->cnt . "/10", '', '', '']);
-        array_push($topBits, [3, 'Custom Dates', $cDate->cnt . "/10", '', '', '']);
+        array_push($topBits, [8, 'Custom Fields', $cData->cnt . "/10", null, '', '', 2]);
+        array_push($topBits, [3, 'Custom Dates', $cDate->cnt . "/10", null, '', '', 2]);
 
         return view('v1.auth_pages.organization.settings', compact('org', 'topBits'));
     }

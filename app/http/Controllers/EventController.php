@@ -385,8 +385,13 @@ class EventController extends Controller
         $event->showLogo = request()->input('showLogo');
         $event->hasFood = request()->input('hasFood');
         $event->slug = request()->input('slug');
-        $event->postRegInfo = request()->input('postRegInfo');
-
+        $postRegInfo = request()->input('postRegInfo');
+        if($postRegInfo !== null){
+            if(preg_match("/data:image/", $postRegInfo)){
+                $postRegInfo = extract_images($postRegInfo, $event->orgID);
+            }
+        }
+        $event->postRegInfo = $postRegInfo;
         // Intentionally set to 0 so that track selection works without issue
         $event->confDays = 0;
 
@@ -600,7 +605,13 @@ class EventController extends Controller
             $event->hasFood = 0;
         }
         $event->slug = request()->input('slug');
-        $event->postRegInfo = request()->input('postRegInfo');
+        $postRegInfo = request()->input('postRegInfo');
+        if($postRegInfo !== null){
+            if(preg_match("/data:image/", $postRegInfo)){
+                $postRegInfo = extract_images($postRegInfo, $event->orgID);
+            }
+        }
+        $event->postRegInfo = $postRegInfo;
         /*
          *  Add these later:
          *  image1

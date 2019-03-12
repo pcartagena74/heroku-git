@@ -59,7 +59,7 @@ class Person extends Model
 
     public function orgperson()
     {
-        return $this->belongsTo(OrgPerson::class, 'personID', 'personID');
+        return $this->hasMany(OrgPerson::class, 'personID', 'personID');
     }
 
     public function registrations()
