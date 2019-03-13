@@ -60,7 +60,7 @@ try{
 {{--
         The piece about multiple organizations would go here...
 --}}
-                            @if (count($currentPerson->orgperson)>1)
+                            @if (count($currentPerson->orgpeeps)>1)
                                 <li><a href="{{ env('APP_URL') }}/orgs">@lang('messages.nav.ms_org')</a></li>
                             @endif
                             <li><a href="{{ env('APP_URL') }}/dashboard">@lang('messages.nav.ms_dash')</a></li>
@@ -92,7 +92,9 @@ try{
                         <li><a><i class="far fa-fw fa-university"></i> @lang('messages.nav.org_set')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/orgsettings">@lang('messages.nav.o_labels')</a></li>
+                                @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
+                                    <li><a href="{{ env('APP_URL') }}/orgsettings">@lang('messages.nav.o_labels')</a></li>
+                                @endif
 
                                 @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
                                     <li><a href="{{ env('APP_URL') }}/eventdefaults">@lang('messages.nav.o_defaults')</a></li>

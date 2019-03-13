@@ -272,7 +272,10 @@ class EventController extends Controller
 
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         // A copied event should always get the discount codes.
         $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
@@ -491,7 +494,11 @@ class EventController extends Controller
         $event->creatorID = $this->currentPerson->personID;
         $event->updaterID = $this->currentPerson->personID;
 
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
+
         if (request()->input('hasTracksCheck') == 1) {
             $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for ($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
@@ -526,7 +533,10 @@ class EventController extends Controller
 
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         if ($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
@@ -749,7 +759,10 @@ class EventController extends Controller
             $event->mainSession = $mainSession->sessionID;
             $event->updaterID = $this->currentPerson->personID;
         }
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         // Make and overwrite the event_{id}.ics file
         $event_filename = 'event_' . $event->eventID . '.ics';
@@ -783,7 +796,10 @@ class EventController extends Controller
             $event->isActive = 1;
         }
         $event->updaterID = auth()->user()->id;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
@@ -810,7 +826,10 @@ class EventController extends Controller
 
         $event->{$name} = $value;
         $event->updaterID = $this->currentPerson->personID;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         // now, either the date or percent changed, so update all event tickets
         // MUST figure out why this isn't working...

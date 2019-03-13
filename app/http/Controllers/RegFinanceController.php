@@ -43,6 +43,7 @@ use App\EventDiscount;
 use App\Email;
 use Illuminate\Support\Facades\Validator;
 use Redirect;
+use App\Notifications\AccountCreation;
 
 set_time_limit(0);
 
