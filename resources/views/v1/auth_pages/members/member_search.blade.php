@@ -32,7 +32,15 @@ if ($mbr_list){
                     title='" . trans('messages.tooltips.mr') . "' class='btn btn-xs btn-warning'>
                    <i class='far fa-fw fa-code-branch'></i></a>";
 
-        $mbr->cnt = $profile_form . $merge_form . $activity_form;
+        $become_form = Form::open(array('url' => '/become', 'method' => 'POST'));
+        $become_form .= Form::hidden('new_id', $mbr->personID);
+        $submit_button = "<i class='fas fa-fw fa-user'></i>";
+        $become_form .= '<button class="btn btn-xs btn-danger" title="' . trans('messages.nav.ms_become').
+                        '" data-toggle="tooltip" onclick="return confirm(\'' . trans('messages.tooltips.sure_become') .
+                        '\');">'. $submit_button . '</button>';
+        $become_form .= Form::close();
+
+        $mbr->cnt = $profile_form . $merge_form . $activity_form . $become_form;
     }
 
     $data = collect($mbr_list);
@@ -99,6 +107,7 @@ if ($mbr_list){
         });
     </script>
     @include('v1.parts.footer-datatable')
+    @if($scroll)
     <script>
         $(document).ready(function() {
             $('#member_table').DataTable({
@@ -107,6 +116,7 @@ if ($mbr_list){
             });
         });
     </script>
+    @endif
     @include('v1.parts.menu-fix', array('path' => '/search'))
 @endsection
 

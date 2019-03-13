@@ -975,6 +975,7 @@ return [
                         (after setting up the similar sessions) to adjust the times that are different.",
         'suppress' => "Change to 'Yes' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.",
         'sure' => "Are you sure?",
+        'sure_become' => "Are you sure you want to become this user?",
         'sure_cancel' => "Are you sure you want to cancel this registration?",
         'sure_copy' => "Are you sure you want to make a copy of this event?",
         'sure_del' => "Are you sure you want to delete this?",
