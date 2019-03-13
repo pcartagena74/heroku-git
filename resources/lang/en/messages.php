@@ -103,7 +103,7 @@ return [
     'event_types' => [
         'Chapter Meeting' => 'Chapter Meeting|Chapter Meetings',
         'Roundtable' => 'Roundtable|Roundtables',
-        'PD Day' => 'PD Day|PD Days',
+        'PD Day' => 'PDC|PDCs',
         'Social Gathering' => 'Social Gathering|Social Gatherings',
         'Region Event' => 'Region Event|Region Events',
         'Job Fair' => 'Job Fair|Job Fairs',
@@ -156,6 +156,7 @@ return [
         'diet_res' => 'Dietary Restrictions',
         'disc' => 'Discount',
         'discs' => 'Discounts',
+        'edit_copy' => "Edit Copied Event",
         'edit_event' => "Edit Event",
         'email' => 'Email Address',
         'empty' => 'Empty',
@@ -531,7 +532,7 @@ return [
                      mCentric has emailed you instructions to reset your password if necessary.",
         'max_reached' => "Maximum attendees reached.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
-        'mbr_search' => "<ol><li>Type a few characters of a first or last name, email address or PMI ID.</li><li>Hit enter to display all results.</li></ol>",
+        'mbr_search' => "<ol><li>Type a few characters of a first or last name, email address or PMI ID.</li><li>Hit enter, or click the button, to display all results.</li></ol>",
         'merge_dupe' => "{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.",
         'merge_notes' => "{p}<b class='red'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
                             <p></p><b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI's records for PDU reconciliation." .

@@ -259,7 +259,7 @@ class RegistrationController extends Controller
             // No user logged in; checking to see if first email is in the database;
             // Should force a login -- return to form with input saved.  Assumptive RISK re: first
             $authorID = 1; $regBy = null;
-            $email = request()->input('login');
+            $email = strtolower(request()->input('login'));
             $chk = Email::where('emailADDR', '=', $email)->first();
             if(null !== $chk) {
                 $p = Person::find($chk->personID);
@@ -329,7 +329,7 @@ class RegistrationController extends Controller
             $firstName = ucwords(request()->input('firstName'.$i_cnt));
             $middleName = ucwords(request()->input('middleName'.$i_cnt));
             $lastName = ucwords(request()->input('lastName'.$i_cnt));
-            $login = request()->input('login'.$i_cnt);
+            $login = strtolower(request()->input('login'.$i_cnt));
             $pmiID = trim(request()->input('OrgStat1'.$i_cnt));
             $pmiID > 0 ?: $pmiID = null;
             $suffix = ucwords(request()->input('suffix'.$i_cnt));

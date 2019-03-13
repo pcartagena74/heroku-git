@@ -221,6 +221,81 @@ class EventController extends Controller
         return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person', 'cs'));
     }
 
+    public function event_copy($param)
+    {
+        $today = Carbon::now();
+        $event = Event::where('eventID', '=', $param)
+            ->orWhere('slug', '=', $param)
+            ->firstOrFail();
+
+        $e = $event->replicate();
+        $e->slug = 'temporary_slug_placeholder';
+        $e->isActive = 0;
+        $e->eventStartDate = $today;
+        $e->eventEndDate = $today;
+        // this is here until we decide to copy EVERYTHING associated with a PD Day event
+        $e->hasTracks = 0;
+        $e->save();
+        $e->slug = $e->eventID;
+        $e->save();
+
+        $event = $e;
+
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $current_person = $this->currentPerson = Person::find(auth()->user()->id);
+        $exLoc = Location::find($event->locationID);
+        $page_title = trans('messages.fields.edit_copy');
+
+        // Create a stub for the default ticket for the event
+        $label                    = Org::find($this->currentPerson->defaultOrgID);
+        $tkt                      = new Ticket;
+        $tkt->ticketLabel         = $label->defaultTicketLabel;
+        $tkt->availabilityEndDate = $event->eventStartDate;
+        $tkt->eventID             = $event->eventID;
+        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate    = Carbon::now();
+        $tkt->save();
+
+        // Create a mainSession for the default ticket for the event
+        $mainSession = new EventSession;
+        $mainSession->trackID = 0;
+        $mainSession->eventID = $event->eventID;
+        $mainSession->ticketID = $tkt->ticketID;
+        $mainSession->sessionName = 'def_sess';
+        $mainSession->confDay = 0;
+        $mainSession->start = $event->eventStartDate;
+        $mainSession->end = $event->eventEndDate;
+        $mainSession->order = 0;
+        $mainSession->creatorID = $this->currentPerson->personID;
+        $mainSession->updaterID = $this->currentPerson->personID;
+        $mainSession->save();
+
+        $event->mainSession = $mainSession->sessionID;
+        $event->updaterID = $this->currentPerson->personID;
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
+
+        // A copied event should always get the discount codes.
+        $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
+            ['discountCODE', "<>", '']])->get();
+
+        foreach ($orgDiscounts as $od) {
+            $ed = new EventDiscount;
+            $ed->orgID = $od->orgID;
+            $ed->eventID = $event->eventID;
+            $ed->discountCODE = $od->discountCODE;
+            $ed->percent = $od->percent;
+            $ed->creatorID = $this->currentPerson->personID;
+            $ed->updaterID = $this->currentPerson->personID;
+            $ed->save();
+        }
+
+        //return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
+        return redirect('/event/' . $event->eventID . '/edit');
+    }
+
     public function show($param, $override = null) {
         // responds to GET /events/{param}
         // $param is either an ID or slug
@@ -419,7 +494,11 @@ class EventController extends Controller
         $event->creatorID = $this->currentPerson->personID;
         $event->updaterID = $this->currentPerson->personID;
 
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
+
         if (request()->input('hasTracksCheck') == 1) {
             $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for ($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
@@ -454,7 +533,10 @@ class EventController extends Controller
 
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         if ($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
@@ -677,7 +759,10 @@ class EventController extends Controller
             $event->mainSession = $mainSession->sessionID;
             $event->updaterID = $this->currentPerson->personID;
         }
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         // Make and overwrite the event_{id}.ics file
         $event_filename = 'event_' . $event->eventID . '.ics';
@@ -711,7 +796,10 @@ class EventController extends Controller
             $event->isActive = 1;
         }
         $event->updaterID = auth()->user()->id;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
     }
@@ -738,7 +826,10 @@ class EventController extends Controller
 
         $event->{$name} = $value;
         $event->updaterID = $this->currentPerson->personID;
-        $event->save();
+        try{
+            $event->save();
+        }catch(\Exception $exception){
+        }
 
         // now, either the date or percent changed, so update all event tickets
         // MUST figure out why this isn't working...
