@@ -240,6 +240,7 @@ class RegistrationController extends Controller
     public function store (Request $request, Event $event) {
         // called by /regstep3/{event}/create
 
+        $logged_in = 0;
         $show_pass_fields = 0; $set_new_user = 0;
         $set_secondary_email = 0; $subcheck = 0; $sumtotal = 0;
         $quantity = request()->input('quantity');
@@ -249,6 +250,7 @@ class RegistrationController extends Controller
         if (Auth::check()) {
             $id = auth()->user()->id;
             $u = User::find($id);
+            $logged_in = 1;
             if($u->password === null){
                 $show_pass_fields = 1;
             }
@@ -270,11 +272,11 @@ class RegistrationController extends Controller
         }
 
         //  $resubmit set based on "unknown user" of 1 or the logged in user.
-        //  Then if the $token is already in the database, under the same personID, it's likely a dupe
-        if($authorID <> 1){
+        //  If the eventID is the same AND the prior order isn't "Processed" then this is likely a dupe to erase
+        if($authorID <> 1 && $logged_in){
             $resubmit = RegFinance::where([
-                ['token', '=', $token],
                 ['personID', '=', $authorID],
+                ['eventID', '=', $event->eventID],
                 ['status', '!=', trans('messages.reg_status.processed')],
             ])->first();
         } else {
@@ -312,17 +314,30 @@ class RegistrationController extends Controller
             ])->get();
 
         // Set $regBy to the first ticket's person info unless someone was already logged in
-        if(null === $regBy){
+        if(null === $regBy && !$logged_in){
             $firstName = ucwords(request()->input('firstName'));
             $lastName = ucwords(request()->input('lastName'));
             $regBy = $firstName . " " . $lastName;
         }
 
+
+        // Registration #1 is "special" because it should be the originating user when self-registering.
         // For each of the registrations
         for($i = 1; $i <= $quantity; $i++){
-            $person = null; $set_new_user = 0;
-            $change_to_member = 0;
-            if($i>1){ $i_cnt = '_'.$i; } else { $i_cnt = ''; }
+            if($i == 1){
+                if($logged_in){
+                    $person = $this->currentPerson;
+                } else {
+                    $person = null;
+                    $set_new_user = 0;
+                }
+                $i_cnt = "";
+            } else {
+                $person = null;
+                $set_new_user = 0;
+                $i_cnt = '_'.$i;
+            }
+            // $change_to_member = 0;
 
             // 1. Grab the passed variables for the person and registration info
             $prefix = ucwords(request()->input('prefix'.$i_cnt));
@@ -364,8 +379,8 @@ class RegistrationController extends Controller
                 $cityState = request()->input('cityState'.$i_cnt);
             }
 
-            // Try to assign $person via OrgStat1
-            if($pmiID){
+            // Try to assign $person via OrgStat1 unless $person has the value of $this->currentPerson (and so is not null)
+            if($pmiID && null == $person){
                 $person = Person::whereHas('orgperson', function($q) use($pmiID) {
                     $q->where('OrgStat1', '=', $pmiID);
                 })->first();
