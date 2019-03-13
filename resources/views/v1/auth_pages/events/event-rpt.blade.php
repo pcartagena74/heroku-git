@@ -26,12 +26,6 @@ if ($event->eventEndDate->gte($today)) {
         trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
     if (Entrust::hasRole('Developer') || Entrust::hasRole('Admin')) {
         foreach ($tkts as $t) {
-/*
-            $rc = '<form action="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" method="post">' . csrf_field();
-            $rc .= '<input type="hidden" name="value" value="1">';
-            $rc .= '<input type="hidden" name="name" value="regCount-' . $t->ticketID . '">';
-            $rc .= '<button class="btn btn-danger btn-xs" id="launchConfirm">Go</button></form>';
-*/
             $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
                 '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
 

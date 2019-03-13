@@ -28,9 +28,9 @@ $width = number_format(100/count($headers), 0, '', '');
             @foreach ($headers as $header)
 <?php $th_count++; ?>
                 @if(isset($hidecol[$th_count]))
-                    <th style="display:none;">{{ $header }}</th>
+                    <th style="display:none;">{!! $header !!}</th>
                 @else
-                    <th style="vertical-align: top; text-align: left;">{{ $header }}</th>
+                    <th style="vertical-align: top; text-align: left;">{!! $header !!}</th>
                 @endif
             @endforeach
         </tr>
@@ -42,9 +42,9 @@ $width = number_format(100/count($headers), 0, '', '');
                 @foreach ($row as $col)
 <?php $tb_count++; ?>
                     @if(isset($hidecol[$tb_count]))
-                            <td data-title="{{ $headers[$tb_count-1] }}" style="display: none;">{!! $col !!}</td>
+                            <td data-title="{!! $headers[$tb_count-1] !!}" style="display: none;">{!! $col !!}</td>
                     @else
-                            <td data-title="{{ $headers[$tb_count-1] }}" style="vertical-align: top; text-align: left;">{!! $col !!}</td>
+                            <td data-title="{!! $headers[$tb_count-1] !!}" style="vertical-align: top; text-align: left;">{!! $col !!}</td>
                     @endif
                 @endforeach
             </tr>
