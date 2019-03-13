@@ -156,6 +156,7 @@ return [
         'diet_res' => 'Dietary Restrictions',
         'disc' => 'Discount',
         'discs' => 'Discounts',
+        'edit_copy' => "Edit Copied Event",
         'edit_event' => "Edit Event",
         'email' => 'Email Address',
         'empty' => 'Empty',

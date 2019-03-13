@@ -244,7 +244,7 @@ class EventController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
         $exLoc = Location::find($event->locationID);
-        $page_title = 'Edit Copied Event';
+        $page_title = trans('messages.fields.edit_copy');
 
         // Create a stub for the default ticket for the event
         $label                    = Org::find($this->currentPerson->defaultOrgID);
