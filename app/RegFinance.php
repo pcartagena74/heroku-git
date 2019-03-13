@@ -12,6 +12,7 @@ class RegFinance extends Model
     // The table
     protected $table = 'reg-finance';
     protected $primaryKey = 'regID';
+    const CREATED_AT = 'createDate';
     const UPDATED_AT = 'cancelDate';
     protected $dates = ['createDate', 'cancelDate', 'deleted_at'];
 
