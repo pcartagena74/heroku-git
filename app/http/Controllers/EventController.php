@@ -353,7 +353,6 @@ class EventController extends Controller
         $bundles =
             Ticket::where([
                 ['isaBundle', 1],
-                ['isDeleted', 0],
                 ['isSuppressed', 0],
                 ['eventID', $event->eventID],
                 ['availabilityEndDate', '>=', $today]
@@ -363,7 +362,6 @@ class EventController extends Controller
             Ticket::where([
                 ['isaBundle', 0],
                 ['isSuppressed', 0],
-                ['isDeleted', 0],
                 ['eventID', $event->eventID],
                 ['availabilityEndDate', '>=', $today]
             ])->get()->sortByDesc('availabilityEndDate');
@@ -986,14 +984,12 @@ class EventController extends Controller
         $bundles =
             Ticket::where([
                 ['isaBundle', 1],
-                ['isDeleted', 0],
                 ['eventID', $event->eventID],
             ])->get()->sortByDesc('availableEndDate');
 
         $tickets =
             Ticket::where([
                 ['isaBundle', 0],
-                ['isDeleted', 0],
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
 
