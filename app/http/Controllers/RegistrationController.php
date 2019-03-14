@@ -38,7 +38,7 @@ class RegistrationController extends Controller
 
     public function processRegForm(Request $request, Event $event)
     {
-        // Initiating registration for an event from /event/{id}
+        // Initiating registration for an event from GET /event/{id}
         $discount_code = request()->input('discount_code');
         $tq = []; $quantity = 0;
 
@@ -51,7 +51,6 @@ class RegistrationController extends Controller
             $tkts = Ticket::where([
                 ['eventID', '=', $event->eventID],
                 ['isSuppressed', '=', 0],
-                ['isDeleted', '=', 0]
             ])->get();
 
             foreach ($tkts as $ticket){
@@ -83,8 +82,7 @@ class RegistrationController extends Controller
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
-            ['isSuppressed', '=', 0],
-            ['isDeleted', '=', 0]
+            ['isSuppressed', '=', 0]
         ])->get();
 
         if($req = Session::get('req')){
@@ -309,8 +307,7 @@ class RegistrationController extends Controller
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
-            ['isSuppressed', '=', 0],
-            ['isDeleted', '=', 0]
+            ['isSuppressed', '=', 0]
             ])->get();
 
         // Set $regBy to the first ticket's person info unless someone was already logged in

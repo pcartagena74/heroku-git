@@ -84,7 +84,7 @@ class BundleController extends Controller
         if (Registration::where('ticketID', $id)->count() > 0) {
             // soft-delete if there are registrations
 
-            $ticket->isDeleted = 1;
+            $ticket->isSuppressed = 1;
             $ticket->updaterID = $this->currentPerson->personID;
             $ticket->save();
         } else {

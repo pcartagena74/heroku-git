@@ -83,13 +83,17 @@ $default = Org::find($event->orgID);
             --}}
             <th>@lang('messages.fields.memprice')</th>
             <th>@lang('messages.fields.nonprice')</th>
-            <th style="width: 20%">
+            <th style="width: 10%">
                 @lang('messages.headers.max')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.max_set')])
             </th>
-            <th style="width: 20%">
+            <th style="width: 10%">
                 @lang('messages.headers.suppress')?
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.suppress')])
+            </th>
+            <th style="width: 20%">
+                @lang('messages.headers.no_discount')?
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.no_discount')])
             </th>
         </tr>
         </thead>
@@ -150,6 +154,11 @@ $default = Org::find($event->orgID);
                            data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
                            data-pk="{{ $ticket->ticketID }}"></a>
                     @endif
+                </td>
+                <td>
+                    <a href="#" id="isDiscountExempt-{{ $tc }}" data-value="{{ $ticket->isDiscountExempt }}"
+                       data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"
+                       data-pk="{{ $ticket->ticketID }}"></a>
                 </td>
             </tr>
         @endforeach
@@ -329,6 +338,14 @@ $default = Org::find($event->orgID);
         $('#maxAttendees-{{ $i }}').editable({type: 'text'});
 
         $('#isSuppressed-{{ $i }}').editable({
+            type: 'select',
+            source: [
+                { value: 0, text: '{{ trans('messages.yesno_check.no') }}'},
+                { value: 1, text: '{{ trans('messages.yesno_check.yes') }}'}
+            ]
+        });
+
+        $('#isDiscountExempt-{{ $i }}').editable({
             type: 'select',
             source: [
                 { value: 0, text: '{{ trans('messages.yesno_check.no') }}'},

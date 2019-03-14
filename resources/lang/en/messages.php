@@ -410,6 +410,7 @@ return [
         'near_chap' => 'Nearby Chapters',
         'net' => 'Net',
         'net_list' => 'Networking List',
+        'no_discount' => "Prevent Discount",
         'note' => 'Note',
         'notify_user' => 'Notify user at above email address?',
         'number' => "Number",
@@ -587,6 +588,7 @@ return [
         'survey_instructions' => "Please provide your objective feedback so that we may continuously improve the value
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.",
         'sold_out' => "Sold Out! Register to add yourself to the wait list.",
+        'sold_out2' => "This ticket is sold out.",
         'tkt_setup' => "Creating additional tickets is typically only necessary for Professional Development Day events.",
         'total_caveat' => "Total does NOT reflect updates due to refunds.",
         'tracks' => "Here are this event's :n tracks and its sessions from which attendees can choose
@@ -604,7 +606,7 @@ return [
         ",
         'userid' => "This has been autopopulated and cannot be edited.",
         'waitlist' => 'Registering will secure a spot on the wait list. You will not be charged at this time.|
-                   Registering will secure :count spots on the wait list. You will not be charged at this time.',
+                   Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
     ],
 
     'mCentric_text' => [
@@ -958,6 +960,7 @@ return [
         'mr' => 'Merge Record',
         'near_chap' => "These are the most likely chapters of attendees of your events.  Put your chapter first, followed by other chapters, and end with 'Other' and 'None of the above.'",
         'no_auth' => "You must be authorized to perform this function.",
+        'no_discount' => "Change to 'Yes' to prevent ALL discount codes from affecting this ticket's price.  Early Bird pricing will still be possible.",
         'nope' => "This value cannot be edited or removed.",
         'not_new' => "Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.",
         'orgName' => "You can change the organization's display name. Ensure that it fits above.  Click it.",

@@ -27,19 +27,15 @@ class TicketController extends Controller
         $event   = Event::find($id);
         $topBits = '';
 
-        $bundles =
-            DB::table('event-tickets')->where([
+        $bundles = Ticket::where([
                 ['isaBundle', 1],
-                ['isDeleted', 0],
                 ['eventID', $event->eventID]
             ])->get()->sortByDesc('availableEndDate');
 
-        $tickets =
-            DB::table('event-tickets')->where([
-                ['isaBundle', 0],
-                ['isDeleted', 0],
-                ['eventID', $event->eventID]
-            ])->get()->sortByDesc('availableEndDate');
+        $tickets = Ticket::where([
+            ['isaBundle', 0],
+            ['eventID', $event->eventID]
+        ])->get()->sortByDesc('availableEndDate');
 
         return view('v1.auth_pages.events.list-tickets', compact('event', 'bundles', 'tickets', 'topBits'));
     }
@@ -140,7 +136,7 @@ class TicketController extends Controller
         if (Registration::where('ticketID', $id)->count() > 0) {
             // soft-delete if there are registrations
 
-            $ticket->isDeleted = 1;
+            $ticket->isSuppressed = 1;
             $ticket->updaterID = $this->currentPerson->personID;
             $ticket->save();
         } else {
