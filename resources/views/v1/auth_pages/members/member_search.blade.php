@@ -45,7 +45,7 @@ if ($mbr_list){
 
     $data = collect($mbr_list);
 } else {
-    $scrolll = 0;
+    $scroll = 0;
 }
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
