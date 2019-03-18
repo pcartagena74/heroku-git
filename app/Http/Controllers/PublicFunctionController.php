@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Person;
+use App\User;
+use App\OrgPerson;
 
 class PublicFunctionController extends Controller
 {
@@ -24,6 +27,9 @@ class PublicFunctionController extends Controller
                 $x = 1;
             }
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
+            if(null === $p->orgperson) {
+                $p->load('orgperson');
+            }
             return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $x,
                 'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
         } else {
