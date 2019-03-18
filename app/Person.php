@@ -59,7 +59,8 @@ class Person extends Model
 
     public function orgperson()
     {
-        return $this->belongsTo(OrgPerson::class, 'defaultOrgID', 'orgID');
+        return $this->belongsTo(OrgPerson::class, 'personID', 'personID')
+            ->where('org-person.orgID', '=', $this->defaultOrgID);
     }
 
     public function orgpeeps()
@@ -129,10 +130,13 @@ class Person extends Model
             })->select('OrgStat1')->first();
     }
 
-    public function speaker(){
+    public function speaker()
+    {
         $this->hasOne(Speaker::class, 'id', 'personID');
     }
-    public function add_speaker_role(){
+
+    public function add_speaker_role()
+    {
 
         $org_role = $this->org_role_id()->id;
         $speaker_role = 2;
@@ -143,7 +147,7 @@ class Person extends Model
             $this->roles()->attach($org_role);
         }
         $s = Speaker::find($this->personID);
-        if($s === null){
+        if ($s === null) {
             $s = new Speaker;
             $s->id = $this->personID;
             $s->save();
