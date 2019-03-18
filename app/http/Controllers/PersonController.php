@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\OrgPerson;
 use App\PersonSocialite;
 use App\Phone;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ class PersonController extends Controller
         $this->middleware('auth', ['except' => ['oLookup']]);
 
         $this->middleware(function (Request $request, $next) {
-            if(auth()){
+            if (auth()) {
                 $this->currentPerson = Person::find(auth()->user()->id);
             }
             return $next($request);
@@ -39,59 +40,139 @@ class PersonController extends Controller
      * Helper function containing code to put the member count bits into a blade template
      */
 
-    protected function member_bits() {
-        $topBits             = [];
-        $total_people        = Cache::get('total_people', function () {
-            return DB::table('person')
-                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+    protected function member_bits()
+    {
+        $topBits = [];
+        $today = Carbon::now();
+
+        $total_people = Cache::get('total_people', function () {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
                 ->where([
                     ['person.personID', '!=', 1],
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                ])->count();
+                ])->distinct()->count();
         });
-        $individual          = trans('messages.headers.p_ind');
-        $individuals         = Cache::get('individual_data', function () use($individual) {
+        $total_change1 = Cache::get('total_change1', function () use ($today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.createDate', '>=', $today->subDays(60)]
+                ])->distinct()->count();
+        });
 
-            return DB::table('person')
-                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+        $total_change2 = Cache::get('total_change2', function () use ($today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.deleted_at', '>=', $today->subDays(60)]
+                ])->withTrashed()->distinct()->count();
+        });
+        $total_change = $total_change1 + ($total_change2 * -1);
+        $tcu = trans_choice('messages.headers.updates_60d', $total_change);
+
+        $individual = trans('messages.headers.p_ind');
+        $individuals = Cache::get('individual_data', function () use ($individual) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
                 ->where([
                     ['person.personID', '!=', 1],
                     ['OrgStat2', '=', $individual],
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                ])->count();
+                ])->distinct()->count();
         });
-        $student             = trans('messages.headers.p_stu');
-        $students            = Cache::get('student_data', function () use($student) {
 
-            return DB::table('person')
-                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+        $ind_change1 = Cache::get('ind_change1', function () use ($individual, $today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $individual],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.createDate', '>=', $today->subDays(60)]
+                ])->distinct()->count();
+        });
+        $ind_change2 = Cache::get('ind_change2', function () use ($individual, $today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $individual],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.deleted_at', '>=', $today->subDays(60)]
+                ])->withTrashed()->distinct()->count();
+        });
+        $ind_change = $ind_change1 + ($ind_change2 * -1);
+        $icu = trans_choice('messages.headers.updates_60d', $ind_change);
+
+        $student = trans('messages.headers.p_stu');
+        $students = Cache::get('student_data', function () use ($student) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
                 ->where([
                     ['person.personID', '!=', 1],
                     ['OrgStat2', '=', $student],
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                ])->count();
+                ])->distinct()->count();
         });
-        $retiree             = trans('messages.headers.p_ret');
-        $retirees            = Cache::get('retiree_data', function () use($retiree) {
 
-            return DB::table('person')
-                ->join('org-person', 'org-person.personID', '=', 'person.personID')
+        $stud_add1 = Cache::get('stud_add1', function () use ($student, $today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $student],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.createDate', '>=', $today->subDays(60)]
+                ])->distinct()->count();
+        });
+        $stud_add2 = Cache::get('stud_add2', function () use ($student, $today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $student],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.deleted_at', '>=', $today->subDays(60)]
+                ])->withTrashed()->distinct()->count();
+        });
+        $stud_change = $stud_add1 + ($stud_add2 * -1);
+        $scu = trans_choice('messages.headers.updates_60d', $stud_change);
+
+        $retiree = trans('messages.headers.p_ret');
+        $retirees = Cache::get('retiree_data', function () use ($retiree) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
                 ->where([
                     ['person.personID', '!=', 1],
                     ['OrgStat2', '=', $retiree],
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID]
-                ])->count();
+                ])->distinct()->count();
         });
+        $ret_change1 = Cache::get('ret_change1', function () use ($retiree, $today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $retiree],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.createDate', '>=', $today->subDays(60)]
+                ])->distinct()->count();
+        });
+        $ret_change2 = Cache::get('ret_change2', function () use ($retiree, $today) {
+            return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
+                ->where([
+                    ['person.personID', '!=', 1],
+                    ['OrgStat2', '=', $retiree],
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['person.deleted_at', '>=', $today->subDays(60)]
+                ])->withTrashed()->distinct()->count();
+        });
+        $ret_change = $ret_change1 + ($ret_change2 * -1);
+        $rcu = trans_choice('messages.headers.updates_60d', $ret_change);
 
-        array_push($topBits, [9, trans('messages.headers.tot_peeps'), $total_people, null, '', '', 2]);
+        array_push($topBits, [9, trans('messages.headers.tot_peeps'), $total_people, $total_change, $tcu, $total_change>0?1:-1, 2]);
         $inds = implode(' ', array($individual, trans_choice('messages.headers.member', 2)));
         $rets = implode(' ', array($retiree, trans_choice('messages.headers.member', 2)));
         $stud = implode(' ', array($student, trans_choice('messages.headers.member', 2)));
-        array_push($topBits, [1, $inds, $individuals, null, '', '', 2]);
-        array_push($topBits, [1, $rets, $retirees, null, '', '', 2]);
-        array_push($topBits, [1, $stud, $students, null, '', '', 2]);
+        array_push($topBits, [1, $inds, $individuals, $ind_change, $icu, $ind_change>0?1:-1, 2]);
+        array_push($topBits, [1, $rets, $retirees, $stud_change, $scu, $stud_change>0?1:-1, 2]);
+        array_push($topBits, [1, $stud, $students, $ret_change, $rcu, $ret_change>0?1:-1, 2]);
 
-        return($topBits);
+        return ($topBits);
     }
 
     // Shows member management page
@@ -104,29 +185,30 @@ class PersonController extends Controller
 
         $mbr_list = Cache::get('mbr_list', function () {
             return OrgPerson::join('person as p', 'p.personID', '=', 'org-person.personID')
-                            ->where([
-                                ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
-                                ['p.personID', '!=', 1]
-                            ])->select(DB::raw("p.personID, concat(firstName, ' ', lastName) AS fullName, OrgStat1, OrgStat2, compName, 
+                ->where([
+                    ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['p.personID', '!=', 1]
+                ])->select(DB::raw("p.personID, concat(firstName, ' ', lastName) AS fullName, OrgStat1, OrgStat2, compName, 
                            title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er
 						 WHERE er.personID=p.personID) AS 'cnt'"))
-                            ->get();
+                ->get();
         });
 
         return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
     }
 
-   /**
-    *  index2: placeholder for member search function
-    */
+    /**
+     *  index2: placeholder for member search function
+     */
 
-    public function index2($query = null) {
+    public function index2($query = null)
+    {
 
         $topBits = $this->member_bits();
         $mbr_list = null;
 
-        if($query !== null){
+        if ($query !== null) {
             $mbr_list = Person::where('firstName', 'LIKE', "%$query%")
                 ->orWhere('person.personID', 'LIKE', "%$query%")
                 ->orWhere('lastName', 'LIKE', "%$query%")
@@ -156,9 +238,10 @@ class PersonController extends Controller
      *  search: display for member search function
      */
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $string = $request->input('string');
-        return redirect(env('APP_URL').'/search/'.$string);
+        return redirect(env('APP_URL') . '/search/' . $string);
     }
 
     // Shows profile information for chosen person (or self)
@@ -173,17 +256,17 @@ class PersonController extends Controller
                 if ($this->currentPerson->avatarURL === null
                     && !$this->currentPerson->socialites->contains('providerName', 'LinkedIN')
                 ) {
-                    $user              = Socialite::driver('linkedin')->user();
-                    $person            = Person::find($id);
+                    $user = Socialite::driver('linkedin')->user();
+                    $person = Person::find($id);
                     $person->avatarURL = $user->avatar;
                     $person->updaterID = $id;
                     $person->save();
 
-                    $socialite               = new PersonSocialite;
-                    $socialite->personID     = $person->personID;
-                    $socialite->providerID   = $user->id;
+                    $socialite = new PersonSocialite;
+                    $socialite->personID = $person->personID;
+                    $socialite->providerID = $user->id;
                     $socialite->providerName = 'LinkedIN';
-                    $socialite->token        = $user->token;
+                    $socialite->token = $user->token;
                     $socialite->save();
                 }
             }
@@ -207,19 +290,19 @@ class PersonController extends Controller
                     ODN1, ODN2, ODN3, ODN4, ODN5, ODN6, RelDate7, ODN8, ODN9, ODN10, person.personID"))->first();
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id, 'errormsg' => $exception->getMessage()]));
-            return redirect(env('APP_URL').'/profile/my');
+            return redirect(env('APP_URL') . '/profile/my');
 
         }
 
-        if($profile === null){
+        if ($profile === null) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id,
-                                        'modifier' => trans('messages.fields.member'), 'errormsg' => null]));
-            return redirect(env('APP_URL').'/profile/my');
+                'modifier' => trans('messages.fields.member'), 'errormsg' => null]));
+            return redirect(env('APP_URL') . '/profile/my');
         }
 
-        if($profile != $this->currentPerson){
+        if ($profile != $this->currentPerson) {
             $u = User::find($profile->personID);
-            if($u->password === null){
+            if ($u->password === null) {
                 request()->session()->flash('alert-warning', trans('messages.instructions.no_user_pass'));
             }
         }
@@ -228,19 +311,19 @@ class PersonController extends Controller
 
         $prefixes = DB::table('prefixes')->get();
         $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
-            $prefixes->pluck('prefix', 'prefix')->map(function($item, $key) {
-                return trans('messages.fields.prefixes.'.$item);
+            $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
+                return trans('messages.fields.prefixes.' . $item);
             })->toArray();
         $prefixes = $prefix_array;
 
         $industries = DB::table('industries')->orderBy('industryName')->get();
         $industry_array = ['' => trans('messages.fields.industries.select')] +
-            $industries->pluck('industryName', 'industryName')->map(function($item, $key) {
-                return trans('messages.fields.industries.'.$item);
+            $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
+                return trans('messages.fields.industries.' . $item);
             })->toArray();
         $industries = $industry_array;
 
-        $addrTypes  = DB::table('address-type')->get();
+        $addrTypes = DB::table('address-type')->get();
         $emailTypes = DB::table('email-type')->get();
         $phoneTypes = DB::table('phone-type')->get();
 
@@ -256,7 +339,7 @@ class PersonController extends Controller
 
         $phones =
             Phone::where('personID', $id)->select('phoneID', 'phoneType', 'phoneNumber')->get();
-        
+
         return view(
             'v1.auth_pages.members.profile',
             compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes', 'cert_array')
@@ -337,21 +420,22 @@ class PersonController extends Controller
             $person->save();
 
         } elseif ($name == 'prefix') {
-            if(strlen($value) > 10) {
+            if (strlen($value) > 10) {
                 $value = substr($value, 0, 10);
             }
             $person->prefix = $value;
             $person->updaterID = $updater;
             $person->save();
         } else {
-            $person->{$name}   = $value;
+            $person->{$name} = $value;
             $person->updaterID = $updater;
             $person->save();
         }
         return json_encode(array('status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $personID));
     }
 
-    public function update_op(Request $request, $id){
+    public function update_op(Request $request, $id)
+    {
         // responds to POST /op/{id} and is an AJAX call
         $personID = request()->input('pk');
         $updater = auth()->user()->id;
@@ -380,7 +464,7 @@ class PersonController extends Controller
         $user = User::find($person->personID);
         $user->login = $email;
         $user->email = $email;
-        $user->name  = $email;
+        $user->name = $email;
         $user->save();
 
         $e = Email::where('emailADDR', $person->login)->first();
@@ -403,8 +487,8 @@ class PersonController extends Controller
 
     public function change_password(Request $request)
     {
-        $curPass               = request()->input('curPass');
-        $password              = request()->input('password');
+        $curPass = request()->input('curPass');
+        $password = request()->input('password');
 
         // validate password matching
         $validator = Validator::make($request->all(), [
@@ -446,10 +530,12 @@ class PersonController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show_force(){
+    public function show_force()
+    {
         $topBits = $this->member_bits();
         return view('v1.auth_pages.members.force_pass_change', compact('topBits'));
     }
+
     /**
      * This is just like the above but it doesn't ask for the prior password
      *
@@ -457,8 +543,8 @@ class PersonController extends Controller
      */
     public function force_password_change(Request $request)
     {
-        $password  = request()->input('password');
-        $userid    = request()->input('userid');
+        $password = request()->input('password');
+        $userid = request()->input('userid');
 
         // validate password matching
         $validator = Validator::make($request->all(), [
@@ -468,7 +554,7 @@ class PersonController extends Controller
         if ($validator->fails()) {
             return back()
                 ->withErrors($validator);
-                //->withInput(['tab' => 'tab_content2']);
+            //->withInput(['tab' => 'tab_content2']);
         }
 
         $user = User::find($userid);
@@ -506,24 +592,25 @@ class PersonController extends Controller
         try {
             $user = Socialite::driver('linkedin')->user();
             //dd($user);
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             //
         }
     }
 
-    public function oLookup($pmi_id){
+    public function oLookup($pmi_id)
+    {
         $op = OrgPerson::where('OrgStat1', '=', $pmi_id)->first();
 
-        if(null !== $op){
+        if (null !== $op) {
             $u = User::where('id', '=', $op->personID)->first();
-            if(null !== $u){
-                $x = $u->password ? 1: 0;
+            if (null !== $u) {
+                $x = $u->password ? 1 : 0;
             } else {
                 $x = 1;
             }
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
             return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $x,
-                               'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
+                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
         } else {
             return json_encode(array('status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id));
         }

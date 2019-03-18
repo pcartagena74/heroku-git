@@ -451,6 +451,7 @@ return [
         'reg_con2' => 'Continue Registration',
         'reg_date' => 'Register Date',
         'regs_this_week' => 'registrations this week',
+        'updates_60d' => '{1}net add in last 60 days|{2,inf}net adds in last 60 days|{-1}net removal in last 60 days|{inf,-2}net removals in last 60 days',
         'reset_pass' => 'Reset Your mCentric Account Password',
         'results' => "Results",
         'ret_sess_list' => "Return to Session List",
@@ -480,7 +481,7 @@ return [
         'this' => 'This Week',
         'tkt4' => 'Tickets for ',
         'to' => "to",
-        'tot_peeps' => "Total People",
+        'tot_peeps' => "Total People (Person Records)",
         'tot_regs' => 'Total Regs',
         'tracks' => "Tracks",
         'twitter' => "Twitter Handle",
@@ -1007,6 +1008,7 @@ return [
 
     'warning' => [
         'inactive_event' => "<b>Note:</b> You are previewing an event that is not yet active OR is in the past.",
+        'inactive_unlocked_event' => "<b>Note:</b> This event is no longer active but you have been given permission to register.",
         'inactive_event_url' => "This event's URL is no longer active.",
         'slug_event_url' => "This event's URL will be: :url",
     ],
