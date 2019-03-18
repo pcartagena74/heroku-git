@@ -50,10 +50,10 @@ class OrgPersonController extends Controller
         } elseif($who && $email) {
             return redirect(env('APP_URL')."/pmi_account/".$who->personID);
         } else {
-            if($pmiID) {
+            if($pmiID > 0) {
                 request()->session()->flash('alert-danger', trans_choice('messages.instructions.pmiID_not_found', $pmiID, ['pmiID' => $pmiID]));
             } else {
-                request()->session()->flash('alert-danger', trans_choice('messages.instructions.pmiID_not_found', $pmiID, ['pmiID' => $pmiID, 'email' => $email]));
+                request()->session()->flash('alert-danger', trans_choice('messages.instructions.pmiID_not_found', 0, ['email' => $email]));
             }
             return redirect()->back();
         }

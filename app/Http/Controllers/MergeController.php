@@ -35,18 +35,18 @@ class MergeController extends Controller
         ];
     }
 
-    /*
-     * showMerge function
-     * @param: $letter
-     * @param: $id1?
-     * @param: $id2?
+    /**
+     * show function
+     * @param $letter
+     * @param null $id1
+     * @param null $id2
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      *
      * 1. If no $id given, give a way to select one (by PMI ID, or personID, lastName
      * 2. Once we're working with a $person, give a way to see the potential merges
      * 3. With merge candidates selected, give the ability to select what wins
      *    think about potentially different merge scenarios
      * 4. Also merge the associated user records
-     *
      */
     public function show($letter, $id1 = null, $id2 = null)
     {
@@ -90,13 +90,12 @@ class MergeController extends Controller
         return view('v1.auth_pages.organization.merge', compact('model1', 'letter', 'collection', 'model2'));
     }
 
-    /*
+    /**
      * getModel: gets model(s) specified by $letter -> class
      *           This is used to build the merge form that is displayed for whatever models will be merged.
-     * @param: $letter
-     * @param: $model1
-     * @param: $model2 (sometimes)
-     *
+     * @param Request $request
+     * @param: $class as represented by $letter
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector : $string
      */
     public function getmodel(Request $request, $letter)
     {
@@ -159,7 +158,7 @@ class MergeController extends Controller
         return redirect($string);
     }
 
-    /*
+    /**
      * Just like getmodel, for the group-registration page
      * @param: string
      */
@@ -179,7 +178,7 @@ class MergeController extends Controller
         ));
     }
 
-    /*
+    /**
      * store function for surviving model.  Should probably be update
      * @param: $letter
      * @param: $model1
@@ -372,9 +371,10 @@ class MergeController extends Controller
         return view('v1.auth_pages.organization.merge');
     }
 
-    /*
+    /**
      * query function - the function that drives the typeahead field search/response
-     * @param: $request
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function query(Request $request)
     {

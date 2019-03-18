@@ -576,8 +576,8 @@ return [
              :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>",
         'pmi_emails' => "The following email address(es) are associated with this account: <ul>:emails</ul><p></p>" .
             "If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email",
-        'pmiID_not_found' => "{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|
-                              [1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
+        'pmiID_not_found' => "{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|".
+                              "[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
         'postRegInfo' => "Anything added here will be displayed and emailed to attendees AFTER they've registered.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",
@@ -840,7 +840,7 @@ return [
         'addr1' => 'Address 1',
         'addr1&2' => 'Address 1 & 2',
         'addr2' => 'Address 2',
-        'addrs' => "{0} There are no addresses associated with this profile.|[1,Inf] The following addresses are associated with this profile.",
+        'addrs' => "{0}There are no addresses associated with this profile.|[1,Inf] The following addresses are associated with this profile.",
         'cant_delete' => "You cannot delete this address because it is your primary address (and login).  Change the login address above first.",
         'change' => 'Change ',
         'city' => 'City',

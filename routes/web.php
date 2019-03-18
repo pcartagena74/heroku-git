@@ -67,7 +67,7 @@ Route::get('/password/forgotmodal', 'Auth\ForgotPasswordController@showLinkReque
 Route::get('/events/{eventslug}/{override?}', 'EventController@show')->name('display_event');
 Route::post('/discount/{event}', 'EventDiscountController@showDiscount')->name('check_discount');    // Ajax
 Route::post('/eLookup/{email}', 'EmailController@show')->name('lookup_email');                       // Ajax
-Route::post('/oLookup/{pmiid}', 'PersonController@oLookup')->name('lookup_pmiid');                   // Ajax
+Route::post('/oLookup/{pmiid}', 'PublicFunctionController@oLookup')->name('lookup_pmiid');           // Ajax
 
 // Public Session-related Routes
 Route::get('/rs/{session}', 'RegSessionController@show')->name('self_checkin');
