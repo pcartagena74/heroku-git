@@ -98,7 +98,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
     <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
         <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
-            Category: {{ $category->catTXT }}</div>
+            {{ trans('messages.fields.category') }}: {{ $category->catTXT }}</div>
 
         @if($event->valid_earlyBird())
             <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
@@ -127,6 +127,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
             <div class="col-md-12 col-sm-12 col-xs-12">
         @endif
 
+                @if(count($bundles) + count($tickets) > 0)
                     <div id="not" class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                         <table id="datatable" class="table table-striped jambo_table">
                             <thead id="cf">
@@ -277,6 +278,9 @@ $mbr_price = trans('messages.instructions.mbr_price');
                     @if($errors->all())
                         @include('v1.parts.error')
                     @endif
+                @else
+                    <b class="red">{{ trans('messages.headers.no_tickets') }}</b>
+                @endif
                 </div>
 
                 @if($event->hasTracks)
