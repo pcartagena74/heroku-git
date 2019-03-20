@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\EventSession;
 use App\Person;
+use Carbon\Carbon;
 
 class Event extends Model
 {
@@ -64,13 +65,13 @@ class Event extends Model
     public static function events_this_year()
     {
         return static::whereYear('eventStartDate', '=', date('Y'))
-            ->whereDate('eventStartDate', '<', \Carbon\Carbon::now())
+            ->whereDate('eventStartDate', '<', Carbon::now())
             ->select('eventID')
             ->get();
     }
 
     public function valid_earlyBird() {
-        $today = \Carbon\Carbon::now();
+        $today = Carbon::now();
         if($this->earlyBirdDate !== null && $this->earlyBirdDate->gte($today)){
             return 1;
         } else {
@@ -79,12 +80,15 @@ class Event extends Model
     }
 
     public function ok_to_display() {
-        $today = \Carbon\Carbon::now();
+        /*
+        $today = Carbon::now();
         $max = Ticket::select('availabilityEndDate')
             ->where('eventID', $this->eventID)
             ->orderBy('availabilityEndDate', 'desc')
             ->first();
-        if($this->isActive && $max->availabilityEndDate->gte($today)){
+        //if($this->isActive && $max->availabilityEndDate->gte($today)){
+        */
+        if($this->isActive){
             return 1;
         } else {
             return 0;
@@ -92,7 +96,7 @@ class Event extends Model
     }
 
     public function checkin_time() {
-        $today = \Carbon\Carbon::now();
+        $today = Carbon::now();
         //dd($this->eventStartDate->diffInDays($today));
         if(($this->eventStartDate->diffInDays($today) <= 2
                 && $this->eventStartDate->diffInDays($today) >= 0)

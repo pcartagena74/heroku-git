@@ -411,6 +411,7 @@ return [
         'net' => 'Net',
         'net_list' => 'Networking List',
         'no_discount' => "Prevent Discount",
+        'no_tickets' => "Tickets are no longer available for this event.",
         'note' => 'Note',
         'notify_user' => 'Notify user at above email address?',
         'number' => "Number",
