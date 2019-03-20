@@ -39,7 +39,7 @@ if($event->hasTracks){
 
 // This is a rejiggering of the order by which tracks/sessions could be displayed.
 // I don't think I ever made use of it.
-//
+
 if ($event->hasTracks && !$event->isSymmetric) {
     $mda = array('days' => $event->confDays, 'sym' => $event->isSymmetric, 'tracks' => count($tracks));
     for ($d = 1; $d <= $event->confDays; $d++) {
@@ -214,13 +214,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                             @foreach($tickets as $ticket)
                                 <tr>
                                     <td style="text-align: center; width:15px;">
-                                        {{--
-                                        <input type="radio" name="ticketID" value="{{ $ticket->ticketID }}"
-                                               required data-error="{{ trans('messages.errors.options') }}">
-                                        <div class="help-block with-errors"></div>
 
-                                        placeholder="  {{ trans('messages.fields.quantity') }}"
-                                        --}}
                                         <div class="form-group">
                                             <input type="number" pattern="[0-5]" name="q-{{ $ticket->ticketID }}" id="q-{{ $ticket->ticketID }}"
                                                    style="width:30px" size="2" value="0" required data-error="{{ trans('messages.errors.numeric') }}">
@@ -257,18 +251,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                     <td data-title="{{ trans('messages.fields.availability') }}">{{ $ticket->availabilityEndDate->format('n/j/Y g:i A') }}</td>
                                 </tr>
                             @endforeach
-                            {{--
-                            <tr>
-                                <td colspan="5">
-                                    <div class="form-group">
-                                        <input type="number" pattern="[0-5]" name="quantity"
-                                               placeholder="  {{ trans('messages.fields.quantity') }}" required
-                                               data-error="{{ trans('messages.errors.numeric') }}">
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                </td>
-                            </tr>
-                            --}}
+
                             </tbody>
                         </table>
                     </div>
