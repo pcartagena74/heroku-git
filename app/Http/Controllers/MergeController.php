@@ -25,7 +25,7 @@ class MergeController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['query']]);
 
         $this->models = [
             'o' => 'Org',
@@ -169,6 +169,7 @@ class MergeController extends Controller
         $person = Person::with('orgperson')
             ->where('personID', $personID)
             ->first();
+        $person->load('orgperson');
         return json_encode(array('status' => 'success',
             'personID' => $person->personID,
             'firstName' => $person->firstName,

@@ -59,8 +59,12 @@ class Person extends Model
 
     public function orgperson()
     {
+        // return $this->orgpeeps->where('org-person.orgID', '=', $this->defaultOrgID)->first();
         return $this->belongsTo(OrgPerson::class, 'personID', 'personID')
-            ->where('org-person.orgID', '=', $this->defaultOrgID);
+            ->where([
+                ['orgID', $this->defaultOrgID],
+                ['personID', $this->personID]
+            ]);
     }
 
     public function orgpeeps()

@@ -26,6 +26,7 @@ class DownloadController extends Controller
         $nametags[] = $tag_headers;
 
         foreach ($regs as $r) {
+            $r->person->load('orgperson');
             $nametags[] = array($r->regID, $r->person->prefName, $r->person->lastName, $r->isFirstEvent, $r->person->login,
                 $r->ticket->ticketLabel, $r->person->compName, $r->person->title, $r->person->indName,
                 $r->person->allergenInfo . "; " . $r->person->allergenNote, $r->person->orgperson->OrgStat1, $r->isAuthPDU,
@@ -60,6 +61,7 @@ class DownloadController extends Controller
         $nametags[] = $tag_headers;
 
         foreach ($regs as $r) {
+            $r->person->load('orgperson');
             $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, // $r->isFirstEvent, $r->person->login,
                 // $r->ticket->ticketLabel, $r->person->compName, $r->person->title, $r->person->indName,
                 // $r->person->allergenInfo . "; " . $r->person->allergenNote,

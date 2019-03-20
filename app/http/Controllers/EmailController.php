@@ -88,6 +88,9 @@ class EmailController extends Controller
         if(null !== $e){
             $u = User::where('id', '=', $e->personID)->first();
             $p = Person::with('orgperson')->where('personID', '=', $e->personID)->first();
+            if(null === $p->orgperson){
+                $p->load('orgperson');
+            }
             return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,
                                'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()])));
         } else {

@@ -41,6 +41,7 @@
 --}}
 <script src="https://js.stripe.com/v3/"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/js/custom.min.js"></script>
+{{--
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -49,4 +50,4 @@
     ga('create', 'UA-96023245-1', 'auto');
     ga('send', 'pageview');
 </script>
-
+--}}
