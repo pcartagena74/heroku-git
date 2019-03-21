@@ -611,6 +611,8 @@ class EventController extends Controller
             return back()->withInput();
         }
 
+        $original = $event->getOriginal();
+
         $this->currentPerson = Person::find(auth()->user()->id);
         $input_loc = request()->input('locationID');
         // check to see if form loc == saved loc
@@ -719,11 +721,13 @@ class EventController extends Controller
         $event->updaterID = $this->currentPerson->personID;
         $today = Carbon::now();
 
-        // Edit the default ticket for the event
-        $tkt = Ticket::where('eventID', $event->eventID)->first();
-        $tkt->availabilityEndDate = $event->eventStartDate;
-        $tkt->earlyBirdEndDate = $today;
-        $tkt->save();
+        // Edit the default ticket for the event IF the end date changed.
+        if($original['eventEndDate'] == $event->eventEndDate){
+            $tkt = Ticket::where('eventID', $event->eventID)->first();
+            $tkt->availabilityEndDate = $event->eventStartDate;
+            $tkt->earlyBirdEndDate = $today;
+            $tkt->save();
+        }
 
         $event_discounts = EventDiscount::where('eventID', $event->eventID)->get();
         if ($event->eventStartDate > $today && !$event_discounts) {
