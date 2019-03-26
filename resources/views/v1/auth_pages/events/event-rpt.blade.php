@@ -43,8 +43,23 @@ if ($event->eventEndDate->gte($today)) {
 } else {
     $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'),
         trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
-    foreach ($tkts as $t) {
-        array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
+
+    // This keeps the fields editable, even after the event, for a Developer
+    if (Entrust::hasRole('Developer')) {
+        foreach ($tkts as $t) {
+            $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
+                '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
+
+            $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
+                "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
+
+            // $t->regCount, $t->waitCount
+            array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $rc, $wc]);
+        }
+    } else {
+        foreach ($tkts as $t) {
+            array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
+        }
     }
 }
 
@@ -335,13 +350,13 @@ $es = $event->default_session();
                             @endforeach
                         </tr>
                         @for($j=1;$j<=$event->confDays;$j++)
-                            <?php
+<?php
                             $z = EventSession::where([
                                 ['confDay', '=', $j],
                                 ['eventID', '=', $event->eventID]
                             ])->first();
                             $y = Ticket::find($z->ticketID);
-                            ?>
+?>
 
                             <tr>
                                 <th style="text-align:center; color: yellow; background-color: #2a3f54;"
@@ -350,7 +365,7 @@ $es = $event->default_session();
                                 </th>
                             </tr>
                             @for($x=1;$x<=5;$x++)
-                                <?php
+<?php
                                 // Check to see if there are any events for $x (this row)
                                 $s = EventSession::where([
                                     ['eventID', $event->eventID],
@@ -359,18 +374,18 @@ $es = $event->default_session();
                                 ])->first();
 
                                 // As long as there are any sessions, the row will be displayed
-                                ?>
+?>
                                 @if($s !== null)
                                     <tr>
                                         @foreach($tracks as $track)
-                                            <?php
+<?php
                                             $s = EventSession::where([
                                                 ['trackID', $track->trackID],
                                                 ['eventID', $event->eventID],
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
-                                            ?>
+?>
                                             @if($s !== null)
                                                 @if($tracks->first() == $track || !$event->isSymmetric)
 
@@ -384,7 +399,7 @@ $es = $event->default_session();
                                                 @endif
                                                 <td colspan="2" style="text-align:left; min-width:150px;
                                                         width: {{ $width }}%; max-width: {{ $mw }}%;">
-                                                    <?php
+<?php
                                                     // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
                                                     $sTotal = 0;
                                                     $sRegs =
@@ -394,7 +409,7 @@ $es = $event->default_session();
                                                                 ['er.eventID', $event->eventID]
                                                             ])->select(DB::raw('er.discountCode, count(*) as cnt'))
                                                             ->groupBy('er.discountCode')->get();
-                                                    ?>
+?>
                                                     <ul>
                                                         @foreach($sRegs as $sr)
                                                             <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
