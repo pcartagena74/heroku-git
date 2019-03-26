@@ -524,7 +524,7 @@ class EventController extends Controller
         $mainSession->trackID = 0;
         $mainSession->eventID = $event->eventID;
         $mainSession->ticketID = $tkt->ticketID;
-        $mainSession->sessionName = 'Default Session';
+        $mainSession->sessionName = 'deff_sess';
         $mainSession->confDay = 0;
         $mainSession->start = $event->eventStartDate;
         $mainSession->end = $event->eventEndDate;
@@ -847,7 +847,11 @@ class EventController extends Controller
                 $ticket->earlyBirdPercent = $value;
             }
             $ticket->updaterID = $this->currentPerson->personID;
-            $ticket->save();
+
+            try{
+                $ticket->save();
+            }catch(\Exception $exception){
+            }
         }
         return redirect('/event-tickets/' . $event->eventID);
     }

@@ -257,7 +257,8 @@ class RegistrationController extends Controller
             $regBy = $this->currentPerson->firstName . " " . $this->currentPerson->lastName;
         } else {
             // No user logged in; checking to see if first email is in the database;
-            // Should force a login -- return to form with input saved.  Assumptive RISK re: first
+            // Should force a login -- return to form with input saved.
+            // Assumptive RISK re: first login mitigated through javascript on form
             $authorID = 1; $regBy = null;
             $email = strtolower(request()->input('login'));
             $chk = Email::where('emailADDR', '=', $email)->first();
