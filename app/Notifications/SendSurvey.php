@@ -53,9 +53,11 @@ class SendSurvey extends Notification
         $o = Org::find($this->person->defaultOrgID);
         $name = $o->orgName;
         $ename = $this->event->event_type->etName;
+        $date = $this->event->eventStartDate->format('F jS');
+
         return (new MailMessage)
             ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $ename]))
-            ->line(trans('messages.notifications.SS.line1'))
+            ->line(trans('messages.notifications.SS.line1', ['name' => $ename, 'date' => $date]))
             ->line(trans('messages.notifications.SS.line2'))
             ->action(trans('messages.notifications.SS.action'), env('APP_URL')."/rs_survey/" . $this->rs->id)
             ->line(trans('messages.notifications.thanks', ['org' => $name]));

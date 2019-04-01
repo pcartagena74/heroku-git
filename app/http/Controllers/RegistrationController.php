@@ -539,14 +539,14 @@ class RegistrationController extends Controller
                 if($reg->discountCode == 'N/A'){
                     $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $request->header('user-agent')";
                     $reg->subtotal = $reg->origcost;
-                    $subtotal = $origcost;
+                    $subtotal = $reg->origcost;
                     if($rf->cost == 0){
                         $rf->cost = $subtotal;
                     }
                 } elseif($dc->percent != 100){
                     $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $request->header('user-agent')";
-                    $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost);
-                    $subtotal = $origcost - ($dc->percent * $origcost);
+                    $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
+                    $subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
                     if($rf->cost == 0){
                         $rf->cost = $subtotal;
                     }
@@ -557,6 +557,16 @@ class RegistrationController extends Controller
             $subcheck += $subtotal;
             $sumtotal += $origcost;
         }
+
+        // Future logic to potentially split off waitlist tickets from non-waitlist tickets would probably go here.
+        // 1. Check if all tickets associated with registration records are in waitlist status
+        // 2. If yes, do what's here.  Otherwise:
+        //    a. split tickets into wait and non.
+        //    b. make a $newRF record that will be for NON-waitlist
+        //    c. Associate non-waitlist reg records with $newRF
+        //    d. Complete $0 waitlist transaction and set a flash message with link
+        //    e. Redirect to confirm_registration pointing to $newRF for purchase
+
 
         if($subcheck == $total){
             $rf->discountAmt = $sumtotal - $subcheck;
