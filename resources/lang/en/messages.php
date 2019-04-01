@@ -738,8 +738,8 @@ return [
         // Send Survey
         'SS' => [
             'subject' => "Survey for :org :event_type",
-            'line1' => "Thank you for attending our event.",
-            'line2' => "Please spend 5 minutes to give us your feedback on the event.",
+            'line1' => "Thank you for attending our event, :name, on :date.",
+            'line2' => "Please spend 5 minutes to give us your feedback on the event and its speaker(s).",
             'action' => "Take Survey",
             'line3' => "",
             'post_mail_msg' => ":count emails with surveys sent to attendees.",
