@@ -16,6 +16,8 @@ function truncate_saw($string, $limit, $break = ".", $pad = "...") {
 
 if($etID == 99){
     $event_tag = trans('messages.codes.etID99');
+} elseif(preg_match('/,/', $etID)){
+    $event_tag = $tag;
 } else {
     $event_tag = $tag->etName;
 }

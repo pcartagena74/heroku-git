@@ -135,3 +135,15 @@ function check_exists($model, $var_array){
 function plink($regID, $personID){
     return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . "</a>";
 }
+
+/**
+ * translate: array_map function to apply a trans_choice if a translation exists for the term
+ */
+function et_translate($term){
+    $x = 'messages.event_types.';
+    if(Lang::has($x.$term)){
+        return trans_choice($x.$term, 1);
+    } else {
+        return $term;
+    }
+}
