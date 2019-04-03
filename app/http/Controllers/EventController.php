@@ -910,41 +910,64 @@ class EventController extends Controller
             $message = trans('messages.instructions.no_org');
             return view('v1.public_pages.error_display', 'message');
         }
-        $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
 
-        if ($etID == 1) {
+        // Check to see if $etID is sent as a comma-separated list of etIDs
+        if(preg_match('/,/', $etID)){
+            // change value of $etID to be the list of things if it's a list
+            $etID_array = explode(",", $etID);
+            $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
+            $tag = array_map("et_translate", $tag);
+            $tag = implode(" or ", (array)$tag);
+
             $events = Event::where([
                 ['orgID', $orgID],
                 ['isActive', 1],
                 ['isPrivate', 0],
             ])
-                ->whereIn('eventTypeID', [3, $etID])
-                ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
-                ->with('location')
-                ->orderBy('eventStartDate')
-                ->get();
-        } elseif($etID==99) {
-            $events = Event::where([
-                ['orgID', $orgID],
-                ['isActive', 1],
-                ['isPrivate', 0],
-            ])
+                ->whereIn('eventTypeID', $etID_array)
                 ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
                 ->with('location')
                 ->orderBy('eventStartDate')
                 ->get();
         } else {
-            $events = Event::where([
-                ['orgID', $orgID],
-                ['eventTypeID', $etID],
-                ['isActive', 1],
-                ['isPrivate', 0],
-            ])
-                ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
-                ->with('location')
-                ->orderBy('eventStartDate')
-                ->get();
+            $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
+            $tag = trans_choice('messages.event_types.'.$tag, 1);
+
+            if ($etID == 1) {
+                $events = Event::where([
+                    ['orgID', $orgID],
+                    ['isActive', 1],
+                    ['isPrivate', 0],
+                ])
+                    ->whereIn('eventTypeID', [3, $etID])
+                    ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
+                    ->with('location')
+                    ->orderBy('eventStartDate')
+                    ->get();
+            } elseif($etID == 99) {
+                $events = Event::where([
+                    ['orgID', $orgID],
+                    ['isActive', 1],
+                    ['isPrivate', 0],
+                ])
+                    ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
+                    ->with('location')
+                    ->orderBy('eventStartDate')
+                    ->get();
+            } else {
+                $events = Event::where([
+                    ['orgID', $orgID],
+                    ['eventTypeID', $etID],
+                    ['isActive', 1],
+                    ['isPrivate', 0],
+                ])
+                    ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
+                    ->with('location')
+                    ->orderBy('eventStartDate')
+                    ->get();
+            }
         }
+
         $cnt = count($events);
 
         if($override){
