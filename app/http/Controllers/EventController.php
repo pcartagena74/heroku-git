@@ -29,6 +29,7 @@ use Spatie\Referer\Referer;
 use App\EventSession;
 use Stripe\Card;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Lang;
 
 
 class EventController extends Controller
@@ -931,7 +932,11 @@ class EventController extends Controller
                 ->get();
         } else {
             $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
-            $tag = trans_choice('messages.event_types.'.$tag, 1);
+            if(Lang::has($tag->etName)){
+                $tag->etName = trans_choice('messages.event_types.'.$tag->etName, 1);
+            } else {
+                // $tag = $tag->etName;
+            }
 
             if ($etID == 1) {
                 $events = Event::where([
