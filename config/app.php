@@ -184,6 +184,7 @@ return [
         \SocialiteProviders\Manager\ServiceProvider::class,
         //Spatie\Activitylog\ActivitylogServiceProvider::class,
         Spatie\LinkChecker\LinkCheckerServiceProvider::class,
+        //\Spatie\CalendarLinks\Link::class,
         Spatie\Referer\RefererServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 

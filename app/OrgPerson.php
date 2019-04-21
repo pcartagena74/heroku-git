@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -10,6 +11,8 @@ class OrgPerson extends Model
     use LogsActivity;
     use SoftDeletes;
     protected $primaryKey = 'personID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
 
     public $incrementing = false;
     protected $dates = [

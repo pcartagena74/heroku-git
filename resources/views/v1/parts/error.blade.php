@@ -14,16 +14,18 @@
 <div class="form-group">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
         @if(Session::has('alert-'.$msg))
-            <p class="alert alert-{{ $msg }}">{!!  Session::get('alert-' . $msg) !!}
+            <div class="alert alert-{{ $msg }}">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            </p>
+                {!!  Session::get('alert-' . $msg) !!}
+            </div>
         @endif
     @endforeach
     @if(count($errors))
         @foreach ($errors->all() as $e)
-            <p class="alert alert-danger">{{ $e }}
+            <div class="alert alert-danger">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            </p>
+                {!! $e !!}
+            </div>
         @endforeach
     @endif
 </div>

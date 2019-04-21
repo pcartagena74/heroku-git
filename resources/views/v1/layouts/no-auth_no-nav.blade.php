@@ -49,12 +49,12 @@
             <form class="navbar-form navbar-right" method="post" action="{{ env('APP_URL') }}/login" id="login-form">
                 {{ csrf_field() }}
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                    @if ($errors->has('email'))
-                        <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
-                    @endif
                     <input type="email" placeholder="Email Address" class="form-control input-sm" name="email"
                            id="user_email"
                            value="{{ old('email') }}" required autofocus>
+                    @if ($errors->has('email'))
+                        <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
+                    @endif
                 </div>
                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                     @if ($errors->has('password'))

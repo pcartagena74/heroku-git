@@ -151,24 +151,8 @@ class EventController extends Controller
 
         $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
-/*
-        $current_sql = "SELECT e.eventID, e.eventName, date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF,
-                               date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate, e.eventEndDate,
-                               count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
-                        FROM `org-event` e
-                        LEFT JOIN `event-registration` er ON er.eventID=e.eventID
-                                  AND er.regStatus != 'In Progress'
-                                  AND er.deleted_at IS NULL
-                        LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
-                        WHERE e.orgID = ?
-                            AND eventEndDate >= NOW() AND e.deleted_at is null
-                        GROUP BY e.eventID, e.eventName, e.eventStartDate, e.eventEndDate, e.isActive, e.eventStartDate
-                        ORDER BY e.eventStartDate ASC";
 
-        $current_events = DB::select($current_sql, [$this->currentPerson->defaultOrgID]);
-*/
-
-        //This is the equivalent of the sql script above.  Just need to add 7-10 days to the start date
+        // Get a list of current events, showing events that have not yet ended.
         $current_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate',
                                         'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
             ->where([
@@ -225,12 +209,22 @@ class EventController extends Controller
     public function event_copy($param)
     {
         $today = Carbon::now();
-        $event = Event::where('eventID', '=', $param)
-            ->orWhere('slug', '=', $param)
-            ->firstOrFail();
+        try {
+            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function($query) use ($param){
+                    return $query->where('eventID', $param);
+                },
+                function($query) use ($param){
+                    return $query->where('slug', $param);
+                }
+            )->firstOrFail();
+        } catch (\Exception $exception) {
+            $message = trans('messages.warning.inactive_event_url');
+            return view('v1.public_pages.error_display', compact('message'));
+        }
 
         $e = $event->replicate();
-        $e->slug = 'temporary_slug_placeholder';
+        $e->slug = 'temp_' . rand();
         $e->isActive = 0;
         $e->eventStartDate = $today;
         $e->eventEndDate = $today;
@@ -247,7 +241,7 @@ class EventController extends Controller
         $exLoc = Location::find($event->locationID);
         $page_title = trans('messages.fields.edit_copy');
 
-        // Create a stub for the default ticket for the event
+        // CHANGE: get the ticket(s) associated with original event, replicate, and change eventStartDate & earlyBirdEndDate
         $label                    = Org::find($this->currentPerson->defaultOrgID);
         $tkt                      = new Ticket;
         $tkt->ticketLabel         = $label->defaultTicketLabel;
@@ -257,7 +251,7 @@ class EventController extends Controller
         $tkt->earlyBirdEndDate    = Carbon::now();
         $tkt->save();
 
-        // Create a mainSession for the default ticket for the event
+        // CHANGE: get the session(s) associated with original event, replicate, and change the ticketID, start, end, creator/updater
         $mainSession = new EventSession;
         $mainSession->trackID = 0;
         $mainSession->eventID = $event->eventID;
@@ -282,6 +276,7 @@ class EventController extends Controller
         $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
             ['discountCODE', "<>", '']])->get();
 
+        // CHANGE: decide if original event's EventDiscounts should be copied instead.
         foreach ($orgDiscounts as $od) {
             $ed = new EventDiscount;
             $ed->orgID = $od->orgID;
@@ -800,6 +795,9 @@ class EventController extends Controller
         if ($event->isActive == 1) {
             $event->isActive = 0;
         } else {
+            if($event->hasTracks){
+                1; // determine what checks should be performed
+            }
             $event->isActive = 1;
         }
         $event->updaterID = auth()->user()->id;

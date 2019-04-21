@@ -25,13 +25,14 @@ if(!isset($topBits)){
                   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="container body">
-    <div class="main_container">
+    <div class="main_container bit">
         @include('v1.parts.nav-left')
         @include('v1.parts.nav-top')
         <div class="right_col" role="main">
             @if(Session::has('become'))
                 @include('v1.parts.become_notice')
             @endif
+                @include('v1.parts.error')
             @if($topBits)
                 <div class="row tile_count">
                     @foreach($topBits as $tdata)

@@ -14,6 +14,13 @@ class EventSessionController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * @param EventSession $es
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector
+     * @throws \Exception
+     *
+     * Sessions get destroyed when removed via the session editing screen
+     */
     public function destroy(EventSession $es)
     {
         $event = Event::find($es->eventID);
@@ -32,6 +39,14 @@ class EventSessionController extends Controller
             $es->delete();
         }
 
+        return redirect('/tracks/' . $event->eventID);
+    }
+
+    public function update(EventSession $es){
+        $event = Event::find($es->eventID);
+        $es->deleted_at = null;
+        $es->updaterID = auth()->user()->id;
+        $es->save();
         return redirect('/tracks/' . $event->eventID);
     }
 }

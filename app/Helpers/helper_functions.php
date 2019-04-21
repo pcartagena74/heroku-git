@@ -82,7 +82,7 @@ function extract_images($html, $orgID){
  *                      + op: PMI ID
  */
 function check_exists($model, $var_array){
-    $details = null;
+    $details = "<ul>";
     switch ($model){
         case 'p':
             list($first, $last, $login) = $var_array;
@@ -95,13 +95,14 @@ function check_exists($model, $var_array){
                     $q->where('emailADDR', '=', $login);
                 })->get();
             if(count($p) > 0){
-                $details = "<ul>";
+                $details .= "<li>$first, $last, $login</li>";
                 foreach($p as $x){
-                    $details .= "<li>$x->firstName, $x->lastName, $x->login</li>";
+                    $existing = trans('messages.errors.existing_account', ['f' => $x-firstName, 'l' => $x->lastName, 'e' => $x->login]);
+                    $details .= "<li>$existing</li>";
                 }
                 $details .= "</ul>";
-                dd($details);
-                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model), ['details' => $details]);
+
+                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                 return 1;
             }
             break;
@@ -109,16 +110,28 @@ function check_exists($model, $var_array){
             list($email) = $var_array;
             $e = Email::where('emailADDR', '=', $email)->first();
             if(null !== $e){
-                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model), ['details' => $details]);
+                $p = Person::find($e->personID);
+                $details .= '<li>' . $email . "</li>";
+                $existing = trans('messages.errors.existing_account', ['f' => $p-firstName, 'l' => $p->lastName, 'e' => $p->login]);
+                $details .= "<li>$existing</li>";
+                $details .= "</ul>";
+                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                 return 1;
             }
             break;
         case 'op':
             list($pmiID) = $var_array;
-            $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
-            if(null !== $op){
-                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model), ['details' => $details]);
-                return 1;
+            if($pmiID !== null){
+                $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
+                if(null !== $op){
+                    $p = Person::find($op->personID);
+                    $details .= '<li>' . $op->OrgStat1 . "</li>";
+                    $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
+                    $details .= "<li>$existing</li>";
+                    $details .= "</ul>";
+                    request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                    return 1;
+                }
             }
             break;
     }
