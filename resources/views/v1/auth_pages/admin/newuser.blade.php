@@ -18,32 +18,44 @@ $currentOrg = $org;
     @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
         || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
-        @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+        @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
         {!! Form::open(array('url' => env('APP_URL').'/newuser', 'method' => 'post')) !!}
 
-        <div class="form-group col-xs-12">
+        <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
             <div class="col-xs-12">
             {!! Form::label('email', trans('messages.fields.email'), array('class' => 'control-label')) !!}
-            {!! Form::text('email', null, array('class' => 'form-control input-sm', 'required')) !!}
+            {!! Form::text('email', old('email'), array('class' => 'form-control input-sm', 'required', 'autofocus')) !!}
+                @if ($errors->has('email'))
+                    <span class="help-block red"><strong>{{ $errors->first('email') }}</strong></span>
+                @endif
             </div>
         </div>
 
-        <div class="form-group col-xs-12">
+        <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
             <div class="col-xs-6">
             {!! Form::label('firstName', trans('messages.fields.firstName'), array('class' => 'control-label')) !!}
-            {!! Form::text('firstName', null, array('class' => 'form-control input-sm', 'required')) !!}
+            {!! Form::text('firstName', old('firstName'), array('class' => 'form-control input-sm', 'required')) !!}
+                @if ($errors->has('firstName'))
+                    <span class="help-block red"><strong>{{ $errors->first('firstName') }}</strong></span>
+                @endif
             </div>
             <div class="col-xs-6">
                 {!! Form::label('lastName', trans('messages.fields.lastName'), array('class' => 'control-label')) !!}
-                {!! Form::text('lastName', null, array('class' => 'form-control input-sm', 'required')) !!}
+                {!! Form::text('lastName', old('lastName'), array('class' => 'form-control input-sm', 'required')) !!}
+                @if ($errors->has('lastName'))
+                    <span class="help-block red"><strong>{{ $errors->first('lastName') }}</strong></span>
+                @endif
             </div>
         </div>
 
-        <div class="form-group col-xs-12">
+        <div class="form-group col-xs-12{{ $errors->has('password') ? ' has-error' : '' }}">
             <div class="col-xs-6">
                 {!! Form::label('password', trans('messages.fields.password'), array('class' => 'control-label')) !!}
                 {!! Form::text('password', null, array('class' => 'form-control input-sm', 'required')) !!}
+                @if ($errors->has('password'))
+                    <span class="help-block red"><strong>{{ $errors->first('password') }}</strong></span>
+                @endif
             </div>
             <div class="col-xs-6">
                 {!! Form::label('password_confirmation', trans('messages.headers.pass_ver'), array('class' => 'control-label')) !!}
@@ -51,10 +63,13 @@ $currentOrg = $org;
             </div>
         </div>
 
-        <div class="form-group col-xs-12">
+        <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
             <div class="col-xs-12">
                 {!! Form::label('pmiID', trans('messages.fields.pmi_id'), array('class' => 'control-label')) !!}
-                {!! Form::text('pmiID', null, array('class' => 'form-control input-sm', 'placeholder' => trans('messages.headers.opt'))) !!}
+                {!! Form::text('pmiID', old('pmiID'), array('class' => 'form-control input-sm', 'placeholder' => trans('messages.headers.opt'))) !!}
+                @if ($errors->has('pmiID'))
+                    <span class="help-block red"><strong>{{ $errors->first('pmiID') }}</strong></span>
+                @endif
             </div>
         </div>
 

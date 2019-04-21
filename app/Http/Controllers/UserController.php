@@ -10,6 +10,7 @@ use App\Email;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\NewUserAcct;
+use DB;
 
 class UserController extends Controller
 {
@@ -74,7 +75,7 @@ class UserController extends Controller
                 'password' => 'required|min:6|confirmed',
             ]);
             if ($validator->fails()) {
-                return back()->withErrors($validator);
+                return back()->withErrors($validator)->withInput();
             } else {
                 $make_pass = 1;
             }
@@ -92,10 +93,12 @@ class UserController extends Controller
 
         if(check_exists('p', array($firstName, $lastName, $email))
             || check_exists('e', array($email)) || check_exists('op', array($pmiID))){
+            // return redirect(env('APP_URL')."/newuser/create");
             return back()->withInput();
         }
 
         try {
+            DB::beginTransaction();
             $p = new Person;
             $p->firstName = $firstName;
             $p->prefName = $firstName;
@@ -133,8 +136,10 @@ class UserController extends Controller
             $e->creatorID = $this->currentPerson->personID;
             $e->updaterID = $this->currentPerson->personID;
             $e->save();
+            DB::commit();
         } catch(\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
+            DB::rollBack();
             return back()->withInput();
         }
 
@@ -143,7 +148,8 @@ class UserController extends Controller
         }
 
         // Send back to same screen but with success message
-        request()->session()->flash('alert-success', trans('messages.messages.user_created'));
+        $button = "<a class='btn btn-xs btn-primary' href='" . env('APP_URL') . "/profile/$p->personID'><i class='far fa-id-card'></i></a>";
+        request()->session()->flash('alert-success', trans('messages.messages.user_created', ['profile_button' => $button]));
         return redirect(env('APP_URL')."/newuser/create");
     }
 

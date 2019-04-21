@@ -193,6 +193,7 @@ Route::patch('/event/{event}', 'EventController@update')->name('event_update');
 Route::delete('/event/{event}', 'EventController@destroy');
 Route::get('/eventdiscount/{event}', 'EventDiscountController@show');
 Route::post('/eventdiscount', 'EventDiscountController@store');
+Route::post('/eventdiscounts/{edID}', 'EventDiscountController@update');
 Route::post('/eventdiscountfix/{event}', 'EventDiscountController@fix_defaults');                          // Ajax
 Route::delete('/eventdiscount/{id}/delete', 'EventDiscountController@destroy');
 Route::post('/eventslug/{id}', 'EventController@checkSlugUniqueness');                                     // Ajax
@@ -203,6 +204,7 @@ Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');          
 Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');                                   // Ajax
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
+Route::patch('/session/{es}', 'EventSessionController@update');
 Route::get('/eventreport/{slug}', 'RegistrationController@show');
 Route::get('/promote/{reg}', 'RegistrationController@promote');
 Route::get('/eventcopy/{slug}', 'EventCopyController@show');

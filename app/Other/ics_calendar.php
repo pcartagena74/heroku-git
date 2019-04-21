@@ -54,11 +54,12 @@ class ics_calendar
         $this->description = $org->orgName . " - " . $event->eventName;
         $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
-        $this->location    = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2  or '' . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
+        $this->location    = null; // $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2  or '' . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
         $this->uri         = env('APP_URL') . "/events/" . $event->slug;
         $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
         $this->stamp       = Carbon::now()->format('Ymd\THis');
         $this->event       = $event;
+        $this->_gen_loc_string($loc);
     }
 
     private function _escapeString($string)
@@ -70,6 +71,14 @@ class ics_calendar
     {
         ($this->o_string) ? $this->o_string : $this->_generate();
         return $this->o_string;
+    }
+
+    private function _gen_loc_string(Location $loc){
+        $this->location = $this->venue_uid . ":" . $loc->locName . "\r\n " . $loc->addr1 . "\r\n ";
+        if($loc->addr2 !== null){
+            $this->location .= $loc->addr2 . "\r\n ";
+        }
+        $this->location .= $loc->city . ", " . $loc->state . " " . $loc->zip;
     }
 
     private function _generate()
@@ -87,7 +96,7 @@ class ics_calendar
             "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\r\n".
             "LOCATION:".$this->_escapeString($this->location)."\r\n".
             "SUMMARY:".$this->_escapeString($this->description)."\r\n".
-            "DESCRIPTION:".$this->_escapeString($this->summary . "\r\n \r\n Information for Registerred Attendees:\r\n " . $this->event->postRegInfo)."\r\n".
+            "DESCRIPTION:".$this->_escapeString($this->summary . "\r\n <br> \r\n Information for Registerred Attendees: \r\n " . $this->event->postRegInfo)."\r\n".
             "URL;VALUE=URI:".$this->_escapeString($this->uri)."\r\n".
             "UID:". $this->uid ."\r\n".
             "SEQUENCE:0\r\n".

@@ -32,6 +32,7 @@ return [
         'close' => 'Close',
         'comp_reg' => 'Complete Registration',
         'delete' => 'Delete',
+        'restore' => 'Restore',
         'door' => 'Pay by Cash/Check at Door',
         'down_name_tags' => 'Download Name Tag Data',
         'down_PDU_list' => 'Download PDU Data',
@@ -79,8 +80,9 @@ return [
     'errors' => [
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'event' => 'Please select an event.',
-        'exists' => "{p}The person record cannot be created to prevent potential duplication.  See details. <br /> :details|".
-                    "{e}The email address entered already exists.|{op}The PMI ID entered already exists.",
+        'exists' => "{p}The person record cannot be created to prevent potential duplication.  See details below. <br /> :details|".
+                    "{e}The email address entered already exists. <br /> :details|{op}The PMI ID entered already exists. <br /> :details",
+        'existing_account' => 'Existing account: :f :l with login :e',
         'html_error' => "An unexpected HTML error occurred while processing your entry.  Check for a trailing &lt;p&gt;&lt;/p&gt; in the code view and remove before saving when you try again.",
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'no_receipt' => "The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
@@ -345,6 +347,7 @@ return [
         'def_label' => 'Default Ticket Label',
         'def_sess' => 'Default Session',
         'defs' => 'Event Defaults for ',
+        'deleted' => 'Deleted',
         'demos' => "Demographics & Contact Information",
         'desc' => "Description",
         'det_fd' => "Detailed Financial Data",
@@ -420,6 +423,7 @@ return [
         'organizer' => "Organizer",
         'org_disc' => 'Organizational Discount Codes',
         'opt' => "Optional",
+        'override' => "Override",
         'p_ind' => "Individual",
         'p_stu' => "Student",
         'p_ret' => "Retiree",
@@ -632,7 +636,7 @@ return [
         'survey_confirm' => "Are you sure you want to email all checked in attendees the survey?",
         'thanks' => "Thank you for using mCentric with :orgname.",
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
-        'user_created' => "The new user was created.  Go to the user's profile.",
+        'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
         'user_create_fail' => "An unknown error of some sort occurred.",
         'visit_mCentric' => "Visit mCentric",
     ],
@@ -908,7 +912,7 @@ return [
         'q5' => "What was your favorite part of the presentation?",
         'q6' => "What suggestions do you have to improve the presentation?",
         'q7' => 'OPTIONAL: Check this box and include your contact info if you would like to speak to a volunteer organizer.',
-        'complete_thanks' => "Thank you for providing session feedback.",
+        'complete_thanks' => "Thank you for providing feedback.",
     ],
 
     // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
@@ -919,6 +923,8 @@ return [
         'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",                // currency symbol
         'cur_class' => "class='far fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
         'cur_class_5x' => "class='far fa-5x fa-dollar-sign fa-fw'",         // currency symbol - class only (when tips are embedded)
+        'restore' => "<i class='fas fa-trash-restore-alt fa-fw'></i>",            // UNdelete symbol
+        'restore_class' => "class='fas fa-trash-restore-alt fa-fw'",              // UNdelete symbol - class only (when tips are embedded)
         'trash' => "<i class='far fa-trash-alt fa-fw'></i>",                // delete symbol
         'trash_class' => "class='far fa-trash-alt fa-fw'",                  // delete symbol - class only (when tips are embedded)
     ],

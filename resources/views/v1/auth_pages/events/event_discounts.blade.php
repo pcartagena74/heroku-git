@@ -29,7 +29,7 @@ $currentOrg    = $currentPerson->defaultOrg;
             ['header' => trans('messages.fields.event'). " " . trans('messages.fields.discs').": " . $event->eventName,
              'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-10 col-sm-10 col-xs-12">
-        @if(count($discount_codes)==0)
+        @if(count($discount_codes) == 0)
             @lang('messages.instructions.no_org_disc')
             <p>&nbsp;</p>
         @endif

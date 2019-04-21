@@ -30,12 +30,10 @@ class EventDiscountController extends Controller
         $current_person      = $this->currentPerson;
         $org                 = Org::find($event->orgID);
 
-        $discount_codes = DB::table('event-discounts')
-                            ->where([
+        $discount_codes = EventDiscount::where([
                                 ['orgID', $org->orgID],
                                 ['eventID', $event->eventID],
                             ])
-                            ->whereNull('deleted_at')
                             ->select('discountID', 'discountCODE', 'percent', 'flatAmt')
                             ->orderBy('discountID', 'DESC')
                             ->get();
@@ -145,6 +143,24 @@ class EventDiscountController extends Controller
     public function update(Request $request, $id)
     {
         // responds to PATCH /blah/id
+        $name = request()->input('name');
+        $value = request()->input('value');
+        if ($value === null) {
+            $value = 0;
+        }
+        $this->currentPerson = Person::find(auth()->user()->id);
+        $discount            = EventDiscount::find($id);
+
+        if ($name == 'discountCODE' . $id) {
+            $discount->discountCODE = $value;
+        } elseif ($name == 'percent' . $id) {
+            $discount->percent = $value;
+        } else {
+            // something unexpected occurred
+            dd(request()->all());
+        }
+        $discount->updaterID = $this->currentPerson->personID;
+        $discount->save();
     }
 
     public function destroy($id)

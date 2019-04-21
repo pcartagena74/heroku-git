@@ -53,7 +53,6 @@ class TrackController extends Controller
 
         // once set, now populate sessions table with some sessions for each track
 
-
         for ($d = 1; $d <= $value; $d++) {
             foreach ($tracks as $t) {
                 for ($i = 1; $i <= 5; $i++) {
@@ -128,7 +127,6 @@ class TrackController extends Controller
 
     public function updateSymmetry(Request $request, Event $event)
     {
-
         if (request()->input('isSymmetric') === null) {
             $isSymmetric = 0;
         } else {
