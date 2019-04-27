@@ -17,11 +17,17 @@ $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
 if ($event->eventTypeID == 5) { // This is a regional event so do that instead
-    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
-    $array = explode(',', $chapters->regionChapters);
+    //$chapters = $org->regionChapters; DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+    $array = explode(',', $org->regionChapters);
 } else {
-    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-    $array = explode(',', $chapters->nearbyChapters);
+    //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+    $array = explode(',', $org->nearbyChapters);
+}
+
+if($org->canSubmitPDU !== null){
+    $PDU_org_types = explode(',', $org->canSubmitPDU);
+} else {
+    $PDU_org_types = null;
 }
 
 $i = 0;
@@ -286,12 +292,14 @@ if ($event->isSymmetric && $event->hasTracks) {
                                                                                data-value="{{ $person->certifications }}"
                                                                                data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a><br />
 
-
+                                    @if(in_array($event->eventTypeID, $PDU_org_types))
                                     @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
                                     <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
                                                                                 data-pk="{{ $reg->regID }}"
                                                                                 data-value="{{ $reg->isAuthPDU }}"
                                                                                 data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
+                                    @endif
+
                                     @if($reg->eventQuestion)
                                         <p><b>@lang('messages.fields.spk_question'):</b> <a
                                                     id="eventQuestion-{{ $tcount }}"
@@ -350,7 +358,9 @@ if ($event->isSymmetric && $event->hasTracks) {
                         {{-- Display session selection stuff if sessions are attached to the ticket attached to $reg --}}
 
                         @if($event->hasTracks > 0 && $ticket->has_sessions())
-                            @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg, 'suppress' => 1])
+                            @include('v1.parts.session_bubbles',
+                                ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+                                 'reg' => $reg, 'suppress' => 1, 'registering' => $registering])
                         @endif
                     </div>
                 </div>

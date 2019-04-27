@@ -82,8 +82,12 @@ class TrackController extends Controller
     public function sessionUpdate(Request $request, Event $event)
     {
         $value = request()->input('value');
+        if($value === null){
+            $name = request()->input('name');
+            $value = request()->input($name);
+        }
         list($name, $track, $day, $order) = array_pad(explode("-", request()->input('name'), 4), 4, null);
-        $s = EventSession::find(request()->input('pk'));
+        $s = EventSession::withTrashed()->find(request()->input('pk'));
 
         // symmetric schedules need to update start & end together
         // any other variable can be updated as a single update
@@ -111,6 +115,43 @@ class TrackController extends Controller
                 $s->updaterID = auth()->user()->id;
                 $s->save();
             }
+        } elseif ($name == 'isLinked') {
+            if($value){
+                $s->isLinked = $s->sessionID;
+            } else {
+                $s->isLinked = 0;
+            }
+            $s->updaterID = auth()->user()->id;
+            $s->save();
+            return redirect(env('APP_URL')."/tracks/$event->eventID");
+        } elseif ($name == 'isLinked2') {
+            if($value){
+                $previous = EventSession::where([
+                    ['order', $order-1],
+                    ['confDay', '=', $day],
+                    ['eventID', $s->eventID],
+                    ['trackID', $track]
+                ])->withTrashed()->first();
+                $s->isLinked = $previous->isLinked;
+                $s->start = $previous->start;
+                $s->end = $previous->end;
+                $s->sessionName = $previous->sessionName;
+                $s->ticketID = $previous->ticketID;
+            } else {
+                $previous = EventSession::where([
+                    ['order', $order],
+                    ['confDay', '=', $day],
+                    ['eventID', $s->eventID]
+                ])->withTrashed()->first();
+                $s->isLinked = 0;
+                $s->start = $previous->start;
+                $s->end = $previous->end;
+                $s->sessionName = null;
+            }
+            $s->updaterID = auth()->user()->id;
+            $s->save();
+            return redirect(env('APP_URL')."/tracks/$event->eventID");
+
         } elseif ($name == 'sessionSpeakers') {
             // Do stuff for sessionSpeaker assignment
             //dd(request()->all());

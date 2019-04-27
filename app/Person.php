@@ -37,6 +37,13 @@ class Person extends Model
         return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID');
     }
 
+    /*
+    public function orgs()
+    {
+        return $this->belongsToMany(Org::class, 'org-person', 'orgID', 'personID');
+    }
+    */
+
     public function emails()
     {
         return $this->hasMany(Email::class, 'personID', 'personID');
@@ -59,17 +66,12 @@ class Person extends Model
 
     public function orgperson()
     {
-        // return $this->orgpeeps->where('org-person.orgID', '=', $this->defaultOrgID)->first();
-        return $this->belongsTo(OrgPerson::class, 'personID', 'personID')
-            ->where([
-                ['orgID', $this->defaultOrgID],
-                ['personID', $this->personID]
-            ]);
-    }
-
-    public function orgpeeps()
-    {
-        return $this->hasMany(OrgPerson::class, 'personID', 'personID');
+        /*
+        return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID')
+            ->wherePivot('orgID', $this->defaultOrgID);
+            //->withPivot('OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4');
+        */
+        return $this->orgs()->where('org-person.orgID', $this->defaultOrgID);
     }
 
     public function registrations()

@@ -63,6 +63,7 @@ class RegFinanceController extends Controller
     {
         // responds to GET /confirm_registration/{id}
         $show_pass_fields = 0;
+        $registering = 1;
         $today = Carbon::now()->format('n/j/Y');
         $u = User::find(auth()->user()->id);
         if ($u->password === null) {
@@ -99,7 +100,7 @@ class RegFinanceController extends Controller
 
             return view('v1.public_pages.register2',
                 compact( 'event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array',
-                         'prefixes', 'industries', 'tracks', 'tickets', 'show_pass_fields'));
+                         'prefixes', 'industries', 'tracks', 'tickets', 'show_pass_fields', 'registering'));
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');
             return view('v1.public_pages.error_display', compact('message'));

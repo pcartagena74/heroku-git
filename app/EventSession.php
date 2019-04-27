@@ -15,6 +15,7 @@ class EventSession extends Model
     const UPDATED_AT = 'updateDate';
     protected $dates = ['start', 'end', 'createDate', 'updateDate', 'deleted_at'];
 
+
     public function track()
     {
         return $this->belongsTo(Track::class, 'trackID');
@@ -32,5 +33,22 @@ class EventSession extends Model
 
     public function regsessions(){
         return $this->hasMany(RegSession::class,'sessionID', 'sessionID');
+    }
+
+    public function show_speakers(){
+        $output = "";
+
+        if($this->speakers !== null){
+            foreach($this->speakers as $speaker){
+                $speaker->load('person');
+                $output .= $speaker->person->showFullName();
+                if($this->speakers->last() != $speaker){
+                    $output .= ", ";
+                }
+            }
+        } else {
+            $output = trans('messages.fields.tbd');
+        }
+        return $output;
     }
 }
