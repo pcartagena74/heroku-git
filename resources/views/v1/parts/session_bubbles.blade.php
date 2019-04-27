@@ -28,6 +28,7 @@ use App\RegSession;
         // Assumption will be that session_bubbles.blade is included when sessions are needed w/ $ticket->has_sessions()
 
 if(!isset($suppress)) { $suppress = 0; }
+if(!isset($registering)) { $registering = 0; }
 
 //$needSessionPick = $reg->ticket->has_sessions();
 
@@ -74,8 +75,12 @@ $tickets = $ticket->bundle_members();
 
 ?>
 @if(1)
-    @if(count($regSessions)==0)
-        <b>@lang('messages.instructions.no_reg_sess')</b><br/>
+    @if(count($regSessions)== 0)
+        @if($registering)
+            <b>@lang('messages.instructions.no_reg_sess_init')</b><br/>
+        @else
+            <b>@lang('messages.instructions.no_reg_sess')</b><br/>
+        @endif
     @else
         <b>@lang('messages.instructions.reg_sess')</b><br/>
     @endif
@@ -130,8 +135,9 @@ $tickets = $ticket->bundle_members();
                         ])->first();
 
                         // As long as there are any sessions, the row will be displayed
+                        // Added new row suppression based on whether the sessions are part of a purchased ticket
 ?>
-                        @if($s !== null)
+                        @if($s !== null && $tickets->contains('ticketID', $s->ticketID))
                             <div class="col-sm-12">
                                 @foreach($tracks as $track)
 <?php
@@ -140,13 +146,15 @@ $tickets = $ticket->bundle_members();
                                         ['eventID', $event->eventID],
                                         ['confDay', $j],
                                         ['order', $x]
-                                    ])->first();
+                                    ])->withTrashed()->first();
 
-                                    if($s !== null) {
+                                    if($s !== null && ($s->deleted_at === null || $s->isLinked == 1)) {
                                         $mySess = $s->sessionID;
+                                    } else {
+                                        $mySess = null;
                                     }
 ?>
-                                    @if($s !== null)
+                                    @if($s !== null && $s->deleted_at === null)
                                         @if($tracks->first() == $track || !$event->isSymmetric)
 
                                             <div class="{{ $time_column }}" style="text-align:left;">
@@ -154,10 +162,10 @@ $tickets = $ticket->bundle_members();
                                                 &dash;
                                                 <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                             </div>
-                                        @else
-
                                         @endif
+
                                         <div class="{{ $track_column }}" style="text-align:left;">
+                                            @if($s !== null && $tickets->contains('ticketID', $s->ticketID))
                                             @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
                                                 <b>{{ $s->sessionName }}</b><br />
                                             <span class="red">@lang('messages.instructions.max_reached')</span>
@@ -165,15 +173,27 @@ $tickets = $ticket->bundle_members();
                                             @else
                                                 <b>{{ $s->sessionName }}</b><br/>
                                             @endif
+                                            {{--
+                                                $regSession check for pre-selection by registrant
+                                            --}}
                                             <center>
                                                 @if($regSessions->contains('sessionID', $s->sessionID))
-                                                    @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
+                                                    @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees || $s->maxAttendees == 0)
                                                         {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
                                                             $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @else
                                                         {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
                                                             $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @endif
+                                    {{--
+                                        Need to come up with a way to tie form components together when sessions span times
+                                        1. Check for asymmetry because sessions in one track can only BE SET to overlap when asymmetric
+                                        2. If asymmetric, for each session, check if there is a "shadow" session with these attributes
+                                            a. deleted_at is NOT NULL
+                                            b. session with the same start/end times
+                                            c. session with contiguous order
+                                        3. Deleted session needs javascript to keep user selection in sync with its live & shadow copies
+                                    --}}
                                                 @else
                                                     @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
                                                         {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
@@ -188,54 +208,83 @@ $tickets = $ticket->bundle_members();
                                                   and have jquery set it to clicked and vice versa;
                                                   if selection moves from x or x-1, it unselects the other
                                                   if selection moves onto 1, it moves onto the other --}}
-                                        </div>
-                                    @else
-                                        @if($tracks->first() == $track || !$event->isSymmetric)
-                                            <div class="{{ $track_column }}" style="text-align:left;">
-                                        @else
-                                            <div class="{{ $track_column }}" style="text-align:left;">
-                                        @endif
+                                                @if($s->isLinked)
 <?php
-                                        $t = EventSession::where([
-                                             ['trackID', $track->trackID],
-                                             ['eventID', $event->eventID],
-                                             ['confDay', $j],
-                                             ['order', $x - 1]
-                                             ])->first();
 
-                                        if($t !== null) {
-                                             $myTess = $t->sessionID;
-                                        }
+// If we're dealing with a linked session:
+// 1. Find out how many & which sessions are linked
+// 2. Setup the jquery code to cause hidden radio buttons to be selected based on this one's selection
+
+                                                        $linked = EventSession::where([
+                                                            ['trackID', $track->trackID],
+                                                            ['eventID', $event->eventID],
+                                                            ['confDay', $j],
+                                                            ['sessionID', '!=', $s->sessionID],
+                                                            ['isLinked', $s->sessionID]
+                                                        ])->withTrashed()->get();
 ?>
-                                        {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, '', false,
-                                        $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-x', 'style' => 'visibility:hidden;')) !!}
-                                        <script>
-                                            $(document).ready(function () {
-                                                $("input:radio[name='{{ 'sess-'. $j . '-'.$x . '-' . $reg->regID }}']").on('change', function () {
-                                                    console.log("{{ 'sess-'. $j . '-'.$x .'-x' }}  changed.");
-                                                    if ($('#{{ 'sess-'. $j . '-'.$x.'-x' }}').is(":checked")) {
-                                                        $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').prop('checked', 'checked');
-                                                    } else {
-                                                        $('#{{ 'sess-'. $j . '-'.($x-1) .'-'. $myTess }}').removeAttr('checked');
-                                                    }
-                                                });
-                                                $("input:radio[name='{{ 'sess-'. $j . '-'.($x-1) }}']").on('change', function () {
-                                                    console.log("{{ 'sess-'.$j.'-'.($x-1) . '-' . $myTess }}  changed.");
-                                                    if ($('#{{ 'sess-'. $j . '-'.($x-1).'-' . $myTess }}').is(":checked")) {
-                                                        $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').prop('checked', 'checked');
-                                                    } else {
-                                                        $('#{{ 'sess-'. $j . '-'.($x) .'-x' }}').removeAttr('checked');
-                                                    }
-                                                });
-                                            });
-                                        </script>
-                                            </div>
-                                  @endif
-                             @endforeach
-                        </div>
-                        @endif
-                    @endfor
-                @endif  {{-- if included ticket --}}
+
+                                                            @if($linked !== null)
+<script>
+    $(document).ready(function () {
+        var rowname = '{{ 'sess-' . $j.'-'.$x.'-'.$reg->regID }}';
+        var sessname = '{{ 'sess-' . $j.'-'.$x.'-'.$s->sessionID }}';
+        $("input:radio[name='" + rowname + "']").on('change', function () {
+            console.log(rowname + " changed.");
+            if ($("input:radio[id='{{ 'sess-'. $j . '-'.$x.'-' . $s->sessionID }}']").prop("checked")) {
+                console.log(sessname + " is checked.");
+                @foreach($linked as $link)
+                child = '{{ 'sess-' . $j.'-'.$link->order.'-'.$link->sessionID }}';
+                console.log("  Checking " + child + ".");
+                $("input:radio[id='" + child + "']").prop('checked', true);
+                console.log("Checked? " + $("input:radio[id='" + child + "']").prop('checked'));
+                @endforeach
+            }
+        });
+    });
+</script>
+                                                            @endif
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            @else  {{-- Dealing with Deleted Session --}}
+                                                @if($tracks->first() == $track || !$event->isSymmetric)
+                                                    <div class="{{ $track_column }}" style="text-align:left;">
+                                                @else
+                                                    <div class="{{ $track_column }}" style="text-align:left;">
+                                                @endif
+<?php
+                                                $parent = EventSession::find($s->isLinked);
+?>
+                                                @if($s->isLinked)
+                                                {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $mySess, true,
+                                                $attributes=array('id' => 'sess-'. $j . '-'.$x .'-' . $s->sessionID, 'style' => 'visibility:hidden;')) !!}
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        {{-- If the parent changes, uncheck the hidden radio button --}}
+                                                        $("input:radio[name='{{ 'sess-'. $j . '-'.$parent->order . '-' . $reg->regID }}']").on('change', function () {
+                                                            console.log("{{ 'sess-'. $j . '-'.$parent->order .'-'.$reg->regID }} changed.");
+                                                            if ($('#{{ 'sess-'. $j . '-'.$parent->order.'-' . $parent->sessionID }}').is(":checked")) {
+                                                                $('#{{ 'sess-'. $j . '-'.($x) .'-'. $s->sessionID }}').prop('checked', 'checked');
+                                                            } else {
+                                                                $('#{{ 'sess-'. $j . '-'.($x) .'-'. $s->sessionID }}').removeAttr('checked');
+                                                            }
+                                                        });
+                                                        {{-- If the hidden radio button changes, uncheck the parent --}}
+                                                        $("input:radio[name='{{ 'sess-'. $j . '-'.($x).'-'. $reg->regID }}']").on('change', function () {
+                                                            console.log("{{ 'sess-'. $j . '-'.($x) .'-'.$reg->regID }} changed.");
+                                                            $('#{{ 'sess-'. $j . '-'.($parent->order) .'-' . $parent->sessionID }}').removeAttr('checked');
+                                                        });
+                                                    });
+                                                </script>
+                                                    </div>
+                                                @endif
+                                          @endif
+                                     @endforeach
+                                </div>
+                                @endif
+                            @endfor
+                        @endif  {{-- if included ticket --}}
             @endif  {{-- if included ticket --}}
        @endfor  {{-- this closes confDays loop --}}
 

@@ -535,6 +535,8 @@ return [
                         <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
                         </ul>",
         'inactive' => "This event is no longer active.",
+        'link_sess_1' => "Click this checkbox to indicate that this session will overlap other session time slots.",
+        'link_sess_2' => "Click this checkbox to indicate that this session time is overlapped by the session 'above' this one.",
         'login' => "You have an account that we've created for you. Please click the login button. 
                      mCentric has emailed you instructions to reset your password if necessary.",
         'max_reached' => "Maximum attendees reached.",
@@ -562,6 +564,7 @@ return [
         'no_pmiID' => "Or, if you do not have a PMI ID, enter your email address.",
         'no_pmiID_zero' => "Enter 0 if you are not a PMI member",
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
+        'no_reg_sess_init' => "Please make session selections below.  You will be able to make changes to your selections prior to the event.",
         'no_regs' => "There are no attendees registered for this event at this time.",
         'no_user_pass' => "This user has not set a password.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",

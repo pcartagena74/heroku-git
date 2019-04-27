@@ -136,14 +136,14 @@ $tickets = Ticket::where([
                                         ['eventID', $event->eventID],
                                         ['confDay', $i],
                                         ['order', $x]
-                                    ])->first();
+                                    ])->withTrashed()->first();
 
                                     // If this particular session exists...
-                                    // ...give the option to delete it from DB if  the sessionName is null
+                                    // ...give the option to delete it from DB if the sessionName is null
 ?>
                                     @if($tracks->first() == $track || !$event->isSymmetric)
-                                        <td rowspan="4" style="text-align:left;">
-                                            @if($s !== null)
+                                            @if($s !== null && $s->deleted_at === null)
+                                            <td rowspan="4" style="text-align:left;">
                                                 <nobr>
                                                     <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                        data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
@@ -159,31 +159,101 @@ $tickets = Ticket::where([
                                                 @if($s !== null)
                                                     @if($s->sessionName === null)
                                                         {!! Form::open(array('url' => env('APP_URL')."/session/".$s->sessionID, 'method' => 'delete')) !!}
-                                                        <button type="submit" class="btn btn-danger btn-xs"><i
-                                                                    class="fa fa-trash"></i></button>
+                                                        <button type="submit" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i></button>
                                                         {!! Form::close() !!}
                                                     @endif
                                                 @endif
+                                            </td>
+                                            @elseif($s !== null && $s->deleted_at !== null)
+                                            <td rowspan="4" style="text-align:left; background-color:lightgray;">
+                                                <nobr>
+                                                    <a id="start-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                       data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
+                                                       data-pk="{{ $s->sessionID }}" data-value="{{ $s->start }}"></a>
+                                                </nobr>
+                                                &dash;
+                                                <nobr>
+                                                    <a id="end-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                       data-url="{{ env('APP_URL') }}/eventsession/{{ $s->eventID }}"
+                                                       data-pk="{{ $s->sessionID }}" data-value="{{ $s->end }}"></a>
+                                                </nobr>
+                                                <br/>
+                                                @if($s !== null)
+                                                    @if($s->deleted_at !== null)
+                                                        {!! Form::open(array('url' => env('APP_URL')."/session/".$s->sessionID, 'method' => 'patch')) !!}
+                                                        <button type="submit" class="btn btn-success btn-xs" data-toggle="tooltip"
+                                                                    title="{!! trans('messages.buttons.restore') !!}"><i {!! trans('messages.symbols.restore_class') !!}></i></button>
+                                                        {!! Form::close() !!}
+                                                    @endif
+                                                @endif
+                                            </td>
                                             @else
-                                                &nbsp;
+                                                <td rowspan="4" style="text-align:left; background-color:lightgray;"></td>
                                             @endif
-                                        </td>
                                     @endif
-                                    <td colspan="2"
-                                        style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;">
                                         @if($s !== null)
+                                        <td colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%;
+                                                max-width: {{ $mw }}%;{{ $s->deleted_at === null ?: ' background-color: lightgray; text-decoration: line-through;' }}">
                                             <label for="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
-                                                   style="color: #2a3f54;"
-                                                   class="control-label">@lang('messages.headers.sess_title')</label>
-                                            <small>({{ $s->sessionID }})</small><br/>
+                                                   style="color: #2a3f54;{{ $s->deleted_at === null ?: 'text-decoration: linethrough;' }}" class="control-label">
+                                                @lang('messages.headers.sess_title')</label>
+                                            <small>({{ $s->sessionID }})</small>
+                                            <div class="pull-right">
+                                                @if($s->deleted_at === null)
+                                                    @include('v1.parts.tooltip', ['title' => trans('messages.instructions.link_sess_1')])
+                                                    {!! Form::open(array('url' => env('APP_URL').'/eventsession/'.$event->eventID, 'method' => 'post')) !!}
+                                                    {!! Form::hidden('pk', $s->sessionID) !!}
+                                                    {!! Form::hidden('name', 'isLinked-'.$track->trackID."-".$s->confDay."-".$s->order) !!}
+                                                    @if($s->isLinked)
+                                                        {!! Form::checkbox('isLinked-'.$track->trackID."-".$s->confDay."-".$s->order, $s->sessionID, true, array('class' => 'js-switch', 'onchange' => 'javascript:submit()')) !!}
+                                                    @else
+                                                        {!! Form::checkbox('isLinked-'.$track->trackID."-".$s->confDay."-".$s->order, $s->sessionID, false, array('class' => 'js-switch', 'onchange' => 'javascript:submit()')) !!}
+                                                    @endif
+                                                    {!! Form::close() !!}
+                                                @elseif($s->deleted_at !== null && $x != 1)
+<?php
+                                                // Get the session "above" (order: x-1) from the same track, etc. so use its ID for linking
+                                                // Need to grab withTrashed() because sometimes there can be 2 deleted & linked sessions.
+                                                    $t = EventSession::where([
+                                                        ['trackID', $track->trackID],
+                                                        ['eventID', $event->eventID],
+                                                        ['confDay', $i],
+                                                        ['order', $x-1]
+                                                    ])->withTrashed()->first();
+?>
+                                                    @include('v1.parts.tooltip', ['title' => trans('messages.instructions.link_sess_2'), 'c' => 'red'])
+                                                    {!! Form::open(array('url' => env('APP_URL').'/eventsession/'.$event->eventID, 'method' => 'post')) !!}
+                                                    {!! Form::hidden('pk', $s->sessionID) !!}
+                                                    {!! Form::hidden('name', 'isLinked2-'.$track->trackID."-".$s->confDay."-".$s->order) !!}
+                                                    @if($s->isLinked)
+                                                        {!! Form::checkbox('isLinked2-'.$track->trackID."-".$s->confDay."-".$s->order, $t->isLinked, true, array('class' => 'js-switch', 'onchange' => 'javascript:submit()')) !!}
+                                                    @else
+                                                        {!! Form::checkbox('isLinked2-'.$track->trackID."-".$s->confDay."-".$s->order, $t->isLinked, false, array('class' => 'js-switch', 'onchange' => 'javascript:submit()')) !!}
+                                                    @endif
+                                                    {!! Form::close() !!}
+                                                @endif
+                                            </div>
+                                            <br/>
                                             <a id="sessionName-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                data-pk="{{ $s->sessionID }}"
                                                data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                                data-value="{{ $s->sessionName }}"></a>
+                                            <p></p>
+                                            <label for="ticketID-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                                   style="color: #2a3f54;" class="control-label">
+<?php
+                                                    if($s->deleted_at !== null){
+                                                        trans('messages.headers.deleted');
+                                                    }
+?>
+                                                @lang('messages.fields.ticket') @lang('messages.headers.override')</label>
+                                            <a id="ticketID-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
+                                               data-pk="{{ $s->sessionID }}"
+                                               data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"></a>
+                                        </td>
                                         @else
-                                            &nbsp;
+                                            <td colspan="2" style="text-align:left; background-color:lightgray;"></td>
                                         @endif
-                                    </td>
                                 @endforeach
                             </tr>
                         @else
@@ -213,8 +283,8 @@ $tickets = Ticket::where([
                                         ['order', $x]
                                     ])->first();
 ?>
-                                    <td colspan="2" style="text-align:left;">
                                         @if($s !== null)
+                                        <td colspan="2" style="text-align:left;">
                                             <label for="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                    style="color: #2a3f54;"
                                                    class="control-label">@lang('messages.headers.sess_spk')</label>
@@ -223,16 +293,17 @@ $tickets = Ticket::where([
                                             <a id="sessionSpeakers-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                data-pk="{{ $s->sessionID }}"
                                                data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"></a>
+                                        </td>
                                         @else
-                                            &nbsp;
+                                            <td colspan="2" style="text-align:left; background-color:lightgray;">
+                                            </td>
                                         @endif
-                                    </td>
                                 @endforeach
                             </tr>
                         @endif
 
 <?php
-                        // Check to see if there are any events for $x (this row)
+                        // Check to see if there are any NOT DELETED events for $x (this row)
                         $check = EventSession::where([
                             ['eventID', $event->eventID],
                             ['confDay', $i],
@@ -315,7 +386,7 @@ $tickets = Ticket::where([
                                                data-value="{{ $s->maxAttendees }}"></a>
                                         </td>
                                     @else
-                                        <td colspan="2"> &nbsp;</td>
+                                        <td colspan="2" style="text-align:left; background-color:lightgray;"></td>
                                     @endif
                                 @endforeach
                             </tr>
@@ -342,8 +413,8 @@ $tickets = Ticket::where([
                                         ['order', $x]
                                     ])->first();
 ?>
-                                    <td colspan="2" style="text-align:left;">
                                         @if($s !== null)
+                                            <td colspan="2" style="text-align:left;">
                                             <label for="sessionAbstract-{{ $track->trackID . "-" . $s->confDay . "-" . $s->order }}"
                                                    style="color: #2a3f54;"
                                                    class="control-label">@lang('messages.fields.abstract')</label><br/>
@@ -351,10 +422,10 @@ $tickets = Ticket::where([
                                                data-pk="{{ $s->sessionID }}"
                                                data-url="{{ env('APP_URL') }}/eventsession/{{ $event->eventID }}"
                                                data-value="{{ $s->sessionAbstract }}"></a>
+                                            </td>
                                         @else
-                                            &nbsp;
+                                            <td colspan="2" style="text-align:left; background-color:lightgray;"></td>
                                         @endif
-                                    </td>
                                 @endforeach
                             </tr>
                         @endif
@@ -428,10 +499,13 @@ $tickets = Ticket::where([
             $sessions = EventSession::where([
                 ['eventID', $event->eventID],
                 ['sessionID', '!=', 0]
-            ])->orderBy('trackID', 'order')->get();
+            ])->orderBy('trackID', 'order')->withTrashed()->get();
 ?>
             @foreach($sessions as $s)
+            @if(1)
+            {{--
             @if($s->deleted_at === null)
+            --}}
 
             $("#start-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
                 type: 'combodate',
@@ -465,6 +539,20 @@ $tickets = Ticket::where([
                 success: function (data) {
                     console.log(data);
                 }
+            });
+            $("#ticketID-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({
+                type: 'select',
+                value: '{{ $s->ticketID }}',
+                source: [
+                        @foreach($tickets as $t)
+                    {
+                        value: '{{ $t->ticketID }}', text: '{{ $t->ticketLabel }}'
+                    }
+                    @if($tickets->last() != $t)
+                    ,
+                    @endif
+                    @endforeach
+                ]
             });
 
             $("#maxAttendees-{{ $s->trackID . "-" . $s->confDay . "-" . $s->order }}").editable({type: 'text'});
