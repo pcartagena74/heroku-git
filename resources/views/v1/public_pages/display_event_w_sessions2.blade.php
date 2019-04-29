@@ -358,9 +358,6 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                     } else {
                                                                         $count = 0;
                                                                     }
-                                                                    if($x == 2 && $track->trackID == 26){
-                                                                        dd($count);
-                                                                    }
 ?>
                                                                     @if($s !== null)
                                                                         @if($tracks->first() == $track || !$event->isSymmetric)
