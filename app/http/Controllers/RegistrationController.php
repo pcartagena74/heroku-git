@@ -132,9 +132,9 @@ class RegistrationController extends Controller
             ->whereHas('regfinance', function($q){
                 $q->where('pmtRecd', '=', 1);
             })->where(function ($q) {
-                $q->where('regStatus', '=', trans('messages.reg_status.active'))
-                    ->orWhere('regStatus', '=', trans('messages.reg_status.processed'))
-                    ->orWhere('regStatus', '=', trans('messages.reg_status.pending'));
+                $q->where('regStatus', '=', 'active')
+                    ->orWhere('regStatus', '=', 'processed')
+                    ->orWhere('regStatus', '=', 'pending');
             })->with('regfinance', 'ticket', 'person')->get();
 
         $regs = $regs->sortBy(function($n){
@@ -154,20 +154,19 @@ class RegistrationController extends Controller
         // list of attendees who are payment pendings so they are displayed separately
         $deadbeats = Registration::where([
             ['eventID', '=', $event->eventID],
-            // ['regStatus', '=', trans('messages.reg_status.pending')],
             ])->with('regfinance', 'ticket')
             ->whereHas('regfinance', function($q){
                 $q->where('pmtRecd', '=', 0);
-                $q->where('status', '=', trans('messages.reg_status.pending'));
+                $q->where('status', '=', 'pending');
             })
             ->get();
 
         // list of wait-listed or interrupted registrations
         $notregs = Registration::where('eventID', '=', $event->eventID)
             ->where(function ($q) {
-                $q->where('regStatus', '=', trans('messages.headers.wait'))
+                $q->where('regStatus', '=', 'wait')
                     // Even if Payment Pending is the status, they are still registered
-                    ->orWhere('regStatus', '=', trans('messages.reg_status.progress'));
+                    ->orWhere('regStatus', '=', 'progress');
             })->with('regfinance', 'ticket')->get();
 
         $tkts = Ticket::where([
@@ -181,7 +180,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '=', trans('messages.reg_status.processed')]
+                ['regStatus', '=', 'processed']
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -196,7 +195,7 @@ class RegistrationController extends Controller
 
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
-                $d->discountCode = trans('messages.headers.N/A');
+                $d->discountCode = 'N/A';
             }
         }
 
@@ -276,7 +275,7 @@ class RegistrationController extends Controller
             $resubmit = RegFinance::where([
                 ['personID', '=', $authorID],
                 ['eventID', '=', $event->eventID],
-                ['status', '!=', trans('messages.reg_status.processed')],
+                ['status', '!=', 'processed'],
             ])->first();
         } else {
             $resubmit = null;
@@ -423,9 +422,9 @@ class RegistrationController extends Controller
             $person->save();
 
             if (null === $pmiID) {
-                $regMem = trans('messages.fields.nonmbr');
+                $regMem = 'nonmbr';
             } else {
-                $regMem = trans('messages.fields.member');
+                $regMem = 'member';
             }
 
             // Only if we had to set a temporary RF record with system owner
@@ -513,10 +512,10 @@ class RegistrationController extends Controller
             $reg->eventQuestion = $eventQuestion;
             $reg->canNetwork = request()->input('canNetwork'.$i_cnt) !== null ? 1 : 0;
             $reg->affiliation = implode(",", $affiliation);
-            $reg->regStatus = trans('messages.reg_status.progress');
+            $reg->regStatus = 'progress';
             if ($t->waitlisting()) {
-                $reg->regStatus = trans('messages.headers.wait');
-                $rf->status = trans('messages.headers.wait');
+                $reg->regStatus = 'wait';
+                $rf->status = 'wait';
             }
             $reg->registeredBy = $regBy;
             $reg->token = $token;
@@ -646,12 +645,12 @@ class RegistrationController extends Controller
         $event = Event::find($reg->eventID);
         $rf = RegFinance::find($reg->rfID);
 
-        $rf->status = trans('messages.reg_status.pending');
-        $rf->pmtType = trans('messages.reg_status.door');
+        $rf->status = 'pending';
+        $rf->pmtType = 'door';
         $rf->updaterID = $this->currentPerson->personID;
         $rf->save();
 
-        $reg->regStatus = trans('messages.reg_status.promoted');
+        $reg->regStatus = 'promoted';
         $reg->updaterID = $this->currentPerson->personID;
         $reg->save();
 
@@ -687,8 +686,8 @@ class RegistrationController extends Controller
                     \Stripe\Refund::create(array(
                         "charge" => $rf->stripeChargeID,
                     ));
-                    $reg->regStatus = trans('messages.headers.refunded');
-                    $rf->status = trans('messages.headers.refunded');
+                    $reg->regStatus = 'refunded';
+                    $rf->status = 'refunded';
                     $rf->save();
                     $reg->save();
 
@@ -706,8 +705,8 @@ class RegistrationController extends Controller
                         "charge" => $rf->stripeChargeID,
                         "amount" => $reg->subtotal * 100,
                     ));
-                    $reg->regStatus = trans('messages.headers.refunded');
-                    $rf->status = trans('messages.reg_status.partial');
+                    $reg->regStatus = 'refunded';
+                    $rf->status = 'partial';
                     $verb = strtolower(trans('messages.headers.refunded'));
                     $rf->save();
                     $reg->save();
@@ -720,15 +719,15 @@ class RegistrationController extends Controller
             }
         } elseif ($rf->seats > 1) {
             // decided against decrementing original seat count
-            $reg->regStatus = trans('messages.headers.canceled');
-            $rf->status = trans('messages.reg_status.p_canceled');
+            $reg->regStatus = 'canceled';
+            $rf->status = 'p_canceled';
             $rf->save();
             $reg->save();
             $reg->delete();
             $verb = strtolower(trans('messages.headers.canceled'));
         } else {
-            $reg->regStatus = trans('messages.headers.canceled');
-            $rf->status = trans('messages.headers.canceled');
+            $reg->regStatus = 'canceled';
+            $rf->status = 'canceled';
             $rf->save();
             $reg->save();
             $reg->delete();
@@ -748,7 +747,7 @@ class RegistrationController extends Controller
 
         // Decrement the regCount on the ticket if ticket was paid OR 'At Door'
         // Also decrement the attendance of any sessions
-        if ($rf->pmtRecd || $rf->pmtType == trans('messages.reg_status.door')) {
+        if ($rf->pmtRecd || $rf->pmtType == 'door') {
             $ticket->update_count(-1);
 
             $sessions = RegSession::where('regID', '=', $reg->regID)->get();

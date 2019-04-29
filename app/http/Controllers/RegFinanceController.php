@@ -195,12 +195,12 @@ class RegFinanceController extends Controller
         // user can hit "at door", if available, or "credit" buttons.
         // if the cost is $0, the 'pay with card' button won't show on the form but a "complete registration" will
 
-        if ($rf->status == trans('messages.headers.wait')) {
+        if ($rf->status == 'wait') {
             // This transaction, regardless of cost, will increment the waitlist, etc.
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
-            $rf->pmtType = trans('messages.headers.wait');
+            $rf->pmtType = 'wait';
             $rf->save();
-        } elseif ($rf->status != trans('messages.reg_status.processed')) {
+        } elseif ($rf->status != 'processed') {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if ($rf->cost > 0 && $stripeToken !== null) {
@@ -263,20 +263,20 @@ class RegFinanceController extends Controller
                     return back()->withInput();
                 }
                 $rf->stripeChargeID = $charge->id;
-                $rf->status = trans('messages.reg_status.processed');
+                $rf->status = 'processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
                 $rf->save();
             } elseif ($rf->cost > 0 && $event->acceptsCash) {
                 // cost > 0 and the 'Pay at Door' button was pressed (assumes acceptsCash = 1)
-                $rf->status = trans('messages.reg_status.pending');
-                $rf->pmtType = trans('messages.reg_status.door');
+                $rf->status = 'pending';
+                $rf->pmtType = 'door';
                 $rf->save();
             } elseif($rf->cost == 0) {
                 //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
-                $rf->status = trans('messages.reg_status.processed');
-                $rf->pmtType = trans('messages.reg_status.free');
+                $rf->status = 'processed';
+                $rf->pmtType = 'free';
                 $rf->save();
             } else {
                 // Some weird error occured
@@ -293,11 +293,11 @@ class RegFinanceController extends Controller
                 $handleFee = 0;
 
                 if ($reg->ticket->waitlisting()) {
-                    $reg->regStatus = trans('messages.headers.wait');
-                } elseif($rf->status == trans('messages.reg_status.pending')) {
-                    $reg->regStatus = trans('messages.reg_status.pending');
+                    $reg->regStatus = 'wait';
+                } elseif($rf->status == 'pending') {
+                    $reg->regStatus = 'pending';
                 } else {
-                    $reg->regStatus = trans('messages.reg_status.processed');
+                    $reg->regStatus = 'processed';
                 }
                 // the ticket count gets updated regardless of regStatus
                 $reg->ticket->update_count(1);
@@ -447,12 +447,12 @@ class RegFinanceController extends Controller
 
         $rf->pmtRecd = 1;
         $rf->pmtType = strtolower($pmt);
-        $rf->status = trans('messages.reg_status.processed');
+        $rf->status = 'processed';
         $rf->cancelDate = $now;
         $rf->updaterID = Auth()->user()->id;
         $rf->save();
 
-        $reg->regStatus = trans('messages.reg_status.processed');
+        $reg->regStatus = 'processed';
         $reg->updaterID = Auth()->user()->id;
         $reg->updateDate = $now;
         $reg->save();
@@ -557,9 +557,9 @@ class RegFinanceController extends Controller
                 $reg->registeredBy = $this->currentPerson->showFullName();
                 $reg->discountCode = $code;
                 if ($pmiid) {
-                    $reg->membership = trans('messages.fields.member');
+                    $reg->membership = 'member';
                 } else {
-                    $reg->membership = trans('messages.fields.nonmbr');
+                    $reg->membership = 'nonmbr';
                 }
                 $reg->token = request()->input('_token');
                 $reg->creatorID = $this->currentPerson->personID;
@@ -574,7 +574,7 @@ class RegFinanceController extends Controller
                 // subtotal
                 if ($t->earlyBirdEndDate !== null && $today->lte($t->earlyBirdEndDate)) {
                     // Use earlybird discount pricing as base
-                    if ($reg->membership == trans('messages.fields.member')) {
+                    if ($reg->membership == 'member') {
                         $reg->origcost = $t->memberBasePrice;
                         $reg->subtotal = $t->memberBasePrice - ($t->memberBasePrice * $t->earlyBirdPercent / 100);
                     } else {
@@ -583,7 +583,7 @@ class RegFinanceController extends Controller
                     }
                 } else {
                     // Use non-discount pricing
-                    if ($reg->membership == trans('messages.fields.member')) {
+                    if ($reg->membership == 'member') {
                         $reg->origcost = $t->memberBasePrice;
                         $reg->subtotal = $t->memberBasePrice;
                     } else {
@@ -611,7 +611,7 @@ class RegFinanceController extends Controller
                         $p->add_speaker_role();
                     }
                 }
-                $reg->regStatus = trans('messages.reg_status.progress');
+                $reg->regStatus = 'progress';
                 $reg->save();
                 if($check) {
                     $reg->checkin();
@@ -631,7 +631,7 @@ class RegFinanceController extends Controller
         $rf->seats = $seats;
         $rf->personID = $this->currentPerson->personID;
         $rf->cost = $total_cost;
-        $rf->status = trans('messages.reg_status.progress');
+        $rf->status = 'progress';
         $rf->handleFee = $total_handle;
         $rf->token = request()->input('_token');
         $rf->save();
@@ -655,7 +655,7 @@ class RegFinanceController extends Controller
         // user can hit "at door" or "credit" buttons.
         // if the cost is $0, the pay button won't show on the form
 
-        if ($rf->status != trans('messages.reg_status.processed')) {
+        if ($rf->status != 'processed') {
             // if cost > $0 AND payment details were given ($stripeToken isset),
             // we need to check stripeToken, stripeEmail, stripeTokenType and record to user table
             if ($rf->cost > 0 && $stripeToken !== null) {
@@ -681,25 +681,25 @@ class RegFinanceController extends Controller
                     'customer' => $user->stripe_id,
                 ));
                 $rf->stripeChargeID = $charge->id;
-                $rf->status = trans('messages.reg_status.processed');
+                $rf->status = 'processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
             } elseif ($rf->cost > 0) {
                 // cost > 0 and the 'Pay at Door' button was pressed
-                $rf->status = trans('messages.reg_status.pending');
-                $rf->pmtType = trans('messages.reg_status.door');
+                $rf->status = 'pending';
+                $rf->pmtType = 'door';
             } else {
                 $rf->pmtRecd = 1;
-                $rf->status = trans('messages.reg_status.processed');
-                $rf->pmtType = trans('messages.reg_status.free');
+                $rf->status = 'processed';
+                $rf->pmtType = 'free';
             }
 
             $discountAmt = 0;
             $handleFee = 0;
 
             // update $rf record and each $reg record status
-            foreach ($rf->registrations() as $reg){
-                $reg->regStatus = trans('messages.reg_status.processed');
+            foreach ($rf->registrations as $reg){
+                $reg->regStatus = 'processed';
                 $reg->updaterID = auth()->user()->id;
 
                 // Update ticket purchase on all bundle ticket members by $rf->seat

@@ -210,7 +210,6 @@ $i = 0;
                                 {!! Form::text("discount_code$i_cnt", $discount_code ?: old($discount_code . $i_cnt),
                                     array('size' => '25', 'class' => 'form-control input-sm', 'id' => "discount_code$i_cnt",
                                     'placeholder' => trans('messages.fields.enter_disc'))) !!}
-                                {{-- add something to either put "Enter discount code" or something else above in placeholder --}}
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-12" style="text-align: left; vertical-align: middle;">
                                 <a class="btn btn-sm btn-primary"
@@ -237,9 +236,9 @@ $i = 0;
                             <b>@lang('messages.fields.app_disc'):</b></div>
                     </td>
                     <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span id="dm-{{ $i }}"
-                                @if($ticket->waitlisting())
+                            @if($ticket->waitlisting())
                                 style="visibility: hidden;"
-                        @else
+                            @else
                                 style="visibility: visible;"
                             @endif
                                 class="status_msg{{ $i_cnt }}">---</span></td>
@@ -549,6 +548,19 @@ $i = 0;
                 var result = eval(data);
                 tix = result.tix;
                 def_tick = result.def_tick;
+
+                if(def_tick.isDiscountExempt == 1){
+                    $("#discount_code").attr('placeholder', '{{ trans('messages.reg_status.disc_exempt') }}');
+                    $("#discount_code").prop('disabled', true);
+                    $("#btn-apply").prop('disabled', true);
+                    da = document.getElementById('da-1');
+                    dm = document.getElementById('dm-1');
+                    btn = document.getElementById('btn-apply');
+                    da.style.visibility = "hidden";
+                    dm.style.visibility = "hidden";
+                    btn.style.visibility = "hidden";
+                }
+
             }
         });
     </script>
@@ -612,9 +624,9 @@ $i = 0;
             $('#i_total').val(subtotal.toFixed(2));
 
                     @for($i=1; $i<=$quantity; $i++)
-                <?php
+<?php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                ?>
+?>
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
@@ -672,7 +684,7 @@ $i = 0;
 
             function check_affiliation_disc(aff_array) {
                 mp_ok = 0;
-                console.log(aff_array);
+                // console.log(aff_array);
                 if(aff_array !== null){
                     aff_array.forEach((aff) => {
                         if(dc.includes(aff)){ mp_ok = 1; }
@@ -984,12 +996,13 @@ $i = 0;
                 adc = document.getElementById('adc-' + i);
                 da = document.getElementById('da-' + i);
                 dm = document.getElementById('dm-' + i);
+                btn = document.getElementById('btn-apply' + which);
                 t = new_tick(tktID);
-                console.log(t[0].ticketID);
+                //console.log(t[0].ticketID);
                 tc = document.getElementById('tcost' + i);
                 fc = document.getElementById('final' + i);
                 os = document.getElementById('OrgStat1' + which);
-                console.log(so.style.visibility);
+                // console.log(so.style.visibility);
                 if (wait_list(t[0])) {
                     so.style.visibility = "visible";
                     adc.style.visibility = "hidden";
@@ -1001,17 +1014,32 @@ $i = 0;
                     da.style.visibility = "visible";
                     dm.style.visibility = "visible";
                 }
+                if(t[0].isDiscountExempt == 1){
+                    $("#discount_code"+which).attr('placeholder', '{{ trans('messages.reg_status.disc_exempt') }}');
+                    $("#discount_code"+which).prop('disabled', true);
+                    $("#btn-apply"+which).prop('disabled', true);
+                    da.style.visibility = "hidden";
+                    dm.style.visibility = "hidden";
+                    btn.style.visibility = "hidden";
+                } else {
+                    $("#discount_code"+which).attr('placeholder', '{{ trans('messages.fields.enter_disc') }}');
+                    $("#discount_code"+which).attr('disabled', false);
+                    $("#btn-apply"+which).prop('disabled', false);
+                    da.style.visibility = "visible";
+                    dm.style.visibility = "visible";
+                    btn.style.visibility = "visible";
+                }
 
-                console.log(so.style.visibility);
+                // console.log(so.style.visibility);
                 fix_pricing(i, which);
             }
 
             function recalc() {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
-                <?php
+<?php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                    ?>
+?>
                     percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();
@@ -1032,9 +1060,7 @@ $i = 0;
                 $('#total').text(subtotal.toFixed(2));
                 $('#i_total').val(subtotal.toFixed(2));
             }
-
-        })
-        ;
+        });
     </script>
     <script>
         $("[data-toggle=tooltip]").tooltip();

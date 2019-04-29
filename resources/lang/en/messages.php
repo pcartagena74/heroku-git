@@ -108,7 +108,7 @@ return [
         'PD Day' => 'PDC|PDCs',
         'Social Gathering' => 'Social Gathering|Social Gatherings',
         'Region Event' => 'Region Event|Region Events',
-        'Job Fair' => 'Job Fair|Job Fairs',
+        'Job Fair' => 'Career Fair|Career Fairs',
         'Annual Meeting' => 'Annual Meeting|Annual Meetings',
     ],
 
@@ -884,10 +884,13 @@ return [
 
     'reg_status' => [
         'active' => 'Active',
+        'canceled' => 'Canceled',
+        'disc_exempt' => 'This ticket cannot be discounted.',
         'door' => 'At Door',
         'mail_broken' => "Mail is not working at the moment.  :org will email you a receipt. 
                           See it now by going to: <a style='color:yellow;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
         'free' => 'No Charge',
+        'inactive' => 'Inactive',
         'msg_status' => 'The registration with id: :id has been :verb',
         'p_refunded' => 'Partially Refunded',
         'promoted' => 'Promoted',
@@ -895,6 +898,7 @@ return [
         'pending' => 'Payment Pending',
         'processed' => 'Processed',
         'progress' => 'In Progress',
+        'refunded' => 'Refunded',
         'wait' => 'Wait List'
     ],
 

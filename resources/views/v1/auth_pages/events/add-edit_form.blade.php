@@ -51,7 +51,17 @@ $oe_types = DB::table('org-event_types')
               ->whereNull('deleted_at')
               ->get();
 
-$event_types = $oe_types->pluck('etName', 'etID');
+$event_types_tmp = $oe_types->pluck('etName', 'etID');
+$event_types = [];
+
+foreach ($event_types_tmp as $et) {
+    if(Lang::has('messages.event_types.'.$et)){
+        $et = trans_choice('messages.event_types.'.$et, 1);
+        array_push($event_types, $et);
+    } else {
+        array_push($event_types, $et);
+    }
+}
 
 $tz = DB::table('timezone')->select('zoneName', 'zoneOffset')->get();
 
