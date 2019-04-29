@@ -66,12 +66,8 @@ class Person extends Model
 
     public function orgperson()
     {
-        /*
-        return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID')
-            ->wherePivot('orgID', $this->defaultOrgID);
-            //->withPivot('OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4');
-        */
-        return $this->orgs()->where('org-person.orgID', $this->defaultOrgID);
+        return $this->hasOne(OrgPerson::class, 'personID', 'personID')
+            ->where('orgID', $this->defaultOrgID);
     }
 
     public function registrations()
@@ -91,6 +87,8 @@ class Person extends Model
 
     public function defaultOrg()
     {
+        // Alternate approach to getting the default organization
+        // return $this->orgs()->where('org-person.orgID', $this->defaultOrgID);
         return $this->belongsTo(Org::class, 'defaultOrgID', 'orgID');
     }
 

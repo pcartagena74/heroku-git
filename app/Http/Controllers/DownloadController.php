@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Org;
 use App\RegSession;
 use Illuminate\Http\Request;
 use Excel;
 use App\Event;
 use App\Registration;
+use App\Person;
 
 class DownloadController extends Controller
 {
@@ -30,7 +32,7 @@ class DownloadController extends Controller
             $nametags[] = array($r->regID, $r->person->prefName, $r->person->lastName, $r->isFirstEvent, $r->person->login,
                 $r->ticket->ticketLabel, $r->person->compName, $r->person->title, $r->person->indName,
                 $r->person->allergenInfo . "; " . $r->person->allergenNote, $r->person->orgperson->OrgStat1, $r->isAuthPDU,
-                $r->canNetwork, $r->regStatus == trans('messages.reg_status.pending') ? trans('messages.yesno_check.yes') : '');
+                $r->canNetwork, $r->regStatus == 'pending' ? 'yes' : '');
         }
 
         Excel::create('nametag_data', function ($excel) use ($nametags) {
@@ -46,35 +48,28 @@ class DownloadController extends Controller
     public function pdu_list(Event $event)
     {
         $nametags = [];
-        $regs = RegSession::where('eventID', '=', $event->eventID)
-            //->whereHas('regfinance', function($q){ $q->where('pmtRecd', '=', 1); })
-            ->with('person', 'person.orgperson', 'registration')->get();
+        $org = Org::find($event->orgID);
 
-        $tag_headers = ['RegSessID', trans('messages.fields.firstName'), trans('messages.fields.lastName'), // trans('messages.headers.isFirst'),
-            //trans('messages.headers.email'), trans('messages.fields.ticket'), // trans('messages.headers.disc_code'),
-            //trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind')),
-            //trans('messages.headers.allergens'),
-            trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU'),
-            //trans('messages.headers.canNetwork'), trans('messages.headers.bal_due2')
-        ];
+        $regs = RegSession::where('eventID', '=', $event->eventID)
+            ->with('person', 'person.orgperson', 'registration', 'person.orgs')->get();
+
+        $tag_headers = ['RegSessID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
+            trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU')];
 
         $nametags[] = $tag_headers;
 
         foreach ($regs as $r) {
-            $r->person->load('orgperson');
-            $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, // $r->isFirstEvent, $r->person->login,
-                // $r->ticket->ticketLabel, $r->person->compName, $r->person->title, $r->person->indName,
-                // $r->person->allergenInfo . "; " . $r->person->allergenNote,
-                $r->person->orgperson->OrgStat1, $r->registration->isAuthPDU,
-                // $r->canNetwork, $r->regStatus == trans('messages.reg_status.pending') ? trans('messages.yesno_check.yes') : ''
-            );
+            $p = Person::find($r->person->personID);
+            $p->load('orgperson');
+
+            $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, $p->orgperson->OrgStat1, $r->registration->isAuthPDU);
         }
 
-        Excel::create('pdu_data', function ($excel) use ($nametags) {
+        Excel::create('pdu_data', function ($excel) use ($nametags, $org) {
             $excel->setTitle('PDU Data');
-            $excel->setCreator('mCentric')->setCompany('Efcico Corporation dba mCentric');
-            $excel->setDescription('Name Tag Data');
-            $excel->sheet('Name Tag Data', function ($sheet) use ($nametags) {
+            $excel->setCreator('mCentric')->setCompany('mCentric for '. $org->orgName);
+            $excel->setDescription('PDU Data');
+            $excel->sheet('PDU Data', function ($sheet) use ($nametags) {
                 $sheet->fromArray($nametags, null, 'A1', false, false);
             });
         })->download('csv');

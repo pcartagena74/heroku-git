@@ -314,16 +314,14 @@ $mbr_price = trans('messages.instructions.mbr_price');
 
                                                 @for($i=1;$i<=$event->confDays;$i++)
                                                     <tr>
-                                                        <?php
+<?php
                                                         $z = EventSession::where([
                                                             ['confDay', '=', $i],
                                                             ['eventID', '=', $event->eventID]
                                                         ])->first();
                                                         $y = Ticket::find($z->ticketID);
-                                                        ?>
-                                                        <th style="text-align:center; color: yellow; background-color: #2a3f54;"
-                                                            colspan="{{ $columns }}">{{ trans('messages.headers.day') }} {{ $i }}
-                                                            :
+?>
+                                                        <th style="text-align:center; color: yellow; background-color: #2a3f54;" colspan="{{ $columns }}">{{ trans('messages.headers.day') }} {{ $i }}:
                                                             {{ $y->ticketLabel  }}
                                                         </th>
                                                     </tr>
@@ -359,6 +357,9 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                         ])->withTrashed()->count();
                                                                     } else {
                                                                         $count = 0;
+                                                                    }
+                                                                    if($x == 2 && $track->trackID == 26){
+                                                                        dd($count);
                                                                     }
 ?>
                                                                     @if($s !== null)
@@ -467,7 +468,8 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                     }
 ?>
                                                                     @if($s !== null && $s->leadAmt+$s->stratAmt+$s->techAmt > 0 && $s->maxAttendees > 0)
-                                                                        <td data-title="{{ trans('messages.fields.credit') }}" style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
+                                                                        <td data-title="{{ trans('messages.fields.credit') }}" rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
+                                                                            style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
                                                                             @if($s->leadAmt > 0)
                                                                                 <b>{{ $s->leadAmt }}
                                                                                     @lang('messages.pdus.lead')
@@ -487,7 +489,8 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                                 </b><br/>
                                                                             @endif
                                                                         </td>
-                                                                        <td data-title="{{ trans('messages.fields.limit') }}" style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
+                                                                        <td data-title="{{ trans('messages.fields.limit') }}"  rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
+                                                                            style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
                                                                             <b> @lang('messages.headers.att_limit'): </b>
                                                                             {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
                                                                         </td>

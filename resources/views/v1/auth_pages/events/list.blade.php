@@ -24,9 +24,9 @@ foreach($current_events as $event) {
     }
     $active_button .= '">';
     if($event->isActive) {
-        $active_button .= "<b>Active</b>";
+        $active_button .= "<b>" . trans('messages.reg_status.active') . "</b>";
     } else {
-        $active_button .= "Inactive";
+        $active_button .= trans('messages.reg_status.inactive');
     }
     $active_button .= "</button>";
 
@@ -80,10 +80,12 @@ foreach($current_events as $event) {
 
     // ->format('D, M d, Y h:i A')  ->toDayDateTimeString()
     array_push($current_data, ["<nobr>" . $event->eventStartDate->format('Y-m-d') . "  - </nobr><br><nobr>" .
-        $event->eventEndDate->format('Y-m-d') . "</nobr>",
-        $event->eventName, $event->etName, $active_button, $progress_bar, $display_link_button . $edit_link_button .
+        $event->eventEndDate->format('Y-m-d') . "</nobr>", $event->eventName,
+        Lang::has('messages.event_types.'.$event->etName) ? trans_choice('messages.event_types.'.$event->etName, 1) : $event->etName,
+        $active_button, $progress_bar, $display_link_button . $edit_link_button .
         $eventDiscount_button . $ticket_button . $track_link_button . $rpt_link_button  . $copy_link_button .
         $checkin_button . $delete_button]);
+
 }
 
 count($current_data) >= 15 ? $current_scroll = 1 : $current_scroll = 0;
