@@ -935,11 +935,12 @@ $i = 0;
                 x = document.getElementById('ticketID-' + j);
                 aff_array = $('#affiliation' + which).val();
                 mp_ok = check_affiliation_disc(aff_array);
+                mp_ok = 1 * $("#OrgStat1"+which).val()
                 compare = x.value;
                 tc = document.getElementById('tcost' + j);
                 fc = document.getElementById('final' + j);
-                var mbr_price = def_tick['memberBasePrice'];
-                var nmb_price = def_tick['nonmbrBasePrice'];
+                var mbr_price = def_tick['eb_mbr_price'];
+                var nmb_price = def_tick['eb_non_price'];
                 tix.forEach(function(ticket){
                     {{--
                                     Need to change logic so pricing fix
@@ -949,8 +950,8 @@ $i = 0;
                                     Then for each ticket, check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
                     --}}
                     if(tix.length > 0) {
-                        var mem_price = ticket['memberBasePrice'];
-                        var non_price = ticket['nonmbrBasePrice'];
+                        var mem_price = ticket['eb_mbr_price'];
+                        var non_price = ticket['eb_non_price'];
                         if (ticket['ticketID'] == compare) {
                             if (mp_ok) {
                                 $("#ticket_type" + j).html(member);
@@ -984,7 +985,7 @@ $i = 0;
             }
 
             function wait_list(t) {
-                if (t['regCount'] >= t['maxAttendees']) {
+                if (t['maxAttendees'] != null && t['regCount'] >= t['maxAttendees']) {
                     return 1;
                 } else {
                     return 0;
@@ -999,7 +1000,7 @@ $i = 0;
                 dm = document.getElementById('dm-' + i);
                 btn = document.getElementById('btn-apply' + which);
                 t = new_tick(tktID);
-                //console.log(t[0].ticketID);
+                console.log(t);
                 tc = document.getElementById('tcost' + i);
                 fc = document.getElementById('final' + i);
                 os = document.getElementById('OrgStat1' + which);
@@ -1030,7 +1031,6 @@ $i = 0;
                     dm.style.visibility = "visible";
                     btn.style.visibility = "visible";
                 }
-
                 // console.log(so.style.visibility);
                 fix_pricing(i, which);
             }
@@ -1041,7 +1041,7 @@ $i = 0;
 <?php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
 ?>
-                    percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
+                percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();
 
