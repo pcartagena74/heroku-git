@@ -22,6 +22,24 @@ class Ticket extends Model
     protected $primaryKey = 'ticketID';
     protected $dates = ['availabilityEndDate', 'earlyBirdEndDate', 'createDate', 'updateDate', 'deleted_at'];
 
+    protected $appends = ['eb_mbr_price', 'eb_non_price'];
+
+    public function getEbMbrPriceAttribute(){
+        if($this->valid_earlyBird()){
+            return $this->memberBasePrice - ($this->memberBasePrice*$this->earlyBirdPercent/100);
+        } else {
+            return $this->memberBasePrice;
+        }
+    }
+
+    public function getEbNonPriceAttribute(){
+        if($this->valid_earlyBird()){
+            return $this->nonmbrBasePrice - ($this->nonmbrBasePrice*$this->earlyBirdPercent/100);
+        } else {
+            return $this->nonmbrBasePrice;
+        }
+    }
+
     public function bundle()
     {
         return $this->belongsTo(Bundle::class, 'ticketID', 'ticketID', Ticket::class);
