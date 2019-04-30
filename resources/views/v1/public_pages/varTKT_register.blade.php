@@ -170,6 +170,7 @@ $i = 0;
             @endif
 
             <table id="ticket_head" class="table table-striped">
+                <tr>
                 <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
                     #{{ $i }} <span id="ticket_type{{ $i }}">
                     @if($i == 1)
@@ -686,7 +687,7 @@ $i = 0;
                 mp_ok = 0;
                 // console.log(aff_array);
                 if(aff_array !== null){
-                    aff_array.forEach((aff) => {
+                    aff_array.forEach(function(aff){
                         if(dc.includes(aff)){ mp_ok = 1; }
                     });
                 } else {
@@ -939,7 +940,7 @@ $i = 0;
                 fc = document.getElementById('final' + j);
                 var mbr_price = def_tick['memberBasePrice'];
                 var nmb_price = def_tick['nonmbrBasePrice'];
-                tix.forEach((ticket) => {
+                tix.forEach(function(ticket){
                     {{--
                                     Need to change logic so pricing fix
                                         1. Checks if the PMI ID is present and

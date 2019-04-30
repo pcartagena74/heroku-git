@@ -281,7 +281,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                 style="height: 32px;"><b>@lang('messages.buttons.buy')</b></button>
                                     </div>
 
-                                    &nbsp;<br/>
+                                    <br/>
                                     <SUP style='color: red'>**</SUP> @lang('messages.tooltips.bundles')
 
                                 @else
@@ -421,12 +421,10 @@ $mbr_price = trans('messages.instructions.mbr_price');
 ?>
                                                                     @if($s !== null)
                                                                         <td data-title="{{ trans('messages.fields.speakers') }}"
-                                                                            colspan="2" style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
+                                                                            colspan="2" style="text-align:left;{{ $x%2?'':'background-color:lightgray;' }}">
                                                                             <b>{{ trans('messages.fields.speakers') }}</b><br/>
                                                                             {{ $s->show_speakers() }}
                                                                         </td>
-                                                                    @else
-                                                                        &nbsp;
                                                                     @endif
                                                                 @endforeach
                                                             </tr>

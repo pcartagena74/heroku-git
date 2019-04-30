@@ -79,7 +79,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                 <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
 
-                    @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                    @if($rf->cost > 0 && $rf->status != 'wait')
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>@lang('messages.buttons.ccpay')</b>
@@ -92,9 +92,9 @@ if ($event->isSymmetric && $event->hasTracks) {
 
                     @if($event->acceptsCash)
                         <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                            @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                            @if($rf->cost > 0 && $rf->status != 'wait')
                                 <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
-                            @elseif($rf->status == trans('messages.headers.wait'))
+                            @elseif($rf->status == 'wait')
                                 <b>@lang('messages.buttons.wait')</b>
                             @else
                                 <b>@lang('messages.buttons.comp_reg')</b>
@@ -105,7 +105,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                             <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.comp_reg')</b>
                             </button>
-                        @elseif($rf->status == trans('messages.headers.wait'))
+                        @elseif($rf->status == 'wait')
                             <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.wait')</b>
                             </button>
@@ -155,7 +155,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                 <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
 
                                 <td style="text-align: left;">@lang('messages.symbols.cur')
-                                    @if($reg->membership == trans('messages.fields.member'))
+                                    @if($reg->membership == 'member')
                                         {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                     @else
                                         {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
@@ -193,7 +193,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                            data-value="{{ $person->prefix }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
-                                    @if($reg->membership == trans('messages.fields.nonmbr'))
+                                    @if($reg->membership == 'nonmbr')
                                         <a id="firstName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->firstName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -210,7 +210,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                            data-value="{{ $person->midName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
                                     @endif
-                                    @if($reg->membership == trans('messages.fields.nonmbr'))
+                                    @if($reg->membership == 'nonmbr')
                                         <a id="lastName-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->lastName }}"
                                            data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -372,7 +372,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                     <h1 @lang('messages.symbols.cur_class_5x')></h1>
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
-                    @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                    @if($rf->cost > 0 && $rf->status != 'wait')
                         <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
                                 class="card btn btn-primary btn-md">
                             <b>@lang('messages.buttons.ccpay')</b>
@@ -381,9 +381,9 @@ if ($event->isSymmetric && $event->hasTracks) {
                     @endif
                     @if($event->acceptsCash)
                         <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                            @if($rf->cost > 0 && $rf->status != trans('messages.headers.wait'))
+                            @if($rf->cost > 0 && $rf->status != 'wait')
                                 <b>{{ $rf->cost > 0 ? trans('messages.buttons.door') : trans('messages.buttons.comp_reg') }}</b>
-                            @elseif($rf->status == trans('messages.headers.wait'))
+                            @elseif($rf->status == 'wait')
                                 <b>@lang('messages.buttons.wait')</b>
                             @else
                                 <b>@lang('messages.buttons.comp_reg')</b>
@@ -394,7 +394,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                 <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.comp_reg')</b>
                                 </button>
-                            @elseif($rf->status == trans('messages.headers.wait'))
+                            @elseif($rf->status == 'wait')
                                 <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.wait')</b>
                                 </button>
@@ -447,11 +447,11 @@ if ($event->isSymmetric && $event->hasTracks) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-                    <?php
+<?php
                     foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
-                    ?>
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -535,10 +535,11 @@ if ($event->isSymmetric && $event->hasTracks) {
             $("#allergenInfo-{{ $i }}").editable({
                 type: 'checklist',
                 source: [
-                    <?php
+<?php
                     foreach ($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
-                    } ?>
+                    }
+?>
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });

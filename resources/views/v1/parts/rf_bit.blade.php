@@ -61,86 +61,86 @@ $s3fs = new Filesystem($adapter);
                         ['eventID', '=', $event->eventID]
                     ])->get();
 ?>
-                    @include('v1.parts.start_min_content', ['header' => $reg->membership .
-                    " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() . "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")",
-                    'subheader' => trans('messages.symbols.cur'). ' ' . number_format($reg->subtotal, 2),
-                    'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    @include('v1.parts.start_min_content', ['header' => Lang::has('messages.fields.'.$reg->membership) ?
+                    trans('messages.fields.'.$reg->membership) : $reg->membership . " Ticket (" .  $person->showFullName() .
+                    "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")", 'subheader' => trans('messages.symbols.cur').
+                    ' ' . number_format($reg->subtotal, 2), 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                    @if($rf->cost > 0) {{-- There is a fee for event --}}
+    @if($rf->cost > 0) {{-- There is a fee for event --}}
 
-                        @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
-                            {{-- Payment received and able to display a refund button --}}
+        @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
+            {{-- Payment received and able to display a refund button --}}
 
-                            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                @lang('messages.buttons.reg_ref')
-                            </button>
-                            {!! Form::close() !!}
-                        @endif
+            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+            <button type="submit" class="btn btn-danger btn-sm">
+                @lang('messages.buttons.reg_ref')
+            </button>
+            {!! Form::close() !!}
+        @endif
 
-                        @if($rf->pmtRecd == 1)
-                            {{-- Payment received so receipt buttons are appropriate --}}
-                            <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                               class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
+        @if($rf->pmtRecd == 1)
+            {{-- Payment received so receipt buttons are appropriate --}}
+            <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+               class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
-                            <a target="_new" href="{{ $receipt_url }}"
-                               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
-                            <br/>
-                        @else
+            <a target="_new" href="{{ $receipt_url }}"
+               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+            <br/>
+        @else
 
-                            {{-- Payment NOT received so continue or cancel buttons are OK whenever --}}
-                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-                                class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
+            {{-- Payment NOT received so continue or cancel buttons are OK whenever --}}
+            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
 
-                            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        @lang('messages.buttons.reg_can')
-                                    </button>
-                            {!! Form::close() !!}
+            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        @lang('messages.buttons.reg_can')
+                    </button>
+            {!! Form::close() !!}
 
-                        @endif
+        @endif
 
-                    @else               {{-- There is no fee for event --}}
+    @else               {{-- There is no fee for event --}}
 
-                        @if($rf->pmtRecd == 1)
-                            {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
+        @if($rf->pmtRecd == 1)
+            {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
 
-                            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                @lang('messages.buttons.reg_can')
-                            </button>
-                            {!! Form::close() !!}
+            {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+            <button type="submit" class="btn btn-danger btn-sm">
+                @lang('messages.buttons.reg_can')
+            </button>
+            {!! Form::close() !!}
 
-                            {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
-                            <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                               class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
+            {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
+            <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+               class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
-                            <a target="_new" href="{{ $receipt_url }}"
-                               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
-                            <br/>
-                        @else
+            <a target="_new" href="{{ $receipt_url }}"
+               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+            <br/>
+        @else
 
 
-                        @endif
+        @endif
 
-                    @endif
+    @endif
 
-                    &nbsp;<br />
-                    @if($reg->ticket->has_sessions())
-                        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
-                        'reg' => $reg, 'regSession' => $regSessions])
-                    @endif
+    &nbsp;<br />
+    @if($reg->ticket->has_sessions())
+        @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
+        'reg' => $reg, 'regSession' => $regSessions])
+    @endif
 
-                    @include('v1.parts.end_content')
+    @include('v1.parts.end_content')
 
-                @endforeach  {{-- end of multiple-seat purchase --}}
+@endforeach  {{-- end of multiple-seat purchase --}}
 
-        </div>
-        @include('v1.parts.end_content')
-    @endforeach
+</div>
+@include('v1.parts.end_content')
+@endforeach
 
 </div>
 @include('v1.parts.end_content')
