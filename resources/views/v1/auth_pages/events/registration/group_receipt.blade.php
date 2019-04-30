@@ -135,8 +135,8 @@ $deletion = 0;
             </div>
             <div class="col-md-10 col-sm-10">
                 <table class="table jambo_table table-bordered table-condensed table-striped">
-                    <tr>
-                        <thead>
+                    <thead>
+                        <tr>
                         <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }}
                             {{ strtoupper(__('messages.fields.ticket')) }}:
                             #{{ $tcount }}
@@ -159,8 +159,8 @@ $deletion = 0;
                                 @endif
                             </span>
                         </th>
-                        </thead>
                     </tr>
+                    </thead>
                     <tr>
                         <th style="text-align: left; color:darkgreen;">@lang('messages.fields.ticket')</th>
                         <th style="text-align: left; color:darkgreen;">@lang('messages.fields.oCost')</th>

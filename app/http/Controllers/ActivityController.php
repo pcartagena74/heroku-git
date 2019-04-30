@@ -50,7 +50,6 @@ class ActivityController extends Controller
                               ['personID', '=', $this->currentPerson->personID],
                               ['pmtRecd', '=', 1]
                           ])
-                          //->whereIn('status', [trans('messages.reg_status.active'), trans('messages.reg_status.processed')])
                           ->get()->sortBy('event.eventStartDate');
 
         $unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
@@ -63,11 +62,7 @@ class ActivityController extends Controller
                                 'registrations', function($q) {
                                     $q->where('pmtRecd', '=', 0);
                             })
-                            ->whereIn('status', [
-                                'progress', 'wait',
-                                trans('messages.reg_status.pending'),
-                                trans('messages.headers.wait')
-                            ])
+                            ->whereIn('status', ['progress', 'wait', 'pending', 'wait'])
                             ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(
@@ -77,7 +72,7 @@ class ActivityController extends Controller
         })
                              ->with('event', 'person', 'registrations')
                              ->where('personID', '=', $this->currentPerson->personID)
-                             ->whereIn('status', ['pending', trans('messages.reg_status.progress')])
+                             ->whereIn('status', ['pending', 'progress'])
                              ->get()->sortBy('event.eventStartDate');
 
         $topBits = '';
@@ -102,8 +97,8 @@ class ActivityController extends Controller
                            ])
                            ->whereNull('er.deleted_at')
                            ->where(function($w) {
-                               $w->where('er.regStatus', '=', trans('messages.reg_status.active'))
-                                 ->orWhere('er.regStatus', '=', trans('messages.reg_status.processed'));
+                               $w->where('er.regStatus', '=', 'active')
+                                 ->orWhere('er.regStatus', '=', 'processed');
                            })
                            ->select('org-event.eventID', 'org-event.eventName', 'oet.etName',
                                'org-event.eventStartDate', 'org-event.eventEndDate',

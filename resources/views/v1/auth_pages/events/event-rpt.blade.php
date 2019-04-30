@@ -171,7 +171,9 @@ foreach ($notregs as $r) {
     $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
     $c = $v->render();
 
-    array_push($notreg_rows, [plink($r->regID, $r->person->personID), $r->regStatus, $r->person->firstName, $r->person->lastName,
+    array_push($notreg_rows, [plink($r->regID, $r->person->personID),
+        trans('messages.reg_status.'.$r->regStatus) ? trans('messages.reg_status.'.$r->regStatus) : $r->regStatus,
+        $r->person->firstName, $r->person->lastName,
         $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
         trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
 }
@@ -223,6 +225,7 @@ if ($event->hasTracks && $event->isSymmetric) {
 }
 
 $es = $event->default_session();
+$count = 0;
 
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -385,25 +388,32 @@ $es = $event->default_session();
                                                 ['confDay', $j],
                                                 ['order', $x]
                                             ])->first();
+
+                                            if ($s !== null && $s->isLinked) {
+                                                $count = EventSession::where([
+                                                    ['trackID', $track->trackID],
+                                                    ['eventID', $event->eventID],
+                                                    ['confDay', $j],
+                                                    ['isLinked', $s->isLinked]
+                                                ])->withTrashed()->count();
+                                            } else {
+                                                $count = 0;
+                                            }
 ?>
                                             @if($s !== null)
                                                 @if($tracks->first() == $track || !$event->isSymmetric)
-
-                                                    <td rowspan="1" style="text-align:left;">
+                                                    <td rowspan="{{ $count>0 ? $count+1 : 1 }}" style="text-align:left;">
                                                         <nobr> {{ $s->start->format('g:i A') }} </nobr>
                                                         &dash;
                                                         <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                     </td>
-                                                @else
-
                                                 @endif
-                                                <td colspan="2" style="text-align:left; min-width:150px;
+                                                <td colspan="2" rowspan="{{ $count>0 ? $count+1 : 1 }}" style="text-align:left; min-width:150px;
                                                         width: {{ $width }}%; max-width: {{ $mw }}%;">
 <?php
                                                     // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
                                                     $sTotal = 0;
-                                                    $sRegs =
-                                                        RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
+                                                    $sRegs = RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
                                                             ->where([
                                                                 ['sessionID', $s->sessionID],
                                                                 ['er.eventID', $event->eventID]
@@ -418,15 +428,8 @@ $es = $event->default_session();
                                                         <li><b>@lang('messages.fields.total'): {{ $sTotal }}</b></li>
                                                     </ul>
                                                 </td>
-                                            @else
-                                                @if($tracks->first() == $track || !$event->isSymmetric)
-                                                    <td colspan="3" style="text-align:left;">
-                                                @else
-                                                    <td colspan="2" style="text-align:left;">
-                                                        @endif
-                                                    </td>
-                                                @endif
-                                                @endforeach
+                                            @endif
+                                        @endforeach
                                     </tr>
                                 @endif
 

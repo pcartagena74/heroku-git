@@ -60,10 +60,10 @@ $s3fs = new Filesystem($adapter);
                 $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
                 $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 ?>
-                @include('v1.parts.start_min_content', ['header' => $reg->membership .
-                " Ticket (" .  $person->showFullName() . "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")",
-                'subheader' => '<i class="fa fa-dollar"></i> ' . $reg->subtotal,
-                'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_min_content', ['header' => Lang::has('messages.fields.'.$reg->membership) ?
+                trans('messages.fields.'.$reg->membership) : $reg->membership . " Ticket (" .  $person->showFullName() .
+                 "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")", 'subheader' => '<i class="fa fa-dollar"></i> ' .
+                 $reg->subtotal, 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                 {!! Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $reg->regID, $reg->regfinance->regID ], 'data-toggle' => 'validator' ]) !!}
                 {{--
