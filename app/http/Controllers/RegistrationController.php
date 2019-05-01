@@ -393,103 +393,114 @@ class RegistrationController extends Controller
                    $set_secondary_email = 1;
                }
             }
-            // if we need to create a new $person record, flag for the creation of the other new objects too
-            if(null === $person) {
-                $person = new Person;
-                $set_new_user = 1;
-            }
 
-            // We have either found the appropriate person record ($p) or have created a new one
-            isset($prefix) ? $person->prefix = $prefix :1;
-            isset($firstName) ? $person->firstName = $firstName :1;
-            isset($middleName) ? $person->midName = $middleName :1;
-            isset($lastName) ? $person->lastName = $lastName :1;
-            isset($suffix) ? $person->suffix = $suffix :1;
-            $person->defaultOrgID = $event->orgID;
-            isset($prefName) ? $person->prefName = $prefName : $person->prefName = $firstName;
-            isset($compName) ? $person->compName = $compName :1;
-            isset($indName) ? $person->indName = $indName :1;
-            isset($title) ? $person->title = $title :1;
-            isset($experience) ? $person->experience = $experience :1;
-            isset($chapterRole) ? $person->chapterRole = $chapterRole :1;
-            isset($login) ? $person->login = $login :1;
-            if ($event->hasFood && $allergenInfo !== null) {
-                $person->allergenInfo = implode(",", (array)$allergenInfo);
-                isset($eventNotes) ? $person->allergenNote = $eventNotes :1;
-            }
-            isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) :1;
-            isset($certification) ? $person->certifications = implode(",", (array)$certification) :1;
-            $person->save();
+            try {
+                DB::beginTransaction();
 
-            if (null === $pmiID) {
-                $regMem = 'nonmbr';
-            } else {
-                $regMem = 'member';
-            }
-
-            // Only if we had to set a temporary RF record with system owner
-            if($i == 1){
-                if($rf->personID == 1){
-                    $rf->personID = $person->personID;
-                    $rf->save();
-                }
-            }
-            if($set_new_user) {
-                $user = new User();
-                $user->id = $person->personID;
-                $user->name = $login;
-                $user->login = $login;
-                $user->email = $login;
-                $user->save();
-                if($i==1 && !Auth::check()) {
-                    // log the first ticket's user in if no one is logged in -- ASSUMPTION RISK
-                    Auth::loginUsingId($user->id);
-                    $rf->personID = $person->personID;
-                    $rf->save();
-                    $show_pass_fields = 1;
+                // if we need to create a new $person record, flag for the creation of the other new objects too
+                if (null === $person) {
+                    $person = new Person;
+                    $set_new_user = 1;
                 }
 
-                $op = new OrgPerson;
-                $op->orgID = $event->orgID;
-                $op->personID = $person->personID;
-                if ($pmiID) {
-                    $op->OrgStat1 = $pmiID;
-                    $change_to_member = 1;
+                // We have either found the appropriate person record ($p) or have created a new one
+                isset($prefix) ? $person->prefix = $prefix : 1;
+                isset($firstName) ? $person->firstName = $firstName : 1;
+                isset($middleName) ? $person->midName = $middleName : 1;
+                isset($lastName) ? $person->lastName = $lastName : 1;
+                isset($suffix) ? $person->suffix = $suffix : 1;
+                $person->defaultOrgID = $event->orgID;
+                isset($prefName) ? $person->prefName = $prefName : $person->prefName = $firstName;
+                isset($compName) ? $person->compName = $compName : 1;
+                isset($indName) ? $person->indName = $indName : 1;
+                isset($title) ? $person->title = $title : 1;
+                isset($experience) ? $person->experience = $experience : 1;
+                isset($chapterRole) ? $person->chapterRole = $chapterRole : 1;
+                isset($login) ? $person->login = $login : 1;
+                if ($event->hasFood && $allergenInfo !== null) {
+                    $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    isset($eventNotes) ? $person->allergenNote = $eventNotes : 1;
                 }
-                $op->save();
+                isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) : 1;
+                isset($certification) ? $person->certifications = implode(",", (array)$certification) : 1;
+                $person->save();
 
-                $email = new Email;
-                $email->personID = $person->personID;
-                $email->emailADDR = $login;
-                $email->isPrimary = 1;
-                $email->save();
-            } else {
-                $op = OrgPerson::where([
-                    ['personID', '=', $person->personID],
-                    ['orgID', '=', $event->orgID]
-                ])->first();
-                // Slight chance of not getting an $op record from above, so create if needed.
-                if(null === $op){
+                if (null === $pmiID) {
+                    $regMem = 'nonmbr';
+                } else {
+                    $regMem = 'member';
+                }
+
+                // Only if we had to set a temporary RF record with system owner
+                if ($i == 1) {
+                    if ($rf->personID == 1) {
+                        $rf->personID = $person->personID;
+                        $rf->save();
+                    }
+                }
+                if ($set_new_user) {
+                    $user = new User();
+                    $user->id = $person->personID;
+                    $user->name = $login;
+                    $user->login = $login;
+                    $user->email = $login;
+                    $user->save();
+                    if ($i == 1 && !Auth::check()) {
+                        // log the first ticket's user in if no one is logged in -- ASSUMPTION RISK
+                        Auth::loginUsingId($user->id);
+                        $rf->personID = $person->personID;
+                        $rf->save();
+                        $show_pass_fields = 1;
+                    }
+
                     $op = new OrgPerson;
                     $op->orgID = $event->orgID;
                     $op->personID = $person->personID;
-                }
-                // If not already a member and a PMI ID was provided, update and flag to change ticket price
-                if(!$person->is_member($event->orgID) && isset($pmiID)){
-                    $op->OrgStat1 = $pmiID;
-                    $op->updaterID = $person->personID;
+                    if ($pmiID) {
+                        $op->OrgStat1 = $pmiID;
+                        $change_to_member = 1;
+                    }
                     $op->save();
-                    $change_to_member = 1;
+
+                    $email = new Email;
+                    $email->personID = $person->personID;
+                    $email->emailADDR = $login;
+                    $email->isPrimary = 1;
+                    $email->save();
+                } else {
+                    $op = OrgPerson::where([
+                        ['personID', '=', $person->personID],
+                        ['orgID', '=', $event->orgID]
+                    ])->first();
+                    // Slight chance of not getting an $op record from above, so create if needed.
+                    if (null === $op) {
+                        $op = new OrgPerson;
+                        $op->orgID = $event->orgID;
+                        $op->personID = $person->personID;
+                    }
+                    // If not already a member and a PMI ID was provided, update and flag to change ticket price
+                    if (!$person->is_member($event->orgID) && isset($pmiID)) {
+                        $op->OrgStat1 = $pmiID;
+                        $op->updaterID = $person->personID;
+                        $op->save();
+                        $change_to_member = 1;
+                    }
                 }
-            }
 
-            if($set_secondary_email){
-                $email = new Email;
-                $email->personID = $person->personID;
-                $email->emailADDR = $login;
-                $email->save();
-            }
+                if ($set_secondary_email) {
+                    $email = new Email;
+                    $email->personID = $person->personID;
+                    $email->emailADDR = $login;
+                    $email->save();
+                }
 
+                DB::commit();
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
+                return back()->withInput();
+            }
+            
             $reg = new Registration;
             $reg->rfID = $rf->regID;
             $reg->eventID = $event->eventID;
