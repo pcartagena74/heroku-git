@@ -31,15 +31,16 @@ use Stripe\Card;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Lang;
 
-
 class EventController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing', 'get_tix']]);
     }
 
     // Helper function containing code to put the event counting bits into a blade template
-    protected function event_bits() {
+    protected function event_bits()
+    {
         $topBits             = [];
         $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -47,7 +48,7 @@ class EventController extends Controller
         $upcoming = trans('messages.fields.up') . " ";
         $rtw = trans('messages.headers.regs_this_week');
 
-        $ch_mtg        = Cache::get('future_cm', function () use($today) {
+        $ch_mtg        = Cache::get('future_cm', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
                 ['orgID', $this->currentPerson->defaultOrgID],
@@ -56,13 +57,13 @@ class EventController extends Controller
         });
 
         $cm_count = 0;
-        foreach($ch_mtg as $cm){
+        foreach ($ch_mtg as $cm) {
             $cm_count += $cm->week_sales();
         }
 
         $cm_label = trans_choice('messages.event_types.Chapter Meeting', 2);
 
-        $roundtables        = Cache::get('future_roundtables', function () use($today) {
+        $roundtables        = Cache::get('future_roundtables', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
                 ['orgID', $this->currentPerson->defaultOrgID],
@@ -71,13 +72,13 @@ class EventController extends Controller
         });
 
         $rt_count = 0;
-        foreach($roundtables as $rt){
+        foreach ($roundtables as $rt) {
             $rt_count += $rt->week_sales();
         }
 
         $rt_label = trans_choice('messages.event_types.Roundtable', 2);
 
-        $socials        = Cache::get('future_socials', function () use($today) {
+        $socials        = Cache::get('future_socials', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
                 ['orgID', $this->currentPerson->defaultOrgID],
@@ -86,13 +87,13 @@ class EventController extends Controller
         });
 
         $so_count = 0;
-        foreach($socials as $so){
+        foreach ($socials as $so) {
             $so_count += $so->week_sales();
         }
 
         $so_label = trans_choice('messages.event_types.Social Gathering', 2);
 
-        $pddays        = Cache::get('future_pddays', function () use($today) {
+        $pddays        = Cache::get('future_pddays', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
                 ['orgID', $this->currentPerson->defaultOrgID],
@@ -101,13 +102,13 @@ class EventController extends Controller
         });
 
         $pd_count = 0;
-        foreach($pddays as $pd){
+        foreach ($pddays as $pd) {
             $pd_count += $pd->week_sales();
         }
 
         $pd_label = trans_choice('messages.event_types.PD Day', 2);
 
-        $jobs        = Cache::get('future_job_fairs', function () use($today) {
+        $jobs        = Cache::get('future_job_fairs', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
                 ['orgID', $this->currentPerson->defaultOrgID],
@@ -116,13 +117,13 @@ class EventController extends Controller
         });
 
         $jf_count = 0;
-        foreach($jobs as $jf){
+        foreach ($jobs as $jf) {
             $jf_count += $jf->week_sales();
         }
 
         $jf_label = trans_choice('messages.event_types.Job Fair', 2);
 
-        $all        = Cache::get('all_future_events', function () use($today) {
+        $all        = Cache::get('all_future_events', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
                 ['orgID', $this->currentPerson->defaultOrgID]
@@ -130,7 +131,7 @@ class EventController extends Controller
         });
 
         $ae_count = 0;
-        foreach($all as $ae){
+        foreach ($all as $ae) {
             $ae_count += $ae->week_sales();
         }
 
@@ -145,7 +146,8 @@ class EventController extends Controller
         return($topBits);
     }
 
-    public function index() {
+    public function index()
+    {
         // responds to GET /events
         $topBits = $this->event_bits();
 
@@ -153,12 +155,22 @@ class EventController extends Controller
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
         // Get a list of current events, showing events that have not yet ended.
-        $current_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate',
-                                        'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+        $current_events = Event::select(
+            'eventID',
+            'eventName',
+            'eventStartDate',
+            'eventEndDate',
+            'org-event.isActive',
+            'hasTracks',
+            'etName',
+            'slug',
+            'hasTracks',
+            'eventTypeID'
+        )
             ->where([
                 ['org-event.orgID', $this->currentPerson->defaultOrgID],
             ])
-            ->where(function($q) use ($today) {
+            ->where(function ($q) use ($today) {
                 $q->orWhere('eventEndDate', '>=', $today);
                 $q->orWhereBetween('eventStartDate', [$today->addDays(-1), $today->addDays(1)]);
             })
@@ -191,8 +203,18 @@ class EventController extends Controller
 
         $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
 
-        $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate',
-            'org-event.isActive', 'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+        $past_events = Event::select(
+            'eventID',
+            'eventName',
+            'eventStartDate',
+            'eventEndDate',
+            'org-event.isActive',
+            'hasTracks',
+            'etName',
+            'slug',
+            'hasTracks',
+            'eventTypeID'
+        )
             ->where([
                 ['org-event.orgID', $this->currentPerson->defaultOrgID],
                 ['eventEndDate', '<', $today]
@@ -210,11 +232,12 @@ class EventController extends Controller
     {
         $today = Carbon::now();
         try {
-            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
-                function($query) use ($param){
+            $event = Event::when(
+                filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function ($query) use ($param) {
                     return $query->where('eventID', $param);
                 },
-                function($query) use ($param){
+                function ($query) use ($param) {
                     return $query->where('slug', $param);
                 }
             )->firstOrFail();
@@ -267,9 +290,9 @@ class EventController extends Controller
 
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
-        try{
+        try {
             $event->save();
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         // A copied event should always get the discount codes.
@@ -292,16 +315,18 @@ class EventController extends Controller
         return redirect('/event/' . $event->eventID . '/edit');
     }
 
-    public function show($param, $override = null) {
+    public function show($param, $override = null)
+    {
         // responds to GET /events/{param}
         // $param is either an ID or slug
 
         try {
-            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
-                function($query) use ($param){
+            $event = Event::when(
+                filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function ($query) use ($param) {
                     return $query->where('eventID', $param);
                 },
-                function($query) use ($param){
+                function ($query) use ($param) {
                     return $query->where('slug', $param);
                 }
             )->firstOrFail();
@@ -309,8 +334,8 @@ class EventController extends Controller
             $message = trans('messages.warning.inactive_event_url');
             return view('v1.public_pages.error_display', compact('message'));
         }
-        if($override){
-            if($override == 'unlock'){
+        if ($override) {
+            if ($override == 'unlock') {
                 $message = trans('messages.warning.inactive_unlocked_event');
             } else {
                 $message = trans('messages.warning.inactive_event');
@@ -368,12 +393,24 @@ class EventController extends Controller
 
         $tracks = Track::where('eventID', $event->eventID)->get();
 
-        return view('v1.public_pages.display_event_w_sessions2',
-            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'tracks',
-                    'currentOrg', 'override'));
+        return view(
+            'v1.public_pages.display_event_w_sessions2',
+            compact(
+                'event',
+                'current_person',
+                'bundles',
+                'tickets',
+                'event_loc',
+                'orgLogoPath',
+                'tracks',
+                'currentOrg',
+                'override'
+            )
+        );
     }
 
-    public function create() {
+    public function create()
+    {
         // responds to /events/create and shows add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
@@ -383,7 +420,8 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         // responds to POST to /events and creates, adds, stores the event
         $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -434,15 +472,15 @@ class EventController extends Controller
         $event->orgID = $this->currentPerson->defaultOrgID;
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
-        if($eventDescription !== null){
-            if(preg_match("/data:image/", $eventDescription)){
+        if ($eventDescription !== null) {
+            if (preg_match("/data:image/", $eventDescription)) {
                 $eventDescription = extract_images($eventDescription, $event->orgID);
             }
         }
         $event->eventDescription = $eventDescription;
         $eventInfo = request()->input('eventInfo');
-        if($eventInfo !== null){
-            if(preg_match("/data:image/", $eventInfo)){
+        if ($eventInfo !== null) {
+            if (preg_match("/data:image/", $eventInfo)) {
                 $eventInfo = extract_images($eventInfo, $event->orgID);
             }
         }
@@ -459,8 +497,8 @@ class EventController extends Controller
         $event->hasFood = request()->input('hasFood');
         $event->slug = request()->input('slug');
         $postRegInfo = request()->input('postRegInfo');
-        if($postRegInfo !== null){
-            if(preg_match("/data:image/", $postRegInfo)){
+        if ($postRegInfo !== null) {
+            if (preg_match("/data:image/", $postRegInfo)) {
                 $postRegInfo = extract_images($postRegInfo, $event->orgID);
             }
         }
@@ -492,9 +530,9 @@ class EventController extends Controller
         $event->creatorID = $this->currentPerson->personID;
         $event->updaterID = $this->currentPerson->personID;
 
-        try{
+        try {
             $event->save();
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         if (request()->input('hasTracksCheck') == 1) {
@@ -531,9 +569,9 @@ class EventController extends Controller
 
         $event->mainSession = $mainSession->sessionID;
         $event->updaterID = $this->currentPerson->personID;
-        try{
+        try {
             $event->save();
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         if ($event->eventStartDate > $today) {
@@ -561,7 +599,8 @@ class EventController extends Controller
         return redirect('/event-tickets/' . $event->eventID);
     }
 
-    public function edit(Event $event) {
+    public function edit(Event $event)
+    {
         // responds to GET /events/id/edit and shows the add/edit form
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -572,7 +611,8 @@ class EventController extends Controller
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }
 
-    public function checkSlugUniqueness(Request $request, $id) {
+    public function checkSlugUniqueness(Request $request, $id)
+    {
         $slug = request()->input('slug');
         if ($id == 0) {
             if (Event::whereSlug($slug)->withTrashed()->exists()) {
@@ -594,7 +634,8 @@ class EventController extends Controller
         return json_encode(array('status' => 'success', 'message' => $message));
     }
 
-    public function update(Request $request, Event $event) {
+    public function update(Request $request, Event $event)
+    {
         // responds to PATCH /event/id
         $slug = request()->input('slug');
         $skip = request()->input('sub_changes');
@@ -657,15 +698,15 @@ class EventController extends Controller
         }
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
-        if($eventDescription !== null){
-            if(preg_match("/data:image/", $eventDescription)){
+        if ($eventDescription !== null) {
+            if (preg_match("/data:image/", $eventDescription)) {
                 $eventDescription = extract_images($eventDescription, $event->orgID);
             }
         }
         $event->eventDescription = $eventDescription;
         $eventInfo = request()->input('eventInfo');
-        if($eventInfo !== null){
-            if(preg_match("/data:image/", $eventInfo)){
+        if ($eventInfo !== null) {
+            if (preg_match("/data:image/", $eventInfo)) {
                 $eventInfo = extract_images($eventInfo, $event->orgID);
             }
         }
@@ -688,8 +729,8 @@ class EventController extends Controller
         }
         $event->slug = request()->input('slug');
         $postRegInfo = request()->input('postRegInfo');
-        if($postRegInfo !== null){
-            if(preg_match("/data:image/", $postRegInfo)){
+        if ($postRegInfo !== null) {
+            if (preg_match("/data:image/", $postRegInfo)) {
                 $postRegInfo = extract_images($postRegInfo, $event->orgID);
             }
         }
@@ -718,7 +759,7 @@ class EventController extends Controller
         $today = Carbon::now();
 
         // Edit the default ticket for the event IF the end date changed.
-        if($original['eventEndDate'] == $event->eventEndDate){
+        if ($original['eventEndDate'] == $event->eventEndDate) {
             $tkt = Ticket::where('eventID', $event->eventID)->first();
             $tkt->availabilityEndDate = $event->eventStartDate;
             $tkt->earlyBirdEndDate = $today;
@@ -761,9 +802,9 @@ class EventController extends Controller
             $event->mainSession = $mainSession->sessionID;
             $event->updaterID = $this->currentPerson->personID;
         }
-        try{
+        try {
             $event->save();
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         // Make and overwrite the event_{id}.ics file
@@ -775,14 +816,15 @@ class EventController extends Controller
         // Think about whether ticket modification should be done here.
         // Maybe catch the auto-created tickets when events are copied
 
-        if($skip === null){
+        if ($skip === null) {
             return redirect(env('APP_URL').'/event-tickets/' . $event->eventID);
         } else {
             return redirect(env('APP_URL')."/events");
         }
     }
 
-    public function destroy(Event $event) {
+    public function destroy(Event $event)
+    {
         // responds to DELETE /events/id
 
         $event->delete();
@@ -795,15 +837,15 @@ class EventController extends Controller
         if ($event->isActive == 1) {
             $event->isActive = 0;
         } else {
-            if($event->hasTracks){
+            if ($event->hasTracks) {
                 1; // determine what checks should be performed
             }
             $event->isActive = 1;
         }
         $event->updaterID = auth()->user()->id;
-        try{
+        try {
             $event->save();
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         return json_encode(array('status' => 'success', 'message' => 'Activation successfully toggled.'));
@@ -817,7 +859,8 @@ class EventController extends Controller
      * @param Event $event
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector
      */
-    public function ajax_update(Request $request, Event $event) {
+    public function ajax_update(Request $request, Event $event)
+    {
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 
@@ -831,9 +874,9 @@ class EventController extends Controller
 
         $event->{$name} = $value;
         $event->updaterID = $this->currentPerson->personID;
-        try{
+        try {
             $event->save();
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         // now, either the date or percent changed, so update all event tickets
@@ -847,9 +890,9 @@ class EventController extends Controller
             }
             $ticket->updaterID = $this->currentPerson->personID;
 
-            try{
+            try {
                 $ticket->save();
-            }catch(\Exception $exception){
+            } catch (\Exception $exception) {
             }
         }
         return redirect('/event-tickets/' . $event->eventID);
@@ -880,7 +923,7 @@ class EventController extends Controller
             $override ? $check = 1 : $check = 0;
             $title = $title . ": $event->eventName";
             $t = Ticket::where('eventID', '=', $event->eventID)->get();
-            if(count($t) > 1){
+            if (count($t) > 1) {
                 $a = $t->pluck('ticketLabel', 'ticketID');
                 $b = array(0 => trans('messages.headers.sel_tkt'));
                 $c = $a->toArray();
@@ -902,7 +945,8 @@ class EventController extends Controller
         //return view('v1.auth_pages.events.group-registration', compact('event'));
     }
 
-    public function listing($orgID, $etID, $override = null) {
+    public function listing($orgID, $etID, $override = null)
+    {
         try {
             $org = Org::find($orgID);
         } catch (\Exception $exception) {
@@ -911,7 +955,7 @@ class EventController extends Controller
         }
 
         // Check to see if $etID is sent as a comma-separated list of etIDs
-        if(preg_match('/,/', $etID)){
+        if (preg_match('/,/', $etID)) {
             // change value of $etID to be the list of things if it's a list
             $etID_array = explode(",", $etID);
             $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
@@ -930,7 +974,7 @@ class EventController extends Controller
                 ->get();
         } else {
             $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
-            if(Lang::has($tag->etName)){
+            if (Lang::has($tag->etName)) {
                 $tag->etName = trans_choice('messages.event_types.'.$tag->etName, 1);
             } else {
                 // $tag = $tag->etName;
@@ -947,7 +991,7 @@ class EventController extends Controller
                     ->with('location')
                     ->orderBy('eventStartDate')
                     ->get();
-            } elseif($etID == 99) {
+            } elseif ($etID == 99) {
                 $events = Event::where([
                     ['orgID', $orgID],
                     ['isActive', 1],
@@ -973,7 +1017,7 @@ class EventController extends Controller
 
         $cnt = count($events);
 
-        if($override){
+        if ($override) {
             $view =  view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'))->render();
             $view = trim(preg_replace('/\r\n/', ' ', $view));
 
@@ -983,13 +1027,15 @@ class EventController extends Controller
         }
     }
 
-    public function ticket_listing($param, $override = null) {
+    public function ticket_listing($param, $override = null)
+    {
         try {
-            $event = Event::when(filter_var($param, FILTER_VALIDATE_INT) !== false,
-                function($query) use ($param){
+            $event = Event::when(
+                filter_var($param, FILTER_VALIDATE_INT) !== false,
+                function ($query) use ($param) {
                     return $query->where('eventID', $param);
                 },
-                function($query) use ($param){
+                function ($query) use ($param) {
                     return $query->where('slug', $param);
                 }
             )->firstOrFail();
@@ -1037,7 +1083,8 @@ class EventController extends Controller
         );
     }
 
-    public function ics_listing($orgID, $etID = null, $override = null) {
+    public function ics_listing($orgID, $etID = null, $override = null)
+    {
         $events = Event::where([
             ['orgID', '=', $orgID],
             ['eventStartDate', '>=', Carbon::now()],
@@ -1056,7 +1103,8 @@ class EventController extends Controller
     /*
      * get_tix: AJAX - returns the tickets for an event
      */
-    public function get_tix(Event $event, Ticket $ticket){
+    public function get_tix(Event $event, Ticket $ticket)
+    {
         $tix = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isSuppressed', '=', 0]

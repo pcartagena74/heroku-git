@@ -49,7 +49,6 @@ class AssetController extends Controller
     public function ajax_store(Request $request)
     {
         // POST /upload/{folder}/{filetype}
-
     }
 
     /**

@@ -47,7 +47,7 @@ class EventDiscountController extends Controller
         // responds to POST /blah/id
         $eventID   = $id;
         $code      = request()->input('discount_code');
-        if($code == ''){
+        if ($code == '') {
             return;
         }
         $event     = Event::find($eventID);
@@ -117,7 +117,8 @@ class EventDiscountController extends Controller
         return redirect("/eventdiscount/$event->eventID");
     }
 
-    public function fix_defaults(Event $event){
+    public function fix_defaults(Event $event)
+    {
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgDiscounts = OrgDiscount::where([['orgID', $event->orgID],
             ['discountCODE', "<>", '']])->get();

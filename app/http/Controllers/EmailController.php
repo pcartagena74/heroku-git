@@ -82,13 +82,14 @@ class EmailController extends Controller
         }
     }
 
-    public function show($email){
+    public function show($email)
+    {
         $e = Email::where('emailADDR', '=', $email)->first();
 
-        if(null !== $e){
+        if (null !== $e) {
             $u = User::where('id', '=', $e->personID)->first();
             $p = Person::with('orgperson')->where('personID', '=', $e->personID)->first();
-            if(null === $p->orgperson){
+            if (null === $p->orgperson) {
                 $p->load('orgperson');
             }
             return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,

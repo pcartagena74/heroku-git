@@ -27,7 +27,7 @@ class PublicFunctionController extends Controller
                 $x = 1;
             }
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
-            if(null === $p->orgperson) {
+            if (null === $p->orgperson) {
                 $p->load('orgperson');
             }
             return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $x,

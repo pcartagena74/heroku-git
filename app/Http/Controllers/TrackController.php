@@ -82,7 +82,7 @@ class TrackController extends Controller
     public function sessionUpdate(Request $request, Event $event)
     {
         $value = request()->input('value');
-        if($value === null){
+        if ($value === null) {
             $name = request()->input('name');
             $value = request()->input($name);
         }
@@ -116,7 +116,7 @@ class TrackController extends Controller
                 $s->save();
             }
         } elseif ($name == 'isLinked') {
-            if($value){
+            if ($value) {
                 $s->isLinked = $s->sessionID;
             } else {
                 $s->isLinked = 0;
@@ -125,7 +125,7 @@ class TrackController extends Controller
             $s->save();
             return redirect(env('APP_URL')."/tracks/$event->eventID");
         } elseif ($name == 'isLinked2') {
-            if($value){
+            if ($value) {
                 $previous = EventSession::where([
                     ['order', $order-1],
                     ['confDay', '=', $day],
@@ -151,7 +151,6 @@ class TrackController extends Controller
             $s->updaterID = auth()->user()->id;
             $s->save();
             return redirect(env('APP_URL')."/tracks/$event->eventID");
-
         } elseif ($name == 'sessionSpeakers') {
             // Do stuff for sessionSpeaker assignment
             //dd(request()->all());

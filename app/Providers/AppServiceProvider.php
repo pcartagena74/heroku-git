@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(env('APP_ENV') != 'local'){
+        if (env('APP_ENV') != 'local') {
             URL::forceScheme('https');
         }
 
@@ -30,7 +30,6 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('trans_choice', function ($expression) {
             return "<?php trans_choice({$expression}); ?>";
         });
-
     }
 
     /**

@@ -57,7 +57,8 @@ class EventCopyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($param) {
+    public function show($param)
+    {
         $today = Carbon::now();
         $event = Event::where('eventID', '=', $param)
             ->orWhere('slug', '=', $param)

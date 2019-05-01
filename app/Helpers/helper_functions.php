@@ -12,7 +12,6 @@ use Intervention\Image\ImageManagerStatic as Image;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use League\Flysystem\AdapterInterface;
 
-
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -21,7 +20,8 @@ use League\Flysystem\AdapterInterface;
  * @param Org $org
  * @return string
  */
-function extract_images($html, $orgID){
+function extract_images($html, $orgID)
+{
     $dom = new \DOMDocument();
     $org = Org::find($orgID);
     $updated = 0;
@@ -31,10 +31,10 @@ function extract_images($html, $orgID){
 
         $images = $dom->getElementsByTagName('img');
 
-        foreach($images as $img){
+        foreach ($images as $img) {
             $src = $img->getAttribute('src');
 
-            if(preg_match('/data:image/', $src)){
+            if (preg_match('/data:image/', $src)) {
                 $updated = 1;
                 // get the mimetype
                 preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
@@ -48,7 +48,7 @@ function extract_images($html, $orgID){
                 $image = Image::make($src)
                     // resize if required
                     /* ->resize(300, 200) */
-                    ->encode($mimetype, 100); 	// encode file to the specified mimetype
+                    ->encode($mimetype, 100);   // encode file to the specified mimetype
 
                 //Flysystem::connection('s3_media')->put($event_filename, $contents);
                 $s3m = Flysystem::connection('s3_media');
@@ -61,7 +61,7 @@ function extract_images($html, $orgID){
                 $img->setAttribute('src', $new_src);
             }
         }
-        if($updated){
+        if ($updated) {
             return $dom->saveHTML();
         } else {
             return $html;
@@ -81,9 +81,10 @@ function extract_images($html, $orgID){
  *                      + e:  login
  *                      + op: PMI ID
  */
-function check_exists($model, $var_array){
+function check_exists($model, $var_array)
+{
     $details = "<ul>";
-    switch ($model){
+    switch ($model) {
         case 'p':
             list($first, $last, $login) = $var_array;
             $p = Person::where([
@@ -91,12 +92,12 @@ function check_exists($model, $var_array){
                 ['lastName', '=', $last]
             ])
                 ->orWhere('login', '=', $login)
-                ->orWhereHas('emails', function($q) use($login){
+                ->orWhereHas('emails', function ($q) use ($login) {
                     $q->where('emailADDR', '=', $login);
                 })->get();
-            if(count($p) > 0){
+            if (count($p) > 0) {
                 $details .= "<li>$first, $last, $login</li>";
-                foreach($p as $x){
+                foreach ($p as $x) {
                     $existing = trans('messages.errors.existing_account', ['f' => $x-firstName, 'l' => $x->lastName, 'e' => $x->login]);
                     $details .= "<li>$existing</li>";
                 }
@@ -109,7 +110,7 @@ function check_exists($model, $var_array){
         case 'e':
             list($email) = $var_array;
             $e = Email::where('emailADDR', '=', $email)->first();
-            if(null !== $e){
+            if (null !== $e) {
                 $p = Person::find($e->personID);
                 $details .= '<li>' . $email . "</li>";
                 $existing = trans('messages.errors.existing_account', ['f' => $p-firstName, 'l' => $p->lastName, 'e' => $p->login]);
@@ -121,9 +122,9 @@ function check_exists($model, $var_array){
             break;
         case 'op':
             list($pmiID) = $var_array;
-            if($pmiID !== null){
+            if ($pmiID !== null) {
                 $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
-                if(null !== $op){
+                if (null !== $op) {
                     $p = Person::find($op->personID);
                     $details .= '<li>' . $op->OrgStat1 . "</li>";
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
@@ -145,16 +146,18 @@ function check_exists($model, $var_array){
  * @param $personID
  * @return string
  */
-function plink($regID, $personID){
+function plink($regID, $personID)
+{
     return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . "</a>";
 }
 
 /**
  * translate: array_map function to apply a trans_choice if a translation exists for the term
  */
-function et_translate($term){
+function et_translate($term)
+{
     $x = 'messages.event_types.';
-    if(Lang::has($x.$term)){
+    if (Lang::has($x.$term)) {
         return trans_choice($x.$term, 1);
     } else {
         return $term;
