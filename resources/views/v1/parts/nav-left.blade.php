@@ -60,7 +60,7 @@ try{
 {{--
         The piece about multiple organizations would go here...
 --}}
-                            @if (count($currentPerson->orgpeeps)>1)
+                            @if (count($currentPerson->orgs)>1)
                                 <li><a href="{{ env('APP_URL') }}/orgs">@lang('messages.nav.ms_org')</a></li>
                             @endif
                             <li><a href="{{ env('APP_URL') }}/dashboard">@lang('messages.nav.ms_dash')</a></li>

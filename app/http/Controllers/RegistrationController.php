@@ -500,7 +500,7 @@ class RegistrationController extends Controller
                 request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
                 return back()->withInput();
             }
-            
+
             $reg = new Registration;
             $reg->rfID = $rf->regID;
             $reg->eventID = $event->eventID;
