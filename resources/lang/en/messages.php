@@ -640,7 +640,7 @@ return [
         'thanks' => "Thank you for using mCentric with :orgname.",
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
         'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
-        'user_create_fail' => "An unknown error of some sort occurred.",
+        'user_create_fail' => "An unknown error occurred.  Please take a screenshot (if appropriate) and contact vpfinance@pmimassbay.org for help.",
         'visit_mCentric' => "Visit mCentric",
     ],
 
