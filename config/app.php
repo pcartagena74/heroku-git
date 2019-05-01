@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'mCentric',
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -182,9 +182,7 @@ return [
         Plank\Mediable\MediableServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         \SocialiteProviders\Manager\ServiceProvider::class,
-        //Spatie\Activitylog\ActivitylogServiceProvider::class,
         Spatie\LinkChecker\LinkCheckerServiceProvider::class,
-        //\Spatie\CalendarLinks\Link::class,
         Spatie\Referer\RefererServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
@@ -221,7 +219,6 @@ return [
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
-        #'AWS' => 'Aws\Laravel\AwsFacade',
         'Blade' => Illuminate\Support\Facades\Blade::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
         'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,

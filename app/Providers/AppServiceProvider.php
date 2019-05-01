@@ -7,6 +7,7 @@ use Phirehose;
 use App\TwitterStream;
 use \Illuminate\Support\Facades\Blade;
 use \Illuminate\Support\Facades\URL as URL;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
         if (env('APP_ENV') != 'local') {
             URL::forceScheme('https');
         }
+
+        Paginator::useBootstrapThree();
 
         $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
 

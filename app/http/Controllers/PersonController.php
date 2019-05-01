@@ -503,7 +503,7 @@ class PersonController extends Controller
         // validate $curPass
         if (Hash::check($curPass, $user->password)) {
             // update password
-            $user->password = bcrypt($password);
+            $user->password = Hash::make($password);
             $user->save();
             request()->session()->flash('alert-success', trans('messages.messages.pass_change'));
 
@@ -556,7 +556,7 @@ class PersonController extends Controller
         $person = Person::find($user->id);
 
         // update password
-        $user->password = bcrypt($password);
+        $user->password = Hash::make($password);
         $user->save();
         request()->session()->flash('alert-success', trans('messages.messages.pass_change_for', ['name' => $person->showFullName()]));
 

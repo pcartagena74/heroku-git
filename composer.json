@@ -8,7 +8,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "~7.1.0",
+        "php": "^7.1.3",
         "ext-imap": "*",
         "ext-ldap": "*",
         "barryvdh/laravel-ide-helper": "^2.4",
@@ -17,7 +17,7 @@
         "doctrine/dbal": "^2.6",
         "eduardokum/laravel-mail-auto-embed": "^1.0",
         "fennb/phirehose": "^1.0",
-        "fideloper/proxy": "~3.0",
+        "fideloper/proxy": "^4.0",
         "google/recaptcha": "~1.1",
         "graham-campbell/flysystem": "^4.1",
         "guzzlehttp/guzzle": "^6.2",

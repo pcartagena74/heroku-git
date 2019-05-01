@@ -44,6 +44,7 @@ use App\Email;
 use Illuminate\Support\Facades\Validator;
 use Redirect;
 use App\Notifications\AccountCreation;
+use Illuminate\Support\Facades\Hash;
 
 set_time_limit(0);
 
@@ -192,7 +193,7 @@ class RegFinanceController extends Controller
                 return back()->withErrors($validator);
             }
             $password = request()->input('password');
-            $u->password = bcrypt($password);
+            $u->password = Hash::make($password);
             $u->save();
             // Removed flash notification to preserve receipt look & feel
             // request()->session()->flash('alert-success', "Your password was set successfully.");

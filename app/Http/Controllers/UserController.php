@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\NewUserAcct;
 use DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -125,7 +126,7 @@ class UserController extends Controller
             $u->name = $email;
             $u->email = $email;
             if ($make_pass) {
-                $u->password = bcrypt($password);
+                $u->password = Hash::make($password);
             }
             $u->save();
 
