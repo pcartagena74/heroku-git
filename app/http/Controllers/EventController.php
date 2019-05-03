@@ -203,7 +203,7 @@ class EventController extends Controller
             ->orderBy('eventStartDate', 'DESC')
             ->get();
 
-        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person', 'cs'));
+        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
     }
 
     public function event_copy($param)
