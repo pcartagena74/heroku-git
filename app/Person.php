@@ -37,12 +37,6 @@ class Person extends Model
         return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID');
     }
 
-    /*
-    public function orgs()
-    {
-        return $this->belongsToMany(Org::class, 'org-person', 'orgID', 'personID');
-    }
-    */
 
     public function emails()
     {
