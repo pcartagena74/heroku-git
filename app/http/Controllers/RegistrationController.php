@@ -49,10 +49,10 @@ class RegistrationController extends Controller
             $discount_code = "/" . $discount_code;
         }
 
-            $tkts = Ticket::where([
-                ['eventID', '=', $event->eventID],
-                ['isSuppressed', '=', 0],
-            ])->get();
+        $tkts = Ticket::where([
+            ['eventID', '=', $event->eventID],
+            ['isSuppressed', '=', 0],
+        ])->get();
 
         foreach ($tkts as $ticket) {
             $q = request()->input('q-' . $ticket->ticketID);
@@ -62,8 +62,8 @@ class RegistrationController extends Controller
             }
         }
 
-            Session::put('req', $request->all());
-            Session::save();
+        Session::put('req', $request->all());
+        Session::save();
 
         return redirect("/regstep2/$event->eventID/$quantity" . $discount_code);
     }
@@ -101,10 +101,10 @@ class RegistrationController extends Controller
 
         $certs = DB::table('certifications')->select('certification')->get();
 
-         return view(
-             'v1.public_pages.varTKT_register',
-             compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters', 'certs')
-         );
+        return view(
+            'v1.public_pages.varTKT_register',
+            compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters', 'certs')
+        );
     }
 
     /**
@@ -159,7 +159,7 @@ class RegistrationController extends Controller
         // list of attendees who are payment pendings so they are displayed separately
         $deadbeats = Registration::where([
             ['eventID', '=', $event->eventID],
-            ])->with('regfinance', 'ticket')
+        ])->with('regfinance', 'ticket')
             ->whereHas('regfinance', function ($q) {
                 $q->where('pmtRecd', '=', 0);
                 $q->where('status', '=', 'pending');
@@ -328,7 +328,7 @@ class RegistrationController extends Controller
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isSuppressed', '=', 0]
-            ])->get();
+        ])->get();
 
         // Set $regBy to the first ticket's person info unless someone was already logged in
         if (null === $regBy && !$logged_in) {
@@ -352,30 +352,30 @@ class RegistrationController extends Controller
             } else {
                 $person = null;
                 $set_new_user = 0;
-                $i_cnt = '_'.$i;
+                $i_cnt = '_' . $i;
             }
             // $change_to_member = 0;
 
             // 1. Grab the passed variables for the person and registration info
-            $prefix = ucwords(request()->input('prefix'.$i_cnt));
-            $firstName = ucwords(request()->input('firstName'.$i_cnt));
-            $middleName = ucwords(request()->input('middleName'.$i_cnt));
-            $lastName = ucwords(request()->input('lastName'.$i_cnt));
-            $login = strtolower(request()->input('login'.$i_cnt));
-            $pmiID = trim(request()->input('OrgStat1'.$i_cnt));
+            $prefix = ucwords(request()->input('prefix' . $i_cnt));
+            $firstName = ucwords(request()->input('firstName' . $i_cnt));
+            $middleName = ucwords(request()->input('middleName' . $i_cnt));
+            $lastName = ucwords(request()->input('lastName' . $i_cnt));
+            $login = strtolower(request()->input('login' . $i_cnt));
+            $pmiID = trim(request()->input('OrgStat1' . $i_cnt));
             $pmiID > 0 ?: $pmiID = null;
-            $suffix = ucwords(request()->input('suffix'.$i_cnt));
-            $prefName = ucwords(request()->input('prefName'.$i_cnt));
-            $compName = ucwords(request()->input('compName'.$i_cnt));
-            $indName = ucwords(request()->input('indName'.$i_cnt));
-            $title = ucwords(request()->input('title'.$i_cnt));
-            $chapterRole = ucwords(request()->input('chapterRole'.$i_cnt));
-            $eventQuestion = request()->input('eventQuestion'.$i_cnt);
-            $eventTopics = request()->input('eventTopics'.$i_cnt);
-            $affiliation = request()->input('affiliation'.$i_cnt);
-            $certification = request()->input('certifications'.$i_cnt);
-            $experience = request()->input('experience'.$i_cnt);
-            $dCode = request()->input('discount_code'.$i_cnt);
+            $suffix = ucwords(request()->input('suffix' . $i_cnt));
+            $prefName = ucwords(request()->input('prefName' . $i_cnt));
+            $compName = ucwords(request()->input('compName' . $i_cnt));
+            $indName = ucwords(request()->input('indName' . $i_cnt));
+            $title = ucwords(request()->input('title' . $i_cnt));
+            $chapterRole = ucwords(request()->input('chapterRole' . $i_cnt));
+            $eventQuestion = request()->input('eventQuestion' . $i_cnt);
+            $eventTopics = request()->input('eventTopics' . $i_cnt);
+            $affiliation = request()->input('affiliation' . $i_cnt);
+            $certification = request()->input('certifications' . $i_cnt);
+            $experience = request()->input('experience' . $i_cnt);
+            $dCode = request()->input('discount_code' . $i_cnt);
             $dc = EventDiscount::where([
                 ['eventID', '=', $event->eventID],
                 ['discountCODE', '=', $dCode]
@@ -383,19 +383,19 @@ class RegistrationController extends Controller
             if ($dc === null || $dCode === null || $dCode == " ") {
                 $dCode = 'N/A';
             }
-            $ticketID = request()->input('ticketID-'.$i);
+            $ticketID = request()->input('ticketID-' . $i);
             $t = Ticket::find($ticketID);
-            $flatamt = request()->input('flatamt'.$i_cnt);
-            $percent = request()->input('percent'.$i_cnt);
-            $subtotal = request()->input('sub'.$i);
-            $origcost = request()->input('cost'.$i);
+            $flatamt = request()->input('flatamt' . $i_cnt);
+            $percent = request()->input('percent' . $i_cnt);
+            $subtotal = request()->input('sub' . $i);
+            $origcost = request()->input('cost' . $i);
             // strip out , from $ figure over $1,000
             $origcost = str_replace(',', '', $origcost);
             if ($event->hasFood) {
-                $specialNeeds = request()->input('specialNeeds'.$i_cnt);
-                $eventNotes = request()->input('eventNotes'.$i_cnt);
-                $allergenInfo = request()->input('allergenInfo'.$i_cnt);
-                $cityState = request()->input('cityState'.$i_cnt);
+                $specialNeeds = request()->input('specialNeeds' . $i_cnt);
+                $eventNotes = request()->input('eventNotes' . $i_cnt);
+                $allergenInfo = request()->input('allergenInfo' . $i_cnt);
+                $cityState = request()->input('cityState' . $i_cnt);
             }
 
             // Try to assign $person via OrgStat1 unless $person has the value of $this->currentPerson (and so is not null)
@@ -415,103 +415,115 @@ class RegistrationController extends Controller
                     $set_secondary_email = 1;
                 }
             }
-            // if we need to create a new $person record, flag for the creation of the other new objects too
-            if (null === $person) {
-                $person = new Person;
-                $set_new_user = 1;
-            }
 
-            // We have either found the appropriate person record ($p) or have created a new one
-            isset($prefix) ? $person->prefix = $prefix :1;
-            isset($firstName) ? $person->firstName = $firstName :1;
-            isset($middleName) ? $person->midName = $middleName :1;
-            isset($lastName) ? $person->lastName = $lastName :1;
-            isset($suffix) ? $person->suffix = $suffix :1;
-            $person->defaultOrgID = $event->orgID;
-            isset($prefName) ? $person->prefName = $prefName : $person->prefName = $firstName;
-            isset($compName) ? $person->compName = $compName :1;
-            isset($indName) ? $person->indName = $indName :1;
-            isset($title) ? $person->title = $title :1;
-            isset($experience) ? $person->experience = $experience :1;
-            isset($chapterRole) ? $person->chapterRole = $chapterRole :1;
-            isset($login) ? $person->login = $login :1;
-            if ($event->hasFood && $allergenInfo !== null) {
-                $person->allergenInfo = implode(",", (array)$allergenInfo);
-                isset($eventNotes) ? $person->allergenNote = $eventNotes :1;
-            }
-            isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) :1;
-            isset($certification) ? $person->certifications = implode(",", (array)$certification) :1;
-            $person->save();
 
-            if (null === $pmiID) {
-                $regMem = 'nonmbr';
-            } else {
-                $regMem = 'member';
-            }
+            try {
+                DB::beginTransaction();
 
-            // Only if we had to set a temporary RF record with system owner
-            if ($i == 1) {
-                if ($rf->personID == 1) {
-                    $rf->personID = $person->personID;
-                    $rf->save();
-                }
-            }
-            if ($set_new_user) {
-                $user = new User();
-                $user->id = $person->personID;
-                $user->name = $login;
-                $user->login = $login;
-                $user->email = $login;
-                $user->save();
-                if ($i==1 && !Auth::check()) {
-                    // log the first ticket's user in if no one is logged in -- ASSUMPTION RISK
-                    Auth::loginUsingId($user->id);
-                    $rf->personID = $person->personID;
-                    $rf->save();
-                    $show_pass_fields = 1;
+                // if we need to create a new $person record, flag for the creation of the other new objects too
+                if (null === $person) {
+                    $person = new Person;
+                    $set_new_user = 1;
                 }
 
-                $op = new OrgPerson;
-                $op->orgID = $event->orgID;
-                $op->personID = $person->personID;
-                if ($pmiID) {
-                    $op->OrgStat1 = $pmiID;
-                    $change_to_member = 1;
+                // We have either found the appropriate person record ($p) or have created a new one
+                isset($prefix) ? $person->prefix = $prefix : 1;
+                isset($firstName) ? $person->firstName = $firstName : 1;
+                isset($middleName) ? $person->midName = $middleName : 1;
+                isset($lastName) ? $person->lastName = $lastName : 1;
+                isset($suffix) ? $person->suffix = $suffix : 1;
+                $person->defaultOrgID = $event->orgID;
+                isset($prefName) ? $person->prefName = $prefName : $person->prefName = $firstName;
+                isset($compName) ? $person->compName = $compName : 1;
+                isset($indName) ? $person->indName = $indName : 1;
+                isset($title) ? $person->title = $title : 1;
+                isset($experience) ? $person->experience = $experience : 1;
+                isset($chapterRole) ? $person->chapterRole = $chapterRole : 1;
+                isset($login) ? $person->login = $login : 1;
+                if ($event->hasFood && $allergenInfo !== null) {
+                    $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    isset($eventNotes) ? $person->allergenNote = $eventNotes : 1;
                 }
-                $op->save();
+                isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) : 1;
+                isset($certification) ? $person->certifications = implode(",", (array)$certification) : 1;
+                $person->save();
 
-                $email = new Email;
-                $email->personID = $person->personID;
-                $email->emailADDR = $login;
-                $email->isPrimary = 1;
-                $email->save();
-            } else {
-                $op = OrgPerson::where([
-                    ['personID', '=', $person->personID],
-                    ['orgID', '=', $event->orgID]
-                ])->first();
-                // Slight chance of not getting an $op record from above, so create if needed.
-                if (null === $op) {
+                if (null === $pmiID) {
+                    $regMem = 'nonmbr';
+                } else {
+                    $regMem = 'member';
+                }
+
+                // Only if we had to set a temporary RF record with system owner
+                if ($i == 1) {
+                    if ($rf->personID == 1) {
+                        $rf->personID = $person->personID;
+                        $rf->save();
+                    }
+                }
+                if ($set_new_user) {
+                    $user = new User();
+                    $user->id = $person->personID;
+                    $user->name = $login;
+                    $user->login = $login;
+                    $user->email = $login;
+                    $user->save();
+                    if ($i == 1 && !Auth::check()) {
+                        // log the first ticket's user in if no one is logged in -- ASSUMPTION RISK
+                        Auth::loginUsingId($user->id);
+                        $rf->personID = $person->personID;
+                        $rf->save();
+                        $show_pass_fields = 1;
+                    }
+
                     $op = new OrgPerson;
                     $op->orgID = $event->orgID;
                     $op->personID = $person->personID;
-                }
-                // If not already a member and a PMI ID was provided, update and flag to change ticket price
-                if (!$person->is_member($event->orgID) && isset($pmiID)) {
-                    $op->OrgStat1 = $pmiID;
-                    $op->updaterID = $person->personID;
+                    if ($pmiID) {
+                        $op->OrgStat1 = $pmiID;
+                        $change_to_member = 1;
+                    }
                     $op->save();
-                    $change_to_member = 1;
+
+                    $email = new Email;
+                    $email->personID = $person->personID;
+                    $email->emailADDR = $login;
+                    $email->isPrimary = 1;
+                    $email->save();
+                } else {
+                    $op = OrgPerson::where([
+                        ['personID', '=', $person->personID],
+                        ['orgID', '=', $event->orgID]
+                    ])->first();
+                    // Slight chance of not getting an $op record from above, so create if needed.
+                    if (null === $op) {
+                        $op = new OrgPerson;
+                        $op->orgID = $event->orgID;
+                        $op->personID = $person->personID;
+                    }
+                    // If not already a member and a PMI ID was provided, update and flag to change ticket price
+                    if (!$person->is_member($event->orgID) && isset($pmiID)) {
+                        $op->OrgStat1 = $pmiID;
+                        $op->updaterID = $person->personID;
+                        $op->save();
+                        $change_to_member = 1;
+                    }
                 }
-            }
 
-            if ($set_secondary_email) {
-                $email = new Email;
-                $email->personID = $person->personID;
-                $email->emailADDR = $login;
-                $email->save();
-            }
+                if ($set_secondary_email) {
+                    $email = new Email;
+                    $email->personID = $person->personID;
+                    $email->emailADDR = $login;
+                    $email->save();
+                }
 
+                DB::commit();
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
+                return back()->withInput();
+            }
+       
             $reg = new Registration;
             $reg->rfID = $rf->regID;
             $reg->eventID = $event->eventID;
@@ -522,7 +534,7 @@ class RegistrationController extends Controller
 
             // Regional Events show the question so pull from form
             if ($event->eventTypeID == 5) {
-                $reg->isFirstEvent = request()->input('isFirstEvent'.$i_cnt) !== null ? 1 : 0;
+                $reg->isFirstEvent = request()->input('isFirstEvent' . $i_cnt) !== null ? 1 : 0;
             } else {
                 // Otherwise, count whether registrations exist for this user
                 if (count($person->registrations) == 0) {
@@ -530,9 +542,9 @@ class RegistrationController extends Controller
                 }
             }
 
-            $reg->isAuthPDU = request()->input('isAuthPDU'.$i_cnt) !== null ? 1 : 0;
+            $reg->isAuthPDU = request()->input('isAuthPDU' . $i_cnt) !== null ? 1 : 0;
             $reg->eventQuestion = $eventQuestion;
-            $reg->canNetwork = request()->input('canNetwork'.$i_cnt) !== null ? 1 : 0;
+            $reg->canNetwork = request()->input('canNetwork' . $i_cnt) !== null ? 1 : 0;
             $reg->affiliation = implode(",", $affiliation);
             $reg->regStatus = 'progress';
             if ($t->waitlisting()) {
@@ -602,16 +614,18 @@ class RegistrationController extends Controller
             );
         }
 
-        // Everything is saved and updated and such, now display the data back for review
+// Everything is saved and updated and such, now display the data back for review
         return redirect('/confirm_registration/' . $rf->regID);
     }
 
-    public function edit($id)
+    public
+    function edit($id)
     {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public function update(Request $request, Registration $reg)
+    public
+    function update(Request $request, Registration $reg)
     {
         // responds to Ajax request via POST /reg_verify/{regID}
         // This is the person record for the registration
@@ -665,7 +679,8 @@ class RegistrationController extends Controller
         $reg->save();
     }
 
-    public function promote(Registration $reg)
+    public
+    function promote(Registration $reg)
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $event = Event::find($reg->eventID);
@@ -684,10 +699,11 @@ class RegistrationController extends Controller
         // Consider a notification
         $recipient->notify(new WaitListNoMore($reg));
 
-        return redirect(env('APP_URL')."/eventreport/$event->slug");
+        return redirect(env('APP_URL') . "/eventreport/$event->slug");
     }
 
-    public function destroy(Registration $reg, RegFinance $rf)
+    public
+    function destroy(Registration $reg, RegFinance $rf)
     {
         // responds to DELETE /cancel_registration/{reg}/{rf}
         // 1. Takes $reg->regID and $rf->regID
