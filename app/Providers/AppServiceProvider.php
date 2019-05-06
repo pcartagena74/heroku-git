@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        Paginator::useBootstrapThree();
+        // Paginator::useBootstrapThree();
 
         $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
 

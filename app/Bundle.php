@@ -2,11 +2,11 @@
 
 namespace App;
 
-use Spatie\Activitylog\Traits\LogsActivity;
+// use Spatie\Activitylog\Traits\LogsActivity;
 
 class Bundle extends Model
 {
-    use LogsActivity;
+    // use LogsActivity;
 
     // The table
     protected $table = 'bundle-ticket';

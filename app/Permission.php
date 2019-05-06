@@ -7,11 +7,11 @@
 namespace App;
 
 use Zizaco\Entrust\EntrustPermission;
-use Spatie\Activitylog\Traits\LogsActivity;
+// use Spatie\Activitylog\Traits\LogsActivity;
 
 class Permission extends EntrustPermission
 {
-    use LogsActivity;
+    // use LogsActivity;
     protected static $logAttributes = ['name', 'display_name', 'description'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
