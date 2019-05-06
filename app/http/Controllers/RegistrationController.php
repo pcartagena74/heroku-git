@@ -411,11 +411,11 @@ class RegistrationController extends Controller
                 })->first();
             } else {
                 // $person was set from PMI ID; quick check to see if email should be a secondary
-                if ($person->login != $login) {
-                    $set_secondary_email = 1;
-                }
-            }
 
+               if($person->login != $login) {
+                   $set_secondary_email = 1;
+               }
+            }
 
             try {
                 DB::beginTransaction();
@@ -618,14 +618,12 @@ class RegistrationController extends Controller
         return redirect('/confirm_registration/' . $rf->regID);
     }
 
-    public
-    function edit($id)
+    public function edit($id)
     {
         // responds to GET /blah/id/edit and shows the add/edit form
     }
 
-    public
-    function update(Request $request, Registration $reg)
+    public function update(Request $request, Registration $reg)
     {
         // responds to Ajax request via POST /reg_verify/{regID}
         // This is the person record for the registration
@@ -679,8 +677,7 @@ class RegistrationController extends Controller
         $reg->save();
     }
 
-    public
-    function promote(Registration $reg)
+    public function promote(Registration $reg)
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $event = Event::find($reg->eventID);
@@ -702,8 +699,7 @@ class RegistrationController extends Controller
         return redirect(env('APP_URL') . "/eventreport/$event->slug");
     }
 
-    public
-    function destroy(Registration $reg, RegFinance $rf)
+    public function destroy(Registration $reg, RegFinance $rf)
     {
         // responds to DELETE /cancel_registration/{reg}/{rf}
         // 1. Takes $reg->regID and $rf->regID
