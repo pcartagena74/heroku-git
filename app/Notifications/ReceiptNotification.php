@@ -62,10 +62,12 @@ class ReceiptNotification extends Notification
         $person = $this->person;
         $loc    = $this->loc;
 
-        $line1 = trans('messages.notifications.RegNote.line1',
+        $line1 = trans(
+            'messages.notifications.RegNote.line1',
             ['event' => $event->eventName,
              'datetime' => $event->eventStartDate->format('n/j/Y g:i A'),
-             'loc' => $loc->locName ]);
+            'loc' => $loc->locName ]
+        );
 
         $action1 = trans('messages.notifications.RegNote.action1');
         $url1 = $this->receipt;
@@ -75,8 +77,10 @@ class ReceiptNotification extends Notification
         $line3 = trans('messages.notifications.RegNote.line2');
 
         return (new MailMessage)
-            ->subject(trans('messages.notifications.RegNote.subject',
-                           ['org' => $org->orgName, 'event' => $event->eventName]))
+            ->subject(trans(
+                'messages.notifications.RegNote.subject',
+                ['org' => $org->orgName, 'event' => $event->eventName]
+            ))
             ->markdown('notifications.two_button_note', [
                 'line1' => $line1,
                 'action1' => $action1,
@@ -105,7 +109,8 @@ class ReceiptNotification extends Notification
         ];
     }
 
-    public function toDatabase($notifiable){
+    public function toDatabase($notifiable)
+    {
         return [
             //
         ];

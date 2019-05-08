@@ -295,15 +295,15 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 Auth::routes();
 
 
-Route::get('ste2', function(){
-    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function($message){
+Route::get('ste2', function () {
+    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
         $message->to('pcartagena@partners.org');
     });
 });
 
-Route::get('snaptest', function(){
+Route::get('snaptest', function () {
     // $snap = App::make('snappy.pdf');
     // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
     // return $snap->inline();

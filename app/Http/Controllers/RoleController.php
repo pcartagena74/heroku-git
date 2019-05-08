@@ -21,51 +21,60 @@ class RoleController extends Controller
         //dd(DB::getQueryLog());
     }
 
-    protected function role_bits(){
+    protected function role_bits()
+    {
         $topBits             = [];
         $this->currentPerson = Person::find(auth()->user()->id);
 
         $org = Org::find($this->currentPerson->defaultOrgID);
 
-        $board = Person::whereHas('orgperson', function($q) use($org){
+        $board = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 1], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 1], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $speaker = Person::whereHas('orgperson', function($q) use($org){
+        $speaker = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 2], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 2], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $events = Person::whereHas('orgperson', function($q) use($org){
+        $events = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 3], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 3], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $vols = Person::whereHas('orgperson', function($q) use($org){
+        $vols = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 4], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 4], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $spkvol = Person::whereHas('orgperson', function($q) use($org){
+        $spkvol = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 6], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 6], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $round = Person::whereHas('orgperson', function($q) use($org){
+        $round = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 7], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 7], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $admin = Person::whereHas('orgperson', function($q) use($org){
+        $admin = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 8], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 8], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
-        $mktg = Person::whereHas('orgperson', function($q) use($org){
+        $mktg = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function($q) use($org){
-            $q->where([ ['id', '=', 10], ['orgID', '=', $org->orgID] ]); })->count();
+        })->whereHas('roles', function ($q) use ($org) {
+            $q->where([ ['id', '=', 10], ['orgID', '=', $org->orgID] ]);
+        })->count();
 
         array_push($topBits, [1, trans('messages.topBits.board'), $board, '', '', '']);
         array_push($topBits, [1, trans('messages.topBits.mktg'), $mktg, '', '', '']);
@@ -97,14 +106,14 @@ class RoleController extends Controller
         $permissions = Permission::all();
         $persons = null;
 
-        if($query !== null){
-            $persons = Person::whereHas('orgs', function($q){
+        if ($query !== null) {
+            $persons = Person::whereHas('orgs', function ($q) {
                 $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
             })
-                ->where(function($q) use($query){
+                ->where(function ($q) use ($query) {
                     $q->whereHas('roles', function ($q) use ($query) {
                             $q->where('roles.name', 'LIKE', "%$query%");
-                        })
+                    })
                         ->orWhere('person.firstName', 'LIKE', "%$query%")
                         ->orWhere('login', 'LIKE', "%$query%")
                         ->orWhere('person.personID', 'LIKE', "%$query%")
@@ -124,7 +133,8 @@ class RoleController extends Controller
         return view('v1.auth_pages.organization.role_mgmt_search', compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
 
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $string = $request->input('string');
         return redirect('/role_mgmt/'.$string);
     }
@@ -175,8 +185,10 @@ class RoleController extends Controller
         }
 
         $message =
-            '<div class="well bg-blue">' . trans('messages.instructions.role_toggle',
-            ['role' => $role->display_name, 'person' => $person->showFullName()]) . "</div>";
+            '<div class="well bg-blue">' . trans(
+                'messages.instructions.role_toggle',
+                ['role' => $role->display_name, 'person' => $person->showFullName()]
+            ) . "</div>";
 
         return json_encode(array('status' => 'success', 'message' => $message));
     }

@@ -46,7 +46,8 @@ class Registration extends Model
         return $this->hasOne(RegSession::class, 'regID', 'regID');
     }
 
-    public function checkin(){
+    public function checkin()
+    {
         $rs = new RegSession;
         $e = $this->event()->first();
         $rs->regID = $this->regID;
@@ -56,5 +57,4 @@ class Registration extends Model
         $rs->hasAttended = 1;
         $rs->save();
     }
-
 }

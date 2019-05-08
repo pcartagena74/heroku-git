@@ -92,13 +92,13 @@ class UploadController extends Controller
 
                                 // First & Last Name string detection of all-caps.  But do not ucwords all entries just in case "DeFrancesco" type names exist
                                 $f = trim($row->first_name);
-                                if($f == strtoupper($f)){
+                                if ($f == strtoupper($f)) {
                                     $first = trim(ucwords($row->first_name));
                                 } else {
                                     $first = $f;
                                 }
                                 $l = trim(ucwords($row->last_name));
-                                if($l == strtoupper($l)){
+                                if ($l == strtoupper($l)) {
                                     $last = trim(ucwords($row->last_name));
                                 } else {
                                     $last = $l;
@@ -124,7 +124,7 @@ class UploadController extends Controller
                                     ['lastName', '=', $last]
                                 ])->first();
 
-                                if($em1 === null && $em2 === null){
+                                if ($em1 === null && $em2 === null) {
                                     // If no email addresses are provided, a user account cannot be creatable.
                                     break;
                                 }
@@ -165,8 +165,7 @@ class UploadController extends Controller
                                         $e->save();
 
                                     // Otherwise, try with email #2
-                                    }
-                                    elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
+                                    } elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
                                         $p->login = $em2;
                                         $p->save();
                                         $u->id    = $p->personID;
@@ -181,13 +180,12 @@ class UploadController extends Controller
                                         $e->isPrimary = 1;
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
-                                        try{
+                                        try {
                                             $e->save();
-                                        } catch(\Exception $exception) {
+                                        } catch (\Exception $exception) {
                                             // There was an error with saving the email -- likely an integrity constraint.
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         // This is a last resort when there are no email addresses associated with the record
                                         // Better to abandon; avoid $p->save();
                                         // Technically, should not ever get here because we check ahead of time.
@@ -213,15 +211,13 @@ class UploadController extends Controller
                                         $e->emailADDR = $em2;
                                         $e->creatorID = auth()->user()->id;
                                         $e->updaterID = auth()->user()->id;
-                                        try{
+                                        try {
                                             $e->save();
-                                        } catch(\Exception $exception) {
+                                        } catch (\Exception $exception) {
                                             // There was an error with saving the email -- likely an integrity constraint.
                                         }
                                     }
-
-                                }
-                                elseif ($op !== null) {
+                                } elseif ($op !== null) {
                                     // There was an org-person record (found by $OrgStat1 == PMI ID)
                                     $newOP            = $op;
                                     $newOP->OrgStat2  = trim(ucwords($row->chapter_member_class));
@@ -259,17 +255,14 @@ class UploadController extends Controller
                                         $e->updaterID = auth()->user()->id;
                                         $e->save();
                                     }
-
-                                }
-                                elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
+                                } elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
                                     // email1 was found in the database
                                     $p = Person::find($emchk1->personID);
                                     $op = OrgPerson::where([
                                         ['personID', $p->personID],
                                         ['orgID', $p->defaultOrgID]
                                     ])->first();
-                                }
-                                elseif ($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
+                                } elseif ($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
                                     // email2 was found in the database
                                     $p = Person::find($emchk2->personID);
                                     $op = OrgPerson::where([
@@ -278,7 +271,7 @@ class UploadController extends Controller
                                     ])->first();
                                 }
 
-                                if($process){
+                                if ($process) {
                                     $p->prefix       = $prefix;
                                     $p->firstName    = $first;
                                     $p->prefName    = $first;
@@ -378,7 +371,6 @@ class UploadController extends Controller
                                 $ps->defaultOrgID = $this->currentPerson->defaultOrgID;
                                 $ps->creatorID    = auth()->user()->id;
                                 $ps->save();
-
                             }
                         }); // end of Excel chunk
                     }); // end of database transaction

@@ -67,14 +67,14 @@ class ics_cal_full
         return "END:VCALENDAR\r\n";
     }
 
-    private function _gen_venue(Location $l){
-        if($l->isVirtual){
+    private function _gen_venue(Location $l)
+    {
+        if ($l->isVirtual) {
             $this->v_string =
                 "BEGIN:VVENUE\r\n" .
                 "UID:" . $this->venue_uid . "\r\n" .
                 "NAME:" . $l->locName . "\r\n" .
                 "END:VVENUE\r\n";
-
         } else {
             $cntry = DB::table('countries')->where('cntryID', '=', $l->countryID)->first();
             $state = DB::table('state')->where('abbrev', '=', $l->state)->first();
@@ -99,9 +99,10 @@ class ics_cal_full
         return $this->v_string;
     }
 
-    private function _gen_loc_string(Location $loc){
+    private function _gen_loc_string(Location $loc)
+    {
         $this->location = $this->venue_uid . ":" . $loc->locName . "\n " . $loc->addr1 . "\n ";
-        if($loc->addr2 !== null){
+        if ($loc->addr2 !== null) {
             $this->location .= $loc->addr2 . "\n ";
         }
         $this->location .= $loc->city . ", " . $loc->state . " " . $loc->zip;
@@ -109,7 +110,8 @@ class ics_cal_full
 
     private function _generate()
     {
-        $this->o_string = ''; $this->v_string = '';
+        $this->o_string = '';
+        $this->v_string = '';
 
         foreach ($this->events as $event) {
             $loc = Location::find($event->locationID);

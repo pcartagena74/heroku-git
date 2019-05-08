@@ -31,18 +31,20 @@ class EventSession extends Model
         return $this->belongsToMany(Speaker::class, 'eventsession_speaker', 'eventsession_id', 'speaker_id');
     }
 
-    public function regsessions(){
-        return $this->hasMany(RegSession::class,'sessionID', 'sessionID');
+    public function regsessions()
+    {
+        return $this->hasMany(RegSession::class, 'sessionID', 'sessionID');
     }
 
-    public function show_speakers(){
+    public function show_speakers()
+    {
         $output = "";
 
-        if($this->speakers !== null){
-            foreach($this->speakers as $speaker){
+        if ($this->speakers !== null) {
+            foreach ($this->speakers as $speaker) {
                 $speaker->load('person');
                 $output .= $speaker->person->showFullName();
-                if($this->speakers->last() != $speaker){
+                if ($this->speakers->last() != $speaker) {
                     $output .= ", ";
                 }
             }
