@@ -484,6 +484,9 @@ class RegistrationController extends Controller
                         $change_to_member = 1;
                     }
                     $op->save();
+                    $person->defaultOrgPersonID = $op->id;
+                    $person->save();
+
 
                     $email = new Email;
                     $email->personID = $person->personID;
@@ -508,6 +511,8 @@ class RegistrationController extends Controller
                         $op->save();
                         $change_to_member = 1;
                     }
+                    $person->defaultOrgPersonID = $op->id;
+                    $person->save();
                 }
 
                 if ($set_secondary_email) {

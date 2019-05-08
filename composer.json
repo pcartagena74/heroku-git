@@ -17,6 +17,7 @@
         "fennb/phirehose": "^1.0",
         "fideloper/proxy": "~4.0",
         "google/recaptcha": "^1.2",
+        "graham-campbell/flysystem": "^5.2",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "h4cc/wkhtmltopdf-amd64": "dev-master",
         "jdavidbakr/mail-tracker": "^2.1",
@@ -28,8 +29,11 @@
         "laravel/framework": "5.8.*",
         "laravel/socialite": "^4.1",
         "laravel/tinker": "^1.0",
+        "league/flysystem": "^1.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
         "maatwebsite/excel": "^3.1",
         "socialiteproviders/linkedin": "^3.0",
+        "spatie/laravel-activitylog": "^3.5",
         "stripe/stripe-php": "^6.34",
         "zizaco/entrust": "^1.9"
     },
@@ -58,6 +62,9 @@
         "classmap": [
             "database/seeds",
             "database/factories"
+        ],
+        "files": [
+            "app/Helpers/helper_functions.php"
         ]
     },
     "autoload-dev": {

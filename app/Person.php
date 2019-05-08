@@ -60,8 +60,7 @@ class Person extends Model
 
     public function orgperson()
     {
-        return $this->hasOne(OrgPerson::class, 'personID', 'personID')
-            ->where('orgID', $this->defaultOrgID);
+        return $this->hasOne(OrgPerson::class, 'id', 'defaultOrgPersonID');
     }
 
     public function registrations()

@@ -120,6 +120,9 @@ class UserController extends Controller
             $op->updaterID = $this->currentPerson->personID;
             $op->save();
 
+            $p->defaultOrgPersonID = $op->id;
+            $p->save();
+
             $u = new User;
             $u->id = $p->personID;
             $u->login = $email;

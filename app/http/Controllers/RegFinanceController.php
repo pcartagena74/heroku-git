@@ -183,6 +183,8 @@ class RegFinanceController extends Controller
         $org = Org::find($event->orgID);
         $user = User::find($rf->personID);
         $person = Person::find($rf->personID);
+        $prefixes = DB::table('prefixes')->get();
+        $industries = DB::table('industries')->get();
 
         if ($u->password === null) {
             // validate password matching
@@ -416,17 +418,14 @@ class RegFinanceController extends Controller
 
         $x = compact(
             'needSessionPick',
-            'ticket',
             'event',
             'quantity',
-            'discount_code',
             'loc',
             'rf',
             'person',
             'prefixes',
             'industries',
-            'org',
-            'tickets'
+            'org'
         );
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
@@ -536,6 +535,7 @@ class RegFinanceController extends Controller
                     // create requisite records: person, orgperson
                     $p = new Person;
                     $p->firstName = $firstName;
+                    $p->prefName = $firstName;
                     $p->lastName = $lastName;
                     $p->defaultOrgID = $this->currentPerson->defaultOrgID;
                     $p->login = $email;
@@ -554,6 +554,9 @@ class RegFinanceController extends Controller
                     $op->orgID = $p->defaultOrgID;
                     $op->OrgStat1 = $pmiid;
                     $op->save();
+
+                    $p->defaultOrgPersonID = $op->id;
+                    $p->save();
 
                     $e = new Email;
                     $e->personID = $p->personID;
