@@ -7,7 +7,6 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 //use Spatie\Activitylog\Traits\LogsActivity;
-
 use Carbon\Carbon;
 use App\User;
 
@@ -35,7 +34,6 @@ class LogSuccessfulLogin
         $event->user->last_login = date('Y-m-d H:i:s');
         $login = $event->user->email;
         // activity('lastLogin')->performedOn($this->user)->log("Login of $login @ " . Carbon::now());
-
         $p = Person::find($event->user->id);
         $p->lastLoginDate = Carbon::now();
         $p->save();

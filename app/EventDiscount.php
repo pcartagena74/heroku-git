@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Spatie\Activitylog\Traits\LogsActivity;
 
-
 class EventDiscount extends Model
 {
     use SoftDeletes;

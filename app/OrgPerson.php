@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrgPerson extends Model
 {
-    //use LogsActivity;
-    use SoftDeletes;
-    protected $primaryKey = 'personID';
+    // use LogsActivity;
+    // use SoftDeletes;
+
+    // The table
+    protected $table = 'org-person';
 
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';

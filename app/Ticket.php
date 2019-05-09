@@ -5,7 +5,6 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Spatie\Activitylog\Traits\LogsActivity;
-
 use Illuminate\Support\Facades\DB;
 use App\Bundle;
 use App\EventSession;
@@ -14,7 +13,6 @@ class Ticket extends Model
 {
     use SoftDeletes;
     //use LogsActivity;
-
 
     protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
         'isaBundle', 'ticketLabel'];

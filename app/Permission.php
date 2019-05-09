@@ -12,7 +12,6 @@ use Zizaco\Entrust\EntrustPermission;
 class Permission extends EntrustPermission
 {
     //use LogsActivity;
-
     protected static $logAttributes = ['name', 'display_name', 'description'];
     protected static $ignoreChangedAttributes = ['createDate'];
 

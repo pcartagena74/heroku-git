@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Spatie\Activitylog\Traits\LogsActivity;
-
 use App\EventSession;
 use App\Person;
 use Carbon\Carbon;
