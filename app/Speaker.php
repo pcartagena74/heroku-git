@@ -12,11 +12,13 @@ class Speaker extends Model
     const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'updateDate'];
 
-    public function eventsessions() {
+    public function eventsessions()
+    {
         return $this->belongsToMany(EventSession::class, 'eventsession_speaker', 'speaker_id', 'eventsession_id');
     }
 
-    public function person(){
-        return $this->hasOne(Person::class,'personID', 'id');
+    public function person()
+    {
+        return $this->hasOne(Person::class, 'personID', 'id');
     }
 }

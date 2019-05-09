@@ -37,20 +37,20 @@ $topBits = '';  // remove this if this was set in the controller
 
             <div id="custom-template" class="form-group col-sm-12">
                 <div class="col-sm-2">
-                    <a data-toggle="tooltip" title="Type at least 3 characters.  Unique is better.">
-                {!! Form::label('helper-'.$i, 'Search for person:') !!}
+                    <a data-toggle="tooltip" title="{{ trans('messages.instructions.group_reg_search') }}">
+                {!! Form::label('helper-'.$i, trans('messages.headers.search4p').':') !!}
                     </a><br />
                 {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs')) !!}<br />
-                    <a id="pop-{{ $i }}" onclick="populate({{ $i }});" class="btn btn-primary btn-xs">Populate Row</a>
-                    <a id="clr-{{ $i }}" onclick="go_clear({{ $i }});" class="btn btn-danger btn-xs invisible">Clear Row</a>
+                    <a id="pop-{{ $i }}" onclick="populate({{ $i }});" class="btn btn-primary btn-xs">@lang('messages.buttons.pop_row')</a>
+                    <a id="clr-{{ $i }}" onclick="go_clear({{ $i }});" class="btn btn-danger btn-xs invisible">@lang('messages.buttons.clr_row')</a>
                 <div id="search-results"></div>
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('firstName-'.$i, 'First Name') !!}<br/>
+                    {!! Form::label('firstName-'.$i, trans('messages.fields.firstName')) !!}<br/>
                     {!! Form::text('firstName-'.$i, null, array('id' => 'firstName-'.$i, 'class' => 'input-xs', 'onblur' => 'require('. $i .');')) !!}<br />
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('lastName-'.$i, 'Last Name') !!}<br/>
+                    {!! Form::label('lastName-'.$i, trans('messages.fields.lastName')) !!}<br/>
                     {!! Form::text('lastName-'.$i, null, array('id' => 'lastName-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
                 <div class="col-sm-2">
@@ -70,7 +70,7 @@ $topBits = '';  // remove this if this was set in the controller
                     {!! Form::hidden('override-'.$i, 0) !!}
                 @else
                     <div class="col-sm-1">
-                        {!! Form::label('override-'.$i, 'Override') !!}
+                        {!! Form::label('override-'.$i, trans('messages.headers.override')) !!}
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.group_reg')])
                         <br/>
                         {!! Form::number('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
@@ -86,7 +86,7 @@ $topBits = '';  // remove this if this was set in the controller
                 </div>
                 @if($check)
                 <div class="col-sm-1">
-                    {!! Form::label('checkin-'.$i, 'CheckIn') !!}<br/>
+                    {!! Form::label('checkin-'.$i, trans('messages.buttons.chk_in')) !!}<br/>
                     {!! Form::checkbox('checkin-'.$i, 1, ['checked']) !!}
                     {!! Form::hidden('check', 1) !!}
                 </div>
@@ -172,8 +172,8 @@ $topBits = '';  // remove this if this was set in the controller
             $("#pmiid-"+row).val("");
             $("#override-"+row).val("");
             $("#pmiid-"+row).val("");
-            $("#ticketID-"+row).val("Select Ticket");
-            $("#code-"+row).val("Select");
+            $("#ticketID-"+row).val("{{ trans('messages.headers.sel_tkt') }}");
+            $("#code-"+row).val("{{ trans('messages.fields.select') }}");
             $("#clr-"+row).addClass("invisible");
         }
 
@@ -193,6 +193,7 @@ $topBits = '';  // remove this if this was set in the controller
                     },
                     success: function (data) {
                         var result = eval(data);
+                        console.log(result);
                         {{--
                         // parse output, add a hidden item (person+row), and populate text fields
                         //console.log(result);

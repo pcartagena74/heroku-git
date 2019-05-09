@@ -1,0 +1,107 @@
+        x "google/recaptcha": "^1.2",
+        "graham-campbell/flysystem": "^5.2",
+        x "kordy/ticketit": "^0.4.5",
+        x "kouz/laravel-airbrake": "^0.4.1",
+        x "maatwebsite/excel": "^3.1",
+        "plank/laravel-mediable": "^2.9"
+        "spatie/laravel-link-checker": "^4.1", // abandoned
+,
+{
+    "name": "laravel/laravel",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": "^7.1.3",
+        "ext-imap": "*",
+        "ext-ldap": "*",
+        "barryvdh/laravel-ide-helper": "^2.6",
+        "barryvdh/laravel-snappy": "^0.4.4",
+        "bugsnag/bugsnag-laravel": "^2.15",
+        "doctrine/dbal": "^2.9",
+        "eduardokum/laravel-mail-auto-embed": "^1.0",
+        "fennb/phirehose": "^1.0",
+        "fideloper/proxy": "^4.0",
+        "google/recaptcha": "^1.2",
+        "graham-campbell/flysystem": "^5.2",
+        "guzzlehttp/guzzle": "^6.3",
+        "h4cc/wkhtmltoimage-amd64": "0.12.x",
+        "h4cc/wkhtmltopdf-amd64": "dev-master",
+        "intervention/image": "^2.4",
+        "jdavidbakr/mail-tracker": "^2.1",
+        "jenssegers/agent": "^2.5",
+        "knplabs/knp-snappy": "^1.1",
+        "kordy/ticketit": "^0.4.5",
+        "kouz/laravel-airbrake": "^0.4.1",
+        "laravel/cashier": "~7.0",
+        "laravel/framework": "5.6",
+        "laravel/lumen-framework": "^5.6",
+        "laravel/socialite": "3.3.0",
+        "laravel/tinker": "^1.0",
+        "laravelcollective/html": "^5.6",
+        "league/flysystem": "^1.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "maatwebsite/excel": "^3.1",
+        "msclics/laravel-phantomjs": "^1.0",
+        "nicolaslopezj/searchable": "1.*",
+        "plank/laravel-mediable": "^2.9",
+        "socialiteproviders/linkedin": "^3.0",
+        "spatie/laravel-link-checker": "^4.1",
+        "spatie/laravel-referer": "1.3.4",
+        "stripe/stripe-php": "^4.13",
+        "true/punycode": "dev-master",
+        "zizaco/entrust": "^1.9"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "^1.0",
+        "tightenco/mailthief": "^0.3.7",
+        "filp/whoops": "^2.0",
+        "nunomaduro/collision": "^2.0"
+    },
+    "autoload": {
+        "classmap": [
+            "database",
+            "vendor/fennb/phirehose/lib"
+        ],
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Helpers/helper_functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "php artisan key:generate"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "process-timeout": 0
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

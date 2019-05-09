@@ -7,6 +7,7 @@ use Phirehose;
 use App\TwitterStream;
 use \Illuminate\Support\Facades\Blade;
 use \Illuminate\Support\Facades\URL as URL;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,9 +18,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(env('APP_ENV') != 'local'){
+        if (env('APP_ENV') != 'local') {
             URL::forceScheme('https');
         }
+
+        // Paginator::useBootstrapThree();
 
         $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
 
@@ -30,7 +33,6 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('trans_choice', function ($expression) {
             return "<?php trans_choice({$expression}); ?>";
         });
-
     }
 
     /**
@@ -46,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
             return new TwitterStream($twitter_access_token, $twitter_access_token_secret, Phirehose::METHOD_FILTER);
         });
 
-        $this->app->alias('bugsnag.multi', \Illuminate\Contracts\Logging\Log::class);
+        $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
     }
 }

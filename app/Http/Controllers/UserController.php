@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\NewUserAcct;
 use DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -19,7 +20,7 @@ class UserController extends Controller
         $this->middleware('auth');
 
         $this->middleware(function (Request $request, $next) {
-            if(auth()){
+            if (auth()) {
                 $this->currentPerson = Person::find(auth()->user()->id);
             } else {
                 $this->currentPerson = null;
@@ -91,8 +92,8 @@ class UserController extends Controller
         //    Check for password existence (and validation) and set if present
         // 3. Create person-email record for login
 
-        if(check_exists('p', array($firstName, $lastName, $email))
-            || check_exists('e', array($email)) || check_exists('op', array($pmiID))){
+        if (check_exists('p', array($firstName, $lastName, $email))
+            || check_exists('e', array($email)) || check_exists('op', array($pmiID))) {
             // return redirect(env('APP_URL')."/newuser/create");
             return back()->withInput();
         }
@@ -110,7 +111,7 @@ class UserController extends Controller
             $p->save();
 
             $op = new OrgPerson;
-            if($pmiID > 0){
+            if ($pmiID > 0) {
                 $op->OrgStat1 = $pmiID;
             }
             $op->personID = $p->personID;
@@ -119,13 +120,16 @@ class UserController extends Controller
             $op->updaterID = $this->currentPerson->personID;
             $op->save();
 
+            $p->defaultOrgPersonID = $op->id;
+            $p->save();
+
             $u = new User;
             $u->id = $p->personID;
             $u->login = $email;
             $u->name = $email;
             $u->email = $email;
-            if($make_pass){
-                $u->password = bcrypt($password);
+            if ($make_pass) {
+                $u->password = Hash::make($password);
             }
             $u->save();
 
@@ -137,13 +141,13 @@ class UserController extends Controller
             $e->updaterID = $this->currentPerson->personID;
             $e->save();
             DB::commit();
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
             DB::rollBack();
             return back()->withInput();
         }
 
-        if($notify){
+        if ($notify) {
             $p->notify(new NewUserAcct($p, $password, auth()->user()->id));
         }
 

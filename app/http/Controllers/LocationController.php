@@ -90,7 +90,6 @@ class LocationController extends Controller
         }
         request()->session()->flash('alert-success', trans_choice('messages.headers.count_added', $count, ['count' => $count]));
         return redirect(env('APP_URL')."/locations");
-
     }
 
     public function edit($id)
