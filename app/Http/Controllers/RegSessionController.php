@@ -130,7 +130,8 @@ class RegSessionController extends Controller
         }
     }
 
-    public function store (Request $request, Event $event){
+    public function store(Request $request, Event $event)
+    {
 
         $esID = $request->input('sessionID');
         $chk = $request->input('chk_walk');
@@ -143,13 +144,13 @@ class RegSessionController extends Controller
             ['eventID', '=', $event->eventID],
             ['sessionID', '=', $esID]
         ])->get();
-        foreach($old_regs as $o){
+        foreach ($old_regs as $o) {
             $o->delete();
         }
 
         // Then, cycle through all p-#-# registrants to enter record
         foreach ($request->all() as $key => $value) {
-            if(preg_match('/^p-/', $key)){
+            if (preg_match('/^p-/', $key)) {
                 list($field, $personID, $regID) = array_pad(explode("-", $key, 3), 3, null);
                 $reg = Registration::find($regID);
                 $reg->checkin();
@@ -157,7 +158,7 @@ class RegSessionController extends Controller
             }
         }
 
-        if($chk){
+        if ($chk) {
             return redirect(env('APP_URL')."/group/$eventID/checkin");
         } else {
             request()->session()->flash('alert-success', trans_choice('messages.headers.count_updated', $count, ['count' => $count]));
@@ -218,7 +219,7 @@ class RegSessionController extends Controller
         return redirect('/upcoming');
     }
 
-    public function store_session (Request $request, EventSession $session)
+    public function store_session(Request $request, EventSession $session)
     {
         // 1) Receive the check-in with $regID
         // 2) Update the RegSession instance,
@@ -233,7 +234,7 @@ class RegSessionController extends Controller
             ['sessionID', '=', $session->sessionID]
         ])->first();
 
-        if(null === $rs){
+        if (null === $rs) {
             // Create the RegSession
             $reg = Registration::find($regID);
             $rs = new RegSession;
@@ -259,7 +260,7 @@ class RegSessionController extends Controller
         return view('v1.public_pages.session_survey', compact('rs', 'session', 'event', 'org'));
     }
 
-    public function store_survey (Request $request)
+    public function store_survey(Request $request)
     {
         // Response from /rs_survey post
 
@@ -303,9 +304,10 @@ class RegSessionController extends Controller
         return view('v1.public_pages.thanks', compact('message'));
     }
 
-    public function send_surveys(Event $event){
+    public function send_surveys(Event $event)
+    {
         $count = 0;
-        foreach ($event->registrations as $reg){
+        foreach ($event->registrations as $reg) {
             $es = $event->default_session();
             $rs = RegSession::where([
                 ['regID', $reg->regID],
@@ -313,7 +315,7 @@ class RegSessionController extends Controller
                 ['eventID', $event->eventID],
                 ['sessionID', $es->sessionID]
             ])->first();
-            if($rs !== null){
+            if ($rs !== null) {
                 $p = Person::find($reg->personID);
                 $p->notify(new SendSurvey($p, $event, $rs));
                 $count++;

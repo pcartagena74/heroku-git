@@ -5,6 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Spatie\Activitylog\Traits\LogsActivity;
+
 use Illuminate\Support\Facades\DB;
 use App\Bundle;
 use App\EventSession;
@@ -13,6 +14,7 @@ class Ticket extends Model
 {
     use SoftDeletes;
     //use LogsActivity;
+
 
     protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
         'isaBundle', 'ticketLabel'];
@@ -24,16 +26,18 @@ class Ticket extends Model
 
     protected $appends = ['eb_mbr_price', 'eb_non_price'];
 
-    public function getEbMbrPriceAttribute(){
-        if($this->valid_earlyBird()){
+    public function getEbMbrPriceAttribute()
+    {
+        if ($this->valid_earlyBird()) {
             return $this->memberBasePrice - ($this->memberBasePrice*$this->earlyBirdPercent/100);
         } else {
             return $this->memberBasePrice;
         }
     }
 
-    public function getEbNonPriceAttribute(){
-        if($this->valid_earlyBird()){
+    public function getEbNonPriceAttribute()
+    {
+        if ($this->valid_earlyBird()) {
             return $this->nonmbrBasePrice - ($this->nonmbrBasePrice*$this->earlyBirdPercent/100);
         } else {
             return $this->nonmbrBasePrice;
@@ -63,14 +67,14 @@ class Ticket extends Model
     /**
      * week_sales() returns count of sales for this ticket's sales based on this ticket's (or its members') sales
      */
-    public function week_sales(){
+    public function week_sales()
+    {
         $tickets = array($this->ticketID);
-        if(!$this->isaBundle){
+        if (!$this->isaBundle) {
             $bundles = Bundle::where('ticketID', $this->ticketID)->select('bundleID')->get();
-            foreach($bundles as $b){
+            foreach ($bundles as $b) {
                 array_push($tickets, $b->bundleID);
             }
-
         }
         return Registration::whereDate('updateDate', '>=', Carbon::now()->subWeek(1))
             ->whereIn('ticketID', $tickets)
@@ -105,9 +109,10 @@ class Ticket extends Model
     /**
      * valid_earlyBird() returns true/false based on current date and ticket's earlyBirdEndDate
      */
-    public function valid_earlyBird(){
+    public function valid_earlyBird()
+    {
         $today = \Carbon\Carbon::now();
-        if($this->earlyBirdEndDate !== null && $this->earlyBirdEndDate->gte($today) && $this->earlyBirdPercent > 0){
+        if ($this->earlyBirdEndDate !== null && $this->earlyBirdEndDate->gte($today) && $this->earlyBirdPercent > 0) {
             return 1;
         } else {
             return 0;
@@ -117,7 +122,8 @@ class Ticket extends Model
     /**
      * bundle_members() returns the members of a bundle ticket
      */
-    public function bundle_members(){
+    public function bundle_members()
+    {
         return Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
             ->where([
                 ['bt.bundleID', '=', $this->ticketID],
@@ -131,11 +137,12 @@ class Ticket extends Model
      *                      count is updated for bundle member tickets OR the ticket itself
      * @param: $amt is the amount passed to update the count - allows for +1 and -1
      */
-    public function update_count($amt, $force = 0){
+    public function update_count($amt, $force = 0)
+    {
         $bundle_members = $this->bundle_members();
-        if(count($bundle_members) > 0) {
+        if (count($bundle_members) > 0) {
             foreach ($bundle_members as $m) {
-                if($m->waitlisting() && !$force){
+                if ($m->waitlisting() && !$force) {
                     $m->waitCount += $amt;
                 } else {
                     $m->regCount += $amt;
@@ -143,7 +150,7 @@ class Ticket extends Model
                 $m->save();
             }
         } else {
-            if($this->waitlisting() && !$force){
+            if ($this->waitlisting() && !$force) {
                 $this->waitCount += $amt;
             } else {
                 $this->regCount += $amt;
@@ -155,14 +162,15 @@ class Ticket extends Model
     /**
      * has_sessions()   Determines if a ticket has been connected with EventSessions
      */
-    public function has_sessions() {
+    public function has_sessions()
+    {
         $bundles = $this->bundle_members();
         foreach ($bundles as $m) {
             $es = EventSession::where([
                 ['eventID', '=', $this->eventID],
                 ['ticketID', '=', $m->ticketID]
             ])->get();
-            if(count($es) > 1) {
+            if (count($es) > 1) {
                 return 1;
             }
         }
@@ -173,7 +181,8 @@ class Ticket extends Model
         return (count($es)> 1);
     }
 
-    public function ok_to_display(){
+    public function ok_to_display()
+    {
         $today = Carbon::now();
         return ($this->availabilityEndDate->gte($today) && $this->isSuppressed == 0);
     }

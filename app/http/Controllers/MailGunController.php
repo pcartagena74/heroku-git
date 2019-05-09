@@ -45,7 +45,8 @@ class MailGunController extends Controller
         });
     }
 
-    public function bugsnag() {
+    public function bugsnag()
+    {
 
         Bugsnag::notifyException(new RuntimeException("Test error"));
     }

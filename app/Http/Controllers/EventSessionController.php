@@ -42,7 +42,8 @@ class EventSessionController extends Controller
         return redirect('/tracks/' . $event->eventID);
     }
 
-    public function update(EventSession $es){
+    public function update(EventSession $es)
+    {
         $event = Event::find($es->eventID);
         $es->deleted_at = null;
         $es->updaterID = auth()->user()->id;

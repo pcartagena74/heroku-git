@@ -31,7 +31,8 @@ class Org extends Model
         return $this->belongsToMany(Person::class, 'org-person', 'orgID', 'personID');
     }
 
-    public function eventTypes() {
+    public function eventTypes()
+    {
         // NOT NOT NOT a relationship return but a true function
         return EventType::whereIn('orgID', array(1, $this->orgID))->get();
     }

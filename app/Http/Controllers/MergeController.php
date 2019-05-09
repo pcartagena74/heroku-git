@@ -54,7 +54,7 @@ class MergeController extends Controller
         $model1 = null;
         $model2 = null;
         $this->currentPerson = Person::find(auth()->user()->id);
-        if($letter === null) {
+        if ($letter === null) {
             // go to a blank merge page
         }
 
@@ -161,21 +161,21 @@ class MergeController extends Controller
     /**
      * Just like getmodel, for the group-registration page
      * @param: string
+     * @return: json entry
      */
     public function getperson(Request $request)
     {
         $string = request()->input('string');
         list($personID, $field) = array_pad(explode("-", $string, 2), 2, null);
-        $person = Person::with('orgperson')
-            ->where('personID', $personID)
-            ->first();
-        $person->load('orgperson');
+        $person = Person::with('orgperson')->find($personID);
+
         return json_encode(array('status' => 'success',
+            'p' => $person,
             'personID' => $person->personID,
             'firstName' => $person->firstName,
             'lastName' => $person->lastName,
             'login' => $person->login,
-            'OrgStat1' => $person->orgperson->OrgStat1,
+            'OrgStat1' => $person->orgperson->OrgStat1
         ));
     }
 
@@ -207,7 +207,6 @@ class MergeController extends Controller
         switch ($letter) {
             // Switch to setup model1 & model2
             case 'p':
-
                 // add phone numbers
                 $model1 = Person::where('personID', $id1)
                     ->with('orgperson', 'emails', 'addresses', 'registrations', 'socialites', 'regfinances', 'phones')
@@ -222,7 +221,7 @@ class MergeController extends Controller
             case 'l':
                 $model1 = Location::find($id1);
                 $model2 = Location::find($id2);
-                if($model2->locNote !== null){
+                if ($model2->locNote !== null) {
                     $model1->locNote .= $model2->locNote;
                 }
                 break;
@@ -245,7 +244,7 @@ class MergeController extends Controller
         $model2->save();
         $model2->delete();
 
-        switch($letter){
+        switch ($letter) {
             // Switch to handle relation models associated with the target models
             case 'p':
                 // Find all emails, addresses, registrations, etc. associated with model2 location and update
@@ -315,9 +314,11 @@ class MergeController extends Controller
                 // change any permissions that might be set
                 DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
 
-                request()->session()->flash('alert-success', trans('messages.messages.merge_succ',
-                        ['model' => $this->models[$letter], 'record1' => $model2->personID,
-                        'record2' => $model1->personID]));
+                request()->session()->flash('alert-success', trans(
+                    'messages.messages.merge_succ',
+                    ['model' => $this->models[$letter], 'record1' => $model2->personID,
+                    'record2' => $model1->personID]
+                ));
 
                 // If a password is set for a user record that will not survive and survivor password is null, copy it.
                 // Then delete non-surviving user record
@@ -352,14 +353,16 @@ class MergeController extends Controller
                 ])->get();
 
                 $cnt = 0;
-                foreach($events as $e){
+                foreach ($events as $e) {
                     $e->locationID = $model1->locID;
                     $e->updaterID = $this->currentPerson->personID;
                     $e->save();
                     $cnt++;
                 }
-                request()->session()->flash('alert-warning', trans('messages.messages.loc_merge',
-                                            ['id' => $model1->locID, 'id2' => $model2->locID, 'count' => $cnt]));
+                request()->session()->flash('alert-warning', trans(
+                    'messages.messages.loc_merge',
+                    ['id' => $model1->locID, 'id2' => $model2->locID, 'count' => $cnt]
+                ));
                 $return_model = $model1->locID;
                 break;
         }
@@ -483,6 +486,5 @@ class MergeController extends Controller
                     break;
             }
         }
-
     }
 }

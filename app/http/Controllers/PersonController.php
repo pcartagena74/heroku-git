@@ -291,7 +291,6 @@ class PersonController extends Controller
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id, 'errormsg' => $exception->getMessage()]));
             return redirect(env('APP_URL') . '/profile/my');
-
         }
 
         if ($profile === null) {
@@ -406,25 +405,21 @@ class PersonController extends Controller
             $new->isPrimary = 1;
             $new->updaterID = $updater;
             $new->save();
-
         } elseif ($name == 'affiliation') {
             $value = implode(",", (array)$value);
             $person->affiliation = $value;
             $person->updaterID = $updater;
             $person->save();
-
         } elseif ($name == 'allergenInfo') {
             $value = implode(",", (array)$value);
             $person->allergenInfo = $value;
             $person->updaterID = $updater;
             $person->save();
-
         } elseif ($name == 'certifications') {
             $value = implode(",", (array)$value);
             $person->certifications = $value;
             $person->updaterID = $updater;
             $person->save();
-
         } elseif ($name == 'prefix') {
             if (strlen($value) > 10) {
                 $value = substr($value, 0, 10);
@@ -514,7 +509,7 @@ class PersonController extends Controller
         // validate $curPass
         if (Hash::check($curPass, $user->password)) {
             // update password
-            $user->password = bcrypt($password);
+            $user->password = Hash::make($password);
             $user->save();
             request()->session()->flash('alert-success', trans('messages.messages.pass_change'));
 
@@ -567,7 +562,7 @@ class PersonController extends Controller
         $person = Person::find($user->id);
 
         // update password
-        $user->password = bcrypt($password);
+        $user->password = Hash::make($password);
         $user->save();
         request()->session()->flash('alert-success', trans('messages.messages.pass_change_for', ['name' => $person->showFullName()]));
 

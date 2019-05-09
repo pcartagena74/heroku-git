@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Spatie\Activitylog\Traits\LogsActivity;
+
 use App\EventSession;
 use App\Person;
 use Carbon\Carbon;
@@ -70,16 +71,18 @@ class Event extends Model
             ->get();
     }
 
-    public function valid_earlyBird() {
+    public function valid_earlyBird()
+    {
         $today = Carbon::now();
-        if($this->earlyBirdDate !== null && $this->earlyBirdDate->gte($today)){
+        if ($this->earlyBirdDate !== null && $this->earlyBirdDate->gte($today)) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    public function ok_to_display() {
+    public function ok_to_display()
+    {
         /*
         $today = Carbon::now();
         $max = Ticket::select('availabilityEndDate')
@@ -88,57 +91,63 @@ class Event extends Model
             ->first();
         //if($this->isActive && $max->availabilityEndDate->gte($today)){
         */
-        if($this->isActive){
+        if ($this->isActive) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    public function checkin_time() {
+    public function checkin_time()
+    {
         $today = Carbon::now();
         //dd($this->eventStartDate->diffInDays($today));
-        if(($this->eventStartDate->diffInDays($today) <= 2
+        if (($this->eventStartDate->diffInDays($today) <= 2
                 && $this->eventStartDate->diffInDays($today) >= 0)
-                || $today->gte($this->eventEndDate)){
+                || $today->gte($this->eventEndDate)) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    public function regCount() {
+    public function regCount()
+    {
         return Registration::where('eventID', '=', $this->eventID)->count();
     }
 
-    public function default_session() {
+    public function default_session()
+    {
         return EventSession::where([
             ['eventID', '=', $this->eventID],
             ['sessionName', '=', 'def_sess']
         ])->first();
     }
 
-    public function registered_speakers() {
-        return Person::whereHas('registrations', function($q) {
+    public function registered_speakers()
+    {
+        return Person::whereHas('registrations', function ($q) {
             $q->where('eventID', '=', $this->eventID);
         })
-            ->whereHas('roles', function($q) {
+            ->whereHas('roles', function ($q) {
                 $q->where('id', '=', 2);
             })
             ->get();
     }
 
-    public function main_reg_sessions(){
+    public function main_reg_sessions()
+    {
         return RegSession::where([
             ['sessionID', $this->mainSession],
             ['eventID', $this->eventID]
         ])->get();
     }
 
-    public function week_sales(){
+    public function week_sales()
+    {
         $count = 0;
 
-        foreach($this->tickets as $t){
+        foreach ($this->tickets as $t) {
             $count += $t->week_sales();
         }
         return $count;

@@ -73,9 +73,10 @@ class ics_calendar
         return $this->o_string;
     }
 
-    private function _gen_loc_string(Location $loc){
+    private function _gen_loc_string(Location $loc)
+    {
         $this->location = $this->venue_uid . ":" . $loc->locName . "\r\n " . $loc->addr1 . "\r\n ";
-        if($loc->addr2 !== null){
+        if ($loc->addr2 !== null) {
             $this->location .= $loc->addr2 . "\r\n ";
         }
         $this->location .= $loc->city . ", " . $loc->state . " " . $loc->zip;

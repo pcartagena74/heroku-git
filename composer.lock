@@ -124,6 +124,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/75d6b1ec57f3438ac960d74e08366be43d52eca7",
                 "reference": "75d6b1ec57f3438ac960d74e08366be43d52eca7",
+
                 "shasum": ""
             },
             "require": {
@@ -3081,6 +3082,7 @@
                 "laravel"
             ],
             "time": "2019-05-07T14:37:11+00:00"
+
         },
         {
             "name": "laravel/socialite",
@@ -5054,6 +5056,7 @@
             "autoload": {
                 "psr-4": {
                     "Spatie\\Referer\\": "src"
+
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
