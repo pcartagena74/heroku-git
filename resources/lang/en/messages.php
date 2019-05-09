@@ -445,6 +445,7 @@ return [
         'pmt' => 'Payment',
         'post-reg' => "Post Registration",
         'prefName' => 'Pref Name',
+        'preventRefunds' => "Will <b class='red'>all</b> refunds be prohibited?",
         'primary' => "Primary",
         'purchased' => 'Purchased on',
         'receipt' => 'Receipt',

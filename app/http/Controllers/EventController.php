@@ -974,7 +974,7 @@ class EventController extends Controller
                 ->get();
         } else {
             $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
-            if (Lang::has($tag->etName)) {
+            if (Lang::has('messages.event_types'.$tag->etName)) {
                 $tag->etName = trans_choice('messages.event_types.'.$tag->etName, 1);
             } else {
                 // $tag = $tag->etName;

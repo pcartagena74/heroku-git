@@ -795,7 +795,7 @@ class RegistrationController extends Controller
         // Decrement the regCount on the ticket if ticket was paid OR 'At Door'
         // Also decrement the attendance of any sessions
         if ($rf->pmtRecd || $rf->pmtType == 'door') {
-            $ticket->update_count(-1);
+            $ticket->update_count(-1, $ticket->waitlisting());
 
             $sessions = RegSession::where('regID', '=', $reg->regID)->get();
             foreach ($sessions as $s) {

@@ -38,6 +38,7 @@ $default = Org::find($event->orgID);
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.eb_enddate')])
                 </th>
                 <th style="text-align: left;">@lang('messages.headers.earlybird') @lang('messages.headers.percent') @lang('messages.fields.disc')</th>
+                <th style="text-align: left;">@lang('messages.headers.preventRefunds')</th>
                 <th style="text-align: left;">@lang('messages.headers.accept_cash')
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.accept_cash')])
                 </th>
@@ -49,6 +50,9 @@ $default = Org::find($event->orgID);
                                                  data-viewformat="MMM D, YYYY h:mm A"
                                                  data-pk="{{ $event->eventID }}"></a></td>
                 <td style="text-align: left;"><a id="earlyDiscount" data-value="{{ $event->earlyDiscount }}"
+                                                 data-url="{{ env('APP_URL') }}/eventajax/{{ $event->eventID }}"
+                                                 data-pk="{{ $event->eventID }}"></a></td>
+                <td style="text-align: left;"><a id="isNonRefundable" data-value="{{ $event->isNonRefundable }}"
                                                  data-url="{{ env('APP_URL') }}/eventajax/{{ $event->eventID }}"
                                                  data-pk="{{ $event->eventID }}"></a></td>
                 <td style="text-align: left;"><a id="acceptsCash" data-value="{{ $event->acceptsCash }}"
@@ -313,6 +317,14 @@ $default = Org::find($event->orgID);
                 window.location = "{{ env('APP_URL') . '/event-tickets/' . $event->eventID }}";
             }
         });
+        $("#isNonRefundable").editable({
+            type: 'select',
+            source: [
+                { value: 0, text: '{{ trans('messages.yesno_check.no') }}'},
+                { value: 1, text: '{{ trans('messages.yesno_check.yes') }}'}
+            ]
+        });
+
         $("#acceptsCash").editable({
             type: 'select',
             source: [

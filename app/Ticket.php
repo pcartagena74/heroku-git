@@ -131,16 +131,20 @@ class Ticket extends Model
     }
 
     /**
-     * update_count($amt)   Increment / Decrement Function for Ticket Counts
-     *                      count is updated for bundle member tickets OR the ticket itself
-     * @param: $amt is the amount passed to update the count - allows for +1 and -1
+     * update_count Increment / Decrement Function for Ticket Counts
+     *              count is updated for bundle member tickets OR the ticket itself
+     *      @param:  $amt is the amount passed to update the count - allows for +1 and -1
+     *      @param:  $waitlist is a boolean indicating whether this should adjust the waitlist count or not
      */
-    public function update_count($amt, $force = 0)
+    public function update_count($amt, $waitlist = 0)
     {
         $bundle_members = $this->bundle_members();
         if (count($bundle_members) > 0) {
             foreach ($bundle_members as $m) {
-                if ($m->waitlisting() && !$force) {
+                // When attempting to increment the count:
+                // 1. Check if waitlisting and add there
+                // 2. Otherwise, add as normal
+                if ($waitlist) {
                     $m->waitCount += $amt;
                 } else {
                     $m->regCount += $amt;
@@ -148,7 +152,7 @@ class Ticket extends Model
                 $m->save();
             }
         } else {
-            if ($this->waitlisting() && !$force) {
+            if ($waitlist) {
                 $this->waitCount += $amt;
             } else {
                 $this->regCount += $amt;

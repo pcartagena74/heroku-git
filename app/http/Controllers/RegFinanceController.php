@@ -175,10 +175,10 @@ class RegFinanceController extends Controller
     public function update(Request $request, $id)
     {
         // responds to PATCH /complete_registration/{id}
-        set_time_limit(100);
-        //$rf = RegFinance::find($id);
-        $rf = RegFinance::with('registrations.ticket')->where('regID', $id)->first();
-        //dd($rf);
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $rf = RegFinance::with('registrations.ticket')->find($id);
         $event = Event::find($rf->eventID);
         $u = User::find(auth()->user()->id);
         $org = Org::find($event->orgID);
@@ -322,7 +322,7 @@ class RegFinanceController extends Controller
                     $reg->regStatus = 'processed';
                 }
                 // the ticket count gets updated regardless of regStatus
-                $reg->ticket->update_count(1);
+                $reg->ticket->update_count(1, $reg->ticket->waitlisting());
 
                 // The first registrant should be logged in
 
@@ -487,7 +487,7 @@ class RegFinanceController extends Controller
         $reg->updateDate = $now;
         $reg->save();
 
-        $reg->ticket->update_count(1, 1);
+        $reg->ticket->update_count(1, $reg->ticket->waitlisting());
 
         return Redirect::back();
     }
@@ -742,7 +742,7 @@ class RegFinanceController extends Controller
 
                 // Update ticket purchase on all bundle ticket members by $rf->seat
                 $ticket = Ticket::find($reg->ticketID);
-                $ticket->update_count(1);
+                $ticket->update_count(1, $ticket->waitlisting());
 
                 if ($reg->subtotal > 0 || $reg->origcost > 0) {
                     // mCentric Handle fee = 2.9% of $rf->cost + $0.30
