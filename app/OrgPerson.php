@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrgPerson extends Model
 {
-    //use LogsActivity;
-    use SoftDeletes;
-    protected $primaryKey = 'personID';
+    // use LogsActivity;
+    // use SoftDeletes;
+
+    // The table
+    protected $table = 'org-person';
+
+    // protected $primaryKey = 'personID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
 
@@ -34,16 +38,14 @@ class OrgPerson extends Model
     protected static $logAttributes = ['OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    // The table
-    protected $table = 'org-person';
 
     public function myperson()
     {
-        return $this->belongsTo(Person::class, 'personID');
+        return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
     public function myorg()
     {
-        return $this->belongsTo(Org::class, 'orgID');
+        return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 }
