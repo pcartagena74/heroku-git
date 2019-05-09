@@ -29,7 +29,7 @@ class Person extends Model
 
     public function orgs()
     {
-        return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID');
+        return $this->belongsToMany(Org::class, 'org-person', 'personID', 'personID');
     }
 
 
