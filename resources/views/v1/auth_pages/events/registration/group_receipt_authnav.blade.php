@@ -300,7 +300,7 @@ $deletion = 0;
             <div class="col-sm-offset-2 col-sm-10">
                 @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
                          'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-                {!! $event->postRegInfo or '' !!}
+                {!! $event->postRegInfo ?? '' !!}
                 @include('v1.parts.end_content')
             </div>
         @endif

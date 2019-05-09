@@ -422,7 +422,7 @@ $count = 0;
 ?>
                                                     <ul>
                                                         @foreach($sRegs as $sr)
-                                                            <li>{{ $sr->discountCode or 'N/A' }}: {{ $sr->cnt }}</li>
+                                                            <li>{{ $sr->discountCode ?? 'N/A' }}: {{ $sr->cnt }}</li>
                                                             <?php $sTotal += $sr->cnt; ?>
                                                         @endforeach
                                                         <li><b>@lang('messages.fields.total'): {{ $sTotal }}</b></li>
@@ -507,7 +507,7 @@ $count = 0;
                                 {!! Form::checkbox('p-'.$row->person->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked => $checked)) !!}
                             </div>
                             <div class="col-xs-2">
-                                {{ $row->person->orgperson->OrgStat1 or 'N/A' }}
+                                {{ $row->person->orgperson->OrgStat1 ?? 'N/A' }}
                             </div>
                             <div class="col-xs-8">
                                 {{ $row->person->prefName }} {{ $row->person->lastName }}
@@ -620,7 +620,7 @@ include('v1.parts.ajax_console')
             data: {
                 labels: [
                     @foreach($discountCounts as $d)
-                            @if($d->discountCode == '' or $d->discountCode == ' ')
+                            @if($d->discountCode == '' || $d->discountCode == ' ')
                         'N/A',
                     @elseif($d->discountCode == 'Total')
                             @else

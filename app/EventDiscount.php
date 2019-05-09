@@ -3,12 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-// use Spatie\Activitylog\Traits\LogsActivity;
+//use Spatie\Activitylog\Traits\LogsActivity;
+
 
 class EventDiscount extends Model
 {
     use SoftDeletes;
-    // use LogsActivity;
+    //use LogsActivity;
 
     // The table
     protected $table = 'event-discounts';

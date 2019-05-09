@@ -156,7 +156,7 @@ try {
     <div class="form-group col-md-3" id="slug_feedback">
     </div>
     <div class="form-group col-md-11 col-md-offset-1">
-        <b>URL will be: https://www.mCentric.org/events/<span id="curl" style="color:red;">{{ $event->slug or '' }}</span></b>
+        <b>URL will be: https://www.mCentric.org/events/<span id="curl" style="color:red;">{{ $event->slug ?? '' }}</span></b>
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', trans('messages.headers.desc').'*', array('class' => 'control-label')) !!}
@@ -514,7 +514,7 @@ try {
             $('#validateSlug').click(function () {
                 var selection = $('#slug').val();
                 if (selection != '') {
-                    var theurl = "/eventslug/" + "{{ $event->eventID or 0 }}";
+                    var theurl = "/eventslug/" + "{{ $event->eventID ?? 0 }}";
                     $.ajax({
                         method: 'post',
                         url: theurl,

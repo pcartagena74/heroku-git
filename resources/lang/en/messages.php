@@ -17,6 +17,10 @@ return [
         'remove' => 'Remove ',
     ],
 
+    'alt_txt' => [
+        'avatar' => 'User Avatar/Image',
+    ],
+
     'buttons' => [
         'add_disc' => 'Add Discount',
         'add_def_disc' => 'Add Default Organizational Discount Codes',
@@ -593,6 +597,7 @@ return [
         'pmiID_not_found' => "{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|".
                               "[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
         'postRegInfo' => "Anything added here will be displayed and emailed to attendees AFTER they've registered.",
+        'pro_change_err' => "There was an error while attempting to change your profile.  Please email vpfinance@pmimassbay.org with the details of what you were attempting.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",
         'quantity' => "The quantity for at least one ticket must be greater than 0.",

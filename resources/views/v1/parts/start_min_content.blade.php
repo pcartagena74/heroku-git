@@ -17,7 +17,7 @@ if(isset($id)) {
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
         @endif
         ">
-    <div {!!  $id or '' !!}class="x_panel collapsed">
+    <div {!!  $id ?? '' !!}class="x_panel collapsed">
         <div class="x_title">
             <h2>{!! $header !!}</h2>
 

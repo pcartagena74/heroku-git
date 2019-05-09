@@ -89,11 +89,11 @@ foreach ($array as $chap) {
                         <td style="text-align: left;">
                             {{-- Check OrgStat1 (PMI ID) to check that PMI provided the first & last name --}}
                             @if($profile->OrgStat1 && !Entrust::hasRole('Admin'))
-                                {!! $profile->firstName or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}
+                                {!! $profile->firstName ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}
                                 @include('v1.parts.tooltip', ['title' => trans('messages.instructions.name_change')])
                             @else
                                 <a href="#" id="firstName" data-title="{{ trans('messages.fields.firstName') }}">
-                                    {!! $profile->firstName or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</a>
+                                    {!! $profile->firstName ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</a>
                                 @if(Entrust::hasRole('Admin'))
                                     @include('v1.parts.tooltip', ['c' => 'red', 'title' => trans('messages.instructions.name_change_ok')])
                                 @endif
@@ -105,7 +105,7 @@ foreach ($array as $chap) {
                         </td>
                         <td style="text-align: left;">
                             @if($profile->OrgStat1 && !Entrust::hasRole('Admin'))
-                                {!! $profile->lastName or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}
+                                {!! $profile->lastName ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}
                                 @include('v1.parts.tooltip', ['title' => trans('messages.instructions.name_change')])
                             @else
                                 <a href="#" id="lastName" data-title="{{ trans('messages.fields.lastName') }}">
@@ -209,7 +209,7 @@ foreach ($array as $chap) {
                             @if(isset($profile->{'ODN'.$i}))
                                 <tr>
                                     <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
-                                    <td style="text-align: left;">{!! $profile->{'RelDate'.$i} or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
+                                    <td style="text-align: left;">{!! $profile->{'RelDate'.$i} ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
                                 </tr>
                             @elseif($i == 1)
                                 @lang('messages.profile.no_id')
@@ -320,7 +320,7 @@ foreach ($array as $chap) {
                             @if(isset($profile->{'OSN'.$i}))
                                 <tr>
                                     <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
-                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} or "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
+                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
                                 </tr>
                             @elseif($i == 1)
                                 @lang('messages.profile.no_id')
@@ -654,7 +654,7 @@ foreach ($array as $chap) {
                 type: 'text',
                 maxlength: 100,
                 pk: '{{ $profile->personID }}',
-                url: '{{ $profile_script_url }}'
+                url: '{{ $op_script_url }}'
             });
 
             $('#twitterHandle').editable({

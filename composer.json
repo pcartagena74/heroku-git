@@ -33,7 +33,8 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "maatwebsite/excel": "^3.1",
         "socialiteproviders/linkedin": "^3.0",
-        "spatie/laravel-activitylog": "^3.5",
+        "spatie/laravel-referer": "^1.4",
+
         "stripe/stripe-php": "^6.34",
         "zizaco/entrust": "^1.9"
     },

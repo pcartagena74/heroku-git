@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ConnectToStreamingAPI::class,
-        // \Spatie\LinkChecker\CheckLinksCommand::class,
+        //\Spatie\LinkChecker\CheckLinksCommand::class,
     ];
 
     /**

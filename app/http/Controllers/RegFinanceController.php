@@ -681,6 +681,8 @@ class RegFinanceController extends Controller
         $org = Org::find($event->orgID);
         $user = User::find($rf->personID);
         $person = Person::find($rf->personID);
+        $prefixes = DB::table('prefixes')->get();
+        $industries = DB::table('industries')->get();
         $loc = Location::find($event->locationID);
         $quantity = $rf->seats;
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -780,7 +782,7 @@ class RegFinanceController extends Controller
             $rf->save();
         }
 
-        $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
+        $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $pdf = PDF::loadView('v1.auth_pages.events.registration.group_receipt', $x)

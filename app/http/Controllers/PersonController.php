@@ -282,7 +282,7 @@ class PersonController extends Controller
                 ->join('organization as o', 'o.orgID', '=', 'person.defaultOrgID')
                 ->select(DB::raw("person.prefix, person.firstName, person.midName, person.lastName, person.suffix,
                                         person.prefName, u.login, person.title, person.compName, person.indName,
-                                        person.experience, person.chapterRole, person.defaultOrgID, person.affiliation,
+                                        person.experience, op.chapterRole, person.defaultOrgID, person.affiliation,
                                         person.allergenInfo, person.allergenNote, person.twitterHandle, person.certifications,
                     OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
                     RelDate1, RelDate2, RelDate3, RelDate4, RelDate5, RelDate6, RelDate7, RelDate8, RelDate9, RelDate10,
@@ -374,12 +374,18 @@ class PersonController extends Controller
             // when changing login we need to:
             // 1. update user->login, user->email, and person->login with the new values
 
-            $user = User::find($id);
-            $orig_email = $user->login;
-            $user->login = $value;
-            $user->name = $value;
-            $user->email = $value;
-            $user->save();
+            try {
+                $user = User::find($id);
+                $orig_email = $user->login;
+                $user->login = $value;
+                $user->name = $value;
+                $user->email = $value;
+                $user->save();
+            } catch(\Exception $exception) {
+                $org = $person->defaultOrg;
+                request()->session()->flash('alert-danger', $org->techContactStatement ?? trans('messages.instructions.pro_change_err'));
+                return redirect(env('APP_URL')."/profile/$personID");
+            }
 
             // 2. trigger a notification to be sent to the old email address
             $person->notify(new LoginChange($person, $orig_email));
