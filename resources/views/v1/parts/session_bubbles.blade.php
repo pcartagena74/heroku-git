@@ -74,7 +74,9 @@ $regSessions = RegSession::where([
 
 // Retrieve the member tickets of a bundle if appropriate
 $tickets = $ticket->bundle_members();
-
+if(count($tickets) == 0){
+    $tickets = Ticket::where('ticketID', $ticket->ticketID)->get();
+}
 ?>
 @if(1)
     @if(count($regSessions)== 0)
@@ -272,7 +274,7 @@ foreach($tickets_associated_with_confDay_sessions as $tkt){
                                                 $parent = EventSession::find($s->isLinked);
 ?>
                                                 @if($s->isLinked)
-                                                {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $mySess, false,
+                                                {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
                                                 $attributes=array('id' => 'sess-'. $j . '-'.$x .'-' . $s->sessionID, 'style' => 'visibility:hidden;')) !!}
                                                 <script>
                                                     $(document).ready(function () {

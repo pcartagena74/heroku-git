@@ -170,7 +170,7 @@ class RegSessionController extends Controller
     {
         // Update or create session records, set a display message, and re-display list
         $event = Event::find($reg->eventID);
-        $verb = 'saved';
+        $verb = trans('messages.messages.saved');
 
         // Check if there are any sessions already saved, so you can decrement EventSession->regCount and delete.
         $rs = RegSession::where([
@@ -179,7 +179,7 @@ class RegSessionController extends Controller
         ])->get();
 
         if (count($rs)>1) {
-            $verb = 'updated';
+            $verb = trans('messages.messages.updated');
             foreach ($rs as $s) {
                 $e = EventSession::find($s->sessionID);
                 if ($e->regCount > 0) {
@@ -190,32 +190,32 @@ class RegSessionController extends Controller
         }
 
         for ($j = 1; $j <= $event->confDays; $j++) {
-            $z = EventSession::where([
-                ['confDay', '=', $j],
-                ['eventID', '=', $event->eventID]
-            ])->first();
-            $y = Ticket::find($z->ticketID);
-
             for ($x = 1; $x <= 5; $x++) {
-                if (request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID)) {
+                $sessionID = null; $sessionID = request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID);
+                if ($sessionID !== null){
                     // if this is set, the value is the session that was chosen.
-                    $rs            = new RegSession;
-                    $rs->regID     = $reg->regID;
-                    $rs->personID  = $reg->personID;
-                    $rs->eventID   = $event->eventID;
-                    $rs->confDay   = $j;
-                    $rs->sessionID = request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID);
-                    $rs->creatorID = auth()->user()->id;
-                    $rs->save();
 
-                    $e = EventSession::find($rs->sessionID);
-                    $e->regCount++;
-                    $e->save();
+                    $e = EventSession::find($sessionID);
+                    if($e!== null && $e->deleted_at === null){
+                        // increment the attendee count
+                        $e->regCount++;
+                        $e->save();
+
+                        // record the person's registration for the session
+                        $rs            = new RegSession;
+                        $rs->regID     = $reg->regID;
+                        $rs->personID  = $reg->personID;
+                        $rs->eventID   = $event->eventID;
+                        $rs->confDay   = $j;
+                        $rs->sessionID = $sessionID;
+                        $rs->creatorID = auth()->user()->id;
+                        $rs->save();
+                    }
                 }
             }
         }
 
-        request()->session()->flash('alert-success', "Your session choices for " . $reg->regID . " were " . $verb . ".");
+        request()->session()->flash('alert-success', trans('messages.messages.sess_saved', ['reg' => $reg->regID, 'verb' => $verb]));
         return redirect('/upcoming');
     }
 
