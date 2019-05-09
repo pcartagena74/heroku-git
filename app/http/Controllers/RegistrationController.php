@@ -189,14 +189,14 @@ class RegistrationController extends Controller
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
-            ->orderBy('cnt')->orderBy('desc')->get();
+            ->orderBy('cnt','desc')->get();
 
         $discountCounts = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
             ->whereHas('regfinance', function ($q) {
                 $q->where('pmtRecd', '=', 1);
-            })->groupBy('discountCode')->orderBy('cnt')->orderBy('desc')->get();
+            })->groupBy('discountCode')->orderBy('cnt', 'desc')->get();
 
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
