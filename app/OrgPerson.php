@@ -14,7 +14,6 @@ class OrgPerson extends Model
     // The table
     protected $table = 'org-person';
 
-    // protected $primaryKey = 'personID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
 
