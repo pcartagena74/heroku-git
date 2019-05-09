@@ -56,12 +56,12 @@ $s3fs = new Filesystem($adapter);
                     ['regID', '=', $reg->regID],
                     ['eventID', '=', $event->eventID]
                 ])->get();
+                $mem_or_not = Lang::has('messages.fields.'.$reg->membership) ? trans('messages.fields.'.$reg->membership) : $reg->membership;
                 $rf    = RegFinance::where('regID', $reg->rfID)->first();
                 $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
                 $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 ?>
-                @include('v1.parts.start_min_content', ['header' => Lang::has('messages.fields.'.$reg->membership) ?
-                trans('messages.fields.'.$reg->membership) : $reg->membership . " Ticket (" .  $person->showFullName() .
+                @include('v1.parts.start_min_content', ['header' => $mem_or_not . " Ticket (" .  $person->showFullName() .
                  "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")", 'subheader' => '<i class="fa fa-dollar"></i> ' .
                  $reg->subtotal, 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 

@@ -52,16 +52,25 @@ $oe_types = DB::table('org-event_types')
               ->get();
 
 $event_types_tmp = $oe_types->pluck('etName', 'etID');
-$event_types = [];
+$event_types_tmp = $oe_types->pluck('etName', 'etID')
+    ->map(function($item, $key) {
+        return Lang::has('messages.event_types.'.$item) ?
+            trans_choice('messages.event_types.'.$item, 1) : $item;
+    });
+$event_types = $event_types_tmp->toArray();
 
-foreach ($event_types_tmp as $et) {
+/*
+foreach ($event_types_tmp as $et => $etID) {
     if(Lang::has('messages.event_types.'.$et)){
         $et = trans_choice('messages.event_types.'.$et, 1);
-        array_push($event_types, $et);
+        array_push($event_types, [$et, $etID]);
     } else {
-        array_push($event_types, $et);
+        array_push($event_types, [$et, $etID]);
     }
 }
+
+dd($event_types);
+*/
 
 $tz = DB::table('timezone')->select('zoneName', 'zoneOffset')->get();
 
