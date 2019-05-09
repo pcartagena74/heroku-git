@@ -44,6 +44,7 @@ use App\Email;
 use Illuminate\Support\Facades\Validator;
 use Redirect;
 use App\Notifications\AccountCreation;
+use Illuminate\Support\Facades\Hash;
 
 set_time_limit(0);
 
@@ -98,9 +99,25 @@ class RegFinanceController extends Controller
             $certs = DB::table('certifications')->select('certification')->get();
             $cert_array = $certs->toArray();
 
-            return view('v1.public_pages.register2',
-                compact( 'event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array',
-                         'prefixes', 'industries', 'tracks', 'tickets', 'show_pass_fields', 'registering'));
+            return view(
+                'v1.public_pages.register2',
+                compact(
+                    'event',
+                    'quantity',
+                    'org',
+                    'loc',
+                    'rf',
+                    'person',
+                    'regs',
+                    'cert_array',
+                    'prefixes',
+                    'industries',
+                    'tracks',
+                    'tickets',
+                    'show_pass_fields',
+                    'registering'
+                )
+            );
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');
             return view('v1.public_pages.error_display', compact('message'));
@@ -108,16 +125,16 @@ class RegFinanceController extends Controller
     }
 
     public function show_receipt(RegFinance $rf)
-{
-    $event = Event::find($rf->eventID);
-    $quantity = $rf->seats;
-    $org = Org::find($event->orgID);
-    $loc = Location::find($event->locationID);
-    $person = Person::find($rf->personID);
+    {
+        $event = Event::find($rf->eventID);
+        $quantity = $rf->seats;
+        $org = Org::find($event->orgID);
+        $loc = Location::find($event->locationID);
+        $person = Person::find($rf->personID);
 
     // return view('v1.public_pages.event_receipt', $x);
-    return view('v1.auth_pages.events.registration.group_receipt_authnav', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
-}
+        return view('v1.auth_pages.events.registration.group_receipt_authnav', compact('event', 'quantity', 'loc', 'rf', 'person', 'org'));
+    }
 
     public function show_receipt_orig(RegFinance $rf)
     {
@@ -142,7 +159,8 @@ class RegFinanceController extends Controller
         dd(request()->all());
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         // responds to GET /groupreg/rfID and shows the group_reg1 page
         $rf = RegFinance::where('regID', '=', $id)->with('registrations')->first();
         $quantity = $rf->seats;
@@ -165,6 +183,8 @@ class RegFinanceController extends Controller
         $org = Org::find($event->orgID);
         $user = User::find($rf->personID);
         $person = Person::find($rf->personID);
+        $prefixes = DB::table('prefixes')->get();
+        $industries = DB::table('industries')->get();
 
         if ($u->password === null) {
             // validate password matching
@@ -175,7 +195,7 @@ class RegFinanceController extends Controller
                 return back()->withErrors($validator);
             }
             $password = request()->input('password');
-            $u->password = bcrypt($password);
+            $u->password = Hash::make($password);
             $u->save();
             // Removed flash notification to preserve receipt look & feel
             // request()->session()->flash('alert-success', "Your password was set successfully.");
@@ -218,7 +238,7 @@ class RegFinanceController extends Controller
                         'email' => $user->email,
                         'source' => $stripeToken,
                     ));
-                } catch (\Exception $exception){
+                } catch (\Exception $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 }
@@ -232,7 +252,8 @@ class RegFinanceController extends Controller
                 }
 
                 try {
-                    $charge = \Stripe\Charge::create(array(
+                    $charge = \Stripe\Charge::create(
+                        array(
                         'amount' => $rf->cost * 100,
                         'currency' => 'usd',
                         'description' => "$org->orgName " . trans('messages.fields.event') . " " .
@@ -240,25 +261,25 @@ class RegFinanceController extends Controller
                         'customer' => $user->stripe_id),
                         array('idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats)
                     );
-                } catch(Card $exception) {
+                } catch (Card $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
-                } catch(InvalidRequest $exception) {
+                } catch (InvalidRequest $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
-                } catch(Authentication $exception) {
+                } catch (Authentication $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
-                } catch(ApiConnection $exception) {
+                } catch (ApiConnection $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
-                } catch(Permission $exception) {
+                } catch (Permission $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
-                } catch(Base $exception) {
+                } catch (Base $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
-                } catch(\Exception $exception) {
+                } catch (\Exception $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 }
@@ -272,7 +293,7 @@ class RegFinanceController extends Controller
                 $rf->status = 'pending';
                 $rf->pmtType = 'door';
                 $rf->save();
-            } elseif($rf->cost == 0) {
+            } elseif ($rf->cost == 0) {
                 //$rf->cost must be 0 so there's no charge for it
                 $rf->pmtRecd = 1;
                 $rf->status = 'processed';
@@ -294,7 +315,7 @@ class RegFinanceController extends Controller
 
                 if ($reg->ticket->waitlisting()) {
                     $reg->regStatus = 'wait';
-                } elseif($rf->status == 'pending') {
+                } elseif ($rf->status == 'pending') {
                     $reg->regStatus = 'pending';
                 } else {
                     $reg->regStatus = 'processed';
@@ -304,19 +325,19 @@ class RegFinanceController extends Controller
 
                 // The first registrant should be logged in
 
-                if($reg->subtotal > 0){
+                if ($reg->subtotal > 0) {
                     $reg->ccFee = number_format(($reg->subtotal * .029) + .30, 2, '.', ',');
                     $handleFee = number_format(($reg->subtotal * .029) + .30, 2, '.', '');
-                    if($handleFee > 5){
+                    if ($handleFee > 5) {
                         $handleFee = 5;
                     }
-                } else if($reg->origcost > 0){
+                } else if ($reg->origcost > 0) {
                     $handleFee = number_format(($reg->origcost * .029) + .30, 2, '.', '');
-                    if($handleFee > 5){
+                    if ($handleFee > 5) {
                         $handleFee = 5;
                     }
                 }
-                if(preg_match("/speaker/i", $reg->discountCode)){
+                if (preg_match("/speaker/i", $reg->discountCode)) {
                     $p = Person::find($reg->personID);
                     $p->add_speaker_role();
                 }
@@ -343,12 +364,11 @@ class RegFinanceController extends Controller
                 $rf->orgAmt = number_format($rf->cost - $rf->ccFee - $rf->handleFee, 2, '.', '');
                 $rf->discountAmt = number_format($discountAmt, 2, '.', '');
             }
-            if($rf->orgAmt < 0){
+            if ($rf->orgAmt < 0) {
                 $rf->orgAmt = 0;
             }
             // fees above are already $0 unless changed so save.
             $rf->save();
-
         }
         // update $rf record and each $reg record status
 
@@ -362,8 +382,7 @@ class RegFinanceController extends Controller
         if (!$written) {
             // inserted code below into this loop to be able to process for each registered person
             // need $reg->personID to save into RegSession record.
-            foreach($rf->registrations as $reg) {
-
+            foreach ($rf->registrations as $reg) {
                 for ($j = 1; $j <= $event->confDays; $j++) {
                     $z = EventSession::where([
                         ['confDay', '=', $j],
@@ -397,13 +416,22 @@ class RegFinanceController extends Controller
             // No session selection data to record;
         }
 
-        $x = compact('needSessionPick', 'ticket', 'event', 'quantity', 'discount_code', 'loc', 'rf',
-            'person', 'prefixes', 'industries', 'org', 'tickets');
+        $x = compact(
+            'needSessionPick',
+            'event',
+            'quantity',
+            'loc',
+            'rf',
+            'person',
+            'prefixes',
+            'industries',
+            'org'
+        );
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
-        try{
+        try {
             $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
         }
 
@@ -430,16 +458,17 @@ class RegFinanceController extends Controller
             // Consider turning this into a notification instead for reliability.
             $person->notify(new ReceiptNotification($rf, $event_pdf));
             // Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
         }
 
         return redirect(env('APP_URL').'/show_receipt/' . $rf->regID);
     }
 
-    public function update_payment(Request $request, Registration $reg, RegFinance $rf){
+    public function update_payment(Request $request, Registration $reg, RegFinance $rf)
+    {
         $now = Carbon::now();
-        if($request->input('Cash')){
+        if ($request->input('Cash')) {
             $pmt = 'cash';
         } else {
             $pmt = 'check';
@@ -462,7 +491,8 @@ class RegFinanceController extends Controller
         return Redirect::back();
     }
 
-    public function group_reg1(Request $request) {
+    public function group_reg1(Request $request)
+    {
         $this->currentPerson = Person::find(auth()->user()->id);
         $eventID = request()->input('eventID');
         $seats = 0;
@@ -505,6 +535,7 @@ class RegFinanceController extends Controller
                     // create requisite records: person, orgperson
                     $p = new Person;
                     $p->firstName = $firstName;
+                    $p->prefName = $firstName;
                     $p->lastName = $lastName;
                     $p->defaultOrgID = $this->currentPerson->defaultOrgID;
                     $p->login = $email;
@@ -523,6 +554,9 @@ class RegFinanceController extends Controller
                     $op->orgID = $p->defaultOrgID;
                     $op->OrgStat1 = $pmiid;
                     $op->save();
+
+                    $p->defaultOrgPersonID = $op->id;
+                    $p->save();
 
                     $e = new Email;
                     $e->personID = $p->personID;
@@ -607,13 +641,13 @@ class RegFinanceController extends Controller
                     if ($reg->subtotal < 0) {
                         $reg->subtotal = 0;
                     }
-                    if(preg_match("/speaker/i", $code)){
+                    if (preg_match("/speaker/i", $code)) {
                         $p->add_speaker_role();
                     }
                 }
                 $reg->regStatus = 'progress';
                 $reg->save();
-                if($check) {
+                if ($check) {
                     $reg->checkin();
                 }
                 $total_orig = $total_orig + $reg->origcost;
@@ -638,7 +672,8 @@ class RegFinanceController extends Controller
         return redirect('/groupreg/' . $rf->regID);
     }
 
-    public function group_reg2(Request $request, $id) {
+    public function group_reg2(Request $request, $id)
+    {
         // responds to PATCH /group_reg2/{rf}
 
         $rf = RegFinance::where('regID', '=', $id)->with('registrations')->first();
@@ -646,6 +681,8 @@ class RegFinanceController extends Controller
         $org = Org::find($event->orgID);
         $user = User::find($rf->personID);
         $person = Person::find($rf->personID);
+        $prefixes = DB::table('prefixes')->get();
+        $industries = DB::table('industries')->get();
         $loc = Location::find($event->locationID);
         $quantity = $rf->seats;
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -698,7 +735,7 @@ class RegFinanceController extends Controller
             $handleFee = 0;
 
             // update $rf record and each $reg record status
-            foreach ($rf->registrations as $reg){
+            foreach ($rf->registrations as $reg) {
                 $reg->regStatus = 'processed';
                 $reg->updaterID = auth()->user()->id;
 
@@ -722,7 +759,9 @@ class RegFinanceController extends Controller
             }
             // Confirmation code is:  personID-regID-seats
             $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
-            if($discountAmt < 0) { $discountAmt = 0; }
+            if ($discountAmt < 0) {
+                $discountAmt = 0;
+            }
 
             // Need to set ccFee if cost > $0 and other fees regardless of the cost
             if ($rf->cost > 0) {
@@ -743,7 +782,7 @@ class RegFinanceController extends Controller
             $rf->save();
         }
 
-        $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'tickets');
+        $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $pdf = PDF::loadView('v1.auth_pages.events.registration.group_receipt', $x)
@@ -761,7 +800,7 @@ class RegFinanceController extends Controller
             ],
             'region' => env('AWS_REGION'),
             'version' => 'latest',
-        ]);  
+        ]);
 
         $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
         $s3fs = new Filesystem($adapter);
@@ -771,17 +810,17 @@ class RegFinanceController extends Controller
         try {
             $person->notify(new ReceiptNotification($rf, $event_pdf));
             // Mail::to($user->login)->send(new GroupEventReceipt($rf, $event_pdf, $x));
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken'));
             //$person->notify(new ReceiptNotification($rf, $event_pdf));
         }
 
         //return view('v1.auth_pages.events.registration.group_receipt', $x);
         return redirect('/show_receipt/' . $rf->regID);
-
     }
 
-    public function show_group_receipt(RegFinance $rf) {
+    public function show_group_receipt(RegFinance $rf)
+    {
         $quantity = $rf->seats;
         $event = Event::find($rf->eventID);
         $loc = Location::find($event->locationID);

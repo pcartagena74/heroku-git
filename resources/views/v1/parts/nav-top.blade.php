@@ -27,8 +27,8 @@ try{
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a href="#" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" width="29" height="29">
-                        {{ $currentPerson->prefName or $currentPerson->firstName }}
+                        <img src="{{ $currentPerson->avatarURL ?? '/images/user.png' }}" alt="{{ trans('messages.alt_txt.avatar') }}" width="29" height="29">
+                        {{ $currentPerson->prefName ?? $currentPerson->firstName }}
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">

@@ -396,7 +396,7 @@ $mbr_price = 'Member pricing is applied automatically when you 1) are logged in 
                                                     @if($s !== null && $s->sessionSpeakers !== null)
                                                         <td data-title="Speaker" colspan="2" style="text-align:left;">
                                                             <b>Session Speaker(s)</b><br/>
-                                                            {{ $s->sessionSpeakers or "tbd" }}
+                                                            {{ $s->sessionSpeakers ?? "tbd" }}
                                                         </td>
                                                     @else
                                                         &nbsp;

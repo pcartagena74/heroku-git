@@ -22,6 +22,6 @@ onclick="return confirm('Are you sure you want to cancel this registration and i
        onclick="return confirm('{!! $confirm !!}');"
    @endif
    class="btn {{ $color }} btn-md">
-    {!! $symbol or '' !!}
-    {!! $text or '' !!}
+    {!! $symbol ?? '' !!}
+    {!! $text ?? '' !!}
 </a>

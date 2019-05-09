@@ -15,7 +15,10 @@ return [
         'add' => 'Add ',
         'merge' => "Merge",
         'remove' => 'Remove ',
-        
+    ],
+
+    'alt_txt' => [
+        'avatar' => 'User Avatar/Image',
     ],
 
     'buttons' => [
@@ -28,9 +31,11 @@ return [
         'cash' => 'Cash',
         'ccpay' => 'Pay Now by Credit Card',
         'check' => 'Check',
-        'chk_att' => "Checkin Attendees",
+        'chk_att' => "Check-In Attendees",
+        'chk_in' => "Check-In",
         'chk_walk' => "Checkin Attendees &amp; Register Walk-Ins",
         'close' => 'Close',
+        'clr_row' => 'Clear Row',
         'comp_reg' => 'Complete Registration',
         'delete' => 'Delete',
         'restore' => 'Restore',
@@ -43,6 +48,7 @@ return [
         'ex_register' => 'R E G I S T E R',
         'mail_surveys' => 'Mail Surveys',
         'pay_bal' => 'Pay Balance Due Now',
+        'pop_row' => 'Populate Row',
         'rec_disp' => 'Display Receipt',
         'rec_down' => 'Download Receipt',
         'reg_can' => 'Cancel Registration',
@@ -265,6 +271,7 @@ return [
         'quantity' => 'Quantity',
         'reg_id' => 'Registration ID',
         's_times' => 'Session Times',
+        'select' => 'Select',
         'selected_sess' => "Selected Sessions",
         'session' => 'Session',
         'sessions' => 'Sessions',
@@ -466,6 +473,7 @@ return [
         'roles' => 'Roles',
         'roles&perms' => "Role & Permission Management",
         'roster_add' => 'Add to Roster',
+        'search4p' => 'Search for person',
         'sel_tkt' => "Select Ticket",
         'sess_setup' => "Session Setup Questions and Instructions",
         'sess_spk' => 'Session Speaker(s)',
@@ -535,6 +543,7 @@ return [
                         <li>If this event has sessions, you will <b>NOT</b> be able to select them for the attendees.</li>
                         <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
                         </ul>",
+        'group_reg_search' => "Type at least 3 characters.  The more unique, the better your chances of narrowing down your selection.",
         'inactive' => "This event is no longer active.",
         'link_sess_1' => "Click this checkbox to indicate that this session will overlap other session time slots.",
         'link_sess_2' => "Click this checkbox to indicate that this session time is overlapped by the session 'above' this one.",
@@ -588,6 +597,7 @@ return [
         'pmiID_not_found' => "{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|".
                               "[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.",
         'postRegInfo' => "Anything added here will be displayed and emailed to attendees AFTER they've registered.",
+        'pro_change_err' => "There was an error while attempting to change your profile.  Please email vpfinance@pmimassbay.org with the details of what you were attempting.",
         'pw_conf' => "Confirm your password",
         'pw_set' => "Set a password",
         'quantity' => "The quantity for at least one ticket must be greater than 0.",

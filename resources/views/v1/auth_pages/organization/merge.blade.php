@@ -128,7 +128,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                         {{ $c }}:
                                     </td>
                                     <td style="text-align: left;">
-                                        {!! $model1->$c or '<i>null</i>' !!}
+                                        {!! $model1->$c ?? '<i>null</i>' !!}
                                         <br />
                                         @if(!in_array($c, $ignore_array) && isset($model2))
                                             {!! Form::radio($c, 1, true, $attributes=array('required', 'id' => $c.'1')) !!}
@@ -136,7 +136,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                     </td>
                                     @if(isset($model2))
                                         <td style="text-align: left;">
-                                            {!! $model2->$c or '<i>null</i>' !!}
+                                            {!! $model2->$c ?? '<i>null</i>' !!}
                                             <br />
                                             @if(!in_array($c, $ignore_array))
                                                 {!! Form::radio($c, 2, false, $attributes=array('required', 'id' => $c.'2')) !!}

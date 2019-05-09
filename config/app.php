@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'mCentric',
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', true),
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'timezone' => 'America/New_York',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -143,20 +143,9 @@ return [
          * Laravel Framework Service Providers...
          */
 
-        #'Aws\Laravel\AwsServiceProvider',
-        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
-        Barryvdh\Snappy\ServiceProvider::class,
-        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
-        #\Eduardokum\LaravelMailAutoEmbed\Providers\LaravelMailAutoEmbedServiceProvider::class,
-        //'Fideloper\Proxy\TrustedProxyServiceProvider',
-        'GrahamCampbell\Flysystem\FlysystemServiceProvider',
-        jdavidbakr\MailTracker\MailTrackerServiceProvider::class,
-        Jenssegers\Agent\AgentServiceProvider::class,
-       // Kordy\Ticketit\TicketitServiceProvider::class,
-        Kouz\Providers\AirbrakeServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
@@ -177,21 +166,12 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-        MSClics\PhantomJs\Provider\PhantomJsServiceProvider::class,
-        Plank\Mediable\MediableServiceProvider::class,
-        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
-        \SocialiteProviders\Manager\ServiceProvider::class,
-        //Spatie\Activitylog\ActivitylogServiceProvider::class,
-        Spatie\LinkChecker\LinkCheckerServiceProvider::class,
-        //\Spatie\CalendarLinks\Link::class,
-        Spatie\Referer\RefererServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
          * Package Service Providers...
          */
-        Laravel\Cashier\CashierServiceProvider::class,
+
+        // Laravel\Cashier\CashierServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -217,11 +197,9 @@ return [
 
     'aliases' => [
 
-        'Agent' => Jenssegers\Agent\Facades\Agent::class,
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
-        #'AWS' => 'Aws\Laravel\AwsFacade',
         'Blade' => Illuminate\Support\Facades\Blade::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
         'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
@@ -232,25 +210,16 @@ return [
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
         'DB' => Illuminate\Support\Facades\DB::class,
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
-        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Event' => Illuminate\Support\Facades\Event::class,
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'File' => Illuminate\Support\Facades\File::class,
-        'Flysystem' => GrahamCampbell\Flysystem\Facades\Flysystem::class,
-        'Form' => Collective\Html\FormFacade::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
-        'Html' => Collective\Html\HtmlFacade::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
         'Log' => Illuminate\Support\Facades\Log::class,
         'Mail' => Illuminate\Support\Facades\Mail::class,
-        'MediaUploader' => Plank\Mediable\MediaUploaderFacade::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
-        'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
-        'PJClient' => MSClics\PhantomJs\Facade\PhantomJs::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
-        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'Request' => Illuminate\Support\Facades\Request::class,
@@ -258,8 +227,6 @@ return [
         'Route' => Illuminate\Support\Facades\Route::class,
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Session' => Illuminate\Support\Facades\Session::class,
-        'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
-        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Storage' => Illuminate\Support\Facades\Storage::class,
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,

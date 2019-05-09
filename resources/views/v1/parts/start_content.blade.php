@@ -10,6 +10,8 @@
 
 if(isset($id)) {
     $id = "id='$id' ";
+} else {
+    $id = null;
 }
 ?>
 <div class="col-md-{{ $w1 }} col-xs-{{ $w1 }}
@@ -17,7 +19,7 @@ if(isset($id)) {
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
         @endif
         ">
-    <div {!!  $id or '' !!}class="x_panel">
+    <div {!!  $id ?? '' !!}class="x_panel">
         <div class="x_title">
             <h2>{!! $header !!}<small>&nbsp;{!! $subheader !!}</small></h2>
 

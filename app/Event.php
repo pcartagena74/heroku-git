@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
+//use Spatie\Activitylog\Traits\LogsActivity;
 use App\EventSession;
 use App\Person;
 use Carbon\Carbon;
 
 class Event extends Model
 {
-    use LogsActivity;
+    //use LogsActivity;
     use SoftDeletes;
 
     // The table

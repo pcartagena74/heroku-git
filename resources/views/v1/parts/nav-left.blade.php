@@ -31,7 +31,6 @@ try{
     $currentPerson->save();
 }
 ?>
-
 <div class="col-md-3 left_col menu_fixed">
     <div class="left_col scroll-view">
 
@@ -41,11 +40,12 @@ try{
 
         <div class="profile">
             <div class="profile_pic">
-                <img src="{{ $currentPerson->avatarURL or '/images/user.png' }}" alt="user avatar" class="img-circle profile_img" width="56" height="56">
+                <img src="{{ $currentPerson->avatarURL ?? '/images/user.png' }}" alt="{{ trans('messages.alt_txt.avatar') }}"
+                    class="img-circle profile_img" width="56" height="56">
             </div>
             <div class="profile_info">
                 <span>@lang('messages.nav.welcome'), </span>
-                <h2>{{ $currentPerson->prefName or $currentPerson->firstName }}</h2>
+                <h2>{{ $currentPerson->prefName ?? $currentPerson->firstName }}</h2>
             </div>
         </div>
 

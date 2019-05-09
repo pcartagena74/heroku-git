@@ -20,7 +20,7 @@ if(!isset($show_past)){
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dynamic_label">{!! $header or trans('messages.modals.default') !!}</h5>
+                <h5 class="modal-title" id="dynamic_label">{!! $header ?? trans('messages.modals.default') !!}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -29,7 +29,7 @@ if(!isset($show_past)){
                 <div class="container">
                     <div class="panel-body" id="modal-content">
                         {{--    Content would go here.    --}}
-                        {!! $content or '' !!}
+                        {!! $content ?? '' !!}
                     </div>
                 </div>
             </div>

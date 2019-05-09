@@ -453,7 +453,7 @@ $deletion = 0;
             @endif
             </div>
             <div class="col-sm-offset-2 col-sm-10">
-                {!! $event->postRegInfo or '' !!}
+                {!! $event->postRegInfo ?? '' !!}
             </div>
 
         </div>
