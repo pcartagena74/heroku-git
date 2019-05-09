@@ -47,13 +47,10 @@ class TrackController extends Controller
                 }
             }
         }
-        $event->confDays = $value;
-        $event->updaterID = auth()->user()->id;
-        $event->save();
 
         // once set, now populate sessions table with some sessions for each track
 
-        for ($d = 1; $d <= $value; $d++) {
+        for ($d = $event->confDays; $d <= $value; $d++) {
             foreach ($tracks as $t) {
                 for ($i = 1; $i <= 5; $i++) {
                     $s = new EventSession;
@@ -68,6 +65,11 @@ class TrackController extends Controller
                 }
             }
         }
+
+        // Moved later so that the creation of sessions can take advantage of existing sessions.
+        $event->confDays = $value;
+        $event->updaterID = auth()->user()->id;
+        $event->save();
     }
 
     public function update(Request $request, Track $track)

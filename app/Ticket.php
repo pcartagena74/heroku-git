@@ -188,4 +188,18 @@ class Ticket extends Model
         $today = Carbon::now();
         return ($this->availabilityEndDate->gte($today) && $this->isSuppressed == 0);
     }
+
+   /**
+    * ticketIDs() returns an array of ticketIDs associated with the chosen ticket
+    */
+
+    public function ticketIDs()
+    {
+        $bundle_members = $this->bundle_members();
+        if(count($bundle_members) > 0){
+            return $bundle_members->pluck('ticketID')->toArray();
+        } else {
+            return [$this->ticketID];
+        }
+    }
 }
