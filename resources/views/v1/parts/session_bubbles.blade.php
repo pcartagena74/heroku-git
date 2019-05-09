@@ -30,6 +30,8 @@ use App\RegSession;
 if(!isset($suppress)) { $suppress = 0; }
 if(!isset($registering)) { $registering = 0; }
 
+$valid_ticketIDs = $ticket->ticketIDs();
+
 //$needSessionPick = $reg->ticket->has_sessions();
 
 if($event->hasTracks > 0) {
@@ -110,15 +112,25 @@ $tickets = $ticket->bundle_members();
 
         @for($j=1;$j<=$event->confDays;$j++)
 <?php
-            $z = EventSession::where([
-                ['confDay', '=', $j],
-                ['eventID', '=', $event->eventID]
-            ])->first();
-            $y = Ticket::find($z->ticketID);
+// the calculus to determine if a conference day should be displayed needs to change to review all potential
+// ticketIDs because we could have "special" sessions
+$y = null;
+
+$tickets_associated_with_confDay_sessions = EventSession::where([
+    ['confDay', '=', $j],
+    ['eventID', '=', $event->eventID]
+])->distinct()->pluck('ticketID')->toArray();
+
+foreach($tickets_associated_with_confDay_sessions as $tkt){
+    if(in_array($tkt, $valid_ticketIDs)){
+        $y = Ticket::find($tkt);
+        break;
+    }
+}
 
 ?>
-            @if($tickets !== null)
-                @if($tickets->contains('ticketID', $z->ticketID))
+            @if($tickets !== null && $y !== null)
+                @if($tickets->contains('ticketID', $y->ticketID))
                     <div class="col-sm-12">&nbsp;<br/></div>
                     <div class="col-sm-12 well-sm" style="text-align:center; color: yellow; background-color: #2a3f54;">
                         <b>@lang('messages.headers.day') {{ $j }}: {{ $y->ticketLabel  }}</b>
@@ -132,7 +144,7 @@ $tickets = $ticket->bundle_members();
                             ['eventID', $event->eventID],
                             ['confDay', $j],
                             ['order', $x]
-                        ])->first();
+                        ])->whereIn('ticketID', $valid_ticketIDs)->first();
 
                         // As long as there are any sessions, the row will be displayed
                         // Added new row suppression based on whether the sessions are part of a purchased ticket
@@ -165,18 +177,20 @@ $tickets = $ticket->bundle_members();
                                         @endif
 
                                         <div class="{{ $track_column }}" style="text-align:left;">
-                                            @if($s !== null && $tickets->contains('ticketID', $s->ticketID))
+                                            @if($s !== null && $tickets->contains('ticketID', $s->ticketID) && in_array($s->ticketID, $valid_ticketIDs))
                                             @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
-                                                <b>{{ $s->sessionName }}</b><br />
+                                                <b>{{ $s->sessionName }}</b> <small class="pull-right">({{ $s->sessionID }})</small><br />
                                             <span class="red">@lang('messages.instructions.max_reached')</span>
                                                 <br/>
                                             @else
-                                                <b>{{ $s->sessionName }}</b><br/>
+                                                <b>{{ $s->sessionName }}</b>
+                                                <small class="pull-right">({{ $s->sessionID }})</small><br/>
                                             @endif
                                             {{--
                                                 $regSession check for pre-selection by registrant
                                             --}}
                                             <center>
+                                                @if(in_array($s->ticketID, $valid_ticketIDs))
                                                 @if($regSessions->contains('sessionID', $s->sessionID))
                                                     @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees || $s->maxAttendees == 0)
                                                         {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
@@ -202,6 +216,7 @@ $tickets = $ticket->bundle_members();
                                                         {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
                                                             $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $mySess)) !!}
                                                     @endif
+                                                @endif
                                                 @endif
                                             </center>
                                             {{--  Need to connect to 'sess-'.$j.'-'.$x-1 and 'sess-'.$j.'-'.$x
@@ -230,14 +245,14 @@ $tickets = $ticket->bundle_members();
         var rowname = '{{ 'sess-' . $j.'-'.$x.'-'.$reg->regID }}';
         var sessname = '{{ 'sess-' . $j.'-'.$x.'-'.$s->sessionID }}';
         $("input:radio[name='" + rowname + "']").on('change', function () {
-            console.log(rowname + " changed.");
+            //console.log(rowname + " changed.");
             if ($("input:radio[id='{{ 'sess-'. $j . '-'.$x.'-' . $s->sessionID }}']").prop("checked")) {
-                console.log(sessname + " is checked.");
+                //console.log(sessname + " is checked.");
                 @foreach($linked as $link)
                 child = '{{ 'sess-' . $j.'-'.$link->order.'-'.$link->sessionID }}';
-                console.log("  Checking " + child + ".");
+                //console.log("  Checking " + child + ".");
                 $("input:radio[id='" + child + "']").prop('checked', true);
-                console.log("Checked? " + $("input:radio[id='" + child + "']").prop('checked'));
+                //console.log("Checked? " + $("input:radio[id='" + child + "']").prop('checked'));
                 @endforeach
             }
         });
@@ -257,13 +272,13 @@ $tickets = $ticket->bundle_members();
                                                 $parent = EventSession::find($s->isLinked);
 ?>
                                                 @if($s->isLinked)
-                                                {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $mySess, true,
+                                                {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $mySess, false,
                                                 $attributes=array('id' => 'sess-'. $j . '-'.$x .'-' . $s->sessionID, 'style' => 'visibility:hidden;')) !!}
                                                 <script>
                                                     $(document).ready(function () {
                                                         {{-- If the parent changes, uncheck the hidden radio button --}}
                                                         $("input:radio[name='{{ 'sess-'. $j . '-'.$parent->order . '-' . $reg->regID }}']").on('change', function () {
-                                                            console.log("{{ 'sess-'. $j . '-'.$parent->order .'-'.$reg->regID }} changed.");
+                                                            //console.log("{{ 'sess-'. $j . '-'.$parent->order .'-'.$reg->regID }} changed.");
                                                             if ($('#{{ 'sess-'. $j . '-'.$parent->order.'-' . $parent->sessionID }}').is(":checked")) {
                                                                 $('#{{ 'sess-'. $j . '-'.($x) .'-'. $s->sessionID }}').prop('checked', 'checked');
                                                             } else {
@@ -272,7 +287,7 @@ $tickets = $ticket->bundle_members();
                                                         });
                                                         {{-- If the hidden radio button changes, uncheck the parent --}}
                                                         $("input:radio[name='{{ 'sess-'. $j . '-'.($x).'-'. $reg->regID }}']").on('change', function () {
-                                                            console.log("{{ 'sess-'. $j . '-'.($x) .'-'.$reg->regID }} changed.");
+                                                            //console.log("{{ 'sess-'. $j . '-'.($x) .'-'.$reg->regID }} changed.");
                                                             $('#{{ 'sess-'. $j . '-'.($parent->order) .'-' . $parent->sessionID }}').removeAttr('checked');
                                                         });
                                                     });
@@ -293,7 +308,9 @@ $tickets = $ticket->bundle_members();
    <div class="col-sm-12"><p>&nbsp;</p></div>
 
     @if(!$suppress)
-   <button type="submit" class="btn btn-primary btn-sm">@lang('messages.buttons.sess_reg')</button>
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary btn-sm">@lang('messages.buttons.sess_reg')</button>
+        </div>
    {!! Form::close() !!}
     @endif
 @else

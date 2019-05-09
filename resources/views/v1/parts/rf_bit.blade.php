@@ -64,7 +64,7 @@ $s3fs = new Filesystem($adapter);
                     //if($reg->regID == 12597) { dd($event->eventStartDate); }
 ?>
                     @include('v1.parts.start_min_content', ['header' => $mem_or_not . " Ticket (" .  $person->showFullName() .
-                    "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . ")", 'subheader' => trans('messages.symbols.cur').
+                    "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => trans('messages.symbols.cur').
                     ' ' . number_format($reg->subtotal, 2), 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
     @if($rf->cost > 0) {{-- There is a fee for event --}}
