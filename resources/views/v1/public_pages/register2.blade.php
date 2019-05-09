@@ -27,7 +27,7 @@ if ($event->eventTypeID == 5) { // This is a regional event so do that instead
 if($org->canSubmitPDU !== null){
     $PDU_org_types = explode(',', $org->canSubmitPDU);
 } else {
-    $PDU_org_types = null;
+    $PDU_org_types = [];
 }
 
 $i = 0;
