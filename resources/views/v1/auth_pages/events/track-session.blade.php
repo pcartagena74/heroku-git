@@ -499,7 +499,7 @@ $tickets = Ticket::where([
             $sessions = EventSession::where([
                 ['eventID', $event->eventID],
                 ['sessionID', '!=', 0]
-            ])->orderBy('trackID', 'order')->withTrashed()->get();
+            ])->orderBy('trackID')->orderBy('order')->withTrashed()->get();
 ?>
             @foreach($sessions as $s)
             @if(1)
