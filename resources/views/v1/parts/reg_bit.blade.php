@@ -65,9 +65,9 @@ $s3fs = new Filesystem($adapter);
                  "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => '<i class="fa fa-dollar"></i> ' .
                  $reg->subtotal, 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                {!! Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $reg->regID, $reg->regfinance->regID ], 'data-toggle' => 'validator' ]) !!}
                 {{--
                         // Removing ability to refund/cancel a sub-portion of a ticket by someone who did not purchase it.
+                {!! Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $reg->regID, $reg->regfinance->regID ], 'data-toggle' => 'validator' ]) !!}
 
                                         <button type="submit" class="btn btn-danger btn-sm">
                                             @if($reg->subtotal > 0)
@@ -77,7 +77,6 @@ $s3fs = new Filesystem($adapter);
                                             @endif
                                         </button>
                                         {!! Form::close() !!}
-                --}}
                 <a target="_new"
                    @if($rf->isGroupReg)
                    href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
@@ -88,6 +87,7 @@ $s3fs = new Filesystem($adapter);
                 <a target="_new" href="{{ $receipt_url }}"
                    class="btn btn-primary btn-sm">Download Receipt</a>
                 <br/>
+                --}}
 
                 @include('v1.parts.session_bubbles', ['event' => $reg->event, 'ticket' => $reg->ticket, 'rf' => $reg->regfinance,
                 'reg' => $reg, 'regSession' => $regSessions])
