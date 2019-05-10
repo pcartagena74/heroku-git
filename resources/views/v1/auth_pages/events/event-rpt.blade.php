@@ -253,15 +253,6 @@ $count = 0;
     </div>
 
     @include('v1.parts.end_content')
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="col-sm-3">
-            @include('v1.parts.url_button', [
-                'url' => env('APP_URL')."/excel/nametags/".$event->eventID,
-                'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_name_tags'),
-                'text' => trans('messages.buttons.down_name_tags')
-            ])
-        </div>
-    </div>
 
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
@@ -301,6 +292,16 @@ $count = 0;
                 &nbsp;<br/>
 
                 @if(count($reg_rows)>0)
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-sm-3">
+                            @include('v1.parts.url_button', [
+                                'url' => env('APP_URL')."/excel/emails/".$event->eventID,
+                                'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_emails'),
+                                'text' => trans('messages.buttons.down_emails')
+                            ])
+                        </div>
+                    </div>
+
                     @include('v1.parts.datatable', ['headers' => $reg_headers, 'data' => $reg_rows, 'scroll' => $scroll])
                 @else
                     @lang('messages.instructions.no_regs')
@@ -446,6 +447,15 @@ $count = 0;
                 &nbsp;<br/>
 
                 @if(count($tag_rows)>0)
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-sm-3">
+                            @include('v1.parts.url_button', [
+                                'url' => env('APP_URL')."/excel/nametags/".$event->eventID,
+                                'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_name_tags'),
+                                'text' => trans('messages.buttons.down_name_tags')
+                            ])
+                        </div>
+                    </div>
                     @include('v1.parts.datatable', ['headers' => $tag_headers, 'data' => $tag_rows, 'scroll' => $tagscroll, 'id' => 'nametags'])
                 @else
                     @lang('messages.instructions.no_regs')

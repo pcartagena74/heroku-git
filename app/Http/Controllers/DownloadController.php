@@ -9,6 +9,7 @@ use Excel;
 use App\Event;
 use App\Registration;
 use App\Person;
+use \App\DataExport;
 
 class DownloadController extends Controller
 {
@@ -25,7 +26,7 @@ class DownloadController extends Controller
             trans('messages.headers.allergens'), trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU'),
             trans('messages.headers.canNetwork'), trans('messages.headers.bal_due2')];
 
-        $nametags[] = $tag_headers;
+        // $nametags[] = $tag_headers;
 
         foreach ($regs as $r) {
             $r->person->load('orgperson');
@@ -35,14 +36,30 @@ class DownloadController extends Controller
                 $r->canNetwork, $r->regStatus == 'pending' ? 'yes' : '');
         }
 
-        Excel::create('nametag_data', function ($excel) use ($nametags) {
-            $excel->setTitle('Name Tag Data');
-            $excel->setCreator('mCentric')->setCompany('Efcico Corporation dba mCentric');
-            $excel->setDescription('Name Tag Data');
-            $excel->sheet('Name Tag Data', function ($sheet) use ($nametags) {
-                $sheet->fromArray($nametags, null, 'A1', false, false);
-            });
-        })->download('csv');
+        return Excel::download(new DataExport($tag_headers, $nametags), 'nametag_data.csv');
+    }
+
+    public function email_list(Event $event)
+    {
+        $nametags = [];
+        $org = Org::find($event->orgID);
+
+        $regs = Registration::where('eventID', '=', $event->eventID)
+            ->whereHas('regfinance', function($q){ $q->where('pmtRecd', '=', 1); })
+            ->with('ticket', 'person', 'person.orgperson')->get();
+
+        $tag_headers = [trans('messages.fields.login')];
+
+        // $nametags[] = $tag_headers;
+
+        foreach ($regs as $r) {
+            $p = Person::find($r->person->personID);
+            $p->load('orgperson');
+
+            $nametags[] = array($r->person->login);
+        }
+
+        return Excel::download(new DataExport($tag_headers, $nametags), 'email_data.csv');
     }
 
     public function pdu_list(Event $event)
@@ -56,7 +73,7 @@ class DownloadController extends Controller
         $tag_headers = ['RegSessID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
             trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU')];
 
-        $nametags[] = $tag_headers;
+        // $nametags[] = $tag_headers;
 
         foreach ($regs as $r) {
             $p = Person::find($r->person->personID);
@@ -65,13 +82,6 @@ class DownloadController extends Controller
             $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, $p->orgperson->OrgStat1, $r->registration->isAuthPDU);
         }
 
-        Excel::create('pdu_data', function ($excel) use ($nametags, $org) {
-            $excel->setTitle('PDU Data');
-            $excel->setCreator('mCentric')->setCompany('mCentric for '. $org->orgName);
-            $excel->setDescription('PDU Data');
-            $excel->sheet('PDU Data', function ($sheet) use ($nametags) {
-                $sheet->fromArray($nametags, null, 'A1', false, false);
-            });
-        })->download('csv');
+        return Excel::download(new DataExport($tag_headers, $nametags), 'pdu_data.csv');
     }
 }

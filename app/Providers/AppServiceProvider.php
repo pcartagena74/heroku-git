@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Registration;
 use Illuminate\Support\ServiceProvider;
 use Phirehose;
 use App\TwitterStream;
@@ -50,5 +51,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
+
+        \App\RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver() );
+        \App\RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver() );
+        \App\Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver() );
+        \App\Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver() );
     }
 }

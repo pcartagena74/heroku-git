@@ -139,14 +139,16 @@ class RegistrationController extends Controller
             })->whereIn('regStatus', ['active', 'processed'])
             ->with('regfinance', 'ticket', 'person')->get();
 
+        /*
         $regs = $regs->sortBy(function ($n) {
             return $n->person->lastName;
         });
+        */
 
         // Separating out the query because name tags should be printed even if paying 'At Door'
         $nametags = Registration::where('eventID', '=', $event->eventID)
             ->with('regfinance', 'ticket', 'person', 'person.orgperson', 'regsessions', 'event')
-            ->orderBy('registeredBy')
+            ->orderBy('regID')
             ->get();
 
         $nametags = $nametags->sortBy(function ($n) {
