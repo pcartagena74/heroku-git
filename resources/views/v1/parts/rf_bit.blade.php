@@ -44,7 +44,15 @@ $s3fs = new Filesystem($adapter);
 <?php
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
-            // @if($rf->seats > 1)
+
+        $file_headers = @get_headers($receipt_url);
+        if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
+            $receipt_exists = false;
+        }
+        else {
+            $receipt_exists = true;
+        }
+
 ?>
         {{-- @if($rf->event->eventEndDate->gte($today)) --}}
         @include('v1.parts.start_min_content', ['header' => $rf->event->eventName,
@@ -85,8 +93,10 @@ $s3fs = new Filesystem($adapter);
             <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
                class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
+            @if($receipt_exists)
             <a target="_new" href="{{ $receipt_url }}"
                class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+            @endif
             <br/>
         @else
 
