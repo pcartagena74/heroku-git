@@ -40,6 +40,7 @@ return [
         'delete' => 'Delete',
         'restore' => 'Restore',
         'door' => 'Pay by Cash/Check at Door',
+        'down_emails' => 'Download Email Addresses',
         'down_name_tags' => 'Download Name Tag Data',
         'down_PDU_list' => 'Download PDU Data',
         'edit_tkt' => "Edit Tickets",
