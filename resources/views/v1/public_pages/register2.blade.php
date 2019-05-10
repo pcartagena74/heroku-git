@@ -80,10 +80,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                     <p></p>
 
                     @if($rf->cost > 0 && $rf->status != 'wait')
-                        <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
-                                class="card btn btn-primary btn-md">
-                            <b>@lang('messages.buttons.ccpay')</b>
-                        </button>
+                        @include('v1.parts.stripe_pay_button', array('id' => 'payment'))
                         {{--
                         <div id="payment-request-button" class="card">
                         </div>
@@ -373,10 +370,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                 </div>
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0 && $rf->status != 'wait')
-                        <button id="payment" type="submit" data-toggle="modal" data-target="#stripe_modal"
-                                class="card btn btn-primary btn-md">
-                            <b>@lang('messages.buttons.ccpay')</b>
-                        </button>
+                        @include('v1.parts.stripe_pay_button', array('id' => 'payment'))
                         <br />
                     @endif
                     @if($event->acceptsCash)
@@ -550,5 +544,7 @@ if ($event->isSymmetric && $event->hasTracks) {
 @endsection
 
 @section('modals')
+    @if($rf->cost > 0)
     @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
+    @endif
 @endsection

@@ -136,11 +136,8 @@ class RegistrationController extends Controller
         $regs = Registration::where('eventID', '=', $event->eventID)
             ->whereHas('regfinance', function ($q) {
                 $q->where('pmtRecd', '=', 1);
-            })->where(function ($q) {
-                $q->where('regStatus', '=', 'active')
-                    ->orWhere('regStatus', '=', 'processed')
-                    ->orWhere('regStatus', '=', 'pending');
-            })->with('regfinance', 'ticket', 'person')->get();
+            })->whereIn('regStatus', ['active', 'processed'])
+            ->with('regfinance', 'ticket', 'person')->get();
 
         $regs = $regs->sortBy(function ($n) {
             return $n->person->lastName;
@@ -162,7 +159,7 @@ class RegistrationController extends Controller
         ])->with('regfinance', 'ticket')
             ->whereHas('regfinance', function ($q) {
                 $q->where('pmtRecd', '=', 0);
-                $q->where('status', '=', 'pending');
+                $q->where('status', '=', 'processed');
             })
             ->get();
 

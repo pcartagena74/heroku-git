@@ -2,8 +2,6 @@
 /**
  * Comment: A pop-up to collect user charge card info and send to stripe
  * Resurrected on: 11/19/2017
- *
- * Implementing because the Payment button only shows on certain browsers
  */
 ?>
 
@@ -11,21 +9,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="stripe_label">mCentric Payment Form</h5>
+                <h5 class="modal-title" id="stripe_label">mCentric @lang('messages.headers.form')</h5>
                 <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
 
-                {{--
-                <form action="/charge" method="post" id="payment-form">
-                --}}
                 {!! Form::open(['url' => env('APP_URL').'/nomatter/'.$rf->regID,
-                        'method' => 'patch', 'id' => 'payment-form', 'data-toggle' => 'validator']) !!}
+                        'method' => 'post', 'id' => 'payment-form']) !!}
                     <div class="form-row" class="form-group">
                         <label for="card-element">
-                            Credit or Debit Card
+                            @lang('messages.fields.c_or_d')
                         </label>
                         <div class="form-group" id="card-element">
                             <!-- a Stripe Element will be inserted here. -->
@@ -34,17 +29,17 @@
                         <div id="card-errors" class="form-group" role="alert"></div>
                     </div>
 
-                    <input type="submit" class="submit form-control btn btn-primary" value="Pay ${{ $amt }}">
+                    <input type="submit" class="submit form-control btn btn-primary" value="{{ trans('messages.headers.pay') }} ${{ $amt }}">
                 {!! Form::close() !!}
 
             </div>
             <div class="modal-footer">
                 <div class="container">
                     <div class="col-sm-10" style="text-align: left;">
-                        Your credit card information is not stored on this server and is safe.
+                        @lang('messages.messages.credit_info')
                     </div>
                     <div class="col-sm-1">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
                     </div>
                 </div>
             </div>
@@ -55,10 +50,36 @@
 <script>
     var stripe = Stripe('{{ env('STRIPE_KEY') }}');
     var elements = stripe.elements();
-    var card = elements.create('card');
 
     // Add an instance of the card UI component into the `card-element` <div>
+    var card = elements.create('card');
     card.mount('#card-element');
+
+    card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Create a token or display an error when the form is submitted.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                // Inform the customer that there was an error.
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // Send the token to your server.
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
 
     function stripeTokenHandler(token) {
         // Insert the token ID into the form so it gets submitted to the server
@@ -80,33 +101,4 @@
         form.submit();
     }
 
-    function createToken() {
-        stripe.createToken(card).then(function(result) {
-            if (result.error) {
-                // Inform the user if there was an error
-                var errorElement = document.getElementById('card-errors');
-                errorElement.textContent = result.error.message;
-            } else {
-                // Send the token to your server
-                // console.log(result);
-                stripeTokenHandler(result.token);
-            }
-        });
-    };
-
-    // Create a token when the form is submitted.
-    var form = document.getElementById('payment-form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        createToken();
-    });
-
-    card.addEventListener('change', function(event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
 </script>
