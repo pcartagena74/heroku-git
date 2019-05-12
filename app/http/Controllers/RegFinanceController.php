@@ -332,13 +332,13 @@ class RegFinanceController extends Controller
 
                 if ($reg->ticket->waitlisting()) {
                     $reg->regStatus = 'wait';
+                    $reg->ticket->update_count(1, 1);
                 } elseif ($rf->status == 'pending') {
                     $reg->regStatus = 'pending';
                 } else {
                     $reg->regStatus = 'processed';
+                    $reg->ticket->update_count(1, 0);
                 }
-                // the ticket count gets updated regardless of regStatus
-                $reg->ticket->update_count(1, $reg->ticket->waitlisting());
 
                 // The first registrant should be logged in
 
@@ -758,7 +758,7 @@ class RegFinanceController extends Controller
 
                 // Update ticket purchase on all bundle ticket members by $rf->seat
                 $ticket = Ticket::find($reg->ticketID);
-                $ticket->update_count(1, $ticket->waitlisting());
+                $ticket->update_count(1, 0);
 
                 if ($reg->subtotal > 0 || $reg->origcost > 0) {
                     // mCentric Handle fee = 2.9% of $rf->cost + $0.30

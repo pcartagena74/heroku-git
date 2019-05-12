@@ -167,7 +167,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Intouch\LaravelNewrelic\NewrelicServiceProvider::class,
-        Kouz\LaravelAirbrake\ServiceProvider::class,
+        //Kouz\LaravelAirbrake\ServiceProvider::class,
 
         /*
          * Package Service Providers...
