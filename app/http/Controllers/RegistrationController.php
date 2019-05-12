@@ -738,6 +738,8 @@ class RegistrationController extends Controller
                     $rf->save();
                     $reg->save();
 
+                    $reg->ticket->update_count(-1, 0);
+
                     // Generate Refund Email
                 } catch (Exception $e) {
                     request()->session()->flash(
@@ -760,9 +762,12 @@ class RegistrationController extends Controller
                     $rf->save();
                     $reg->save();
 
+                    $reg->ticket->update_count(-1, 0);
+
                     // Generate Refund Email
                 } catch (\Exception $e) {
-                    request()->session()->flash('alert-danger', trans('messages.messages.partial_fail', ['rfid' => $rf->regID]) . $org->adminContactStatement);
+                    request()->session()->flash('alert-danger', trans('messages.messages.partial_fail',
+                            ['rfid' => $rf->regID]) . $org->adminContactStatement);
                 }
                 $reg->delete();
             }
@@ -799,7 +804,7 @@ class RegistrationController extends Controller
         // Decrement the regCount on the ticket if ticket was paid OR 'At Door'
         // Also decrement the attendance of any sessions
         if ($rf->pmtRecd || $rf->pmtType == 'door') {
-            $ticket->update_count(-1, $ticket->waitlisting());
+            $ticket->update_count(-1, 0);
 
             $sessions = RegSession::where('regID', '=', $reg->regID)->get();
             foreach ($sessions as $s) {

@@ -35,7 +35,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single', 'bugsnag', 'airbrake'],
+            'channels' => ['single', 'bugsnag'],
         ],
 
         'single' => [
@@ -80,12 +80,13 @@ return [
         'bugsnag' => [
             'driver' => 'bugsnag',
         ],
-
+/*
         'airbrake' => [
             'driver' => 'custom',
             'via' => Kouz\LaravelAirbrake\AirbrakeLogger::class,
             'level' => 'error',
         ],
+*/
     ],
 
 ];
