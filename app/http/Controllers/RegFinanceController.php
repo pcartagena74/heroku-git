@@ -83,8 +83,6 @@ class RegFinanceController extends Controller
 
             $regs = Registration::where('rfID', '=', $rf->regID)->get();
 
-            // $ticket = Ticket::find($rf->ticketID);
-
             $loc = Location::find($event->locationID);
             $quantity = $rf->seats;
             //$discount_code = $rf->discountCode;
@@ -99,22 +97,7 @@ class RegFinanceController extends Controller
 
             $certs = DB::table('certifications')->select('certification')->get();
             $cert_array = $certs->toArray();
-/*
-            \Stripe\Stripe::setAPIKey(env('STRIPE_SECRET'));
-            $stripe_session = \Stripe\Checkout\Session::create([
-                'payment_method_types' => ['card'],
-                'line_items' => [[
-                    'name' => $event->eventName . " " . trans('messages.headers.reg'),
-                    'description' => 'Comfortable cotton t-shirt',
-                    //'images' => ['https://example.com/t-shirt.png'],
-                    'amount' => $rf->cost*100,
-                    'currency' => $org->currency,
-                    'quantity' => count($regs),
-                ]],
-                'success_url' => 'https://example.com/success',
-                'cancel_url' => 'https://example.com/cancel',
-            ]);
-*/
+
             return view(
                 'v1.public_pages.register2',
                 compact(
