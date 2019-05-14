@@ -25,7 +25,7 @@ $default = Org::find($event->orgID);
         </div>
     </div>
 
-    @include('v1.parts.start_content', ['header' => trans('messages.headers.tkt4') . $event->eventName . '"',
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.tkt4') . '"'. $event->eventName . '"',
              'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <p>@lang('messages.instructions.ev_defaults')<br>
