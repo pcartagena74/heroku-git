@@ -63,6 +63,7 @@ class EventCopyController extends Controller
         $event = Event::where('eventID', '=', $param)
             ->orWhere('slug', '=', $param)
             ->firstOrFail();
+        $org = Org::find($event->orgID);
 
         $e = $event->replicate();
         $e->slug = 'temporary_slug_placeholder';
