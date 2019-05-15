@@ -98,7 +98,7 @@ function check_exists($model, $var_array)
             if (count($p) > 0) {
                 $details .= "<li>$first, $last, $login</li>";
                 foreach ($p as $x) {
-                    $existing = trans('messages.errors.existing_account', ['f' => $x-firstName, 'l' => $x->lastName, 'e' => $x->login]);
+                    $existing = trans('messages.errors.existing_account', ['f' => $x->firstName, 'l' => $x->lastName, 'e' => $x->login]);
                     $details .= "<li>$existing</li>";
                 }
                 $details .= "</ul>";
