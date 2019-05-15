@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\NewUserAcct;
 use DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash as Hash;
 
 class UserController extends Controller
 {
@@ -78,10 +78,10 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return back()->withErrors($validator)->withInput();
             } else {
-                $make_pass = 1;
+                $make_pass = Hash::make($password);
             }
         } else {
-            $make_pass = 0;
+            $make_pass = null;
         }
 
         // 0. Check for the existence of records before creation (Person, Email, OrgPerson (if PMI ID), etc.)
@@ -128,9 +128,7 @@ class UserController extends Controller
             $u->login = $email;
             $u->name = $email;
             $u->email = $email;
-            if ($make_pass) {
-                $u->password = Hash::make($password);
-            }
+            $u->password = $make_pass;
             $u->save();
 
             $e = new Email;
@@ -143,6 +141,7 @@ class UserController extends Controller
             DB::commit();
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
+            request()->session()->flash('alert-warning', "Person: $p, OP: $op, U: $u, E: $e");
             DB::rollBack();
             return back()->withInput();
         }
