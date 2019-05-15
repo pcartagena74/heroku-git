@@ -14,10 +14,12 @@ class OrgPerson extends Model
     // The table
     protected $table = 'org-person';
 
+    protected $primaryKey = 'id';
+
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
 
-    public $incrementing = false;
+    public $incrementing = true;
     protected $dates = [
         'createDate',
         'updateDate',
