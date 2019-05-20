@@ -132,7 +132,7 @@ class RegistrationController extends Controller
             return view('v1.public_pages.error_display', compact('message'));
         }
 
-        // list of attendees who have registered, including payment pendings so they are listed everywhere needed
+        // list of attendees who have registered, excludes payment pendings
         $regs = Registration::where('eventID', '=', $event->eventID)
             ->whereHas('regfinance', function ($q) {
                 $q->where('pmtRecd', '=', 1);

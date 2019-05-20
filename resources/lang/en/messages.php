@@ -389,7 +389,7 @@ return [
         'for' => "for",
         'form' => "Payment Form",
         'formal' => "Formal/Corporate Name",
-        'fut_behalf' => "Events Purchased On Your Behalf'",
+        'fut_behalf' => "Events Purchased On Your Behalf",
         'fut_paid' => "Your Paid Registered Events",
         'fut_unpaid' => "Registered Events with <b class='red'>Unpaid Balances</b>",
         'fut_inc' => "<b class='red'>Your Incomplete Registrations</b>",
@@ -705,6 +705,7 @@ return [
         'o_roles' => "Roles & Permissions",
         'ev_mgmt' => "Event Management",
         'ev_manage' => "Manage Events",
+        'ev_old' => "All Past Events",
         'ev_add' => "Add Event",
         'ev_loc' => "Location Management",
         'ev_mt' => "Manage Event Tickets",
@@ -712,6 +713,7 @@ return [
         'ev_grp' => "Group Registration",
         'spk_mgmt' => "Speaker Management",
         's_list' => "Speakers List",
+        'spk_surveys' => "Speaker Surveys",
         's_new' => "New Report",
         'mbr_mgmt' => "Member Management",
         'm_list' => "Complete Member List",
@@ -732,6 +734,7 @@ return [
     ],
 
     'notifications' => [
+        'hello' => "Hello :firstName,",
         'thanks' => "Thank you for using mCentric with :org.",
         'login' => "Login to mCentric",
 
@@ -765,11 +768,11 @@ return [
         // Send Survey
         'SS' => [
             'subject' => "Survey for :org :event_type",
-            'line1' => "Thank you for attending our event, :name, on :date.",
+            'line1' => 'Thank you for attending our :etype, ":ename," on :date.',
             'line2' => "Please spend 5 minutes to give us your feedback on the event and its speaker(s).",
             'action' => "Take Survey",
             'line3' => "",
-            'post_mail_msg' => ":count emails with surveys sent to attendees.",
+            'post_mail_msg' => ":count survey email sent to the attendee.|:count survey emails sent to the attendees.",
         ],
 
         // AccountCreation

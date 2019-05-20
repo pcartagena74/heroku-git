@@ -146,7 +146,7 @@ class EventController extends Controller
         return($topBits);
     }
 
-    public function index()
+    public function index($past = null)
     {
         // responds to GET /events
         $topBits = $this->event_bits();
@@ -154,19 +154,11 @@ class EventController extends Controller
         $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
+        if(null === $past){
+            // Function called was "Manage Events" so there should be future events and limited past events"
         // Get a list of current events, showing events that have not yet ended.
-        $current_events = Event::select(
-            'eventID',
-            'eventName',
-            'eventStartDate',
-            'eventEndDate',
-            'org-event.isActive',
-            'hasTracks',
-            'etName',
-            'slug',
-            'hasTracks',
-            'eventTypeID'
-        )
+        $current_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+                                        'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
             ->where([
                 ['org-event.orgID', $this->currentPerson->defaultOrgID],
             ])
@@ -180,7 +172,7 @@ class EventController extends Controller
             ->orderBy('eventStartDate', 'ASC')
             ->get();
 
-
+        /*
         $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
                             date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
                             count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
@@ -194,38 +186,42 @@ class EventController extends Controller
                      GROUP BY e.eventStartDate, e.eventID, e.eventName, e.eventEndDate, e.isActive, e.eventStartDate
                      ORDER BY eventStartDateF DESC";
 
-        /*
         $past = Event::where([
                 ['org-event.orgID', $this->currentPerson->defaultOrgID],
         ]);
+        $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
         */
 
-
-        $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
-
-        $past_events = Event::select(
-            'eventID',
-            'eventName',
-            'eventStartDate',
-            'eventEndDate',
-            'org-event.isActive',
-            'hasTracks',
-            'etName',
-            'slug',
-            'hasTracks',
-            'eventTypeID'
-        )
+        $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+                                     'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
             ->where([
                 ['org-event.orgID', $this->currentPerson->defaultOrgID],
                 ['eventEndDate', '<', $today]
             ])
+            ->whereIn(DB::raw("year(eventEndDate)"), [$today->year, $today->year - 1])
             ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
             ->with('registrations', 'event_type')
             ->withCount('registrations')
             ->orderBy('eventStartDate', 'DESC')
             ->get();
 
-        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person'));
+        } else {
+            $current_events = null;
+            $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+                'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+                ->where([
+                    ['org-event.orgID', $this->currentPerson->defaultOrgID],
+                    ['eventEndDate', '<', $today]
+                ])
+                ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
+                ->with('registrations', 'event_type')
+                ->withCount('registrations')
+                ->orderBy('eventStartDate', 'DESC')
+                ->get();
+
+        }
+
+        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person', 'past'));
     }
 
     public function event_copy($param)
@@ -1103,7 +1099,7 @@ class EventController extends Controller
     /*
      * get_tix: AJAX - returns the tickets for an event
      */
-    public function get_tix(Event $event, Ticket $ticket)
+    public function get_tix(Event $event, Ticket $ticket = null)
     {
         $tix = Ticket::where([
             ['eventID', '=', $event->eventID],

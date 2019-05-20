@@ -71,7 +71,7 @@ $s3fs = new Filesystem($adapter);
                     $mem_or_not = Lang::has('messages.fields.'.$reg->membership) ? trans('messages.fields.'.$reg->membership) : $reg->membership;
                     //if($reg->regID == 12597) { dd($event->eventStartDate); }
 ?>
-                    @include('v1.parts.start_min_content', ['header' => $mem_or_not . " Ticket (" .  $person->showFullName() .
+                    @include('v1.parts.start_min_content', ['header' => $mem_or_not . " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() .
                     "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => trans('messages.symbols.cur').
                     ' ' . number_format($reg->subtotal, 2), 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 

@@ -61,36 +61,17 @@ $s3fs = new Filesystem($adapter);
                 $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
                 $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 ?>
-                @include('v1.parts.start_min_content', ['header' => $mem_or_not . " Ticket (" .  $person->showFullName() .
-                 "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => '<i class="fa fa-dollar"></i> ' .
+                @include('v1.parts.start_min_content', ['header' => $mem_or_not .  " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() .
+                 "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => trans('messages.symbols.cur') .
                  $reg->subtotal, 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                {{--
-                        // Removing ability to refund/cancel a sub-portion of a ticket by someone who did not purchase it.
-                {!! Form::open(['method'  => 'delete', 'route' => [ 'cancel_registration', $reg->regID, $reg->regfinance->regID ], 'data-toggle' => 'validator' ]) !!}
+    <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+       class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            @if($reg->subtotal > 0)
-                                                Refund Registration
-                                            @else
-                                                Cancel Registration
-                                            @endif
-                                        </button>
-                                        {!! Form::close() !!}
-                <a target="_new"
-                   @if($rf->isGroupReg)
-                   href="{!! env('APP_URL') !!}/show_group_receipt/{{ $rf->regID }}"
-                   @else
-                   href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                   @endif
-                   class="btn btn-success btn-sm">Display Receipt</a>
-                <a target="_new" href="{{ $receipt_url }}"
-                   class="btn btn-primary btn-sm">Download Receipt</a>
-                <br/>
-                --}}
-
-                @include('v1.parts.session_bubbles', ['event' => $reg->event, 'ticket' => $reg->ticket, 'rf' => $reg->regfinance,
-                'reg' => $reg, 'regSession' => $regSessions])
+    @if($reg->ticket->has_sessions())
+        @include('v1.parts.session_bubbles', ['event' => $reg->event, 'ticket' => $reg->ticket, 'rf' => $reg->regfinance,
+        'reg' => $reg, 'regSession' => $regSessions])
+    @endif
 
                 @include('v1.parts.end_content')
 
