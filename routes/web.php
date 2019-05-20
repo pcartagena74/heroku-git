@@ -182,10 +182,10 @@ Route::get('/show_orig/{rf}', 'RegFinanceController@show_receipt_orig');
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 
 // Event & Ticket Routes
-Route::get('/events', 'EventController@index')->name('manageEvents');
+Route::get('/manage_events/{past?}', 'EventController@index')->name('manageEvents');
 Route::post('/activate/{event}', 'EventController@activate');                                              // Ajax
 Route::post('/eventajax/{event}', 'EventController@ajax_update');                                          // Ajax
-Route::post('/tix/{event}/{ticket}', 'EventController@get_tix');                                           // Ajax
+Route::post('/tix/{event}/{ticket?}', 'EventController@get_tix');                                           // Ajax
 Route::get('/event/create', 'EventController@create')->name('add_edit_form');
 Route::post('/event/create', 'EventController@store')->name('save_event');
 Route::get('/event/{event}/edit', 'EventController@edit');

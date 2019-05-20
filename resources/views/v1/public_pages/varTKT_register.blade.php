@@ -543,7 +543,7 @@ $i = 0;
             type: 'POST',
             cache: true,
             async: true,
-            url: '{{ env('APP_URL') }}/tix/{{ $event->eventID }}/{{ $ticket->ticketID }}',
+            url: '{{ env('APP_URL') }}/tix/{{ $event->eventID }}/{{ $ticket->ticketID ?? '' }}',
             dataType: 'json',
             success: function (data) {
                 var result = eval(data);

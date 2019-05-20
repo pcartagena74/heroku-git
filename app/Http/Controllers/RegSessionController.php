@@ -321,7 +321,7 @@ class RegSessionController extends Controller
                 $count++;
             }
         }
-        request()->session()->flash('alert-success', trans('messages.notifications.SS.post_mail_msg', ['count' => $count]));
+        request()->session()->flash('alert-success', trans_choice('messages.notifications.SS.post_mail_msg', $count, ['count' => $count]));
         return redirect(env('APP_URL')."/eventreport/$event->slug");
     }
 }

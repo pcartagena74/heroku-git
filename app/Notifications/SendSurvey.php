@@ -10,6 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Lang;
 
 class SendSurvey extends Notification
 {
@@ -52,12 +53,17 @@ class SendSurvey extends Notification
     {
         $o = Org::find($this->person->defaultOrgID);
         $name = $o->orgName;
-        $ename = $this->event->event_type->etName;
+        $etype = $this->event->event_type->etName;
+        $ename = $this->event->eventName;
+        if(Lang::has('messages.event_types.'.$etype)){
+            $etype = trans_choice('messages.event_types.'.$etype, 1);
+        }
         $date = $this->event->eventStartDate->format('F jS');
 
         return (new MailMessage)
-            ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $ename]))
-            ->line(trans('messages.notifications.SS.line1', ['name' => $ename, 'date' => $date]))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->person->showDisplayName()]))
+            ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $etype]))
+            ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
             ->line(trans('messages.notifications.SS.line2'))
             ->action(trans('messages.notifications.SS.action'), env('APP_URL')."/rs_survey/" . $this->rs->id)
             ->line(trans('messages.notifications.thanks', ['org' => $name]));
