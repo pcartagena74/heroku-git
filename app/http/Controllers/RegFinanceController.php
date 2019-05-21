@@ -633,7 +633,7 @@ class RegFinanceController extends Controller
                         ['eventID', $eventID],
                         ['discountCODE', $code]
                     ])->first();
-                    if ($dCode->percent > 0) {
+                    if (null !== $dCode && $dCode->percent > 0) {
                         $reg->subtotal = $reg->subtotal - ($reg->subtotal * $dCode->percent / 100);
                     } else {
                         $reg->subtotal = $reg->subtotal - $dCode->flatAmt;

@@ -4,7 +4,7 @@
  * Created: 10/21/2018
  */
 
-$homeURL = env('APP_URL').'/events';
+$homeURL = env('APP_URL').'/manage_events';
 $editURL    = env('APP_URL').'/event/' . $event->eventID . '/edit';
 $displayURL = env('APP_URL').'/events/' . $event->slug;
 $tktURL = env('APP_URL').'/event-tickets/'. $event->eventID;

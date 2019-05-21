@@ -57,13 +57,13 @@ $topBits = '';  // remove this if this was set in the controller
                     {!! Form::label('email-'.$i, trans('messages.headers.email')) !!}<br/>
                     {!! Form::text('email-'.$i, null, array('id' => 'email-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
-                @if(is_array($tickets))
+                @if(is_numeric($tickets))
+                    {!! Form::hidden('ticketID-'.$i, $tickets) !!}
+                @else
                     <div class="col-sm-1">
                         {!! Form::label('ticketID-'.$i, trans('messages.fields.ticket')) !!}<br/>
                         {!! Form::select('ticketID-'.$i, $tickets, old('ticketID-'.$i), array('id' => 'ticketID-'.$i, 'class' =>'input-sm', 'style' => 'width:75px;')) !!}
                     </div>
-                @else
-                    {!! Form::hidden('ticketID-'.$i, $tickets) !!}
                 @endif
 
                 @if(0)

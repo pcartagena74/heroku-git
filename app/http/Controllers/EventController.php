@@ -921,7 +921,7 @@ class EventController extends Controller
             $t = Ticket::where('eventID', '=', $event->eventID)->get();
             if (count($t) > 1) {
                 $a = $t->pluck('ticketLabel', 'ticketID');
-                $b = array(0 => trans('messages.headers.sel_tkt'));
+                $b = array(null => trans('messages.headers.sel_tkt'));
                 $c = $a->toArray();
                 $tickets = $b + $c;
             } else {
