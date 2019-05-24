@@ -152,7 +152,7 @@ function plink($regID, $personID)
 }
 
 /**
- * translate: array_map function to apply a trans_choice if a translation exists for the term
+ * et_translate: array_map function to apply a trans_choice if a translation exists for the term
  */
 function et_translate($term)
 {
@@ -162,4 +162,36 @@ function et_translate($term)
     } else {
         return $term;
     }
+}
+
+/**
+ * li_print_array: convert an array into a html-formatted list
+ * @param $array
+ * @param $type
+ * @return string
+ */
+function li_print_array($array, $type){
+    //dd($array);
+    switch($type){
+        case "ol":
+            $start = "<OL>";
+            $end = "</OL>";
+            break;
+        case "ul":
+            $start = "<UL>";
+            $end = "</UL>";
+            break;
+    }
+    $output = $start;
+    foreach($array as $item){
+        $reg = $item['reg'];
+        $name = $item['name'];
+        //$button = "<a href='" . env('APP_URL')."/cancel_registration/$reg->regID/$reg->rfID" . "' class='btn btn-primary btn-xs'>" . trans('messages.buttons.reg_can') . "</a>";
+        $form = Form::open(['method'  => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->regfinance->regID]]);
+        $form .= Form::submit(trans('messages.buttons.reg_can'), array('class' => 'btn btn-primary btn-xs'));
+        $form .= Form::close();
+        $output .= "<li>$name $form</li>";
+    }
+    $output .= $end;
+    return $output;
 }

@@ -95,6 +95,9 @@ return [
         'no_id' => "There is no :modifier ID: :id.  :errormsg",
         'no_receipt' => "The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
                          <a style='color:black;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
+        'no_regs' => "The registration(s) no longer exist.  You can either :startover or :close.",
+        'no_reg1' => "Restart Registration",
+        'no_reg2' => "Goto mCentric Dashboard",
         'numeric' => 'Please enter a value between 1 - 5.',
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
@@ -1044,6 +1047,7 @@ return [
     ],
 
     'warning' => [
+        'dupe_reg' => "FYI: You have already registered for this event. :names|FYI: The following people appear to have already registered for this event: :names",
         'inactive_event' => "<b>Note:</b> You are previewing an event that is not yet active OR is in the past.",
         'inactive_unlocked_event' => "<b>Note:</b> This event is no longer active but you have been given permission to register.",
         'inactive_event_url' => "This event's URL is no longer active.",

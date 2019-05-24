@@ -250,9 +250,11 @@ class RegistrationController extends Controller
 
     public function store(Request $request, Event $event)
     {
-        // called by /regstep3/{event}/create
+        // called by POST /regstep3/{event}/create
 
         $logged_in = 0;
+        $flag_dupe = 0;
+        $dupe_names = [];
         $show_pass_fields = 0;
         $set_new_user = 0;
         $set_secondary_email = 0;
@@ -353,7 +355,8 @@ class RegistrationController extends Controller
                 $set_new_user = 0;
                 $i_cnt = '_' . $i;
             }
-            // $change_to_member = 0;
+
+            $dupe_check = null;
 
             // 1. Grab the passed variables for the person and registration info
             $prefix = ucwords(request()->input('prefix' . $i_cnt));
@@ -528,6 +531,12 @@ class RegistrationController extends Controller
                 return back()->withInput();
             }
 
+            $dupe_check = Registration::where([
+                ['personID', $person->personID],
+                ['eventID', $event->eventID],
+                ['regStatus', 'processed']
+            ])->first();
+
             $reg = new Registration;
             $reg->rfID = $rf->regID;
             $reg->eventID = $event->eventID;
@@ -591,6 +600,11 @@ class RegistrationController extends Controller
             }
             $reg->save();
 
+            if(null !== $dupe_check){
+                $flag_dupe = 1;
+                array_push($dupe_names, ['reg' => $reg, 'name' => $person->showFullName()]);
+            }
+
             $subcheck += $subtotal;
             $sumtotal += $origcost;
         }
@@ -615,6 +629,13 @@ class RegistrationController extends Controller
             );
             return Redirect::back()->withErrors(
                 ['warning' => trans('messages.errors.corruption', ['total' => $total, 'check' => $subcheck])]
+            );
+        }
+
+        if($flag_dupe){
+            request()->session()->flash(
+                'alert-warning',
+                trans_choice('messages.warning.dupe_reg', count($dupe_names), ['names' => li_print_array($dupe_names, "ul")])
             );
         }
 
@@ -721,10 +742,32 @@ class RegistrationController extends Controller
         $verb = strtolower(trans('messages.headers.canceled'));
         $event = Event::find($reg->eventID);
         $org = Org::find($event->orgID);
+        $flag_dupe = 0; $dupe_names = [];
+        $rf->load('registrations');
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        if ($reg->regStatus == 'pending') {
+        if ($reg->regStatus == 'progress') {
+            // for a registration that is in process (or just never completed) check if we're catching dupes
+            if(count($rf->registrations) > 1){
+                // Deleting this registration, will leave at least 1 on the order.  Need to recheck if there are dupes
+                foreach($rf->registrations as $reg_chk){
+                    $dupe_check = null;
+                    if($reg_chk->regID != $reg->regID){
+                        $dupe_check = Registration::where([
+                            ['personID', $reg_chk->personID],
+                            ['eventID', $event->eventID],
+                            ['regStatus', 'processed']
+                        ])->with('person')->first();
+
+                        if(null !== $dupe_check){
+                            $flag_dupe = 1;
+                            array_push($dupe_names, ['reg' => $reg_chk, 'name' => $reg_chk->person->showFullName()]);
+                        }
+                    }
+                }
+            }
+
             // the registration was never finalized, sessions weren't picked, so delete
             $reg->delete();
         } elseif ($reg->subtotal > 0 && $rf->pmtRecd == 1 && $rf->stripeChargeID) {
@@ -820,6 +863,12 @@ class RegistrationController extends Controller
         }
 
         request()->session()->flash('alert-success', trans('messages.reg_status.msg_status', ['id' => $reg->regID, 'verb' => $verb]));
+        if($flag_dupe){
+            request()->session()->flash(
+                'alert-warning',
+                trans_choice('messages.warning.dupe_reg', count($dupe_names), ['names' => li_print_array($dupe_names, "ul")])
+            );
+        }
         //return redirect('/upcoming');
         return redirect()->back()->withInput();
     }

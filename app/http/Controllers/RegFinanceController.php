@@ -82,6 +82,13 @@ class RegFinanceController extends Controller
             }
 
             $regs = Registration::where('rfID', '=', $rf->regID)->get();
+            if(count($regs) == 0){
+                $rf->delete();
+                $button1 = "<a class='btn btn-primary btn-xs' href='" . env('APP_URL') . "/events/$event->eventID'>" . trans('messages.errors.no_reg1') . "</a>";
+                $button2 = "<a class='btn btn-info btn-xs' href='" . env('APP_URL') . "/dashboard'>" . trans('messages.errors.no_reg2') . "</a>";
+                $message = trans('messages.errors.no_regs', ['startover' => $button1, 'close' => $button2]);
+                return view('v1.public_pages.error_display', compact('message'));
+            }
 
             $loc = Location::find($event->locationID);
             $quantity = $rf->seats;
@@ -98,26 +105,9 @@ class RegFinanceController extends Controller
             $certs = DB::table('certifications')->select('certification')->get();
             $cert_array = $certs->toArray();
 
-            return view(
-                'v1.public_pages.register2',
-                compact(
-                    'event',
-                    'quantity',
-                    'org',
-                    'loc',
-                    'rf',
-                    'person',
-                    'regs',
-                    'cert_array',
-                    'prefixes',
-                    'industries',
-                    'tracks',
-                    'tickets',
-                    //'stripe_session',
-                    'show_pass_fields',
-                    'registering'
-                )
-            );
+            return view('v1.public_pages.register2',
+                compact('event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array', 'prefixes',
+                    'industries', 'tracks', 'tickets')); //'stripe_session', 'show_pass_fields', 'registering'));
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');
             return view('v1.public_pages.error_display', compact('message'));
