@@ -35,7 +35,7 @@ $today = \Carbon\Carbon::now();
         @if(count($unpaid)>0)
             @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_unpaid'), 'rf_array' => $unpaid])
         @endif
-        @if(count($pending)>0)
+        @if(0 && count($pending)>0)
             @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_inc'), 'rf_array' => $pending])
         @endif
     @endif
