@@ -107,7 +107,7 @@ class RegFinanceController extends Controller
 
             return view('v1.public_pages.register2',
                 compact('event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array', 'prefixes',
-                    'industries', 'tracks', 'tickets', 'show_pass_fields')); // stripe_session', 'show_pass_fields', 'registering'));
+                    'industries', 'tracks', 'tickets', 'show_pass_fields', 'registering'));
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');
             return view('v1.public_pages.error_display', compact('message'));
