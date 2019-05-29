@@ -1,20 +1,23 @@
 <?php
 /**
  * Comment: This is a DIV version of the session selection form
+ *          This is included by rf-bit.blade and reg-bit.blade to display the session selection form to update sessions.
+ *          This is also included by register2.blade during the registration process.
+ *          All pages that include this MUST check whether $event->hasTracks() or purchased $ticket->has_sessions()
  * Created: 7/12/2017
  * Updated: 9/29/2018
  *
  * Passing in $event, $ticket, $rf, $reg
- * @param $event: the event for which sessions will be displayed
+ * @param $event:  the event for which sessions will be displayed
  * @param $ticket: the ticket (bundle or otherwise) for which sessions will be displayed
  *                 in the event a ticket is a bundle, sessions will be displayed for the appropriate component ticket(s)
- * @param $rf: the regFinance record associated with the registration
- * @param $reg: the individual registration instance for which the sessions will be displayed
+ * @param $rf:     the regFinance record associated with the registration
+ * @param $reg:    the individual registration instance for which the sessions will be displayed
  *
  * Update requires this form to be modularized in a way that allows or suppresses an individual selection form
  *
- * @param $suppress: if 1, the form pieces (open, close, submit button) will be suppressed
- *
+ * @param $suppress: if 1, the form pieces (open, close, submit button) will be suppressed because selections can no
+ *                   longer be edited.
  */
 
 use App\Ticket;
@@ -22,17 +25,10 @@ use App\Track;
 use App\EventSession;
 use App\RegSession;
 
-        // If an event has tracks, there could be sessions associated with 1 or more tickets
-        // (depending on the number of days that have sessions)
-
-        // Assumption will be that session_bubbles.blade is included when sessions are needed w/ $ticket->has_sessions()
-
 if(!isset($suppress)) { $suppress = 0; }
 if(!isset($registering)) { $registering = 0; }
 
 $valid_ticketIDs = $ticket->ticketIDs();
-
-//$needSessionPick = $reg->ticket->has_sessions();
 
 if($event->hasTracks > 0) {
     $tracks = Track::where('eventID', $event->eventID)->get();
@@ -61,12 +57,9 @@ if($event->hasTracks > 0) {
 // Bundle Tickets won't have sessions associated with them, but any individual ticket(s) that make it up can
 // So if it's a bundle,
 // 1. Get the child tickets of the bundle (parent)
-// 2. Get all session records that were created for the event
-// 3. Check if the ticketID associated with the sessions appears in #1 collection, and set $needSessionPick = 1
+// 2. Get all session records that were created for this $reg record for this $event
 
-
-
-// Retrieve the session data associated with any previously-selected sessions
+// Retrieve the session data associated with any previously-selected sessions for this registration record
 $regSessions = RegSession::where([
     ['regID', '=', $reg->regID],
     ['eventID', '=', $event->eventID]
@@ -78,7 +71,7 @@ if(count($tickets) == 0){
     $tickets = Ticket::where('ticketID', $ticket->ticketID)->get();
 }
 ?>
-@if(1)
+@if(1)  {{-- didn't clean up; previously checked if this included stuff should display --}}
     @if(count($regSessions)== 0)
         @if($registering)
             <b>@lang('messages.instructions.no_reg_sess_init')</b><br/>
@@ -229,7 +222,7 @@ foreach($tickets_associated_with_confDay_sessions as $tkt){
 <?php
 
 // If we're dealing with a linked session:
-// 1. Find out how many & which sessions are linked
+// 1. Find out how many & which sessions are linked (where isLinked == $s->sessionID)
 // 2. Setup the jquery code to cause hidden radio buttons to be selected based on this one's selection
 
                                                         $linked = EventSession::where([
@@ -240,24 +233,44 @@ foreach($tickets_associated_with_confDay_sessions as $tkt){
                                                             ['isLinked', $s->sessionID]
                                                         ])->withTrashed()->get();
 ?>
-
                                                             @if($linked !== null)
 <script>
     $(document).ready(function () {
         var rowname = '{{ 'sess-' . $j.'-'.$x.'-'.$reg->regID }}';
         var sessname = '{{ 'sess-' . $j.'-'.$x.'-'.$s->sessionID }}';
         $("input:radio[name='" + rowname + "']").on('change', function () {
-            //console.log(rowname + " changed.");
             if ($("input:radio[id='{{ 'sess-'. $j . '-'.$x.'-' . $s->sessionID }}']").prop("checked")) {
-                //console.log(sessname + " is checked.");
+                {{--
+                console.log(rowname + " changed.");
+
+                First, add a line for each linked "child" so that each hidden radio button can be checked
+                when the parent radio button is checked.
+
+                console.log(sessname + " is checked.");
+                console.log("  Checking " + child + ".");
+                console.log("Checked? " + $("input:radio[id='" + child + "']").prop('checked'));
+                --}}
                 @foreach($linked as $link)
                 child = '{{ 'sess-' . $j.'-'.$link->order.'-'.$link->sessionID }}';
-                //console.log("  Checking " + child + ".");
                 $("input:radio[id='" + child + "']").prop('checked', true);
-                //console.log("Checked? " + $("input:radio[id='" + child + "']").prop('checked'));
                 @endforeach
             }
         });
+
+        {{--
+        Now, loop through the children to add an on('change') event for each row with a child.
+        This may not be needed here because we can add jquery code in a just-in-time way for each hidden-radio child
+
+        @foreach($linked as $link)
+        childrow = '{{ 'sess-' . $j.'-'.$link->order.'-'.$reg->regID }}';
+        childsess = '{{ 'sess-' . $j.'-'.$link->order.'-'.$link->sessionID }}';
+        $("input:radio[name='" + childrow + "']").on('change', function () {
+            if ($("input:radio[id='" + childrow + "']").prop("checked")) {
+                $("input:radio[id='" + sessname + "']").prop('checked', true);
+            }
+        });
+        @endforeach
+        --}}
     });
 </script>
                                                             @endif
@@ -278,19 +291,32 @@ foreach($tickets_associated_with_confDay_sessions as $tkt){
                                                 $attributes=array('id' => 'sess-'. $j . '-'.$x .'-' . $s->sessionID, 'style' => 'visibility:hidden;')) !!}
                                                 <script>
                                                     $(document).ready(function () {
-                                                        {{-- If the parent changes, uncheck the hidden radio button --}}
+                                                        {{-- If the parent changes, uncheck the hidden radio button
+                                                        This is already getting done in the first part of the code when the parent is displayed.
+
                                                         $("input:radio[name='{{ 'sess-'. $j . '-'.$parent->order . '-' . $reg->regID }}']").on('change', function () {
-                                                            //console.log("{{ 'sess-'. $j . '-'.$parent->order .'-'.$reg->regID }} changed.");
+                                                            console.log("{{ 'sess-'. $j . '-'.$parent->order .'-'.$reg->regID }} changed.");
                                                             if ($('#{{ 'sess-'. $j . '-'.$parent->order.'-' . $parent->sessionID }}').is(":checked")) {
                                                                 $('#{{ 'sess-'. $j . '-'.($x) .'-'. $s->sessionID }}').prop('checked', 'checked');
                                                             } else {
                                                                 $('#{{ 'sess-'. $j . '-'.($x) .'-'. $s->sessionID }}').removeAttr('checked');
                                                             }
                                                         });
+
+                                                        childsess = '{{ 'sess-'. $j . '-'.($x).'-'. $s->sessionID }}';
+                                                        console.log(childrow + " changed.");
+                                                        console.log("the parent: " + $('#'+parentsess) + " is: " + checked);
+                                                        console.log("the parent: " + $('#'+parentsess) + " is: " + checked);
+                                                        --}}
+
                                                         {{-- If the hidden radio button changes, uncheck the parent --}}
-                                                        $("input:radio[name='{{ 'sess-'. $j . '-'.($x).'-'. $reg->regID }}']").on('change', function () {
-                                                            //console.log("{{ 'sess-'. $j . '-'.($x) .'-'.$reg->regID }} changed.");
-                                                            $('#{{ 'sess-'. $j . '-'.($parent->order) .'-' . $parent->sessionID }}').removeAttr('checked');
+                                                        childrow = '{{ 'sess-'. $j . '-'.($x).'-'. $reg->regID }}';
+                                                        parentsess= '{{ 'sess-'. $j . '-'.$parent->order . '-'. $parent->sessionID }}';
+                                                        $("input:radio[name='" +  childrow +  "']").on('change', function () {
+                                                            if($("input:radio[id='"+ parentsess + "']").is(":checked")){
+                                                                checked = $("input:radio[id='"+ parentsess + "']").is(":checked")?true:false;
+                                                                $("input:radio[id='"+ parentsess + "']").prop('checked', false);
+                                                            }
                                                         });
                                                     });
                                                 </script>

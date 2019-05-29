@@ -268,7 +268,7 @@ Route::patch('/campaign/{campaign}', 'CampaignController@update');
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
-Route::get('/test', function () {
+Route::get('/mytest', function () {
     $events = App\Event::all();
     return view('v1.auth_pages.welcome', compact('events'));
 });
