@@ -263,7 +263,7 @@ $deletion = 0;
                 </table>
 
                 @if($reg->ticket->has_sessions())
-                    @include('v1.parts.session_print', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg])
+                    @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg])
                 @endif
 </div>
 

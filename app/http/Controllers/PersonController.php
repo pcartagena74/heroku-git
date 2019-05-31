@@ -204,7 +204,6 @@ class PersonController extends Controller
 
     public function index2($query = null)
     {
-
         $topBits = $this->member_bits();
         $mbr_list = null;
 
