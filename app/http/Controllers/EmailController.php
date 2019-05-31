@@ -71,6 +71,7 @@ class EmailController extends Controller
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
         $email = Email::find($id);
+        $email->emailADDR = 'deleted_' . $email->emailADDR;
         $email->updaterID = $this->currentPerson->personID;
         $email->save();
         $email->delete();

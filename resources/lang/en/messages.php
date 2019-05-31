@@ -482,6 +482,7 @@ return [
         'roles&perms' => "Role & Permission Management",
         'roster_add' => 'Add to Roster',
         'search4p' => 'Search for person',
+        'seats' => "Seat|Seats",
         'sel_tkt' => "Select Ticket",
         'sess_setup' => "Session Setup Questions and Instructions",
         'sess_spk' => 'Session Speaker(s)',
