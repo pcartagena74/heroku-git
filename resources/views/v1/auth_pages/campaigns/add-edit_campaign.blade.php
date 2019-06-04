@@ -120,7 +120,7 @@ $topBits = '';  // remove this if this was set in the controller
             {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email5')) !!}
         </div>
-        <a id="add_email" onclick="javascript:add_email();">Add Another</a>
+        <a id="add_email" onclick="add_email();">Add Another</a>
         <p>
         <div class="form-group">
             {!! Form::label('note', 'Personal Note') !!}

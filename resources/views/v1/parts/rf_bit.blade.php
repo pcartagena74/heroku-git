@@ -53,9 +53,10 @@ $s3fs = new Filesystem($adapter);
             $receipt_exists = true;
         }
 
+        $header = $rf->event->eventName . " <small>" . trans_choice('messages.headers.seats', $rf->seats) . ": " . $rf->seats . "</small>";
 ?>
         {{-- @if($rf->event->eventEndDate->gte($today)) --}}
-        @include('v1.parts.start_min_content', ['header' => $rf->event->eventName,
+        @include('v1.parts.start_min_content', ['header' => $header,
                  'subheader' => $rf->event->eventStartDate->format('n/j/Y'),
                  'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
         <div class="col-md-12 col-sm-12 col-xs-12">
@@ -100,17 +101,20 @@ $s3fs = new Filesystem($adapter);
             <br/>
         @else
 
-            {{-- Payment NOT received so continue or cancel buttons are OK whenever --}}
+            {{-- Payment NOT received so pay balance button should be displayed if it's the only/first seat --}}
+
+            @if($rf->seats == 1 || $reg == $rf->registrations->first())
             <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                 class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
+            @endif
 
+        {{-- Cancel button is always OK to show --}}
             {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
                 'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
                     <button type="submit" class="btn btn-danger btn-sm">
                         @lang('messages.buttons.reg_can')
                     </button>
             {!! Form::close() !!}
-
         @endif
 
     @else               {{-- There is no fee for event --}}
@@ -140,7 +144,7 @@ $s3fs = new Filesystem($adapter);
     @endif
 
     &nbsp;<br />
-    @if($reg->ticket->has_sessions())
+    @if($reg->ticket->has_sessions() && 1 || $rf->pmtRecd == 1)
         @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
         'reg' => $reg, 'regSession' => $regSessions])
     @endif

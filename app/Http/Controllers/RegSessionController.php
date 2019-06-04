@@ -132,14 +132,14 @@ class RegSessionController extends Controller
 
     public function store(Request $request, Event $event)
     {
-
+        // called by POST /event_checkin/{eventID}
         $esID = $request->input('sessionID');
         $chk = $request->input('chk_walk');
         $eventID = $request->input('eventID');
         $id = auth()->user()->id;
         $count = 0;
 
-        // First, delete all RegistrationSession records that were saved
+        // First, delete all RegSession records that were saved
         $old_regs = RegSession::where([
             ['eventID', '=', $event->eventID],
             ['sessionID', '=', $esID]
@@ -172,7 +172,7 @@ class RegSessionController extends Controller
         $event = Event::find($reg->eventID);
         $verb = trans('messages.messages.saved');
 
-        // Check if there are any sessions already saved, so you can decrement EventSession->regCount and delete.
+        // Check if there are any sessions already saved for the person's reg, to decrement EventSession->regCount and delete.
         $rs = RegSession::where([
             ['eventID', '=', $reg->eventID],
             ['regID', '=', $reg->regID]
@@ -182,7 +182,7 @@ class RegSessionController extends Controller
             $verb = trans('messages.messages.updated');
             foreach ($rs as $s) {
                 $e = EventSession::find($s->sessionID);
-                if ($e->regCount > 0) {
+                if (null !== $e && $e->regCount > 0) {
                     $e->regCount--;
                 } $e->save();
                 $s->delete();

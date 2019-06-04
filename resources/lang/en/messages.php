@@ -654,6 +654,7 @@ return [
         'merge_succ' => ":model record: :record1 was successfully merged into :record2.",
         'no_curr_pass_match' => "The current password did not match.",
         'no_events' => "There are no future events in the system.",
+        'no_sessions' => "No session selections have been made. You can do so <a href=':link'>here</a>.",
         'partial_fail' => "The attempt to get a partial refund failed with order: :rfid.",
         'pass_change' => "The password was changed successfully.",
         'pass_change_for' => "The password for :name was changed successfully.",

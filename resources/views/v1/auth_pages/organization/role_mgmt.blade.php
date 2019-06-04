@@ -279,6 +279,6 @@ set_time_limit(100);
                     //$('#status_msg').html(result.message).fadeIn(0);
                 }
             });
-        };
+        }
     </script>
 @endsection

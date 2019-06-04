@@ -582,8 +582,8 @@ $experience_choices = [
                     }
                 });
             }
-        };
-    });
+        }
+        });
     </script>
     <script>
         $("[data-toggle=tooltip]").tooltip();

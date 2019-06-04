@@ -620,8 +620,7 @@ $experience_choices = [
                         }
                     });
                 }
-            };
-
+            }
             function findUser(email, which) {
                 if (!FieldIsEmpty(email)) {
                     $.ajax({
@@ -782,7 +781,7 @@ $experience_choices = [
 {{--
                 Check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
 --}}
-                    if(tix.length > 1){
+                    if(tix.length > 1;){
                         var new_price = ticket['memberBasePrice'];
                         if(ticket['ticketID'] == compare){
                             tc.innerHTML = new_price.toFixed(2);
@@ -793,7 +792,7 @@ $experience_choices = [
                         fc.innerHTML = mbr_price.toFixed(2);
                     }
                 recalc();
-                });
+            })
             }
 
             function recalc(){

@@ -595,7 +595,7 @@ $mbr_price = 'Member pricing is applied automatically when you 1) are logged in 
                 });
             }
         }
-        ;
+
     </script>
     <script>
         $('[data-toggle="popover"]').popover({

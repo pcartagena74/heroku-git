@@ -623,7 +623,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                     } else {
                         alert("{{ trans('messages.instructions.quantity') }}");
                     }
-                };
+                }
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -668,7 +668,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                             }
                         });
                     }
-                };
+                }
             </script>
             <script>
                 $('[data-toggle="popover"]').popover({

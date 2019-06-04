@@ -468,7 +468,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
                         }
                     });
                 }
-            };
+            }
         });
     </script>
 
