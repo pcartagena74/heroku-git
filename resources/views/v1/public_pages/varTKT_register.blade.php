@@ -745,9 +745,8 @@ $i = 0;
                                 }
                             });
                         }
-                    };
-
-                    function findUser(email, which) {
+            }
+            function findUser(email, which) {
                         if (!FieldIsEmpty(email)) {
                             $.ajax({
                                 type: 'POST',
@@ -935,7 +934,7 @@ $i = 0;
                 x = document.getElementById('ticketID-' + j);
                 aff_array = $('#affiliation' + which).val();
                 mp_ok = check_affiliation_disc(aff_array);
-                mp_ok = 1 * $("#OrgStat1"+which).val()
+                mp_ok = 1 * $("#OrgStat1"+which).val();
                 compare = x.value;
                 tc = document.getElementById('tcost' + j);
                 fc = document.getElementById('final' + j);

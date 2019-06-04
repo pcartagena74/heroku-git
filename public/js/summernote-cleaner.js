@@ -7,7 +7,7 @@
     } else {
         factory(window.jQuery);
     }
-}
+};
 (function ($) {
     $.extend(true, $.summernote.lang, {
         'en-US': {
@@ -126,7 +126,7 @@
                         var lengthStatus = '';
                         if (options.cleaner.limitStop == true && textLength.length >= options.cleaner.limitChars) {
                             var key = e.keyCode;
-                            allowed_keys = [8, 37, 38, 39, 40, 46]
+                            allowed_keys = [8, 37, 38, 39, 40, 46];
                             if ($.inArray(key, allowed_keys) != -1) {
                                 $editor.find('.cleanerLimit').removeClass('text-danger');
                                 return true;

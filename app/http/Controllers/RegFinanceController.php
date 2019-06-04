@@ -381,7 +381,8 @@ class RegFinanceController extends Controller
                     $y = Ticket::find($z->ticketID);
 
                     for ($x = 1; $x <= 5; $x++) {
-                        if (request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID)) {
+                        $sess_name = request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID);
+                        if ($sess_id = request()->input($sess_name)){
                             // if this is set, the value is the session that was chosen.
                             // Create the RegSession record
 
@@ -390,14 +391,16 @@ class RegFinanceController extends Controller
                             $rs->personID = $reg->personID;
                             $rs->eventID = $event->eventID;
                             $rs->confDay = $j;
-                            $rs->sessionID = request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID);
+                            $rs->sessionID = $sess_id;
                             $rs->creatorID = auth()->user()->id;
                             $rs->updaterID = auth()->user()->id;
                             $rs->save();
 
-                            $e = EventSession::find($rs->sessionID);
-                            $e->regCount++;
-                            $e->save();
+                            $e = EventSession::find($sess_id);
+                            if(null !== $e){
+                                $e->regCount++;
+                                $e->save();
+                            }
                         }
                     }
                 }

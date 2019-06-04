@@ -15,7 +15,7 @@
                     <div class="text-center text-center" style="text-align: center;">
                         <h1 class="error-number">404</h1>
                         <h2>Sorry but we couldn't find this page</h2>
-                        This page you are looking for does not exist. <a onclick="javascript:show()">Report this?</a>
+                        This page you are looking for does not exist. <a onclick="show()">Report this?</a>
                         <div class="mid_center" style="display:none">
                             <h3>Report Issue</h3>
                             {{ Form::open(['url' => env('APP_URL').'/reportissue', 'method' => 'post']) }}

@@ -55,11 +55,11 @@ if ($event->isSymmetric && $event->hasTracks) {
 
     <div class="whole">
 
-        <div style="float: right;" class="col-md-5 col-sm-5">
+        <div style="float: right;" class="col-lg-4 hidden-md hidden-sm hidden-xs">
             <img style="opacity: .25;" src="{{ env('APP_URL') }}/images/meeting.jpg" width="100%" height="90%">
         </div>
-        <div class="left col-md-7 col-sm-7">
-            <div class="myrow col-md-12 col-sm-12">
+        <div class="left col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            <div class="myrow col-lg-12 col-xs-12">
 
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
                     <h1 class="far fa-5x fa-calendar-alt"></h1>
