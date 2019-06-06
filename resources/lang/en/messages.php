@@ -102,6 +102,7 @@ return [
         'options' => 'Please select an option.',
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
         'slug_error' => "The URL you chose is not unique.  Please change and validate it before proceeding.",
+        'social_error' => "An error occurred while connecting to :social. ",
         'unexpected' => "An unexpected error occurred. Please logout and attempt to perform your action again.<br />If this persists, contact mCentric@mCentric.org with as much detail as possible.",
     ],
 

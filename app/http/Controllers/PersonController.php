@@ -255,18 +255,22 @@ class PersonController extends Controller
                 if ($this->currentPerson->avatarURL === null
                     && !$this->currentPerson->socialites->contains('providerName', 'LinkedIN')
                 ) {
-                    $user = Socialite::driver('linkedin')->user();
-                    $person = Person::find($id);
-                    $person->avatarURL = $user->avatar;
-                    $person->updaterID = $id;
-                    $person->save();
+                    try {
+                        $user = Socialite::driver('linkedin')->user();
+                        $person = Person::find($id);
+                        $person->avatarURL = $user->avatar;
+                        $person->updaterID = $id;
+                        $person->save();
 
-                    $socialite = new PersonSocialite;
-                    $socialite->personID = $person->personID;
-                    $socialite->providerID = $user->id;
-                    $socialite->providerName = 'LinkedIN';
-                    $socialite->token = $user->token;
-                    $socialite->save();
+                        $socialite = new PersonSocialite;
+                        $socialite->personID = $person->personID;
+                        $socialite->providerID = $user->id;
+                        $socialite->providerName = 'LinkedIN';
+                        $socialite->token = $user->token;
+                        $socialite->save();
+                    } catch(\Exception $e){
+                        request()->session()->flash('alert-warning', trans('messages.errors.social_error', ['social' => 'LinkedIn']));
+                    }
                 }
             }
         }
