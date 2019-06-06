@@ -50,8 +50,7 @@ $check = RegSession::where([
                     ?>
                     @if(null !== $s)
                         <tr>
-                            <th style="text-align:center; color: yellow; background-color: #2a3f54;"
-                                colspan="2">@lang('messages.headers.day') {{ $j }}:
+                            <th style="text-align:center; color: yellow; background-color: #2a3f54;" colspan="2">@lang('messages.headers.day') {{ $j }}:
                                 {{ $y->ticketLabel  }}
                             </th>
                         </tr>
