@@ -39,37 +39,39 @@ $check = RegSession::where([
                 ['regID', '=', $reg->regID],
                 ['personID', '=', $reg->personID],
                 ['eventID', '=', $event->eventID]
-            ])->orderBy('id')->get();
+            ])->orderBy('id')->distinct()->get();
             ?>
 
             @foreach($rs as $z)
                 @if($rs->first() == $z)
+                    {{--  Print the Conference Day Label just once --}}
                     <?php
                     $s = EventSession::find($z->sessionID);
                     $y = Ticket::find($s->ticketID);
                     ?>
                     @if(null !== $s)
                         <tr>
-                            <th style="text-align:center; color: yellow; background-color: #2a3f54;" colspan="2">@lang('messages.headers.day') {{ $j }}:
+                            <th style="text-align:center; color: yellow; background-color: #2a3f54;"
+                                colspan="2">@lang('messages.headers.day') {{ $j }}:
                                 {{ $y->ticketLabel  }}
                             </th>
                         </tr>
                     @endif
-                    <?php
-                    $s = EventSession::with('track')->where('sessionID', $z->sessionID)->first();
-                    ?>
-                    <tr>
-                        <td rowspan="1" style="text-align:left; width:33%;">
-                            <nobr> {{ $s->start->format('g:i A') }} </nobr>
-                            -
-                            <nobr> {{ $s->end->format('g:i A') }} </nobr>
-                        </td>
-                        <td colspan="1" style="text-align:left; min-width:150px; width: 67%;">
-                            <b>{{ $s->track->trackName }}</b><br/>
-                            {{ $s->sessionName }} <br/>
-                        </td>
-                    </tr>
                 @endif
+                <?php
+                $s = EventSession::with('track')->where('sessionID', $z->sessionID)->first();
+                ?>
+                <tr>
+                    <td rowspan="1" style="text-align:left; width:33%;">
+                        <nobr> {{ $s->start->format('g:i A') }} </nobr>
+                        -
+                        <nobr> {{ $s->end->format('g:i A') }} </nobr>
+                    </td>
+                    <td colspan="1" style="text-align:left; min-width:150px; width: 67%;">
+                        <b>{{ $s->track->trackName }}</b><br/>
+                        {{ $s->sessionName }} <br/>
+                    </td>
+                </tr>
             @endforeach
         @endfor
     </table>

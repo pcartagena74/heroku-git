@@ -381,8 +381,9 @@ class RegFinanceController extends Controller
                     $y = Ticket::find($z->ticketID);
 
                     for ($x = 1; $x <= 5; $x++) {
-                        $sess_name = request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID);
-                        if ($sess_id = request()->input($sess_name)){
+                        $sess_name = 'sess-' . $j . '-' . $x . '-' . $reg->regID;
+                        $sess_id = request()->input($sess_name);
+                        if ($sess_id > 0){
                             // if this is set, the value is the session that was chosen.
                             // Create the RegSession record
 
@@ -402,6 +403,8 @@ class RegFinanceController extends Controller
                                 $e->save();
                             }
                         }
+                        $sess_name = null;
+                        $sess_id = null;
                     }
                 }
             }
