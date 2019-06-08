@@ -1,7 +1,9 @@
 <?php
 /**
  * Comment: Event Receipt
- * Created: 3/26/2017
+ * Created: 3/26/17 and updated on 10/25/2019
+ *
+ * Literal COPY of group_receipt.blade.php
  */
 
 use App\RegSession;
@@ -12,12 +14,6 @@ use League\Flysystem\Filesystem;
 use App\Registration;
 use App\Person;
 use App\Ticket;
-
-$today = Carbon\Carbon::now();
-
-// $rf, $loc, $event, $org
-// $ticketLabel will need to be set individually per registration
-// $ticketLabel = $rf->ticket->ticketLabel;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();
@@ -32,17 +28,24 @@ $string = '';
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-$array = explode(',', $chapters->nearbyChapters);
+if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+    $array    = explode(',', $chapters->regionChapters);
+} else {
+    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+    $array    = explode(',', $chapters->nearbyChapters);
+}
 
 $i = 0;
 foreach($array as $chap) {
-    $i++;
+    $i++; $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 
 // must use $etype->etName to get the text embedded here
 $etype = DB::table('org-event_types')->where('etID', $event->eventTypeID)->select('etName')->first();
+// etName is now the value of $etype post et_translate function
+$etype = et_translate($etype->etName);
 
 // Find out how to embed the correct TZ in front of this since not using UTC
 $est = $event->eventStartDate->format('Ymd\THis'); // $event->eventTimeZone;
@@ -50,11 +53,11 @@ $eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
 
 $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
 
-$event_url = "For details, visit: " . env('APP_URL') . "/events/$event->slug";
+$event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
 $yahoo_url =
-    "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype->etName&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
+    "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
 $google_url =
-    "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype->etName&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
+    "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
 $event_filename = 'event_' . $event->eventID . '.ics';
 
 $client = new S3Client([
@@ -77,350 +80,256 @@ http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru
 an email url to a form
 */
 
+$header = trans('messages.headers.reg') . " ";
+if($rf->pmtRecd){
+    $header .= trans('messages.headers.receipt');
+} else {
+    $header .= trans('messages.headers.invoice');
+}
 // To track whether there were any parts of the registration canceled/refunded
 $deletion = 0;
 ?>
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => "Registration Receipt: $event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="whole">
 
-        <div style="float: right;" class="col-md-5 col-sm-5">
-            <img style="opacity: .25;" src="{{ env('APP_URL') }}/images/meeting.jpg" width="100%" height="90%">
+        {{--        <div class="left col-md-7 col-sm-7">            --}}
+        <div class="myrow col-md-12 col-sm-12">
+            <div class="col-md-2 col-sm-2" style="text-align:center;">
+                <h1 class="far fa-5x fa-calendar-alt"></h1>
+            </div>
+            <div class="col-md-7 col-sm-7">
+                <h2><b>{{ $event->eventName }}</b></h2>
+                <div style="margin-left: 10px;">
+                    {{ $event->eventStartDate->format('n/j/Y g:i A') }}
+                    - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
+                    <br>
+                    {{ $loc->locName }}<br>
+                    {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }},
+                    {{ $loc->state }} {{ $loc->zip }}
+                </div>
+                <br />
+                <b style="color:red;">@lang('messages.headers.purchased'): </b> {{ $rf->createDate->format('n/j/Y') }}
+                <b style="color:red;">@lang('messages.headers.at') </b> {{ $rf->createDate->format('g:i A') }}
+                @if($rf->cost > 0 && $rf->pmtRecd == 0)
+                    <h1 style="color:red;">@lang('messages.headers.bal_due')</h1>
+                @endif
+            </div>
+            <div class="col-md-3 col-sm-3">
+            </div>
         </div>
-        <div class="left col-md-7 col-sm-7">
+
+        @foreach($rf->registrations as $reg)
+            <?php
+            $tcount++;
+            $person = Person::find($reg->personID);
+            $ticket = Ticket::find($reg->ticketID);
+            ?>
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
-                    <h1 class="fa fa-5x fa-calendar"></h1>
-                </div>
-                <div class="col-md-7 col-sm-7">
-                    <h2><b>{{ $event->eventName }}</b></h2>
-                    <div style="margin-left: 10px;">
-                        {{ $event->eventStartDate->format('n/j/Y g:i A') }}
-                        - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
-                        <br>
-                        {{ $loc->locName }}<br>
-                        {{ $loc->addr1 }} <i class="fa fa-circle fa-tiny-circle"></i> {{ $loc->city }},
-                        {{ $loc->state }} {{ $loc->zip }}
-                    </div>
-                    <br/>
-                    @if($rf->cost > 0 && $rf->pmtRecd == 0)
-{{--
-                        <h1 style="color:red;">
-                            @if($ticket->waitlisting())
-                                WAIT LIST ONLY - Not a Ticket
-                            @else
-                                Balance Due at Event
-                            @endif
-                        </h1>
-                        <b style="color:red;">
-                            @if($ticket->waitlisting())
-                                Wait-Listed
-                            @else
-                                Registered
-                            @endif
-                            on: </b> {{ $rf->createDate->format('n/j/Y') }}
-                        <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
+                    @if($reg->deleted_at)
+                        <h1 class="fas fa-5x fa-user red"></h1>
                     @else
-                        <b style="color:red;">Purchased on: </b> {{ $rf->createDate->format('n/j/Y') }}
-                        <b style="color:red;">at </b> {{ $rf->createDate->format('g:i A') }}<br />
-                        @if($rf->createDate->format('n/j/Y') != $rf->cancelDate->format('n/j/Y'))
-                            <b style="color:red;">Updated on: </b> {{ $rf->cancelDate->format('n/j/Y') }}
-                            <b style="color:red;">at </b> {{ $rf->cancelDate->format('g:i A') }}
-                        @endif
---}}
+                        <h1 class="fas fa-5x fa-user"></h1>
                     @endif
                 </div>
-                <div class="col-md-3 col-sm-3">
-                </div>
-            </div>
-
-            @foreach($rf->registrations as $reg)
-<?php
-// @for($i=$rf->regID-($rf->seats-1);$i<=$rf->regID;$i++)
-/*
-                try {
-                    $reg = Registration::where('regID', $i)->withTrashed()->first();
-                } catch(Exception $e) {
-                    next;
-                }
-*/
-                $tcount++;
-                if($reg->deleted_at){
-                    $deletion = 1;
-                }
-                $person = Person::find($reg->personID);
-                $ticket = Ticket::find($reg->ticketID);
-?>
-                <div class="myrow col-md-12 col-sm-12">
-                    <div class="col-md-2 col-sm-2" style="text-align:center;">
-                        @if($reg->deleted_at)
-                            <h1 class="far fa-5x fa-user red"></h1>
-                        @else
-                            <h1 class="far fa-5x fa-user"></h1>
-                        @endif
-                    </div>
-                    <div class="col-md-10 col-sm-10">
-                        <table class="table table-bordered table-condensed table-striped">
-                            <tr>
-                                <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }} TICKET:
-                                    #{{ $tcount }}
-                                    @if($reg->deleted_at)
-                                        <span class="red">
-                                            @if($reg->subtotal > 0)
-                                                REFUNDED
-                                            @else
-                                                CANCELED
-                                            @endif
-                                        </span>
-                                    @endif
-
-                                    <span style="float: right;">Registration ID#:
-                                        @if($reg->deleted_at)
-                                            {{ $reg->regID }}
+                <div class="col-md-10 col-sm-10">
+                    <table class="table jambo_table table-bordered table-condensed table-striped">
+                        <tr>
+                            <thead>
+                            <th colspan="4" style="text-align: left;">{{ strtoupper($reg->membership) }}
+                                {{ strtoupper(__('messages.fields.ticket')) }}:
+                                #{{ $tcount }}
+                                @if($reg->deleted_at)
+                                    &nbsp; &nbsp; &nbsp; &nbsp;
+                                    <span class="yellow">
+                                    @if($reg->subtotal > 0)
+                                            {{ strtoupper(__('messages.headers.refunded')) }}
                                         @else
-                                            <span style="color:red;">{{ $reg->regID }}</span>
+                                            {{ strtoupper(__('messages.headers.canceled')) }}
                                         @endif
-                                    </span>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th style="text-align: left; color:darkgreen;">Ticket</th>
-                                <th style="text-align: left; color:darkgreen;">Original Cost</th>
-                                <th style="text-align: left; color:darkgreen;">Discounts</th>
-                                <th style="text-align: left; color:darkgreen;">Subtotal</th>
-                            </tr>
-                            <tr>
-                                <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
+                                </span>
+                                @endif
 
-                                <td style="text-align: left;"><i class="fa fa-dollar"></i>
-                                    @if($reg->membership == 'Member')
-                                        {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
+                                <span style="float: right;">@lang('messages.fields.reg_id')#:
+                                    @if($reg->deleted_at)
+                                        {{ $reg->regID }}
                                     @else
-                                        {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
+                                        <span style="color:yellow;">{{ $reg->regID }}</span>
                                     @endif
-                                </td>
-<?php
-                                    $compareDate = $today;
-?>
-                                @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
-                                    @if($rf->discountCode)
-                                        <td style="text-align: left;">Early Bird, {{ $rf->discountCode }}</td>
-                                    @else
-                                        <td style="text-align: left;">Early Bird</td>
-                                    @endif
+                            </span>
+                            </th>
+                            </thead>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left; color:darkgreen;">@lang('messages.fields.ticket')</th>
+                            <th style="text-align: left; color:darkgreen;">@lang('messages.fields.oCost')</th>
+                            <th style="text-align: left; color:darkgreen;">{{ trans_choice('messages.fields.disc', 2) }}</th>
+                            <th style="text-align: left; color:darkgreen;">@lang('messages.fields.subtotal')</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">{{ $ticket->ticketLabel }}</td>
+
+                            <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
+                                @if($reg->membership == 'Member')
+                                    {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                 @else
-                                    @if($rf->discountCode)
-                                        <td style="text-align: left;">{{ $rf->discountCode }}</td>
+                                    {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
+                                @endif
+                            </td>
+
+                            @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
+                                @if($reg->discountCode)
+                                    <td style="text-align: left;">@lang('messages.headers.earlybird'), {{ $reg->discountCode }}</td>
+                                @else
+                                    <td style="text-align: left;">@lang('messages.headers.earlybird')</td>
+                                @endif
+                            @else
+                                @if($reg->discountCode)
+                                    <td style="text-align: left;">{{ $reg->discountCode }}</td>
+                                @else
+                                    <td style="text-align: left;"> --</td>
+                                @endif
+                            @endif
+                            <td style="text-align: left;"><i class="far fa-dollar-sign"></i>
+                                {{ number_format($reg->subtotal, 2, ".", ",") }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.att_info')</th>
+                            <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.event_info')</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: left;">
+                                @if($person->prefix)
+                                    {{ $person->prefix }}
+                                @endif
+                                {{ $person->firstName }}
+                                @if($person->prefName)
+                                    ({{ $person->prefName }})
+                                @endif
+                                @if($person->midName)
+                                    {{ $person->midName }}
+                                @endif
+                                {{ $person->lastName }}
+                                @if($person->suffix)
+                                    {{ $person->suffix }}
+                                @endif
+                                <nobr>[ {{ $person->login }} ]</nobr>
+                                <br />
+                                @if($person->compName)
+                                    @if($person->title)
+                                        {{ $person->title }}
                                     @else
-                                        <td style="text-align: left;"> --</td>
+                                        @lang('messages.headers.employed')
+                                    @endif
+                                    @lang('messages.headers.at') {{ $person->compName }}
+                                @else
+                                    @if($person->title !== null)
+                                        {{ $person->title }}
+                                    @elseif($person->indName !== null)
+                                        @lang('messages.headers.employed')
                                     @endif
                                 @endif
-                                <td style="text-align: left;"><i class="fa fa-dollar"></i>
-                                    {{ number_format($reg->subtotal, 2, ".", ",") }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th colspan="2" style="width: 50%; text-align: left;">Attendee Info</th>
-                                <th colspan="2" style="width: 50%; text-align: left;">Event-Specific Info</th>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="text-align: left;">
-                                    @if($person->prefix)
-                                        {{ $person->prefix }}
+                                @if($person->indName !== null)
+                                    @lang('messages.headers.inthe') {{ $person->indName }} @lang('messages.headers.ind') <br />
+                                @endif
+
+                                @if($person->affiliation)
+                                    <br />@lang('messages.headers.aff_with'): {{ $person->affiliation }}
+                                @endif
+                            </td>
+                            <td colspan="2" style="text-align: left;">
+
+                                <b>@lang('messages.headers.roster_add'):</b> {{ $reg->canNetwork
+                                                                            ? trans('messages.yesno_check.yes')
+                                                                            : trans('messages.yesno_check.no') }}<br />
+
+                                <b>@lang('messages.headers.certs'):</b>: {{ $person->certifications }} <br />
+
+                                <b>@lang('messages.fields.pdu_sub'):</b> {{ $reg->isAuthPDU
+                                                                            ? trans('messages.yesno_check.yes')
+                                                                            : trans('messages.yesno_check.no') }}<br />
+                                @if($reg->allergenInfo)
+                                    <b>@lang('messages.fields.diet_info'):</b> {{ $reg->allergenInfo }}<br />
+                                    @if($reg->eventNotes)
+                                        {{ $reg->eventNotes }}<br />
                                     @endif
-                                    {{ $person->firstName }}
-                                    @if($person->prefName)
-                                        ({{ $person->prefName }})
-                                    @endif
-                                    @if($person->midName)
-                                        {{ $person->midName }}
-                                    @endif
-                                    {{ $person->lastName }}
-                                    @if($person->suffix)
-                                        {{ $person->suffix }}
-                                    @endif
-                                    <nobr>[ {{ $person->login }} ]</nobr>
-                                    <br/>
-                                    @if($event->eventTypeID==5)
-                                            @if($person->chapterRole)
-                                                {{ $person->chapterRole }}
-                                            @endif
-                                            @if($person->affiliation)
-                                                with: PMI {{ $person->affiliation }}
-                                            @endif
-                                    @else
-                                            @if($person->compName)
-                                                @if($person->title)
-                                                    {{ $person->title }}
-                                                @else
-                                                    Employed
-                                                @endif
-                                                at {{ $person->compName }}
-                                            @else
-                                                @if($person->title !== null)
-                                                    {{ $person->title }}
-                                                @elseif($person->indName !== null)
-                                                    Employed
-                                                @endif
-                                            @endif
-                                            @if($person->indName !== null)
-                                                in the {{ $person->indName }} industry <br/>
-                                            @endif
-
-                                            @if($person->affiliation)
-                                                <br/>Affiliated with: {{ $person->affiliation }}
-                                            @endif
-                                    @endif
-                                </td>
-                                <td colspan="2" style="text-align: left;">
-                                    @if($reg->isFirstEvent)
-                                        <b>First Event?</b> {{ $reg->isFirstEvent ? 'Yes' : 'No' }}<br/>
-                                    @endif
-
-                                    <b>Add to Roster:</b> {{ $reg->canNetwork ? 'Yes' : 'No' }}<br/>
-                                    <b>PDU Submission:</b> {{ $reg->isAuthPDU ? 'Yes' : 'No' }}<br/>
-                                    @if($reg->eventQuestion)
-                                        <p><b>Speaker Questions:</b> {{ $reg->eventQuestion }}</p>
-                                    @endif
-
-                                    @if($reg->eventTopics)
-                                        <p><b>Future Topics:</b><br/> {{ $reg->eventTopics }}</p>
-                                    @endif
-
-                                    @if($reg->cityState)
-                                        <b>Commuting From:</b> {{ $reg->cityState }}<br/>
-                                    @endif
-
-                                    @if($reg->specialNeeds)
-                                        <b>Special Needs:</b> {{ $reg->specialNeeds }} <br/>
-                                    @endif
-
-                                    @if($reg->allergenInfo)
-                                        <b>Dietary Info:</b> {{ $reg->allergenInfo }}<br/>
-                                        @if($reg->eventNotes)
-                                            {{ $reg->eventNotes }}<br/>
-                                        @endif
-                                    @elseif($reg->eventNotes)
-                                        <b>Other Comments/Notes:</b> {{ $reg->eventNotes }}<br/>
-                                    @endif
-
-                                </td>
-                            </tr>
-                        </table>
-
-                        @if($event->hasTracks > 0 && $needSessionPick == 1 && !$ticket->waitlisting())
-                            <table class="table table-bordered jambo_table table-striped">
-                                <thead>
-                                <tr>
-                                    <th colspan="2" style="text-align: left;">
-                                        Track Selection
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <th style="text-align:left;">Session Times</th>
-                                    <th style="text-align:left;"> Selected Session</th>
-                                </tr>
-                                @for($j=1;$j<=$event->confDays;$j++)
-<?php
-                                    $rs = RegSession::where([
-                                        ['confDay', '=', $j],
-                                        ['regID', '=', $reg->regID],
-                                        ['personID', '=', $reg->personID],
-                                        ['eventID', '=', $event->eventID]
-                                    ])->orderBy('id')->get();
-?>
-
-                                    @foreach($rs as $z)
-                                        @if($rs->first() == $z)
-<?php
-                                            $s = EventSession::find($z->sessionID);
-                                            $y = Ticket::find($s->ticketID);
-?>
-                                            <tr>
-                                                <th style="text-align:center; color: yellow; background-color: #2a3f54;"
-                                                    colspan="2">Day {{ $j }}:
-                                                    {{ $y->ticketLabel  }}
-                                                </th>
-                                            </tr>
-                                        @endif
-<?php
-                                        $s = EventSession::with('track')->where('sessionID', $z->sessionID)->first();
-?>
-                                        <tr>
-                                            <td rowspan="1" style="text-align:left; width:33%;">
-                                                <nobr> {{ $s->start->format('g:i A') }} </nobr>
-                                                -
-                                                <nobr> {{ $s->end->format('g:i A') }} </nobr>
-                                            </td>
-                                            <td colspan="1" style="text-align:left; min-width:150px; width: 67%;">
-                                                <b>{{ $s->track->trackName }}</b><br />
-                                                {{ $s->sessionName }} <br/>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endfor
-                            </table>
-
-                        @endif
-                    </div>
-
-                </div>
-
-            @endforeach
-
-            <div class="myrow col-md-12 col-sm-12">
-                <div class="col-md-2 col-sm-2" style="text-align:center;">
-                    <h1 class="fa fa-5x fa-dollar"></h1>
-                </div>
-                <div class="col-md-7 col-sm-7">
-                    @if($deletion)
-                        <p class="red"><b>Note:</b> Total does NOT reflect updates due to refunds. </p>
-                    @endif
-                </div>
-                <div class="col-md-3 col-sm-3">
-                    <table class="table table-striped table-condensed jambo_table">
-                        <thead>
-                        <tr>
-                            <th style="text-align: center;">Total</th>
-                        </tr>
-                        </thead>
-                        <tr>
-                            <td style="text-align: center;">
-                                <b><i class="fa fa-dollar"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                                @endif
                             </td>
                         </tr>
                     </table>
+
+                    @if($reg->ticket->has_sessions())
+                        @include('v1.parts.session_print', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg])
+                    @endif
                 </div>
+
             </div>
 
-            <hr>
+        @endforeach
+
+        <div class="myrow col-md-12 col-sm-12">
+            <div class="col-md-2 col-sm-2" style="text-align:center;">
+                <h1 class="far fa-5x fa-dollar-sign"></h1>
+            </div>
+            <div class="col-md-7 col-sm-7">
+                @if($deletion)
+                    <p class="red"><b>@lang('messages.headers.note'):</b> @lang('messages.instructions.total_caveat') </p>
+                @endif
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <table class="table table-striped table-condensed jambo_table">
+                    <thead>
+                    <tr>
+                        <th style="text-align: center;">@lang('messages.fields.total')</th>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td style="text-align: center;">
+                            <b><i class="far fa-dollar-sign"></i> {{ number_format($rf->cost, 2, '.', ',') }}</b>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr>
+        @if($event->postRegInfo)
             <div class="col-sm-offset-2 col-sm-10">
-                <h4>Add this event to your calendar app of choice.</h4>
+                @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
+                         'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+                {!! $event->postRegInfo ?? '' !!}
+                @include('v1.parts.end_content')
+            </div>
+        @endif
+        <hr>
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <h4>@lang('messages.headers.add_to_cal')</h4>
             @if(0)
                 <table class="table borderless">
                     <tr>
                         <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
-                                <h2 style="color: gold;" class="fa fa-4x fa-calendar"></h2></a></td>
+                                <h2 style="color: gold;" class="fal fa-4x fa-calendar-alt"></h2></a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $google_url }}">
-                                <span class="fa fa-stack fa-lg fa-2x">
-                                <h1 style="color: red;" class="fa fa-4x fa-square fa-stack-2x"></h1>
-                                <h1 style="color: white;" class="fa fa-1x fa-google fa-stack-1x"></h1>
-                                </span>
+    <span class="far fa-stack fa-lg fa-2x">
+    <h1 style="color: red;" class="far fa-4x fa-square fa-stack-2x"></h1>
+    <h1 style="color: white;" class="far fa-1x fa-google fa-stack-1x"></h1>
+    </span>
                             </a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $yahoo_url }}">
-                                <span class="fa fa-stack fa-lg fa-2x">
-                                <h1 style="color: rebeccapurple;" class="fa fa-3x fa-square fa-stack-2x"></h1>
-                                <h1 style="color: white;" class="fa fa-1x fa-yahoo fa-stack-1x"></h1>
-                                </span>
+    <span class="far fa-stack fa-lg fa-2x">
+    <h1 style="color: rebeccapurple;" class="far fa-3x fa-square fa-stack-2x"></h1>
+    <h1 style="color: white;" class="far fa-1x fa-yahoo fa-stack-1x"></h1>
+    </span>
                             </a></td>
                         <td style="text-align: center;"><a target="_new" href="{{ $ics }}">
-                                <span class="fa fa-stack fa-lg fa-2x">
-                                <h2 style="color: red;" class="fa fa-3x fa-calendar-o fa-stack-2x"></h2>
-                                <h2 class="fa-stack-1x" style="text-align: center; color: black; margin-top:1em;">ICS</h2>
-                                </span>
+    <span class="far fa-stack fa-lg fa-2x">
+    <h2 style="color: red;" class="fal fa-3x fa-calendar-alt fa-stack-2x"></h2>
+    <h2 class="fa-stack-1x" style="text-align: center; color: black; margin-top:1em;">ICS</h2>
+    </span>
                             </a></td>
                     </tr>
                 </table>
@@ -447,19 +356,13 @@ $deletion = 0;
                                 <img height="50" width="50" src="{{ env('APP_URL') }}/images/ical.jpg">
                             </a>
                         </td>
-
                     </tr>
                 </table>
             @endif
-            </div>
-            <div class="col-sm-offset-2 col-sm-10">
-                {!! $event->postRegInfo ?? '' !!}
-            </div>
-
         </div>
     </div>
 
-    {{-- add links to ical, etc. --}}
     @include('v1.parts.end_content')
 @endsection
+
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-//use App\Notifications\EventReceipt;
 use App\EventSession;
 use App\Mail\GroupEventReceipt;
 use App\Mail\EventReceipt;
@@ -412,17 +411,7 @@ class RegFinanceController extends Controller
             // No session selection data to record;
         }
 
-        $x = compact(
-            'needSessionPick',
-            'event',
-            'quantity',
-            'loc',
-            'rf',
-            'person',
-            'prefixes',
-            'industries',
-            'org'
-        );
+        $x = compact('needSessionPick','event','quantity','loc','rf','person','prefixes','industries','org');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         try {
@@ -829,5 +818,52 @@ class RegFinanceController extends Controller
     public function destroy($id)
     {
         // responds to DELETE /blah/id
+    }
+
+    public function generate_receipt(RegFinance $rf)
+    {
+        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $quantity = $rf->seats;
+        $event = Event::find($rf->eventID);
+        $loc = Location::find($event->locationID);
+        $person = Person::find($rf->personID);
+        $org = Org::find($event->orgID);
+
+        $x = compact('event','quantity','loc','rf','person','org');
+        try {
+            $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+        } catch (\Exception $exception) {
+            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
+        }
+
+        Flysystem::connection('s3_receipts')->put(
+            $receipt_filename,
+            $pdf->output(),
+            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+        );
+
+        $client = new S3Client([
+            'credentials' => [
+                'key' => env('AWS_KEY'),
+                'secret' => env('AWS_SECRET')
+            ],
+            'region' => env('AWS_REGION'),
+            'version' => 'latest',
+        ]);
+
+        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+        $s3fs = new Filesystem($adapter);
+        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+
+        try {
+            $person->notify(new ReceiptNotification($rf, $event_pdf));
+            // Turned into a notification for reliability.
+            // Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+        } catch (\Exception $exception) {
+            request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
+        }
+
+        request()->session()->flash('alert-success', trans('messages.messages.receipt_recreated'));
+        return redirect()->back();
     }
 }

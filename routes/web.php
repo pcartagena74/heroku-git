@@ -178,6 +178,7 @@ Route::patch('/complete_registration/{id}', 'RegFinanceController@update')->name
 Route::patch('/update_payment/{reg}/{rf}', 'RegFinanceController@update_payment')->name('accept_payment');
 Route::post('/reg_verify/{reg}', 'RegistrationController@update');                                         // Ajax
 Route::get('/show_receipt/{rf}', 'RegFinanceController@show_receipt');
+Route::get('/recreate_receipt/{rf}', 'RegFinanceController@generate_receipt');
 Route::get('/show_orig/{rf}', 'RegFinanceController@show_receipt_orig');
 Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy')->name('cancel_registration');
 

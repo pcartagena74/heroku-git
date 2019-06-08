@@ -1,7 +1,7 @@
 <?php
 /**
  * Comment: Event Receipt
- * Created: 10/25/2018
+ * Created: 3/26/17 and updated on 10/25/2019
  *
  * Literal COPY of group_receipt.blade.php
  */
@@ -14,8 +14,6 @@ use League\Flysystem\Filesystem;
 use App\Registration;
 use App\Person;
 use App\Ticket;
-
-$today = Carbon\Carbon::now();
 
 $tcount = 0;
 $today = Carbon\Carbon::now();
@@ -46,6 +44,8 @@ foreach($array as $chap) {
 
 // must use $etype->etName to get the text embedded here
 $etype = DB::table('org-event_types')->where('etID', $event->eventTypeID)->select('etName')->first();
+// etName is now the value of $etype post et_translate function
+$etype = et_translate($etype->etName);
 
 // Find out how to embed the correct TZ in front of this since not using UTC
 $est = $event->eventStartDate->format('Ymd\THis'); // $event->eventTimeZone;
@@ -55,9 +55,9 @@ $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)
 
 $event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
 $yahoo_url =
-    "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype->etName&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
+    "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
 $google_url =
-    "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype->etName&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
+    "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
 $event_filename = 'event_' . $event->eventID . '.ics';
 
 $client = new S3Client([

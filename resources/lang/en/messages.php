@@ -659,6 +659,7 @@ return [
         'partial_fail' => "The attempt to get a partial refund failed with order: :rfid.",
         'pass_change' => "The password was changed successfully.",
         'pass_change_for' => "The password for :name was changed successfully.",
+        'receipt_recreated' => 'Your receipt was successfully recreated.',
         'saved' => 'saved',
         'sess_saved' => "Your session choices for :reg were :verb.",
         'survey_confirm' => "Are you sure you want to email all checked in attendees the survey?",
