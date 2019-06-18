@@ -13,8 +13,28 @@ if(isset($id)) {
 } else {
     $id = null;
 }
+
+if(!isset($w2)){
+    $w2 = $w1;
+}
+
+if(!isset($class)){
+    $class = "";
+}
+
+if($w1>0){
+    $md = 'col-md-'.$w1;
+} else {
+    $md = '';
+}
+
+if($w2>0){
+    $xs = 'col-xs-'.$w2;
+} else {
+    $xs = '';
+}
 ?>
-<div class="col-md-{{ $w1 }} col-xs-{{ $w1 }}
+<div class="{{ $md }} {{ $xs }} {{ $class }}
         @if(isset($o))
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
         @endif

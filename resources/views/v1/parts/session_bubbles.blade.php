@@ -25,6 +25,7 @@ use App\Ticket;
 use App\Track;
 use App\EventSession;
 use App\RegSession;
+use App\Org;
 
 if (!isset($suppress)) {
     $suppress = 0;
@@ -55,6 +56,10 @@ if ($event->hasTracks > 0) {
     }
 } else {
     $tracks = null;
+}
+
+if(!isset($org)){
+    $org = Org::find($event->orgID);
 }
 
 // Bundle Tickets won't have sessions associated with them, but any individual ticket(s) that make it up can
@@ -191,7 +196,7 @@ $valid_ticketIDs = $ticket->ticketIDs();
                                                 @if(env('APP_ENV') == 'local')
                                                     <small class="pull-right">({{ $s->sessionID }})</small><br/>
                                                 @endif
-                                                <span class="red">@lang('messages.instructions.max_reached')</span>
+                                                <span class="red">{!!  $org->fullTXT ?? trans('messages.instructions.max_reached') !!}</span>
                                                 <br/>
                                             @else
                                                 <b>{{ $s->sessionName }}</b>

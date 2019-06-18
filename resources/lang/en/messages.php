@@ -548,7 +548,7 @@ return [
                         <b>Please keep the following in mind:</b>
                         <ul>
                         <li>Attendees will need to have records in this system.  You can find them by typing
-                        <b class=\"red\">any part</b> of the name, email or PMI ID of the desired attendee in the search box.</li>
+                        <b class='red'>any part</b> of the name, email or PMI ID of the desired attendee in the search box.</li>
                         <li>If a record doesn't already exist, enter the information in the fields and it will be created.</li>
                         <li>If this event has sessions, you will <b>NOT</b> be able to select them for the attendees.</li>
                         <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
@@ -559,7 +559,7 @@ return [
         'link_sess_2' => "Click this checkbox to indicate that this session time is overlapped by the session 'above' this one.",
         'login' => "You have an account that we've created for you. Please click the login button. 
                      mCentric has emailed you instructions to reset your password if necessary.",
-        'max_reached' => "Maximum attendees reached.",
+        'max_reached' => "Maximum attendees reached. You can request a session change at the conference if there is space.",
         'mbr_price' => "Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.",
         'mbr_search' => "<ol><li>Type a few characters of a first or last name, email address or PMI ID.</li><li>Hit enter, or click the button, to display all results.</li></ol>",
         'merge_dupe' => "{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.",

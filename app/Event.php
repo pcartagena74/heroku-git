@@ -32,6 +32,7 @@ class Event extends Model
     {
         return $this->hasOne(Location::class, 'locID', 'locationID');
     }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
@@ -103,7 +104,7 @@ class Event extends Model
         //dd($this->eventStartDate->diffInDays($today));
         if (($this->eventStartDate->diffInDays($today) <= 2
                 && $this->eventStartDate->diffInDays($today) >= 0)
-                || $today->gte($this->eventEndDate)) {
+            || $today->gte($this->eventEndDate)) {
             return 1;
         } else {
             return 0;
@@ -117,10 +118,11 @@ class Event extends Model
 
     public function default_session()
     {
-        return EventSession::where([
-            ['eventID', '=', $this->eventID],
-            ['sessionName', '=', 'def_sess']
-        ])->first();
+        return EventSession::where('eventID', '=', $this->eventID)
+            ->where(function ($q) {
+                $q->orWhere('sessionName', '=', 'def_sess');
+                $q->orWhere('trackID', '=', 0);
+            })->first();
     }
 
     public function registered_speakers()
