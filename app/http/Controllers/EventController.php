@@ -390,7 +390,8 @@ class EventController extends Controller
         $tracks = Track::where('eventID', $event->eventID)->get();
 
         return view(
-            'v1.public_pages.display_event_w_sessions2',
+            // 'v1.public_pages.display_event_w_sessions2',
+            'v1.public_pages.event_show',
             compact(
                 'event',
                 'current_person',
@@ -815,7 +816,7 @@ class EventController extends Controller
         if ($skip === null) {
             return redirect(env('APP_URL').'/event-tickets/' . $event->eventID);
         } else {
-            return redirect(env('APP_URL')."/events");
+            return redirect(env('APP_URL')."/manage_events");
         }
     }
 

@@ -102,7 +102,8 @@ class RegistrationController extends Controller
         $certs = DB::table('certifications')->select('certification')->get();
 
         return view(
-            'v1.public_pages.varTKT_register',
+            //'v1.public_pages.varTKT_register',
+            'v1.public_pages.regform_show',
             compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters', 'certs')
         );
     }
