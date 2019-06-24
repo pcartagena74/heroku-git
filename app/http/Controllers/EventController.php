@@ -825,7 +825,7 @@ class EventController extends Controller
         // responds to DELETE /events/id
 
         $event->delete();
-        return redirect('/events');
+        return redirect('/manage_events');
     }
 
     public function activate(Event $event)

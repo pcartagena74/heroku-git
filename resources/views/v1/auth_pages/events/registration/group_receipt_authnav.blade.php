@@ -218,6 +218,10 @@ $deletion = 0;
                                 {{ $person->suffix }}
                             @endif
                             <nobr>[ {{ $person->login }} ]</nobr>
+                                @if($person->orgperson->OrgStat1)
+                                    <br />
+                                    {{ $org->OSN1 }}: {{ $person->orgperson->OrgStat1 }}
+                                @endif
                             <br />
                             @if($person->compName)
                                 @if($person->title)
