@@ -126,9 +126,10 @@ $mbr_price = trans('messages.instructions.mbr_price');
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified hidden-xs" role="tablist">
                     <li class="active hidden-xs"><a href="#tab_content1" id="ticketing-tab" data-toggle="tab"
-                                          aria-expanded="true"><b>@lang('messages.tabs.ticketing')</b></a></li>
+                                                    aria-expanded="true"><b>@lang('messages.tabs.ticketing')</b></a>
+                    </li>
                     <li class="hidden-xs"><a href="#tab_content2" id="sessions-tab" data-toggle="tab"
-                                    aria-expanded="false"><b>@lang('messages.tabs.sessions')</b></a></li>
+                                             aria-expanded="false"><b>@lang('messages.tabs.sessions')</b></a></li>
                 </ul>
                 <div id="tab-content" class="tab-content">
                     <div class="tab-pane active" id="tab_content1" aria-labelledby="ticketing-tab">
@@ -154,7 +155,8 @@ $mbr_price = trans('messages.instructions.mbr_price');
 
                                             @foreach($bundles as $bundle)
                                                 <tr>
-                                                    <td data-title="{{ trans('messages.fields.quantity') }}" style="text-align: left;">
+                                                    <td data-title="{{ trans('messages.fields.quantity') }}"
+                                                        style="text-align: left;">
                                                         <div class="form-group">
                                                             <input type="number" pattern="[0-5]"
                                                                    name="q-{{ $bundle->ticketID }}"
@@ -227,7 +229,8 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                             @endforeach
                                             @foreach($tickets as $ticket)
                                                 <tr>
-                                                    <td data-title="{{ trans('messages.fields.quantity') }}" style="text-align: left; width:15px;">
+                                                    <td data-title="{{ trans('messages.fields.quantity') }}"
+                                                        style="text-align: left; width:15px;">
 
                                                         <div class="form-group">
                                                             <input type="number" pattern="[0-5]"
@@ -277,22 +280,30 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                     <div class="col-md-12 col-sm-12 col-xs-12" id="status_msg"></div>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-md-9 col-sm-9 col-xs-9 form-group" style="text-align: right">
-                                            <input class="form-control input-sm" id="discount_code" name="discount_code" type="text" placeholder="  {{ trans('messages.codes.empty') }}"/>
+                                            <input class="form-control input-sm" id="discount_code" name="discount_code"
+                                                   type="text" placeholder="  {{ trans('messages.codes.empty') }}"/>
                                         </div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
-                                            <a class="btn btn-sm btn-primary" id="btn-validate">@lang('messages.fields.validate')</a>
+                                            <a class="btn btn-sm btn-primary"
+                                               id="btn-validate">@lang('messages.fields.validate')</a>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
+                                    <div class="col-md-6 col-sm-6 col-xs-12"
+                                         style="text-align: left; vertical-align: top;">
                                         <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png"><img
                                                 alt="MasterCard Logo" src="{{ env('APP_URL') }}/images/mastercard.png">
-                                        <button type="submit" class="btn btn-success btn-sm" id="purchase" style="height: 32px;">
+                                        <button type="submit" class="btn btn-success btn-sm" id="purchase"
+                                                style="height: 32px;">
                                             <b>@lang('messages.buttons.buy')</b>
                                         </button>
                                     </div>
 
                                     <br/>
-                                    <SUP style='color: red'>**</SUP> @lang('messages.tooltips.bundles')
+                                    @if(count($bundles)>0)
+                                        <div class="col-xs-12">
+                                            <SUP style='color: red'>**</SUP> @lang('messages.tooltips.bundles')
+                                        </div>
+                                    @endif
 
                                 @else
                                     <b class="red">{{ trans('messages.headers.no_tickets') }}</b>
@@ -324,20 +335,22 @@ $mbr_price = trans('messages.instructions.mbr_price');
 
                                                 @for($i=1;$i<=$event->confDays;$i++)
                                                     <tr>
-<?php
+                                                        <?php
                                                         $z = EventSession::where([
                                                             ['confDay', '=', $i],
                                                             ['eventID', '=', $event->eventID]
                                                         ])->first();
                                                         $y = Ticket::find($z->ticketID);
-?>
-                                                        <th style="text-align:center; color: yellow; background-color: #2a3f54;" colspan="{{ $columns }}">{{ trans('messages.headers.day') }} {{ $i }}:
+                                                        ?>
+                                                        <th style="text-align:center; color: yellow; background-color: #2a3f54;"
+                                                            colspan="{{ $columns }}">{{ trans('messages.headers.day') }} {{ $i }}
+                                                            :
                                                             {{ $y->ticketLabel  }}
                                                         </th>
                                                     </tr>
 
                                                     @for($x=1;$x<=5;$x++)
-<?php
+                                                        <?php
                                                         // Check to see if there are any events for $x (this row)
                                                         $check = EventSession::where([
                                                             ['eventID', $event->eventID],
@@ -346,11 +359,11 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                         ])->first();
 
                                                         // As long as there are any sessions, the row will be displayed
-?>
+                                                        ?>
                                                         @if($check !== null)
                                                             <tr>
                                                                 @foreach($tracks as $track)
-<?php
+                                                                    <?php
                                                                     $s = EventSession::where([
                                                                         ['trackID', $track->trackID],
                                                                         ['eventID', $event->eventID],
@@ -368,25 +381,31 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                     } else {
                                                                         $count = 0;
                                                                     }
-?>
+                                                                    ?>
                                                                     @if($s !== null)
                                                                         @if($tracks->first() == $track || !$event->isSymmetric)
                                                                             <td data-title="{{ trans('messages.fields.times') }}"
-                                                                                rowspan="{{ $count>0 ? $count*3 : 3 }}" style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
+                                                                                rowspan="{{ $count>0 ? $count*3 : 3 }}"
+                                                                                style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
                                                                                 <nobr> {{ $s->start->format('g:i A') }} </nobr>
                                                                                 &dash;
                                                                                 <nobr> {{ $s->end->format('g:i A') }} </nobr>
                                                                             </td>
                                                                         @endif
                                                                         <td data-title="{{ trans('messages.fields.session') }}"
-                                                                            colspan="2" style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;{{ $x%2?:'background-color:lightgray;' }}">
+                                                                            colspan="2"
+                                                                            style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;{{ $x%2?:'background-color:lightgray;' }}">
                                                                             <b>{{ $s->sessionName }}</b>
                                                                             @if($s->sessionAbstract !== null)
                                                                                 <a tabindex="0"
-                                                                                   class="btn btn-xs btn-primary pull-right" data-html="true"
-                                                                                   data-toggle="popover" data-trigger="focus" data-placement="left"
-                                                                                   title="{!! $s->sessionName !!}" data-content="{!! $s->sessionAbstract !!}">
-                                                                                   @lang('messages.fields.abstract')</a>
+                                                                                   class="btn btn-xs btn-primary pull-right"
+                                                                                   data-html="true"
+                                                                                   data-toggle="popover"
+                                                                                   data-trigger="focus"
+                                                                                   data-placement="left"
+                                                                                   title="{!! $s->sessionName !!}"
+                                                                                   data-content="{!! $s->sessionAbstract !!}">
+                                                                                    @lang('messages.fields.abstract')</a>
                                                                                 <br/>
                                                                             @endif
                                                                         </td>
@@ -397,7 +416,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                             </tr>
                                                         @endif
 
-<?php
+                                                        <?php
                                                         // Check to see if there are any events for $x (this row)
                                                         $check = EventSession::where([
                                                             ['eventID', $event->eventID],
@@ -406,11 +425,11 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                         ])->first();
 
                                                         // As long as there are any sessions, the row will be displayed
-?>
+                                                        ?>
                                                         @if($check !== null)
                                                             <tr>
                                                                 @foreach($tracks as $track)
-<?php
+                                                                    <?php
                                                                     $s = EventSession::where([
                                                                         ['trackID', $track->trackID],
                                                                         ['eventID', $event->eventID],
@@ -428,10 +447,11 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                     } else {
                                                                         $count = 0;
                                                                     }
-?>
+                                                                    ?>
                                                                     @if($s !== null)
                                                                         <td data-title="{{ trans('messages.fields.speakers') }}"
-                                                                            colspan="2" style="text-align:left;{{ $x%2?'':'background-color:lightgray;' }}">
+                                                                            colspan="2"
+                                                                            style="text-align:left;{{ $x%2?'':'background-color:lightgray;' }}">
                                                                             <b>{{ trans('messages.fields.speakers') }}</b><br/>
                                                                             {{ $s->show_speakers() }}
                                                                         </td>
@@ -440,7 +460,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                             </tr>
                                                         @endif
 
-<?php
+                                                        <?php
                                                         // Check to see if there are any events for $x (this row)
                                                         $check = EventSession::where([
                                                             ['eventID', $event->eventID],
@@ -449,11 +469,11 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                         ])->first();
 
                                                         // As long as there are any sessions, the row will be displayed
-?>
+                                                        ?>
                                                         @if($check !== null)
                                                             <tr>
                                                                 @foreach($tracks as $track)
-<?php
+                                                                    <?php
                                                                     $s = EventSession::where([
                                                                         ['trackID', $track->trackID],
                                                                         ['eventID', $event->eventID],
@@ -471,9 +491,10 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                     } else {
                                                                         $count = 0;
                                                                     }
-?>
+                                                                    ?>
                                                                     @if($s !== null && $s->leadAmt+$s->stratAmt+$s->techAmt > 0 && $s->maxAttendees > 0)
-                                                                        <td data-title="{{ trans('messages.fields.credit') }}" rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
+                                                                        <td data-title="{{ trans('messages.fields.credit') }}"
+                                                                            rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
                                                                             style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
                                                                             @if($s->leadAmt > 0)
                                                                                 <b>{{ $s->leadAmt }}
@@ -494,9 +515,11 @@ $mbr_price = trans('messages.instructions.mbr_price');
                                                                                 </b><br/>
                                                                             @endif
                                                                         </td>
-                                                                        <td data-title="{{ trans('messages.fields.limit') }}"  rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
+                                                                        <td data-title="{{ trans('messages.fields.limit') }}"
+                                                                            rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
                                                                             style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
-                                                                            <b> @lang('messages.headers.att_limit'): </b>
+                                                                            <b> @lang('messages.headers.att_limit')
+                                                                                : </b>
                                                                             {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
                                                                         </td>
                                                                     @else
@@ -635,6 +658,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
                         alert("{{ trans('messages.instructions.quantity') }}");
                     }
                 }
+
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
