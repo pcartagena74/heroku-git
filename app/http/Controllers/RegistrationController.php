@@ -102,7 +102,6 @@ class RegistrationController extends Controller
         $certs = DB::table('certifications')->select('certification')->get();
 
         return view(
-            //'v1.public_pages.varTKT_register',
             'v1.public_pages.regform_show',
             compact('event', 'discount_code', 'tkts', 'tq', 'member', 'nonmbr', 'quantity', 'discountChapters', 'certs')
         );
@@ -189,7 +188,7 @@ class RegistrationController extends Controller
             ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
-            ->orderBy('cnt','desc')->get();
+            ->orderBy('cnt', 'desc')->get();
 
         $discountCounts = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
@@ -224,18 +223,10 @@ class RegistrationController extends Controller
         } else {
             $tracks = null;
         }
-        return view('v1.auth_pages.events.event-rpt', compact(
-            'event',
-            'regs',
-            'notregs',
-            'tkts',
-            'refunds',
-            'nametags',
-            'deadbeats',
-            'discPie',
-            'tracks',
-            'discountCounts'
-        ));
+        return view(
+            'v1.auth_pages.events.event-rpt',
+            compact('event', 'regs', 'notregs', 'tkts', 'refunds', 'nametags', 'deadbeats', 'discPie', 'tracks', 'discountCounts')
+        );
     }
 
     public function create()
@@ -415,9 +406,9 @@ class RegistrationController extends Controller
             } else {
                 // $person was set from PMI ID; quick check to see if email should be a secondary
 
-               if($person->login != $login) {
-                   $set_secondary_email = 1;
-               }
+                if ($person->login != $login) {
+                    $set_secondary_email = 1;
+                }
             }
 
             try {
@@ -601,7 +592,7 @@ class RegistrationController extends Controller
             }
             $reg->save();
 
-            if(null !== $dupe_check){
+            if (null !== $dupe_check) {
                 $flag_dupe = 1;
                 array_push($dupe_names, ['reg' => $reg, 'name' => $person->showFullName()]);
             }
@@ -633,7 +624,7 @@ class RegistrationController extends Controller
             );
         }
 
-        if($flag_dupe){
+        if ($flag_dupe) {
             request()->session()->flash(
                 'alert-warning',
                 trans_choice('messages.warning.dupe_reg', count($dupe_names), ['names' => li_print_array($dupe_names, "ul")])
@@ -743,25 +734,26 @@ class RegistrationController extends Controller
         $verb = strtolower(trans('messages.headers.canceled'));
         $event = Event::find($reg->eventID);
         $org = Org::find($event->orgID);
-        $flag_dupe = 0; $dupe_names = [];
+        $flag_dupe = 0;
+        $dupe_names = [];
         $rf->load('registrations');
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         if ($reg->regStatus == 'progress') {
             // for a registration that is in process (or just never completed) check if we're catching dupes
-            if(count($rf->registrations) > 1){
+            if (count($rf->registrations) > 1) {
                 // Deleting this registration, will leave at least 1 on the order.  Need to recheck if there are dupes
-                foreach($rf->registrations as $reg_chk){
+                foreach ($rf->registrations as $reg_chk) {
                     $dupe_check = null;
-                    if($reg_chk->regID != $reg->regID){
+                    if ($reg_chk->regID != $reg->regID) {
                         $dupe_check = Registration::where([
                             ['personID', $reg_chk->personID],
                             ['eventID', $event->eventID],
                             ['regStatus', 'processed']
                         ])->with('person')->first();
 
-                        if(null !== $dupe_check){
+                        if (null !== $dupe_check) {
                             $flag_dupe = 1;
                             array_push($dupe_names, ['reg' => $reg_chk, 'name' => $reg_chk->person->showFullName()]);
                         }
@@ -855,16 +847,19 @@ class RegistrationController extends Controller
             $sessions = RegSession::where('regID', '=', $reg->regID)->get();
             foreach ($sessions as $s) {
                 $e = EventSession::find($s->sessionID);
-                if (null !== $e && $e->regCount > 0) {
-                    $e->regCount--;
+                // Need to check for null EventSession due to 'shadow' sessions
+                if (null !== $e) {
+                    if ($e->regCount > 0) {
+                        $e->regCount--;
+                        $e->save();
+                    }
                 }
-                $e->save();
                 $s->delete();
             }
         }
 
         request()->session()->flash('alert-success', trans('messages.reg_status.msg_status', ['id' => $reg->regID, 'verb' => $verb]));
-        if($flag_dupe){
+        if ($flag_dupe) {
             request()->session()->flash(
                 'alert-warning',
                 trans_choice('messages.warning.dupe_reg', count($dupe_names), ['names' => li_print_array($dupe_names, "ul")])
