@@ -855,7 +855,7 @@ class RegistrationController extends Controller
             $sessions = RegSession::where('regID', '=', $reg->regID)->get();
             foreach ($sessions as $s) {
                 $e = EventSession::find($s->sessionID);
-                if ($e->regCount > 0) {
+                if (null !== $e && $e->regCount > 0) {
                     $e->regCount--;
                 }
                 $e->save();

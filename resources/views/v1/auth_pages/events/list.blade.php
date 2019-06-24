@@ -220,7 +220,7 @@ if ($past) {
                 success: function (data) {
                     console.log(data);
                     var result = eval(data);
-                    window.location = "/events";
+                    window.location = "/manage_events";
                 },
                 error: function (data) {
                     console.log(data);

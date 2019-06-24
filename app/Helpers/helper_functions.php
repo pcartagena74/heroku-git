@@ -195,3 +195,13 @@ function li_print_array($array, $type){
     $output .= $end;
     return $output;
 }
+
+/**
+ * into_array: turns a comma-delimited string into an array
+ * @param $string
+ * @param $delimeter
+ * @return array
+ */
+function into_array($string, $delimeter) {
+    return(explode($delimeter, $string));
+}

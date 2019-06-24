@@ -276,19 +276,19 @@ $mbr_price = trans('messages.instructions.mbr_price');
 
                                     <div class="col-md-12 col-sm-12 col-xs-12" id="status_msg"></div>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <div class="col-md-9 col-sm-9 col-xs-6" style="text-align: right"><input
-                                                    id="discount_code" name="discount_code" type="text"
-                                                    placeholder="  {{ trans('messages.codes.empty') }}"/></div>
-                                        <div class="col-md-3 col-sm-3 col-xs-6"><a class="btn btn-xs btn-primary"
-                                                                                   id="btn-validate">@lang('messages.fields.validate')</a>
+                                        <div class="col-md-9 col-sm-9 col-xs-9 form-group" style="text-align: right">
+                                            <input class="form-control input-sm" id="discount_code" name="discount_code" type="text" placeholder="  {{ trans('messages.codes.empty') }}"/>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <a class="btn btn-sm btn-primary" id="btn-validate">@lang('messages.fields.validate')</a>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6 col-xs-12"
-                                         style="text-align: left; vertical-align: top;">
+                                    <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
                                         <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png"><img
                                                 alt="MasterCard Logo" src="{{ env('APP_URL') }}/images/mastercard.png">
-                                        <button type="submit" class="btn btn-success btn-sm" id="purchase"
-                                                style="height: 32px;"><b>@lang('messages.buttons.buy')</b></button>
+                                        <button type="submit" class="btn btn-success btn-sm" id="purchase" style="height: 32px;">
+                                            <b>@lang('messages.buttons.buy')</b>
+                                        </button>
                                     </div>
 
                                     <br/>
