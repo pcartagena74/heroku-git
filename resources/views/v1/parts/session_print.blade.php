@@ -61,17 +61,19 @@ $check = RegSession::where([
                 <?php
                 $s = EventSession::with('track')->where('sessionID', $z->sessionID)->first();
                 ?>
-                <tr>
-                    <td rowspan="1" style="text-align:left; width:33%;">
-                        <nobr> {{ $s->start->format('g:i A') }} </nobr>
-                        -
-                        <nobr> {{ $s->end->format('g:i A') }} </nobr>
-                    </td>
-                    <td colspan="1" style="text-align:left; min-width:150px; width: 67%;">
-                        <b>{{ $s->track->trackName }}</b><br/>
-                        {{ $s->sessionName }} <br/>
-                    </td>
-                </tr>
+                @if($s)
+                    <tr>
+                        <td rowspan="1" style="text-align:left; width:33%;">
+                            <nobr> {{ $s->start->format('g:i A') }} </nobr>
+                            -
+                            <nobr> {{ $s->end->format('g:i A') }} </nobr>
+                        </td>
+                        <td colspan="1" style="text-align:left; min-width:150px; width: 67%;">
+                            <b>{{ $s->track->trackName }}</b><br/>
+                            {{ $s->sessionName }} <br/>
+                        </td>
+                    </tr>
+                @endif
             @endforeach
         @endfor
     </table>
