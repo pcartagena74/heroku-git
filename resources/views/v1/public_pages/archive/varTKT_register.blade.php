@@ -60,7 +60,7 @@ if ($event->eventTypeID == 5) { // This is a regional event so do that instead
     $array = explode(',', $org->nearbyChapters);
 }
 
-if($org->canSubmitPDU !== null){
+if ($org->canSubmitPDU !== null) {
     $PDU_org_types = explode(',', $org->canSubmitPDU);
 } else {
     $PDU_org_types = [];
@@ -171,42 +171,43 @@ $i = 0;
 
             <table id="ticket_head" class="table table-striped">
                 <tr>
-                <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
-                    #{{ $i }} <span id="ticket_type{{ $i }}">
+                    <th colspan="3" style="text-align: left; vertical-align: middle;"
+                        class="col-md-6 col-sm-6 col-xs-12">
+                        #{{ $i }} <span id="ticket_type{{ $i }}">
                     @if($i == 1)
-                            @if($isMember)
-                                {{ strtoupper(__('messages.fields.member')) }}
+                                @if($isMember)
+                                    {{ strtoupper(__('messages.fields.member')) }}
+                                @else
+                                    {{ strtoupper(__('messages.fields.nonmbr')) }}
+                                @endif
                             @else
                                 {{ strtoupper(__('messages.fields.nonmbr')) }}
-                            @endif
+                            @endif </span>
+                        {{ strtoupper(__('messages.fields.ticket')) }}:
+                        @if(count($tkts) > 1)
+                            {{ Form::select('ticketID-'.$i, $tix_dropdown, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
+                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
                         @else
-                            {{ strtoupper(__('messages.fields.nonmbr')) }}
-                        @endif </span>
-                    {{ strtoupper(__('messages.fields.ticket')) }}:
-                    @if(count($tkts) > 1)
-                        {{ Form::select('ticketID-'.$i, $tix_dropdown, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
-                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
-                    @else
-                        {{ $ticket->ticketLabel }}
-                        {{ Form::hidden('ticketID-'.$i, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
-                    @endif
-                    <br/>
-                    @if($ticket->waitlisting())
-                        <div id="so-{{ $i }}" class="red" style="visibility: visible;"> &nbsp;
-                            &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
-                    @else
-                        <div id="so-{{ $i }}" class="red" style="visibility: hidden;"> &nbsp;
-                            &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
-                    @endif
-                </th>
-                <th colspan="3" style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="col-md-12 col-sm-12 col-xs-12" id="adc-{{ $i }}"
-                    @if($ticket->waitlisting())
-                        style="visibility: hidden;">
-                    @else
-                         style="visibility: visible;">
-                    @endif
-                        <div class="col-md-3 col-sm-3 col-xs-12"></div>
+                            {{ $ticket->ticketLabel }}
+                            {{ Form::hidden('ticketID-'.$i, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
+                        @endif
+                        <br/>
+                        @if($ticket->waitlisting())
+                            <div id="so-{{ $i }}" class="red" style="visibility: visible;"> &nbsp;
+                                &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
+                        @else
+                            <div id="so-{{ $i }}" class="red" style="visibility: hidden;"> &nbsp;
+                                &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
+                        @endif
+                    </th>
+                    <th colspan="3" style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" id="adc-{{ $i }}"
+                             @if($ticket->waitlisting())
+                             style="visibility: hidden;">
+                            @else
+                                style="visibility: visible;">
+                            @endif
+                            <div class="col-md-3 col-sm-3 col-xs-12"></div>
                             <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right; vertical-align: middle;">
                                 {!! Form::text("discount_code$i_cnt", $discount_code ?: old($discount_code . $i_cnt),
                                     array('size' => '25', 'class' => 'form-control input-sm', 'id' => "discount_code$i_cnt",
@@ -215,8 +216,8 @@ $i = 0;
                             <div class="col-md-3 col-sm-3 col-xs-12" style="text-align: left; vertical-align: middle;">
                                 <a class="btn btn-sm btn-primary"
                                    id="btn-apply{{ $i_cnt }}">@lang('messages.buttons.apply')</a></div>
-                    </div>
-                </th>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <td style="width: 11%"><b>@lang('messages.fields.tCost'):</b> @lang('messages.symbols.cur')
@@ -229,20 +230,21 @@ $i = 0;
                         </span></td>
                     <td colspan="2" style="width: 22%; text-align: right; vertical-align: middle;">
                         <div id="da-{{ $i }}"
-                        @if($ticket->waitlisting())
-                            style="visibility: hidden;">
-                        @else
-                            style="visibility: visible;">
-                        @endif
+                             @if($ticket->waitlisting())
+                             style="visibility: hidden;">
+                            @else
+                                style="visibility: visible;">
+                            @endif
                             <b>@lang('messages.fields.app_disc'):</b></div>
                     </td>
                     <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span id="dm-{{ $i }}"
-                            @if($ticket->waitlisting())
-                                style="visibility: hidden;"
-                            @else
-                                style="visibility: visible;"
-                            @endif
-                                class="status_msg{{ $i_cnt }}">---</span></td>
+                                                                                                        @if($ticket->waitlisting())
+                                                                                                        style="visibility: hidden;"
+                                                                                                        @else
+                                                                                                        style="visibility: visible;"
+                                                                                                        @endif
+                                                                                                        class="status_msg{{ $i_cnt }}">---</span>
+                    </td>
                     <td style="width: 11%; text-align: right;"><b>@lang('messages.fields.fCost')
                             :</b> @lang('messages.symbols.cur')
                         <span id="final{{ $i }}">---</span></td>
@@ -328,18 +330,21 @@ $i = 0;
                 </div>
 
                 <div class="col-sm-12">
-                    <label class="control-label" for="prefName{{ $i_cnt }}">@lang('messages.fields.prefName') <sup
-                                class='red'>*</sup></label>
+                    <label class="control-label" for="prefName{{ $i_cnt }}">
+                        @lang('messages.fields.prefName')
+                        <sup class='red'>*</sup>
+                    </label>
                     {!! Form::text("prefName$i_cnt", old("prefName$i_cnt"),
                             array('class' => 'form-control input-sm', 'required', 'id' => "prefName$i_cnt")) !!}
                     <br/>
 
-                    <label class="control-label" for="certifications{{ $i_cnt }}">@lang('messages.fields.certification')
-                        <sup
-                                class='red'>*</sup></label>
-                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.certification_tip')])
-                    {!! Form::select("certifications$i_cnt" . "[]", $cert_array, old("certifications") ?: reset($cert_array),
-                        array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
+                        <label class="control-label" for="certifications{{ $i_cnt }}">
+                            @lang('messages.fields.certification')
+                            <sup class='red'>*</sup>
+                        </label>
+                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.certification_tip')])
+                        {!! Form::select("certifications$i_cnt" . "[]", $cert_array, old("certifications") ?: reset($cert_array),
+                            array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
                 </div>
             </div>
 
@@ -550,7 +555,7 @@ $i = 0;
                 tix = result.tix;
                 def_tick = result.def_tick;
 
-                if(def_tick.isDiscountExempt == 1){
+                if (def_tick.isDiscountExempt == 1) {
                     $("#discount_code").attr('placeholder', '{{ trans('messages.reg_status.disc_exempt') }}');
                     $("#discount_code").prop('disabled', true);
                     $("#btn-apply").prop('disabled', true);
@@ -625,9 +630,9 @@ $i = 0;
             $('#i_total').val(subtotal.toFixed(2));
 
                     @for($i=1; $i<=$quantity; $i++)
-<?php
+                <?php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-?>
+                ?>
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
@@ -686,9 +691,11 @@ $i = 0;
             function check_affiliation_disc(aff_array) {
                 mp_ok = 0;
                 // console.log(aff_array);
-                if(aff_array !== null){
-                    aff_array.forEach(function(aff){
-                        if(dc.includes(aff)){ mp_ok = 1; }
+                if (aff_array !== null) {
+                    aff_array.forEach(function (aff) {
+                        if (dc.includes(aff)) {
+                            mp_ok = 1;
+                        }
                     });
                 } else {
                     mp_ok = 0;
@@ -728,40 +735,41 @@ $i = 0;
                                 $("#discount_code" + which).val('');
                             } else {
                             --}}
-                                $('#discount' + which).text(result.percent);
-                                $('#flatdisc' + which).text(result.flatAmt);
+                            $('#discount' + which).text(result.percent);
+                            $('#flatdisc' + which).text(result.flatAmt);
 
-                                $('#i_percent' + which).val(result.percent);
-                                $('#i_flatamt' + which).val(result.flatAmt);
-                                recalc();
-                                    {{--
-                                    }
-                            --}}
-                                },
-                                error: function (data) {
-                                    //console.log(data);
-                                    var result = eval(data);
-                                    $('.status_msg{{ $i_cnt }}').html(result.message).fadeIn(0);
-                                }
-                            });
+                            $('#i_percent' + which).val(result.percent);
+                            $('#i_flatamt' + which).val(result.flatAmt);
+                            recalc();
+                            {{--
+                            }
+                    --}}
+                        },
+                        error: function (data) {
+                            //console.log(data);
+                            var result = eval(data);
+                            $('.status_msg{{ $i_cnt }}').html(result.message).fadeIn(0);
                         }
+                    });
+                }
             }
+
             function findUser(email, which) {
-                        if (!FieldIsEmpty(email)) {
-                            $.ajax({
-                                type: 'POST',
-                                cache: false,
-                                async: true,
-                                url: '{{ env('APP_URL') }}/eLookup/' + email,
-                                dataType: 'json',
-                                success: function (data) {
-                                    //console.log(data);
-                                    var result = eval(data);
-                                    if (result.status == 'success') {
-                                                {{--
-                                                // prompt user with modal (email addr indicates user x) and ask if that's correct
-                                                // and if they want to auto-populate the form, yes/no.
-                                                --}}
+                if (!FieldIsEmpty(email)) {
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        async: true,
+                        url: '{{ env('APP_URL') }}/eLookup/' + email,
+                        dataType: 'json',
+                        success: function (data) {
+                            //console.log(data);
+                            var result = eval(data);
+                            if (result.status == 'success') {
+                                        {{--
+                                        // prompt user with modal (email addr indicates user x) and ask if that's correct
+                                        // and if they want to auto-populate the form, yes/no.
+                                        --}}
 
                                 var p = result.p;
 
@@ -934,13 +942,13 @@ $i = 0;
                 x = document.getElementById('ticketID-' + j);
                 aff_array = $('#affiliation' + which).val();
                 mp_ok = check_affiliation_disc(aff_array);
-                mp_ok = 1 * $("#OrgStat1"+which).val();
+                mp_ok = 1 * $("#OrgStat1" + which).val();
                 compare = x.value;
                 tc = document.getElementById('tcost' + j);
                 fc = document.getElementById('final' + j);
                 var mbr_price = def_tick['eb_mbr_price'];
                 var nmb_price = def_tick['eb_non_price'];
-                tix.forEach(function(ticket){
+                tix.forEach(function (ticket) {
                     {{--
                                     Need to change logic so pricing fix
                                         1. Checks if the PMI ID is present and
@@ -948,7 +956,7 @@ $i = 0;
 
                                     Then for each ticket, check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
                     --}}
-                    if(tix.length > 0) {
+                    if (tix.length > 0) {
                         var mem_price = ticket['eb_mbr_price'];
                         var non_price = ticket['eb_non_price'];
                         if (ticket['ticketID'] == compare) {
@@ -1015,17 +1023,17 @@ $i = 0;
                     da.style.visibility = "visible";
                     dm.style.visibility = "visible";
                 }
-                if(t[0].isDiscountExempt == 1){
-                    $("#discount_code"+which).attr('placeholder', '{{ trans('messages.reg_status.disc_exempt') }}');
-                    $("#discount_code"+which).prop('disabled', true);
-                    $("#btn-apply"+which).prop('disabled', true);
+                if (t[0].isDiscountExempt == 1) {
+                    $("#discount_code" + which).attr('placeholder', '{{ trans('messages.reg_status.disc_exempt') }}');
+                    $("#discount_code" + which).prop('disabled', true);
+                    $("#btn-apply" + which).prop('disabled', true);
                     da.style.visibility = "hidden";
                     dm.style.visibility = "hidden";
                     btn.style.visibility = "hidden";
                 } else {
-                    $("#discount_code"+which).attr('placeholder', '{{ trans('messages.fields.enter_disc') }}');
-                    $("#discount_code"+which).attr('disabled', false);
-                    $("#btn-apply"+which).prop('disabled', false);
+                    $("#discount_code" + which).attr('placeholder', '{{ trans('messages.fields.enter_disc') }}');
+                    $("#discount_code" + which).attr('disabled', false);
+                    $("#btn-apply" + which).prop('disabled', false);
                     da.style.visibility = "visible";
                     dm.style.visibility = "visible";
                     btn.style.visibility = "visible";
@@ -1037,10 +1045,10 @@ $i = 0;
             function recalc() {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
-<?php
+                <?php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-?>
-                percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
+                    ?>
+                    percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();
 

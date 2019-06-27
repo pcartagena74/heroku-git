@@ -169,14 +169,16 @@ class MergeController extends Controller
         list($personID, $field) = array_pad(explode("-", $string, 2), 2, null);
         $person = Person::with('orgperson')->find($personID);
 
-        return json_encode(array('status' => 'success',
-            'p' => $person,
-            'personID' => $person->personID,
-            'firstName' => $person->firstName,
-            'lastName' => $person->lastName,
-            'login' => $person->login,
-            'OrgStat1' => $person->orgperson->OrgStat1
-        ));
+        if(null !== $person) {
+            return json_encode(array('status' => 'success',
+                'p' => $person,
+                'personID' => $person->personID,
+                'firstName' => $person->firstName,
+                'lastName' => $person->lastName,
+                'login' => $person->login,
+                'OrgStat1' => $person->orgperson->OrgStat1
+            ));
+        }
     }
 
     /**
