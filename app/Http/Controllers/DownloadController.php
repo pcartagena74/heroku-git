@@ -24,7 +24,8 @@ class DownloadController extends Controller
             trans('messages.headers.email'), trans('messages.fields.ticket'), // trans('messages.headers.disc_code'),
             trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind')),
             trans('messages.headers.allergens'), trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU'),
-            trans('messages.headers.canNetwork'), trans('messages.headers.bal_due2')];
+            trans('messages.headers.canNetwork'), trans('messages.headers.bal_due2'), trans('messages.headers.affiliation'),
+            trans('messages.headers.membership')];
 
         // $nametags[] = $tag_headers;
 
@@ -33,7 +34,7 @@ class DownloadController extends Controller
             $nametags[] = array($r->regID, $r->person->prefName, $r->person->lastName, $r->isFirstEvent, $r->person->login,
                 $r->ticket->ticketLabel, $r->person->compName, $r->person->title, $r->person->indName,
                 $r->person->allergenInfo . "; " . $r->person->allergenNote, $r->person->orgperson->OrgStat1, $r->isAuthPDU,
-                $r->canNetwork, $r->regStatus == 'pending' ? 'yes' : '');
+                $r->canNetwork, $r->regStatus == 'pending' ? 'yes' : '', $r->affiliation, $r->membership);
         }
 
         return Excel::download(new DataExport($tag_headers, $nametags), 'nametag_data.csv');

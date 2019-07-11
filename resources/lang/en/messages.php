@@ -318,6 +318,7 @@ return [
         'affiliation' => "Chapter Affiliation",
         'aff_with' => 'Affiliated with',
         'allergens' => 'Food Allergens',
+        'anoncat' => "Non-PDU Event Categories",
         'ass_roles' => 'Assign Roles',
         'at' => 'at',
         'att' => 'Attendee|Attendees',
@@ -358,6 +359,7 @@ return [
         'day' => 'Day',
         'days' => 'Days',
         'def_cust_et' => 'Default &amp; Custom Event Types',
+        'addl_label' => 'How many additional non-member tickets do you need?',
         'def_label' => 'Default Ticket Label',
         'def_sess' => 'Default Session',
         'defs' => 'Event Defaults for ',
@@ -418,6 +420,7 @@ return [
         'max' => "Max Attendees",
         'mem_demo' => "Member Demographics",
         'member' => "Member|Members",
+        'membership' => "Membership",
         'merge_can' => "Merge Candidate",
         'merge_notes' => "Merge Notes",
         'mList' => 'Member List',
@@ -579,8 +582,8 @@ return [
         'no_org_disc' => "<b style='color: darkorange;'>WARNING:</b><br />No organizational discounts have been added to
                           this event.  If you wish to add them, do it now via the button below.",
         'no_password' => "An mCentric account was found for you and its password has not been set. " .
-            "You will need to set it and login to complete your registration. " .
-            "Click to <a style='color: red;' href='" . env('APP_URL') . "/password/reset'>reset it now.</a>",
+                         "You will need to set it and login to complete your registration. " .
+                         "Click to <a style='color: red;' href='" . env('APP_URL') . "/password/reset'>reset it now.</a>",
         'no_pmiID' => "Or, if you do not have a PMI ID, enter your email address.",
         'no_pmiID_zero' => "Enter 0 if you are not a PMI member",
         'no_reg_sess' => "You have not yet registered for sessions. You can do so below.",
@@ -974,8 +977,12 @@ return [
     'tooltips' => [
         'accept_cash' => "Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.",
         'accommodate' => 'We will do our best to accommodate you.',
+        'addl_ticket' => "If you are attempting to buy any tickets for members, they will need to purchase their ticket "
+                         . "separately to benefit from the member discount.",
         'affiliation_tip' => 'Ctrl-Click to select more than one affiliation.',
         'allergenInfo_tip' => 'Ctrl-Click to select more than one dietary restriction.',
+        'anoncat' => "These are the event categories where multiple tickets, if an attendee wishes to buy multiple"
+                      . " tickets, can be purchased without requiring the identification for every individual ticket.",
         'bundle_include' => "Change to 'Yes' to add each corresponding ticket to this bundle.",
         'bundles' => "Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.",
         'cant_cancel_reg' => "You cannot cancel this registration. Find an admin.",
