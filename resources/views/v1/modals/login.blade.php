@@ -30,7 +30,7 @@ if(!isset($msg)){
                         <label  for="email" class="col-md-4 control-label">@lang('messages.fields.email')</label>
 
                         <div class="col-md-6">
-                            <input id="email" type="email" class="form-control" name="email"
+                            <input id="email" type="email" class="form-control" name="email" autocomplete="username email"
                                    value="{{ old('email') }}" required autofocus>
 
                             @if ($errors->has('email'))
@@ -45,7 +45,7 @@ if(!isset($msg)){
                         <label for="password" class="col-md-4 control-label">@lang('messages.fields.password')</label>
 
                         <div class="col-md-6">
-                            <input id="password" type="password" class="form-control" name="password" required>
+                            <input id="password" type="password" class="form-control" name="password" autocomplete="current-password" required>
 
                             @if ($errors->has('password'))
                                 <span class="help-block">

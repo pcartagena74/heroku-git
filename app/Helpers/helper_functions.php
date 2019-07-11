@@ -186,7 +186,6 @@ function li_print_array($array, $type){
     foreach($array as $item){
         $reg = $item['reg'];
         $name = $item['name'];
-        //$button = "<a href='" . env('APP_URL')."/cancel_registration/$reg->regID/$reg->rfID" . "' class='btn btn-primary btn-xs'>" . trans('messages.buttons.reg_can') . "</a>";
         $form = Form::open(['method'  => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->regfinance->regID]]);
         $form .= Form::submit(trans('messages.buttons.reg_can'), array('class' => 'btn btn-primary btn-xs'));
         $form .= Form::close();
