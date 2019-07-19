@@ -77,71 +77,83 @@ $s3fs = new Filesystem($adapter);
 
                 @if($rf->cost > 0) {{-- There is a fee for event --}}
 
-                @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
-                    {{-- Payment received and able to display a refund button --}}
+                    @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
+                        {{-- Payment received and able to display a refund button --}}
 
-                    {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                    'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        @lang('messages.buttons.reg_ref')
-                    </button>
-                    {!! Form::close() !!}
-                @endif
+                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @lang('messages.buttons.reg_ref')
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
 
-                @if($rf->pmtRecd == 1)
-                    {{-- Payment received so receipt buttons are appropriate --}}
-                    <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                       class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
+                    @if($rf->pmtRecd == 1)
+                        {{-- Payment received so receipt buttons are appropriate --}}
+                        <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                           class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
-                    @if($receipt_exists)
-                        <a target="_new" href="{{ $receipt_url }}"
-                           class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
-                    @else
+                        @if($receipt_exists)
+                            <a target="_new" href="{{ $receipt_url }}"
+                               class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+                        @else
                             <a target="_new" href="{{ env('APP_URL'). "/recreate_receipt/".$rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+                        @endif
+                        <br/>
+                    @else
+
+                        {{-- Payment NOT received so pay balance button should be displayed if it's the only/first seat --}}
+
+                        @if($rf->seats == 1 || $reg == $rf->registrations->first())
+                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                               class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
+                        @endif
+
+                        {{-- Cancel button is always OK to show --}}
+                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @lang('messages.buttons.reg_can')
+                        </button>
+                        {!! Form::close() !!}
                     @endif
-                    <br/>
-                @else
-
-                    {{-- Payment NOT received so pay balance button should be displayed if it's the only/first seat --}}
-
-                    @if($rf->seats == 1 || $reg == $rf->registrations->first())
-                        <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
-                           class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
-                    @endif
-
-                    {{-- Cancel button is always OK to show --}}
-                    {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        @lang('messages.buttons.reg_can')
-                    </button>
-                    {!! Form::close() !!}
-                @endif
 
                 @else               {{-- There is no fee for event --}}
 
-                @if($rf->pmtRecd == 1)
-                    {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
+                    @if($rf->pmtRecd == 1)
+                        {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
 
-                    {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                    'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        @lang('messages.buttons.reg_can')
-                    </button>
-                    {!! Form::close() !!}
+                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @lang('messages.buttons.reg_can')
+                        </button>
+                        {!! Form::close() !!}
 
-                    {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
-                    <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
-                       class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
+                        {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
+                        <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                           class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
-                    <a target="_new" href="{{ $receipt_url }}"
-                       class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
-                    <br/>
-                @else
+                        <a target="_new" href="{{ $receipt_url }}"
+                           class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
+                        <br/>
+                    @else
+                        {{-- No charge but transaction wasn't completed.  Complete Reg button should be displayed if it's the only/first seat --}}
 
+                        @if($rf->seats == 1 || $reg == $rf->registrations->first())
+                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                               class="btn btn-primary btn-sm">@lang('messages.buttons.comp_reg')</a>
+                        @endif
 
-                @endif
+                        {{-- Cancel button is always OK to show --}}
+                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
+                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            @lang('messages.buttons.reg_can')
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
 
                 @endif
 
