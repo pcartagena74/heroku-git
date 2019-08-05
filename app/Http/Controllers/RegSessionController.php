@@ -184,7 +184,8 @@ class RegSessionController extends Controller
                 $e = EventSession::find($s->sessionID);
                 if (null !== $e && $e->regCount > 0) {
                     $e->regCount--;
-                } $e->save();
+                    $e->save();
+                }
                 $s->delete();
             }
         }
