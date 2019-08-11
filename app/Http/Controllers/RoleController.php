@@ -106,6 +106,8 @@ class RoleController extends Controller
         $permissions = Permission::all();
         $persons = null;
 
+        //DB::enableQueryLog();
+
         if ($query !== null) {
             $persons = Person::whereHas('orgs', function ($q) {
                 $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
@@ -129,6 +131,8 @@ class RoleController extends Controller
                 ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
                 ->with('roles')->get();
         }
+
+        //dd(DB::getQueryLog());
 
         return view('v1.auth_pages.organization.role_mgmt_search', compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
