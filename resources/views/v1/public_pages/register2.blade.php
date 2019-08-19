@@ -272,7 +272,7 @@ if ($event->isSymmetric && $event->hasTracks) {
                                 </td>
                                 <td colspan="2" style="text-align: left;">
                                     @if($reg->isFirstEvent)
-                                        <b>@lang('messages.headers.isFirst')</b> <a id="firstEvent-{{ $tcount }}"
+                                        <b>@lang('messages.headers.isFirst')</b> <a id="isFirstEvent-{{ $tcount }}"
                                                                                     data-pk="{{ $reg->regID }}"
                                                                                     data-value="{{ $reg->isFirstEvent }}"
                                                                                     data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
@@ -502,7 +502,7 @@ if ($event->isSymmetric && $event->hasTracks) {
             $("#specialNeeds-{{ $i }}").editable({type: 'text'});
             $("#eventNotes-{{ $i }}").editable({type: 'text'});
 
-            $("#firstEvent-{{ $i }}").editable({
+            $("#isFirstEvent-{{ $i }}").editable({
                 type: 'select',
                 source: [
                     {value: '0', text: 'No'},
