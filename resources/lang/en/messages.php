@@ -127,6 +127,7 @@ return [
     'fields' => [
 
         'abstract' => 'Abstract',
+        'aCost' => 'Additional Cost',
         'additional' => 'Additional Information',
         'add_det' => 'Additional Detail',
         'addr' => "Address",
@@ -297,6 +298,7 @@ return [
         'times' => 'Times',
         'title' => 'Title',
         'total' => 'Total',
+        'total_due' => 'Total due Chapter',
         'track_select' => 'Track Selection',
         'up' => "Upcoming",
         'up_event' => "Upcoming Events",
@@ -413,6 +415,7 @@ return [
         'isFirst' => 'First Event?',
         'keep' => 'The Keeper',
         'label' => 'Ticket Label',
+        'less_cc' => 'Less Cash and/or Checks',
         'linkedin' => "Linked-In URL",
         'locations' => "Event Locations Available in Add/Edit Event Form",
         'logo' => "Logo",
