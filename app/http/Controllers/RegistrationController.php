@@ -228,7 +228,7 @@ class RegistrationController extends Controller
             })->first();
 
         $discPie->put(count($discPie), $subtotal);
-        if ($lessCounts->cnt > 0) {
+        if ($lessCounts !==  null && $lessCounts->cnt > 0) {
             $discPie->put(count($discPie), $lessCounts);
             $subtotal->discountCode = trans('messages.fields.subtotal');
             $lessCounts->discountCode = '&nbsp; &nbsp; <span class="red">' . trans('messages.headers.less_cc') . '</span>';
