@@ -24,6 +24,9 @@ use App\Notifications\SetYourPassword;
 use Session;
 use App\Notifications\WaitListNoMore;
 
+set_time_limit(0);
+ini_set('memory_limit', '-1');
+
 class RegistrationController extends Controller
 {
     public function __construct()
@@ -139,12 +142,6 @@ class RegistrationController extends Controller
             })->whereIn('regStatus', ['active', 'processed'])
             ->with('regfinance', 'ticket', 'person')->get();
 
-        /*
-        $regs = $regs->sortBy(function ($n) {
-            return $n->person->lastName;
-        });
-        */
-
         // Separating out the query because name tags should be printed even if paying 'At Door'
         $nametags = Registration::where('eventID', '=', $event->eventID)
             ->with('regfinance', 'ticket', 'person', 'person.orgperson', 'regsessions', 'event')
@@ -178,24 +175,33 @@ class RegistrationController extends Controller
             ['isaBundle', '=', 0]
         ])->get();
 
-        $discPie = DB::table('event-registration')
+        $discPie = Registration::where([
+            ['eventID', '=', $event->eventID],
+        ])
+            ->whereHas('regfinance', function ($query) {
+                $query->whereNotIn('pmtType', ['pending']);
+                $query->whereNull('deleted_at');
+            })
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
-            ->where([
-                ['eventID', '=', $event->eventID],
-                ['regStatus', '=', 'processed']
-            ])
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
 
-        $discountCounts = Registration::where('eventID', '=', $event->eventID)
-            ->select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
+        $discountCounts = Registration::select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
+            ->where([
+                ['eventID', '=', $event->eventID],
+                ['regStatus', '=', 'processed']
+            ])
+            ->groupBy('discountCode')->orderBy('cnt', 'desc')->get();
+
+        $lessCounts = Registration::where('eventID', '=', $event->eventID)
+            ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt, 0, 0, 0, 0'))
             ->whereHas('regfinance', function ($q) {
-                $q->where('pmtRecd', '=', 1);
-            })->groupBy('discountCode')->orderBy('cnt', 'desc')->get();
+                $q->whereIn('pmtType', ['door', 'cash', 'check']);
+            })->groupBy('discountCode')->orderBy('cnt', 'desc')->first();
 
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
@@ -203,18 +209,35 @@ class RegistrationController extends Controller
             }
         }
 
-        //$total = DB::table('event-registration')
-        $total = Registration::where('eventID', '=', $event->eventID)
-            ->select(DB::raw('"discountCode", count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+        $subtotal = Registration::where('eventID', '=', $event->eventID)
+            ->select(DB::raw('"discountCode", count("discountCode") as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
-            ->whereHas('regfinance', function ($q) {
-                $q->where('pmtRecd', '=', 1);
+            ->whereHas('regfinance', function ($query) {
+                $query->whereNotIn('pmtType', ['pending']);
+                $query->whereNull('deleted_at');
             })->first();
 
-        $total->discountCode = 'Total';
+        $total = Registration::where('eventID', '=', $event->eventID)
+            ->select(DB::raw('"discountCode", count("discountCode") as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
+                                    sum(ccFee) as ccFee, sum(subtotal) as cost'))
+            ->whereHas('regfinance', function ($query) {
+                $query->whereNotIn('pmtType', ['pending']);
+                $query->whereNull('deleted_at');
+            })->first();
 
-        $discPie->put(count($discPie), $total);
+        $discPie->put(count($discPie), $subtotal);
+        if ($lessCounts->cnt > 0) {
+            $discPie->put(count($discPie), $lessCounts);
+            $subtotal->discountCode = trans('messages.fields.subtotal');
+            $lessCounts->discountCode = '&nbsp; &nbsp; <span class="red">' . trans('messages.headers.less_cc') . '</span>';
+            $discPie->put(count($discPie), $total);
+            $total->discountCode = '&nbsp; &nbsp; &nbsp; &nbsp; ' . trans('messages.fields.total_due');
+            $total->orgAmt = $total->orgAmt - $lessCounts->orgAmt;
+        } else {
+            $subtotal->discountCode = '&nbsp; &nbsp; &nbsp; &nbsp; ' . trans('messages.fields.total_due');
+        }
 
         $refunds = RegFinance::where('eventID', '=', $event->eventID)->whereNotNull('deleted_at')->get();
 
@@ -335,20 +358,24 @@ class RegistrationController extends Controller
         // For each of the registrations
         for ($i = 1; $i <= $quantity; $i++) {
             if ($i == 1) {
-                if ($logged_in) {
+                $login = strtolower(request()->input('login'));
+                $p = $this->currentPerson;
+                if ($logged_in && assoc_email($login, $p)) {
                     $person = $this->currentPerson;
+                    $set_new_user = 0;
                 } else {
                     $person = null;
-                    $set_new_user = 0;
+                    $set_new_user = 1;
                 }
                 $i_cnt = "";
             } else {
                 $person = null;
-                $set_new_user = 0;
+                $set_new_user = 1;
                 $i_cnt = '_' . $i;
             }
 
             $dupe_check = null;
+            $set_secondary_email = 0;
 
             // 1. Grab the passed variables for the person and registration info
             $prefix = ucwords(request()->input('prefix' . $i_cnt));
