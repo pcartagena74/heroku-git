@@ -204,3 +204,18 @@ function li_print_array($array, $type){
 function into_array($string, $delimeter) {
     return(explode($delimeter, $string));
 }
+
+/**
+ * assoc_email returns 0 or 1 based on whether the $email address is associated with Person $p
+ * @param $email
+ * @param $p
+ * @return boolean
+ */
+function assoc_email($email, $p) {
+    $e = Email::where('emailADDR', '=', $email)->first();
+    if(null === $e || $e->personID != $p->personID){
+        return 0;
+    } else {
+        return 1;
+    }
+}
