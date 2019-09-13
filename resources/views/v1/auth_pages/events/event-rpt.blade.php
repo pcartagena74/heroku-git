@@ -232,20 +232,17 @@ $count = 0;
 
 @section('content')
 
-    <div class="col-xs-12">
-        <div class="col-xs-6">
-            @include('v1.parts.event_buttons', ['event' => $event])
-        </div>
+    <h2>{{ $event->eventName }}</h2>
+    <div class="col-lg-7 col-xs-12">
+        @include('v1.parts.event_buttons', ['event' => $event])
     </div>
 
-    @include('v1.parts.start_content', ['header' => $event->eventName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-
-    @include('v1.parts.start_content', ['header' => $stats, 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => $stats, 'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @include('v1.parts.datatable', ['headers' => $headers, 'data' => $rows, 'scroll' => 0])
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.fields.disc') . ' ' . trans('messages.headers.breakdown'),
-                                        'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+                                        'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-6 col-sm-6 col-xs-6">
         <canvas id="discPie"></canvas>
     </div>
@@ -260,11 +257,11 @@ $count = 0;
                                   aria-expanded="true"><b>@lang('messages.headers.reged') {{ trans_choice('messages.headers.att', 2) }}</b></a>
             </li>
             @if(count($deadbeats) > 0)
-                <li class=""><a href="#tab_content6" id="pending-tab" data-toggle="tab"
+                <li class="hidden-xs"><a href="#tab_content6" id="pending-tab" data-toggle="tab"
                                 aria-expanded="true"><b>@lang('messages.headers.doored')</b></a></li>
             @endif
             @if(count($notregs) > 0)
-                <li class=""><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
+                <li class="hidden-xs"><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.headers.wait') {{ strtolower(__('messages.headers.or')) }} @lang('messages.headers.int_reg')</b></a>
                 </li>
             @endif
@@ -276,7 +273,7 @@ $count = 0;
                 <li class=""><a href="#tab_content3" id="sessions-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.tabs.sessions')</b></a></li>
             @endif
-            <li class=""><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
+            <li class="hidden-xs"><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
             @if($event->checkin_time() && ( Entrust::hasRole($currentOrg->orgName) &&
                     ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
@@ -311,6 +308,8 @@ $count = 0;
             <div class="tab-pane fade" id="tab_content4" aria-labelledby="nonreg-tab">
                 &nbsp;<br/>
 
+                <div class="hidden-lg hidden-md hidden-sm col-xs-12"> <p>&nbsp;</p> </div>
+
                 @if(count($notreg_rows)>0)
                     @include('v1.parts.datatable', ['headers' => $notreg_headers, 'data' => $notreg_rows, 'scroll' => $notscroll])
                 @else
@@ -320,6 +319,8 @@ $count = 0;
             </div>
             <div class="tab-pane fade" id="tab_content6" aria-labelledby="pending-tab">
                 &nbsp;<br/>
+
+                <div class="hidden-lg hidden-md hidden-sm col-xs-12"> <p>&nbsp;</p> </div>
 
                 @if(count($dead_rows)>0)
                     @include('v1.parts.datatable', ['headers' => $dead_headers, 'data' => $dead_rows, 'scroll' => $notscroll])
@@ -446,6 +447,8 @@ $count = 0;
             <div class="tab-pane fade" id="tab_content5" aria-labelledby="nametags-tab">
                 &nbsp;<br/>
 
+                <div class="hidden-lg hidden-md hidden-sm col-xs-12"> <p>&nbsp;</p> </div>
+
                 @if(count($tag_rows)>0)
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="col-sm-3">
@@ -538,11 +541,11 @@ $count = 0;
         </div>
     </div>
 
-    @include('v1.parts.end_content')
 
 @endsection
 
 {{--
+    @include('v1.parts.end_content')
 include('v1.parts.ajax_console')
 --}}
 
