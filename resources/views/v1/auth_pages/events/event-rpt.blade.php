@@ -490,7 +490,7 @@ $count = 0;
                         ])
                     @endif
                 </div>
-                @if(count($nametags)>0 && $event->hasTracks == 0)
+                @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es)
                     {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                     {!! Form::hidden('sessionID', $es->sessionID) !!}
                     {!! Form::hidden('eventID', $event->eventID) !!}
