@@ -257,11 +257,11 @@ $count = 0;
                                   aria-expanded="true"><b>@lang('messages.headers.reged') {{ trans_choice('messages.headers.att', 2) }}</b></a>
             </li>
             @if(count($deadbeats) > 0)
-                <li class="hidden-xs"><a href="#tab_content6" id="pending-tab" data-toggle="tab"
+                <li class="hidden-sm hidden-xs"><a href="#tab_content6" id="pending-tab" data-toggle="tab"
                                 aria-expanded="true"><b>@lang('messages.headers.doored')</b></a></li>
             @endif
             @if(count($notregs) > 0)
-                <li class="hidden-xs"><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
+                <li class="hidden-sm hidden-xs"><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.headers.wait') {{ strtolower(__('messages.headers.or')) }} @lang('messages.headers.int_reg')</b></a>
                 </li>
             @endif
@@ -273,7 +273,7 @@ $count = 0;
                 <li class=""><a href="#tab_content3" id="sessions-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.tabs.sessions')</b></a></li>
             @endif
-            <li class="hidden-xs"><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
+            <li class="hidden-sm hidden-xs"><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
             @if($event->checkin_time() && ( Entrust::hasRole($currentOrg->orgName) &&
                     ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
