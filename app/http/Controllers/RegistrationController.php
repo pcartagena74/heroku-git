@@ -180,6 +180,7 @@ class RegistrationController extends Controller
         ])
             ->whereHas('regfinance', function ($query) {
                 $query->whereNotIn('pmtType', ['pending']);
+                $query->where('pmtRecd', '=', 1);
                 $query->whereNull('deleted_at');
             })
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
@@ -201,6 +202,7 @@ class RegistrationController extends Controller
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt, 0, 0, 0, 0'))
             ->whereHas('regfinance', function ($q) {
                 $q->whereIn('pmtType', ['door', 'cash', 'check']);
+                $q->where('pmtRecd', '=', 1);
             })->groupBy('discountCode')->orderBy('cnt', 'desc')->first();
 
         foreach ($discPie as $d) {
@@ -215,6 +217,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->whereHas('regfinance', function ($query) {
                 $query->whereNotIn('pmtType', ['pending']);
+                $query->where('pmtRecd', '=', 1);
                 $query->whereNull('deleted_at');
             })->first();
 
