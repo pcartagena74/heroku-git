@@ -84,12 +84,20 @@ class OrgController extends Controller
         // responds to PATCH /blah/id
         $name = request()->input('name');
         $value = request()->input('value');
-
-        // Add logic to change Role information if orgName changes
         $org = Org::find($id);
-        $org->{$name} = $value;
-        $org->updaterID = auth()->user()->id;
+        $updater = auth()->user()->id;
+
+        if ($name == 'anonCats') {
+            $value = implode(",", (array)$value);
+            $org->anonCats = $value;
+        } else {
+            // Add logic to change Role information if orgName changes
+            $org->{$name} = $value;
+        }
+
+        $org->updaterID = $updater;
         $org->save();
+
     }
 
     public function destroy($id)

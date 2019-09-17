@@ -103,7 +103,8 @@ $s3fs = new Filesystem($adapter);
                         <br/>
                     @else
 
-                        {{-- Payment NOT received so pay balance button should be displayed if it's the only/first seat --}}
+                        {{-- Payment NOT received so pay balance button should be displayed if it's the
+                         only/first seat --}}
 
                         @if($rf->seats == 1 || $reg == $rf->registrations->first())
                             <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"

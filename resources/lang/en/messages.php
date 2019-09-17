@@ -435,6 +435,7 @@ return [
         'net' => 'Net',
         'net_list' => 'Networking List',
         'no_discount' => "Prevent Discount",
+        'no_switch' => "No Session Switching Message",
         'no_tickets' => "Tickets are no longer available for this event.",
         'note' => 'Note',
         'notify_user' => 'Notify user at above email address?',
@@ -662,10 +663,12 @@ return [
         'no_curr_pass_match' => "The current password did not match.",
         'no_events' => "There are no future events in the system.",
         'no_sessions' => "No session selections have been made. You can do so <a href=':link'>here</a>.",
+        'no_switch' => "Please see the registration desk to change session registration.",
         'partial_fail' => "The attempt to get a partial refund failed with order: :rfid.",
         'pass_change' => "The password was changed successfully.",
         'pass_change_for' => "The password for :name was changed successfully.",
         'receipt_recreated' => 'Your receipt was successfully recreated.',
+        'reg_success' => ":name was successfully registered.",
         'saved' => 'saved',
         'sess_saved' => "Your session choices for :reg were :verb.",
         'survey_confirm' => "Are you sure you want to email all checked in attendees the survey?",
@@ -673,7 +676,7 @@ return [
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
         'updated' => 'updated',
         'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
-        'user_create_fail' => "An unknown error occurred.  Please take a screenshot (if appropriate) and contact vpfinance@pmimassbay.org for help.",
+        'user_create_fail' => "An unknown error occurred during account creation.  Please take a screenshot (if appropriate) and contact vpfinance@pmimassbay.org for help.",
         'visit_mCentric' => "Visit mCentric",
     ],
 
@@ -682,8 +685,8 @@ return [
         'default' => 'Default Title',
         'confirm' => 'The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
         'confirm2' => 'The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
-        'login_msg' => "If registering resulted in mCentric telling you that an account exists for you, login or
-                        click on the 'Forgot Your Password?' link above and enter the email you used to register.<br>" .
+        'login_msg' => "If registering resulted in mCentric telling you that an account exists for you, login or " .
+                        "click on the 'Forgot Your Password?' link above and enter the email you used to register.<br>" .
             "If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.",
         'login_msg2' => "If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.",
         'loginform' => 'Login Form',
@@ -1016,6 +1019,8 @@ return [
         'near_chap' => "These are the most likely chapters of attendees of your events.  Put your chapter first, followed by other chapters, and end with 'Other' and 'None of the above.'",
         'no_auth' => "You must be authorized to perform this function.",
         'no_discount' => "Change to 'Yes' to prevent ALL discount codes from affecting this ticket's price.  Early Bird pricing will still be possible.",
+        'no_switch' => "For events with sessions, if you prohibit session switching for a given session, this message would be displayed if an attendee attempts to " .
+                        "checkin to a session for which they have not already registered.",
         'nope' => "This value cannot be edited or removed.",
         'not_new' => "Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.",
         'orgName' => "You can change the organization's display name. Ensure that it fits above.  Click it.",
@@ -1065,6 +1070,7 @@ return [
         'inactive_event' => "<b>Note:</b> You are previewing an event that is not yet active OR is in the past.",
         'inactive_unlocked_event' => "<b>Note:</b> This event is no longer active but you have been given permission to register.",
         'inactive_event_url' => "This event's URL is no longer active.",
+        'no_switch' => "",
         'slug_event_url' => "This event's URL will be: :url",
     ],
 
