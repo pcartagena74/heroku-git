@@ -317,7 +317,9 @@ class RegistrationController extends Controller
                 ['status', '!=', 'processed'],
             ])->first();
         } else {
+            // no in-progress submissions found
             $resubmit = null;
+            // but check if there are any paid ones to flag user with message
         }
 
         // Create new, or re-open the stub (only if the stub is a stub for this event), reg-finance record
@@ -771,9 +773,10 @@ class RegistrationController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         if ($reg->regStatus == 'progress') {
-            // for a registration that is in process (or just never completed) check if we're catching dupes
+            // for a registration that is in process (or never completed) check if we're catching dupes
             if (count($rf->registrations) > 1) {
-                // Deleting this registration, will leave at least 1 on the order.  Need to recheck if there are dupes
+                // Deleting this registration, will leave at least 1 on the order.
+                // Need to recheck if there are dupes  (can't recall if this is even true here anymore)
                 foreach ($rf->registrations as $reg_chk) {
                     $dupe_check = null;
                     if ($reg_chk->regID != $reg->regID) {
@@ -789,10 +792,16 @@ class RegistrationController extends Controller
                         }
                     }
                 }
+                // subtract $reg->subtotal from $rf->cost and save to reflect new total
+                $rf->cost -= $reg->subtotal;
+                $rf->updaterID = auth()->user()->id;
+                $rf->save();
+                $reg->delete();
+            } else {
+                $reg->delete();
+                $rf->delete();
             }
 
-            // the registration was never finalized, sessions weren't picked, so delete
-            $reg->delete();
         } elseif ($reg->subtotal > 0 && $rf->pmtRecd == 1 && $rf->stripeChargeID) {
             // There's a refund that needs to occur with Stripe
             if ($reg->subtotal == $rf->cost) {

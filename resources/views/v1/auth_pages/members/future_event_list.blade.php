@@ -25,6 +25,10 @@ $today = \Carbon\Carbon::now();
     @if(count($paid) + count($unpaid) + count($pending) + count($bought) == 0)
         <b>@lang('messages.instructions.no_fut_events')</b>
     @else
+        @if(0 && count($pending)>0)
+            @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_inc'), 'rf_array' => $pending])
+        @endif
+
         @if(count($bought)>0)
             @include('v1.parts.reg_bit', ['header' => trans('messages.headers.fut_behalf'), 'reg_array' => $bought])
         @endif
@@ -34,9 +38,6 @@ $today = \Carbon\Carbon::now();
         @endif
         @if(count($unpaid)>0)
             @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_unpaid'), 'rf_array' => $unpaid])
-        @endif
-        @if(0 && count($pending)>0)
-            @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_inc'), 'rf_array' => $pending])
         @endif
     @endif
 

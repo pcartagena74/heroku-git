@@ -18,6 +18,7 @@ $tagArray = explode(',', $org->nearbyChapters);
 $discount_headers = ['#', 'Discount Code', 'Discount Percent'];
 
 $topBits = '';
+$string = '';
 
 $currentPerson = App\Person::find(auth()->user()->id);
 $currentOrg = $currentPerson->defaultOrg;
@@ -95,10 +96,17 @@ $currentOrg = $currentPerson->defaultOrg;
                 @lang('messages.headers.anoncat')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.anoncat')])
             </th>
+            <th style="text-align: left;">
+                @lang('messages.headers.no_switch')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.no_switch')])
+            </th>
         </tr>
         <tr>
             <td style="text-align: left;">
-                <a href="#" id="anonCat" data-value="{{ $org->anonCat }}"></a>
+                <a href="#" id="anonCats" data-value="{{ $org->anonCats }}" data-placement="right"></a>
+            </td>
+            <td style="text-align: left;">
+                <a href="#" id="noSwitchTEXT" data-value="{{ $org->noSwitchTEXT }}" data-placement="right"></a>
             </td>
         </tr>
     </table>
@@ -311,6 +319,28 @@ $currentOrg = $currentPerson->defaultOrg;
                 pk: '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}'
+            });
+
+            $("#anonCats").editable({
+                type: 'checklist',
+                pk: '{{ $org->orgID }}',
+                url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
+                value: '{{ $org->anonCats }}',
+                source: [
+                    <?php
+                    foreach ($event_types as $x) {
+                        $string .= "{ value: '" . $x->etID . "' , text: '" . $x->etName . "' },";
+                    }
+                    ?>
+                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                ],
+            });
+
+            $('#noSwitchTEXT').editable({
+                type: 'text',
+                pk: '{{ $org->orgID }}',
+                placement: 'right',
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
             });
 
             @foreach($event_types as $et)
