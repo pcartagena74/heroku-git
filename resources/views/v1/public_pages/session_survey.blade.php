@@ -19,6 +19,8 @@ try {
     $logo = '';
 }
 
+$speakers = $session->show_speakers();
+
 ?>
 @extends('v1.layouts.no-auth_simple')
 
@@ -28,9 +30,12 @@ try {
     @if($event->showLogo && $logo)
         <img src="{{ $logo }}" height="50">
     @endif
-    <h2>Event: {{ $event->eventName }}</h2>
+    <h2>@lang('messages.fields.event'): {{ $event->eventName }}</h2>
     @if($session->sessionName != "def_sess")
-    <b>Session: {{ $session->sessionName }}</b>
+        <b>@lang('messages.fields.session'):</b> {{ $session->sessionName }} <br />
+    @endif
+    @if($speakers)
+        <b>@lang('messages.fields.speakers'):</b> {{ $speakers }}
     @endif
 
     <p>&nbsp;</p>

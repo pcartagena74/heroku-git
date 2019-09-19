@@ -37,7 +37,7 @@ try {
 
     <p>&nbsp;</p>
 
-    @if($event->hasTracks > 0 && $session->trackID == 0)
+    @if($event->hasTracks > 0 && $session === null)
 
         <div class="col-sm-12 col-xs-12">
             @foreach($track as $t)
