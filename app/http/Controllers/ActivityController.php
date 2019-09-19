@@ -31,7 +31,7 @@ class ActivityController extends Controller
         $bought = Registration::where('personID', $this->currentPerson->personID)
                               ->whereHas(
                                   'event', function($q) {
-                                  $q->where('eventStartDate', '>=', Carbon::now());
+                                  $q->where('eventEndDate', '>=', Carbon::now());
                               })
                               ->whereHas(
                                   'regfinance', function($q) {
@@ -43,7 +43,7 @@ class ActivityController extends Controller
 
         $paid = RegFinance::whereHas(
             'event', function($q) {
-            $q->where('eventStartDate', '>=', Carbon::now());
+            $q->where('eventEndDate', '>=', Carbon::now());
         })
                           ->with('event', 'person', 'registrations')
                           ->where([
@@ -55,19 +55,19 @@ class ActivityController extends Controller
         $unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
                             ->whereHas(
                                 'event', function($q) {
-                                $q->where('eventStartDate', '>=', Carbon::now());
+                                $q->where('eventEndDate', '>=', Carbon::now());
                             })
                             ->with('event', 'person', 'registrations')
                             ->whereHas(
                                 'registrations', function($q) {
                                     $q->where('pmtRecd', '=', 0);
                             })
-                            ->whereIn('status', ['progress', 'wait', 'pending', 'wait'])
+                            ->whereIn('status', ['pending'])
                             ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(
             'event', function($q) {
-            $q->where('eventStartDate', '>=', Carbon::now())
+            $q->where('eventEndDate', '>=', Carbon::now())
               ->orderBy('eventStartDate');
         })
                              ->with('event', 'person', 'registrations')
@@ -75,9 +75,22 @@ class ActivityController extends Controller
                              ->whereIn('status', ['pending', 'progress'])
                              ->get()->sortBy('event.eventStartDate');
 
+        $wait = RegFinance::where('personID', '=', $this->currentPerson->personID)
+            ->whereHas(
+                'event', function($q) {
+                $q->where('eventEndDate', '>=', Carbon::now());
+            })
+            ->with('event', 'person', 'registrations')
+            ->whereHas(
+                'registrations', function($q) {
+                $q->where('pmtRecd', '=', 0);
+            })
+            ->whereIn('status', ['wait'])
+            ->get()->sortBy('event.eventStartDate');
+
         $topBits = '';
 
-        return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits'));
+        return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits', 'wait'));
     }
 
     public function index () {
