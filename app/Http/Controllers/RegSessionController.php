@@ -19,7 +19,6 @@ class RegSessionController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
-        //$this->middleware('tidy')->only('update');
     }
 
     public function show(EventSession $session)
