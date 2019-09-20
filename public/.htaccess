@@ -8,6 +8,10 @@ RewriteCond %{HTTPS} =on
 RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
 RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
 
+# Force www.
+RewriteCond %{HTTP_HOST} ^example.com [NC]
+RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301,NC]
+
 #Removed https-redirection; replaced by AppServiceProvider.php
 
 #checking if request is for a non-existent directory or file
