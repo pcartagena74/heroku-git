@@ -42,7 +42,7 @@ try {
         <div class="col-sm-12 col-xs-12">
             @foreach($track as $t)
                 <div class="col-sm-3 col-xs-3">
-                    {{ $t->trackName }}
+                    <b>{{ $t->trackName }}</b>
                 </div>
             @endforeach
         </div>
