@@ -47,10 +47,11 @@ class RegSessionController extends Controller
             return redirect()->back();
         }
 
-        if ($s === null) {
-            $session = EventSession::find($event->mainSession);
-        } else {
+        if ($s !== null) {
+            // $session = EventSession::find($event->mainSession);
             $session = EventSession::find($s);
+        } else {
+            $session = null;
         }
 
         if ($event->hasTracks > 0) {
