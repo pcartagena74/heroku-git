@@ -91,7 +91,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                         ])->first();
                         $t_label = \App\Ticket::find($tmp->ticketID);
                     } catch (Exception $e) {
-                        request()->session()->flash('alert-danger', trans('messages.errors.unexpected'));
+                        $message = trans('messages.errors.unexpected');
+                        request()->session()->flash('alert-danger', $message);
                         return view('v1.public_pages.error_display', compact('message'));
                     }
                     ?>
@@ -107,7 +108,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                 ['order', $x]
                             ])->first();
                         } catch (Exception $e) {
-                            request()->session()->flash('alert-danger', trans('messages.errors.unexpected'));
+                            $message = trans('messages.errors.unexpected');
+                            request()->session()->flash('alert-danger', $message);
                             return view('v1.public_pages.error_display', compact('message'));
                         }
                         ?>
@@ -127,7 +129,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                         $header .= " ($cnt $x)";
                                     }
                                 } catch (Exception $e) {
-                                    request()->session()->flash('alert-danger', trans('messages.errors.unexpected'));
+                                    $message = trans('messages.errors.unexpected');
+                                    request()->session()->flash('alert-danger', $message);
                                     return view('v1.public_pages.error_display', compact('message'));
                                 }
                                 ?>
