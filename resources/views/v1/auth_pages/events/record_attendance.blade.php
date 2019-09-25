@@ -27,9 +27,13 @@ $expand_msg = trans('messages.subheaders.expand_min');
                 $es->sessionName = trans('messages.headers.'.$es->sessionName);
             }
             $header = $es->sessionName;
-            if($cnt = count($es->regsessions) > 0){
-                $x = trans_choice('messages.headers.checkins', $cnt);
-                $header .= " ($cnt $x)";
+            $cnt = count($es->regsessions);
+            if($cnt > 0){
+                $xx = trans_choice('messages.headers.checkins', $cnt);
+                $header .= " ($cnt $xx)";
+            }
+            if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer')){
+                $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
             }
             ?>
             @if($es->sessionName != 'def_sess')
@@ -109,7 +113,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                             ])->first();
                         } catch (Exception $e) {
                             $message = trans('messages.errors.unexpected');
-                            request()->session()->flash('alert-danger', $message);
+                            request()->session()->flash('alert-danger', $message . "<br />$e");
                             return view('v1.public_pages.error_display', compact('message'));
                         }
                         ?>
@@ -123,20 +127,26 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                         ['order', $x],
                                         ['trackID', $track->trackID]
                                     ])->first();
-                                    $header = $es->sessionName;
-                                    if($cnt = count($es->regsessions) > 0){
-                                        $x = trans_choice('messages.headers.checkins', $cnt);
-                                        $header .= " ($cnt $x)";
-                                    }
                                 } catch (Exception $e) {
                                     $message = trans('messages.errors.unexpected');
-                                    request()->session()->flash('alert-danger', $message);
+                                    request()->session()->flash('alert-danger', $message . "<br />$e");
                                     return view('v1.public_pages.error_display', compact('message'));
                                 }
                                 ?>
                                 @if(null !== $es)
+                                    <?php
+                                    $header = $es->sessionName;
+                                    $cnt = count($es->regsessions);
+                                    if($cnt > 0){
+                                        $xx = trans_choice('messages.headers.checkins', $cnt);
+                                        $header .= " ($cnt $xx)";
+                                    }
+                                    if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer')){
+                                        $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
+                                    }
+                                    ?>
                                     @include('v1.parts.start_content', ['header' => $header, 'subheader' => "$track->trackName: " . $es->start->format('g:i A'),
-                                                                        'w1' => '6', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
+                                                                        'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
                                     <div>
                                         <p>
                                             @lang('messages.instructions.one-at-time')
