@@ -152,41 +152,43 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                             @lang('messages.instructions.one-at-time')
                                         </p>
                                     </div>
-                                    <div>
+
+                                    <div class="col-sm-3">
                                         <button data-toggle="modal" class="btn btn-md btn-success" data-target="#dynamic_modal"
                                                 data-target-id="{{ $es->sessionID }}">
                                             <i class="far fa-fw fa-check-square"></i>
                                             @lang('messages.headers.check_tab')
                                         </button>
+                                    </div>
 
-                                        {{-- Access for the Mail_Survey activity button ONLY for Developer role --}}
+                                    {{-- Access for the Mail_Survey activity button ONLY for Developer role --}}
+                                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
+
+                                        @if(count($es->regsessions) > 0)
+                                            <div class="col-sm-3">
+                                                @include('v1.parts.url_button', [
+                                                    'url' => env('APP_URL')."/mail_surveys/$event->eventID/$es->sessionID",
+                                                    'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
+                                                    'confirm' => trans('messages.messages.survey_confirm'),
+                                                    'text' => trans('messages.buttons.mail_surveys')
+                                                ])
+                                                &nbsp; <br/>
+                                            </div>
+                                        @endif
+                                    @endif
+                                    <div class="col-sm-3">
+                                        {{-- Access for the Download_List activity button ONLY for Admin or Developer roles --}}
                                         @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
-
-                                            @if(count($es->regsessions) > 0)
-                                                <div class="col-sm-3 col-xs-offset-2">
-                                                    @include('v1.parts.url_button', [
-                                                        'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
-                                                        'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
-                                                        'confirm' => trans('messages.messages.survey_confirm'),
-                                                        'text' => trans('messages.buttons.mail_surveys')
-                                                    ])
-                                                    &nbsp; <br/>
-                                                </div>
+                                            @if($event->checkin_time() && count($es->regsessions) > 0)
+                                                @include('v1.parts.url_button', [
+                                                    'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
+                                                    'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
+                                                    'text' => trans('messages.buttons.down_PDU_list')
+                                                ])
                                             @endif
                                         @endif
-                                        <div class="col-sm-3">
-                                            {{-- Access for the Download_List activity button ONLY for Admin or Developer roles --}}
-                                            @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
-                                                @if($event->checkin_time() && count($es->regsessions) > 0)
-                                                    @include('v1.parts.url_button', [
-                                                        'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
-                                                        'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
-                                                        'text' => trans('messages.buttons.down_PDU_list')
-                                                    ])
-                                                @endif
-                                            @endif
-                                        </div>
                                     </div>
+
                                     @include('v1.parts.end_content')
                                 @endif
 
