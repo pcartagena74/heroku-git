@@ -22,10 +22,20 @@ $expand_msg = trans('messages.subheaders.expand_min');
         </div>
 
         @foreach($def_sesses as $es)
+            <?php
+            if(Lang::has('messages.headers.'.$es->sessionName)){
+                $es->sessionName = trans('messages.headers.'.$es->sessionName);
+            }
+            $header = $es->sessionName;
+            if($cnt = count($es->regsessions) > 0){
+                $x = trans_choice('messages.headers.checkins', $cnt);
+                $header .= " ($cnt $x)";
+            }
+            ?>
             @if($es->sessionName != 'def_sess')
 
-                @include('v1.parts.start_content', ['header' => $es->sessionName . " ($es->sessionID)", 'subheader' => $expand_msg,
-                                                    'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => 1])
+                @include('v1.parts.start_content', ['header' => $header, 'subheader' => $expand_msg,
+                                                    'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
                 <div class="col-xs-12">
                     <p>
                         @lang('messages.instructions.one-at-time')
@@ -45,7 +55,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                     @if(count($es->regsessions) > 0)
                         <div class="col-sm-3">
                             @include('v1.parts.url_button', [
-                                'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
+                                'url' => env('APP_URL')."/mail_surveys/$event->eventID/$es->sessionID",
                                 'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
                                 'confirm' => trans('messages.messages.survey_confirm'),
                                 'text' => trans('messages.buttons.mail_surveys')
@@ -111,14 +121,19 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                         ['order', $x],
                                         ['trackID', $track->trackID]
                                     ])->first();
+                                    $header = $es->sessionName;
+                                    if($cnt = count($es->regsessions) > 0){
+                                        $x = trans_choice('messages.headers.checkins', $cnt);
+                                        $header .= " ($cnt $x)";
+                                    }
                                 } catch (Exception $e) {
                                     request()->session()->flash('alert-danger', trans('messages.errors.unexpected'));
                                     return view('v1.public_pages.error_display', compact('message'));
                                 }
                                 ?>
                                 @if(null !== $es)
-                                    @include('v1.parts.start_content', ['header' => $es->sessionName . " ($es->sessionID)", 'subheader' => "$track->trackName: " . $es->start->format('g:i A'),
-                                                                        'w1' => '6', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => 1])
+                                    @include('v1.parts.start_content', ['header' => $header, 'subheader' => "$track->trackName: " . $es->start->format('g:i A'),
+                                                                        'w1' => '6', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
                                     <div>
                                         <p>
                                             @lang('messages.instructions.one-at-time')

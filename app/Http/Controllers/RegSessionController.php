@@ -334,7 +334,6 @@ class RegSessionController extends Controller
             $rss = RSSurvey::where([
                 ['regID', $reg->regID],
                 ['personID', $reg->personID],
-                ['eventID', $event->eventID],
                 ['sessionID', $es->sessionID]
             ])->first();
 
@@ -348,6 +347,7 @@ class RegSessionController extends Controller
             }
         }
         request()->session()->flash('alert-success', trans_choice('messages.notifications.SS.post_mail_msg', $count, ['count' => $count, 'c2' => $scount]));
-        return redirect(env('APP_URL')."/eventreport/$event->slug");
+        //return redirect(env('APP_URL')."/eventreport/$event->slug");
+        return redirect()->back();
     }
 }
