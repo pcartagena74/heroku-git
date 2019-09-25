@@ -43,18 +43,45 @@ class Registration extends Model
 
     public function regsessions()
     {
-        return $this->hasOne(RegSession::class, 'regID', 'regID');
+        return $this->hasMany(RegSession::class, 'regID', 'regID');
     }
 
-    public function checkin()
+    public function checkin($sessionID = null)
     {
-        $rs = new RegSession;
-        $e = $this->event()->first();
-        $rs->regID = $this->regID;
-        $rs->eventID = $e->eventID;
-        $rs->sessionID = $e->default_session()->sessionID;
-        $rs->personID = $this->personID;
-        $rs->hasAttended = 1;
-        $rs->save();
+        if(null === $sessionID){
+            $sessionID = $this->event->default_session()->sessionID;
+        }
+
+        $es = EventSession::find($sessionID);
+        $rs = RegSession::where([
+            ['eventID', '=', $this->eventID],
+            ['regID', '=', $this->regID],
+            ['sessionID', '=', $sessionID],
+            ['personID', '=', $this->personID]
+        ])->first();
+
+        try {
+            $rs->hasAttended = 1;
+            $rs->save();
+        } catch (\Exception $e) {
+            $rs = new RegSession;
+            $event = $this->event()->first();
+            $rs->regID = $this->regID;
+            $rs->eventID = $event->eventID;
+            $rs->confDay = $es->confDay;
+            $rs->sessionID = $sessionID;
+            $rs->personID = $this->personID;
+            $rs->hasAttended = 1;
+            $rs->save();
+        }
+    }
+
+    public function is_session_attended($sessionID)
+    {
+        return RegSession::where([
+            ['regID', $this->regID],
+            ['sessionID', $sessionID],
+            ['hasAttended', 1]
+        ])->first();
     }
 }

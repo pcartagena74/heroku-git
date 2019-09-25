@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment: a No-Auth way to mark session attendance
+ * Comment: a No-Auth way to mark session attendance (by Volunteer) on behalf of attendee
  * Created: 7/5/2017
  *
  * Consider the following:

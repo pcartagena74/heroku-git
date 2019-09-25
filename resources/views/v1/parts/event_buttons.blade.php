@@ -13,6 +13,7 @@ $trackURL = env('APP_URL').'/tracks/' . $event->eventID;
 $rptURL = env('APP_URL').'/eventreport/' . $event->slug;
 $copyURL = env('APP_URL').'/eventcopy/' . $event->slug;
 $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
+$recordURL = env('APP_URL').'/record_attendance/' . $event->slug;
 
 ?>
 
@@ -49,8 +50,8 @@ $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 
 @if($event->hasTracks)
     <div class="col-xs-1">
-        <a href='{{ $trackURL }}' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top'
-           title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-pencil'></i></a>
+        <a href='{{ $trackURL }}' class='btn btn-brown btn-sm' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
     </div>
 @endif
 
@@ -76,9 +77,16 @@ $checkinURL = env('APP_URL').'/checkin/' . $event->slug;
 </div>
 @endif
 
+@if($event->hasTracks > 0 && $event->checkin_time())
+    <div class="col-xs-1">
+        <a href='{{ $recordURL }}' class='btn btn-pink btn-sm' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.buttons.rec_att') }}'><i class='far fa-fw fa-check-square'></i></a>
+    </div>
+@endif
+
 @if($event->checkin_time())
     <div class="col-xs-1">
         <a href='{{ $checkinURL }}' class='btn btn-pink btn-sm' data-toggle='tooltip' data-placement='top'
-           title='{{ trans('messages.buttons.chk_att') }}'><i class='far fa-fw fa-check-square'></i></a>
+           title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
     </div>
 @endif

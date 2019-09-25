@@ -14,8 +14,13 @@
 //$adminLevel = $_SESSION['adminLevel'];
 //$org_count = $_SESSION['org_count'];
 
-$currentPerson = App\Person::find(auth()->user()->id);
-$currentOrg    = $currentPerson->defaultOrg;
+try {
+    $currentPerson = App\Person::find(auth()->user()->id);
+    $currentOrg    = $currentPerson->defaultOrg;
+} catch(Exception $e) {
+    request()->session()->flash('alert-warning', trans('messages.errors.timeout'));
+    return redirect()->route('home');
+}
 
 // This is an Entrust option array that is used when invoking $user->ability(x, y, z)
 // $options is the implied z parameter in above.

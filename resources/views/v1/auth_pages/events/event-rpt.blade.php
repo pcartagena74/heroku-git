@@ -261,8 +261,14 @@ $count = 0;
                                 aria-expanded="true"><b>@lang('messages.headers.doored')</b></a></li>
             @endif
             @if(count($notregs) > 0)
-                <li class="hidden-sm hidden-xs"><a href="#tab_content4" id="nonreg-tab" data-toggle="tab"
-                                aria-expanded="false"><b>@lang('messages.headers.wait') {{ strtolower(__('messages.headers.or')) }} @lang('messages.headers.int_reg')</b></a>
+                <li class="hidden-sm hidden-xs">
+                    <a href="#tab_content4" id="nonreg-tab" data-toggle="tab" aria-expanded="false">
+                        <b>
+                            @lang('messages.headers.wait')
+                            {{ strtolower(__('messages.headers.or')) }}
+                            @lang('messages.headers.int_reg')
+                        </b>
+                    </a>
                 </li>
             @endif
             @if(Entrust::hasRole('Board') || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))

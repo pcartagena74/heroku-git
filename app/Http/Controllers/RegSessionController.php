@@ -18,12 +18,12 @@ class RegSessionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware('web', ['except' => ['record_attendance']]);
     }
 
     public function show(EventSession $session)
     {
-        // Called with /rs/{session}
+        // Called with GET /rs/{session}
         // Given a event's sessionID, display a form for a person to enter their $regID
 
         $event = Event::find($session->eventID);
@@ -35,7 +35,7 @@ class RegSessionController extends Controller
 
     public function volunteer_checkin($param, $s = null)
     {
-        // Called with /checkin/{event}
+        // Called with GET /checkin/{event}/{session?}
         // Given an event's sessionID, display a form for a person to enter their $regID
         try {
             $event = Event::where('eventID', '=', $param)
@@ -78,10 +78,13 @@ class RegSessionController extends Controller
         $sessionID = request()->input('sessionID');
         $eventID   = request()->input('eventID');
 
-        // Check if Registration ID entered was invalid and redirect back with message
+        // Check if Registration ID entered was valid else redirect back with message
         try {
-            $reg       = Registration::find($regID);
-            $event     = Event::find($eventID);
+            $reg       = Registration::where([
+                ['regID', '=', $regID],
+                ['eventID', '=', $eventID]
+            ])->first();
+            $event     = Event::find($reg->eventID);
             $org       = Org::find($event->orgID);
             $session   = EventSession::find($event->mainSession);
             $person    = Person::find($reg->personID);
@@ -90,6 +93,7 @@ class RegSessionController extends Controller
             return redirect()->back();
         }
 
+        // Consider deleting as $track doesn't seem to be used
         if ($event->hasTracks > 0) {
             $track = Track::where([
                 ['eventID', '=', $event->eventID],
@@ -101,6 +105,7 @@ class RegSessionController extends Controller
             $track = 0;
         }
 
+        // Check if a reg-session for this regID, eventID, sessionID exists (pre-registered) & update hasAttended if yes
         try {
             $rs              = RegSession::where([
                 ['regID', '=', $regID],
@@ -109,19 +114,24 @@ class RegSessionController extends Controller
             ])->first();
             $rs->hasAttended = 1;
             $rs->save();
+            request()->session()->flash('alert-success', trans('messages.messages.reg_success',['name' => $person->firstName . " " . $person->lastName]));
         } catch (\Exception $exception) {
-            $rs = new RegSession;
-            $rs->regID = $regID;
-            $rs->eventID = request()->input('eventID');
-            $rs->sessionID = $sessionID;
-            $rs->personID = $person->personID;
-            $rs->confDay = $session->confDay;
-            $rs->hasAttended = 1;
-            $rs->save();
+            // Check if event-session restricts casual switching
+            $es = EventSession::find($sessionID);
+            if(!$es->isRegSwitchProhibited){
+                $rs = new RegSession;
+                $rs->regID = $regID;
+                $rs->eventID = request()->input('eventID');
+                $rs->sessionID = $sessionID;
+                $rs->personID = $person->personID;
+                $rs->confDay = $session->confDay;
+                $rs->hasAttended = 1;
+                $rs->save();
+                request()->session()->flash('alert-success', trans('messages.messages.reg_success',['name' => $person->firstName . " " . $person->lastName]));
+            } else {
+                request()->session()->flash('alert-warning', $org->noSwitchTEXT);
+            }
         }
-
-        request()->session()->flash('alert-success', $person->firstName . " " . $person->lastName . " was successfully registered.");
-        //return view('v1.auth_pages.events.checkin_attendee', compact('event', 'session', 'org', 'track'));
 
         if (request()->input('return')) {
             return redirect('/checkin/' . $eventID . '/' . $sessionID);
@@ -145,7 +155,8 @@ class RegSessionController extends Controller
             ['sessionID', '=', $esID]
         ])->get();
         foreach ($old_regs as $o) {
-            $o->delete();
+            $o->hasAttended = 0;
+            $o->save();
         }
 
         // Then, cycle through all p-#-# registrants to enter record
@@ -184,7 +195,8 @@ class RegSessionController extends Controller
                 $e = EventSession::find($s->sessionID);
                 if (null !== $e && $e->regCount > 0) {
                     $e->regCount--;
-                } $e->save();
+                    $e->save();
+                }
                 $s->delete();
             }
         }
@@ -304,24 +316,38 @@ class RegSessionController extends Controller
         return view('v1.public_pages.thanks', compact('message'));
     }
 
-    public function send_surveys(Event $event)
+    public function send_surveys(Event $event, EventSession $es = null)
     {
         $count = 0;
-        foreach ($event->registrations as $reg) {
+        $scount = 0;
+        if(null === $es){
             $es = $event->default_session();
+        }
+        foreach ($event->registrations as $reg) {
             $rs = RegSession::where([
+                ['regID', $reg->regID],
+                ['personID', $reg->personID],
+                ['eventID', $event->eventID],
+                ['sessionID', $es->sessionID],
+                ['hasAttended', 1]
+            ])->first();
+            $rss = RSSurvey::where([
                 ['regID', $reg->regID],
                 ['personID', $reg->personID],
                 ['eventID', $event->eventID],
                 ['sessionID', $es->sessionID]
             ])->first();
-            if ($rs !== null) {
+
+            // YES this person attended the session and NO there is no survey yet
+            if (null !== $rs && $rss === null) {
                 $p = Person::find($reg->personID);
                 $p->notify(new SendSurvey($p, $event, $rs));
                 $count++;
+            } elseif(null !== $rs){
+                $scount++;
             }
         }
-        request()->session()->flash('alert-success', trans_choice('messages.notifications.SS.post_mail_msg', $count, ['count' => $count]));
+        request()->session()->flash('alert-success', trans_choice('messages.notifications.SS.post_mail_msg', $count, ['count' => $count, 'c2' => $scount]));
         return redirect(env('APP_URL')."/eventreport/$event->slug");
     }
 }

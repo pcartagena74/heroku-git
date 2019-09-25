@@ -27,7 +27,7 @@ class Ticket extends Model
     public function getEbMbrPriceAttribute()
     {
         if ($this->valid_earlyBird()) {
-            return $this->memberBasePrice - ($this->memberBasePrice*$this->earlyBirdPercent/100);
+            return $this->memberBasePrice - ($this->memberBasePrice * $this->earlyBirdPercent / 100);
         } else {
             return $this->memberBasePrice;
         }
@@ -36,7 +36,7 @@ class Ticket extends Model
     public function getEbNonPriceAttribute()
     {
         if ($this->valid_earlyBird()) {
-            return $this->nonmbrBasePrice - ($this->nonmbrBasePrice*$this->earlyBirdPercent/100);
+            return $this->nonmbrBasePrice - ($this->nonmbrBasePrice * $this->earlyBirdPercent / 100);
         } else {
             return $this->nonmbrBasePrice;
         }
@@ -133,8 +133,8 @@ class Ticket extends Model
     /**
      * update_count Increment / Decrement Function for Ticket Counts
      *              count is updated for bundle member tickets OR the ticket itself
-     *      @param:  $amt is the amount passed to update the count - allows for +1 and -1
-     *      @param:  $waitlist is a boolean indicating whether this should adjust the waitlist count or not
+     * @param:  $amt is the amount passed to update the count - allows for +1 and -1
+     * @param:  $waitlist is a boolean indicating whether this should adjust the waitlist count or not
      */
     public function update_count($amt, $waitlist = 0)
     {
@@ -142,7 +142,7 @@ class Ticket extends Model
         if (count($bundle_members) > 0) {
             foreach ($bundle_members as $m) {
                 // When attempting to increment the count:
-                // 1. Check if waitlisting and add there
+                // 1. Check if waitlisting and ad there
                 // 2. Otherwise, add as normal
                 if ($waitlist) {
                     $m->waitCount += $amt;
@@ -180,7 +180,7 @@ class Ticket extends Model
             ['eventID', '=', $this->eventID],
             ['ticketID', '=', $this->ticketID]
         ])->get();
-        return (count($es)> 1);
+        return (count($es) > 1);
     }
 
     public function ok_to_display()
@@ -189,17 +189,45 @@ class Ticket extends Model
         return ($this->availabilityEndDate->gte($today) && $this->isSuppressed == 0);
     }
 
-   /**
-    * ticketIDs() returns an array of ticketIDs associated with the chosen ticket
-    */
+    /**
+     * bundle_ticket_array() returns an array of ticketIDs associated with the chosen ticket's bundle members
+     *             or an array of just the single ticketID
+     */
 
-    public function ticketIDs()
+    public function bundle_ticket_array()
     {
         $bundle_members = $this->bundle_members();
-        if(count($bundle_members) > 0){
+        if (count($bundle_members) > 0) {
             return $bundle_members->pluck('ticketID')->toArray();
         } else {
             return [$this->ticketID];
         }
     }
+
+    /**
+     * bundle_parents() returns an array of ticketIDs that could result the purchase of $this ticket
+     */
+
+    public function bundle_parents()
+    {
+        return Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+            ->where([
+                ['bt.ticketID', '=', $this->ticketID],
+                ['event-tickets.eventID', '=', $this->eventID]
+            ])
+            ->pluck('bundleID')->toArray();
+    }
+
+    /**
+     * bundle_parent_array() returns an array of ticketIDs associated with bundles that include $this ticket
+     *             or an array of just the single ticketID
+     */
+
+    public function bundle_parent_array()
+    {
+        $bundle_parents = $this->bundle_parents();
+        array_push($bundle_parents, $this->ticketID);
+        return $bundle_parents;
+    }
+
 }

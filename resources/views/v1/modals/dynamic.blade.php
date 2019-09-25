@@ -11,8 +11,8 @@
  *
  */
 
-if(!isset($show_past)){
-    $show_past = 0;
+if(!isset($url)){
+    $url = '';
 }
 
 ?>
@@ -27,6 +27,9 @@ if(!isset($show_past)){
             </div>
             <div id="dynamic-modal-body" class="modal-body">
                 <div class="container">
+                    <div class="wait">
+                        <h1><i class="far fa-sync-alt fa-spin"></i> @lang('messages.messages.loading')</h1>
+                    </div>
                     <div class="panel-body" id="modal-content">
                         {{--    Content would go here.    --}}
                         {!! $content ?? '' !!}
@@ -40,17 +43,24 @@ if(!isset($show_past)){
     </div>
 </div>
 
-@if($show_past)
+@if($url)
 <script>
+    $(document).ajaxStart(function(){
+        $(".wait").css("display", "block");
+        $("#modal-content").html('');
+    });
     $(document).ready(function(){
         $("#dynamic_modal").on("show.bs.modal", function(e){
             var id = $(e.relatedTarget).data('target-id');
-            $.get("{!! env('APP_URL') !!}/activity/"+id, function(d){
+            $.get("{!! env('APP_URL') !!}/{{ $url }}/"+id, function(d){
                 var data = JSON.parse(d);
                 //console.log(data.html);
                 $("#modal-content").html(data.html);
             });
         });
+    });
+    $(document).ajaxComplete(function(){
+        $(".wait").css("display", "none");
     });
 </script>
 @endif

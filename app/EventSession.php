@@ -18,12 +18,17 @@ class EventSession extends Model
 
     public function track()
     {
-        return $this->belongsTo(Track::class, 'trackID');
+        return $this->belongsTo(Track::class, 'trackID', 'trackID');
     }
 
     public function event()
     {
-        return $this->belongsTo(Event::class, 'eventID');
+        return $this->belongsTo(Event::class, 'eventID', 'eventID');
+    }
+
+    public function ticket()
+    {
+        return $this->belongsTo(Ticket::class, 'ticketID', 'ticketID');
     }
 
     public function speakers()
