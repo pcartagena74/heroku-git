@@ -517,8 +517,8 @@ $count = 0;
                             <div class="col-xs-2" style="text-align: right;">
 <?php
                                 $checked = '';
-                                if (null !== $row->regsessions) {
-                                    if ($row->regsessions->hasAttended == 1) {
+                                if (null !== $row->regsessions && count($row->regsessions) > 0) {
+                                    if ($row->is_session_attended($es->sessionID)) {
                                         $checked = 'checked';
                                     }
                                 }
