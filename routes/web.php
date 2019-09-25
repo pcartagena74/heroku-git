@@ -231,7 +231,7 @@ Route::get('/show_group_receipt/{rf}', 'RegFinanceController@show_group_receipt'
 
 // Data Download Routes
 Route::get('/excel/nametags/{event}', 'DownloadController@nametags');
-Route::get('/excel/pdudata/{event}', 'DownloadController@pdu_list');
+Route::get('/excel/pdudata/{event}/{es?}', 'DownloadController@pdu_list');
 Route::get('/excel/emails/{event}', 'DownloadController@email_list');
 
 // Ticket & Bundle Routes

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EventSession;
 use App\Org;
 use App\RegSession;
 use Illuminate\Http\Request;
@@ -63,13 +64,23 @@ class DownloadController extends Controller
         return Excel::download(new DataExport($tag_headers, $nametags), 'email_data.csv');
     }
 
-    public function pdu_list(Event $event)
+    public function pdu_list(Event $event, EventSession $es = null)
     {
         $nametags = [];
         $org = Org::find($event->orgID);
 
-        $regs = RegSession::where('eventID', '=', $event->eventID)
-            ->with('person', 'person.orgperson', 'registration', 'person.orgs')->get();
+        if(null === $es){
+            $regs = RegSession::where('eventID', '=', $event->eventID)
+                ->with('person', 'person.orgperson', 'registration', 'person.orgs')->get();
+            $filename = 'pdu_data.csv';
+        } else {
+            $regs = RegSession::where([
+                ['eventID', '=', $event->eventID],
+                ['sessionID', '=', $es->sessionID]
+            ])
+                ->with('person', 'person.orgperson', 'registration', 'person.orgs')->get();
+            $filename = "pdu_data_$es->sessionID.csv";
+        }
 
         $tag_headers = ['RegSessID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
             trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU')];
@@ -83,6 +94,6 @@ class DownloadController extends Controller
             $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, $p->orgperson->OrgStat1, $r->registration->isAuthPDU);
         }
 
-        return Excel::download(new DataExport($tag_headers, $nametags), 'pdu_data.csv');
+        return Excel::download(new DataExport($tag_headers, $nametags), $filename);
     }
 }

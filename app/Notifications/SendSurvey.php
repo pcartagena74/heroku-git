@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Event;
+use App\EventSession;
 use App\Org;
 use App\Person;
 use App\RegSession;
@@ -19,6 +20,7 @@ class SendSurvey extends Notification
     protected $person;
     protected $event;
     protected $rs;
+    protected $es;
 
     /**
      * Create a new notification instance.
@@ -30,6 +32,7 @@ class SendSurvey extends Notification
         $this->person = $person;
         $this->event = $event;
         $this->rs = $rs;
+        $this->es = EventSession::find($rs->sessionID);
     }
 
     /**
@@ -60,13 +63,24 @@ class SendSurvey extends Notification
         }
         $date = $this->event->eventStartDate->format('F jS');
 
-        return (new MailMessage)
-            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->person->showDisplayName()]))
-            ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $etype]))
-            ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
-            ->line(trans('messages.notifications.SS.line2'))
-            ->action(trans('messages.notifications.SS.action'), env('APP_URL')."/rs_survey/" . $this->rs->id)
-            ->line(trans('messages.notifications.thanks', ['org' => $name]));
+        if($this->event->hasTracks > 0){
+            return (new MailMessage)
+                ->greeting(trans('messages.notifications.hello', ['firstName' => $this->person->showDisplayName()]))
+                ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $etype]))
+                ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
+                ->line(trans('messages.notifications.SS.line2'))
+                ->line(trans('messages.notifications.SS.line3', ['name' => $this->es->sessionName]))
+                ->action(trans('messages.notifications.SS.action'), env('APP_URL')."/rs_survey/" . $this->rs->id)
+                ->line(trans('messages.notifications.thanks', ['org' => $name]));
+        } else {
+            return (new MailMessage)
+                ->greeting(trans('messages.notifications.hello', ['firstName' => $this->person->showDisplayName()]))
+                ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $etype]))
+                ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
+                ->line(trans('messages.notifications.SS.line2'))
+                ->action(trans('messages.notifications.SS.action'), env('APP_URL')."/rs_survey/" . $this->rs->id)
+                ->line(trans('messages.notifications.thanks', ['org' => $name]));
+        }
     }
 
     /**

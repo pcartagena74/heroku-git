@@ -23,20 +23,23 @@ $expand_msg = trans('messages.subheaders.expand_min');
 
         @foreach($def_sesses as $es)
             <?php
-            if(Lang::has('messages.headers.'.$es->sessionName)){
-                $es->sessionName = trans('messages.headers.'.$es->sessionName);
+            if (Lang::has('messages.headers.' . $es->sessionName)) {
+                $es->sessionName = trans('messages.headers.' . $es->sessionName);
             }
             $header = $es->sessionName;
             $cnt = count($es->regsessions);
-            if($cnt > 0){
+            if ($cnt > 0) {
                 $xx = trans_choice('messages.headers.checkins', $cnt);
                 $header .= " ($cnt $xx)";
             }
-            if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer')){
+            if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
                 $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
             }
             ?>
             @if($es->sessionName != 'def_sess')
+                @if($es->sessionID == 646)
+                    {{-- dd($event->registrants(646))  --}}
+                @endif
 
                 @include('v1.parts.start_content', ['header' => $header, 'subheader' => $expand_msg,
                                                     'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
@@ -73,8 +76,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                     @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
                         @if($event->checkin_time() && count($es->regsessions) > 0)
                             @include('v1.parts.url_button', [
-                                'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
-                                'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
+                                'url' => env('APP_URL')."/excel/pdudata/$event->eventID/$es->sessionID",
+                                'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_PDU_list'),
                                 'text' => trans('messages.buttons.down_PDU_list')
                             ])
                         @endif
@@ -137,11 +140,11 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                     <?php
                                     $header = $es->sessionName;
                                     $cnt = count($es->regsessions);
-                                    if($cnt > 0){
+                                    if ($cnt > 0) {
                                         $xx = trans_choice('messages.headers.checkins', $cnt);
                                         $header .= " ($cnt $xx)";
                                     }
-                                    if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer')){
+                                    if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
                                         $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
                                     }
                                     ?>
@@ -154,7 +157,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                     </div>
 
                                     <div class="col-sm-3">
-                                        <button data-toggle="modal" class="btn btn-md btn-success" data-target="#dynamic_modal"
+                                        <button data-toggle="modal" class="btn btn-md btn-success"
+                                                data-target="#dynamic_modal"
                                                 data-target-id="{{ $es->sessionID }}">
                                             <i class="far fa-fw fa-check-square"></i>
                                             @lang('messages.headers.check_tab')
@@ -181,8 +185,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                         @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
                                             @if($event->checkin_time() && count($es->regsessions) > 0)
                                                 @include('v1.parts.url_button', [
-                                                    'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
-                                                    'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
+                                                    'url' => env('APP_URL')."/excel/pdudata/$event->eventID/$es->sessionID",
+                                                    'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_PDU_list'),
                                                     'text' => trans('messages.buttons.down_PDU_list')
                                                 ])
                                             @endif

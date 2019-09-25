@@ -802,8 +802,8 @@ return [
             'subject' => "Survey for :org :event_type",
             'line1' => 'Thank you for attending our :etype, ":ename," on :date.',
             'line2' => "Please spend 5 minutes to give us your feedback on the event and its speaker(s).",
+            'line3' => "This survey is for the PDC session named:  :name",
             'action' => "Take Survey",
-            'line3' => "",
             'post_mail_msg' => ":count survey email sent to the attendee.  :c2 survey was already completed.|" .
                                ":count survey emails sent to the attendees. :c2 surveys were already completed",
         ],
