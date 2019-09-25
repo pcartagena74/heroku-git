@@ -359,16 +359,6 @@ class EventController extends Controller
         }
         $currentOrg = Org::find($event->orgID);
 
-        $referrer = app(Referer::class)->get();
-
-        if ($referrer) {
-            $r = new ReferLink;
-            $r->objectType = 'eventID';
-            $r->objectID = $event->eventID;
-            $r->referrerText = $referrer;
-            $r->save();
-        }
-
         $event_loc = Location::where('locID', $event->locationID)->first();
         $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
         $bundles =

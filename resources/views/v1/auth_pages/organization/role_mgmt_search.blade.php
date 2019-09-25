@@ -340,5 +340,5 @@ $counter = 0;
 @endsection
 
 @section('modals')
-    @include('v1.modals.dynamic', ['header' => trans('messages.headers.mAct'), 'show_past' => 1])
+    @include('v1.modals.dynamic', ['header' => trans('messages.headers.mAct'), 'url' => 'activity'])
 @endsection

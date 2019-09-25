@@ -6,8 +6,20 @@
 *
  * $header, $subheader, $w1, $w2, $r1, $r2, $r3 [optional $id]
  *
+ * sending 'min' defined will trigger the collapse mechanism
+ *
  */
 
+
+ /*
+  * To collapse, the page calling it must contain:
+  *
+  *
+    <script>
+        $('.collapsed').css('height', 'auto');
+        $('.collapsed').find('.x_content').css('display', 'none');
+    </script>
+  */
 if(isset($id)) {
     $id = "id='$id' ";
 } else {
@@ -33,13 +45,20 @@ if($w2>0){
 } else {
     $xs = '';
 }
+if(isset($min)){
+    $min = " collapsed";
+    $chevron = "down";
+} else {
+    $min='';
+    $chevron = "up";
+}
 ?>
 <div class="{{ $md }} {{ $xs }} {{ $class }}
         @if(isset($o))
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}
         @endif
         ">
-    <div {!!  $id ?? '' !!}class="x_panel">
+    <div {!!  $id ?? '' !!}class="x_panel{{ $min }}">
         <div class="x_title">
             <h2>{!! $header !!}<small>&nbsp;{!! $subheader !!}</small></h2>
 
@@ -48,7 +67,7 @@ if($w2>0){
                 <ul class="nav navbar-right panel_toolbox">
 
                     @if ($r1==1)
-                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li><a class="collapse-link"><i class="fa fa-chevron-{{ $chevron }}"></i></a></li>
                     @endif
 
                     @if ($r2==1)

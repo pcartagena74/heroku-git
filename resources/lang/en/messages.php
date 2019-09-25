@@ -80,6 +80,11 @@ return [
         'img' => "Event Image",
     ],
 
+    // Common words that are often reused
+    'common' => [
+        'reminder' => "Reminder",
+    ],
+
     'directions' => [
         'org' => [
             'fullname' => "Enter complete, formal/corporate name",
@@ -105,6 +110,7 @@ return [
         'refund_failed' => 'The attempt to get a refund failed with order: :rest',
         'slug_error' => "The URL you chose is not unique.  Please change and validate it before proceeding.",
         'social_error' => "An error occurred while connecting to :social. ",
+        'timeout' => "Your session timed out.  Please login again to continue.",
         'unexpected' => "An unexpected error occurred. Please logout and attempt to perform your action again.<br />If this persists, contact mCentric@mCentric.org with as much detail as possible.",
     ],
 
@@ -528,18 +534,22 @@ return [
         'your' => 'Your',
     ],
 
+    'subheaders' => [
+        'expand_min' => "Click the arrow to expand this section.",
+    ],
+
     'instructions' => [
         'bar_chart' => "Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.",
-        'become_instr' => "Find a person by searching by that person's first or last name, email address, or PMI ID",
-        'become_id' => "Enter the left-most number from the field above. ",
+        'become_instr' => "Find a person by searching for that person's first or last name, email address, or PMI ID",
+        'become_id' => "Enter the first (left-most) number from the field above. ",
         'bundle_setup' => "If you need to create a 'bundle' ticket, do so after adding <b>all</b> of its component (non-bundle) tickets.",
         'card_error' => "There was an error with the card used.  ",
         'customURL' => "Please enter a custom URL.",
         'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect until ",
         'early_values' => "Changing the date or discount percent will apply to all associated tickets shown below or created.",
         'ev_defaults' => "Default values for this event only.",
-        'ev_discounts' => "The <b style='color: red;'>non-empty discount codes</b> here are active for this event.<br>
-                           Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.",
+        'ev_discounts' => "The <b style='color: red;'>non-empty discount codes</b> here are active for this event.<br>".
+                           "Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.",
         'ev_loc' => "This is a listing of locations used for all of the events that have been entered.
                     <ul>
                     <li>You can add new locations here <b>OR</b> when adding/editing an event.</li>
@@ -598,6 +608,7 @@ return [
         'no_user_pass' => "This user has not set a password.",
         'no_waits' => "There are no interrupted or wait listed registrations for this event at this time.",
         'not_self' => "If you are not logged in, and do not already have an account, this first ticket must be for you.",
+        'one-at-time' => "The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.",
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created." .
             "<br>Changes made here <b class='red'>do not</b> affect existing events.",
         'pmiID' => "Please enter your PMI Identification Number.",
@@ -657,6 +668,7 @@ return [
         'become' => "You are emulating the experience for: :name.  ",
         'confirm_msg' => "A confirmation email was sent to: :name.",
         'credit_info' => "Your credit/debit card information is not stored on this server and is safe.",
+        'loading' => "Loading",
         'loc_merge' => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
         'merge_sub' => "Your mCentric account for :name events",
         'merge_msg1' => "An officer/admin with :orgname recently merged accounts associated with you.",
@@ -670,7 +682,7 @@ return [
         'pass_change' => "The password was changed successfully.",
         'pass_change_for' => "The password for :name was changed successfully.",
         'receipt_recreated' => 'Your receipt was successfully recreated.',
-        'reg_success' => ":name was successfully registered.",
+        'reg_success' => ":name was successfully checked into the session.",
         'saved' => 'saved',
         'sess_saved' => "Your session choices for :reg were :verb.",
         'survey_confirm' => "Are you sure you want to email all checked in attendees the survey?",
@@ -680,6 +692,7 @@ return [
         'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
         'user_create_fail' => "An unknown error occurred during account creation.  Please take a screenshot (if appropriate) and contact vpfinance@pmimassbay.org for help.",
         'visit_mCentric' => "Visit mCentric",
+        'please_wait' => "Please wait while this content loads.",
     ],
 
     'modals' => [
@@ -790,7 +803,8 @@ return [
             'line2' => "Please spend 5 minutes to give us your feedback on the event and its speaker(s).",
             'action' => "Take Survey",
             'line3' => "",
-            'post_mail_msg' => ":count survey email sent to the attendee.|:count survey emails sent to the attendees.",
+            'post_mail_msg' => ":count survey email sent to the attendee.  :c2 survey was already completed.|" .
+                               ":count survey emails sent to the attendees. :c2 surveys were already completed",
         ],
 
         // AccountCreation
