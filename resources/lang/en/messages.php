@@ -350,6 +350,7 @@ return [
         'certs' => 'Certifications',
         'chap' => 'Chapter',
         'chap_evt_att' => 'Chapter Event Attendance',
+        'checkins' => "Check-in|Check-ins",
         'past_evt_att' => 'Past Event Attendance',
         'chapterRole' => 'Chapter Role',
         'check_tab' => "Attendee Check-In",

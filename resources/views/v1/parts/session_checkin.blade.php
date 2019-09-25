@@ -37,7 +37,7 @@ $registrants = $event->registrants($es->sessionID);
         @if(null !== $row)
             <div class="col-xs-12" style="text-align: right;{{ $key+1 & 1 ? "background-color: #cccccc;" : ''}}">
                 <div class="col-xs-1" style="text-align: right;">
-                    @if(null !== $row->hasAttended)
+                    @if(null !== $row->hasAttended && $row->hasAttended == 0)
                         <b>{{ $key+1 }}</b>
                     @else
                         {{ $key+1 }}
@@ -55,14 +55,14 @@ $registrants = $event->registrants($es->sessionID);
                     {!! Form::checkbox('p-'.$row->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked => $checked)) !!}
                 </div>
                 <div class="col-xs-4" style="height: 100%; text-align: left;">
-                    @if(null !== $row->hasAttended)
+                    @if(null !== $row->hasAttended && $row->hasAttended == 0)
                         <b> {{ $row->prefName }} {{ $row->lastName }} </b>
                     @else
                         {{ $row->prefName }} {{ $row->lastName }}
                     @endif
                 </div>
                 <div class="col-xs-6" style="height: 100%; text-align: left;">
-                    @if(null !== $row->hasAttended)
+                    @if(null !== $row->hasAttended && $row->hasAttended == 0)
                         <b> {{ $row->OrgStat1 ?? 'N/A' }} </b>
                     @else
                         {{ $row->OrgStat1 ?? 'N/A' }}
