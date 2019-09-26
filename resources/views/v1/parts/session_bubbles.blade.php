@@ -80,7 +80,7 @@ if (count($purchased_tickets) == 0) {
 }
 
 // These are the ticketIDs that have been purchased, it's an array of 1 item (if stand-alone) or more (if bundled)
-$valid_ticketIDs = $ticket->ticketIDs();
+$valid_ticketIDs = $ticket->bundle_ticket_array();
 
 ?>
 @if(1)  {{-- didn't clean up; previously checked if this included stuff should display --}}
