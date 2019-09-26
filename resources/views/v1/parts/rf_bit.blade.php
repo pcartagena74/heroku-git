@@ -159,7 +159,7 @@ $s3fs = new Filesystem($adapter);
                 @endif
 
                 &nbsp;<br/>
-                @if($reg->ticket->has_sessions() && 1 || $rf->pmtRecd == 1)
+                @if($reg->ticket->has_sessions() && $rf->pmtRecd == 1)
                     @include('v1.parts.session_bubbles', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf,
                     'reg' => $reg, 'regSession' => $regSessions])
                 @endif
