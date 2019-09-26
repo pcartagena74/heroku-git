@@ -115,6 +115,7 @@ return [
     ],
 
     'flashes' => [
+        'merge_failure' => "The attempt to merge the records has failed.<br />:e",
         'password_success' => "The password for the account with the login: :login was set successfully.",
     ],
 
