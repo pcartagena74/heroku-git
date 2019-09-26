@@ -3,6 +3,7 @@
  * Comment: Buttons to display on Event Management pages
  * Created: 10/21/2018
  */
+$today = \Carbon\Carbon::now();
 
 $homeURL = env('APP_URL').'/manage_events';
 $editURL    = env('APP_URL').'/event/' . $event->eventID . '/edit';
@@ -77,7 +78,7 @@ $recordURL = env('APP_URL').'/record_attendance/' . $event->slug;
 </div>
 @endif
 
-@if($event->hasTracks > 0 && $event->checkin_time())
+@if($event->hasTracks > 0 && ($event->checkin_time() || $today->gte($event->eventEndDate)))
     <div class="col-xs-1">
         <a href='{{ $recordURL }}' class='btn btn-pink btn-sm' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.buttons.rec_att') }}'><i class='far fa-fw fa-check-square'></i></a>

@@ -10,6 +10,7 @@ use App\PersonSocialite;
 use App\Phone;
 use App\RegFinance;
 use App\Registration;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use App\Person;
@@ -202,6 +203,7 @@ class MergeController extends Controller
         // responds to POST to /execute_merge
         $this->currentPerson = Person::find(auth()->user()->id);
         $letter = request()->input('letter');
+        $return_model = null;
 
         $id1 = request()->input('model1');
         $id2 = request()->input('model2');
@@ -239,134 +241,151 @@ class MergeController extends Controller
             }
         }
 
-        $model1->updaterID = $this->currentPerson->personID;
-        $model1->save();
+        DB::beginTransaction();
+        try {
+            $model1->updaterID = $this->currentPerson->personID;
+            $model1->save();
 
-        $model2->updaterID = $this->currentPerson->personID;
-        $model2->save();
-        $model2->delete();
+            $model2->updaterID = $this->currentPerson->personID;
+            $model2->save();
+            $model2->delete();
 
-        switch ($letter) {
-            // Switch to handle relation models associated with the target models
-            case 'p':
-                // Find all emails, addresses, registrations, etc. associated with model2 location and update
+            switch ($letter) {
+                // Switch to handle relation models associated with the target models
+                case 'p':
+                    // Find all emails, addresses, registrations, etc. associated with model2 location and update
 
-                foreach ($model2->emails as $e) {
-                    $m2 = Email::find($e->emailID);
-                    $m2->personID = $model1->personID;
-                    $m2->isPrimary = 0;
-                    $m2->updaterID = $this->currentPerson->personID;
-                    $m2->save();
-                }
-                foreach ($model2->addresses as $e) {
-                    $m2 = Address::find($e->addrID);
-                    $m2->personID = $model1->personID;
-                    $m2->updaterID = $this->currentPerson->personID;
-                    $m2->save();
-                }
-                foreach ($model2->socialites as $e) {
-                    $e->personID = $model1->personID;
-                    $e->updaterID = $this->currentPerson->personID;
-                    $e->save();
-                }
-                foreach ($model2->registrations as $e) {
-                    $m2 = Registration::find($e->regID);
-                    $m2->personID = $model1->personID;
-                    $m2->updaterID = $this->currentPerson->personID;
-                    $m2->save();
-                }
-                foreach ($model2->regfinances as $e) {
-                    $m2 = RegFinance::find($e->regID);
-                    $m2->personID = $model1->personID;
-                    $m2->updaterID = $this->currentPerson->personID;
-                    $m2->save();
-                }
-                foreach ($model2->phones as $e) {
-                    $m2 = Phone::find($e->phoneID);
-                    $m2->personID = $model1->personID;
-                    $m2->updaterID = $this->currentPerson->personID;
-                    $m2->save();
-                }
-
-                $o1 = OrgPerson::where([
-                    ['personID', $model1->personID],
-                    ['orgID', $this->currentPerson->defaultOrgID]
-                ])->first();
-
-                $o2 = OrgPerson::where([
-                    ['personID', $model2->personID],
-                    ['orgID', $this->currentPerson->defaultOrgID]
-                ])->first();
-
-                if (($o1->OrgStat1 === null || $o1->OrgStat1 == '') && isset($o2)) {
-                    if ($o2->OrgStat1) {
-                        $o1->OrgStat1 = $o2->OrgStat1;
-                        $o1->OrgStat2 = $o2->OrgStat2;
-                        $o1->RelDate1 = $o2->RelDate1;
-                        $o1->RelDate2 = $o2->RelDate2;
-                        $o1->RelDate3 = $o2->RelDate3;
-                        $o1->RelDate4 = $o2->RelDate4;
-                        $o1->save();
+                    foreach ($model2->emails as $e) {
+                        $m2 = Email::find($e->emailID);
+                        $m2->personID = $model1->personID;
+                        $m2->isPrimary = 0;
+                        $m2->updaterID = $this->currentPerson->personID;
+                        $m2->save();
                     }
-                }
-                if (isset($o2)) {
-                    $o2->delete();
-                }
+                    foreach ($model2->addresses as $e) {
+                        $m2 = Address::find($e->addrID);
+                        $m2->personID = $model1->personID;
+                        $m2->updaterID = $this->currentPerson->personID;
+                        $m2->save();
+                    }
+                    foreach ($model2->socialites as $e) {
+                        $e->personID = $model1->personID;
+                        $e->updaterID = $this->currentPerson->personID;
+                        $e->save();
+                    }
+                    foreach ($model2->registrations as $e) {
+                        $m2 = Registration::find($e->regID);
+                        $m2->personID = $model1->personID;
+                        $m2->updaterID = $this->currentPerson->personID;
+                        $m2->save();
+                    }
+                    foreach ($model2->regfinances as $e) {
+                        $m2 = RegFinance::find($e->regID);
+                        $m2->personID = $model1->personID;
+                        $m2->updaterID = $this->currentPerson->personID;
+                        $m2->save();
+                    }
+                    foreach ($model2->phones as $e) {
+                        $m2 = Phone::find($e->phoneID);
+                        $m2->personID = $model1->personID;
+                        $m2->updaterID = $this->currentPerson->personID;
+                        $m2->save();
+                    }
 
-                // change any permissions that might be set
-                DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
+                    $o1 = OrgPerson::where([
+                        ['personID', $model1->personID],
+                        ['orgID', $this->currentPerson->defaultOrgID]
+                    ])->first();
 
-                request()->session()->flash('alert-success', trans(
-                    'messages.messages.merge_succ',
-                    ['model' => $this->models[$letter], 'record1' => $model2->personID,
-                    'record2' => $model1->personID]
-                ));
+                    $o2 = OrgPerson::where([
+                        ['personID', $model2->personID],
+                        ['orgID', $this->currentPerson->defaultOrgID]
+                    ])->first();
 
-                // If a password is set for a user record that will not survive and survivor password is null, copy it.
-                // Then delete non-surviving user record
-                $u1 = User::find($model1->personID);
-                $u2 = User::find($model2->personID);
-
-                if ($u2 !== null) {
-                    if ($u1->password === null) {
-                        if ($u2->password !== null) {
-                            $u1->password = $u2->password;
-                            // Need to notify $model2 it's being merged ONLY if password !== null
-                            $model2->notify(new AccountMerge($model1, $model2));
+                    if (($o1->OrgStat1 === null || $o1->OrgStat1 == '') && isset($o2)) {
+                        if ($o2->OrgStat1) {
+                            $o1->OrgStat1 = $o2->OrgStat1;
+                            $o1->OrgStat2 = $o2->OrgStat2;
+                            $o1->RelDate1 = $o2->RelDate1;
+                            $o1->RelDate2 = $o2->RelDate2;
+                            $o1->RelDate3 = $o2->RelDate3;
+                            $o1->RelDate4 = $o2->RelDate4;
+                            $o1->save();
                         }
                     }
-                    $u2->delete();
-                    $u1->save();
-                }
+                    if (isset($o2)) {
+                        $o2->delete();
+                    }
 
-                // Person soft-deletes require unique key 'login' to be uniquely modified
-                $model2->login = 'merged_' . $model2->login;
-                $model2->save();
-                $model2->delete();
+                    $u1 = User::find($model1->personID);
+                    $u2 = User::find($model2->personID);
 
-                $return_model = $model1->personID;
-                break;
+                    // change any permissions that might be set
+                    // DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
 
-            case 'l':
-                // Find all events with model2's location and update
-                $events = Event::where([
-                    ['orgID', '=', $this->currentPerson->defaultOrgID],
-                    ['locationID', '=', $model2->locID]
-                ])->get();
+                    $weedout = $u1->roles()->pluck('id')->toArray();
+                    foreach($u2->roles as $r){
+                        if(!in_array($r->id, $weedout)){
+                            $u1->roles()->attach($r->id);
+                        }
+                        $u2->roles()->detach($r->id);
+                    }
 
-                $cnt = 0;
-                foreach ($events as $e) {
-                    $e->locationID = $model1->locID;
-                    $e->updaterID = $this->currentPerson->personID;
-                    $e->save();
-                    $cnt++;
-                }
-                request()->session()->flash('alert-warning', trans(
-                    'messages.messages.loc_merge',
-                    ['id' => $model1->locID, 'id2' => $model2->locID, 'count' => $cnt]
-                ));
-                $return_model = $model1->locID;
-                break;
+                    request()->session()->flash('alert-success', trans(
+                        'messages.messages.merge_succ',
+                        ['model' => $this->models[$letter], 'record1' => $model2->personID,
+                            'record2' => $model1->personID]
+                    ));
+
+                    // If a password is set for a user record that will not survive and survivor password is null, copy it.
+                    // Then delete non-surviving user record
+
+                    if ($u2 !== null) {
+                        if ($u1->password === null) {
+                            if ($u2->password !== null) {
+                                $u1->password = $u2->password;
+                                // Need to notify $model2 it's being merged ONLY if password !== null
+                                $model2->notify(new AccountMerge($model1, $model2));
+                            }
+                        }
+                        $u2->delete();
+                        $u1->save();
+                    }
+
+                    // Person soft-deletes require unique key 'login' to be uniquely modified
+                    $model2->login = 'merged_' . $model2->login;
+                    $model2->save();
+                    $model2->delete();
+
+                    $return_model = $model1->personID;
+                    break;
+
+                case 'l':
+                    // Find all events with model2's location and update
+                    $events = Event::where([
+                        ['orgID', '=', $this->currentPerson->defaultOrgID],
+                        ['locationID', '=', $model2->locID]
+                    ])->get();
+
+                    $cnt = 0;
+                    foreach ($events as $e) {
+                        $e->locationID = $model1->locID;
+                        $e->updaterID = $this->currentPerson->personID;
+                        $e->save();
+                        $cnt++;
+                    }
+                    request()->session()->flash('alert-warning', trans(
+                        'messages.messages.loc_merge',
+                        ['id' => $model1->locID, 'id2' => $model2->locID, 'count' => $cnt]
+                    ));
+                    $return_model = $model1->locID;
+                    break;
+            }
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollback();
+            request()->session()->flash('alert-warning', trans('messages.flashes.merge_failure', ['e' => $e]));
+            return back()->withInput();
         }
 
         return redirect('/merge/' . $letter . '/' . $return_model);

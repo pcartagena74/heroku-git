@@ -281,12 +281,14 @@ $count = 0;
             @endif
             <li class="hidden-sm hidden-xs"><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
                             aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a></li>
-            @if($event->checkin_time() && ( Entrust::hasRole($currentOrg->orgName) &&
-                    ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
-                || Entrust::hasRole('Developer'))
+            @if($event->hasTracks == 0)
+                @if($event->checkin_time() && ( Entrust::hasRole($currentOrg->orgName) &&
+                        ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
+                    || Entrust::hasRole('Developer'))
 
-                <li class=""><a href="#tab_content7" id="checkin-tab" data-toggle="tab"
-                                aria-expanded="false"><b>@lang('messages.headers.check_tab')</b></a></li>
+                    <li class=""><a href="#tab_content7" id="checkin-tab" data-toggle="tab"
+                                    aria-expanded="false"><b>@lang('messages.headers.check_tab')</b></a></li>
+                @endif
             @endif
         </ul>
 

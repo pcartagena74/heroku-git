@@ -13,8 +13,9 @@ $expand_msg = trans('messages.subheaders.expand_min');
 
 @section('content')
 
-    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
-        || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+    @if(( Entrust::hasRole($currentOrg->orgName) &&
+         ( Entrust::can('event-management') || Entrust::hasRole('Admin') )
+         ) || Entrust::hasRole('Developer'))
 
         <h2>{{ $event->eventName }}</h2>
         <div class="col-lg-7 col-xs-12">
@@ -24,10 +25,11 @@ $expand_msg = trans('messages.subheaders.expand_min');
         @foreach($def_sesses as $es)
             <?php
             if (Lang::has('messages.headers.' . $es->sessionName)) {
-                $es->sessionName = trans('messages.headers.' . $es->sessionName);
+                $header = $es->sessionName = trans('messages.headers.' . $es->sessionName);
+            } else {
+                $header = $es->sessionName;
             }
-            $header = $es->sessionName;
-            $cnt = count($es->regsessions);
+            $cnt = count($es->regsessions->where('hasAttended', 1));
             if ($cnt > 0) {
                 $xx = trans_choice('messages.headers.checkins', $cnt);
                 $header .= " ($cnt $xx)";
@@ -57,9 +59,9 @@ $expand_msg = trans('messages.subheaders.expand_min');
                 </div>
 
                 {{-- Access for the Mail_Survey activity button ONLY for Developer role --}}
-                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
+                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
-                    @if(count($es->regsessions) > 0)
+                    @if($cnt > 0)
                         <div class="col-sm-3">
                             @include('v1.parts.url_button', [
                                 'url' => env('APP_URL')."/mail_surveys/$event->eventID/$es->sessionID",
@@ -73,8 +75,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                 @endif
                 <div class="col-sm-3">
                     {{-- Access for the Download_List activity button ONLY for Admin or Developer roles --}}
-                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
-                        @if($event->checkin_time() && count($es->regsessions) > 0)
+                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                        @if($event->checkin_period() && $cnt > 0)
                             @include('v1.parts.url_button', [
                                 'url' => env('APP_URL')."/excel/pdudata/$event->eventID/$es->sessionID",
                                 'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_PDU_list'),
@@ -139,7 +141,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                 @if(null !== $es)
                                     <?php
                                     $header = $es->sessionName;
-                                    $cnt = count($es->regsessions);
+                                    $cnt = count($es->regsessions->where('hasAttended', 1));
                                     if ($cnt > 0) {
                                         $xx = trans_choice('messages.headers.checkins', $cnt);
                                         $header .= " ($cnt $xx)";
@@ -166,7 +168,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                     </div>
 
                                     {{-- Access for the Mail_Survey activity button ONLY for Developer role --}}
-                                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
+                                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
                                         @if(count($es->regsessions) > 0)
                                             <div class="col-sm-3">
@@ -182,8 +184,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                                     @endif
                                     <div class="col-sm-3">
                                         {{-- Access for the Download_List activity button ONLY for Admin or Developer roles --}}
-                                        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Developer'))
-                                            @if($event->checkin_time() && count($es->regsessions) > 0)
+                                        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                                            @if($event->checkin_period() && count($es->regsessions) > 0)
                                                 @include('v1.parts.url_button', [
                                                     'url' => env('APP_URL')."/excel/pdudata/$event->eventID/$es->sessionID",
                                                     'color' => 'btn-primary', 'tooltip' => trans('messages.buttons.down_PDU_list'),

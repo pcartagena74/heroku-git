@@ -105,7 +105,20 @@ class Event extends Model
         //dd($this->eventStartDate->diffInDays($today));
         if (($this->eventStartDate->diffInDays($today) <= 2
                 && $this->eventStartDate->diffInDays($today) >= 0)
-            || $today->gte($this->eventEndDate)) {
+            || $today->diffInDays($this->eventEndDate) <= 1) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function checkin_period()
+    {
+        $today = Carbon::now();
+        //dd($this->eventStartDate->diffInDays($today));
+        if ( ($this->eventStartDate->diffInDays($today) <= 2
+                && $this->eventStartDate->diffInDays($today) >= 0)
+            || $today->gte($this->eventEndDate) ) {
             return 1;
         } else {
             return 0;
