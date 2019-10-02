@@ -106,6 +106,7 @@ Route::get('/newuser/create', 'UserController@create');
 Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
+Route::get('/panel', 'AdminController@index');
 
 // My Profile / Member Editing
 // ---------------------
@@ -170,7 +171,7 @@ Route::post('/search', 'PersonController@search');
 // Speaker Routes
 // ---------------------
 Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
-//Route::get('/speakers2', 'SpeakerController@index2')->name('manageSpeakers2');
+Route::get('/speakers/{speaker}', 'SpeakerController@show');
 
 // Event Routes
 // ---------------------

@@ -85,6 +85,7 @@ try{
                                 <li><a href="{{ env('APP_URL') }}/newuser/create">@lang('messages.nav.ad_new')</a></li>
                                 <li><a href="{{ env('APP_URL') }}/role_mgmt">@lang('messages.nav.o_roles')</a></li>
                                 @if(Entrust::hasRole('Developer'))
+                                    <li><a href="{{ env('APP_URL') }}/panel">@lang('messages.nav.ad_panel')</a></li>
                                     <li><a href="{{ env('APP_URL') }}/load_data">@lang('messages.nav.o_upload')</a></li>
                                 @endif
                             </ul>

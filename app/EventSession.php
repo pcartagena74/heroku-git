@@ -41,6 +41,11 @@ class EventSession extends Model
         return $this->hasMany(RegSession::class, 'sessionID', 'sessionID');
     }
 
+    public function surveys()
+    {
+        return $this->hasMany(RSSurvey::class, 'sessionID', 'sessionID');
+    }
+
     public function show_speakers()
     {
         $output = "";
