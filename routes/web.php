@@ -212,7 +212,7 @@ Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');        
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
 Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::patch('/session/{es}', 'EventSessionController@update');
-Route::get('/eventreport/{slug}', 'RegistrationController@show');
+Route::get('/eventreport/{slug}/{format?}', 'RegistrationController@show');
 Route::get('/promote/{reg}', 'RegistrationController@promote');
 Route::get('/eventcopy/{slug}', 'EventCopyController@show');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');                                  // Ajax

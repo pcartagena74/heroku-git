@@ -116,9 +116,9 @@ class RegistrationController extends Controller
      * @param $param : the slug or eventID for an event
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show($param)
+    public function show($param, $format = null)
     {
-        // Responds to GET /eventreport/{slug]
+        // Responds to GET /eventreport/{slug}/{format?}
 
         try {
             $event = Event::when(
@@ -251,7 +251,7 @@ class RegistrationController extends Controller
         }
         return view(
             'v1.auth_pages.events.event-rpt',
-            compact('event', 'regs', 'notregs', 'tkts', 'refunds', 'nametags', 'deadbeats', 'discPie', 'tracks', 'discountCounts')
+            compact('event', 'regs', 'notregs', 'tkts', 'refunds', 'nametags', 'deadbeats', 'discPie', 'tracks', 'discountCounts', 'format')
         );
     }
 
