@@ -32,7 +32,7 @@ if ($mbr_list){
                     title='" . trans('messages.tooltips.mr') . "' class='btn btn-xs btn-warning'>
                    <i class='far fa-fw fa-code-branch'></i></a>";
 
-        $become_form = Form::open(array('url' => '/become', 'method' => 'POST'));
+        $become_form = Form::open(array('url' => '/become', 'method' => 'POST', 'target' => '_blank'));
         $become_form .= Form::hidden('new_id', $mbr->personID);
         $submit_button = "<i class='fas fa-fw fa-user'></i>";
         $become_form .= '<button class="btn btn-xs btn-danger" title="' . trans('messages.nav.ms_become').

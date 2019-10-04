@@ -30,20 +30,10 @@
             @include('v1.parts.start_content', ['header' => trans('messages.reports.ev_by_year'), 'subheader' => '',
                      'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-            @if(Entrust::hasRole('Developer'))
                 <b>@lang('messages.reports.graph_years'):</b> <a id="tags"
                                        data-pk="{{ 1 }}" data-type="select2" data-title="{{ trans('messages.reports.select_years') }}"
                                        data-url="{{ env('APP_URL') }}/mbrreport/{{ 1 }}">{!! $year_string !!}</a><br/>
 
-            @if(0)
-                {!! Form::open(array('url' => env('APP_URL')."/mbrreport", 'method' => 'POST')) !!}
-                {!! Form::hidden('name', 'tags') !!}
-                {!! Form::hidden('value[]', '2018') !!}
-                {!! Form::hidden('value[]', '2019') !!}
-                {!! Form::submit() !!}
-                {!! Form::close() !!}
-            @endif
-            @endif
             <div id="canvas"></div>
 
             @include('v1.parts.end_content')
@@ -67,6 +57,7 @@
 @endsection
 
 @section('scripts')
+    @include('v1.parts.menu-fix', array('path' => '/mbrreport'))
     <script>
         // $.fn.editable.defaults.ajaxOptions = {type: "POST"};
         var result;
