@@ -76,10 +76,12 @@ class EmailController extends Controller
         $email->save();
         $email->delete();
 
-        if (request()->input('personID') == $this->currentPerson->personID) {
+        $personID = request()->input('personID');
+
+        if ($personID == $this->currentPerson->personID) {
             return redirect("/profile/my");
         } else {
-            return redirect("/profile/" . $this->currentPerson->personID);
+            return redirect("/profile/" . $personID);
         }
     }
 

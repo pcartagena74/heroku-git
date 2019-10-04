@@ -1,69 +1,66 @@
 <?php
 /**
- * Comment:
+ * Comment: Report showing member activity by year and industry breakdown
  * Created: 2/9/2017
+ * -----------------
+ * Updated: 10/4/2019 for configurable graph (display years)
+ *
  */
-
-/*
-$headers = ['#', trans('messages.fields.name'), trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
-             trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.indName'),
-             trans('messages.fields.expr'), trans('messages.fields.buttons')];
-//$headers = ['#', 'Name', 'PMI ID', 'PMI Classification', 'Company', 'Title', 'Industry', 'Expiration', 'Buttons'];
-*/
 ?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
-            <li class="active"><a href="#tab_content1" id="member_tab" data-toggle="tab"
-                                  aria-expanded="true"><b>@lang('messages.headers.mem_demo')</b></a></li>
-            <li class=""><a href="#tab_content2" id="everyone_tab" data-toggle="tab"
-                            aria-expanded="false"><b>Heat Map [Coming Soon]</b></a></li>
-{{--
-            @if(Entrust::hasRole('Speaker'))
-                <li class=""><a href="#tab_content3" id="other-tab" data-toggle="tab"
-                                aria-expanded="false"><b>Third Thing</b></a></li>
-            @endif
---}}
-        </ul>
+    <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
+        <li class="active"><a href="#tab_content1" id="member_tab" data-toggle="tab"
+                              aria-expanded="true"><b>@lang('messages.tabs.mem_demo')</b></a></li>
+        <li class=""><a href="#tab_content2" id="everyone_tab" data-toggle="tab"
+                        aria-expanded="false"><b>@lang('messages.tabs.heat_map')</b></a></li>
+        {{--
+                    @if(Entrust::hasRole('Speaker'))
+                        <li class=""><a href="#tab_content3" id="other-tab" data-toggle="tab"
+                                        aria-expanded="false"><b>Third Thing</b></a></li>
+                    @endif
+        --}}
+    </ul>
+    <p>&nbsp;</p>
 
-        <div id="tab-content" class="tab-content">
-            <div class="tab-pane active" id="tab_content1" aria-labelledby="member_tab">
-                &nbsp;<br/>
-                @include('v1.parts.start_content', ['header' => 'Number of Events Attended by Year', 'subheader' => '',
-                         'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    <div id="tab-content" class="tab-content">
+        <div class="tab-pane active" id="tab_content1" aria-labelledby="member_tab">
+            &nbsp;<br/>
+            @include('v1.parts.start_content', ['header' => trans('messages.reports.ev_by_year'), 'subheader' => '',
+                     'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-                @if(Entrust::hasRole('Developer'))
-                <b>Graph Years:</b> <a id="tags"
-                                        data-pk="{{ 1 }}" data-type="select2" data-title="Select Years to Display"
-                                        data-url="{{ env('APP_URL') }}/reg_verify/{{ 1 }}">2013, 2014, 2015, 2016, 2017, 2018</a><br/>
-                @endif
-                <div id="canvas"></div>
+                <b>@lang('messages.reports.graph_years'):</b> <a id="tags"
+                                       data-pk="{{ 1 }}" data-type="select2" data-title="{{ trans('messages.reports.select_years') }}"
+                                       data-url="{{ env('APP_URL') }}/mbrreport/{{ 1 }}">{!! $year_string !!}</a><br/>
 
-                @include('v1.parts.end_content')
+            <div id="canvas"></div>
 
-                @include('v1.parts.start_content', ['header' => 'Identified Industry Breakdown', 'subheader' => '',
-                         'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <canvas id="indPie"></canvas>
-                </div>
-                <div id="pieLegend" class="col-md-12 col-sm-12 col-xs-12">
-                </div>
-                @include('v1.parts.end_content')
+            @include('v1.parts.end_content')
 
-
+            @include('v1.parts.start_content', ['header' => trans('messages.reports.ind_brk'), 'subheader' => '',
+                     'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <canvas id="indPie"></canvas>
             </div>
-            <div class="tab-pane fade" id="tab_content2" aria-labelledby="everyone_tab">
-                <br />
+            <div id="pieLegend" class="col-md-12 col-sm-12 col-xs-12">
             </div>
+            @include('v1.parts.end_content')
+
+
+        </div>
+        <div class="tab-pane fade" id="tab_content2" aria-labelledby="everyone_tab">
+            <br/>
         </div>
     </div>
 
 @endsection
 
 @section('scripts')
+    @include('v1.parts.menu-fix', array('path' => '/mbrreport'))
     <script>
+        // $.fn.editable.defaults.ajaxOptions = {type: "POST"};
+        var result;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -74,9 +71,13 @@ $headers = ['#', trans('messages.fields.name'), trans('messages.fields.pmi_id'),
             placement: 'right',
             inputclass: 'input-large',
             select2: {
-                tags: ['2013', '2014', '2015', '2016', '2017', '2018'],
+                tags: [{!! $quote_string !!}],
                 tokenSeparators: [",", " "]
-            }
+            },
+            success: function (data) {
+                result = eval(data);
+                window.location = "{{ env('APP_URL') . "/mbrreport/$orgID" }}";
+            },
         });
     </script>
     @include('v1.parts.footer-chart')

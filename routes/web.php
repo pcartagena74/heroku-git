@@ -159,7 +159,8 @@ Route::post('/eventtype/{etID}', 'EventTypeController@update');                 
 Route::get('/members', 'PersonController@index')->name('manageMembers');
 Route::get('/merge/{model_code}/{id1?}/{id2?}', 'MergeController@show')->name('showMergeModel');
 //Route::get('/find', 'MergeController@find')->name('search');
-Route::get('/mbrreport', 'ReportController@member_report')->name('member_report');
+Route::get('/mbrreport/{id?}', 'ReportController@show')->name('member_report');
+Route::post('/mbrreport/{id}', 'ReportController@update');
 Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete');               // Ajax
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');

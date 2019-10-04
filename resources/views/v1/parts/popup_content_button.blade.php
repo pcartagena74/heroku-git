@@ -10,13 +10,15 @@ if(!isset($placement)){
 if(!isset($color)){
     $color = 'btn-primary';
 }
+
+// removed from below b/c of iOS
+// data-trigger="focus"
 ?>
 @if(isset($title) && isset($content) && isset($button_text))
-<a tabindex="0"
+<a tabindex="0" role="button"
    class="btn btn-xs {{ $color }} {{ $extra_class ?? '' }}"
    data-html="true"
    data-toggle="popover"
-   data-trigger="focus"
    data-placement="{{ $placement }}"
    title="{!! $title !!}"
    data-content="{!! $content !!}">
