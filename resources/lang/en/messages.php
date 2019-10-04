@@ -431,7 +431,6 @@ return [
         'logo' => "Logo",
         'main' => "Main",
         'max' => "Max Attendees",
-        'mem_demo' => "Member Demographics",
         'member' => "Member|Members",
         'membership' => "Membership",
         'merge_can' => "Merge Candidate",
@@ -963,6 +962,13 @@ return [
         'wait' => 'Wait List'
     ],
 
+    'reports' => [
+        'ev_by_year' => "Number of Events Attended by Year",
+        'graph_years' => "Year Display",
+        'ind_brk' => "Identified Industry Breakdown",
+        'select_years' => "Select Years to Display",
+    ],
+
     'surveys' => [
         'responses' => [
             'vg' => 'Very Good',
@@ -1007,6 +1013,8 @@ return [
     ],
 
     'tabs' => [
+        'heat_map' => "Heat Map [Coming Soon]",
+        'mem_demo' => "Member Demographics",
         'ticketing' => 'Event Ticketing',
         'sessions' => 'Event Sessions',
     ],

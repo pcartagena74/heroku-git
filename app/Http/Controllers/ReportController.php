@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use App\Person;
+use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,14 +15,34 @@ class ReportController extends Controller
         $this->middleware('auth');
     }
 
-    public function member_report()
+    public function show($year_string = null)
     {
         $topBits = '';
         $this->currentPerson = Person::find(auth()->user()->id);
+        $orgID = $this->currentPerson->defaultOrgID;
+        $quote_string = Session::get('quote_string');
+
+        if($quote_string == "''" && null !== $year_string){
+            $year_string = null;
+        }
+
+        if(null === $year_string){
+            $year_array = Event::where('orgID', $this->currentPerson->defaultOrgID)
+                ->join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
+                ->select(DB::raw("year(eventStartDate) as 'year'"))
+                ->distinct()->orderBy('year', 'asc')->pluck('year');
+
+            $year_string = implode(",", $year_array->toArray());
+            $quote_string = "'" . implode("','", $year_array->toArray()). "'";
+        } else {
+            $year_string = Session::get('year_string');
+            $quote_string = Session::get('quote_string');
+        }
 
         $years = Event::where('orgID', $this->currentPerson->defaultOrgID)
             ->join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
             ->select(DB::raw("year(eventStartDate) as 'year'"))
+            ->whereIn(DB::raw('year(eventStartDate)'), explode(",", $year_string))
             ->distinct()->orderBy('year', 'asc')->get();
 
         $datastring = "";
@@ -34,7 +55,7 @@ class ReportController extends Controller
         }
         rtrim($labels, ",");
 
-        $chart = DB::select('call member_report');
+        $chart = DB::select('call member_report("' . $year_string . '")');
 
         foreach ($chart as $e) {
             if ($e->numEvent >= 8) {
@@ -95,7 +116,7 @@ class ReportController extends Controller
             }
         }
 
-        $total  = Person::whereNotNull('indName')
+        $total = Person::whereNotNull('indName')
             ->where('indName', '<>', "")
             ->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID)
             ->selectRaw("count('indName') as cnt")->first();
@@ -110,6 +131,27 @@ class ReportController extends Controller
                                        and indName is not null and indName <> ""
                                  group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
 
-        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'datastring', 'labels', 'indPie'));
+        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years',
+            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // POST /mbrreport/{id} -- $id is meaningless
+
+        $pk = request()->input('pk');
+        $name = request()->input('name');
+        $value = request()->input('value');
+
+        if($name == 'tags'){
+            $quote = "'" . implode("','", (array)$value) . "'";
+            $value = implode(",", (array)$value);
+
+            Session::put('year_string', $value);
+            Session::put('quote_string', $quote);
+            Session::save();
+
+            //return json_encode(array('status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $pk));
+        }
     }
 }

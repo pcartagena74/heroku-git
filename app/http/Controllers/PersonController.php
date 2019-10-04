@@ -391,7 +391,11 @@ class PersonController extends Controller
             }
 
             // 2. trigger a notification to be sent to the old email address
-            $person->notify(new LoginChange($person, $orig_email));
+            try{
+                $person->notify(new LoginChange($person, $orig_email));
+            } catch(\Exception $e){
+                1;
+            }
 
             $person->login = $value;
             $person->updaterID = $updater;
