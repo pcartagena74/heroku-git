@@ -4,6 +4,15 @@
  * Created: 10/21/2018
  */
 $today = \Carbon\Carbon::now();
+if(!isset($size)){
+    $size = 'sm';
+}
+
+if($today->gt($event->eventEndDate)){
+    $past = 1;
+} else {
+    $past = 0;
+}
 
 $homeURL = env('APP_URL').'/manage_events';
 $editURL    = env('APP_URL').'/event/' . $event->eventID . '/edit';
@@ -18,76 +27,83 @@ $recordURL = env('APP_URL').'/record_attendance/' . $event->slug;
 
 ?>
 
-<div class="col-xs-1">
-    <a href='{{ $homeURL }}' class='btn btn-gray btn-sm' data-toggle='tooltip' data-placement='top'
+@if(!isset($suppress))
+<!-- div class="col-xs-1" -->
+    <a href='{{ $homeURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        title='{{ trans('messages.buttons.return') }}'><i class='fas fa-fw fa-home'></i></a>
-</div>
-@if($event->ok_to_display())
-    <div class="col-xs-1">
-        <a target='_new' href='{{ $displayURL }}' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top'
+<!-- /div -->
+@endif
+@if($event->ok_to_display() && !$past)
+    <!-- div class="col-xs-1" -->
+        <a target='_new' href='{{ $displayURL }}' class='btn btn-primary btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.headers.ev_prev') }}'><i class='far fa-fw fa-eye'></i></a>
-    </div>
+    <!-- /div -->
 @else
-    <div class="col-xs-1">
-        <a target='_new' href='{{ $displayURL . "/1" }}' class='btn btn-yellow btn-sm' data-toggle='tooltip' data-placement='top'
+    <!-- div class="col-xs-1" -->
+        <a target='_new' href='{{ $displayURL . "/1" }}' class='btn btn-yellow btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.headers.ev_prev') }}'><i style="color:black;" class='far fa-fw fa-eye'></i></a>
-    </div>
+    <!-- /div -->
 @endif
 
-<div class="col-xs-1">
-    <a href='{{ $editURL }}' class='btn btn-primary btn-sm' data-toggle='tooltip' data-placement='top'
+@if(!$past)
+<!-- div class="col-xs-1" -->
+    <a href='{{ $editURL }}' class='btn btn-primary btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        title='{{ trans('messages.fields.edit_event') }}'><i class='far fa-fw fa-pencil'></i></a>
-</div>
+<!-- /div -->
 
-<div class="col-xs-1">
-    <a href='{{ $eventDiscountURL }}' class='btn btn-success btn-sm' data-toggle='tooltip' data-placement='top'
+<!-- div class="col-xs-1" -->
+    <a href='{{ $eventDiscountURL }}' class='btn btn-success btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        title='{{ trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') }}'>{!! trans('messages.symbols.cur') !!}</a>
-</div>
+<!-- /div -->
 
-<div class="col-xs-1">
-    <a href='{{ $tktURL }}' class='btn btn-info btn-sm' data-toggle='tooltip' data-placement='top'
+<!-- div class="col-xs-1" -->
+    <a href='{{ $tktURL }}' class='btn btn-info btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        title='{{ trans('messages.buttons.edit_tkt') }}'><i class='far fa-fw fa-ticket-alt'></i></a>
-</div>
+<!-- /div -->
 
 @if($event->hasTracks)
-    <div class="col-xs-1">
-        <a href='{{ $trackURL }}' class='btn btn-brown btn-sm' data-toggle='tooltip' data-placement='top'
+    <!-- div class="col-xs-1" -->
+        <a href='{{ $trackURL }}' class='btn btn-brown btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
-    </div>
+    <!-- /div -->
+@endif
 @endif
 
-<div class="col-xs-1">
-    <a href='{{ $rptURL }}' class='btn btn-purple btn-sm' data-toggle='tooltip' data-placement='top'
+<!-- div class="col-xs-1" -->
+    <a href='{{ $rptURL }}' class='btn btn-purple btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        title='{{ trans('messages.headers.ev_rpt') }}'><i class='far fa-fw fa-chart-bar'></i></a>
-</div>
+<!-- /div -->
 
-<div class="col-xs-1">
-    <a href='{{ $copyURL }}' class='btn btn-deep-orange btn-sm' data-toggle='tooltip' data-placement='top'
+<!-- div class="col-xs-1" -->
+    <a href='{{ $copyURL }}' class='btn btn-deep-orange btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        onclick="return confirm('{{ trans('messages.tooltips.sure_copy') }}');"
        title='{{ trans('messages.headers.ev_copy') }}'><i class='far fa-fw fa-copy'></i></a>
-</div>
+<!-- /div -->
 
 @if(!$event->isActive && $event->regCount() == 0)
-<div class="col-xs-1">
+<!-- div class="col-xs-1" -->
     {!! Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) !!}
-    <button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top"
+    <button class="btn btn-danger btn-{{ $size }}" data-toggle="tooltip" data-placement="top"
             onclick="return confirm('{{ trans('messages.tooltips.sure') }}');"
             title="{{ trans('messages.buttons.delete') }}"> {!! trans('messages.symbols.trash') !!}</button>
     <input id="myDelete" type="submit" value="Go" class="hidden" />
     {!! Form::close() !!}
-</div>
+<!-- /div -->
 @endif
 
-@if($event->hasTracks > 0 && ($event->checkin_time() || $today->gte($event->eventEndDate)))
-    <div class="col-xs-1">
-        <a href='{{ $recordURL }}' class='btn btn-pink btn-sm' data-toggle='tooltip' data-placement='top'
+@if($event->hasTracks > 0 && $event->checkin_period())
+    <!-- div class="col-xs-1" -->
+        <a href='{{ $recordURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.buttons.rec_att') }}'><i class='far fa-fw fa-check-square'></i></a>
-    </div>
+    <!-- /div -->
 @endif
 
-@if($event->checkin_time())
-    <div class="col-xs-1">
-        <a href='{{ $checkinURL }}' class='btn btn-pink btn-sm' data-toggle='tooltip' data-placement='top'
+@if($event->hasTracks > 0 && $event->checkin_time())
+    <!-- div class="col-xs-1" -->
+        <a href='{{ $checkinURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
-    </div>
+    <!-- /div -->
+@elseif($event->checkin_time())
+    <a href='{{ $rptURL }}#tab_content7' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+       title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
 @endif

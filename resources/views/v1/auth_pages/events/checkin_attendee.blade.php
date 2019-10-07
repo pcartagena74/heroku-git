@@ -27,7 +27,7 @@ try {
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_att'), 'subheader' => '',
+    @include('v1.parts.start_content', ['header' => trans('messages.buttons.chk_vol'), 'subheader' => '',
              'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @if($logo_url)
@@ -39,8 +39,17 @@ try {
 
     @if($event->hasTracks > 0 && $session === null)
 
+        @foreach($event->default_sessions() as $s)
+            <div class="col-sm-12 col-xs-12">
+                <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
+                   style="white-space: normal;" class="btn btn-primary btn-sm">
+                   {{ $s->sessionName }}
+                </a>
+            </div>
+        @endforeach
+
         <div class="col-sm-12 col-xs-12">
-            @foreach($track as $t)
+            @foreach($tracks as $t)
                 <div class="col-sm-3 col-xs-3">
                     <b>{{ $t->trackName }}</b>
                 </div>
@@ -49,8 +58,7 @@ try {
 
         @for($i=1;$i<=$event->confDays;$i++)
             <div class="form-group col-sm-12 col-xs-12">
-                <div style="background-color:#2a3f54; color:yellow;"
-                     class="col-sm-{{ 3 * count($track) }} col-xs-{{ 3 * count($track) }}">
+                <div style="background-color:#2a3f54; color:yellow;" class="col-sm-{{ 3 * count($tracks) }} col-xs-{{ 3 * count($tracks) }}">
                     @lang('messages.headers.day') {{ $i }} @lang('messages.fields.sessions')
                 </div>
             </div>
@@ -65,7 +73,7 @@ try {
 ?>
                 @if($s !== null)
                     <div class="form-group col-sm-12 col-xs-12">
-                        @foreach($track as $t)
+                        @foreach($tracks as $t)
 <?php
                             $s = EventSession::where([
                                 ['trackID', $t->trackID],
@@ -97,8 +105,10 @@ try {
         {!! Form::hidden('eventID', $event->eventID) !!}
         {!! Form::hidden('orgID', $org->orgID) !!}
         {!! Form::hidden('sessionID', $session->sessionID) !!}
+        @if($session->sessionName != 'def_sess')
         <b>Session: {{ $session->sessionName }}</b>
         <p>&nbsp;</p>
+        @endif
         <div class="form-group has-feedback col-md-12 col-xs-12">
             {!! Form::label('regID', trans('messages.headers.regID'), array('class' => 'control-label')) !!}
             {!! Form::text('regID', '', $attributes = array('class'=>'form-control has-feedback-left', 'required')) !!}
