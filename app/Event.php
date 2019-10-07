@@ -124,10 +124,10 @@ class Event extends Model
     public function checkin_period()
     {
         $today = Carbon::now();
-        //dd($this->eventStartDate->diffInDays($today));
-        if ( ($this->eventStartDate->diffInDays($today) <= 2
-                && $this->eventStartDate->diffInDays($today) >= 0)
-            || $today->gte($this->eventEndDate) ) {
+
+        if (($this->eventStartDate->diffInDays($today) <= 2
+                && $this->eventStartDate->diffInDays($today) >= 0) ||
+            $today->diffInDays($this->eventEndDate) <= 21) {
             return 1;
         } else {
             return 0;
@@ -201,26 +201,26 @@ class Event extends Model
 
         $ticketIDs = $es->ticket->bundle_parent_array();
 
-            // DB::listen(function ($sql){var_dump($sql->sql, $sql->bindings);});
-            // DB::enableQueryLog();
+        // DB::listen(function ($sql){var_dump($sql->sql, $sql->bindings);});
+        // DB::enableQueryLog();
 
-            $out = Registration::whereIn('event-registration.ticketID', $ticketIDs)
-                ->select('p.personID', 'p.firstName', 'p.prefName', 'p.lastName', 'op.OrgStat1', 'rs.hasAttended', 'event-registration.regID')
-                //->with('ticket', 'event', 'person.orgperson', 'regsessions', 'person')
-                ->where('event-registration.eventID', '=', $es->eventID)
-                ->join('person as p', 'p.personID', '=', 'event-registration.personID')
-                ->join('org-person as op', 'p.defaultOrgPersonID', '=', 'op.id')
-                ->join('event-sessions as es', 'es.eventID', '=', 'event-registration.eventID')
-                ->leftJoin('reg-session as rs', function ($q) use ($es) {
-                    $q->on('rs.regID', '=', 'event-registration.regID');
-                    $q->on('rs.personID', '=', 'p.personID');
-                    $q->on('rs.sessionID', '=', 'es.sessionID')->where('es.sessionID', '=', $es->sessionID);
-                })
-                ->whereIn('es.sessionID', [$es->sessionID, null])
-                ->distinct()
-                ->orderBy('p.lastName')
-                ->get();
-            // dd(DB::getQueryLog());
+        $out = Registration::whereIn('event-registration.ticketID', $ticketIDs)
+            ->select('p.personID', 'p.firstName', 'p.prefName', 'p.lastName', 'op.OrgStat1', 'rs.hasAttended', 'event-registration.regID')
+            //->with('ticket', 'event', 'person.orgperson', 'regsessions', 'person')
+            ->where('event-registration.eventID', '=', $es->eventID)
+            ->join('person as p', 'p.personID', '=', 'event-registration.personID')
+            ->join('org-person as op', 'p.defaultOrgPersonID', '=', 'op.id')
+            ->join('event-sessions as es', 'es.eventID', '=', 'event-registration.eventID')
+            ->leftJoin('reg-session as rs', function ($q) use ($es) {
+                $q->on('rs.regID', '=', 'event-registration.regID');
+                $q->on('rs.personID', '=', 'p.personID');
+                $q->on('rs.sessionID', '=', 'es.sessionID')->where('es.sessionID', '=', $es->sessionID);
+            })
+            ->whereIn('es.sessionID', [$es->sessionID, null])
+            ->distinct()
+            ->orderBy('p.lastName')
+            ->get();
+        // dd(DB::getQueryLog());
 
         return $out;
     }

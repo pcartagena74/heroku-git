@@ -669,6 +669,16 @@ include('v1.parts.ajax_console')
             });
             $.fn.editable.defaults.mode = 'popup';
 
+            var url = document.location.toString();
+            if (url.match('#')) {
+                $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+            }
+
+            {{-- Change hash for page-reload --}}
+            $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                window.location.hash = e.target.hash;
+            })
+
             @foreach ($tkts as $t)
             $('#regCount-{{ $t->ticketID }}').editable({type: 'text', url: '/post'});
             $('#waitCount-{{ $t->ticketID }}').editable({type: 'text'});

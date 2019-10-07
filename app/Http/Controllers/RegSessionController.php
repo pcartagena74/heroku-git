@@ -33,7 +33,7 @@ class RegSessionController extends Controller
         return view('v1.public_pages.attend_session', compact('session', 'event', 'track', 'org'));
     }
 
-    public function volunteer_checkin($param, $s = null)
+    public function volunteer_checkin($param, $id = null)
     {
         // Called with GET /checkin/{event}/{session?}
         // Given an event's sessionID, display a form for a person to enter their $regID
@@ -46,26 +46,24 @@ class RegSessionController extends Controller
             return redirect()->back();
         }
 
-        if ($s !== null) {
+        if ($id !== null) {
             // $session = EventSession::find($event->mainSession);
-            $session = EventSession::find($s);
+            $session = EventSession::find($id);
         } else {
-            $session = null;
+            $session = null; // $event->default_session();
         }
 
         if ($event->hasTracks > 0) {
-            $track = Track::where([
+            $tracks = Track::where([
                 ['eventID', '=', $event->eventID],
                 ['trackID', '!=', 0]
             ])->get();
-        } elseif ($session->trackID == 0) {
-            $track = Track::find($session->trackID);
         } else {
-            $track = 0;
+            $tracks = null;
         }
         $org = Org::find($event->orgID);
 
-        return view('v1.auth_pages.events.checkin_attendee', compact('session', 'event', 'track', 'org'));
+        return view('v1.auth_pages.events.checkin_attendee', compact('session', 'event', 'tracks', 'org'));
     }
 
     public function process_checkin(Request $request)
@@ -93,6 +91,7 @@ class RegSessionController extends Controller
             return redirect()->back();
         }
 
+        /*
         // Consider deleting as $track doesn't seem to be used
         if ($event->hasTracks > 0) {
             $track = Track::where([
@@ -104,6 +103,7 @@ class RegSessionController extends Controller
         } else {
             $track = 0;
         }
+        */
 
         // Check if a reg-session for this regID, eventID, sessionID exists (pre-registered) & update hasAttended if yes
         try {
@@ -114,7 +114,7 @@ class RegSessionController extends Controller
             ])->first();
             $rs->hasAttended = 1;
             $rs->save();
-            request()->session()->flash('alert-success', trans('messages.messages.reg_success',['name' => $person->firstName . " " . $person->lastName]));
+            request()->session()->flash('alert-success', trans('messages.messages.reg_success',['name' => $person->showFullName()]));
         } catch (\Exception $exception) {
             // Check if event-session restricts casual switching
             $es = EventSession::find($sessionID);
@@ -127,7 +127,7 @@ class RegSessionController extends Controller
                 $rs->confDay = $session->confDay;
                 $rs->hasAttended = 1;
                 $rs->save();
-                request()->session()->flash('alert-success', trans('messages.messages.reg_success',['name' => $person->firstName . " " . $person->lastName]));
+                request()->session()->flash('alert-success', trans('messages.messages.reg_success',['name' => $person->showFullName()]));
             } else {
                 request()->session()->flash('alert-warning', $org->noSwitchTEXT);
             }
