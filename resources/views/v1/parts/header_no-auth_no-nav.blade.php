@@ -18,8 +18,9 @@
     <link href="/css/mmmm.css" rel="stylesheet">
     {{--
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    --}}
     <script defer src="https://pro.fontawesome.com/releases/v5.0.13/js/all.js" integrity="sha384-d84LGg2pm9KhR4mCAs3N29GQ4OYNy+K+FBHX8WhimHpPm86c839++MDABegrZ3gn" crossorigin="anonymous"></script>
+    --}}
+    <script src="https://kit.fontawesome.com/d28859cec2.js" crossorigin="anonymous"></script>
     <script src="/js/ie-emulation-modes-warning.js"></script>
     <!--[if lt IE 9]>
     <script src="/js/html5shiv.min.js"></script>

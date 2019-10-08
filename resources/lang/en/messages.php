@@ -39,7 +39,6 @@ return [
         'clr_row' => 'Clear Row',
         'comp_reg' => 'Complete Registration',
         'delete' => 'Delete',
-        'restore' => 'Restore',
         'door' => 'Pay by Cash/Check at Door',
         'down_emails' => 'Download Email Addresses',
         'down_name_tags' => 'Download Name Tag Data',
@@ -56,6 +55,8 @@ return [
         'rec_down' => 'Download Receipt',
         'reg_can' => 'Cancel Registration',
         'reg_ref' => 'Refund Registration',
+        'res_row' => 'Restore Row',
+        'restore' => 'Restore',
         'return' => "Return to Event Listing",
         'rev&pay' => 'Next: Review & Payment',
         'save_ad' => 'Save Address|Save Addresses',
@@ -648,8 +649,8 @@ return [
         'tracks' => "Here are this event's :n tracks and its sessions from which attendees can choose
                      to participate.<br/> This does not show any full-group keynotes, lunch or evening sessions.",
         'track_setup' => "
-            <li>If the majority of your times are standard for the event tracks, choose Yes for now. <br/>
-                You can change this later to edit any unique track/session times.
+            <li>If the majority of your times are standard for the event tracks, choose Yes to begin. <br/>
+                You can change this later to edit the unique track/session times.
             </li>
             <li>Edit the number of days the event will run.</li>
             <li>Edit the times and other information for each session where attendees have a choice. <b class='red'>Do not</b> enter
@@ -746,7 +747,7 @@ return [
         'ev_loc' => "Location Management",
         'ev_mt' => "Manage Event Tickets",
         'ev_rpt' => "Event Reporting",
-        'ev_grp' => "Group Registration",
+        'ev_grp' => "Groups / Invoicing",
         'spk_mgmt' => "Speaker Management",
         's_list' => "Speakers List",
         'spk_surveys' => "Speaker Surveys",
@@ -1006,8 +1007,8 @@ return [
         'cur' => "<i class='far fa-dollar-sign fa-fw'></i>",                // currency symbol
         'cur_class' => "class='far fa-dollar-sign fa-fw'",                  // currency symbol - class only (when tips are embedded)
         'cur_class_5x' => "class='far fa-5x fa-dollar-sign fa-fw'",         // currency symbol - class only (when tips are embedded)
-        'restore' => "<i class='fas fa-trash-restore-alt fa-fw'></i>",            // UNdelete symbol
-        'restore_class' => "class='fas fa-trash-restore-alt fa-fw'",              // UNdelete symbol - class only (when tips are embedded)
+        'restore' => "<i class='fad fa-trash-restore-alt fa-fw'></i>",      // UNdelete symbol
+        'restore_class' => "class='fad fa-trash-undo-alt fa-fw'",           // UNdelete symbol - class only (when tips are embedded)
         'trash' => "<i class='far fa-trash-alt fa-fw'></i>",                // delete symbol
         'trash_class' => "class='far fa-trash-alt fa-fw'",                  // delete symbol - class only (when tips are embedded)
     ],

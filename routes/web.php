@@ -193,12 +193,12 @@ Route::delete('/cancel_registration/{reg}/{rf}', 'RegistrationController@destroy
 Route::get('/manage_events/{past?}', 'EventController@index')->name('manageEvents');
 Route::post('/activate/{event}', 'EventController@activate');                                              // Ajax
 Route::post('/eventajax/{event}', 'EventController@ajax_update');                                          // Ajax
-Route::post('/tix/{event}/{ticket?}', 'EventController@get_tix');                                           // Ajax
-Route::get('/event/create', 'EventController@create')->name('add_edit_form');
+Route::post('/tix/{event}/{ticket?}', 'EventController@get_tix');                                          // Ajax
+Route::get('/event/create', 'EventController@create')->name('add_edit_event');
 Route::post('/event/create', 'EventController@store')->name('save_event');
-Route::get('/event/{event}/edit', 'EventController@edit');
-Route::patch('/event/{event}', 'EventController@update')->name('event_update');
-Route::delete('/event/{event}', 'EventController@destroy');
+Route::get('/event/{event}/edit', 'EventController@edit')->name('edit_event');
+Route::patch('/event/{event}', 'EventController@update')->name('update_event');
+Route::delete('/event/{event}', 'EventController@destroy')->name('delete_event');
 Route::get('/eventdiscount/{event}', 'EventDiscountController@show');
 Route::post('/eventdiscount', 'EventDiscountController@store');
 Route::post('/eventdiscounts/{edID}', 'EventDiscountController@update');
@@ -211,8 +211,8 @@ Route::post('/eventDays/{event}', 'TrackController@confDaysUpdate');            
 Route::post('/eventsession/{event}', 'TrackController@sessionUpdate');                                     // Ajax
 Route::post('/tracksymmetry/{event}', 'TrackController@updateSymmetry');                                   // Ajax
 Route::post('/trackticket/{day}', 'TrackController@assignTicketSessions');
-Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::patch('/session/{es}', 'EventSessionController@update');
+Route::delete('/session/{es}', 'EventSessionController@destroy');
 Route::get('/eventreport/{slug}/{format?}', 'RegistrationController@show');
 Route::get('/promote/{reg}', 'RegistrationController@promote');
 Route::get('/eventcopy/{slug}', 'EventCopyController@show');

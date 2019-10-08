@@ -50,7 +50,7 @@ class EventSession extends Model
     {
         $output = "";
 
-        if ($this->speakers !== null) {
+        if ($this->speakers !== null && count($this->speakers) > 0) {
             foreach ($this->speakers as $speaker) {
                 $speaker->load('person');
                 $output .= $speaker->person->showFullName();
