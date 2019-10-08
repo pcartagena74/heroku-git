@@ -100,16 +100,17 @@ class Event extends Model
     }
 
     /**
-     * checkin_time returns true when within 2 days of start or 1 day after the end of the event
+     * checkin_time returns true when within 1 day of start or 2 days after the end of the event
      *
      * @return bool
      */
     public function checkin_time()
     {
         $today = Carbon::now();
-        if (($this->eventStartDate->diffInDays($today) <= 2
-                && $this->eventStartDate->diffInDays($today) >= 0)
-            || $today->diffInDays($this->eventEndDate) <= 1) {
+        if (($this->eventStartDate->diffInDays($today) <= 1
+                && $this->eventStartDate->diffInDays($today) >= 0) ||
+            ($today->gt($this->eventStartDate) && $today->lt($this->eventEndDate))
+            || $today->diffInDays($this->eventEndDate) <= 2) {
             return 1;
         } else {
             return 0;
@@ -117,7 +118,7 @@ class Event extends Model
     }
 
     /**
-     * checkin_period returns true when within 2 days of start or anytime after the end of the event
+     * checkin_period returns true when within 1 day of start or within 3 weeks after the end of the event
      *
      * @return bool
      */
@@ -125,8 +126,9 @@ class Event extends Model
     {
         $today = Carbon::now();
 
-        if (($this->eventStartDate->diffInDays($today) <= 2
+        if (($this->eventStartDate->diffInDays($today) <= 1
                 && $this->eventStartDate->diffInDays($today) >= 0) ||
+            ($today->gt($this->eventStartDate) && $today->lt($this->eventEndDate)) ||
             $today->diffInDays($this->eventEndDate) <= 21) {
             return 1;
         } else {
