@@ -123,7 +123,7 @@ try {
     @endif
 
     @if($event->eventID !== null)
-        {!! Form::model($event->toArray() + $exLoc->toArray(), ['route' => ['event_update', $event->eventID], 'method' => 'patch']) !!}
+        {!! Form::model($event->toArray() + $exLoc->toArray(), ['route' => ['update_event', $event->eventID], 'method' => 'patch']) !!}
     @else
         {!! Form::open(array('url' => '/event/create')) !!}
     @endif
