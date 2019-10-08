@@ -29,7 +29,7 @@ $recordURL = env('APP_URL') . '/record_attendance/' . $event->slug;
 
 @if(!isset($suppress))
     <!-- div class="col-xs-1" -->
-    <a href='{{ $homeURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+    <a href='{{ $homeURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='right'
        title='{{ trans('messages.buttons.return') }}'><i class='fas fa-fw fa-home'></i></a>
     <!-- /div -->
 @endif

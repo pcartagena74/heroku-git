@@ -674,10 +674,12 @@ include('v1.parts.ajax_console')
                 $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
             }
 
-            {{-- Change hash for page-reload --}}
+            {{--
+            Change hash for page-reload
             $('.nav-tabs a').on('shown.bs.tab', function (e) {
                 window.location.hash = e.target.hash;
             })
+            --}}
 
             @foreach ($tkts as $t)
             $('#regCount-{{ $t->ticketID }}').editable({type: 'text', url: '/post'});
