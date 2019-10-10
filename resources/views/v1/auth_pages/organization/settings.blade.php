@@ -96,7 +96,13 @@ $currentOrg    = $currentPerson->defaultOrg;
             <th colspan="5" style="text-align: left;">@lang('messages.headers.admin_stmt')</th>
         </tr>
         <tr>
-            <td colspan="5" style="text-align: left;"><a href="#" id="adminStatement" data-value="{{ $org->adminContactStatement }}"></a></td>
+            <td colspan="5" style="text-align: left;"><a href="#" id="adminContactStatement" data-value="{{ $org->adminContactStatement }}"></a></td>
+        </tr>
+        <tr>
+            <th colspan="5" style="text-align: left;">@lang('messages.headers.tech_stmt')</th>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align: left;"><a href="#" id="techContactStatement" data-value="{{ $org->techContactStatement }}"></a></td>
         </tr>
 
     </table>
@@ -225,7 +231,12 @@ $currentOrg    = $currentPerson->defaultOrg;
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 pk:  '{{ $org->orgID }}'
             });
-            $('#adminStatement').editable({
+            $('#adminContactStatement').editable({
+                type: 'textarea',
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
+            });
+            $('#techContactStatement').editable({
                 type: 'textarea',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 pk:  '{{ $org->orgID }}'

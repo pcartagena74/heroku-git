@@ -377,7 +377,7 @@ try {
         @else
             {!! Form::submit(trans('messages.headers.sub&rev'), array('class' => 'btn btn-primary', 'name' => 'sub&rev')) !!}
         @endif
-        <a href="{{ env('APP_URL') }}/events" class="btn btn-default">@lang('messages.headers.cancel')</a>
+        <a href="{{ env('APP_URL') }}/manage_events" class="btn btn-default">@lang('messages.headers.cancel')</a>
     </div>
 
     @include('v1.parts.start_content', ['header' => strtoupper(trans('messages.headers.opt')).': '. trans('messages.headers.post-reg').' '.trans('messages.headers.info'),

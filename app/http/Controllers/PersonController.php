@@ -386,7 +386,7 @@ class PersonController extends Controller
                 $user->save();
             } catch(\Exception $exception) {
                 $org = $person->defaultOrg;
-                request()->session()->flash('alert-danger', $org->techContactStatement ?? trans('messages.instructions.pro_change_err'));
+                request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err') . $org->techContactStatement );
                 return redirect(env('APP_URL')."/profile/$personID");
             }
 

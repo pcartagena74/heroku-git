@@ -174,7 +174,7 @@ $default = Org::find($event->orgID);
         <button type="button" id="add_ticket" class="btn btn-sm btn-success" data-toggle="modal"
                 data-target="#ticket_modal">@lang('messages.buttons.add_tkt')
         </button>
-        <a href="{{ env('APP_URL') }}/events" class="btn btn-default">@lang('messages.buttons.return')</a>
+        <a href="{{ env('APP_URL') }}/manage_events" class="btn btn-default">@lang('messages.buttons.return')</a>
     </div>
     <div class="col-md-4 col-sm-6 col-xs-12" style="text-align: left;">
         @if($event->hasTracks > 0)

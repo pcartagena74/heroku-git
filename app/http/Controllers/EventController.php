@@ -148,7 +148,7 @@ class EventController extends Controller
 
     public function index($past = null)
     {
-        // responds to GET /events
+        // responds to GET /manage_events
         $topBits = $this->event_bits();
 
         $today = Carbon::now();
