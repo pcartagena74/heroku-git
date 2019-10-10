@@ -248,7 +248,7 @@ class RegFinanceController extends Controller
                         'description' => "$org->orgName " . trans('messages.fields.event') . " " .
                                           trans('messages.headers.reg') . ": $event->eventName",
                         'customer' => $user->stripe_id),
-                        array('idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats)
+                        array('idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats . '-' . $rf->registrations->first()->regID)
                     );
                 } catch (Card $exception) {
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
