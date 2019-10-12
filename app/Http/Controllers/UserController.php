@@ -92,8 +92,8 @@ class UserController extends Controller
         //    Check for password existence (and validation) and set if present
         // 3. Create person-email record for login
 
-        if (check_exists('p', array($firstName, $lastName, $email))
-            || check_exists('e', array($email)) || check_exists('op', array($pmiID))) {
+        if (check_exists('p', 1, array($firstName, $lastName, $email))
+            || check_exists('e', 1, array($email)) || check_exists('op', 1, array($pmiID))) {
             // return redirect(env('APP_URL')."/newuser/create");
             return back()->withInput();
         }

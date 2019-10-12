@@ -76,12 +76,13 @@ function extract_images($html, $orgID)
  * Takes a model indicator and an array of variables, usually just 1, and performs a rudimentary existence check
  *
  * @param $model        Values: p for Person, e for Email, op for OrgPerson
+ * @param $doFlash          1 if flash message should be set
  * @param $var_array    Contents:
  *                      + p:  firstName, lastName, login
  *                      + e:  login
  *                      + op: PMI ID
  */
-function check_exists($model, $var_array)
+function check_exists($model, $doFlash, $var_array)
 {
     $details = "<ul>";
     switch ($model) {
@@ -103,7 +104,9 @@ function check_exists($model, $var_array)
                 }
                 $details .= "</ul>";
 
-                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                if($doFlash){
+                    request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                }
                 return 1;
             }
             break;
@@ -116,7 +119,9 @@ function check_exists($model, $var_array)
                 $existing = trans('messages.errors.existing_account', ['f' => $p-firstName, 'l' => $p->lastName, 'e' => $p->login]);
                 $details .= "<li>$existing</li>";
                 $details .= "</ul>";
-                request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                if($doFlash){
+                    request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                }
                 return 1;
             }
             break;
@@ -130,7 +135,9 @@ function check_exists($model, $var_array)
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                     $details .= "<li>$existing</li>";
                     $details .= "</ul>";
-                    request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                    if($doFlash){
+                        request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
+                    }
                     return 1;
                 }
             }
@@ -195,15 +202,18 @@ function li_print_array($array, $type){
     return $output;
 }
 
-/**
+/*
+
+Deleting - no need to have had this helper...
+
  * into_array: turns a comma-delimited string into an array
  * @param $string
  * @param $delimeter
  * @return array
- */
 function into_array($string, $delimeter) {
     return(explode($delimeter, $string));
 }
+ */
 
 /**
  * assoc_email returns 0 or 1 based on whether the $email address is associated with Person $p
