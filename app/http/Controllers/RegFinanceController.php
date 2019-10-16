@@ -408,12 +408,22 @@ class RegFinanceController extends Controller
                 }
             }
         } else {
-            // No session selection data to record;
+            // No session selection data to record;  OR something had already been written...?
         }
 
         $x = compact('needSessionPick','event','quantity','loc','rf','person','prefixes','industries','org');
 
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+
+        // NEED TO REMOVE AFTER Heroku-18 Testing
+        $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+
+        Flysystem::connection('s3_receipts')->put(
+            $receipt_filename,
+            $pdf->output(),
+            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+        );
+        /*
         try {
             $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
 
@@ -425,6 +435,7 @@ class RegFinanceController extends Controller
         } catch (\Exception $exception) {
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
         }
+        */
 
 
         $client = new S3Client([
