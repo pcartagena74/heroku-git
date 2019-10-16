@@ -282,6 +282,8 @@ $deletion = 0;
             <div class="col-md-7 col-sm-7">
                 @if($deletion)
                     <p class="red"><b>@lang('messages.headers.note'):</b> @lang('messages.instructions.total_caveat') </p>
+                @else
+                    &nbsp;
                 @endif
             </div>
             <div class="col-md-3 col-sm-3">
@@ -301,7 +303,8 @@ $deletion = 0;
         </div>
         <hr>
         @if($event->postRegInfo)
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="col-sm-2">&nbsp;</div>
+            <div class="col-sm-10">
                 @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
                          'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
                 {!! $event->postRegInfo ?? '' !!}
@@ -310,7 +313,7 @@ $deletion = 0;
         @endif
         <hr>
 
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-12">
             <h4>@lang('messages.headers.add_to_cal')</h4>
             @if(0)
                 <table class="table borderless">
