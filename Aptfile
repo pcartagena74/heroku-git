@@ -1,2 +1,8 @@
 libfontconfig1
 libxrender1
+libssl1.0.0
+libpng12-0
+libpng12-dev
+libmagickwand-6.q16-2
+libmagickcore-6.q16-2
+libmagickcore-6.q16-2-extra
