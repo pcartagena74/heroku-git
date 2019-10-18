@@ -91,3 +91,7 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+    @include('v1.parts.email_pop', ['field' => 'email', 'parameter' => 'email'])
+@endsection
