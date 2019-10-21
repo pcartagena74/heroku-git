@@ -29,24 +29,9 @@ class RegFinance extends Model
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-/*
- * Removed because tickets are no longer relevant for the regFinance record.
- *
-public function ticket()
-    {
-        return $this->belongsTo(Ticket::class, 'ticketID', 'ticketID');
-    }
- */
-
     public function registrations()
     {
         return $this->hasMany(Registration::class, 'rfID', 'regID');
     }
 
-/*
-    // trying to get to event-session counts from a regID
-    public function sessions() {
-        return $this->hasManyThrough(EventSession::class, Event::class, 'eventID', 'token');
-    }
-*/
 }

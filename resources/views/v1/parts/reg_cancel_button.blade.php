@@ -3,13 +3,36 @@
  * Comment: Template for registration cancel/refund button that can be reused
  * Created: 10/23/2018
  *
- * @param $reg: the regID concerned
- * @param $wait: will be set to 1 if wait list button needed
+ * @param $reg : the regID concerned
+ * @param $wait : will be set to 1 if wait list button needed
  *
  */
 
+use Aws\S3\S3Client;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use League\Flysystem\Filesystem;
+
 $wait_tooltip = trans('messages.tooltips.wait_cnv');
 $wait_confirm = trans('messages.tooltips.sure');
+
+$today = \Carbon\Carbon::now();
+$post_event = $today->gte($reg->event->eventEndDate);
+
+$client = new S3Client([
+    'credentials' => [
+        'key' => env('AWS_KEY'),
+        'secret' => env('AWS_SECRET')
+    ],
+    'region' => env('AWS_REGION'),
+    'version' => 'latest',
+]);
+
+$adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+$s3fs = new Filesystem($adapter);
+$rf = $reg->regfinance;
+
+$receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+$receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
 if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
     // currency symbol
@@ -23,7 +46,7 @@ if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
 
 if (Entrust::hasRole('Admin')) {
     $button_class = "btn-danger";
-    $button_tooltip = trans('messages.tooltips.click_cancel_reg') ;
+    $button_tooltip = trans('messages.tooltips.click_cancel_reg');
 } else {
     $confirm_msg = "";
     $button_class = "btn-secondary";
@@ -32,28 +55,41 @@ if (Entrust::hasRole('Admin')) {
 ?>
 @if(Entrust::hasRole('Admin'))
 
-    @if($reg->regStatus == trans('messages.headers.wait'))
-        <a class="btn btn-primary btn-sm" onclick="return confirm('{{ $wait_confirm }}');"
-           href="{!! env('APP_URL')."/promote/$reg->regID" !!}" data-toggle="tooltip" title="{!! $wait_tooltip !!}"><i class="fas fa-angle-double-right"></i></a>
+    @if(!$post_event)
+        @if($reg->regStatus == trans('messages.headers.wait'))
+            <a class="btn btn-primary btn-sm" onclick="return confirm('{{ $wait_confirm }}');"
+               href="{!! env('APP_URL')."/promote/$reg->regID" !!}" data-toggle="tooltip" title="{!! $wait_tooltip !!}"><i
+                        class="fas fa-angle-double-right"></i></a>
+        @endif
+
+        @if($reg->regStatus == trans('messages.reg_status.progress'))
+            <a href="{{ env('APP_URL') }}/confirm_registration/{{ $reg->rfID }}" target="_top"
+               class="btn btn-sm btn-success"
+               data-toggle="tooltip" title="{{ trans('messages.headers.reg_con2') }}" data-placement="top">
+                <i class="fal fa-credit-card"></i>
+            </a>
+        @endif
+
+        {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->rfID], 'data-toggle' => 'validator']) !!}
+        <button type="submit" class="btn {{ $button_class }} btn-sm" onclick="return confirm('{{ $confirm_msg }}');"
+                data-toggle="tooltip" data-placement="top" title="{{ $button_tooltip }}">
+            {!! $button_symbol !!}
+        </button>
+        {!! Form::close() !!}
     @endif
 
-    @if($reg->regStatus == trans('messages.reg_status.progress'))
-    <a href="{{ env('APP_URL') }}/confirm_registration/{{ $reg->rfID }}" target="_top" class="btn btn-sm btn-success"
-       data-toggle="tooltip" title="{{ trans('messages.headers.reg_con2') }}" data-placement="top">
-        <i class="fal fa-credit-card"></i>
-    </a>
+    @if($reg->regfinance->pmtRecd && $reg->subtotal > 0)
+        <a class="btn btn-success btn-sm" href="{!! $receipt_url !!}" target="_new"
+           data-toggle="tooltip" title="{!! trans('messages.headers.receipt') !!}">
+            <i class="far fa-file-invoice-dollar fa-fw"></i>
+        </a>
     @endif
-
-    {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->rfID], 'data-toggle' => 'validator']) !!}
-    <button type="submit" class="btn {{ $button_class }} btn-sm" onclick="return confirm('{{ $confirm_msg }}');"
-        data-toggle="tooltip" data-placement="top" title="{{ $button_tooltip }}">
-        {!! $button_symbol !!}
-    </button>
-    {!! Form::close() !!}
 
 @else
+    @if(!$post_event)
     <button class="btn {{ $button_class }}btn-sm" data-toggle="tooltip" title="{{ $button_tooltip }}">
         {!! $button_symbol !!}
     </button>
+    @endif
 @endif
 

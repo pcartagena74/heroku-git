@@ -35,9 +35,6 @@ function get_survey_comments($session)
     $content = view('v1.parts.session_comments', ['list' => $faves, 'title' => $ft])->render();
     $content .= view('v1.parts.session_comments', ['list' => $suggest, 'title' => $st])->render();
     $content .= view('v1.parts.session_comments', ['list' => $contact, 'title' => $ct])->render();
-    if ($session->sessionID == 644) {
-        //dd($content);
-    }
     return $content;
 }
 
@@ -85,7 +82,7 @@ if ($event->eventEndDate->gte($today)) {
 }
 
 $reg_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'), trans('messages.fields.ticket'),
-    trans('messages.headers.disc_code'), trans('messages.headers.reg_date'), trans('messages.headers.cost'), trans('messages.headers.reg_can')];
+    trans('messages.headers.disc_code'), trans('messages.headers.reg_date'), trans('messages.headers.cost'), trans('messages.fields.buttons')];
 $dead_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
     trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
     trans('messages.headers.cost'), trans('messages.headers.pmt')];
@@ -163,13 +160,7 @@ if ($event->eventTypeID == 5) {
 $p = null;
 
 foreach ($regs as $r) {
-
-    if (!$post_event) {
-        $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
-        $c = $v->render();
-    } else {
-        $c = null;
-    }
+    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
     array_push($reg_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
         $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
 }
@@ -673,13 +664,6 @@ include('v1.parts.ajax_console')
             if (url.match('#')) {
                 $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
             }
-
-            {{--
-            Change hash for page-reload
-            $('.nav-tabs a').on('shown.bs.tab', function (e) {
-                window.location.hash = e.target.hash;
-            })
-            --}}
 
             @foreach ($tkts as $t)
             $('#regCount-{{ $t->ticketID }}').editable({type: 'text', url: '/post'});
