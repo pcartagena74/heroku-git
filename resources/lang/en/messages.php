@@ -94,6 +94,7 @@ return [
     ],
 
     'errors' => [
+        'become_error' => 'The id entered, :id, is invalid.',
         'corruption' => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'event' => 'Please select an event.',
         'exists' => "{p}The person record cannot be created to prevent potential duplication.  See details below. <br /> :details|".

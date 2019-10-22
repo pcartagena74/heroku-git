@@ -280,15 +280,21 @@ $count = 0;
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
             @if(null === $format)
-                <li class="active"><a href="#tab_content1" id="attendees-tab" data-toggle="tab"
-                                      aria-expanded="true"><b>@lang('messages.headers.reged') {{ trans_choice('messages.headers.att', 2) }}</b></a>
+                <li class="active">
+                    <a href="#tab_content1" id="attendees-tab" data-toggle="tab" aria-expanded="true">
+                        <b>@lang('messages.headers.reged') {{ trans_choice('messages.headers.att', 2) }}</b>
+                    </a>
                 </li>
-                <li class="hidden-sm hidden-xs"><a href="#tab_content5" id="nametags-tab" data-toggle="tab"
-                                                   aria-expanded="false"><b>@lang('messages.headers.nametags')</b></a>
+                <li class="hidden-sm hidden-xs">
+                    <a href="#tab_content5" id="nametags-tab" data-toggle="tab" aria-expanded="false">
+                        <b>@lang('messages.headers.nametags')</b>
+                    </a>
                 </li>
                 @if(count($deadbeats) > 0)
-                    <li class="hidden-sm hidden-xs"><a href="#tab_content6" id="pending-tab" data-toggle="tab"
-                                                       aria-expanded="true"><b>@lang('messages.headers.doored')</b></a>
+                    <li class="hidden-sm hidden-xs">
+                        <a href="#tab_content6" id="pending-tab" data-toggle="tab" aria-expanded="true">
+                            <b>@lang('messages.headers.doored')</b>
+                        </a>
                     </li>
                 @endif
                 @if(count($notregs) > 0)
@@ -329,7 +335,7 @@ $count = 0;
                 <div class="tab-pane active" id="tab_content1" aria-labelledby="attendees-tab">
                     &nbsp;<br/>
 
-                    @if(count($reg_rows)>0 && Entrust::hasRole('Admin'))
+                    @if(count($reg_rows)>0 && (Entrust::hasRole('Admin') || Entrust::can('event-management')))
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="col-sm-3">
                                 @include('v1.parts.url_button', [

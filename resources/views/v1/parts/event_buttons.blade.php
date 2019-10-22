@@ -69,7 +69,7 @@ $recordURL = env('APP_URL') . '/record_attendance/' . $event->slug;
            title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
         <!-- /div -->
     @endif
-@elseif(Entrust::hasRole('Developer'))
+@elseif(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
     <a href='{{ $editURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
        title='{{ trans('messages.fields.edit_event') }}'><i class='far fa-fw fa-pencil'></i></a>
     <a href='{{ $eventDiscountURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
@@ -111,7 +111,7 @@ $recordURL = env('APP_URL') . '/record_attendance/' . $event->slug;
            data-placement='top'
            title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
     @endif
-@elseif(Entrust::hasRole('Developer'))
+@elseif(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
     @if($event->hasTracks > 0)
         <a href='{{ $checkinURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
            title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
