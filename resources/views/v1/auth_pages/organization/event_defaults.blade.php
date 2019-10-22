@@ -100,6 +100,10 @@ $currentOrg = $currentPerson->defaultOrg;
                 @lang('messages.headers.no_switch')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.no_switch')])
             </th>
+            <th style="text-align: left;">
+                @lang('messages.fields.postEventEditDays')
+                @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.postEventEditDays')])
+            </th>
         </tr>
         <tr>
             <td style="text-align: left;">
@@ -107,6 +111,9 @@ $currentOrg = $currentPerson->defaultOrg;
             </td>
             <td style="text-align: left;">
                 <a href="#" id="noSwitchTEXT" data-value="{{ $org->noSwitchTEXT }}" data-placement="right"></a>
+            </td>
+            <td style="text-align: left;">
+                <a href="#" id="postEventEditDays" data-value="{{ $org->postEventEditDays }}"></a>
             </td>
         </tr>
     </table>
@@ -341,6 +348,13 @@ $currentOrg = $currentPerson->defaultOrg;
                 pk: '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'
+            });
+
+            $('#postEventEditDays').editable({
+                type: 'number',
+                pk: '{{ $org->orgID }}',
+                placement: 'right',
+                url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}'
             });
 
             @foreach($event_types as $et)

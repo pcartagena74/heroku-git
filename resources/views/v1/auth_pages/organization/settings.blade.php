@@ -85,11 +85,16 @@ $currentOrg    = $currentPerson->defaultOrg;
         </tr>
         <tr>
             <th colspan="3" style="text-align: left;">@lang('messages.headers.linkedin')</th>
-            <th colspan="2" style="text-align: left;">@lang('messages.headers.google')</th>
+            <th colspan="2" style="text-align: left;">
+                {{-- lang('messages.headers.google') --}}
+            </th>
         </tr>
         <tr>
             <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL" data-value="{{ $org->linkedinURL }}"></a></td>
-            <td colspan="2" style="text-align: left;"><a href="#" id="googleURL" data-value="{{ $org->googleURL }}"></a>
+            <td colspan="2" style="text-align: left;">
+                <?php
+               // <a href="#" id="googleURL" data-value="{{ $org->googleURL }}"></a>
+               ?>
             </td>
         </tr>
         <tr>
