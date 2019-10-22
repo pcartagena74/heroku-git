@@ -125,11 +125,17 @@ class Event extends Model
     public function checkin_period()
     {
         $today = Carbon::now();
+        if($this->orgID > 0){
+            $org = Org::find($this->orgID);
+        } else {
+            $e = Event::find($this->eventID);
+            $org = Org::find($e->orgID);
+        }
 
         if (($this->eventStartDate->diffInDays($today) <= 1
                 && $this->eventStartDate->diffInDays($today) >= 0) ||
             ($today->gt($this->eventStartDate) && $today->lt($this->eventEndDate)) ||
-            $today->diffInDays($this->eventEndDate) <= 21) {
+            $today->diffInDays($this->eventEndDate) <= $org->postEventEditDays) {
             return 1;
         } else {
             return 0;

@@ -270,6 +270,7 @@ return [
         'pdu_sub' => 'PDU Submission',
         'pmi_id' => 'PMI ID',
         'pmi_type' => 'PMI Type',
+        'postEventEditDays' => 'Post-Event Editing Days',
         'prefix' => 'Prefix',
 
         'prefixes' => [
@@ -1072,6 +1073,7 @@ return [
         'orgStat1_tip2' => 'If your PMI Member ID is incorrect, :acs',
         'pmi_tip' => "As a PMI Member, your name must match PMI's roster for PDU processing.  Therefore, you are not able to change it here.",
         'pmt_msg' => "Are you sure you want to accept :method as payment?",
+        'postEventEditDays' => 'This is the number of days after an event during which it can still be edited.',
         'ref_days' => "This is the number of days, PRIOR to an event, within which a refund is no longer possible.",
         'reg_cancel' => "Cancel this registration attempt.",
         'region_chap' => "If you host a regional event, all of the chapters will be listed.  Put your chapter first, followed by other chapters, and end with 'Other' and 'None of the above.'",
