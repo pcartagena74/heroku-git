@@ -39,9 +39,6 @@ $expand_msg = trans('messages.subheaders.expand_min');
             }
             ?>
             @if($es->sessionName != 'def_sess')
-                @if($es->sessionID == 646)
-                    {{-- dd($event->registrants(646))  --}}
-                @endif
 
                 @include('v1.parts.start_content', ['header' => $header, 'subheader' => $expand_msg,
                                                     'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
@@ -58,9 +55,8 @@ $expand_msg = trans('messages.subheaders.expand_min');
                     </button>
                 </div>
 
-                {{-- Access for the Mail_Survey activity button ONLY for Developer role --}}
+                {{-- Access for the Mail_Survey activity button ONLY for Developer or Admin roles --}}
                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-
                     @if($cnt > 0)
                         <div class="col-sm-3">
                             @include('v1.parts.url_button', [
@@ -169,7 +165,6 @@ $expand_msg = trans('messages.subheaders.expand_min');
 
                                     {{-- Access for the Mail_Survey activity button ONLY for Developer role --}}
                                     @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-
                                         @if(count($es->regsessions) > 0)
                                             <div class="col-sm-3">
                                                 @include('v1.parts.url_button', [
