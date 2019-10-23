@@ -160,7 +160,8 @@ if ($event->eventTypeID == 5) {
 $p = null;
 
 foreach ($regs as $r) {
-    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]); $c = $v->render();
+    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
+    $c = $v->render();
     array_push($reg_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
         $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
 }
@@ -181,7 +182,7 @@ if (!$post_event) {
 }
 
 foreach ($notregs as $r) {
-    if(!$post_event){
+    if (!$post_event) {
         $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
         $c = $v->render();
     } else {
@@ -319,8 +320,11 @@ $count = 0;
                             ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
                         || Entrust::hasRole('Developer'))
 
-                        <li class=""><a href="#tab_content7" id="checkin-tab" data-toggle="tab"
-                                        aria-expanded="false"><b>@lang('messages.headers.check_tab')</b></a></li>
+                        <li class="">
+                            <a href="#tab_content7" id="checkin-tab" data-toggle="tab" aria-expanded="false">
+                                <b>@lang('messages.headers.check_tab')</b>
+                            </a>
+                        </li>
                     @endif
                 @endif
             @endif
@@ -352,6 +356,7 @@ $count = 0;
                     @endif
 
                 </div>
+
                 <div class="tab-pane fade" id="tab_content4" aria-labelledby="nonreg-tab">
                     &nbsp;<br/>
 
@@ -364,6 +369,7 @@ $count = 0;
                     @endif
 
                 </div>
+
                 <div class="tab-pane fade" id="tab_content6" aria-labelledby="pending-tab">
                     &nbsp;<br/>
 
@@ -459,7 +465,7 @@ $count = 0;
                                                 } else {
                                                     $count = 0;
                                                 }
-                                                if($track == $tracks->first()){
+                                                if ($track == $tracks->first()) {
                                                     $placement = 'right';
                                                 } elseif ($track == $tracks->last()) {
                                                     $placement = 'left';
@@ -544,12 +550,13 @@ $count = 0;
                     @endif
 
                 </div>
+
                 <div class="tab-pane fade" id="tab_content7" aria-labelledby="checkin-tab">
                     &nbsp;<br/>
 
                     @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-                        @if(count($event->main_reg_sessions()) > 0)
-                            <div class="col-sm-3 col-xs-offset-2">
+                        <div class="col-sm-3 col-xs-offset-2">
+                            @if(count($event->main_reg_sessions()) > 0)
                                 @include('v1.parts.url_button', [
                                     'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
                                     'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
@@ -557,19 +564,19 @@ $count = 0;
                                     'text' => trans('messages.buttons.mail_surveys')
                                 ])
                                 &nbsp; <br/>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
+                        <div class="col-sm-3">
+                            @if($event->checkin_period() && count($event->main_reg_sessions()) > 0)
+                                @include('v1.parts.url_button', [
+                                    'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
+                                    'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
+                                    'text' => trans('messages.buttons.down_PDU_list')
+                                ])
+                            @endif
+                        </div>
                     @endif
-                    <div class="col-sm-3">
-                        @if($event->checkin_time() && count($event->main_reg_sessions()) > 0)
-                            @include('v1.parts.url_button', [
-                                'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
-                                'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
-                                'text' => trans('messages.buttons.down_PDU_list')
-                            ])
-                        @endif
-                    </div>
-                    @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es)
+                    @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es && $event->checkin_time())
                         {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                         {!! Form::hidden('sessionID', $es->sessionID) !!}
                         {!! Form::hidden('eventID', $event->eventID) !!}
@@ -612,6 +619,16 @@ $count = 0;
                         </div>
                         {!! Form::close() !!}
 
+                    @elseif(count($nametags)>0 && $event->hasTracks == 0 && null !== $es)
+
+                        <div class="col-xs-12">
+
+                            @include('v1.parts.session_stats', ['es' => $es->sessionID, 'session' => $es])
+                            @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
+                                     'title' => trans('messages.surveys.popup'),
+                                     'content' => get_survey_comments($es), 'placement' => 'right',
+                                     'button_text' => trans('messages.surveys.popup')])
+                        </div>
                     @else
                         @lang('messages.instructions.no_regs')
                     @endif

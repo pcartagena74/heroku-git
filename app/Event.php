@@ -84,14 +84,6 @@ class Event extends Model
 
     public function ok_to_display()
     {
-        /*
-        $today = Carbon::now();
-        $max = Ticket::select('availabilityEndDate')
-            ->where('eventID', $this->eventID)
-            ->orderBy('availabilityEndDate', 'desc')
-            ->first();
-        //if($this->isActive && $max->availabilityEndDate->gte($today)){
-        */
         if ($this->isActive) {
             return 1;
         } else {
@@ -118,7 +110,7 @@ class Event extends Model
     }
 
     /**
-     * checkin_period returns true when within 1 day of start or within 3 weeks after the end of the event
+     * checkin_period returns true when within 1 day of start or within $postEventEndDays after the end of the event
      *
      * @return bool
      */
