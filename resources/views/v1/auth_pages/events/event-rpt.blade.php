@@ -316,8 +316,8 @@ $count = 0;
                 @endif
 
                 @if($event->hasTracks == 0)
-                    @if($event->checkin_time() && ( Entrust::hasRole($currentOrg->orgName) &&
-                            ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') ))
+                    @if( Entrust::hasRole($currentOrg->orgName) &&
+                            ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') )
                         || Entrust::hasRole('Developer'))
 
                         <li class="">

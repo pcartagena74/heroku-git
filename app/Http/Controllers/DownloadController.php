@@ -71,6 +71,9 @@ class DownloadController extends Controller
 
         if(null === $es){
             $regs = RegSession::where('eventID', '=', $event->eventID)
+                ->whereHas('registration', function($q){
+                    $q->whereNull('deleted_at');
+                })
                 ->with('person', 'person.orgperson', 'registration', 'person.orgs')->get();
             $filename = 'pdu_data.csv';
         } else {
@@ -78,6 +81,9 @@ class DownloadController extends Controller
                 ['eventID', '=', $event->eventID],
                 ['sessionID', '=', $es->sessionID]
             ])
+                ->whereHas('registration', function($q){
+                    $q->whereNull('deleted_at');
+                })
                 ->with('person', 'person.orgperson', 'registration', 'person.orgs')->get();
             $filename = "pdu_data_$es->sessionID.csv";
         }
@@ -86,12 +92,15 @@ class DownloadController extends Controller
             trans('messages.fields.pmi_id'), trans('messages.headers.isAuthPDU')];
 
         // $nametags[] = $tag_headers;
+        //dd($regs);
 
         foreach ($regs as $r) {
             $p = Person::find($r->person->personID);
             $p->load('orgperson');
+            $r->load('registration');
+            $x = $r->registration;
 
-            $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, $p->orgperson->OrgStat1, $r->registration->isAuthPDU);
+            $nametags[] = array($r->regID, $r->person->firstName, $r->person->lastName, $p->orgperson->OrgStat1, $x->isAuthPDU);
         }
 
         return Excel::download(new DataExport($tag_headers, $nametags), $filename);
