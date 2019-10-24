@@ -26,7 +26,7 @@ class MergeController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['query']]);
+        $this->middleware('auth'); //, ['except' => ['query']]);
 
         $this->models = [
             'o' => 'Org',
