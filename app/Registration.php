@@ -33,12 +33,12 @@ class Registration extends Model
 
     public function ticket()
     {
-        return $this->belongsTo(Ticket::class, 'ticketID', 'ticketID');
+        return $this->hasOne(Ticket::class, 'ticketID', 'ticketID');
     }
 
     public function regfinance()
     {
-        return $this->hasOne(RegFinance::class, 'regID', 'rfID');
+        return $this->belongsTo(RegFinance::class, 'rfID', 'regID');
     }
 
     public function regsessions()
