@@ -76,7 +76,7 @@ return [
         'invalid_id' => "The :id is not valid.",
         'valid' => "Code: ':code' provides a :disc discount.",
         'empty' => "Enter a discount code.",
-        'etID99' => "All Upcoming Events",
+        'etID99' => "All :which Events",
         'eventID' => 'event ID',
         'img' => "Event Image",
     ],
@@ -686,7 +686,7 @@ return [
         'merge_msg2' => "The account with :email2 was merged into :email1 and the password was swapped as well.",
         'merge_succ' => ":model record: :record1 was successfully merged into :record2.",
         'no_curr_pass_match' => "The current password did not match.",
-        'no_events' => "There are no future events in the system.",
+        'no_events' => "There are no :which events in the system.",
         'no_sessions' => "No session selections have been made. You can do so <a href=':link'>here</a>.",
         'no_switch' => "Please see the registration desk to change session registration.",
         'partial_fail' => "The attempt to get a partial refund failed with order: :rfid.",
@@ -699,6 +699,7 @@ return [
         'survey_confirm' => "Are you sure you want to email all checked in attendees the survey?",
         'thanks' => "Thank you for using mCentric with :orgname.",
         'undo_login' => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
+        'unknown' => "Unknown",
         'updated' => 'updated',
         'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
         'user_create_fail' => "An unknown error occurred during account creation.  ",
@@ -1110,6 +1111,11 @@ return [
         'spk_vol' => "Speaker-Volunteer Role",
         'vol' => "Volunteer Role",
 
+    ],
+
+    // Variable Words
+    'var_words' => [
+        'time_period' => "{0}Upcoming|{1}Past",
     ],
 
     'warning' => [

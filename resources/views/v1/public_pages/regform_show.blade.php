@@ -625,7 +625,7 @@ $i = 0;
 
             var subtotal = 0;
 
-                    @for($i=1;$i<=$quantity; $i++)
+            @for($i=1;$i<=$quantity; $i++)
             var tc{{ $i }} = $('#tcost{{ $i }}').text().replace(/,/g, '') * 1;
             var newval{{ $i }} = tc{{ $i }} * 1;
             $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
