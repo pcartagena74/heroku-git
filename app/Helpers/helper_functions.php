@@ -116,7 +116,7 @@ function check_exists($model, $doFlash, $var_array)
             if (null !== $e) {
                 $p = Person::find($e->personID);
                 $details .= '<li>' . $email . "</li>";
-                $existing = trans('messages.errors.existing_account', ['f' => $p-firstName, 'l' => $p->lastName, 'e' => $p->login]);
+                $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                 $details .= "<li>$existing</li>";
                 $details .= "</ul>";
                 if($doFlash){

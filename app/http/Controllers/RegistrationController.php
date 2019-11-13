@@ -396,7 +396,12 @@ class RegistrationController extends Controller
                     // someone in the database
                     if(check_exists('e', 0, [$login])){
                         $inDB = 1;
+                        $person = Person::where([
+                            ['login', $login]
+                        ])->first();
                         $set_new_user = 0;
+                    } else {
+                        $person = null;
                     }
                 } else {
                     // No one is logged in and information appears to be new to the DB
