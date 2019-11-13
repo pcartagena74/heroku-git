@@ -476,6 +476,7 @@ return [
         'preventRefunds' => "Will <b class='red'>all</b> refunds be prohibited?",
         'primary' => "Primary",
         'purchased' => 'Purchased on',
+        'purchased_by' => 'Purchased by',
         'receipt' => 'Receipt',
         'rec_sess_att' => "Record Session Attendance",
         'rec_merge' => "Merge Records",
