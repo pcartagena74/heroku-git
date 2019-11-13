@@ -219,7 +219,7 @@ Route::get('/eventcopy/{slug}', 'EventCopyController@show');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');                                  // Ajax
 
 // API Routes that circumvent AUTH and mCentric navigation, etc.
-Route::get('/eventlist/{orgID}/{etID}/{override?}', 'EventController@listing');
+Route::get('/eventlist/{orgID}/{past}/{etID?}', 'EventAPIController@show');
 Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
 Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 

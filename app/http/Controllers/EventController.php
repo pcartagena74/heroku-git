@@ -135,7 +135,9 @@ class EventController extends Controller
             $ae_count += $ae->week_sales();
         }
 
-        $ae_label = trans('messages.codes.etID99');
+        // sets $which to "Upcoming"
+        $which = trans_choice('messages.var_words.time_period', 0);
+        $ae_label = trans('messages.codes.etID99', ['which' => $which]);
 
         array_push($topBits, [3, $upcoming.$cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count>0?1:-1, 2]);
         array_push($topBits, [3, $upcoming.$rt_label, count($roundtables), $rt_count, $rtw, $rt_count>0?1:-1, 2]);
