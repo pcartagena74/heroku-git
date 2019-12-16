@@ -243,7 +243,13 @@ class PersonController extends Controller
         return redirect(env('APP_URL') . '/search/' . $string);
     }
 
-    // Shows profile information for chosen person (or self)
+
+    /**
+     * Shows profile information for chosen person (or self)
+     * @param $id
+     * @param null $modal
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function show($id, $modal = null)
     {
         // responds to GET /profile/{id}
@@ -359,6 +365,11 @@ class PersonController extends Controller
         dd(request()->all());
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return false|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
+     */
     public function update(Request $request, $id)
     {
         // responds to POST /profile/{id} and is an AJAX call
@@ -374,44 +385,54 @@ class PersonController extends Controller
         $updater = auth()->user()->id;
 
         if ($name == 'login') {
+            // ALL 3 steps should be in a DB::transaction block...
             // when changing login we need to:
-            // 1. update user->login, user->email, and person->login with the new values
 
             try {
+                DB::beginTransaction();
+
+                // 1. update user->login, user->email, and person->login with the new values
                 $user = User::find($id);
                 $orig_email = $user->login;
                 $user->login = $value;
                 $user->name = $value;
                 $user->email = $value;
                 $user->save();
+
+                $person->login = $value;
+                $person->updaterID = $updater;
+                $person->save();
+
+                // While there should only be 1, find all emails marked as a primary and set to 0
+                $primaries = Email::where([
+                    ['personID', $person->personID],
+                    ['isPrimary', 1]
+                ])->get();
+                foreach($primaries as $orig){
+                    $orig->isPrimary = 0;
+                    $orig->updaterID = $updater;
+                    $orig->save();
+                }
+
+                // 2. change the Email::isPrimary field on the new primary email (the one where email will be sent)
+                $new_email = $value;
+                $new = Email::where('emailADDR', 'ilike', "%$new_email%")->first();
+                $new->isPrimary = 1;
+                $new->updaterID = $updater;
+                $new->save();
+
+                DB::commit();
+
+                // 3. trigger a notification to be sent to the old email address because it can undo this transaction
+                $person->notify(new LoginChange($person, $orig_email));
+
             } catch(\Exception $exception) {
+                DB::rollBack();
                 $org = $person->defaultOrg;
                 request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err') . $org->techContactStatement );
                 return redirect(env('APP_URL')."/profile/$personID");
             }
 
-            // 2. trigger a notification to be sent to the old email address
-            try{
-                $person->notify(new LoginChange($person, $orig_email));
-            } catch(\Exception $e){
-                1;
-            }
-
-            $person->login = $value;
-            $person->updaterID = $updater;
-            $person->save();
-
-            $orig = Email::where('emailADDR', '=', $orig_email)->first();
-            $orig->isPrimary = 0;
-            $orig->updaterID = $updater;
-            $orig->save();
-
-            // 3. change the Email::isPrimary field on the old and new primary email (the one where email will be sent)
-            $new_email = $value;
-            $new = Email::where('emailADDR', '=', $new_email)->first();
-            $new->isPrimary = 1;
-            $new->updaterID = $updater;
-            $new->save();
         } elseif ($name == 'affiliation') {
             $value = implode(",", (array)$value);
             $person->affiliation = $value;
