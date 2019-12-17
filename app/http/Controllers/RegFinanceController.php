@@ -65,8 +65,10 @@ class RegFinanceController extends Controller
         // responds to GET /confirm_registration/{id}
         $show_pass_fields = 0;
         $registering = 1;
+        $bought_for_other = 0;
+        $this->currentPerson = Person::find(auth()->user()->id);
         $today = Carbon::now()->format('n/j/Y');
-        $u = User::find(auth()->user()->id);
+        $u = User::find($this->currentPerson->personID);
         if ($u->password === null) {
             $show_pass_fields = 1;
         }
@@ -81,6 +83,15 @@ class RegFinanceController extends Controller
             }
 
             $regs = Registration::where('rfID', '=', $rf->regID)->get();
+            $regs_check = $regs->filter(function ($value, $key){
+                if($value['personID'] == $this->currentPerson->personID){
+                    return true;
+                }
+            });
+            if(count($regs_check) == 0) {
+                $bought_for_other = 1;
+            }
+
             if(count($regs) == 0){
                 $rf->delete();
                 $button1 = "<a class='btn btn-primary btn-xs' href='" . env('APP_URL') . "/events/$event->eventID'>" . trans('messages.errors.no_reg1') . "</a>";
@@ -106,7 +117,7 @@ class RegFinanceController extends Controller
 
             return view('v1.public_pages.register2',
                 compact('event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array', 'prefixes',
-                    'industries', 'tracks', 'tickets', 'show_pass_fields', 'registering'));
+                    'industries', 'tracks', 'tickets', 'show_pass_fields', 'registering', 'bought_for_other'));
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');
             return view('v1.public_pages.error_display', compact('message'));

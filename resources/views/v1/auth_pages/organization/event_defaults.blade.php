@@ -274,7 +274,7 @@ $currentOrg = $currentPerson->defaultOrg;
             });
 
             $('#earlyBirdPercent').editable({
-                type: 'text',
+                type: 'number',
                 pk: '{{ $org->orgID }}',
                 placement: 'right',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}'

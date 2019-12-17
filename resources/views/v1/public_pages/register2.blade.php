@@ -46,6 +46,7 @@ if ($event->isSymmetric && $event->hasTracks) {
     $width = number_format(80 / $event->hasTracks, 0, '', '');
     $mw = number_format(85 / $event->hasTracks, 0, '', '');
 }
+$rfp = $rf->person;
 
 ?>
 @extends('v1.layouts.no-auth')
@@ -81,10 +82,6 @@ if ($event->isSymmetric && $event->hasTracks) {
 
                     @if($rf->cost > 0 && $rf->status != 'wait')
                         @include('v1.parts.stripe_pay_button', array('id' => 'payment'))
-                        {{--
-                        <div id="payment-request-button" class="card">
-                        </div>
-                        --}}
                     @endif
 
                     @if($event->acceptsCash)
@@ -118,6 +115,14 @@ if ($event->isSymmetric && $event->hasTracks) {
                     </div>
                     <div class="col-sm-6 form-group">
                         {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_conf'))) !!}
+                    </div>
+                </div>
+            @endif
+
+            @if($bought_for_other)
+                <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
+                    <div class="col-xs-12">
+                        <b class="red">@lang('messages.headers.purchased_by'):</b> {!! $rfp->showFullName() !!}
                     </div>
                 </div>
             @endif
