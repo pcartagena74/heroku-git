@@ -416,7 +416,7 @@ class PersonController extends Controller
 
                 // 2. change the Email::isPrimary field on the new primary email (the one where email will be sent)
                 $new_email = $value;
-                $new = Email::where('emailADDR', 'ilike', "%$new_email%")->first();
+                $new = Email::whereRaw("lower(emailADDR) like '%$new_email%'")->first();
                 $new->isPrimary = 1;
                 $new->updaterID = $updater;
                 $new->save();
