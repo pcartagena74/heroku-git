@@ -17,6 +17,17 @@ return [
         'remove' => 'Remove ',
     ],
 
+    'admin' => [
+        'upload' => [
+            'count' => 'Prior upload of :count records, successful.',
+            'filename' => 'File name to import',
+            'header' => 'Data Upload',
+            'loaded' => ':what were successfully loaded. (:count)',
+            'select' => 'Select an event...',
+            'upload' => 'Upload data by browsing to file and clicking the "Upload Data" button.',
+        ],
+    ],
+
     'alt_txt' => [
         'avatar' => 'User Avatar/Image',
     ],
@@ -177,6 +188,7 @@ return [
         'count' => 'Count',
         'credit' => 'Credit',
         'customURL' => "Custom URL",
+        'data' => 'Data',
         'd&t' => 'Date &amp; Time',
         'detail' => 'Event Detail',
         'diet_info' => 'Dietary Info',
@@ -189,7 +201,7 @@ return [
         'email' => 'Email Address',
         'empty' => 'Empty',
         'enter_disc' => 'Enter discount code',
-        'event' => "Event",
+        'event' => 'Event',
         'eventNotes' => 'Dietary or Other Comments',
         'eventTopics' => 'What future event topics would interest you?',
         'eventQuestion' => 'List any questions you may have for the speaker(s)?',
