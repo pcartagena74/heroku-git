@@ -20,9 +20,11 @@ return [
     'admin' => [
         'upload' => [
             'count' => 'Prior upload of :count records, successful.',
+            'evtdata' => 'Event registration records',
             'filename' => 'File name to import',
             'header' => 'Data Upload',
             'loaded' => ':what were successfully loaded. (:count)',
+            'mbrdata' => 'Member records',
             'select' => 'Select an event...',
             'upload' => 'Upload data by browsing to file and clicking the "Upload Data" button.',
         ],

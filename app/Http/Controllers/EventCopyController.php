@@ -59,6 +59,8 @@ class EventCopyController extends Controller
      */
     public function show($param)
     {
+        $this->currentPerson = Person::find(auth()->user()->id);
+
         $today = Carbon::now();
         $event = Event::where('eventID', '=', $param)
             ->orWhere('slug', '=', $param)
@@ -66,10 +68,11 @@ class EventCopyController extends Controller
         $org = Org::find($event->orgID);
 
         $e = $event->replicate();
+        $e->creatorID = $this->currentPerson->personID;
         $e->slug = 'temporary_slug_placeholder';
         $e->isActive = 0;
-        $e->eventStartDate = $today;
-        $e->eventEndDate = $today;
+        $e->eventStartDate = $today->addDay();
+        $e->eventEndDate = $today->addDay();
         // this is here until we decide to copy EVERYTHING associated with a PD Day event
         $e->hasTracks = 0;
         $e->save();
