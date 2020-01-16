@@ -14,31 +14,31 @@ if(isset($blah)){
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
-    @include('v1.parts.start_content', ['header' => 'Data Upload', 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    @include('v1.parts.start_content', ['header' => trans('messages.admin.upload.header'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @if($count > 0)
-        <p>Prior upload of {{ $count }} records, successful.</p>
+        <p>@lang('messages.admin.upload.count', $count)</p>
     @endif
 
-    Upload data by browsing to file and clicking the Upload button.<p>
+    <p>@lang('messages.admin.upload.upload')</p>
 
     <form enctype='multipart/form-data' action='{{ env('APP_URL') }}/load_data' method='post'>
         {{ csrf_field() }}
         <div class="col-sm-6 col-xs-6 form-group">
-            <label for="filename">File name to import:</label>
+            <label for="filename">{!! trans('messages.admin.upload.filename') !!}:</label>
             <input size='50' type='file' name='filename' required class="form-control">
         </div>
 
         <div class="col-sm-7 col-xs-7 form-group">
             <select id="dt" name='data_type' required class="form-control">
-                <option value='mbrdata'>Member Data</option>
-                <option value='evtdata'>Event Data</option>
+                <option value='mbrdata'>{!! trans('messages.fields.member') !!} {!! trans('messages.fields.data') !!}</option>
+                <option value='evtdata'>{!! trans('messages.fields.event') !!} {!! trans('messages.fields.data') !!}</option>
             </select><br/>
         </div>
 
         <div class="col-sm-8 col-xs-8 form-group">
             <select id="evt" name='eventID' style='display:none;' class="form-control">
-                <option value="">Select an event...</option>
+                <option value="">@lang('messages.admin.upload.select')</option>
                 @foreach($events as $event)
                     <option value="{{ $event->eventID }}">{{ $event->eventID }}
                         : {{ $event->eventStartDate->format('n/Y') }}
@@ -49,7 +49,7 @@ if(isset($blah)){
 
         <div class="col-sm-9 col-xs-9">
             <br />
-            <input type='submit' name='submit' value='Upload'><br/>
+            <input type='submit' name='submit' value='{!! trans('messages.nav.o_upload') !!}'><br/>
         </div>
     </form>
 

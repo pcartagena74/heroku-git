@@ -14,6 +14,7 @@
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-K4MGRCX');</script>
 <!-- End Google Tag Manager -->
+@yield('header')
 </head>
 <body style="background-color: white;">
 <!-- Google Tag Manager (noscript) -->
