@@ -412,6 +412,7 @@ class MergeController extends Controller
         }
         $exclude_model = $request->m;
         $usersArray = [];
+        $locArray = [];
 
         if ($exclude_model) {
             switch ($letter) {
