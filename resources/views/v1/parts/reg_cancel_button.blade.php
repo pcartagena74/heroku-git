@@ -56,7 +56,7 @@ if (Entrust::hasRole('Admin')) {
 @if(Entrust::hasRole('Admin'))
 
     @if(!$post_event)
-        @if($reg->regStatus == trans('messages.headers.wait'))
+        @if($reg->regStatus == 'wait')
             <a class="btn btn-primary btn-sm" onclick="return confirm('{{ $wait_confirm }}');"
                href="{!! env('APP_URL')."/promote/$reg->regID" !!}" data-toggle="tooltip" title="{!! $wait_tooltip !!}"><i
                         class="fas fa-angle-double-right"></i></a>
