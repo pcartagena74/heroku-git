@@ -220,6 +220,8 @@ Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store');       
 
 // API Routes that circumvent AUTH and mCentric navigation, etc.
 Route::get('/eventlist/{orgID}/{past}/{etID?}', 'EventAPIController@show');
+// The files saved as copies w/2 (EvantAPI, eventlist.blade) need this route
+//Route::get('/eventlist/{orgID}/{past}/{cal}/{etID?}', 'EventAPIController@show');
 Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
 Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 
@@ -240,7 +242,7 @@ Route::get('/excel/emails/{event}', 'DownloadController@email_list');
 Route::post('/bundle/{id}', 'BundleController@update');                                                    // Ajax
 Route::delete('/bundle/{id}/delete', 'BundleController@destroy')->name('delete_bundle');
 Route::post('/ticket/{id}', 'TicketController@update');                                                    // Ajax
-Route::post('/tickets/create', 'TicketController@store');
+Route::post('/ticket/create', 'TicketController@store');
 Route::delete('/ticket/{id}/delete', 'TicketController@destroy')->name('delete_ticket');
 Route::get('/event-tickets/{id}', 'TicketController@show');
 Route::post('/event-tickets/{id}', 'TicketController@show');
