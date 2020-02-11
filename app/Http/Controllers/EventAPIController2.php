@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 
-class EventAPIController extends Controller
+class EventAPIController2 extends Controller
 {
     /**
      * Display a listing of the resource.
