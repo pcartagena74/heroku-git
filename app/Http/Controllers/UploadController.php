@@ -80,9 +80,10 @@ class UploadController extends Controller
         switch ($what) {
             case 'mbrdata':
 
-                $import = new MembersImport();
+                //$import = new MembersImport();
                 try {
-                    $this->counter = $import->import($path);
+                    // $this->counter = $import->import($path);
+                    $this->counter = \Excel::import(new MembersImport, $path);
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                     $failures = $e->failures();
 
