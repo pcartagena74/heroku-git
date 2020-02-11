@@ -66,6 +66,9 @@ class UploadController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $what                = request()->input('data_type');
         $filename            = $_FILES['filename']['tmp_name'];
+        //$fname               = $_FILES['filename']['name'];
+        //$f2 = request()->file('filename');
+        //dd($_FILES, $fname, $f2, $f2->getClientOriginalName());
         $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
@@ -78,7 +81,7 @@ class UploadController extends Controller
 
                 $import = new MembersImport();
                 try {
-                    $this->counter = $import->import($filename);
+                    $this->counter = $import->import(request()->file('filename'));
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                     $failures = $e->failures();
 
