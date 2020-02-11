@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Session;
 
-class ActivityController extends Controller
+class ActivityController2 extends Controller
 {
     public function __construct()
     {
