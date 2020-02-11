@@ -91,7 +91,7 @@ if ($past) {
                             'id' => 'current_events',
                             'scroll' => $current_scroll])
                     @else
-                        @lang('messages.messages.no_events')
+                        @lang('messages.messages.no_events', ['which' => strtolower(trans('messages.fields.up'))])
                     @endif
                 </div>
                 <div class="tab-pane fade" id="tab_content2" aria-labelledby="past_events-tab">
