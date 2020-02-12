@@ -15,33 +15,33 @@ class PermissionTableSeeder extends Seeder
         $permission = [
             [
                 'name' => 'role-management',
-                'display_name' => 'Display, Create, Edit, Delete Roles',
-                'description' => 'Perform Role Management'
+                'display_name' => 'Role Management',
+                'description' => 'Display, Create, Edit, Delete Roles'
             ],
             [
                 'name' => 'settings-management',
                 'display_name' => 'Org Settings Management',
-                'description' => 'Perform Org Settings Management'
+                'description' => 'Manage Org Settings'
             ],
             [
                 'name' => 'member-management',
-                'display_name' => 'Display/Edit Member Listing',
-                'description' => 'Perform Member Management'
+                'display_name' => 'Member Management',
+                'description' => 'Display/Edit Member Data'
             ],
             [
                 'name' => 'mailing-management',
-                'display_name' => 'Display, Create, Edit, Delete Mailings',
-                'description' => 'Perform Mailing Management'
+                'display_name' => 'Mail Management',
+                'description' => 'Display, Create, Edit, Delete Mailings'
             ],
             [
                 'name' => 'survey-management',
-                'display_name' => 'Display, Create, Edit, Delete Surveys',
-                'description' => 'Perform Survey Management'
+                'display_name' => 'Survey Management',
+                'description' => 'Display, Create, Edit, Delete Surveys'
             ],
             [
                 'name' => 'event-management',
-                'display_name' => 'Display, Create, Edit, Delete Events',
-                'description' => 'Perform Event Management'
+                'display_name' => 'Event Management',
+                'description' => 'Display, Create, Edit, Delete Events'
             ],
             [
                 'name' => 'speaker-management',
