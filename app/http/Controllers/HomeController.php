@@ -23,6 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // echo bcrypt('mufaddal');die();
         return view('v1.public_pages.home-login');
     }
 

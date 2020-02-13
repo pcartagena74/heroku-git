@@ -28,7 +28,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
      * @var array
      */
     protected $fillable = [
-        'email', 'login', 'password',
+        'email', 'login', 'password','ticketit_agent'
     ];
 
     /**

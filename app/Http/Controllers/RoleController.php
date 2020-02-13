@@ -6,11 +6,9 @@ use App\Org;
 use App\Permission;
 use App\Person;
 use App\Role;
+use App\User;
 use Illuminate\Http\Request;
-use App\Event;
-use App\EventDiscount;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
 class RoleController extends Controller
 {
@@ -31,49 +29,49 @@ class RoleController extends Controller
         $board = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 1], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 1], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $speaker = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 2], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 2], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $events = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 3], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 3], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $vols = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 4], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 4], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $spkvol = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 6], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 6], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $round = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 7], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 7], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $admin = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 8], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 8], ['orgID', '=', $org->orgID]]);
         })->count();
 
         $mktg = Person::whereHas('orgperson', function ($q) use ($org) {
             $q->where('orgID', '=', $org->orgID);
         })->whereHas('roles', function ($q) use ($org) {
-            $q->where([ ['id', '=', 10], ['orgID', '=', $org->orgID] ]);
+            $q->where([['id', '=', 10], ['orgID', '=', $org->orgID]]);
         })->count();
 
         array_push($topBits, [1, trans('messages.topBits.board'), $board, '', '', '']);
@@ -85,7 +83,7 @@ class RoleController extends Controller
         array_push($topBits, [1, trans('messages.topBits.speaker'), $speaker, '', '', '', 2]);
         array_push($topBits, [1, trans('messages.topBits.admin'), $admin, '', '', '']);
 
-        return($topBits);
+        return ($topBits);
     }
 
     public function index($query = null)
@@ -96,15 +94,15 @@ class RoleController extends Controller
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         $roles               = Role::where([
             ['orgID', '=', $org->orgID],
-            ['name', '!=', $org->orgName]
+            ['name', '!=', $org->orgName],
         ])
-            // This line is to prevent the display of roles with relevant ID.  0 blocks nothing...
-                                   ->whereNotIn('id', [0])
-                                   ->with('permissions')
-                                   ->get();
+        // This line is to prevent the display of roles with relevant ID.  0 blocks nothing...
+            ->whereNotIn('id', [0])
+            ->with('permissions')
+            ->get();
 
         $permissions = Permission::all();
-        $persons = null;
+        $persons     = null;
 
         //DB::enableQueryLog();
 
@@ -114,7 +112,7 @@ class RoleController extends Controller
             })
                 ->where(function ($q) use ($query) {
                     $q->whereHas('roles', function ($q) use ($query) {
-                            $q->where('roles.name', 'LIKE', "%$query%");
+                        $q->where('roles.name', 'LIKE', "%$query%");
                     })
                         ->orWhere('person.firstName', 'LIKE', "%$query%")
                         ->orWhere('login', 'LIKE', "%$query%")
@@ -140,9 +138,8 @@ class RoleController extends Controller
     public function search(Request $request)
     {
         $string = $request->input('string');
-        return redirect('/role_mgmt/'.$string);
+        return redirect('/role_mgmt/' . $string);
     }
-
 
     public function show($id)
     {
@@ -177,7 +174,6 @@ class RoleController extends Controller
         if (!$person->roles->contains('id', $person->org_role_id()->id)) {
             $orgID_needed = 1;
         }
-
         // Remove the orgName role if it's the only one...
         if (count($person->roles) == 1 && !$orgID_needed) {
             $person->roles->forget('id', $person->org_role_id()->id);
@@ -188,11 +184,22 @@ class RoleController extends Controller
             $person->roles()->toggle($person->org_role_id()->id);
         }
 
+        //update user as ticketit agent if is admin
+        if ($role->name == 'Admin') {
+            $user = User::find($person->personID);
+            if ($user->ticketit_agent == 1) {
+                $user->ticketit_agent = 0;
+            } else {
+                $user->ticketit_agent = 1;
+            }
+            $user->save();
+        }
+
         $message =
-            '<div class="well bg-blue">' . trans(
-                'messages.instructions.role_toggle',
-                ['role' => $role->display_name, 'person' => $person->showFullName()]
-            ) . "</div>";
+        '<div class="well bg-blue">' . trans(
+            'messages.instructions.role_toggle',
+            ['role' => $role->display_name, 'person' => $person->showFullName()]
+        ) . "</div>";
 
         return json_encode(array('status' => 'success', 'message' => $message));
     }

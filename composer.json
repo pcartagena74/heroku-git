@@ -23,10 +23,12 @@
         "jdavidbakr/mail-tracker": "^2.1",
         "jenssegers/agent": "^2.6",
         "knplabs/knp-snappy": "^1.1",
+        "kordy/ticketit": "^0.4.8",
         "laravel/cashier": "^9.3",
         "laravel/framework": "5.8.22",
         "laravel/socialite": "^4.1",
         "laravel/tinker": "^1.0",
+        "laravelcollective/html": "^5.4",
         "league/flysystem": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
         "maatwebsite/excel": "^3.1",
@@ -37,8 +39,7 @@
         "spatie/laravel-referer": "^1.4",
         "squizlabs/php_codesniffer": "^3.4",
         "stripe/stripe-php": "^6.34",
-        "zizaco/entrust": "^1.9",
-        "laravelcollective/html": "^5.4"
+        "zizaco/entrust": "^1.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
