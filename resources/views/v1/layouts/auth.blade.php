@@ -34,7 +34,7 @@ if(!isset($topBits)){
             @endif
                 @include('v1.parts.error')
             @if($topBits)
-                <div class="row tile_count">
+                <div class="row tile_count hidden-xs hidden-sm">
                     @foreach($topBits as $tdata)
                         @if(count($tdata)>6)
                             @include('v1.parts.title-bit', ['icon' => $tdata[0], 'label' => $tdata[1],
