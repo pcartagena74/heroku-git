@@ -171,7 +171,7 @@ class RoleController extends Controller
         $person->roles()->toggle($role->id);
 
         // Check to see if a role for the orgName is in the DB...
-        dd($person->org_role_id());
+        
         if (!$person->roles->contains('id', $person->org_role_id()->id)) {
             $orgID_needed = 1;
         }

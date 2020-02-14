@@ -138,10 +138,11 @@ Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogi
 // Organizational Routes
 // ---------------------
 // Settings
-Route::get('/orgsettings', 'OrgController@index');
+Route::get('/orgsettings', 'OrgController@index'); //updated for org listing if available
 Route::get('/orgsettings/{id}', 'OrgController@show');
 Route::post('/orgsettings/{id}', 'OrgController@update'); // Ajax
 Route::get('/eventdefaults', 'OrgController@event_defaults');
+Route::post('/update-default-org', 'OrgController@updateDefaultOrg');
 Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update'); // Ajax
 
 Route::get('/load_data', 'UploadController@index');

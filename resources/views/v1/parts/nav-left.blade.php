@@ -66,7 +66,7 @@ try{
         The piece about multiple organizations would go here...
 --}}
                             @if (count($currentPerson->orgs)>1)
-                                <li><a href="{{ url('/')}}/orgs">@lang('messages.nav.ms_org')</a></li>
+                                <li><a href="{{ url('orgsettings')}}">@lang('messages.nav.ms_org')</a></li>
                             @endif
                             <li><a href="{{ url('/')}}/dashboard">@lang('messages.nav.ms_dash')</a></li>
                             <li><a href="{{ url('/')}}/upcoming">@lang('messages.nav.ms_fut')</a></li>
@@ -99,7 +99,7 @@ try{
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-                                    <li><a href="{{ url('/')}}/orgsettings">@lang('messages.nav.o_labels')</a></li>
+                                    <li><a href="{{ url('orgsettings',$currentOrg)}}">@lang('messages.nav.o_labels')</a></li>
                                 @endif
 
                                 @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
