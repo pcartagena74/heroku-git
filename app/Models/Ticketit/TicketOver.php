@@ -2,10 +2,11 @@
 
 namespace App\Models\Ticketit;
 
+use App\Models\Ticketit\AgentOver as Agent;
+use App\Models\Ticketit\CategoryOver as Category;
+use App\Person;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Date\Date;
-use Kordy\Ticketit\Models\Agent;
-use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Traits\ContentEllipse;
 use Kordy\Ticketit\Traits\Purifiable;
@@ -40,7 +41,14 @@ class TicketOver extends Ticket
      */
     public function scopeComplete($query)
     {
-        return $query->whereNotNull('completed_at');
+        //static to allow phil to see all records
+        if (auth()->user()->id == 1) {
+            return $query->whereNotNull('completed_at');
+        } else {
+            $person = Person::find(auth()->user()->id);
+            $orgId  = $person->defaultOrgID;
+            return $query->whereNotNull('completed_at')->where('orgId', $orgId);
+        }
     }
 
     /**
@@ -50,7 +58,15 @@ class TicketOver extends Ticket
      */
     public function scopeActive($query)
     {
-        return $query->whereNull('completed_at');
+        //static to allow phil to see all records
+        if (auth()->user()->id == 1) {
+            return $query->whereNull('completed_at');
+        } else {
+            $person = Person::find(auth()->user()->id);
+            $orgId  = $person->defaultOrgID;
+            return $query->whereNull('completed_at')->where('orgId', $orgId);
+
+        }
     }
 
     /**
@@ -199,13 +215,16 @@ class TicketOver extends Ticket
     public function autoSelectAgent()
     {
         $cat_id = $this->category_id;
-        $agents = Category::find($cat_id)->agents()->with(['agentOpenTickets' => function ($query) {
+        $orgId  = $this->orgId;
+        $agents = Category::find($cat_id)->agents()->with(['agentOpenTickets' => function ($query) use ($orgId) {
             $query->addSelect(['id', 'agent_id']);
+            $query->where('orgId', $orgId);
         }])->get();
         $count          = 0;
         $lowest_tickets = 1000000;
         // If no agent selected, select the admin
-        $first_admin       = Agent::admins()->first();
+        $first_admin = Agent::admins()->first();
+
         $selected_agent_id = $first_admin->id;
         foreach ($agents as $agent) {
             if ($count == 0) {

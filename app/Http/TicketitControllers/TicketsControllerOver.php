@@ -37,24 +37,27 @@ class TicketsControllerOver extends TicketController
             $datatables = app(\Yajra\Datatables\Datatables::class);
         }
 
-        $user = $this->agent->find(auth()->user()->id);
+        $user   = $this->agent->find(auth()->user()->id);
+        $person = Person::find(auth()->user()->id);
+        $orgId  = $person->defaultOrgID;
+        
         if ($user->isAdmin()) {
             if ($complete) {
-                $collection = Ticket::complete();
+                $collection = Ticket::complete($orgId);
             } else {
-                $collection = Ticket::active();
+                $collection = Ticket::active($orgId);
             }
         } elseif ($user->isAgent()) {
             if ($complete) {
-                $collection = Ticket::complete()->agentUserTickets($user->id);
+                $collection = Ticket::complete($orgId)->agentUserTickets($user->id);
             } else {
-                $collection = Ticket::active()->agentUserTickets($user->id);
+                $collection = Ticket::active($orgId)->agentUserTickets($user->id);
             }
         } else {
             if ($complete) {
-                $collection = Ticket::userTickets($user->id)->complete();
+                $collection = Ticket::userTickets($user->id)->complete($orgId);
             } else {
-                $collection = Ticket::userTickets($user->id)->active();
+                $collection = Ticket::userTickets($user->id)->active($orgId);
             }
         }
 

@@ -11,11 +11,11 @@ $new_tickets_path = '\App\Http\TicketitControllers\TicketsControllerOver';
                     <span class="badge">
                          <?php 
                             if ($u->isAdmin()) {
-                                echo Kordy\Ticketit\Models\Ticket::active()->count();
+                                echo App\Models\Ticketit\TicketOver::active()->count();
                             } elseif ($u->isAgent()) {
-                                echo Kordy\Ticketit\Models\Ticket::active()->agentUserTickets($u->id)->count();
+                                echo App\Models\Ticketit\TicketOver::active()->agentUserTickets($u->id)->count();
                             } else {
-                                echo Kordy\Ticketit\Models\Ticket::userTickets($u->id)->active()->count();
+                                echo App\Models\Ticketit\TicketOver::userTickets($u->id)->active()->count();
                             }
                         ?>
                     </span>
@@ -26,11 +26,11 @@ $new_tickets_path = '\App\Http\TicketitControllers\TicketsControllerOver';
                     <span class="badge">
                         <?php 
                             if ($u->isAdmin()) {
-                                echo Kordy\Ticketit\Models\Ticket::complete()->count();
+                                echo App\Models\Ticketit\TicketOver::complete()->count();
                             } elseif ($u->isAgent()) {
-                                echo Kordy\Ticketit\Models\Ticket::complete()->agentUserTickets($u->id)->count();
+                                echo App\Models\Ticketit\TicketOver::complete()->agentUserTickets($u->id)->count();
                             } else {
-                                echo Kordy\Ticketit\Models\Ticket::userTickets($u->id)->complete()->count();
+                                echo App\Models\Ticketit\TicketOver::userTickets($u->id)->complete()->count();
                             }
                         ?>
                     </span>
