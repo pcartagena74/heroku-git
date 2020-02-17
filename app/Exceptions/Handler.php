@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use InvalidArgumentException;
@@ -61,6 +62,34 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof \Illuminate\Database\QueryException) {
+            return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
+        }
+        if ($exception instanceof \jdavidbakr\MailTracker\Exceptionmails\BadUrlLink) {
+            return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
+        }
+        
+        if ($this->isHttpException($exception)) {
+            if ($exception->getStatusCode() == 404) {
+                return response()->view('errors.' . '404', [], 404);
+            }
+            if ($exception->getStatusCode() == 403) {
+                return response()->view('errors.genericException', ['code' => 403, 'description' => trans('messages.exceptions.forbidden')], 403);
+            }
+            if ($exception->getStatusCode() == 419) {
+                return response()->view('errors.genericException', ['code' => 419, 'description' => trans('messages.exceptions.page_expired')], 419);
+            }
+            if ($exception->getStatusCode() == 429) {
+                return response()->view('errors.genericException', ['code' => 429, 'description' => trans('messages.exceptions.too_many_request')], 429);
+            }
+            if ($exception->getStatusCode() == 500) {
+                return response()->view('errors.genericException', ['code' => 500, 'description' => trans('messages.exceptions.error_500')], 500);
+            }
+
+            if ($exception->getStatusCode() == 503) {
+                return response()->view('errors.genericException', ['code' => 503, 'description' => trans('messages.exceptions.service_unavailable')], 503);
+            }
+        }
         if ($exception instanceof TokenMismatchException) {
             return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
         }
@@ -69,7 +98,6 @@ class Handler extends ExceptionHandler
                 dd(get_defined_vars());
             }
         }
-
         return parent::render($request, $exception);
     }
 

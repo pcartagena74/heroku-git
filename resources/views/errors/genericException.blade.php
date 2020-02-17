@@ -14,12 +14,11 @@
             <div class="col-middle">
                 <div class="text-center text-center" style="text-align: center;">
                     <h1 class="error-number">
-                        404
+                        {{$code}}
                     </h1>
                     <h2>
-                        Sorry but we couldn't find this page
+                        {{$description}}
                     </h2>
-                    This page you are looking for does not exist.
                     <a onclick="show()">
                         Report this?
                     </a>
@@ -28,12 +27,16 @@
                             Report Issue
                         </h3>
                         {{ Form::open(['url' => url('reportissue'), 'method' => 'post']) }}
-                        <div class="g-recaptcha" data-sitekey="{{env('RECAPTCHA_PUBLIC_KEY')}}">
+                        <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_PUBLIC_KEY')  }}" id="feedback-recaptcha">
                         </div>
+                        <span class="error" id="error_captcha">
+                        </span>
                         {{-- Add Captcha --}}
                         <div class="col-xs-12 form-group pull-right top_search">
                             <div class="input-group">
-                                <input class="form-control custom-control" id="subject" placeholder="Subject" required=""/>
+                                <input class="form-control " id="subject" placeholder="Subject" required=""/>
+                                <span class="input-group-addon" style="cursor: default;" style="border-radius: 0px 25px 25px 0px;">
+                                </span>
                                 <span class="error" id="error_subject">
                                 </span>
                             </div>
@@ -52,9 +55,9 @@
                         {{ Form::close() }}
                         <span class="error" id="error_member">
                         </span>
-                        <span class="success" id="success">
-                        </span>
                     </div>
+                    <span class="success" id="success">
+                    </span>
                 </div>
             </div>
         </div>
@@ -63,17 +66,26 @@
 </div>
 <script>
     function show(){
+        $('#error_subject').html('');
+        $('#error_content').html('');
+        $('#error_member').html('');
+        $('#error_captcha').html('');
            $('.mid_center').toggle();
         }
     function submitIssue(){
         $('#error_subject').html('');
         $('#error_content').html('');
         $('#error_member').html('');
+        $('#error_captcha').html('');
         $.ajax({
             url: "{{url('reportissue')}}",
             type: "post",
             dataType:'json',
-            data: {'subject':$('#subject').val().trim(),'content':$('#message').val().trim()},
+            data: {
+                'subject':$('#subject').val().trim(),
+                'content':$('#message').val().trim(),
+                'g-recaptcha': $("#g-recaptcha-response").val()
+               },
             success: function (response) {
                if(response.error){
                     if(response.error.subject){
@@ -84,6 +96,8 @@
                     }
                    if(response.error.member) {
                         $('#error_member').html(response.error.member);
+                   }if(response.error['g-recaptcha']) {
+                        $('#error_captcha').html(response.error['g-recaptcha']);
                    }
                } else {
                     $('#success').html(response.success);

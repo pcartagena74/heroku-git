@@ -129,6 +129,9 @@ return [
         'timeout'                   => "Your session timed out.  Please login again to continue.",
         'unexpected'                => "An unexpected error occurred. Please logout and attempt to perform your action again.<br />If this persists, contact mCentric@mCentric.org with as much detail as possible.",
         'org_default_update_failed' => "Failed to update Default Organization.",
+        'ticketit_login_error_404'  => "You need to be logged in to raise a ticket.",
+        'google_recaptcha'          => 'Complete the reCAPTCHA to submit the request.',
+        'google_recaptcha_required' => 'Please Complete the reCAPTCHA to submit the request.',
     ],
 
     'flashes'          => [
@@ -1151,6 +1154,16 @@ return [
     'yesno_check'      => [
         'no'  => 'No',
         'yes' => 'Yes',
+    ],
+
+    'exceptions'       => [
+        'query_exception'     => 'Resource you are looking for has been either moved/deleted/does not exist',
+        'bad_url_link'        => 'The link you are trying to access has been expired.',
+        'forbidden'           => 'You are not authorized to access this page.',
+        'page_expired'        => 'Page Expired.',
+        'too_many_request'    => 'Too Many Requests, Rate limit exceeded.',
+        'service_unavailable' => 'Service Unavailable, Please try again after sometime.',
+        'error_500'           => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
     ],
 
 ];

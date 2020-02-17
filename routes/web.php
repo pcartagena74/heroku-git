@@ -33,6 +33,8 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 
+Route::post('/reportissue', 'ErrorController@reportIssue');
+
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
@@ -323,6 +325,6 @@ Route::get('snaptest', function () {
     return PDF::loadFile(env('APP_URL') . "/show_orig/159")->inline('blah.pdf');
 });
 
-Route::any('{all}', function () {
-    return view('errors.404');
-})->where('all', '.*');
+// Route::any('{all}', function () {
+//     return view('errors.404');
+// })->where('all', '.*');

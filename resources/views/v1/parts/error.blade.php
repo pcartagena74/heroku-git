@@ -9,23 +9,31 @@
  */
 ?>
 {{--
-<style> .error {color:red;} </style>
+<style>
+    .error {color:red;}
+</style>
 --}}
 <div class="form-group">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
         @if(Session::has('alert-'.$msg))
-            <div class="alert alert-{{ $msg }}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {!!  Session::get('alert-' . $msg) !!}
-            </div>
-        @endif
+    <div class="alert alert-{{ $msg }}">
+        <a aria-label="close" class="close" data-dismiss="alert" href="#">
+            ×
+        </a>
+        {!!  Session::get('alert-' . $msg) !!}
+    </div>
+    @endif
     @endforeach
+    @if(isset($errors))
     @if(count($errors))
         @foreach ($errors->all() as $e)
-            <div class="alert alert-danger">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {!! $e !!}
-            </div>
-        @endforeach
+    <div class="alert alert-danger">
+        <a aria-label="close" class="close" data-dismiss="alert" href="#">
+            ×
+        </a>
+        {!! $e !!}
+    </div>
+    @endforeach
+    @endif
     @endif
 </div>
