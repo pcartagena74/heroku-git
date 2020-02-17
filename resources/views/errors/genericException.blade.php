@@ -34,8 +34,10 @@
                         {{-- Add Captcha --}}
                         <div class="col-xs-12 form-group pull-right top_search">
                             <div class="input-group">
-                                <input class="form-control " id="subject" placeholder="Subject" required=""/>
-                                <span class="input-group-addon" style="cursor: default;" style="border-radius: 0px 25px 25px 0px;">
+                                <input class="form-control custom-control" id="subject" placeholder="Subject" required=""/>
+                                <span class="input-group-addon btn btn-primary" style="border-radius: 0px 25px 25px 0px;" readonly>
+                                    <i aria-hidden="true" class="fa fa-pencil">
+                                    </i>
                                 </span>
                                 <span class="error" id="error_subject">
                                 </span>

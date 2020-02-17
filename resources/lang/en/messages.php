@@ -1164,6 +1164,7 @@ return [
         'too_many_request'    => 'Too Many Requests, Rate limit exceeded.',
         'service_unavailable' => 'Service Unavailable, Please try again after sometime.',
         'error_500'           => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'no_msg_available'    => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
     ],
 
 ];

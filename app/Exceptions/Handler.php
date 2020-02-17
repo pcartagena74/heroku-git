@@ -89,6 +89,7 @@ class Handler extends ExceptionHandler
             if ($exception->getStatusCode() == 503) {
                 return response()->view('errors.genericException', ['code' => 503, 'description' => trans('messages.exceptions.service_unavailable')], 503);
             }
+            return response()->view('errors.genericException', ['code' => $exception->getStatusCode(), 'description' => trans('messages.exceptions.no_msg_available')], $exception->getStatusCode());
         }
         if ($exception instanceof TokenMismatchException) {
             return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
