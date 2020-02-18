@@ -55,7 +55,7 @@ try{
         </div>
 
         <br>
-        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div id="sidebar-menu a{{var_dump(Entrust::hasRole($currentOrg->orgName))}}a" class="main_menu_side hidden-print main_menu">
 
             <div class="menu_section">
                 <h3>&nbsp;</h3>
@@ -178,11 +178,11 @@ try{
                         </li>
                     @endif
 
-                    {{--
-                    Entrust::hasRole($currentOrg->orgName) && (Entrust::hasRole('Admin'))
-                    --}}
-                    @if(Entrust::hasRole('Developer'))
-                        <li><a><i class="far fa-fw fa-ticket-alt"></i> @lang('messages.nav.help')<span
+                    
+                    
+                    
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::hasRole('Admin')) || Entrust::hasRole('Developer'))
+                        <li class=""><a><i class="far fa-fw fa-ticket-alt"></i> @lang('messages.nav.help')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ url('/')}}/tickets-admin">@lang('messages.nav.h_dash')</a></li>

@@ -71,7 +71,6 @@ class OrgController extends Controller
 
     public function show(Request $request, $id)
     {
-        abort(555);
         // responds to GET /blah/id
         $person = Person::find(auth()->user()->id);
         if (!$person->orgs->contains('orgID', $id)) {

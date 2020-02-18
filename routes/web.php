@@ -111,6 +111,8 @@ Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 Route::get('/panel', 'AdminController@index');
+Route::get('/create_organization', 'AdminController@create');
+Route::post('/save_organization', 'AdminController@store');
 
 // My Profile / Member Editing
 // ---------------------

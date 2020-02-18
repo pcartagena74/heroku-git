@@ -108,7 +108,8 @@ class RoleController extends Controller
 
         if ($query !== null) {
             $persons = Person::whereHas('orgs', function ($q) {
-                $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+
+                // $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
             })
                 ->where(function ($q) use ($query) {
                     $q->whereHas('roles', function ($q) use ($query) {
@@ -169,20 +170,21 @@ class RoleController extends Controller
 
         // toggle the role selected
         $person->roles()->toggle($role->id);
+        //check if user has any role associated if not do not run below code
+        if (isset($person->org_role_id()->id)) {
+            // Check to see if a role for the orgName is in the DB...
+            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
+                $orgID_needed = 1;
+            }
+            // Remove the orgName role if it's the only one...
+            if (count($person->roles) == 1 && !$orgID_needed) {
+                $person->roles->forget('id', $person->org_role_id()->id);
+            }
 
-        // Check to see if a role for the orgName is in the DB...
-        
-        if (!$person->roles->contains('id', $person->org_role_id()->id)) {
-            $orgID_needed = 1;
-        }
-        // Remove the orgName role if it's the only one...
-        if (count($person->roles) == 1 && !$orgID_needed) {
-            $person->roles->forget('id', $person->org_role_id()->id);
-        }
-
-        // ...or add the orgName role if it's needed.
-        if ($orgID_needed) {
-            $person->roles()->toggle($person->org_role_id()->id);
+            // ...or add the orgName role if it's needed.
+            if ($orgID_needed) {
+                $person->roles()->toggle($person->org_role_id()->id);
+            }
         }
 
         //update user as ticketit agent if is admin
