@@ -55,7 +55,7 @@ try{
         </div>
 
         <br>
-        <div id="sidebar-menu a{{var_dump(Entrust::hasRole($currentOrg->orgName))}}a" class="main_menu_side hidden-print main_menu">
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
             <div class="menu_section">
                 <h3>&nbsp;</h3>
