@@ -8,6 +8,8 @@ use App\Org;
 use App\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Mail;
+
 class CampaignController extends Controller
 {
     /**
