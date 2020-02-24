@@ -75,30 +75,28 @@ class CampaignController extends Controller
                 request()->session()->flash('alert-info', "Test message(s) sent.");
                 array_push($test_emails, $e);
                 // $this->bulkEmail($c);
-                $details             = new Collection();
-                $details->toEmail    = $e;
-                $details->fromName   = $c->fromName;
-                $details->fromEmail  = $c->fromEmail;
-                $details->replyEmail = $c->replyEmail;
-                $details->subject    = $c->subject;
-                $details->preheader  = $c->preheader;
-                $details->content    = $c->content;
-                // CampaignEmail::dispatch($details);
-                dispatch(new \App\Jobs\CampaignEmail($details));
-
-
-                // Mail::send(
-                //     'v1.auth_pages.campaigns.generic_campaign_email',
-                //     ['content' => $c->content],
-                //     function ($message) use ($c, $e) {
-                //         $message->from($c->fromEmail, $c->fromName);
-                //         $message->sender($c->fromEmail, $c->fromName);
-                //         $message->to($e, $name = null);
-                //         $message->subject($c->subject);
-                //         // Create a custom header that we can later retrieve
-                //         //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
-                //     }
-                // );
+                // $details             = new Collection();
+                // $details->toEmail    = $e;
+                // $details->fromName   = $c->fromName;
+                // $details->fromEmail  = $c->fromEmail;
+                // $details->replyEmail = $c->replyEmail;
+                // $details->subject    = $c->subject;
+                // $details->preheader  = $c->preheader;
+                // $details->content    = $c->content;
+                // // CampaignEmail::dispatch($details);
+                // dispatch(new \App\Jobs\CampaignEmail($details));
+                Mail::send(
+                    'v1.auth_pages.campaigns.generic_campaign_email',
+                    ['content' => $c->content],
+                    function ($message) use ($c, $e) {
+                        $message->from($c->fromEmail, $c->fromName);
+                        $message->sender($c->fromEmail, $c->fromName);
+                        $message->to($e, $name = null);
+                        $message->subject($c->subject);
+                        // Create a custom header that we can later retrieve
+                        //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
+                    }
+                );
             }
         }
         return redirect(env('APP_URL') . "/campaigns");
