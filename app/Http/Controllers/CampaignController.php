@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Campaign;
+use App\Jobs\CampaignEmail;
 use App\Org;
 use App\Person;
-use App\Campaign;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Support\Collection;
 class CampaignController extends Controller
 {
     /**
@@ -22,9 +22,9 @@ class CampaignController extends Controller
         //->with('emails', 'emails.urls', 'email_count', 'emails.url_count')
 
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
-                             ->with('emails.click_count')
-                             ->withCount('emails', 'urls')
-                             ->get();
+            ->with('emails.click_count')
+            ->withCount('emails', 'urls')
+            ->get();
 //dd($campaigns);
         return view('v1.auth_pages.campaigns.campaigns', compact('campaigns'));
     }
@@ -71,24 +71,37 @@ class CampaignController extends Controller
         $note = request()->input('note');
         for ($i = 1; $i <= 5; $i++) {
             $e = request()->input('email' . $i);
-            if ($e != null) {
+            if (!empty($e)) {
                 request()->session()->flash('alert-info', "Test message(s) sent.");
                 array_push($test_emails, $e);
-                Mail::send(
-                    'v1.auth_pages.campaigns.generic_campaign_email',
-                    ['content' => $c->content],
-                    function ($message) use ($c, $e) {
-                        $message->from($c->fromEmail, $c->fromName);
-                        $message->sender($c->fromEmail, $c->fromName);
-                        $message->to($e, $name = null);
-                        $message->subject($c->subject);
-                        // Create a custom header that we can later retrieve
-                        //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
-                    }
-                );
+                // $this->bulkEmail($c);
+                $details             = new Collection();
+                $details->toEmail    = $e;
+                $details->fromName   = $c->fromName;
+                $details->fromEmail  = $c->fromEmail;
+                $details->replyEmail = $c->replyEmail;
+                $details->subject    = $c->subject;
+                $details->preheader  = $c->preheader;
+                $details->content    = $c->content;
+                // CampaignEmail::dispatch($details);
+                dispatch(new \App\Jobs\CampaignEmail($details));
+
+
+                // Mail::send(
+                //     'v1.auth_pages.campaigns.generic_campaign_email',
+                //     ['content' => $c->content],
+                //     function ($message) use ($c, $e) {
+                //         $message->from($c->fromEmail, $c->fromName);
+                //         $message->sender($c->fromEmail, $c->fromName);
+                //         $message->to($e, $name = null);
+                //         $message->subject($c->subject);
+                //         // Create a custom header that we can later retrieve
+                //         //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
+                //     }
+                // );
             }
         }
-        return redirect(env('APP_URL')."/campaigns");
+        return redirect(env('APP_URL') . "/campaigns");
     }
 
     /**
@@ -141,5 +154,29 @@ class CampaignController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function bulkEmail($campain)
+    {
+        $details = [
+            'from_email' => 'recipient@example.com',
+            'from_email' => 'recipient@example.com',
+            'from_email' => 'recipient@example.com',
+            'from_email' => 'recipient@example.com',
+        ];
+        CampaignEmail::dispatchNow($details);
+        // CampaignEmail
+        // Mail::send(
+        //             'v1.auth_pages.campaigns.generic_campaign_email',
+        //             ['content' => $c->content],
+        //             function ($message) use ($c, $e) {
+        //                 $message->from($c->fromEmail, $c->fromName);
+        //                 $message->sender($c->fromEmail, $c->fromName);
+        //                 $message->to($e, $name = null);
+        //                 $message->subject($c->subject);
+        //                 // Create a custom header that we can later retrieve
+        //                 //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
+        //             }
+        //         );
     }
 }

@@ -7,7 +7,6 @@ ini_set('max_execution_time', 0);
 use App\Address;
 use App\Email;
 use App\Event;
-use App\Imports\MembersImport;
 use App\OrgPerson;
 use App\Person;
 use App\PersonStaging;
@@ -79,7 +78,7 @@ class UploadController extends Controller
             yield $var;
         }
     }
-    public $rowConsumer;
+
     public function store(Request $request)
     {
         // responds to POST to /blah and creates, adds, stores the event
@@ -102,37 +101,20 @@ class UploadController extends Controller
         switch ($what) {
             case 'mbrdata':
 
-                // $this->counter = \Excel::import(new MembersImport, $path);
-                // dd($path);
-                // $collection = (new FastExcel)->import($path, function ($line) {
-                //     $var = [];
-                //     foreach ($line as $key => $value) {
-                //         $key       = strtolower(str_replace(' ', '_', $key));
-                //         $var[$key] = $value;
-                //     }
-                //     return $var;
-                //     return $this->collection($var);
-                // });
-                //
                 $collection    = (new FastExcel)->import($path);
-                $this->rowConsumer    = (new FastExcel)->import($path);
                 $currentPerson = Person::where('personID', auth()->user()->id)->get();
                 $currentPerson = (object) $currentPerson[0]->toArray();
-                $rows = $this->rowsConsumer();
-                $count = 0;
+                $rows          = $this->rowsConsumer();
+                $count         = 0;
                 foreach ($collection as $key => $value) {
-                    // if(++$count < 611)
-                    // {
-                    //     continue;
-                    // }
                     $var = array();
                     foreach ($value as $key1 => $value1) {
                         $key1       = strtolower(str_replace(' ', '_', $key1));
                         $var[$key1] = $value1;
                     }
-                    $this->storeDataDB($var, $currentPerson,$count);
+                    $this->storeImportDataDB($var, $currentPerson, $count);
                 }
-                // dd($collection);
+                // previously used method
                 // $import = new MembersImport();
                 // try {
                 //     $this->counter = $import->import($path);
@@ -1902,6 +1884,7 @@ class UploadController extends Controller
     //
     public function timeMem($msg = null)
     {
+        return;
         $m   = (1024 * 1024);
         $t   = ((microtime(true) - $this->starttime));
         $str = '';
@@ -1912,12 +1895,11 @@ class UploadController extends Controller
         echo $str . "<br>\n";
         // $str .=  round((memory_get_peak_usage() / $m), 2) . "<br>\n";
     }
-    public function storeDataDB($row, $currentPerson,$count_g)
+    public function storeImportDataDB($row, $currentPerson, $count_g)
     {
         DB::connection()->disableQueryLog();
-        // DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 
-        $this->timeMem('starttime '.$count_g);
+        $this->timeMem('starttime ' . $count_g);
         $count = 0;
         $count++;
         $update_existing_record = 1;
@@ -1943,10 +1925,12 @@ class UploadController extends Controller
         //     ['OrgStat1', $pmi_id],
         //     ['orgID', $currentPerson->defaultOrgID],
         // ])->get();
-        $op = DB::table('org-person')->where(['OrgStat1' => $pmi_id,
-            'orgID'                                          => $currentPerson->defaultOrgID])->get();
+        $op = DB::table('org-person')->where([
+            'OrgStat1' => $pmi_id,
+            'orgID'    => $currentPerson->defaultOrgID])->get();
         $this->timeMem('1 op query ');
-        // $any_op = OrgPerson::where('OrgStat1', $pmi_id)->get();
+        
+        // create index on OrgStat1
         $any_op = DB::table('org-person')->where('OrgStat1', $pmi_id)->get();
         $this->timeMem('2 any op query ');
         $prefix = trim(ucwords($row['prefix']));
@@ -2159,8 +2143,8 @@ class UploadController extends Controller
                 if ($emchk1[0]->personID != $p->personID) {
                     $emchk1[0]->personID  = $p->personID;
                     $emchk1[0]->debugNote = "ugh!  Was: $emchk1[0]->personID; Should be: $p->personID";
-                    DB::table('person-email')->where(['personID'=>$emchk1[0]->personID])
-                    ->update(['personID'=>$p->personID,'debugNote'=>$emchk1[0]->debugNote]);
+                    DB::table('person-email')->where(['personID' => $emchk1[0]->personID])
+                        ->update(['personID' => $p->personID, 'debugNote' => $emchk1[0]->debugNote]);
                     // $emchk1->save();
                     $this->timeMem('12 update email 2163');
                 }
@@ -2171,26 +2155,26 @@ class UploadController extends Controller
                 if ($emchk2->personID != $p->personID) {
                     $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
                     $emchk2->personID  = $p->personID;
-                    DB::table('person-email')->where(['personID'=>$emchk2[0]->personID])
-                    ->update(['personID'=>$p->personID,'debugNote'=>$emchk2[0]->debugNote]);
+                    DB::table('person-email')->where(['personID' => $emchk2[0]->personID])
+                        ->update(['personID' => $p->personID, 'debugNote' => $emchk2[0]->debugNote]);
                     // $emchk2->save();
                     $this->timeMem('13 update email 2173');
                 }
             }
-        // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
+            // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
         } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
             // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
-            $p  = Person::where(['personID' => $emchk1->personID])->get();
+            $p = Person::where(['personID' => $emchk1->personID])->get();
             $this->timeMem('14 get person 2180');
-            $p  = $p[0];
-            try{
+            $p = $p[0];
+            try {
                 $op = OrgPerson::where([
                     ['personID', $emchk1->personID],
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get();
                 $this->timeMem('15 get org person 2187');
-            } catch(Exception $ex){
-                dd([$emchk1,$em1]);
+            } catch (Exception $ex) {
+                dd([$emchk1, $em1]);
             }
             if ($op->isEmpty()) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
@@ -2214,7 +2198,7 @@ class UploadController extends Controller
 
             // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
             // can be done to pick the right one...
-            if(!empty($p->personID)){
+            if (!empty($p->personID)) {
                 $op = OrgPerson::where([
                     ['personID', $p->personID],
                     ['orgID', $currentPerson->defaultOrgID],
@@ -2232,7 +2216,7 @@ class UploadController extends Controller
                 $ary['prefix'] = $prefix;
             }
             $ary['firstName'] = $first;
-            try{
+            try {
                 if ($p->prefName === null) {
                     $ary['prefName'] = $first;
                 }
@@ -2260,7 +2244,7 @@ class UploadController extends Controller
                 DB::table('person')->where('personID', $p->personID)->update($ary);
                 $this->timeMem('18 get org person 2257');
 
-            } catch(Exception $ex) {
+            } catch (Exception $ex) {
                 dd($p);
             }
 
@@ -2322,7 +2306,7 @@ class UploadController extends Controller
             }
         } else {
             // We'll update some fields on the off chance they weren't properly filled in a previous creation
-            if(isset($op[0])) {
+            if (isset($op[0])) {
                 $newOP = $op[0];
                 // dd($newOP);
                 $ary = [];
@@ -2365,85 +2349,85 @@ class UploadController extends Controller
         }
 
         // Add the person-specific records as needed
-        if(!empty($p)){
-        $pa   = trim(ucwords($row['preferred_address']));
-        $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
-        $this->timeMem('22 get address 2367');
-        if ($addr->isEmpty() && $pa !== null && $pa != "" && $pa != " ") {
-            $z = trim($row['zip']);
-            if (strlen($z) == 4) {
-                $z = "0" . $z;
-            } elseif (strlen($z) == 8) {
-                $r2 = substr($z, -4, 4);
-                $l2 = substr($z, 0, 4);
-                $z  = "0" . $l2 . "-" . $r2;
-            } elseif (strlen($z) == 9) {
-                $r2 = substr($z, -4, 4);
-                $l2 = substr($z, 0, 5);
-                $z  = $l2 . "-" . $r2;
+        if (!empty($p)) {
+            $pa   = trim(ucwords($row['preferred_address']));
+            $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
+            $this->timeMem('22 get address 2367');
+            if ($addr->isEmpty() && $pa !== null && $pa != "" && $pa != " ") {
+                $z = trim($row['zip']);
+                if (strlen($z) == 4) {
+                    $z = "0" . $z;
+                } elseif (strlen($z) == 8) {
+                    $r2 = substr($z, -4, 4);
+                    $l2 = substr($z, 0, 4);
+                    $z  = "0" . $l2 . "-" . $r2;
+                } elseif (strlen($z) == 9) {
+                    $r2 = substr($z, -4, 4);
+                    $l2 = substr($z, 0, 5);
+                    $z  = $l2 . "-" . $r2;
+                }
+                // $addr->zip = $z;
+
+                // // Need a smarter way to determine country code
+                $cntry    = trim(ucwords($row['country']));
+                $cntry_id = 228;
+                if ($cntry == 'United States') {
+                    $addr->cntryID = 228;
+                    $cntry_id      = 228;
+                } elseif ($cntry == 'Canada') {
+                    $addr->cntryID = 36;
+                    $cntry_id      = 36;
+                }
+
+                $this->insertAddress(
+                    $personID = $p->personID,
+                    $addresstype = trim(ucwords($row['preferred_address_type'])),
+                    $addr1 = trim(ucwords($row['preferred_address'])),
+                    $city = trim(ucwords($row['city'])),
+                    $state = trim(ucwords($row['state'])),
+                    $zip = $z,
+                    $country = $cntry_id);
             }
-            // $addr->zip = $z;
-
-            // // Need a smarter way to determine country code
-            $cntry    = trim(ucwords($row['country']));
-            $cntry_id = 228;
-            if ($cntry == 'United States') {
-                $addr->cntryID = 228;
-                $cntry_id      = 228;
-            } elseif ($cntry == 'Canada') {
-                $addr->cntryID = 36;
-                $cntry_id      = 36;
+            $num = [];
+            if (strlen($row['home_phone']) > 7) {
+                $num[] = trim($row['home_phone']);
             }
 
-            $this->insertAddress(
-                $personID = $p->personID,
-                $addresstype = trim(ucwords($row['preferred_address_type'])),
-                $addr1 = trim(ucwords($row['preferred_address'])),
-                $city = trim(ucwords($row['city'])),
-                $state = trim(ucwords($row['state'])),
-                $zip = $z,
-                $country = $cntry_id);
-        }
-        $num = [];
-        if (strlen($row['home_phone']) > 7) {
-            $num[] = trim($row['home_phone']);
-        }
+            if (strlen($row['work_phone']) > 7) {
+                $num[] = trim($row['work_phone']);
+            }
 
-        if (strlen($row['work_phone']) > 7) {
-            $num[] = trim($row['work_phone']);
-        }
+            if (strlen($row['mobile_phone']) > 7) {
+                $num[] = trim($row['mobile_phone']);
+            }
 
-        if (strlen($row['mobile_phone']) > 7) {
-            $num[] = trim($row['mobile_phone']);
-        }
+            if (!empty($num)) {
+                // $phone = Phone::whereIn('phoneNumber', $num)->get();
+                $phone = DB::table('person-phone')->whereIn('phoneNumber', $num)->get();
+                $this->timeMem('23 get phone 2419');
+                if ($phone->isNotEmpty()) {
+                    foreach ($phone as $key => $value) {
+                        // $value->debugNote = "ugh!  Was: $value->personID; Should be: $p->personID";
+                        // $value->personID  = $p->personID;
+                        // $value->save();
+                    }
+                } else {
+                    if (strlen($row['home_phone']) > 7) {
+                        $this->insertPhone($personid = $p->personID, $phonenumber = $row['home_phone'], $phonetype = 'Home');
+                    }
 
-        if (!empty($num)) {
-            // $phone = Phone::whereIn('phoneNumber', $num)->get();
-            $phone = DB::table('person-phone')->whereIn('phoneNumber', $num)->get();
-            $this->timeMem('23 get phone 2419');
-            if ($phone->isNotEmpty()) {
-                foreach ($phone as $key => $value) {
-                    // $value->debugNote = "ugh!  Was: $value->personID; Should be: $p->personID";
-                    // $value->personID  = $p->personID;
-                    // $value->save();
-                }
-            } else {
-                if (strlen($row['home_phone']) > 7) {
-                    $this->insertPhone($personid = $p->personID, $phonenumber = $row['home_phone'], $phonetype = 'Home');
-                }
+                    if (strlen($row['work_phone']) > 7) {
+                        $this->insertPhone($personid = $p->personID, $phonenumber = $row['work_phone'], $phonetype = 'Work');
+                    }
 
-                if (strlen($row['work_phone']) > 7) {
-                    $this->insertPhone($personid = $p->personID, $phonenumber = $row['work_phone'], $phonetype = 'Work');
-                }
-
-                if (strlen($row['mobile_phone']) > 7) {
-                    $this->insertPhone($personid = $p->personID, $phonenumber = $row['mobile_phone'], $phonetype = 'Mobile');
+                    if (strlen($row['mobile_phone']) > 7) {
+                        $this->insertPhone($personid = $p->personID, $phonenumber = $row['mobile_phone'], $phonetype = 'Mobile');
+                    }
                 }
             }
-        }
 
-        $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
-    }   
+            $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
+        }
         unset($chk1);
         unset($chk2);
         unset($p);
@@ -2466,7 +2450,7 @@ class UploadController extends Controller
 
         $this->bulkInsertAll();
         gc_collect_cycles();
-        $this->timeMem('end time '.$count_g);
+        $this->timeMem('end time ' . $count_g);
 
         //herer
     }
@@ -2575,22 +2559,22 @@ class UploadController extends Controller
 
         if (!empty($this->email_master)) {
             Email::insertIgnore($this->email_master);
-            $this->timeMem('24 inset bulk email '. count ($this->email_master));
+            $this->timeMem('24 inset bulk email ' . count($this->email_master));
         }
 
         if (!empty($this->phone_master)) {
             Phone::insertIgnore($this->phone_master);
-            $this->timeMem('25 insert bulk phone '.count($this->phone_master));
+            $this->timeMem('25 insert bulk phone ' . count($this->phone_master));
         }
 
         if (!empty($this->address_master)) {
             Address::insertIgnore($this->address_master);
-            $this->timeMem('26 inset bulk addres '.count($this->address_master));
+            $this->timeMem('26 inset bulk addres ' . count($this->address_master));
         }
 
         if (!empty($this->person_staging_master)) {
             PersonStaging::insertIgnore($this->person_staging_master);
-            $this->timeMem('27 inset bulk personstaggin '.count($this->person_staging_master));
+            $this->timeMem('27 inset bulk personstaggin ' . count($this->person_staging_master));
         }
 
         $this->email_master          = array();
