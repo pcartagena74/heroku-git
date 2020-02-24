@@ -820,6 +820,8 @@ return [
         'c_lock'      => "Lock",
         'c_log'       => "Logout",
         'o_create'    => 'Create New Organization',
+        'en_local'=>'English',
+        'es_local'=>'Español',
     ],
 
     'notifications'    => [

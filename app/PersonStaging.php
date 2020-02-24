@@ -3,20 +3,21 @@
 namespace App;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\InsertOnDuplicateKey;
 
 class PersonStaging extends Model
 {
     //use LogsActivity;
-
+    use InsertOnDuplicateKey;
     // The table
-    protected $table = 'person-staging';
+    protected $table      = 'person-staging';
     protected $primaryKey = 'personID';
-    protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
+    protected $dates      = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
 
     //protected static $logAttributes = ['prefName', 'login', 'defaultOrgID', 'title', 'compName', 'indName', 'allergenInfo', 'affiliation'];
     //protected static $ignoreChangedAttributes = ['createDate'];
 
-    protected $hidden = [ 'remember_token' ];
+    protected $hidden = ['remember_token'];
 
     public function emails()
     {

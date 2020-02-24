@@ -33,7 +33,10 @@ class HomeController extends Controller
         dd($request);
     }
 
-    public function reportIssue(Request $request){
+    public function reportIssue(Request $request)
+    {
         dd($request);
     }
+
+ 
 }

@@ -29,6 +29,20 @@ $topBits = '';
 return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
+/**
+ * below code is for launguage route do not update
+ */
+Route::get('setlocale/{locale}', function ($locale) {
+    if (in_array($locale, \Config::get('app.locales'))) {
+        if (Auth::check()) {
+            $user         = Auth::user();
+            $user->locale = $locale;
+            $user->update();
+        }
+    }
+    session(['locale' => $locale]);
+    return redirect('\\');
+});
 
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');

@@ -2,10 +2,9 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Validation\Concerns\ValidatesAttributes;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
@@ -28,7 +27,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
      * @var array
      */
     protected $fillable = [
-        'email', 'login', 'password','ticketit_agent'
+        'id', 'email', 'name', 'login', 'password', 'ticketit_agent',
     ];
 
     /**
