@@ -11,6 +11,8 @@ use Mail;
 
 class SendEmailJob implements ShouldQueue
 {
+    public $tries   = 5;
+    public $timeout = 20;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $user;
@@ -37,24 +39,24 @@ class SendEmailJob implements ShouldQueue
     public function handle()
     {
         // $email = new EmailForQueuing();
-        $c = (object) $this->details;
-        // dd($c);?
+        $c = $this->details;
+        $c->toEmail = 'mufaddal@systango.com';
+        // dd([$c->fromEmail,$c->toEmail,$c->fromName,$c->subject]);
         // Mail::to($this->details['email'])->send($email);
-        Mail::send(
-            'v1.auth_pages.campaigns.generic_campaign_email',
-            ['content' => $c->content],
-            function ($message) use ($c) {
-                $message->from($c->fromEmail, $c->fromName);
-                // $message->sender($c->fromEmail, $c->fromName);
-                $message->to($c->toEmail, $name = null);
-                $message->subject($c->subject);
-                // Create a custom header that we can later retrieve
-                //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
-            }
-        );
-
-
-        // CREATE INDEX person_firstName_IDX USING BTREE ON `mcen-bk`.person (firstName,lastName);
-
+        try {
+            Mail::send('v1.auth_pages.campaigns.generic_campaign_email',
+                ['content' => $c->content],
+                function ($message) use ($c) {
+                    $message->from($c->fromEmail, $c->fromName);
+                    // $message->sender($c->fromEmail, $c->fromName);
+                    $message->to($c->toEmail, $name = null);
+                    $message->subject($c->subject);
+                    // Create a custom header that we can later retrieve
+                    //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
+                }
+            );
+        } catch (Exception $ex) {
+            dd($ex);
+        }
     }
 }

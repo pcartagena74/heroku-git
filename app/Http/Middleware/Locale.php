@@ -32,10 +32,14 @@ class Locale
             // return redirect(RouteServiceProvider::HOME);
         } else {
             $raw_locale = $request->session()->get('locale');
-            if (in_array($raw_locale, Config::get('app.locales'))) {
-                $locale = $raw_locale;
-            } else {
+            if(empty($request->session()->get('locale'))){
                 $locale = Config::get('app.locale');
+            } else {
+                if (in_array($raw_locale, Config::get('app.locales'))) {
+                    $locale = $raw_locale;
+                } else {
+                    $locale = Config::get('app.locale');
+                }
             }
         }
         App::setLocale($locale);

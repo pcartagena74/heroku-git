@@ -10,7 +10,7 @@ use App\Registration;
 use App\Event;
 use App\Org;
 
-class WaitListNoMore extends Notification
+class WaitListNoMore extends Notification implements ShouldQueue
 {
     use Queueable;
 

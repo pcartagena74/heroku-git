@@ -41,7 +41,7 @@ Route::get('setlocale/{locale}', function ($locale) {
         }
     }
     session(['locale' => $locale]);
-    return redirect('\\');
+    return redirect()->back();
 });
 
 // Public Routes
