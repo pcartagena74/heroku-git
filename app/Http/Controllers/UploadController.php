@@ -101,11 +101,13 @@ class UploadController extends Controller
         switch ($what) {
             case 'mbrdata':
 
-                $collection    = (new FastExcel)->import($path);
-                $currentPerson = Person::where('personID', auth()->user()->id)->get();
-                $currentPerson = (object) $currentPerson[0]->toArray();
-                $rows          = $this->rowsConsumer();
-                $count         = 0;
+                $collection                  = (new FastExcel)->import($path);
+                $currentPerson               = Person::where('personID', auth()->user()->id)->get();
+                $currentPerson               = (object) $currentPerson[0]->toArray();
+                $rows                        = $this->rowsConsumer();
+                $count                       = 0;
+                $log                         = array();
+                $this->person_staging_master = [];
                 foreach ($collection as $key => $value) {
                     $var = array();
                     foreach ($value as $key1 => $value1) {
@@ -113,7 +115,11 @@ class UploadController extends Controller
                         $var[$key1] = $value1;
                     }
                     $this->storeImportDataDB($var, $currentPerson, $count);
+                    $count++;
                 }
+                $this->bulkInsertAll();
+                    PersonStaging::insertIgnore($this->person_staging_master);
+                $this->person_staging_master = [];
                 // previously used method
                 // $import = new MembersImport();
                 // try {
@@ -1897,9 +1903,9 @@ class UploadController extends Controller
     }
     public function storeImportDataDB($row, $currentPerson, $count_g)
     {
-        DB::connection()->disableQueryLog();
+        // DB::connection()->disableQueryLog();
 
-        $this->timeMem('starttime ' . $count_g);
+        // $this->timeMem('starttime ' . $count_g);
         $count = 0;
         $count++;
         $update_existing_record = 1;
@@ -1915,26 +1921,31 @@ class UploadController extends Controller
         $u                      = null;
         $f                      = null;
         $l                      = null;
-
         // columns in the MemberDetail sheet are fixed; check directly and then add if not found...
         // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
         // if found, get $person, $org-person, $email, $address, $phone records and update, else create
 
         $pmi_id = trim($row['pmi_id']);
-        // $op     = OrgPerson::where([
-        //     ['OrgStat1', $pmi_id],
-        //     ['orgID', $currentPerson->defaultOrgID],
-        // ])->get();
-        $op = DB::table('org-person')->where([
-            'OrgStat1' => $pmi_id,
-            'orgID'    => $currentPerson->defaultOrgID])->get();
-        $this->timeMem('1 op query ');
-        
+
+        //merging org-person two queies into one as it will be more light weight
+        // $op = DB::table('org-person')->where(['OrgStat1' => $pmi_id])->get();
+        // $this->timeMem('1 op query ');
+        $op = new Collection();
+
         // create index on OrgStat1
         $any_op = DB::table('org-person')->where('OrgStat1', $pmi_id)->get();
-        $this->timeMem('2 any op query ');
-        $prefix = trim(ucwords($row['prefix']));
+        // $this->timeMem('1 any op query ');
 
+        if ($any_op->isNotEmpty()) {
+            foreach ($any_op as $key => $value) {
+                if ($value->orgID == $currentPerson->defaultOrgID) {
+                    $op = new Collection($value);
+                    break;
+                }
+            }
+        }
+
+        $prefix = trim(ucwords($row['prefix']));
         // First & Last Name string detection of all-caps or all-lower.
         // Do not ucwords all entries just in case "DeFrancesco" type names exist
         $f = trim($row['first_name']);
@@ -1956,47 +1967,45 @@ class UploadController extends Controller
         $title    = trim(ucwords($row['title']));
         $compName = trim(ucwords($row['company']));
 
-        $em1 = trim(strtolower($row['primary_email']));
+        $em1    = trim(strtolower($row['primary_email']));
+        $em2    = trim(strtolower($row['alternate_email']));
+        $emchk1 = new Collection();
+        $emchk2 = new Collection();
 
-        if (strlen($em1) > 0 && strpos($em1, '@')) {
+        if (filter_var($em1, FILTER_VALIDATE_EMAIL) && filter_var($em2, FILTER_VALIDATE_EMAIL)) {
+            $email_check = Email::whereRaw('lower(emailADDR) = ?', [$em1])
+                ->whereRaw('lower(emailADDR) = ?', [$em2])
+                ->withTrashed()->limit(1)->get();
+            if ($email_check->isNotEmpty()) {
+                foreach ($email_check as $key => $value) {
+                    if ($value == $em1) {
+                        $emchk1 = new collection($value);
+                    } else {
+                        $emchk2 = new collection($value);
+                    }
+                }
+            }
+        } elseif (filter_var($em1, FILTER_VALIDATE_EMAIL)) {
             $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->withTrashed()->limit(1)->get();
-            $this->timeMem('3 $emchk1 ');
-            // $emchk1 = DB::table('person-email')->whereRaw('lower(emailADDR) = ?', [$em1])->limit(1)->get();
-        } else {
-            // The email address in $em1 was not valid so null it all out
-            $em1    = null;
-            $emchk1 = new Collection();
-        }
-        if ($emchk1->isNotEmpty()) {
-            $chk1 = $emchk1[0]->emailADDR;
-        }
-
-        $em2 = trim(strtolower($row['alternate_email']));
-        if (strlen($em2) > 0 && strpos($em2, '@')) {
+            if ($emchk1->isNotEmpty()) {
+                $chk1 = $emchk1[0];
+            }
+        } elseif (filter_var($em2, FILTER_VALIDATE_EMAIL)) {
             $emchk2 = Email::whereRaw('lower(emailADDR) = ?', [$em2])->withTrashed()->limit(1)->get();
-            $this->timeMem('4 $emchk2 ');
-            // $emchk2 = DB::table('person-email')->whereRaw('lower(emailADDR) = ?', [$em2])->limit(1)->get();
-        } else {
-            // The email address in $em2 was not valid so null it all out
-            $em2    = null;
-            $emchk2 = new Collection();
+            if ($emchk2->isNotEmpty()) {
+                $chk2 = $emchk2[0];
+            }
         }
-        if ($emchk2->isNotEmpty()) {
-            $chk2 = $emchk2[0]->emailADDR;
+        if (!filter_var($em1, FILTER_VALIDATE_EMAIL)) {
+            $em1 = null;
+        }
+        if (!filter_var($em2, FILTER_VALIDATE_EMAIL)) {
+            $em2 = null;
         }
 
-        // $pchk = Person::where([
-        //     ['firstName', '=', $first],
-        //     ['lastName', '=', $last],
-        // ])->limit(1)->get();
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-        $this->timeMem('5 $pchk ');
-        // Person::where([
-        //     ['firstName', '=', $first],
-        //     ['lastName', '=', $last],
-        // ])->limit(1)->get();
+        // $this->timeMem('5 $pchk ');
 
-        // dd([$op, $any_op, $emchk1, $emchk2, $pchk]);
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
             // PMI ID, first & last names, and emails are not found so person is likely completely new; create all records
@@ -2004,8 +2013,7 @@ class UploadController extends Controller
             $need_op_record = 1;
             $p              = '';
             $u              = '';
-            // $p              = new Person;
-            // $u              = new User;
+
             $p_array = [
                 'prefix'       => $prefix,
                 'firstName'    => $first,
@@ -2019,26 +2027,13 @@ class UploadController extends Controller
                 'defaultOrgID' => $currentPerson->defaultOrgID,
                 'affiliation'  => $currentPerson->affiliation,
             ];
-            // $p->prefix       = $prefix;
-            // $p->firstName    = $first;
-            // $p->prefName     = $first;
-            // $p->midName      = $midName;
-            // $p->lastName     = $last;
-            // $p->suffix       = $suffix;
-            // $p->title        = $title;
-            // $p->compName     = $compName;
-            // $p->creatorID    = auth()->user()->id;
-            // $p->defaultOrgID = $currentPerson->defaultOrgID;
-            // if ($p->affiliation === null) {
-            //     $p->affiliation = $currentPerson->affiliation;
-            // }
             $update_existing_record = 0;
 
             // If email1 is not null or blank, use it as primary to login, etc.
             if ($em1 !== null && $em1 != "" && $em1 != " ") {
                 $p_array['login'] = $em1;
                 $p                = Person::create($p_array);
-                $this->timeMem('6 p insert');
+                // $this->timeMem('6 p insert');
                 // $p->login = $em1;
                 // $p->save();
                 $u_array = [
@@ -2048,13 +2043,7 @@ class UploadController extends Controller
                     'email' => $em1,
                 ];
                 $u = User::create($u_array);
-                $this->timeMem('7 u insert');
-                // $u->id    = $p->personID;
-                // $u->login = $em1;
-                // $u->name  = $em1;
-                // $u->email = $em1;
-                // $u->save();
-
+                // $this->timeMem('7 u insert');
                 $this->insertEmail($personID = $p->personID, $email = $em1, $primary = 1);
 
                 // Otherwise, try with email #2
@@ -2078,18 +2067,20 @@ class UploadController extends Controller
 
                 // Emails didn't match for some reason but found a first/last name match
                 // Recheck to see if there's just 1 match
-                $pchk_count = Person::where([
-                    ['firstName', '=', $first],
-                    ['lastName', '=', $last],
-                ])->get();
-                $this->timeMem('8 $pchk_count');
-                if (count($pchk_count) == 1) {
-                    $p = $pchk;
-                } else {
-                    // Would need a way to pick the right one if there's more than 1
-                    // For now, just taking the first one
-                    $p = $pchk;
-                }
+                // no need to query again as we donot have filter for now
+                $p = $pchk[0];
+                // $pchk_count = Person::where([
+                //     ['firstName', '=', $first],
+                //     ['lastName', '=', $last],
+                // ])->get();
+                // $this->timeMem('8 $pchk_count');
+                // if (count($pchk_count) == 1) {
+                //     $p = $pchk;
+                // } else {
+                //     // Would need a way to pick the right one if there's more than 1
+                //     // For now, just taking the first one
+                //     $p = $pchk;
+                // }
             } else {
                 // This is a last resort when there are no email addresses associated with the record
                 // Better to abandon; avoid $p->save();
@@ -2100,19 +2091,12 @@ class UploadController extends Controller
             // If email 1 exists and was used as primary but email 2 was also provided and unique, add it.
             if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $chk2) {
                 $this->insertEmail($personID = $p->personID, $email = $em2, $primary = 0);
-                try {
-                    // $e->save();
-                    // $this->timeMem('email save 2');
-                } catch (\Exception $exception) {
-                    // There was an error with saving the email -- likely an integrity constraint.
-                }
             } elseif ($em2 !== null && $em2 == strtolower($chk2)) {
                 if ($emchk2->personID != $p->personID) {
                     $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
                     $emchk2->personID  = $p->personID;
                     $emchk2->save();
-                    $this->timeMem('9 $pchk_count update 2130');
-
+                    // $this->timeMem('9 $pchk_count update 2130');
                 }
 
             }
@@ -2122,14 +2106,15 @@ class UploadController extends Controller
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
-                $p = Person::where(['personID' => $op[0]->personID])->get();
-                $this->timeMem('10 op and any op check 2142');
+                //
+                $p = Person::where(['personID' => $op->get('personID')])->get();
+                // $this->timeMem('10 op and any op check 2142');
                 $p = $p[0];
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op[0]->personID])->get();
-                $this->timeMem('11 op and any op check 2148');
+                $p = Person::where(['personID' => $any_op->get(['personID'])])->get();
+                // $this->timeMem('11 op and any op check 2148');
                 $p = $p[0];
             }
 
@@ -2146,7 +2131,7 @@ class UploadController extends Controller
                     DB::table('person-email')->where(['personID' => $emchk1[0]->personID])
                         ->update(['personID' => $p->personID, 'debugNote' => $emchk1[0]->debugNote]);
                     // $emchk1->save();
-                    $this->timeMem('12 update email 2163');
+                    // $this->timeMem('12 update email 2163');
                 }
             }
             if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != strtolower($chk1) && $em2 != strtolower($chk2) && $em2 != $em1) {
@@ -2158,21 +2143,21 @@ class UploadController extends Controller
                     DB::table('person-email')->where(['personID' => $emchk2[0]->personID])
                         ->update(['personID' => $p->personID, 'debugNote' => $emchk2[0]->debugNote]);
                     // $emchk2->save();
-                    $this->timeMem('13 update email 2173');
+                    // $this->timeMem('13 update email 2173');
                 }
             }
             // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
         } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
             // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
             $p = Person::where(['personID' => $emchk1->personID])->get();
-            $this->timeMem('14 get person 2180');
+            // $this->timeMem('14 get person 2180');
             $p = $p[0];
             try {
                 $op = OrgPerson::where([
                     ['personID', $emchk1->personID],
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get();
-                $this->timeMem('15 get org person 2187');
+                // $this->timeMem('15 get org person 2187');
             } catch (Exception $ex) {
                 dd([$emchk1, $em1]);
             }
@@ -2187,7 +2172,7 @@ class UploadController extends Controller
                 ['personID', $emchk2->personID],
                 ['orgID', $currentPerson->defaultOrgID],
             ])->get();
-            $this->timeMem('16 get org person 2202');
+            // $this->timeMem('16 get org person 2202');
             if ($op->isEmpty()) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
@@ -2203,7 +2188,7 @@ class UploadController extends Controller
                     ['personID', $p->personID],
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get();
-                $this->timeMem('17 get org person 2218');
+                // $this->timeMem('17 get org person 2218');
                 if ($op->isEmpty()) {
                     $need_op_record = 1;
                 }
@@ -2242,7 +2227,7 @@ class UploadController extends Controller
                 $ary['updaterID']    = auth()->user()->id;
                 $ary['defaultOrgID'] = $currentPerson->defaultOrgID;
                 DB::table('person')->where('personID', $p->personID)->update($ary);
-                $this->timeMem('18 get org person 2257');
+                // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
                 dd($p);
@@ -2297,10 +2282,10 @@ class UploadController extends Controller
             }
             $newOP->creatorID = auth()->user()->id;
             $newOP->save();
-            $this->timeMem('19 new po update 2312');
+            // $this->timeMem('19 new po update 2312');
             if ($p->defaultOrgPersonID === null) {
                 DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
-                $this->timeMem('20 person update 2315');
+                // $this->timeMem('20 person update 2315');
                 // $p->defaultOrgPersonID = $newOP->id;
                 // $p->save();
             }
@@ -2352,7 +2337,7 @@ class UploadController extends Controller
         if (!empty($p)) {
             $pa   = trim(ucwords($row['preferred_address']));
             $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
-            $this->timeMem('22 get address 2367');
+            // $this->timeMem('22 get address 2367');
             if ($addr->isEmpty() && $pa !== null && $pa != "" && $pa != " ") {
                 $z = trim($row['zip']);
                 if (strlen($z) == 4) {
@@ -2404,7 +2389,7 @@ class UploadController extends Controller
             if (!empty($num)) {
                 // $phone = Phone::whereIn('phoneNumber', $num)->get();
                 $phone = DB::table('person-phone')->whereIn('phoneNumber', $num)->get();
-                $this->timeMem('23 get phone 2419');
+                // $this->timeMem('23 get phone 2419');
                 if ($phone->isNotEmpty()) {
                     foreach ($phone as $key => $value) {
                         // $value->debugNote = "ugh!  Was: $value->personID; Should be: $p->personID";
@@ -2448,11 +2433,9 @@ class UploadController extends Controller
         unset($ps);
         unset($row);
 
-        $this->bulkInsertAll();
+        // $this->bulkInsertAll();5863 baki me kuch problem h 
+        // 
         gc_collect_cycles();
-        $this->timeMem('end time ' . $count_g);
-
-        //herer
     }
 
     public function insertPersonStaging($personID, $prefix, $first, $midName, $lastname, $suffix, $login, $title, $compName, $default_org)
@@ -2558,29 +2541,41 @@ class UploadController extends Controller
     {
 
         if (!empty($this->email_master)) {
-            Email::insertIgnore($this->email_master);
-            $this->timeMem('24 inset bulk email ' . count($this->email_master));
+            try {
+                Email::insertIgnore($this->email_master);
+            } catch (Exception $ex) {
+                //do nothing
+            }
+            // $this->timeMem('24 inset bulk email ' . count($this->email_master));
         }
 
         if (!empty($this->phone_master)) {
-            Phone::insertIgnore($this->phone_master);
-            $this->timeMem('25 insert bulk phone ' . count($this->phone_master));
+            try {
+                Phone::insertIgnore($this->phone_master);
+            } catch (Exception $ex) {
+                //do nothing
+            }
+            // $this->timeMem('25 insert bulk phone ' . count($this->phone_master));
         }
 
         if (!empty($this->address_master)) {
-            Address::insertIgnore($this->address_master);
-            $this->timeMem('26 inset bulk addres ' . count($this->address_master));
+            try {
+                Address::insertIgnore($this->address_master);
+            } catch (Exception $ex) {
+                //do nothing
+            }
+            // $this->timeMem('26 inset bulk addres ' . count($this->address_master));
         }
 
         if (!empty($this->person_staging_master)) {
-            PersonStaging::insertIgnore($this->person_staging_master);
-            $this->timeMem('27 inset bulk personstaggin ' . count($this->person_staging_master));
+            // PersonStaging::insertIgnore($this->person_staging_master);
+            // $this->timeMem('27 inset bulk personstaggin ' . count($this->person_staging_master));
         }
 
-        $this->email_master          = array();
-        $this->phone_master          = array();
-        $this->address_master        = array();
-        $this->person_staging_master = array();
+        $this->email_master   = array();
+        $this->phone_master   = array();
+        $this->address_master = array();
+        // $this->person_staging_master = array();
 
     }
 
