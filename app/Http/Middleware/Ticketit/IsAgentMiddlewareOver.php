@@ -23,7 +23,9 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
             return $next($request);
         }
 
-        return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index')
+        // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index')
+        //     ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
+         return redirect()->route(Setting::grab('main_route'). '.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
     }
 }
