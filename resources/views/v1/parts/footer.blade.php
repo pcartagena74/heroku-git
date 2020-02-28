@@ -5,6 +5,16 @@
  */
 ?>
 <style>
+    .main_container .right_col  > *:nth-last-child(2):not(footer)  {
+        margin-bottom: 25px;
+        clear: both;
+    }
+    .footer_fixed footer {
+        left: initial;
+        width: auto;
+        right: 0;
+        z-index: 999;
+    }
     .language-button {
         /*position: absolute;*/
         right: 0;
@@ -47,8 +57,7 @@
     }
     @endif
 </style>
-<p>
-</p>
+<p></p>
 <footer>
     <div class="pull-right footer-logo">
         @if(!Auth::check())

@@ -109,7 +109,8 @@ class Handler extends ExceptionHandler
                 dd(get_defined_vars());
             }
         }
-
+        /* 
+        few case missing will enable once caught
         if ($exception) {
             if (env('APP_ENV') != 'local') {
                 $error_code = 500;
@@ -127,7 +128,7 @@ class Handler extends ExceptionHandler
                         $error_code);
                 }
             }
-        }
+        }*/ 
         return parent::render($request, $exception);
     }
 
