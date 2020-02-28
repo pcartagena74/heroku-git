@@ -25,6 +25,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Validation\ValidationException::class,
     ];
 
+
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
@@ -63,7 +64,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if (env('APP_ENV') == 'local') {
-            return parent::render($request, $exception);
+            // return parent::render($request, $exception);
         }
         
         if ($exception instanceof \Illuminate\Database\QueryException) {
@@ -109,8 +110,11 @@ class Handler extends ExceptionHandler
                 dd(get_defined_vars());
             }
         }
-        /* 
-        few case missing will enable once caught
+
+        if($exception instanceof AuthenticationException) {
+            return parent::render($request, $exception);
+        }
+         
         if ($exception) {
             if (env('APP_ENV') != 'local') {
                 $error_code = 500;
@@ -128,7 +132,7 @@ class Handler extends ExceptionHandler
                         $error_code);
                 }
             }
-        }*/ 
+        } 
         return parent::render($request, $exception);
     }
 

@@ -1,6 +1,6 @@
 @php 
 $ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController';
-$new_tickets_path = '\\App\\Http\\TicketitControllers\\TicketsControllerOver';
+$new_tickets_path = '\App\Http\TicketitControllers\TicketsControllerOver';
 
 @endphp
 <div class="panel panel-default">
