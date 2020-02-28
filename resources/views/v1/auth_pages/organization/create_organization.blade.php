@@ -231,8 +231,8 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
         @endif
     </div>
 </div>
-<div class="form-group col-xs-12">
-    <div class="col-xs-3">
+<div class="form-group col-xs-12{{$errors->has('create_user') ? ' has-error' : '' }}">
+    <div class="col-xs-6" style="margin-left: 37%;font-size: 20px;">
         <label class="control-label">
             <a class="active" href="javascript:void(0)" id="select_user_link" onclick="toggleCreateUser(2)">
                 {!! trans('messages.headers.select_user') !!}
@@ -245,11 +245,10 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
             </a>
         </label>
         <br/>
-        <input id="create_user_checkbox" name="create_user" type="hidden" value="1"/>
-        {{-- {!! Form::checkbox('create_user', 1, old('create_user'), ['class' => 'hidden','style'=>'display:none','id'=>'create_user_checkbox']) !!} --}}
+        <input id="create_user_checkbox" name="create_user" type="hidden" value=""/>
     </div>
 </div>
-<div class="form-group col-xs-12{{ $errors->has('existing_user') ? ' has-error' : '' }}" id="custom-template">
+<div class="form-group col-xs-12{{ $errors->has('existing_user') ? ' has-error' : '' }}" id="custom-template" style="display: none;">
     {!! Form::label('select_user', trans('messages.headers.select_user_hint'), array('class' => 'control-label')) !!}
         {!! Form::text('existing_user', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}
     <div id="search-results">
@@ -404,7 +403,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
             });
             let create_user_input = '{{old('create_user')}}';
             if(create_user_input === ''){
-                toggleCreateUser(0);
+                // toggleCreateUser(0);
             } else {
                 if(create_user_input == 0) {
                     toggleCreateUser(0);
