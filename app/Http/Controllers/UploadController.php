@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Imports\MembersImport;
 
 class UploadController extends Controller
 {
@@ -121,8 +120,10 @@ class UploadController extends Controller
                 $this->bulkInsertAll();
                 PersonStaging::insertIgnore($this->person_staging_master);
                 $this->person_staging_master = [];
+                $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
+            ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
                 // previously used method
-                
+
                 // $this->timeMem('starttime');
                 // $import = new MembersImport();
                 // try {
@@ -2396,9 +2397,13 @@ class UploadController extends Controller
                 // $this->timeMem('23 get phone 2419');
                 if ($phone->isNotEmpty()) {
                     foreach ($phone as $key => $value) {
-                        $value->debugNote = "ugh!  Was: $value->personID; Should be: $p->personID";
-                        $value->personID  = $p->personID;
-                        $value->save();
+                        if ($value->phoneID == $p->personID) {
+                            $ary = [
+                                'debugNote' => "ugh!  Was: $value->personID; Should be: $p->personID",
+                                'personID'  => $p->personID,
+                            ];
+                            DB::table('person-phone')->where('id', $value->phoneID)->update($ary);
+                        }
                     }
                 } else {
                     if (strlen($row['home_phone']) > 7) {
@@ -2437,8 +2442,8 @@ class UploadController extends Controller
         unset($ps);
         unset($row);
 
-        // $this->bulkInsertAll();5863 baki me kuch problem h 
-        // 
+        // $this->bulkInsertAll();5863 baki me kuch problem h
+        //
         gc_collect_cycles();
     }
 
