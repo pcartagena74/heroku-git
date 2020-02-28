@@ -41,6 +41,7 @@ Route::get('setlocale/{locale}', function ($locale) {
         }
     }
     session(['locale' => $locale]);
+    Cookie::queue('locale', $locale, 60);
     return redirect()->back();
 });
 

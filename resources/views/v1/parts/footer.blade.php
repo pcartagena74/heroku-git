@@ -26,12 +26,16 @@
     .footer__logo {
         margin-top: 20px;
         margin-left: 5px;
+    }
+    footer {
+        background: transparent;    
     } 
     @else
     footer {
         position: static;
         width: 100%;
         margin: 0;
+        background: transparent;
     }
     footer::after {
         content: ' ';
@@ -39,7 +43,7 @@
         clear: both;
     }
     .footer-logo {
-        margin: 18px 0 15px 5px;
+        margin: 0;
     }
     @endif
 </style>

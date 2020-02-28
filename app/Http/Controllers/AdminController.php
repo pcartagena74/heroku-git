@@ -58,7 +58,7 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validation_rules = [
             'orgName'               => 'required|min:3|max:50',
             'orgPath'               => 'required|min:3|max:50',
             'formalName'            => 'nullable|max:255',
@@ -77,8 +77,21 @@ class AdminController extends Controller
             'orgHandle'             => 'nullable',
             'adminContactStatement' => 'nullable',
             'techContactStatement'  => 'nullable',
+            'create_user'           => 'required',
             'existing_user'         => 'required_if:create_user,0',
-        ]);
+        ];
+        $create_user = $request->input('create_user');
+        if (!empty($create_user) && $create_user == 1) {
+            $validation_rules['email']                 = 'required|email';
+            $validation_rules['firstName']             = 'required|min:3|max:50';
+            $validation_rules['lastName']              = 'required|min:3|max:50';
+            $validation_rules['password']              = 'required|min:6|confirmed';
+            $validation_rules['password_confirmation'] = 'required|min:6';
+        }
+        $validation_message = [
+            'existing_user.required_if' => trans('messages.validation.create_org_existing_user'),
+        ];
+        $validator = Validator::make($request->all(), $validation_rules,$validation_message);
         $validator->setAttributeNames([
             'orgName'               => trans('messages.fields.org_name'),
             'formalName'            => trans('messages.fields.formal_name'),
@@ -98,12 +111,13 @@ class AdminController extends Controller
             'adminContactStatement' => trans('messages.fields.admin_contact_statement'),
             'techContactStatement'  => trans('messages.fields.tech_contact_statement'),
         ]);
+
         if ($validator->fails()) {
+            // dd($validator);
             return redirect('create_organization')
                 ->withErrors($validator)
                 ->withInput();
         }
-        $create_user = $request->input('create_user');
         $existing_user = $request->input('existing_user');
         // dd($request->input('existing_user'));
         // dd($this->currentPerson);
@@ -236,7 +250,7 @@ class AdminController extends Controller
                     }
                 }
             }
-            if(!$id_exist) {
+            if (!$id_exist) {
                 $org->forceDelete();
                 request()->session()->flash('alert-warning', trans('messages.errors.user_not_found'));
                 return back()->withInput();

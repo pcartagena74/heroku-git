@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Comment: Create New Organization and associate it with a user.
  *
@@ -33,7 +34,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
         @endif
     </div>
     <div class="col-xs-4">
-        {!! Form::label('orgPath', trans('messages.fields.org_path'), array('class' => 'control-label')) !!}
+        {!! Form::label('orgPath', trans('messages.fields.org_path').'*', array('class' => 'control-label')) !!}
             {!! Form::text('orgPath', old('orgPath'), array('class' => 'form-control input-sm', 'required')) !!}
                 @if ($errors->has('orgPath'))
         <span class="help-block red">
@@ -230,19 +231,36 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
         @endif
     </div>
 </div>
-<div class="form-group col-xs-12" id="custom-template">
-    {!! Form::label('select_user', trans('messages.headers.select_user'), array('class' => 'control-label')) !!}
-    
+<div class="form-group col-xs-12">
+    <div class="col-xs-3">
+        <label class="control-label">
+            <a class="active" href="javascript:void(0)" id="select_user_link" onclick="toggleCreateUser(2)">
+                {!! trans('messages.headers.select_user') !!}
+            </a>
+        </label>
+        OR
+        <label class="control-label">
+            <a href="javascript:void(0)" id="create_user_link" onclick="toggleCreateUser(1)">
+                {!! trans('messages.headers.create_user') !!}
+            </a>
+        </label>
+        <br/>
+        <input id="create_user_checkbox" name="create_user" type="hidden" value="1"/>
+        {{-- {!! Form::checkbox('create_user', 1, old('create_user'), ['class' => 'hidden','style'=>'display:none','id'=>'create_user_checkbox']) !!} --}}
+    </div>
+</div>
+<div class="form-group col-xs-12{{ $errors->has('existing_user') ? ' has-error' : '' }}" id="custom-template">
+    {!! Form::label('select_user', trans('messages.headers.select_user_hint'), array('class' => 'control-label')) !!}
         {!! Form::text('existing_user', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}
     <div id="search-results">
     </div>
-</div>
-<div class="form-group col-xs-12">
-    <div class="col-xs-3">
-        {!! Form::label('create_user', trans('messages.headers.create_user'), array('class' => 'control-label')) !!}
-        <br/>
-        {!! Form::checkbox('create_user', 1, old('create_user'), ['class' => 'form-control flat input-sm i-checks','id'=>'toggleCreateUser']) !!}
-    </div>
+    @if ($errors->has('existing_user'))
+    <span class="help-block red">
+        <strong>
+            {{ $errors->first('existing_user') }}
+        </strong>
+    </span>
+    @endif
 </div>
 <div id="create_user" style="display: none;">
     <h2>
@@ -250,7 +268,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
     </h2>
     <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
         <div class="col-xs-12">
-            {!! Form::label('email', trans('messages.fields.email'), array('class' => 'control-label')) !!}
+            {!! Form::label('email', trans('messages.fields.email').'*', array('class' => 'control-label')) !!}
             {!! Form::text('email', old('email'), array('class' => 'form-control input-sm', 'required', 'autofocus')) !!}
                 @if ($errors->has('email'))
             <span class="help-block red">
@@ -261,9 +279,9 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
             @endif
         </div>
     </div>
-    <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
+    <div class="form-group col-xs-12{{ $errors->has('firstName') ? ' has-error' : '' }}">
         <div class="col-xs-6">
-            {!! Form::label('firstName', trans('messages.fields.firstName'), array('class' => 'control-label')) !!}
+            {!! Form::label('firstName', trans('messages.fields.firstName').'*', array('class' => 'control-label')) !!}
             {!! Form::text('firstName', old('firstName'), array('class' => 'form-control input-sm', 'required')) !!}
                 @if ($errors->has('firstName'))
             <span class="help-block red">
@@ -274,7 +292,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
             @endif
         </div>
         <div class="col-xs-6">
-            {!! Form::label('lastName', trans('messages.fields.lastName'), array('class' => 'control-label')) !!}
+            {!! Form::label('lastName', trans('messages.fields.lastName').'*', array('class' => 'control-label')) !!}
                 {!! Form::text('lastName', old('lastName'), array('class' => 'form-control input-sm', 'required')) !!}
                 @if ($errors->has('lastName'))
             <span class="help-block red">
@@ -287,7 +305,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
     </div>
     <div class="form-group col-xs-12{{ $errors->has('password') ? ' has-error' : '' }}">
         <div class="col-xs-6">
-            {!! Form::label('password', trans('messages.fields.password'), array('class' => 'control-label')) !!}
+            {!! Form::label('password', trans('messages.fields.password').'*', array('class' => 'control-label')) !!}
                 {!! Form::text('password', null, array('class' => 'form-control input-sm', 'required')) !!}
                 @if ($errors->has('password'))
             <span class="help-block red">
@@ -298,11 +316,11 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
             @endif
         </div>
         <div class="col-xs-6">
-            {!! Form::label('password_confirmation', trans('messages.headers.pass_ver'), array('class' => 'control-label')) !!}
+            {!! Form::label('password_confirmation', trans('messages.headers.pass_ver').'*', array('class' => 'control-label')) !!}
                 {!! Form::text('password_confirmation', null, array('class' => 'form-control input-sm', 'required')) !!}
         </div>
     </div>
-    <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
+    <div class="form-group col-xs-12{{ $errors->has('pmiID') ? ' has-error' : '' }}">
         <div class="col-xs-12">
             {!! Form::label('pmiID', trans('messages.fields.pmi_id'), array('class' => 'control-label')) !!}
                 {!! Form::text('pmiID', old('pmiID'), array('class' => 'form-control input-sm')) !!}
@@ -323,9 +341,46 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
         </div>
     </div>
 </div>
+<div class="form-group col-xs-12">
+    <div class="col-xs-3">
+        {!! Form::submit(trans('messages.nav.ad_new_org'), array('class' => 'btn btn-primary', 'name' => 'sub_changes')) !!}
+    </div>
+</div>
+{!! Form::close() !!}
+
+        @include('v1.parts.end_content')
+    @endif
+@endsection
+
+@section('scripts')
+    @include('v1.parts.menu-fix', ['path' => '/newuser'])
 <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js">
 </script>
 <script>
+    function toggleCreateUser(type) {
+            if(type == 1){
+                $('#custom-template').hide();
+                $('#create_user').show();
+                $('#select_user_link').addClass('active');
+                $('#create_user_link').removeClass('active');
+                $('#create_user_checkbox').val(1);
+                $('#create_user input[type=text]').each(function(){
+                    if($(this).attr('name') == 'pmiID'){
+                        continue;
+                    }
+                    $(this).attr('required','true');
+                });
+            } else {
+                $('#custom-template').show();
+                $('#create_user').hide();       
+                $('#select_user_link').removeClass('active');
+                $('#create_user_link').addClass('active');
+                $('#create_user_checkbox').val(0);
+                 $('#create_user input[type=text]').each(function(){
+                    $(this).removeAttr('required');
+                });
+            }
+        }
     $(document).ready(function ($) {
             var people = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -348,44 +403,38 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
                 $(this).removeAttr('required');  
             });
             let create_user_input = '{{old('create_user')}}';
-            if(create_user_input){
-                $('#custom-template').hide();
-                $('#create_user').show();
+            if(create_user_input === ''){
+                toggleCreateUser(0);
             } else {
-                $('#custom-template').show();
-                $('#create_user').hide();
-            }
-            $('.i-checks').on('ifChanged', function(event) {
-                if(event.target.checked == true){
-                    $('#custom-template').hide();
-                    $('#create_user').show();
-                    $('#create_user input[type=text]').each(function(){
-                        $(this).attr('required','true');
-                    });
-                } else {
-                    $('#create_user').hide();
-                    $('#custom-template').show();
-                    $('#create_user input[type=text]').each(function(){
-                        $(this).removeAttr('required');
-                    });
+                if(create_user_input == 0) {
+                    toggleCreateUser(0);
                 }
+                else {
+                     toggleCreateUser(1);
+                }
+
+            }
+
+            
+            $('#toggleCreateUser').on('click', function() {
+                console.log('here');
+                // if(event.target.checked == true){
+                //     $('#custom-template').hide();
+                //     $('#create_user').show();
+                //     $('#create_user input[type=text]').each(function(){
+                //         $(this).attr('required','true');
+                //     });
+                // } else {
+                //     $('#create_user').hide();
+                //     $('#custom-template').show();
+                //     $('#create_user input[type=text]').each(function(){
+                //         $(this).removeAttr('required');
+                //     });
+                // }
             });
 
         });
 </script>
-<div class="form-group col-xs-12">
-    <div class="col-xs-3">
-        {!! Form::submit(trans('messages.nav.ad_new'), array('class' => 'btn btn-primary', 'name' => 'sub_changes')) !!}
-    </div>
-</div>
-{!! Form::close() !!}
-
-        @include('v1.parts.end_content')
-    @endif
-@endsection
-
-@section('scripts')
-    @include('v1.parts.menu-fix', ['path' => '/newuser'])
 @endsection
 
 @section('footer')

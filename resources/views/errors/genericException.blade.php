@@ -18,10 +18,12 @@
                     </h1>
                     <h2>
                         {{$description}}
-                    </h2>
-                    <a onclick="show()">
-                        Report this?
-                    </a>
+                    </h2> 
+                    @if(Auth::check())
+                        <a onclick="show()" style="cursor: pointer;" id="report_this">
+                            Report this?
+                        </a>
+                    </div>
                     <div class="mid_center" style="display:none">
                         <h3>
                             Report Issue
@@ -58,6 +60,7 @@
                         <span class="error" id="error_member">
                         </span>
                     </div>
+                    @endif
                     <span class="success" id="success">
                     </span>
                 </div>
@@ -103,6 +106,7 @@
                    }
                } else {
                     $('#success').html(response.success);
+                    $('#report_this').hide();
                     $('.mid_center').toggle();
 
                }

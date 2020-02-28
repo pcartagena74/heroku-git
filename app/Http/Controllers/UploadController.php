@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
+use App\Imports\MembersImport;
 
 class UploadController extends Controller
 {
@@ -118,13 +119,16 @@ class UploadController extends Controller
                     $count++;
                 }
                 $this->bulkInsertAll();
-                    PersonStaging::insertIgnore($this->person_staging_master);
+                PersonStaging::insertIgnore($this->person_staging_master);
                 $this->person_staging_master = [];
                 // previously used method
+                
+                // $this->timeMem('starttime');
                 // $import = new MembersImport();
                 // try {
                 //     $this->counter = $import->import($path);
                 //     $this->counter = \Excel::import(new MembersImport, $path);
+                // $this->timeMem('endime');
 
                 // } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                 //     $failures = $e->failures();
@@ -1903,7 +1907,7 @@ class UploadController extends Controller
     }
     public function storeImportDataDB($row, $currentPerson, $count_g)
     {
-        // DB::connection()->disableQueryLog();
+        DB::connection()->disableQueryLog();
 
         // $this->timeMem('starttime ' . $count_g);
         $count = 0;
@@ -2392,9 +2396,9 @@ class UploadController extends Controller
                 // $this->timeMem('23 get phone 2419');
                 if ($phone->isNotEmpty()) {
                     foreach ($phone as $key => $value) {
-                        // $value->debugNote = "ugh!  Was: $value->personID; Should be: $p->personID";
-                        // $value->personID  = $p->personID;
-                        // $value->save();
+                        $value->debugNote = "ugh!  Was: $value->personID; Should be: $p->personID";
+                        $value->personID  = $p->personID;
+                        $value->save();
                     }
                 } else {
                     if (strlen($row['home_phone']) > 7) {

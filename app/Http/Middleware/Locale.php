@@ -7,7 +7,8 @@ use Closure;
 use Config;
 use Illuminate\Support\Facades\Auth;
 use Session;
-
+use Cookie;
+// Symfony\Component\HttpFoundation\Cookie
 class Locale
 {
     /**
@@ -19,7 +20,6 @@ class Locale
      */
     public function handle($request, Closure $next)
     {
-        //$raw_locale = Session::get('locale');
         if (Auth::check()) {
             if (empty(Auth::user()->locale)) {
                 $locale             = Config::get('app.locale');
@@ -33,18 +33,18 @@ class Locale
             }
             // return redirect(RouteServiceProvider::HOME);
         } else {
-            $raw_locale = $request->session()->get('locale');
-            if (empty($request->session()->get('locale'))) {
-                $locale = Config::get('app.locale');
-                session(['locale' => $locale]);
-            } else {
-                if (in_array($raw_locale, Config::get('app.locales'))) {
-                    $locale = $raw_locale;
+            $locale = Cookie::get('locale');
+            if(!empty($locale)){
+                if (in_array($locale, Config::get('app.locales'))) {
+                    //do nothing
                 } else {
                     $locale = Config::get('app.locale');
                     session(['locale' => $locale]);
                 }
+            } else {
+                $locale = Config::get('app.locale');
             }
+            Cookie::queue('locale', $locale, 60);
         }
         App::setLocale($locale);
         return $next($request);

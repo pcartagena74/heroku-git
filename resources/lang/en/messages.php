@@ -337,7 +337,7 @@ return [
         'validate'                => 'Validate',
         'years'                   => 'Years',
         'zip'                     => 'Zip',
-        'org_name'                => 'Organization Name',
+        'org_name'                => 'Organization Name*',
         'formal_name'             => 'Formal/Corporate Name',
         'org_addr1'               => 'Address Line 1',
         'org_addr2'               => 'Address Line 2',
@@ -348,7 +348,7 @@ return [
         'admin_email'             => 'Admin Email',
         'facebook_url'            => 'Facebook URL',
         'org_website'             => 'Organization Website',
-        'credit_label'            => 'Credit Label',
+        'credit_label'            => 'Credit Label*',
         'twitter_handle'          => 'Twitter Handle',
         'admin_contact_statement' => 'Admin Contact Statement',
         'tech_contact_statement'  => 'Tech Contact Statement',
@@ -579,7 +579,8 @@ return [
         'website'             => "Website",
         'your'                => 'Your',
         'select_organization' => 'Select Organization',
-        'select_user'         => 'Select User Type a few characters of a first or last name, email address or PMI ID.',
+        'select_user'         => 'Select User',
+        'select_user_hint'    => 'Type a few characters of a first or last name, email address or PMI ID.',
         'create_user'         => 'Create User',
     ],
 
@@ -820,8 +821,9 @@ return [
         'c_lock'      => "Lock",
         'c_log'       => "Logout",
         'o_create'    => 'Create New Organization',
-        'en_local'=>'English',
-        'es_local'=>'Español',
+        'en_local'    => 'English',
+        'es_local'    => 'Español',
+        'ad_new_org'  => 'Create New Organization',
     ],
 
     'notifications'    => [
@@ -1190,5 +1192,7 @@ return [
         'no_msg_available'    => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'       => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
     ],
-
+    'validation'       => [
+        'create_org_existing_user' => 'Please select one existing user',
+    ],
 ];
