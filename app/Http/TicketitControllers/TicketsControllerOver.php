@@ -238,7 +238,8 @@ class TicketsControllerOver extends TicketController
 
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-created'));
 
-        return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index');
+        // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index');
+        return redirect()->route(Setting::grab('main_route') . '.index');
     }
 
     /**
