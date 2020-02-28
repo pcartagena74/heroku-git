@@ -49,7 +49,7 @@ if(!isset($topBits)){
 
             @yield('content')
 
-            <p>&nbsp;</p>
+            <p class="clearfix">&nbsp;</p>
             @include('v1.parts.footer')
         </div>
     </div>
