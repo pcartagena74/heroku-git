@@ -5,6 +5,7 @@ namespace App\Http\Middleware\Ticketit;
 use Closure;
 use Kordy\Ticketit\Models\Agent;
 use Kordy\Ticketit\Middleware\IsAgentMiddleware as IsAgentMiddleware;
+use App\Http\Middleware\Ticketit\SettingOver as Setting;
 
 class IsAgentMiddlewareOver extends IsAgentMiddleware
 {

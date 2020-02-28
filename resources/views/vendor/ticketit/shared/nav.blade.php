@@ -6,8 +6,8 @@ $new_tickets_path = '\App\Http\TicketitControllers\TicketsControllerOver';
 <div class="panel panel-default">
     <div class="panel-body">
         <ul class="nav nav-pills">
-            <li role="presentation" class="{!! $tools->fullUrlIs(route(Kordy\Ticketit\Models\Setting::grab('main_route') . '.index')) ? "active" : "" !!}">
-                <a href="{{ route(Kordy\Ticketit\Models\Setting::grab('main_route') . '.index') }}">{{ trans('ticketit::lang.nav-active-tickets') }}
+            <li role="presentation" class="{!! $tools->fullUrlIs(route(App\Models\Ticketit\SettingOver::grab('main_route') . '.index')) ? "active" : "" !!}">
+                <a href="{{ route(App\Models\Ticketit\SettingOver::grab('main_route') . '.index') }}">{{ trans('ticketit::lang.nav-active-tickets') }}
                     <span class="badge">
                          <?php 
                             if ($u->isAdmin()) {
