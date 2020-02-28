@@ -60,6 +60,9 @@ return [
             'prefix' => '',
             'strict' => true,
             'engine' => null,
+            'options'   => [
+                // PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
+            ],
         ],
 
         'pgsql' => [

@@ -1,0 +1,122 @@
+<?php
+/**
+ * Comment:
+ * Created: 10/22/2017
+ */
+?>
+@extends('v1.layouts.no-auth')
+
+@section('content')
+<div class="container body">
+    <div class="main_container">
+        <!-- page content -->
+        <div class="col-md-12">
+            <div class="col-middle">
+                <div class="text-center text-center" style="text-align: center;">
+                    <h1 class="error-number">
+                        {{$code}}
+                    </h1>
+                    <h2>
+                        {{$description}}
+                    </h2> 
+                    @if(Auth::check())
+                        <a onclick="show()" style="cursor: pointer;" id="report_this">
+                            Report this?
+                        </a>
+                    </div>
+                    <div class="mid_center" style="display:none">
+                        <h3>
+                            Report Issue
+                        </h3>
+                        {{ Form::open(['url' => url('reportissue'), 'method' => 'post']) }}
+                        <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_PUBLIC_KEY')  }}" id="feedback-recaptcha">
+                        </div>
+                        <span class="error" id="error_captcha">
+                        </span>
+                        {{-- Add Captcha --}}
+                        <div class="col-xs-12 form-group pull-right top_search">
+                            <div class="input-group">
+                                <input class="form-control custom-control" id="subject" placeholder="Subject" required=""/>
+                                <span class="input-group-addon btn btn-primary" style="border-radius: 0px 25px 25px 0px;" readonly>
+                                    <i aria-hidden="true" class="fa fa-pencil">
+                                    </i>
+                                </span>
+                                <span class="error" id="error_subject">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 form-group pull-right top_search">
+                            <div class="input-group">
+                                <textarea class="form-control custom-control" id="message" placeholder="Please describe the issue in detail." required="" rows="5" style="resize:none;">
+                                </textarea>
+                                <span class="error" id="error_content">
+                                </span>
+                                <span class="input-group-addon btn btn-primary" onclick="submitIssue()" style="border-radius: 0px 25px 25px 0px;">
+                                    Go!
+                                </span>
+                            </div>
+                        </div>
+                        {{ Form::close() }}
+                        <span class="error" id="error_member">
+                        </span>
+                    </div>
+                    @endif
+                    <span class="success" id="success">
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+</div>
+<script>
+    function show(){
+        $('#error_subject').html('');
+        $('#error_content').html('');
+        $('#error_member').html('');
+        $('#error_captcha').html('');
+           $('.mid_center').toggle();
+        }
+    function submitIssue(){
+        $('#error_subject').html('');
+        $('#error_content').html('');
+        $('#error_member').html('');
+        $('#error_captcha').html('');
+        $.ajax({
+            url: "{{url('reportissue')}}",
+            type: "post",
+            dataType:'json',
+            data: {
+                'subject':$('#subject').val().trim(),
+                'content':$('#message').val().trim(),
+                'g-recaptcha': $("#g-recaptcha-response").val()
+               },
+            success: function (response) {
+               if(response.error){
+                    if(response.error.subject){
+                        $('#error_subject').html(response.error.subject[0]);
+                    }
+                    if(response.error.content){
+                        $('#error_content').html(response.error.content[0]);
+                    }
+                   if(response.error.member) {
+                        $('#error_member').html(response.error.member);
+                   }if(response.error['g-recaptcha']) {
+                        $('#error_captcha').html(response.error['g-recaptcha']);
+                   }
+               } else {
+                    $('#success').html(response.success);
+                    $('#report_this').hide();
+                    $('.mid_center').toggle();
+
+               }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               console.log(textStatus, errorThrown);
+            }
+        });
+    }
+</script>
+<script async="" defer="" src="https://www.google.com/recaptcha/api.js">
+</script>
+@stop

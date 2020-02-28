@@ -30,5 +30,13 @@ class HomeController extends Controller
     {
         // This is the function that processes issues reported by error page
         // Responds to POST /reportissue
+        dd($request);
     }
+
+    public function reportIssue(Request $request)
+    {
+        dd($request);
+    }
+
+ 
 }

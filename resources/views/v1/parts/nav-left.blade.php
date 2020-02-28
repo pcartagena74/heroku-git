@@ -40,7 +40,7 @@ try{
     <div class="left_col scroll-view">
 
         <div class="navbar nav_title" style="border: 0;">
-            <a href="{{ env('APP_URL') }}/dashboard" class="site_title"><span>{{ $currentOrg->orgName }}</span></a>
+            <a href="{{ url('/')}}/dashboard" class="site_title"><span>{{ $currentOrg->orgName }}</span></a>
         </div>
 
         <div class="profile">
@@ -66,11 +66,11 @@ try{
         The piece about multiple organizations would go here...
 --}}
                             @if (count($currentPerson->orgs)>1)
-                                <li><a href="{{ env('APP_URL') }}/orgs">@lang('messages.nav.ms_org')</a></li>
+                                <li><a href="{{ url('orgsettings')}}">@lang('messages.nav.ms_org')</a></li>
                             @endif
-                            <li><a href="{{ env('APP_URL') }}/dashboard">@lang('messages.nav.ms_dash')</a></li>
-                            <li><a href="{{ env('APP_URL') }}/upcoming">@lang('messages.nav.ms_fut')</a></li>
-                            <li><a href="{{ env('APP_URL') }}/profile/my">@lang('messages.nav.ms_profile')</a></li>
+                            <li><a href="{{ url('/')}}/dashboard">@lang('messages.nav.ms_dash')</a></li>
+                            <li><a href="{{ url('/')}}/upcoming">@lang('messages.nav.ms_fut')</a></li>
+                            <li><a href="{{ url('/')}}/profile/my">@lang('messages.nav.ms_profile')</a></li>
                             @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                             @endif
                         </ul>
@@ -81,12 +81,12 @@ try{
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="fas fa-fw fa-lock-alt"></i> @lang('messages.nav.admin') <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/become">@lang('messages.nav.ms_become')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/newuser/create">@lang('messages.nav.ad_new')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/role_mgmt">@lang('messages.nav.o_roles')</a></li>
+                                <li><a href="{{ url('/')}}/become">@lang('messages.nav.ms_become')</a></li>
+                                <li><a href="{{ url('/')}}/newuser/create">@lang('messages.nav.ad_new')</a></li>
+                                <li><a href="{{ url('/')}}/role_mgmt">@lang('messages.nav.o_roles')</a></li>
                                 @if(Entrust::hasRole('Developer'))
-                                    <li><a href="{{ env('APP_URL') }}/panel">@lang('messages.nav.ad_panel')</a></li>
-                                    <li><a href="{{ env('APP_URL') }}/load_data">@lang('messages.nav.o_upload')</a></li>
+                                    <li><a href="{{ url('/')}}/panel">@lang('messages.nav.ad_panel')</a></li>
+                                    <li><a href="{{ url('/')}}/load_data">@lang('messages.nav.o_upload')</a></li>
                                 @endif
                             </ul>
                         </li>
@@ -99,11 +99,11 @@ try{
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
                                 @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-                                    <li><a href="{{ env('APP_URL') }}/orgsettings">@lang('messages.nav.o_labels')</a></li>
+                                    <li><a href="{{ url('orgsettings',$currentOrg)}}">@lang('messages.nav.o_labels')</a></li>
                                 @endif
 
                                 @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
-                                    <li><a href="{{ env('APP_URL') }}/eventdefaults">@lang('messages.nav.o_defaults')</a></li>
+                                    <li><a href="{{ url('/')}}/eventdefaults">@lang('messages.nav.o_defaults')</a></li>
                                 @endif
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 @endif
@@ -116,11 +116,11 @@ try{
                         <li><a><i class="far fa-fw fa-calendar-alt"></i> @lang('messages.nav.ev_mgmt')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/manage_events">@lang('messages.nav.ev_manage')</a></li>
-                                <li><a id="add" href="{{ env('APP_URL') }}/event/create">@lang('messages.nav.ev_add')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/locations">@lang('messages.nav.ev_loc')</a></li>
-                                <li><a id="grp" href="{{ env('APP_URL') }}/group">@lang('messages.nav.ev_grp')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/manage_events/past">@lang('messages.nav.ev_old')</a></li>
+                                <li><a href="{{ url('/')}}/manage_events">@lang('messages.nav.ev_manage')</a></li>
+                                <li><a id="add" href="{{ url('/')}}/event/create">@lang('messages.nav.ev_add')</a></li>
+                                <li><a href="{{ url('/')}}/locations">@lang('messages.nav.ev_loc')</a></li>
+                                <li><a id="grp" href="{{ url('/')}}/group">@lang('messages.nav.ev_grp')</a></li>
+                                <li><a href="{{ url('/')}}/manage_events/past">@lang('messages.nav.ev_old')</a></li>
                             </ul>
                         </li>
                     @endif
@@ -129,25 +129,25 @@ try{
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')<span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/search">@lang('messages.nav.m_sch')</a></li>
+                                <li><a href="{{ url('/')}}/search">@lang('messages.nav.m_sch')</a></li>
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-                                    <li><a href="{{ env('APP_URL') }}/merge/p">@lang('messages.nav.m_merge')
+                                    <li><a href="{{ url('/')}}/merge/p">@lang('messages.nav.m_merge')
                                             <span class="label label-danger pull-right">@lang('messages.nav.b_admin')</span>
                                         </a>
                                     </li>
                                 @endif
-                                <li><a href="{{ env('APP_URL') }}/members" id="mem">
+                                <li><a href="{{ url('/')}}/members" id="mem">
                                         @lang('messages.nav.m_list')
                                         <span class="label label-warning pull-right">@lang('messages.nav.b_slow')</span>
                                     </a>
                                 </li>
-                                <li><a href="{{ env('APP_URL') }}/mbrreport">
+                                <li><a href="{{ url('/')}}/mbrreport">
                                         @lang('messages.nav.m_rpt')
                                         <span class="label label-success pull-right">NEW</span>
                                     </a>
                                 </li>
                                 @if(Entrust::hasRole('Deleted') || Entrust::hasRole('Deleted'))
-                                    <li><a href="{{ env('APP_URL') }}/force">@lang('messages.nav.m_pass')</a></li>
+                                    <li><a href="{{ url('/')}}/force">@lang('messages.nav.m_pass')</a></li>
                                 @endif
                             </ul>
                         </li>
@@ -159,8 +159,8 @@ try{
                         <li><a><i class="far fa-fw fa-microphone"></i> @lang('messages.nav.spk_mgmt')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/speakers">@lang('messages.nav.s_list')</a></li>
-                                <li><a href="{{ env('APP_URL') }}#">@lang('messages.nav.s_new') <span
+                                <li><a href="{{ url('/')}}/speakers">@lang('messages.nav.s_list')</a></li>
+                                <li><a href="{{ url('/')}}#">@lang('messages.nav.s_new') <span
                                                 class="label label-success pull-right">Define It</span></a></li>
                             </ul>
                         </li>
@@ -170,28 +170,31 @@ try{
                         <li><a><i class="far fa-fw fa-envelope"></i> @lang('messages.nav.em_mktg')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/campaigns">@lang('messages.nav.e_camp')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/library">@lang('messages.nav.e_asset')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/lists">@lang('messages.nav.e_list')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/reports">@lang('messages.nav.e_rpt')</a></li>
+                                <li><a href="{{ url('/')}}/campaigns">@lang('messages.nav.e_camp')</a></li>
+                                <li><a href="{{ url('/')}}/library">@lang('messages.nav.e_asset')</a></li>
+                                <li><a href="{{ url('/')}}/lists">@lang('messages.nav.e_list')</a></li>
+                                <li><a href="{{ url('/')}}/reports">@lang('messages.nav.e_rpt')</a></li>
                             </ul>
                         </li>
                     @endif
 
-                    {{--
-                    Entrust::hasRole($currentOrg->orgName) && (Entrust::hasRole('Admin'))
-                    --}}
-                    @if(Entrust::hasRole('Developer'))
-                        <li><a><i class="far fa-fw fa-ticket-alt"></i> @lang('messages.nav.help')<span
+                    
+                    
+                    
+                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::hasRole('Admin')) || Entrust::hasRole('Developer'))
+                        <li class=""><a><i class="far fa-fw fa-ticket-alt"></i> @lang('messages.nav.help')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ env('APP_URL') }}/tickets-admin">@lang('messages.nav.h_dash')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/tickets">@lang('messages.nav.h_active')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/tickets/create">@lang('messages.nav.h_tkt')</a></li>
-                                <li><a href="{{ env('APP_URL') }}/reports">@lang('messages.nav.h_rpt')</a></li>
+                                <li><a href="{{ url('/')}}/tickets-admin">@lang('messages.nav.h_dash')</a></li>
+                                <li><a href="{{ url('/')}}/tickets">@lang('messages.nav.h_active')</a></li>
+                                <li><a href="{{ url('/')}}/tickets/create">@lang('messages.nav.h_tkt')</a></li>
+                                <li><a href="{{ url('/')}}/reports">@lang('messages.nav.h_rpt')</a></li>
                             </ul>
                         </li>
                     @endif
+
+                   
+
 
                 </ul>
             </div>
@@ -207,7 +210,7 @@ try{
             <a data-toggle="tooltip" data-placement="top" title="{{ trans('messages.nav.coming') }}: {{ trans('messages.nav.c_lock') }}">
                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
             </a>
-            <a href="{{ env('APP_URL') }}/logout" data-toggle="tooltip" data-placement="top" title="{{ trans('messages.nav.c_log') }}">
+            <a href="{{ url('/')}}/logout" data-toggle="tooltip" data-placement="top" title="{{ trans('messages.nav.c_log') }}">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
             </a>
         </div>

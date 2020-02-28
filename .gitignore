@@ -13,3 +13,4 @@ composer.phar
 known_composer.lck
 print_routes.txt
 load_error.txt
+effort/*
