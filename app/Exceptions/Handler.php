@@ -14,7 +14,8 @@ use InvalidArgumentException;
 class Handler extends ExceptionHandler
 {
     public function __construct()
-        
+    {
+
     }
     /**
      * A list of the exception types that should not be reported.
@@ -67,7 +68,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        dd(\Auth::check());
+        dd(Auth::check());
         if (env('APP_ENV') == 'local') {
             return parent::render($request, $exception);
         }
