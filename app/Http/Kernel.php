@@ -18,7 +18,7 @@ class Kernel extends HttpKernel
         // commented out per https://stackoverflow.com/questions/48594851/upgrading-laravel-5-5-to-5-6-error/48595052#48595052
         // 'Fideloper\Proxy\TrustProxies',
         \App\Http\Middleware\CheckForMaintenanceMode::class,
-        // \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
@@ -34,7 +34,7 @@ class Kernel extends HttpKernel
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\StartSession::class,
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
