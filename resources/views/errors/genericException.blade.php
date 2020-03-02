@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <div class="col-middle">
                 <div class="text-center text-center" style="text-align: center;">
-                    <h1 class="error-number">
+                    <h1 class="error-number -{{auth()->check()}}-  c -{{Auth::check()}}-">
                         {{$code}}
                     </h1>
                     <h2>
