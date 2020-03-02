@@ -19,7 +19,7 @@
                     <h2>
                         {{$description}}
                     </h2> 
-                    @if(Auth::check())
+                    @if(auth()->check())
                         <a onclick="show()" style="cursor: pointer;" id="report_this">
                             Report this?
                         </a>
@@ -60,9 +60,9 @@
                         <span class="error" id="error_member">
                         </span>
                     </div>
-                    @endif
                     <span class="success" id="success">
                     </span>
+                    @endif
                 </div>
             </div>
         </div>
