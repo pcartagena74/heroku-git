@@ -13,13 +13,13 @@
         <div class="col-md-12">
             <div class="col-middle">
                 <div class="text-center text-center" style="text-align: center;">
-                    <h1 class="error-number -{{auth()->check()}}-  c -{{Auth::check()}}-">
+                    <h1 class="error-number -{{auth()->check()}}-  c -{{\Auth::check()}}-">
                         {{$code}}
                     </h1>
                     <h2>
                         {{$description}}
                     </h2> 
-                    @if(auth()->check())
+                    @auth
                         <a onclick="show()" style="cursor: pointer;" id="report_this">
                             Report this?
                         </a>
@@ -62,7 +62,7 @@
                     </div>
                     <span class="success" id="success">
                     </span>
-                    @endif
+                    @endauth
                 </div>
             </div>
         </div>
