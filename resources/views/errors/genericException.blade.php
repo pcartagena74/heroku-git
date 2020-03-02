@@ -62,7 +62,7 @@
                     </div>
                     <span class="success" id="success">
                     </span>
-                    @authend
+                    @endauth
                 </div>
             </div>
         </div>
