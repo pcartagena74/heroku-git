@@ -7,8 +7,9 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
-use InvalidArgumentException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 class Handler extends ExceptionHandler
 {
@@ -25,7 +26,6 @@ class Handler extends ExceptionHandler
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
     ];
-
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
@@ -68,7 +68,7 @@ class Handler extends ExceptionHandler
         if (env('APP_ENV') == 'local') {
             return parent::render($request, $exception);
         }
-        
+
         if ($exception instanceof \Illuminate\Database\QueryException) {
             return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
         }
@@ -113,10 +113,10 @@ class Handler extends ExceptionHandler
             }
         }
 
-        if($exception instanceof AuthenticationException) {
+        if ($exception instanceof AuthenticationException) {
             return parent::render($request, $exception);
         }
-         
+
         if ($exception) {
             if (env('APP_ENV') != 'local') {
                 $error_code = 500;
@@ -134,7 +134,7 @@ class Handler extends ExceptionHandler
                         $error_code);
                 }
             }
-        } 
+        }
         return parent::render($request, $exception);
     }
 
