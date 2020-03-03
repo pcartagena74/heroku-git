@@ -91,7 +91,7 @@ try{
                             </ul>
                         </li>
                     @endif
-
+                    
                     @if((Entrust::hasRole($currentOrg->orgName) &&
                             (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))

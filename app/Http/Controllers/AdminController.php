@@ -6,7 +6,10 @@ use App\Email;
 use App\Notifications\NewUserAcct;
 use App\Org;
 use App\OrgPerson;
+use App\Permission;
+use App\PermissionRole;
 use App\Person;
+use App\Role;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
@@ -91,7 +94,7 @@ class AdminController extends Controller
         $validation_message = [
             'existing_user.required_if' => trans('messages.validation.create_org_existing_user'),
         ];
-        $validator = Validator::make($request->all(), $validation_rules,$validation_message);
+        $validator = Validator::make($request->all(), $validation_rules, $validation_message);
         $validator->setAttributeNames([
             'orgName'               => trans('messages.fields.org_name'),
             'formalName'            => trans('messages.fields.formal_name'),
@@ -144,6 +147,12 @@ class AdminController extends Controller
         $org->updaterID             = $this->currentPerson->personID;
         $org->save();
         $orgID = $org->orgID;
+        $roles = Role::where('orgID', 10)->get();
+        foreach ($roles as $key => $value) {
+            $new_role        = $value->replicate();
+            $new_role->orgID = $orgID;
+            $new_role->save();
+        }
 
         $email                 = request()->input('email');
         $pmiID                 = request()->input('pmiID');
@@ -216,6 +225,11 @@ class AdminController extends Controller
                 $u->email    = $email;
                 $u->password = $make_pass;
                 $u->save();
+                // assign all roles so this user will act as admin for this organization
+                $all_role = Role::where('orgID', $orgID)->get();
+                foreach ($all_role as $key => $value) {
+                    $u->attachRole($value, ['orgID' => $orgID]);
+                }
 
                 $e            = new Email;
                 $e->emailADDR = $email;
@@ -264,6 +278,35 @@ class AdminController extends Controller
             $op->creatorID = $this->currentPerson->personID;
             $op->updaterID = $this->currentPerson->personID;
             $op->save();
+            // assign all roles so this user will act as admin for this organization
+            $all_role = Role::where('orgID', $orgID)->get();
+            $user     = User::find($person_id[0]);
+            foreach ($all_role as $key => $value) {
+                $user->attachRole($value, ['orgID' => $orgID]);
+            }
+            $permission = Permission::all();
+            $roles      = Role::where('orgID', $orgID)
+                ->where(function ($query) {
+                    $query->orWhere('name', 'Board')
+                        ->orWhere('name', 'Developer')
+                        ->orWhere('name', 'Roundtable-Volunteer')
+                        ->orWhere('name', 'Event-Volunteer');
+                })->get();
+            $role_permission_array = [];
+            foreach ($roles as $role_key => $role_value) {
+                if ($role_value->name == 'Board' || $role_value->name == 'Developer') {
+                    foreach ($permission as $per_key => $per_value) {
+                        $role_permission_array[] = ['permission_id' => $per_value->id, 'role_id' => $role_value->id];
+                    }
+                } elseif ($role_value->name == 'Event-Volunteer' || $role_value->name == 'Roundtable-Volunteer') {
+                    foreach ($permission as $per_key => $per_value) {
+                        if ($per_value->id == 6) {
+                            $role_permission_array[] = ['permission_id' => $per_value->id, 'role_id' => $role_value->id];
+                        }
+                    }
+                }
+            }
+            PermissionRole::insert($role_permission_array);
             request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
             return back();
         }

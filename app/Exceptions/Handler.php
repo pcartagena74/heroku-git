@@ -108,6 +108,8 @@ class Handler extends ExceptionHandler
         if ($exception instanceof InvalidArgumentException) {
             if (env('APP_ENV') == 'local') {
                 dd(get_defined_vars());
+            } else {
+                return response()->view('errors.genericException', ['code' => 500, 'description' => trans('messages.exceptions.error_500')], 500);
             }
         }
 

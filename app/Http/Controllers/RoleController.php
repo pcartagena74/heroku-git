@@ -188,6 +188,7 @@ class RoleController extends Controller
         }
 
         //update user as ticketit agent if is admin
+        //create a table to store ticketit agent info for all users update ticketit for that 
         if ($role->name == 'Admin') {
             $user = User::find($person->personID);
             if ($user->ticketit_agent == 1) {

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\EventType;
 use App\Org;
 use App\Person;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
