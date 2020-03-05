@@ -60,6 +60,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
 
     public function roles()
     {
+        // we need to get default person org id so running another query to fetch same
         $person = Person::find(auth()->user()->id);
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgId', $person->defaultOrgID);
     }

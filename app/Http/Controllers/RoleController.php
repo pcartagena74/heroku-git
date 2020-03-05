@@ -107,7 +107,7 @@ class RoleController extends Controller
         //DB::enableQueryLog();
 
         if ($query !== null) {
-
+            // optimized below code, added check for that org user and their roles would be shown. 
             // $persons = Person::whereHas('orgs', function ($q) {
             //     // $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
             // })->where(function ($q) use ($query) {
@@ -128,6 +128,7 @@ class RoleController extends Controller
             //     ->where('defaultOrgID', $this->currentPerson->defaultOrgID)
             //     ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
             //     ->with('roles')->get();
+            
 
             $persons = Person::select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
                 ->leftJoin('person-email as pe', 'pe.personID', '=', 'person.personID')

@@ -6,67 +6,67 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
     $new_tickets_path = 'App\Http\TicketitControllers\TicketsControllerOver';
     //Route::group(['middleware' => '', function () use ($main_route) {
     //Ticket public route
-    Route::get("$main_route_path/complete", $new_tickets_path.'@indexComplete')
-            ->name("$main_route-complete");
-    Route::get("$main_route_path/data/{id?}", $new_tickets_path.'@data')
-            ->name("$main_route.data");
+    Route::get("$main_route_path/complete", $new_tickets_path . '@indexComplete')
+        ->name("$main_route-complete");
+    Route::get("$main_route_path/data/{id?}", $new_tickets_path . '@data')
+        ->name("$main_route.data");
 
     $field_name = last(explode('/', $main_route_path));
     Route::resource($main_route_path, $new_tickets_path, [
-            'names' => [
-                'index'   => $main_route.'.index',
-                'store'   => $main_route.'.store',
-                'create'  => $main_route.'.create',
-                'update'  => $main_route.'.update',
-                'show'    => $main_route.'.show',
-                'destroy' => $main_route.'.destroy',
-                'edit'    => $main_route.'.edit',
-            ],
-            'parameters' => [
-                $field_name => 'ticket',
-            ],
-        ]);
+        'names'      => [
+            'index'   => $main_route . '.index',
+            'store'   => $main_route . '.store',
+            'create'  => $main_route . '.create',
+            'update'  => $main_route . '.update',
+            'show'    => $main_route . '.show',
+            'destroy' => $main_route . '.destroy',
+            'edit'    => $main_route . '.edit',
+        ],
+        'parameters' => [
+            $field_name => 'ticket',
+        ],
+    ]);
 
     //Ticket Comments public route
     $field_name = last(explode('/', "$main_route_path-comment"));
     Route::resource("$main_route_path-comment", 'Kordy\Ticketit\Controllers\CommentsController', [
-            'names' => [
-                'index'   => "$main_route-comment.index",
-                'store'   => "$main_route-comment.store",
-                'create'  => "$main_route-comment.create",
-                'update'  => "$main_route-comment.update",
-                'show'    => "$main_route-comment.show",
-                'destroy' => "$main_route-comment.destroy",
-                'edit'    => "$main_route-comment.edit",
-            ],
-            'parameters' => [
-                $field_name => 'ticket_comment',
-            ],
-        ]);
+        'names'      => [
+            'index'   => "$main_route-comment.index",
+            'store'   => "$main_route-comment.store",
+            'create'  => "$main_route-comment.create",
+            'update'  => "$main_route-comment.update",
+            'show'    => "$main_route-comment.show",
+            'destroy' => "$main_route-comment.destroy",
+            'edit'    => "$main_route-comment.edit",
+        ],
+        'parameters' => [
+            $field_name => 'ticket_comment',
+        ],
+    ]);
 
     //Ticket complete route for permitted user.
-    Route::get("$main_route_path/{id}/complete", $new_tickets_path.'@complete')
-            ->name("$main_route.complete");
+    Route::get("$main_route_path/{id}/complete", $new_tickets_path . '@complete')
+        ->name("$main_route.complete");
 
     //Ticket reopen route for permitted user.
-    Route::get("$main_route_path/{id}/reopen", $new_tickets_path.'@reopen')
-            ->name("$main_route.reopen");
+    Route::get("$main_route_path/{id}/reopen", $new_tickets_path . '@reopen')
+        ->name("$main_route.reopen");
     //});
 
-    Route::group(['middleware' => 'App\Http\Middleware\Ticketit\IsAgentMiddlewareOver'], function () use ($main_route, $main_route_path,$new_tickets_path) {
+    Route::group(['middleware' => 'App\Http\Middleware\Ticketit\IsAgentMiddlewareOver'], function () use ($main_route, $main_route_path, $new_tickets_path) {
 
         //API return list of agents in particular category
         Route::get("$main_route_path/agents/list/{category_id?}/{ticket_id?}", [
-            'as'   => $main_route.'agentselectlist',
-            'uses' => $new_tickets_path.'@agentSelectList',
+            'as'   => $main_route . 'agentselectlist',
+            'uses' => $new_tickets_path . '@agentSelectList',
         ]);
     });
 
     Route::group(['middleware' => 'App\Http\Middleware\Ticketit\IsAdminMiddlewareOver'], function () use ($admin_route, $admin_route_path) {
         //Ticket admin index route (ex. http://url/tickets-admin/)
         Route::get("$admin_route_path/indicator/{indicator_period?}", [
-                'as'   => $admin_route.'.dashboard.indicator',
-                'uses' => 'Kordy\Ticketit\Controllers\DashboardController@index',
+            'as'   => $admin_route . '.dashboard.indicator',
+            'uses' => 'Kordy\Ticketit\Controllers\DashboardController@index',
         ]);
         Route::get($admin_route_path, 'Kordy\Ticketit\Controllers\DashboardController@index');
 

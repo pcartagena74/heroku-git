@@ -24,8 +24,8 @@ class Person extends Model
 
     public function roles()
     {
+        // we need to get default person org id so running another query to fetch same
         $person = Person::find(auth()->user()->id);
-        // return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')->where('roles.orgId', DB::raw('(SELECT defaultOrgID FROM person where person.personID = person_role.user_id)'));
         return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')->where('person_role.org_id', $person->defaultOrgID);
     }
 
