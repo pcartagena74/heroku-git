@@ -107,31 +107,41 @@ class RoleController extends Controller
         //DB::enableQueryLog();
 
         if ($query !== null) {
-            $persons = Person::whereHas('orgs', function ($q) {
 
-                // $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
-            })
-                ->where(function ($q) use ($query) {
-                    $q->whereHas('roles', function ($q) use ($query) {
-                        $q->where('roles.name', 'LIKE', "%$query%");
-                    })
-                        ->orWhere('person.firstName', 'LIKE', "%$query%")
-                        ->orWhere('login', 'LIKE', "%$query%")
+            // $persons = Person::whereHas('orgs', function ($q) {
+            //     // $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+            // })->where(function ($q) use ($query) {
+            //     $q->whereHas('roles', function ($q) use ($query) {
+            //         $q->where('roles.name', 'LIKE', "%$query%")
+            //             ->where('orgID', $this->currentPerson->defaultOrgID);
+            //     })->orWhere('person.firstName', 'LIKE', "%$query%")
+            //         ->orWhere('lastName', 'LIKE', "%$query%")
+            //         ->orWhere('login', 'LIKE', "%$query%")
+            //         ->orWhere('person.personID', 'LIKE', "%$query%")
+            //         ->orWhereHas('orgperson', function ($q) use ($query) {
+            //             $q->where('OrgStat1', 'LIKE', "%$query%");
+            //         })->orWhereHas('emails', function ($q) use ($query) {
+            //         $q->where('emailADDR', 'LIKE', "%$query%");
+            //     });
+            // })
+            //     ->join('org-person as op', 'op.personID', '=', 'person.personID')
+            //     ->where('defaultOrgID', $this->currentPerson->defaultOrgID)
+            //     ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
+            //     ->with('roles')->get();
+
+            $persons = Person::select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
+                ->leftJoin('person-email as pe', 'pe.personID', '=', 'person.personID')
+                ->leftJoin('org-person as op', 'op.personID', '=', DB::raw('person.personID and op.orgID = ' . $this->currentPerson->defaultOrgID))
+                ->leftJoin('role_user as ru', 'ru.user_id', '=', DB::raw('person.personID AND ru.orgID = ' . $this->currentPerson->defaultOrgID . ' AND EXISTS (select roles.name from roles where roles.name ="%' . $query . '%")'))
+                ->orWhere(function ($q) use ($query) {
+                    $q->orWhere('person.firstName', 'LIKE', "%$query%")
+                        ->orWhere('person.lastName', 'LIKE', "%$query%")
+                        ->orWhere('person.login', 'LIKE', "%$query%")
                         ->orWhere('person.personID', 'LIKE', "%$query%")
-                        ->orWhere('lastName', 'LIKE', "%$query%")
-                        ->orWhereHas('orgperson', function ($q) use ($query) {
-                            $q->where('OrgStat1', 'LIKE', "%$query%");
-                        })
-                        ->orWhereHas('emails', function ($q) use ($query) {
-                            $q->where('emailADDR', 'LIKE', "%$query%");
-                        });
-                })
-                ->join('org-person as op', 'op.personID', '=', 'person.personID')
-                ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
-                ->with('roles')->get();
+                        ->orWhere('pe.emailADDR', 'LIKE', "%$query%")
+                        ->orWhere('op.OrgStat1', 'LIKE', "%$query%");
+                })->with('roles')->get();
         }
-
-        //dd(DB::getQueryLog());
 
         return view('v1.auth_pages.organization.role_mgmt_search', compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
@@ -169,8 +179,26 @@ class RoleController extends Controller
         $orgID_needed = 0;
 
         // toggle the role selected
-        $person->roles()->toggle($role->id);
+        //as toggle does not offer extra parameter to be added like attach does we are removing toggle and manually attaching or detaching it.
+        $attach          = true;
+        $admin           = Person::find(auth()->user()->id);
+        $user_role_pivot = DB::table('role_user')
+            ->select(['role_id', 'orgID'])
+            ->where(['user_id' => $person->personID, 'orgID' => $admin->defaultOrgID, 'role_id' => $role->id])
+            ->get();
+        if ($user_role_pivot->isNotEmpty()) {
+            DB::table('role_user')
+                ->where(['user_id' => $person->personID, 'orgID' => $admin->defaultOrgID, 'role_id' => $role->id])
+                ->delete();
+
+        } else {
+            $person->roles()->attach($role->id, ['org_id' => $admin->defaultOrgID]);
+        }
+
+        // $person->roles()->toggle($role->id, ['orgID' => $person->defaultOrg]);
+
         //check if user has any role associated if not do not run below code
+        //not needed now as orgname role is not needed admin will be the admin of that org
         if (isset($person->org_role_id()->id)) {
             // Check to see if a role for the orgName is in the DB...
             if (!$person->roles->contains('id', $person->org_role_id()->id)) {
@@ -183,21 +211,22 @@ class RoleController extends Controller
 
             // ...or add the orgName role if it's needed.
             if ($orgID_needed) {
-                $person->roles()->toggle($person->org_role_id()->id);
+                $person->roles()->toggle($person->org_role_id()->id, ['org_id' => $person->defaultOrgID]);
             }
         }
 
-        //update user as ticketit agent if is admin
-        //create a table to store ticketit agent info for all users update ticketit for that 
+        /* not needed as ticketit admin is fixed and agent will be org admins
+        /update user as ticketit agent if is admin
         if ($role->name == 'Admin') {
-            $user = User::find($person->personID);
-            if ($user->ticketit_agent == 1) {
-                $user->ticketit_agent = 0;
-            } else {
-                $user->ticketit_agent = 1;
-            }
-            $user->save();
+        $user = User::find($person->personID);
+        if ($user->ticketit_agent == 1) {
+        $user->ticketit_agent = 0;
+        } else {
+        $user->ticketit_agent = 1;
         }
+        $user->save();
+        }
+         */
 
         $message =
         '<div class="well bg-blue">' . trans(

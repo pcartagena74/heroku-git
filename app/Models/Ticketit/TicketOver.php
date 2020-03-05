@@ -5,6 +5,7 @@ namespace App\Models\Ticketit;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\CategoryOver as Category;
 use App\Person;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Date\Date;
 use Kordy\Ticketit\Models\Ticket;
@@ -202,9 +203,17 @@ class TicketOver extends Ticket
      */
     public function scopeAgentUserTickets($query, $id)
     {
-        return $query->where(function ($subquery) use ($id) {
-            $subquery->where('agent_id', $id)->orWhere('user_id', $id);
-        });
+        //added admin check for agent
+        $user = User::where('id',$id)->get()->first();
+        if ($user->hasRole(['Admin'])) {
+            return $query->where(function ($subquery) use ($id) {
+                $subquery->where('agent_id', $id)->orWhere('user_id', $id);
+            });
+        } else {
+            return $query->where(function ($subquery) use ($id) {
+                $subquery->where('user_id', $id);
+            });
+        }
     }
 
     /**

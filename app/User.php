@@ -61,6 +61,6 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     public function roles()
     {
         $person = Person::find(auth()->user()->id);
-        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgId', $person->defaultOrgID)->where('roles.orgId', $person->defaultOrgID);
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgId', $person->defaultOrgID);
     }
 }

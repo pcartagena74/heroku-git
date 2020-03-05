@@ -76,7 +76,7 @@ try{
                         </ul>
                     </li>
 
-                    @if((Entrust::hasRole($currentOrg->orgName) &&
+                    @if((
                             (Entrust::hasRole('Admin') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="fas fa-fw fa-lock-alt"></i> @lang('messages.nav.admin') <span class="far fa-pull-right fa-chevron-down"></span></a>
@@ -92,17 +92,17 @@ try{
                         </li>
                     @endif
                     
-                    @if((Entrust::hasRole($currentOrg->orgName) &&
+                    @if((
                             (Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-university"></i> @lang('messages.nav.org_set')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
+                                @if( Entrust::can('settings-management'))
                                     <li><a href="{{ url('orgsettings',$currentOrg)}}">@lang('messages.nav.o_labels')</a></li>
                                 @endif
 
-                                @if(Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+                                @if( Entrust::can('event-management'))
                                     <li><a href="{{ url('/')}}/eventdefaults">@lang('messages.nav.o_defaults')</a></li>
                                 @endif
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
@@ -111,7 +111,7 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && (Entrust::hasRole('Board')|| Entrust::can('event-management')))
+                    @if(( (Entrust::hasRole('Board')|| Entrust::can('event-management')))
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-calendar-alt"></i> @lang('messages.nav.ev_mgmt')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
@@ -125,7 +125,7 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) && (Entrust::hasRole('Board')|| Entrust::can('member-management')))
+                    @if(( (Entrust::hasRole('Board')|| Entrust::can('member-management')))
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')<span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -153,7 +153,7 @@ try{
                         </li>
                     @endif
 
-                    @if((Entrust::hasRole($currentOrg->orgName) &&
+                    @if((
                             (Entrust::hasRole('Board') || Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Developer'))
                         <li><a><i class="far fa-fw fa-microphone"></i> @lang('messages.nav.spk_mgmt')<span
@@ -179,19 +179,17 @@ try{
                     @endif
 
                     
-                    
-                    
-                    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::hasRole('Admin')) || Entrust::hasRole('Developer'))
                         <li class=""><a><i class="far fa-fw fa-ticket-alt"></i> @lang('messages.nav.help')<span
                                         class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li><a href="{{ url('/')}}/tickets-admin">@lang('messages.nav.h_dash')</a></li>
+                                @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                                    <li><a href="{{ url('/')}}/tickets-admin">@lang('messages.nav.h_dash')</a></li>
+                                @endif
                                 <li><a href="{{ url('/')}}/tickets">@lang('messages.nav.h_active')</a></li>
                                 <li><a href="{{ url('/')}}/tickets/create">@lang('messages.nav.h_tkt')</a></li>
                                 <li><a href="{{ url('/')}}/reports">@lang('messages.nav.h_rpt')</a></li>
                             </ul>
                         </li>
-                    @endif
 
                    
 
