@@ -15,7 +15,7 @@ class CreatePersonEmailTable extends Migration {
 		Schema::create('person-email', function(Blueprint $table)
 		{
 			$table->integer('emailID', true);
-			$table->integer('personID')->index('pe-personID_idx');
+			$table->integer('personID')->unsigned()->index('pe-personID_idx');
 			$table->string('emailTYPE', 25)->nullable();
 			$table->string('emailADDR')->unique('emailADDR');
 			$table->boolean('isPrimary')->default(0);

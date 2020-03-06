@@ -18,7 +18,7 @@ class CreateEventRegistrationTable extends Migration {
 			$table->integer('rfID')->nullable();
 			$table->integer('eventID')->index('er-eventID_idx');
 			$table->integer('ticketID')->index('er-ticketID_idx');
-			$table->integer('personID')->index('er-personID_idx');
+			$table->integer('personID')->unsigned()->index('er-personID_idx');
 			$table->string('reportedIndustry', 100)->nullable();
 			$table->text('eventTopics', 65535)->nullable();
 			$table->boolean('isFirstEvent')->default(0);

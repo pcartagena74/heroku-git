@@ -360,7 +360,7 @@ try{
                                         @lang('messages.nav.h_tkt')
                                     </a>
                                 </li>
-                                <li>
+                                <li style="display: none">
                                     <a href="{{ url('reports')}}">
                                         @lang('messages.nav.h_rpt')
                                     </a>

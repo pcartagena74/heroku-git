@@ -5,7 +5,8 @@
  */
 
 $cats = DB::table('event-category')
-    ->select('catID', 'catTXT')
+    ->
+select('catID', 'catTXT')
     ->where([
         ['isActive', 1],
         ['orgID', $current_person->defaultOrgID]
@@ -26,202 +27,233 @@ $currentOrg = $currentPerson->defaultOrg;
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
-@if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('settings-management'))
-    || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+@if((Entrust::can('settings-management')) || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
 @section('content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.defs') . $org->orgName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <table id="demographics" class="table table-striped table-condensed">
-        <tr>
-            <th style="text-align: left; width: 33%;">
-                @lang('messages.headers.def_label')
+<table class="table table-striped table-condensed" id="demographics">
+    <tr>
+        <th style="text-align: left; width: 33%;">
+            @lang('messages.headers.def_label')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.def_label')])
-            </th>
-            <th style="text-align: left; width: 33%;">@lang('messages.headers.tz')</th>
-            <th style="text-align: left; width: 33%;">@lang('messages.headers.disc_chap')
+        </th>
+        <th style="text-align: left; width: 33%;">
+            @lang('messages.headers.tz')
+        </th>
+        <th style="text-align: left; width: 33%;">
+            @lang('messages.headers.disc_chap')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.disc_chap')])
-            </th>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><a href="#" id="defaultTicketLabel" data-value="{{ $org->defaultTicketLabel }}"></a></td>
-            <td style="text-align: left;"><a href="#" id="orgZone" data-value="{{ $org->orgZone }}"></a></td>
-            <td style="text-align: left;"><a href="#" id="discountChapters" data-value="{{ $org->discountChapters }}"></a></td>
-        </tr>
-        <tr>
-            <th style="text-align: left;">
-                @lang('messages.headers.early')
+        </th>
+    </tr>
+    <tr>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->defaultTicketLabel }}" href="#" id="defaultTicketLabel">
+            </a>
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->orgZone }}" href="#" id="orgZone">
+            </a>
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->discountChapters }}" href="#" id="discountChapters">
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">
+            @lang('messages.headers.early')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.eb_percent')])
-            </th>
-            <th style="text-align: left;">@lang('messages.headers.contact_email')</th>
-            <th style="text-align: left;">
-                @lang('messages.headers.near_chap')
+        </th>
+        <th style="text-align: left;">
+            @lang('messages.headers.contact_email')
+        </th>
+        <th style="text-align: left;">
+            @lang('messages.headers.near_chap')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.near_chap')])
-            </th>
-        </tr>
-        <tr>
-            <td style="text-align: left;">
-                <a href="#" id="earlyBirdPercent" data-value="{{ $org->earlyBirdPercent }}"></a> &nbsp;
-                <i class="fa fa-percent"></i>
-            </td>
-            <td style="text-align: left;"><a href="#" id="eventEmail" data-value="{{ $org->eventEmail }}"></a></td>
-            <td style="text-align: left;"><a href="#" id="nearbyChapters" data-value="{{ $org->nearbyChapters }}"></a></td>
-        </tr>
-        <tr>
-            <th style="text-align: left;">
-                @lang('messages.headers.ref_days')
+        </th>
+    </tr>
+    <tr>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->earlyBirdPercent }}" href="#" id="earlyBirdPercent">
+            </a>
+            <i class="fa fa-percent">
+            </i>
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->eventEmail }}" href="#" id="eventEmail">
+            </a>
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->nearbyChapters }}" href="#" id="nearbyChapters">
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">
+            @lang('messages.headers.ref_days')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.ref_days')])
-            </th>
-            <th style="text-align: left; width: 33%;">
-                @lang('messages.headers.cat')
+        </th>
+        <th style="text-align: left; width: 33%;">
+            @lang('messages.headers.cat')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.event_cat')])
-            </th>
-            <th style="text-align: left;">
-                @lang('messages.headers.reg_chap')
+        </th>
+        <th style="text-align: left;">
+            @lang('messages.headers.reg_chap')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.region_chap')])
-            </th>
-        </tr>
-        <tr>
-            <td style="text-align: left;">
-                <a href="#" id="refundDays" data-value="{{ $org->refundDays }}"></a>
-                &nbsp; @lang('messages.headers.days')
-            </td>
-            <td style="text-align: left;"><a href="#" id="orgCategory" data-value="{{ $org->orgCategory }}"></a></td>
-            <td style="text-align: left;">
-                <a href="#" id="regionChapters" data-value="{{ $org->regionChapters }}"></a>
-            </td>
-        </tr>
-        <tr>
-            <th style="text-align: left;">
-                @lang('messages.headers.anoncat')
+        </th>
+    </tr>
+    <tr>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->refundDays }}" href="#" id="refundDays">
+            </a>
+            @lang('messages.headers.days')
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->orgCategory }}" href="#" id="orgCategory">
+            </a>
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->regionChapters }}" href="#" id="regionChapters">
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">
+            @lang('messages.headers.anoncat')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.anoncat')])
-            </th>
-            <th style="text-align: left;">
-                @lang('messages.headers.no_switch')
+        </th>
+        <th style="text-align: left;">
+            @lang('messages.headers.no_switch')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.no_switch')])
-            </th>
-            <th style="text-align: left;">
-                @lang('messages.fields.postEventEditDays')
+        </th>
+        <th style="text-align: left;">
+            @lang('messages.fields.postEventEditDays')
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.postEventEditDays')])
-            </th>
-        </tr>
-        <tr>
-            <td style="text-align: left;">
-                <a href="#" id="anonCats" data-value="{{ $org->anonCats }}" data-placement="right"></a>
-            </td>
-            <td style="text-align: left;">
-                <a href="#" id="noSwitchTEXT" data-value="{{ $org->noSwitchTEXT }}" data-placement="right"></a>
-            </td>
-            <td style="text-align: left;">
-                <a href="#" id="postEventEditDays" data-value="{{ $org->postEventEditDays }}"></a>
-            </td>
-        </tr>
-    </table>
-
-    @include('v1.parts.end_content')
+        </th>
+    </tr>
+    <tr>
+        <td style="text-align: left;">
+            <a data-placement="right" data-value="{{ $org->anonCats }}" href="#" id="anonCats">
+            </a>
+        </td>
+        <td style="text-align: left;">
+            <a data-placement="right" data-value="{{ $org->noSwitchTEXT }}" href="#" id="noSwitchTEXT">
+            </a>
+        </td>
+        <td style="text-align: left;">
+            <a data-value="{{ $org->postEventEditDays }}" href="#" id="postEventEditDays">
+            </a>
+        </td>
+    </tr>
+</table>
+@include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => 'Organizational Discount Codes' , 'subheader' => '',
              'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @lang('messages.instructions.org_disc')
-    <br/> &nbsp; <br/>
-
-    <?php
-    // @include('v1.parts.datatable', ['headers'=>$discount_headers, 'data'=>$discount_codes, 'scroll'=>0])
-    ?>
-    <table class="table table-bordered table-striped table-condensed">
-        <thead>
+<br/>
+<br/>
+@php
+    // @include('v1.parts.datatable', ['headers'=>
+// $discount_headers, 'data'=>$discount_codes, 'scroll'=>0])
+    @endphp
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
         <tr>
-            <th style="text-align: left;">#</th>
-            <th style="text-align: left;">@lang('messages.headers.disc_code')</th>
-            <th style="text-align: left;">@lang('messages.headers.disc_percent')</th>
+            <th style="text-align: left;">
+                #
+            </th>
+            <th style="text-align: left;">
+                @lang('messages.headers.disc_code')
+            </th>
+            <th style="text-align: left;">
+                @lang('messages.headers.disc_percent')
+            </th>
         </tr>
-        </thead>
-        <tbody>
+    </thead>
+    <tbody>
         @foreach($discount_codes as $dCode)
-            <tr>
-                <td style="text-align: left;">{{ $dCode->discountID }}</td>
-                <td style="text-align: left;">
-                    <a data-pk="{{ $dCode->discountID }}" id="discountCODE{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->discountCODE }}"
-                       data-url="{{ env('APP_URL') }}/orgdiscounts/{{ $dCode->discountID }}"
-                       data-type="text" data-placement="top"></a>
-                </td>
-                <td style="text-align: left;">
-                    <a data-pk="{{ $dCode->discountID }}" id="percent{{ $dCode->discountID }}"
-                       data-value="{{ $dCode->percent }}"
-                       data-url="{{ env('APP_URL') }}/orgdiscounts/{{ $dCode->discountID }}"
-                       data-type="text" data-placement="top"></a>
-                </td>
-            </tr>
+        <tr>
+            <td style="text-align: left;">
+                {{ $dCode->discountID }}
+            </td>
+            <td style="text-align: left;">
+                <a data-pk="{{ $dCode->discountID }}" data-placement="top" data-type="text" data-url="{{ env('APP_URL') }}/orgdiscounts/{{ $dCode->discountID }}" data-value="{{ $dCode->discountCODE }}" id="discountCODE{{ $dCode->discountID }}">
+                </a>
+            </td>
+            <td style="text-align: left;">
+                <a data-pk="{{ $dCode->discountID }}" data-placement="top" data-type="text" data-url="{{ env('APP_URL') }}/orgdiscounts/{{ $dCode->discountID }}" data-value="{{ $dCode->percent }}" id="percent{{ $dCode->discountID }}">
+                </a>
+            </td>
+        </tr>
         @endforeach
-        </tbody>
-    </table>
-    @include('v1.parts.end_content')
+    </tbody>
+</table>
+@include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' =>  trans('messages.headers.def_cust_et'), 'subheader' => '',
              'w1' => '6', 'w2' => '6', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-
-    <table class="table table-bordered table-striped table-condensed">
-        <thead>
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
         <tr>
-            <th colspan="3" style="text-align: left;">{{ trans_choice('messages.headers.et', 2) }}
+            <th colspan="3" style="text-align: left;">
+                {{ trans_choice('messages.headers.et', 2) }}
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.etID')])
             </th>
         </tr>
-        </thead>
-        <tbody>
+    </thead>
+    <tbody>
         @foreach($event_types as $et)
-            <tr>
-                @if($et->orgID != 1)
-                    <td style="text-align: left; width: 15px;">
-                        {!! Form::open(array('url' => env('APP_URL')."/eventtype/" . $et->etID . "/delete", 'method' => 'delete')) !!}
-                        <input type="hidden" name="personID" value="{{ $current_person->personID }}">
-                        <button class="btn btn-danger btn-sm"
-                                {{--
-                                data-toggle="confirmation"
-                                --}}
-                                data-btn-ok-label="Continue"
-                                data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                data-btn-ok-class="btn-success btn-sm"
-                                data-btn-cancel-label="Stop!"
-                                data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                data-btn-cancel-class="btn-danger btn-sm"
-                                data-title="Are you sure?" data-content="This cannot be undone.">
-                            <i class="far fa-trash-alt fa-fw"></i>
-                        </button>
-                        {{ Form::close() }}
-                    </td>
-                    <td style="text-align: left;"><b>{{ $et->etID }}</b></td>
-                    <td style="text-align: left;">
-                        <a data-pk="{{ $et->etID }}" id="etName-{{ $et->etID }}"
-                           data-value="{{ $et->etName }}"
-                           data-url="{{ env('APP_URL') }}/eventtype/{{ $et->etID }}"
-                           data-type="text" data-placement="top"></a>
-                    </td>
-                @else
-                    <td style="text-align: left;"></td>
-                    <td style="text-align: left;">
-                        <b>{{ $et->etID }}</b>
-                    </td>
-                    <td style="text-align: left;">
-                        {{ $et->etName }}
+        <tr>
+            @if($et->orgID != 1)
+            <td style="text-align: left; width: 15px;">
+                {!! Form::open(array('url' => env('APP_URL')."/eventtype/" . $et->etID . "/delete", 'method' => 'delete')) !!}
+                <input name="personID" type="hidden" value="{{ $current_person->personID }}">
+                    <button class="btn btn-danger btn-sm" data-btn-cancel-class="btn-danger btn-sm" data-btn-cancel-icon="glyphicon glyphicon-ban-circle" data-btn-cancel-label="Stop!" data-btn-ok-class="btn-success btn-sm" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-label="Continue" data-content="This cannot be undone." data-title="Are you sure?">
+                        <i class="far fa-trash-alt fa-fw">
+                        </i>
+                    </button>
+                    {{ Form::close() }}
+                </input>
+            </td>
+            <td style="text-align: left;">
+                <b>
+                    {{ $et->etID }}
+                </b>
+            </td>
+            <td style="text-align: left;">
+                <a data-pk="{{ $et->etID }}" data-placement="top" data-type="text" data-url="{{ env('APP_URL') }}/eventtype/{{ $et->etID }}" data-value="{{ $et->etName }}" id="etName-{{ $et->etID }}">
+                </a>
+            </td>
+            @else
+            <td style="text-align: left;">
+            </td>
+            <td style="text-align: left;">
+                <b>
+                    {{ $et->etID }}
+                </b>
+            </td>
+            <td style="text-align: left;">
+                {{ $et->etName }}
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.nope')])
-                    </td>
-                @endif
-            </tr>
+            </td>
+            @endif
+        </tr>
         @endforeach
-        </tbody>
-    </table>
-    <button class="btn btn-success btn-sm" data-toggle="modal"
-            data-target="#et_modal">{{ trans_choice('messages.headers.add', 1) }}</button>
-    @include('v1.parts.end_content')
+    </tbody>
+</table>
+<button class="btn btn-success btn-sm" data-target="#et_modal" data-toggle="modal">
+    {{ trans_choice('messages.headers.add', 1) }}
+</button>
+@include('v1.parts.end_content')
 
 @endsection
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
-    <script>
-        $(document).ready(function () {
+<script>
+    $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -233,9 +265,9 @@ $currentOrg = $currentPerson->defaultOrg;
             $('#percent{{ $dCode->discountID }}').editable();
             @endforeach
         });
-    </script>
-    <script>
-        $(document).ready(function () {
+</script>
+<script>
+    $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip({'placement': 'top'});
             //$.fn.editable.defaults.mode = 'inline';
             $.fn.editable.defaults.params = function (params) {
@@ -365,9 +397,9 @@ $currentOrg = $currentPerson->defaultOrg;
             @endif
             @endforeach
         });
-    </script>
-    <script>
-        $(document).ready(function () {
+</script>
+<script>
+    $(document).ready(function () {
             var i = 2;
             var x;
             $('#add_row').click(function () {
@@ -400,60 +432,71 @@ $currentOrg = $currentPerson->defaultOrg;
                 }
             });
         });
-    </script>
+</script>
 @endsection
 
 @section('modals')
-    <div class="modal fade" id="et_modal" tabindex="-1" role="dialog" aria-labelledby="et_label"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="et_label">{{ trans_choice('messages.headers.add', 2) }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form name="eventtypes" method="post" action="{{ env('APP_URL') }}/eventtype/create">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="personID" value="{{ $current_person->personID }}">
-                        <table id="new_et_fields" class="table table-striped">
+<div aria-hidden="true" aria-labelledby="et_label" class="modal fade" id="et_modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="et_label">
+                    {{ trans_choice('messages.headers.add', 2) }}
+                </h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">
+                        ×
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ env('APP_URL') }}/eventtype/create" method="post" name="eventtypes">
+                    {{ csrf_field() }}
+                    <input name="personID" type="hidden" value="{{ $current_person->personID }}">
+                        <table class="table table-striped" id="new_et_fields">
                             <thead>
-                            <tr>
-                                <th style="width: 10%">Event Type</th>
-                            </tr>
+                                <tr>
+                                    <th style="width: 10%">
+                                        Event Type
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
-                            @for($n=1; $n<=5; $n++)
-                                <tr id="et_{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
-                                    <td><input name='eventType-{{ $n }}' type='text' placeholder='Event Type'
-                                               class='form-control input-sm'>
+                                @for($n=1; $n<=5; $n++)
+                                <tr ($n="" <?php="" id="et_{{ $n }}_row" if="">
+                                    1) echo(' style="display:none"'); ?>>
+                                    <td>
+                                        <input class="form-control input-sm" name="eventType-{{ $n }}" placeholder="Event Type" type="text">
+                                        </input>
                                     </td>
                                 </tr>
-                            @endfor
+                                @endfor
                             </tbody>
                         </table>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <button type="button" id="add_row"
-                                    class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
+                            <button class="btn btn-sm btn-warning" id="add_row" type="button">
+                                @lang('messages.buttons.another')
+                            </button>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
-                            <button type="button" style="display: none" id="delete_row" class="btn btn-sm btn-danger">
+                            <button class="btn btn-sm btn-danger" id="delete_row" style="display: none" type="button">
                                 @lang('messages.buttons.delete')
                             </button>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm"
-                            data-dismiss="modal">@lang('messages.buttons.close')</button>
-                    <button type="submit" id="et_submit"
-                            class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_et', 1) }}</button>
-                    </form>
-                </div>
+                    </input>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary btn-sm" data-dismiss="modal" type="button">
+                    @lang('messages.buttons.close')
+                </button>
+                <button class="btn btn-sm btn-success" id="et_submit" type="submit">
+                    {{ trans_choice('messages.buttons.save_et', 1) }}
+                </button>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @endif

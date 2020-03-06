@@ -23,7 +23,6 @@ class AgentOver extends User
     public function scopeAgents($query, $paginate = false)
     {
         $user = User::whereHas('roles', function($q){$q->whereIn('name', ['Admin']);})->get();
-        dd($user);
         if ($paginate) {
             return $query->where('ticketit_agent', '1')->paginate($paginate, ['*'], 'agents_page');
         } else {

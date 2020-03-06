@@ -17,7 +17,7 @@ class CreateRegFinanceTable extends Migration {
 			$table->integer('regID', true);
 			$table->integer('eventID')->index('rf-eventID_idx');
 			$table->integer('ticketID')->nullable()->default(0);
-			$table->integer('personID')->index('rf-personID_idx');
+			$table->integer('personID')->unsigned()->index('rf-personID_idx');
 			$table->integer('seats')->default(1);
 			$table->string('pmtType', 45)->default('pending');
 			$table->string('confirmation', 45)->default('pending');

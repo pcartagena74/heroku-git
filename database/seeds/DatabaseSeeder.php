@@ -1,5 +1,6 @@
 <?php
 
+use App\Org;
 use App\Permission;
 use App\Role;
 use App\User;
@@ -14,19 +15,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call([
-        //     UsersTableSeeder::class,
-        //     PermissionTableSeeder::class,
-        //     RoleTableSeeder::class,
-        // ]);
+        $this->call([
+            UsersTableSeeder::class,
+            PermissionTableSeeder::class,
+            RoleTableSeeder::class,
+        ]);
 
         $role       = Role::findOrFail(9);
         $permission = Permission::get();
         foreach ($permission as $key => $value) {
             $role->attachPermission($value);
         }
-
+        $org  = Org::first();
         $user = User::first();
-        $user->attachRole($role);
+        // DB::insert();
+        // $user->attachRole($role, ['orgID', $org->id]);
     }
 }

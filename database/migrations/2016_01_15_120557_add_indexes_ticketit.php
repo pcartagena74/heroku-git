@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
  *
  * Class AddIndexes
  */
-class AddIndexes extends Migration
+class AddIndexesTicketit extends Migration
 {
     /**
      * Run the migrations.

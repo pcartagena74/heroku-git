@@ -16,7 +16,7 @@ class CreatePersonSocialiteTable extends Migration {
 		{
 			$table->engine = 'InnoDB';
 			$table->integer('id', true);
-			$table->integer('personID')->default(1);
+			$table->integer('personID')->unsigned()->default(1);
 			$table->string('providerID', 45);
 			$table->string('providerName', 45);
 			$table->string('token');

@@ -32,7 +32,7 @@ class AddLocaleToUserUserHistoryTable extends Migration
             $table->dropColumn('locale');
         });
         Schema::table('users_history', function (Blueprint $table) {
-            $table->string('locale')->nullable();
+            $table->dropColumn('locale');
         });
     }
 }
