@@ -5,6 +5,7 @@ use App\Permission;
 use App\Role;
 use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,14 +22,20 @@ class DatabaseSeeder extends Seeder
             RoleTableSeeder::class,
         ]);
 
-        $role       = Role::findOrFail(9);
+        $roles      = Role::find([9, 8]);
         $permission = Permission::get();
-        foreach ($permission as $key => $value) {
-            $role->attachPermission($value);
+        foreach ($roles as $key => $r_value) {
+            foreach ($permission as $p_key => $p_value) {
+                $r_value->attachPermission($p_value);
+            }
         }
-        $org  = Org::first();
-        $user = User::first();
-        // DB::insert();
-        // $user->attachRole($role, ['orgID', $org->id]);
+        $org       = Org::first();
+        $user      = User::first();
+        $all_roles = Role::all();
+        $bulk      = [];
+        foreach ($all_roles as $key => $value) {
+            $bulk[] = ['role_id' => $value->id, 'user_id' => $user->id, 'orgID' => $org->orgID];
+        }
+        DB::table('role_user')->insert($bulk);
     }
 }
