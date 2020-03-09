@@ -17,7 +17,7 @@ class CreateRegSessionTable extends Migration {
 			$table->engine = 'InnoDB';
 			$table->integer('id', true);
 			$table->integer('regID')->index('rs-regID_idx');
-			$table->integer('personID')->default(1)->index('rs-personID_idx');
+			$table->integer('personID')->unsigned()->default(1)->index('rs-personID_idx');
 			$table->integer('eventID')->index('rs-eventID_idx');
 			$table->integer('confDay')->default(0);
 			$table->integer('hasAttended')->default(0);

@@ -15,7 +15,7 @@ class CreatePersonAddressTable extends Migration {
 		Schema::create('person-address', function(Blueprint $table)
 		{
 			$table->integer('addrID', true);
-			$table->integer('personID')->index('pa-personID_idx');
+			$table->integer('personID')->unsigned()->index('pa-personID_idx');
 			$table->string('addrTYPE', 25)->nullable();
 			$table->string('addr1');
 			$table->string('addr2')->nullable();

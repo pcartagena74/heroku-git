@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLocaleToUserTable extends Migration
+class AddOrgidToRoleUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,20 @@ class AddLocaleToUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('locale')->nullable();
+        Schema::table('role_user', function (Blueprint $table) {
+            $table->unsignedInteger('orgID')->nullable();
         });
-}
+    }
 
     /**
      * Reverse the migrations.
      *
      * @return void
      */
-    function down()
-{
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('locale');
+    public function down()
+    {
+        Schema::table('role_user', function (Blueprint $table) {
+            $table->drop('orgID');
         });
     }
 }

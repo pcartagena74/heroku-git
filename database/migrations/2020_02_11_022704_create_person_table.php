@@ -14,7 +14,7 @@ class CreatePersonTable extends Migration {
 	{
 		Schema::create('person', function(Blueprint $table)
 		{
-			$table->integer('personID', true);
+			$table->integer('personID', true)->unsigned();
 			$table->string('prefix', 5)->nullable();
 			$table->string('firstName', 50)->nullable();
 			$table->string('midName', 50)->nullable();

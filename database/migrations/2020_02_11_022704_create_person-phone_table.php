@@ -15,7 +15,7 @@ class CreatePersonPhoneTable extends Migration {
 		Schema::create('person-phone', function(Blueprint $table)
 		{
 			$table->integer('phoneID', true);
-			$table->integer('personID')->index('pp-personID_idx');
+			$table->integer('personID')->unsigned()->index('pp-personID_idx');
 			$table->string('phoneNumber', 25)->nullable();
 			$table->string('phoneType', 10)->nullable();
 			$table->integer('creatorID')->nullable()->default(1);

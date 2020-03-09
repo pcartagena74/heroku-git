@@ -5,6 +5,7 @@ namespace App\Models\Ticketit;
 use App\Models\Ticketit\TicketOver as Ticketit;
 use Auth;
 use Kordy\Ticketit\Models\Agent as User;
+use Zizaco\Entrust\Entrust;
 
 class AgentOver extends User
 {
@@ -21,6 +22,7 @@ class AgentOver extends User
      */
     public function scopeAgents($query, $paginate = false)
     {
+        $user = User::whereHas('roles', function($q){$q->whereIn('name', ['Admin']);})->get();
         if ($paginate) {
             return $query->where('ticketit_agent', '1')->paginate($paginate, ['*'], 'agents_page');
         } else {
@@ -40,7 +42,7 @@ class AgentOver extends User
      */
     public function scopeAdmins($query, $paginate = false, $withOrg = false)
     {
-        if($withOrg !== false) {
+        if ($withOrg !== false) {
             return $query->where('ticketit_admin', '1')->paginate($paginate, ['*'], 'admins_page');
         }
         if ($paginate) {
@@ -95,6 +97,18 @@ class AgentOver extends User
      */
     public static function isAgent($id = null)
     {
+        //as we want to have agent who are admin of particular org we can use entrust. we have already
+        //updated entrust to check org id for all roles.
+        if (isset($id)) {
+            $user  = User::where('id',$id)->get()->first();
+            return $user->hasRole(['Admin']);
+        }
+        if (auth()->check()) {
+            return auth()->user()->hasRole(['Admin']);
+        }
+
+        return false;
+        // updated code ends
         if (isset($id)) {
             $user = User::find($id);
             if ($user->ticketit_agent) {
@@ -103,13 +117,6 @@ class AgentOver extends User
 
             return false;
         }
-        if (auth()->check()) {
-            if (auth()->user()->ticketit_agent) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

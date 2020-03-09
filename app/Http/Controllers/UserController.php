@@ -97,7 +97,7 @@ class UserController extends Controller
             // return redirect(env('APP_URL')."/newuser/create");
             return back()->withInput();
         }
-
+        $e = null;
         try {
             DB::beginTransaction();
             $p = new Person;

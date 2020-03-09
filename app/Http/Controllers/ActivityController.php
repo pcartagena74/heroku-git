@@ -98,6 +98,7 @@ class ActivityController extends Controller
 
     public function index()
     {
+        
         // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgID = $this->currentPerson->defaultOrgID;

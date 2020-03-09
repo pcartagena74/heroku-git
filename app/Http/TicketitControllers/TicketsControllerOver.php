@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Models;
-use Kordy\Ticketit\Models\Agent;
+use App\Models\Ticketit\AgentOver as Agent;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
 use \Kordy\Ticketit\Helpers\LaravelVersion;

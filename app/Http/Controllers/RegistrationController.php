@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\EventDiscount;
-use App\Org;
-use App\Person;
-use App\OrgPerson;
-use App\Registration;
-use App\RegSession;
-use App\User;
-use Illuminate\Http\Request;
-use App\Ticket;
-use App\Event;
 use App\Email;
-use App\RegFinance;
-use App\Track;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB;
-use Stripe\Stripe;
+use App\Event;
+use App\EventDiscount;
 use App\EventSession;
 use App\Notifications\SetYourPassword;
-use Session;
 use App\Notifications\WaitListNoMore;
+use App\Org;
+use App\OrgPerson;
+use App\Person;
+use App\RegFinance;
+use App\Registration;
+use App\RegSession;
+use App\Ticket;
+use App\Track;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Session;
+use Stripe\Stripe;
 
 set_time_limit(0);
 ini_set('memory_limit', '-1');
@@ -44,8 +44,8 @@ class RegistrationController extends Controller
         // called by POST /regstep1/{event}
         // Initiating registration for an event from GET /event/{id}
         $discount_code = request()->input('discount_code');
-        $tq = [];
-        $quantity = 0;
+        $tq            = [];
+        $quantity      = 0;
 
         if ($discount_code === null) {
             $discount_code = '';
@@ -98,7 +98,7 @@ class RegistrationController extends Controller
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
-            ['isSuppressed', '=', 0]
+            ['isSuppressed', '=', 0],
         ])->get();
 
         if ($req = Session::get('req')) {
@@ -179,13 +179,13 @@ class RegistrationController extends Controller
         $notregs = Registration::where('eventID', '=', $event->eventID)
             ->where(function ($q) {
                 $q->where('regStatus', '=', 'wait')
-                    // Even if Payment Pending is the status, they are still registered
+                // Even if Payment Pending is the status, they are still registered
                     ->orWhere('regStatus', '=', 'progress');
             })->with('regfinance', 'ticket')->get();
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
-            ['isaBundle', '=', 0]
+            ['isaBundle', '=', 0],
         ])->get();
 
         $discPie = Registration::where([
@@ -197,7 +197,7 @@ class RegistrationController extends Controller
                 $query->whereNull('deleted_at');
             })
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
-                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee,
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->whereNull('deleted_at')
             ->groupBy('discountCode')
@@ -207,7 +207,7 @@ class RegistrationController extends Controller
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
             ->where([
                 ['eventID', '=', $event->eventID],
-                ['regStatus', '=', 'processed']
+                ['regStatus', '=', 'processed'],
             ])
             ->groupBy('discountCode')->orderBy('cnt', 'desc')->get();
 
@@ -226,7 +226,7 @@ class RegistrationController extends Controller
 
         $subtotal = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('"discountCode", count("discountCode") as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
-                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee,
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->whereHas('regfinance', function ($query) {
                 $query->whereNotIn('pmtType', ['pending']);
@@ -236,7 +236,7 @@ class RegistrationController extends Controller
 
         $total = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('"discountCode", count("discountCode") as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
-                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee, 
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee,
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->whereHas('regfinance', function ($query) {
                 $query->whereNotIn('pmtType', ['pending']);
@@ -244,13 +244,13 @@ class RegistrationController extends Controller
             })->first();
 
         $discPie->put(count($discPie), $subtotal);
-        if ($lessCounts !==  null && $lessCounts->cnt > 0) {
+        if ($lessCounts !== null && $lessCounts->cnt > 0) {
             $discPie->put(count($discPie), $lessCounts);
-            $subtotal->discountCode = trans('messages.fields.subtotal');
+            $subtotal->discountCode   = trans('messages.fields.subtotal');
             $lessCounts->discountCode = '&nbsp; &nbsp; <span class="red">' . trans('messages.headers.less_cc') . '</span>';
             $discPie->put(count($discPie), $total);
             $total->discountCode = '&nbsp; &nbsp; &nbsp; &nbsp; ' . trans('messages.fields.total_due');
-            $total->orgAmt = $total->orgAmt - $lessCounts->orgAmt;
+            $total->orgAmt       = $total->orgAmt - $lessCounts->orgAmt;
         } else {
             $subtotal->discountCode = '&nbsp; &nbsp; &nbsp; &nbsp; ' . trans('messages.fields.total_due');
         }
@@ -283,43 +283,46 @@ class RegistrationController extends Controller
     {
         // called by POST /regstep3/{event}/create
 
-        $org = Org::find($event->orgID);
-        $logged_in = 0;  $inDB = 0;
-        $flag_dupe = 0; $dupe_names = [];
-        $show_pass_fields = 0;
-        $set_new_user = 0;
+        $org                 = Org::find($event->orgID);
+        $logged_in           = 0;
+        $inDB                = 0;
+        $flag_dupe           = 0;
+        $dupe_names          = [];
+        $show_pass_fields    = 0;
+        $set_new_user        = 0;
         $set_secondary_email = 0;
-        $subcheck = 0; $sumtotal = 0;
+        $subcheck            = 0;
+        $sumtotal            = 0;
 
         $quantity = request()->input('quantity');
-        $total = request()->input('total');
-        $token = request()->input('_token');
+        $total    = request()->input('total');
+        $token    = request()->input('_token');
 
         // Record logged in user info
         if (Auth::check()) {
-            $id = auth()->user()->id;
-            $u = User::find($id);
+            $id        = auth()->user()->id;
+            $u         = User::find($id);
             $logged_in = 1;
             if ($u->password === null) {
                 // This shouldn't be possible
                 $show_pass_fields = 1;
             }
-            $p = $this->currentPerson = Person::find($id)->load('orgperson');
+            $p        = $this->currentPerson        = Person::find($id)->load('orgperson');
             $authorID = $p->personID;
-            $regBy = $p->showFullName();
+            $regBy    = $p->showFullName();
         } else {
             // No user logged in; checking to see if first provided email is in the database;
             // If so, force a login by returning to form with input saved and message.
             // Assumptive RISK re: first email is of the person doing the registration -- mitigated through javascript
 
-            $authorID = 0;  // placeholder personID until $person record created
-            $regBy = null;
-            $email = strtolower(request()->input('login'));
-            $chk = Email::where('emailADDR', '=', $email)->first();
+            $authorID = 0; // placeholder personID until $person record created
+            $regBy    = null;
+            $email    = strtolower(request()->input('login'));
+            $chk      = Email::where('emailADDR', '=', $email)->first();
             if (null !== $chk) {
                 $p = Person::find($chk->personID);
                 $u = User::find($p->personID);
-                if(null === $u->password){
+                if (null === $u->password) {
                     request()->session()->flash('alert-warning', trans('messages.instructions.login_new', ['admin' => $org->adminContactStatement]));
                 } else {
                     request()->session()->flash('alert-warning', trans('messages.instructions.login', ['admin' => $org->adminContactStatement]));
@@ -331,13 +334,13 @@ class RegistrationController extends Controller
 
         //  $resubmit set based on "unknown user" of 0 or the logged in user.
         //  If the eventID is the same AND the prior order isn't "Processed" then this is likely a dupe to erase
-        if ($authorID <> 0 && $logged_in) {
+        if ($authorID != 0 && $logged_in) {
             $resubmit = RegFinance::where([
                 ['personID', '=', $authorID],
                 ['eventID', '=', $event->eventID],
                 ['status', '!=', 'processed'],
             ])->first();
-        } elseif($authorID==0 && !$logged_in) {
+        } elseif ($authorID == 0 && !$logged_in) {
             // no in-progress submissions found
             $resubmit = null;
             // but check if there are any paid ones to flag user with message
@@ -348,7 +351,7 @@ class RegistrationController extends Controller
 
         // Create new, or re-open the stub (only if the stub is a stub for this event), reg-finance record
         if (null !== $resubmit && $resubmit->eventID == $event->eventID) {
-            $rf = $resubmit;
+            $rf               = $resubmit;
             $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
             // if there was a resubmit, delete the old registration records and redo later...
             foreach ($resubmitted_regs as $reg) {
@@ -356,30 +359,30 @@ class RegistrationController extends Controller
             }
             $resubmitted_regs = null;
         } else {
-            $rf = new RegFinance();
+            $rf               = new RegFinance();
             $resubmitted_regs = null;
         }
         // $rf->regID is either set (stub) or will be upon save.
         // $rf->ticketID is no longer relevant to reg-finance records -- Remove line when no longer in DB
         $rf->creatorID = $authorID;
         $rf->updaterID = $authorID;
-        $rf->personID = $authorID;
-        $rf->eventID = $event->eventID;
-        $rf->seats = $quantity;
-        $rf->token = $token;
-        $rf->cost = $total;
+        $rf->personID  = $authorID;
+        $rf->eventID   = $event->eventID;
+        $rf->seats     = $quantity;
+        $rf->token     = $token;
+        $rf->cost      = $total;
         $rf->save();
 
         $tkts = Ticket::where([
             ['eventID', '=', $event->eventID],
-            ['isSuppressed', '=', 0]
+            ['isSuppressed', '=', 0],
         ])->get();
 
         // Set $regBy to the first ticket's person info unless someone was already logged in
         if (null === $regBy && !$logged_in) {
             $firstName = ucwords(request()->input('firstName'));
-            $lastName = ucwords(request()->input('lastName'));
-            $regBy = $firstName . " " . $lastName;
+            $lastName  = ucwords(request()->input('lastName'));
+            $regBy     = $firstName . " " . $lastName;
         }
 
         // Registration #1 is assumed "special" because it should be the originating user when self-registering.
@@ -389,15 +392,16 @@ class RegistrationController extends Controller
                 $login = strtolower(request()->input('login'));
                 // Check to see if the email of the first registrant belongs to the logged-in person
                 if ($logged_in && assoc_email($login, $p)) {
-                    $person = $this->currentPerson;  $inDB = 1;
+                    $person       = $this->currentPerson;
+                    $inDB         = 1;
                     $set_new_user = 0;
-                } elseif($logged_in) {
+                } elseif ($logged_in) {
                     // $login email is not associated with $this->currentPerson but could still be associated with
                     // someone in the database
-                    if(check_exists('e', 0, [$login])){
-                        $inDB = 1;
+                    if (check_exists('e', 0, [$login])) {
+                        $inDB   = 1;
                         $person = Person::where([
-                            ['login', $login]
+                            ['login', $login],
                         ])->first();
                         $set_new_user = 0;
                     } else {
@@ -405,59 +409,59 @@ class RegistrationController extends Controller
                     }
                 } else {
                     // No one is logged in and information appears to be new to the DB
-                    $person = null;
+                    $person       = null;
                     $set_new_user = 1;
                 }
                 $i_cnt = "";
             } else {
-                $person = null;
+                $person       = null;
                 $set_new_user = 1;
-                $i_cnt = '_' . $i;
+                $i_cnt        = '_' . $i;
             }
 
-            $dupe_check = null;
+            $dupe_check          = null;
             $set_secondary_email = 0;
 
             // 1. Grab the passed variables for the person and registration info
-            $prefix = ucwords(request()->input('prefix' . $i_cnt));
-            $firstName = ucwords(request()->input('firstName' . $i_cnt));
-            $middleName = ucwords(request()->input('middleName' . $i_cnt));
-            $lastName = ucwords(request()->input('lastName' . $i_cnt));
-            $login = strtolower(request()->input('login' . $i_cnt));
-            $pmiID = trim(request()->input('OrgStat1' . $i_cnt));
+            $prefix              = ucwords(request()->input('prefix' . $i_cnt));
+            $firstName           = ucwords(request()->input('firstName' . $i_cnt));
+            $middleName          = ucwords(request()->input('middleName' . $i_cnt));
+            $lastName            = ucwords(request()->input('lastName' . $i_cnt));
+            $login               = strtolower(request()->input('login' . $i_cnt));
+            $pmiID               = trim(request()->input('OrgStat1' . $i_cnt));
             $pmiID > 0 ?: $pmiID = null;
-            $suffix = ucwords(request()->input('suffix' . $i_cnt));
-            $prefName = ucwords(request()->input('prefName' . $i_cnt));
-            $compName = ucwords(request()->input('compName' . $i_cnt));
-            $indName = ucwords(request()->input('indName' . $i_cnt));
-            $title = ucwords(request()->input('title' . $i_cnt));
-            $chapterRole = ucwords(request()->input('chapterRole' . $i_cnt));
-            $eventQuestion = request()->input('eventQuestion' . $i_cnt);
-            $eventTopics = request()->input('eventTopics' . $i_cnt);
-            $affiliation = request()->input('affiliation' . $i_cnt);
-            $certification = request()->input('certifications' . $i_cnt);
-            $experience = request()->input('experience' . $i_cnt);
-            $dCode = request()->input('discount_code' . $i_cnt);
-            $dc = EventDiscount::where([
+            $suffix              = ucwords(request()->input('suffix' . $i_cnt));
+            $prefName            = ucwords(request()->input('prefName' . $i_cnt));
+            $compName            = ucwords(request()->input('compName' . $i_cnt));
+            $indName             = ucwords(request()->input('indName' . $i_cnt));
+            $title               = ucwords(request()->input('title' . $i_cnt));
+            $chapterRole         = ucwords(request()->input('chapterRole' . $i_cnt));
+            $eventQuestion       = request()->input('eventQuestion' . $i_cnt);
+            $eventTopics         = request()->input('eventTopics' . $i_cnt);
+            $affiliation         = request()->input('affiliation' . $i_cnt);
+            $certification       = request()->input('certifications' . $i_cnt);
+            $experience          = request()->input('experience' . $i_cnt);
+            $dCode               = request()->input('discount_code' . $i_cnt);
+            $dc                  = EventDiscount::where([
                 ['eventID', '=', $event->eventID],
-                ['discountCODE', '=', $dCode]
+                ['discountCODE', '=', $dCode],
             ])->first();
             if ($dc === null || $dCode === null || $dCode == " ") {
                 $dCode = 'N/A';
             }
             $ticketID = request()->input('ticketID-' . $i);
-            $t = Ticket::find($ticketID);
-            $flatamt = request()->input('flatamt' . $i_cnt);
-            $percent = request()->input('percent' . $i_cnt);
+            $t        = Ticket::find($ticketID);
+            $flatamt  = request()->input('flatamt' . $i_cnt);
+            $percent  = request()->input('percent' . $i_cnt);
             $subtotal = request()->input('sub' . $i) * 1;
             $origcost = request()->input('cost' . $i);
             // strip out , from $ figure over $1,000
             $origcost = str_replace(',', '', $origcost);
             if ($event->hasFood) {
                 $specialNeeds = request()->input('specialNeeds' . $i_cnt);
-                $eventNotes = request()->input('eventNotes' . $i_cnt);
+                $eventNotes   = request()->input('eventNotes' . $i_cnt);
                 $allergenInfo = request()->input('allergenInfo' . $i_cnt);
-                $cityState = request()->input('cityState' . $i_cnt);
+                $cityState    = request()->input('cityState' . $i_cnt);
             }
 
             // Try to assign $person via OrgStat1 unless $person has the value of $this->currentPerson (and so is not null)
@@ -486,34 +490,34 @@ class RegistrationController extends Controller
 
                 // if we need to create a new $person record, flag for the creation of the other new objects too
                 if (null === $person) {
-                    $person = new Person;
+                    $person       = new Person;
                     $set_new_user = 1;
                 }
 
                 // We have either found the appropriate person record ($p) or have created a new one
-                isset($login) && $set_new_user ? $person->login = $login : 1;   // only sets $login if new
-                if(!$person->is_member($event->orgID)){
+                isset($login) && $set_new_user ? $person->login = $login : 1; // only sets $login if new
+                if (!$person->is_member($event->orgID)) {
                     // These fields should NOT be updated if $person is in DB AND a PMI ID (OrgStat1) is set.
                     isset($firstName) ? $person->firstName = $firstName : 1;
-                    isset($lastName) ? $person->lastName = $lastName : 1;
+                    isset($lastName) ? $person->lastName   = $lastName : 1;
                 }
 
-                isset($prefix) ? $person->prefix = $prefix : 1;
-                isset($middleName) ? $person->midName = $middleName : 1;
-                isset($suffix) ? $person->suffix = $suffix : 1;
-                $person->defaultOrgID = $event->orgID;
-                isset($prefName) ? $person->prefName = $prefName : $person->prefName = $firstName;
-                isset($compName) ? $person->compName = $compName : 1;
-                isset($indName) ? $person->indName = $indName : 1;
-                isset($title) ? $person->title = $title : 1;
-                isset($experience) ? $person->experience = $experience : 1;
+                isset($prefix) ? $person->prefix           = $prefix : 1;
+                isset($middleName) ? $person->midName      = $middleName : 1;
+                isset($suffix) ? $person->suffix           = $suffix : 1;
+                $person->defaultOrgID                      = $event->orgID;
+                isset($prefName) ? $person->prefName       = $prefName : $person->prefName       = $firstName;
+                isset($compName) ? $person->compName       = $compName : 1;
+                isset($indName) ? $person->indName         = $indName : 1;
+                isset($title) ? $person->title             = $title : 1;
+                isset($experience) ? $person->experience   = $experience : 1;
                 isset($chapterRole) ? $person->chapterRole = $chapterRole : 1;
                 if ($event->hasFood && $allergenInfo !== null) {
-                    $person->allergenInfo = implode(",", (array)$allergenInfo);
+                    $person->allergenInfo                      = implode(",", (array) $allergenInfo);
                     isset($eventNotes) ? $person->allergenNote = $eventNotes : 1;
                 }
-                isset($affiliation) ? $person->affiliation = implode(",", (array)$affiliation) : 1;
-                isset($certification) ? $person->certifications = implode(",", (array)$certification) : 1;
+                isset($affiliation) ? $person->affiliation      = implode(",", (array) $affiliation) : 1;
+                isset($certification) ? $person->certifications = implode(",", (array) $certification) : 1;
                 $person->save();
 
                 if (null === $pmiID) {
@@ -530,9 +534,9 @@ class RegistrationController extends Controller
                     }
                 }
                 if ($set_new_user) {
-                    $user = new User();
-                    $user->id = $person->personID;
-                    $user->name = $login;
+                    $user        = new User();
+                    $user->id    = $person->personID;
+                    $user->name  = $login;
                     $user->login = $login;
                     $user->email = $login;
                     $user->save();
@@ -544,37 +548,36 @@ class RegistrationController extends Controller
                         $show_pass_fields = 1;
                     }
 
-                    $op = new OrgPerson;
-                    $op->orgID = $event->orgID;
+                    $op           = new OrgPerson;
+                    $op->orgID    = $event->orgID;
                     $op->personID = $person->personID;
                     if ($pmiID) {
-                        $op->OrgStat1 = $pmiID;
+                        $op->OrgStat1     = $pmiID;
                         $change_to_member = 1;
                     }
                     $op->save();
                     $person->defaultOrgPersonID = $op->id;
                     $person->save();
 
-
-                    $email = new Email;
-                    $email->personID = $person->personID;
+                    $email            = new Email;
+                    $email->personID  = $person->personID;
                     $email->emailADDR = $login;
                     $email->isPrimary = 1;
                     $email->save();
                 } else {
                     $op = OrgPerson::where([
                         ['personID', '=', $person->personID],
-                        ['orgID', '=', $event->orgID]
+                        ['orgID', '=', $event->orgID],
                     ])->first();
                     // Chance of not getting an $op record from above, if $person exists but for other chapter, so create if needed.
                     if (null === $op) {
-                        $op = new OrgPerson;
-                        $op->orgID = $event->orgID;
+                        $op           = new OrgPerson;
+                        $op->orgID    = $event->orgID;
                         $op->personID = $person->personID;
                     }
                     // If not already a member and a PMI ID was provided, update and flag to change ticket price
                     if (!$person->is_member($event->orgID) && isset($pmiID)) {
-                        $op->OrgStat1 = $pmiID;
+                        $op->OrgStat1  = $pmiID;
                         $op->updaterID = $person->personID;
                         $op->save();
                         $change_to_member = 1;
@@ -584,8 +587,8 @@ class RegistrationController extends Controller
                 }
 
                 if ($set_secondary_email) {
-                    $email = new Email;
-                    $email->personID = $person->personID;
+                    $email            = new Email;
+                    $email->personID  = $person->personID;
                     $email->emailADDR = $login;
                     $email->save();
                 }
@@ -601,17 +604,17 @@ class RegistrationController extends Controller
             $dupe_check = Registration::where([
                 ['personID', $person->personID],
                 ['eventID', $event->eventID],
-                ['regStatus', 'processed']
+                ['regStatus', 'processed'],
             ])->first();
 
             try {
-                $reg = new Registration;
-                $reg->rfID = $rf->regID;
-                $reg->eventID = $event->eventID;
-                $reg->ticketID = $ticketID;
-                $reg->personID = $person->personID;
+                $reg                   = new Registration;
+                $reg->rfID             = $rf->regID;
+                $reg->eventID          = $event->eventID;
+                $reg->ticketID         = $ticketID;
+                $reg->personID         = $person->personID;
                 $reg->reportedIndustry = $indName;
-                $reg->eventTopics = $eventTopics;
+                $reg->eventTopics      = $eventTopics;
 
                 // Regional Events show the question so pull from form
                 if ($event->eventTypeID == 5) {
@@ -623,26 +626,26 @@ class RegistrationController extends Controller
                     }
                 }
 
-                $reg->isAuthPDU = request()->input('isAuthPDU' . $i_cnt) !== null ? 1 : 0;
+                $reg->isAuthPDU     = request()->input('isAuthPDU' . $i_cnt) !== null ? 1 : 0;
                 $reg->eventQuestion = $eventQuestion;
-                $reg->canNetwork = request()->input('canNetwork' . $i_cnt) !== null ? 1 : 0;
-                $reg->affiliation = implode(",", $affiliation);
-                $reg->regStatus = 'progress';
+                $reg->canNetwork    = request()->input('canNetwork' . $i_cnt) !== null ? 1 : 0;
+                $reg->affiliation   = implode(",", $affiliation);
+                $reg->regStatus     = 'progress';
                 if ($t->waitlisting()) {
                     $reg->regStatus = 'wait';
-                    $rf->status = 'wait';
+                    $rf->status     = 'wait';
                 }
                 $reg->registeredBy = $regBy;
-                $reg->token = $token;
-                $reg->subtotal = $subtotal;
+                $reg->token        = $token;
+                $reg->subtotal     = $subtotal;
                 $reg->discountCode = $dCode;
-                $reg->origcost = $origcost;
-                $reg->membership = $regMem;
+                $reg->origcost     = $origcost;
+                $reg->membership   = $regMem;
                 if ($event->hasFood) {
                     $reg->specialNeeds = $specialNeeds;
-                    $reg->allergenInfo = implode(",", (array)$allergenInfo);
-                    $reg->cityState = $cityState;
-                    $reg->eventNotes = $eventNotes;
+                    $reg->allergenInfo = implode(",", (array) $allergenInfo);
+                    $reg->cityState    = $cityState;
+                    $reg->eventNotes   = $eventNotes;
                 }
                 $reg->creatorID = $authorID;
                 $reg->updaterID = $authorID;
@@ -651,27 +654,27 @@ class RegistrationController extends Controller
                 // Need to also account for scenario where there is a non-member price but member price is $0 AND origcost is > $0 due to 2nd ticket.
                 if ($reg->subtotal == 0 && $reg->origcost > 0 &&
                     ($reg->discountCode == 'N/A' || null !== $dc) ||
-                        ($person->is_member($event->orgID) &&
-                         $reg->ticket->memberBasePrice == $reg->subtotal)) {
+                    ($person->is_member($event->orgID) &&
+                        $reg->ticket->memberBasePrice == $reg->subtotal)) {
                     // Set the debugNote field and adjust the subtotal
                     if ($reg->ticket->memberBasePrice == $reg->subtotal && $person->is_member($event->orgID)) {
-                        $x = $request->header('user-agent');
+                        $x               = $request->header('user-agent');
                         $reg->debugNotes = "2nd Tkt Fail - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
-                        $reg->origcost = $reg->subtotal;
-                        $subtotal = $reg->subtotal;
+                        $reg->origcost   = $reg->subtotal;
+                        $subtotal        = $reg->subtotal;
                     } elseif ($reg->discountCode == 'N/A') {
-                        $x = $request->header('user-agent');
+                        $x               = $request->header('user-agent');
                         $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
-                        $reg->subtotal = $reg->origcost;
-                        $subtotal = $reg->origcost;
+                        $reg->subtotal   = $reg->origcost;
+                        $subtotal        = $reg->origcost;
                         if ($rf->cost == 0) {
                             $rf->cost = $subtotal;
                         }
                     } elseif ($dc->percent != 100) {
-                        $x = $request->header('user-agent');
+                        $x               = $request->header('user-agent');
                         $reg->debugNotes = "\$dc->percent fail - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
-                        $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
-                        $subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
+                        $reg->subtotal   = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
+                        $subtotal        = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
                         if ($rf->cost == 0) {
                             $rf->cost = $subtotal;
                         }
@@ -686,8 +689,8 @@ class RegistrationController extends Controller
 
                 $subcheck += $subtotal;
                 $sumtotal += $origcost;
-            } catch(\Exception $e) {
-                request()->session()->flash('alert-danger', implode(" ", [trans('messages.errors.reg_fail1', ['name' => $person->showFullName()]), $org->techContactStatement])).$e->getMessage();
+            } catch (\Exception $e) {
+                request()->session()->flash('alert-danger', implode(" ", [trans('messages.errors.reg_fail1', ['name' => $person->showFullName()]), $org->techContactStatement])) . $e->getMessage();
                 return redirect()->back()->withInput();
             }
         }
@@ -700,7 +703,6 @@ class RegistrationController extends Controller
         //    c. Associate non-waitlist reg records with $newRF
         //    d. Complete $0 waitlist transaction and set a flash message with link
         //    e. Redirect to confirm_registration pointing to $newRF for purchase
-
 
         if ($subcheck == $total) {
             $rf->discountAmt = $sumtotal - $subcheck;
@@ -726,10 +728,10 @@ class RegistrationController extends Controller
         /*
         // This is a temporary outgoing message re: Fatal Error when paying
         request()->session()->flash(
-            'alert-warning',
-            "You may see a 'Fatal Error' message after paying on the next screen.  Your registration is successfully processing.  Email vpfinance@pmimassbay.org for verification and further instructions."
+        'alert-warning',
+        "You may see a 'Fatal Error' message after paying on the next screen.  Your registration is successfully processing.  Email vpfinance@pmimassbay.org for verification and further instructions."
         );
-        */
+         */
         return redirect('/confirm_registration/' . $rf->regID);
     }
 
@@ -767,27 +769,27 @@ class RegistrationController extends Controller
         // Because allergenInfo, allergenNote (as eventNotes) and Industry are reported
         // in registrations and saved to the profile...
         if ($name == 'allergenInfo' && $value !== null) {
-            $value = implode(",", (array)$value);
+            $value                = implode(",", (array) $value);
             $person->allergenInfo = $value;
-            $person->updaterID = $updater;
+            $person->updaterID    = $updater;
             $person->save;
         } elseif ($name == 'eventNotes') {
             $person->allergenInfo = $value;
-            $person->updaterID = $updater;
+            $person->updaterID    = $updater;
             $person->save;
         } elseif ($name == 'indName') {
-            $person->indName = $value;
+            $person->indName   = $value;
             $person->updaterID = $updater;
             $person->save;
         } elseif ($name == 'affiliation') {
-            $value = implode(",", (array)$value);
+            $value               = implode(",", (array) $value);
             $person->affiliation = $value;
-            $person->updaterID = $updater;
+            $person->updaterID   = $updater;
             $person->save;
         }
 
         //$person            = Person::find($reg->personID);
-        $reg->{$name} = $value;
+        $reg->{$name}   = $value;
         $reg->updaterID = $updater;
         $reg->save();
     }
@@ -795,11 +797,11 @@ class RegistrationController extends Controller
     public function promote(Registration $reg)
     {
         $this->currentPerson = Person::find(auth()->user()->id);
-        $event = Event::find($reg->eventID);
-        $rf = RegFinance::find($reg->rfID);
+        $event               = Event::find($reg->eventID);
+        $rf                  = RegFinance::find($reg->rfID);
 
-        $rf->status = 'pending';
-        $rf->pmtType = 'door';
+        $rf->status    = 'pending';
+        $rf->pmtType   = 'door';
         $rf->updaterID = $this->currentPerson->personID;
         $rf->save();
 
@@ -822,11 +824,11 @@ class RegistrationController extends Controller
         // 3. Decrement registration count on ticket(s), sessions as needed
 
         $needSessionPick = 0;
-        $verb = strtolower(trans('messages.headers.canceled'));
-        $event = Event::find($reg->eventID);
-        $org = Org::find($event->orgID);
-        $flag_dupe = 0;
-        $dupe_names = [];
+        $verb            = strtolower(trans('messages.headers.canceled'));
+        $event           = Event::find($reg->eventID);
+        $org             = Org::find($event->orgID);
+        $flag_dupe       = 0;
+        $dupe_names      = [];
         $rf->load('registrations');
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -842,7 +844,7 @@ class RegistrationController extends Controller
                         $dupe_check = Registration::where([
                             ['personID', $reg_chk->personID],
                             ['eventID', $event->eventID],
-                            ['regStatus', 'processed']
+                            ['regStatus', 'processed'],
                         ])->with('person')->first();
 
                         if (null !== $dupe_check) {
@@ -870,7 +872,7 @@ class RegistrationController extends Controller
                         "charge" => $rf->stripeChargeID,
                     ));
                     $reg->regStatus = 'refunded';
-                    $rf->status = 'refunded';
+                    $rf->status     = 'refunded';
                     $rf->save();
                     $reg->save();
 
@@ -893,8 +895,8 @@ class RegistrationController extends Controller
                         "amount" => $reg->subtotal * 100,
                     ));
                     $reg->regStatus = 'refunded';
-                    $rf->status = 'partial';
-                    $verb = strtolower(trans('messages.headers.refunded'));
+                    $rf->status     = 'partial';
+                    $verb           = strtolower(trans('messages.headers.refunded'));
                     $rf->save();
                     $reg->save();
 
@@ -903,21 +905,21 @@ class RegistrationController extends Controller
                     // Generate Refund Email
                 } catch (\Exception $e) {
                     request()->session()->flash('alert-danger', trans('messages.messages.partial_fail',
-                            ['rfid' => $rf->regID]) . $org->adminContactStatement);
+                        ['rfid' => $rf->regID]) . $org->adminContactStatement);
                 }
                 $reg->delete();
             }
         } elseif ($rf->seats > 1) {
             // decided against decrementing original seat count
             $reg->regStatus = 'canceled';
-            $rf->status = 'p_canceled';
+            $rf->status     = 'p_canceled';
             $rf->save();
             $reg->save();
             $reg->delete();
             $verb = strtolower(trans('messages.headers.canceled'));
         } else {
             $reg->regStatus = 'canceled';
-            $rf->status = 'canceled';
+            $rf->status     = 'canceled';
             $rf->save();
             $reg->save();
             $reg->delete();

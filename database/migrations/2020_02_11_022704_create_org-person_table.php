@@ -16,7 +16,7 @@ class CreateOrgPersonTable extends Migration {
 		{
 			$table->integer('id', true);
 			$table->integer('orgID')->index('op-orgID_idx');
-			$table->integer('personID')->index('op-personID_idx');
+			$table->integer('personID')->unsigned()->index('op-personID_idx');
 			$table->string('chapterRole', 100)->nullable();
 			$table->boolean('isAdmin')->default(0);
 			$table->integer('adminLevel')->default(0);

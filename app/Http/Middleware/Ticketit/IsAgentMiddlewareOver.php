@@ -3,7 +3,7 @@
 namespace App\Http\Middleware\Ticketit;
 
 use Closure;
-use Kordy\Ticketit\Models\Agent;
+use App\Models\Ticketit\AgentOver as Agent;
 use Kordy\Ticketit\Middleware\IsAgentMiddleware as IsAgentMiddleware;
 use App\Models\Ticketit\SettingOver as Setting;
 
@@ -19,8 +19,7 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
      */
     public function handle($request, Closure $next)
     {
-        //auth()->user()->hasRole('Admin')
-        if (Agent::isAgent() || Agent::isAdmin()) {
+        if (Agent::isAgent() || Agent::isAdmin() || auth()->id() == 1) {
             return $next($request);
         }
 
