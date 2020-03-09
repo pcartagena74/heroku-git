@@ -68,12 +68,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if (env('APP_ENV') == 'local' || true) {
+        if (env('APP_ENV') == 'local') {
             return parent::render($request, $exception);
-        }
-
-        if($exception instanceof \Symfony\Component\Debug\Exception\FatalErrorException) {
-            return response()->view('errors.genericException', ['code' => 400, 'description' => $exception->getMessage()], 400);
         }
 
         if ($exception instanceof \Illuminate\Database\QueryException) {
