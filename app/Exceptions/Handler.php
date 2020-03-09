@@ -72,6 +72,10 @@ class Handler extends ExceptionHandler
             return parent::render($request, $exception);
         }
 
+        if($exception instanceof \Symfony\Component\Debug\Exception\FatalErrorException) {
+            return response()->view('errors.genericException', ['code' => 400, 'description' => $exception->getMessage()], 400);
+        }
+
         if ($exception instanceof \Illuminate\Database\QueryException) {
             return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
         }
