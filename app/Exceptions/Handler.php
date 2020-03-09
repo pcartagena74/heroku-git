@@ -15,6 +15,7 @@ class Handler extends ExceptionHandler
 {
     public function __construct()
     {
+        parent::setUp();
 
     }
     /**
