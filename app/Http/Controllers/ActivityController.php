@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
 use App\Event;
-use App\Org;
 use App\Person;
 use App\RegFinance;
 use App\Registration;
@@ -14,7 +13,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Builder;
 use Session;
 
 class ActivityController extends Controller
@@ -28,51 +26,51 @@ class ActivityController extends Controller
     {
         // responds to GET /upcoming
         $this->currentPerson = Person::find(auth()->user()->id);
-        $now = Carbon::now();
+        $now                 = Carbon::now();
 
         // Registrations bought by someone else for $this->currentPerson
         $bought = Registration::where('personID', $this->currentPerson->personID)
             ->whereHas(
                 'event', function ($q) {
-                $q->where('eventEndDate', '>=', Carbon::now());
-            })
+                    $q->where('eventEndDate', '>=', Carbon::now());
+                })
             ->whereHas(
                 'regfinance', function ($q) {
-                $q->where('personID', '!=', $this->currentPerson->personID);
-                $q->where('pmtRecd', '=', 1);
-            })
+                    $q->where('personID', '!=', $this->currentPerson->personID);
+                    $q->where('pmtRecd', '=', 1);
+                })
             ->with('event', 'ticket', 'person', 'regfinance')
             ->get()->sortBy('event.eventStartDate');
 
         $paid = RegFinance::whereHas(
             'event', function ($q) {
-            $q->where('eventEndDate', '>=', Carbon::now());
-        })
+                $q->where('eventEndDate', '>=', Carbon::now());
+            })
             ->with('event', 'person', 'registrations')
             ->where([
                 ['personID', '=', $this->currentPerson->personID],
-                ['pmtRecd', '=', 1]
+                ['pmtRecd', '=', 1],
             ])
             ->get()->sortBy('event.eventStartDate');
 
         $unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
             ->whereHas(
                 'event', function ($q) {
-                $q->where('eventEndDate', '>=', Carbon::now());
-            })
+                    $q->where('eventEndDate', '>=', Carbon::now());
+                })
             ->with('event', 'person', 'registrations')
             ->whereHas(
                 'registrations', function ($q) {
-                $q->where('pmtRecd', '=', 0);
-            })
+                    $q->where('pmtRecd', '=', 0);
+                })
             ->whereIn('status', ['pending'])
             ->get()->sortBy('event.eventStartDate');
 
         $pending = RegFinance::whereHas(
             'event', function ($q) {
-            $q->where('eventEndDate', '>=', Carbon::now())
-                ->orderBy('eventStartDate');
-        })
+                $q->where('eventEndDate', '>=', Carbon::now())
+                    ->orderBy('eventStartDate');
+            })
             ->with('event', 'person', 'registrations')
             ->where('personID', '=', $this->currentPerson->personID)
             ->whereIn('status', ['pending', 'progress'])
@@ -81,13 +79,13 @@ class ActivityController extends Controller
         $wait = RegFinance::where('personID', '=', $this->currentPerson->personID)
             ->whereHas(
                 'event', function ($q) {
-                $q->where('eventEndDate', '>=', Carbon::now());
-            })
+                    $q->where('eventEndDate', '>=', Carbon::now());
+                })
             ->with('event', 'person', 'registrations')
             ->whereHas(
                 'registrations', function ($q) {
-                $q->where('pmtRecd', '=', 0);
-            })
+                    $q->where('pmtRecd', '=', 0);
+                })
             ->whereIn('status', ['wait'])
             ->get()->sortBy('event.eventStartDate');
 
@@ -98,11 +96,11 @@ class ActivityController extends Controller
 
     public function index()
     {
-        
+
         // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
-        $orgID = $this->currentPerson->defaultOrgID;
-        $today = Carbon::now();
+        $orgID               = $this->currentPerson->defaultOrgID;
+        $today               = Carbon::now();
 
         $attendance = Event::where('er.personID', '=', $this->currentPerson->personID)
             ->join('org-event_types as oet', function ($join) {
@@ -111,7 +109,7 @@ class ActivityController extends Controller
             ->whereIn('oet.orgID', [1, $orgID])
             ->where([
                 ['org-event.orgID', '=', $orgID],
-                ['eventEndDate', '<', $today]
+                ['eventEndDate', '<', $today],
             ])
             ->whereNull('er.deleted_at')
             ->where(function ($w) {
@@ -131,7 +129,7 @@ class ActivityController extends Controller
                 . $this->currentPerson->personID . " and er2.deleted_at is null) as 'attended'"))
             ->where([
                 ['orgID', $orgID],
-                ['eventEndDate', '<', $today]
+                ['eventEndDate', '<', $today],
             ])->whereIn('eventTypeID', [1, 9])
             ->whereHas('event_type', function ($q) use ($orgID) {
                 $q->whereIn('orgID', array(1, $orgID));
@@ -143,9 +141,9 @@ class ActivityController extends Controller
         $datastring = "";
         $myevents[] = null;
         foreach ($bar2 as $bar_row) {
-            $label = $bar_row->eventStartDate->format('M Y') . " " . $bar_row->event_type->etName;
+            $label  = $bar_row->eventStartDate->format('M Y') . " " . $bar_row->event_type->etName;
             $attend = $bar_row->registrations_count;
-            $there = $bar_row->attended;
+            $there  = $bar_row->attended;
 
             if ($there == 1) {
                 array_push($myevents, $label);
@@ -186,15 +184,15 @@ class ActivityController extends Controller
     public function networking(Request $request)
     {
         // responds to POST to /networking
-        $eventID = request()->input('eventID');
+        $eventID   = request()->input('eventID');
         $eventName = request()->input('eventName');
 
         $er = Registration::where([
             ['eventID', '=', $eventID],
-            ['canNetwork', '=', 1]
+            ['canNetwork', '=', 1],
         ])
             ->join('person as p', 'event-registration.personID', '=', 'p.personID')
-            //    ->distinct()
+        //    ->distinct()
             ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'p.indName')
             ->distinct()
             ->orderBy('p.lastName', 'asc')
@@ -212,8 +210,8 @@ class ActivityController extends Controller
     {
         // triggered by POST /become
 
-        $new_id = request()->input('new_id');
-        $cancel = request()->input('cancel');
+        $new_id   = request()->input('new_id');
+        $cancel   = request()->input('cancel');
         $prior_id = auth()->user()->id;
 
         // "Become" by logging in the $new_id

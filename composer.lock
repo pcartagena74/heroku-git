@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "05e648a085c1871ae3d6783fedc31c81",
+    "content-hash": "f5375ccf0b238f7ba0b49fb7328225b4",
     "packages": [
         {
             "name": "aws/aws-php-sns-message-validator",
@@ -141,7 +141,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-29T00:41:14+00:00"
+            "time": "2020-03-06T19:16:46+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
