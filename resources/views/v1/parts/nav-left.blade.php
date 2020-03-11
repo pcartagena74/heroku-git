@@ -67,7 +67,7 @@ try{
         </div>
         <br>
             <div class="main_menu_side hidden-print main_menu" id="sidebar-menu">
-                <div class="menu_section">
+                <div class="menu_sections">
                     <h3>
                     </h3>
                     <ul class="nav side-menu">
@@ -133,6 +133,11 @@ try{
                                     </a>
                                 </li>
                                 @if(Entrust::hasRole('Developer'))
+                                <li>
+                                    <a href="{{ url('create_organization')}}">
+                                        @lang('messages.nav.ad_new_org')
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="{{ url('/')}}/panel">
                                         @lang('messages.nav.ad_panel')
@@ -343,7 +348,7 @@ try{
                                 </span>
                             </a>
                             <ul class="nav child_menu">
-                                @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                                @if((Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) && auth()->id() == 1)
                                 <li>
                                     <a href="{{ url('tickets-admin')}}">
                                         @lang('messages.nav.h_dash')

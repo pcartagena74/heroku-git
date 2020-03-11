@@ -336,7 +336,7 @@ return [
         'validate'                => 'es-Validate',
         'years'                   => 'es-Years',
         'zip'                     => 'es-Zip',
-        'org_name'                => 'es-Organization Name',
+        'org_name'                => 'es-Organization Name*',
         'formal_name'             => 'es-Formal/Corporate Name',
         'org_addr1'               => 'es-Address Line 1',
         'org_addr2'               => 'es-Address Line 2',
@@ -347,7 +347,7 @@ return [
         'admin_email'             => 'es-Admin Email',
         'facebook_url'            => 'es-Facebook URL',
         'org_website'             => 'es-Organization Website',
-        'credit_label'            => 'es-Credit Label',
+        'credit_label'            => 'es-Credit Label*',
         'twitter_handle'          => 'es-Twitter Handle',
         'admin_contact_statement' => 'es-Admin Contact Statement',
         'tech_contact_statement'  => 'es-Tech Contact Statement',
@@ -578,8 +578,10 @@ return [
         'website'             => 'es-Website',
         'your'                => 'es-Your',
         'select_organization' => 'es-Select Organization',
-        'select_user'         => 'es-Select User Type a few characters of a first or last name, email address or PMI ID.',
+        'select_user'         => 'es-Select User',
+        'select_user_hint'    => 'es-Type a few characters of a first or last name, email address or PMI ID.',
         'create_user'         => 'es-Create User',
+
     ],
 
     'subheaders'             => [
@@ -821,6 +823,7 @@ return [
         'o_create'    => 'es-Create New Organization',
         'en_local'    => 'Inglés',
         'es_local'    => 'Spanish',
+        'ad_new_org'  => 'es-Create New Organization',
     ],
 
     'notifications'          => [
@@ -1189,6 +1192,11 @@ return [
         'no_msg_available'    => 'es-Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'       => 'es-Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
     ],
+
+    'validation'             => [
+        'create_org_existing_user' => 'Please select one existing user',
+    ],
+
     'page_generic_exception' => [
         'report_this'   => 'es-Report This?',
         'report_issue'  => 'es-Report Issue',

@@ -824,6 +824,7 @@ return [
         'en_local'    => 'English',
         'es_local'    => 'Español',
         'ad_new_org'  => 'Create New Organization',
+        
     ],
 
     'notifications'          => [
