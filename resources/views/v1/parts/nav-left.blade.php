@@ -134,6 +134,11 @@ try{
                                 </li>
                                 @if(Entrust::hasRole('Developer'))
                                 <li>
+                                    <a href="{{ url('create_organization')}}">
+                                        @lang('messages.nav.ad_new_org')
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="{{ url('/')}}/panel">
                                         @lang('messages.nav.ad_panel')
                                     </a>
@@ -343,7 +348,7 @@ try{
                                 </span>
                             </a>
                             <ul class="nav child_menu">
-                                @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                                @if((Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) && auth()->id() == 1)
                                 <li>
                                     <a href="{{ url('tickets-admin')}}">
                                         @lang('messages.nav.h_dash')

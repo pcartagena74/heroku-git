@@ -21,12 +21,12 @@
                     </h2> 
                     @auth
                         <a onclick="show()" style="cursor: pointer;" id="report_this">
-                            Report this?
+                            {{ trans('messages.page_generic_exception.report_this') }}
                         </a>
                     </div>
                     <div class="mid_center" style="display:none">
                         <h3>
-                            Report Issue
+                            {{ trans('messages.page_generic_exception.report_issue') }}
                         </h3>
                         {{ Form::open(['url' => url('reportissue'), 'method' => 'post']) }}
                         <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_PUBLIC_KEY')  }}" id="feedback-recaptcha">
@@ -36,7 +36,7 @@
                         {{-- Add Captcha --}}
                         <div class="col-xs-12 form-group pull-right top_search">
                             <div class="input-group">
-                                <input class="form-control custom-control" id="subject" placeholder="Subject" required=""/>
+                                <input class="form-control custom-control" id="subject" placeholder="{{trans('messages.page_generic_exception.place_subject')}}" required=""/>
                                 <span class="input-group-addon btn btn-primary" style="border-radius: 0px 25px 25px 0px;" readonly>
                                     <i aria-hidden="true" class="fa fa-pencil">
                                     </i>
@@ -52,7 +52,7 @@
                                 <span class="error" id="error_content">
                                 </span>
                                 <span class="input-group-addon btn btn-primary" onclick="submitIssue()" style="border-radius: 0px 25px 25px 0px;">
-                                    Go!
+                                    {{ trans('messages.page_generic_exception.btn_go') }}
                                 </span>
                             </div>
                         </div>
