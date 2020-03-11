@@ -66,8 +66,8 @@ class Handler extends ExceptionHandler
     {
         if ($request->hasCookie('locale')) {
             $cookie = $request->cookie('locale');
-            $locale = strlen($cookie) > 2 ? decrypt($cookie,false) : $cookie;
-            if(in_array($locale, \Config::get('app.locales'))){
+            $locale = strlen($cookie) > 2 ? decrypt($cookie, false) : $cookie;
+            if (in_array($locale, \Config::get('app.locales'))) {
                 app()->setLocale($locale);
             } else {
                 app()->setLocale($locale);
@@ -75,7 +75,7 @@ class Handler extends ExceptionHandler
         }
 
         if (env('APP_ENV') == 'local') {
-            // return parent::render($request, $exception);
+            return parent::render($request, $exception);
         }
 
         if ($exception instanceof \Illuminate\Database\QueryException) {
@@ -84,6 +84,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \jdavidbakr\MailTracker\Exceptionmails\BadUrlLink) {
             return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
         }
+
         if ($this->isHttpException($exception)) {
             switch ($exception->getStatusCode()) {
                 case 404:
@@ -113,19 +114,20 @@ class Handler extends ExceptionHandler
 
         }
 
+        if ($exception instanceof AuthenticationException) {
+            return parent::render($request, $exception);
+        }
+        
         if ($exception instanceof TokenMismatchException) {
             return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
         }
+
         if ($exception instanceof InvalidArgumentException) {
             if (env('APP_ENV') == 'local') {
                 dd(get_defined_vars());
             } else {
                 return response()->view('errors.genericException', ['code' => 500, 'description' => trans('messages.exceptions.error_500')], 500);
             }
-        }
-
-        if ($exception instanceof AuthenticationException) {
-            return parent::render($request, $exception);
         }
 
         if ($exception) {
