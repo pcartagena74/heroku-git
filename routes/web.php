@@ -39,6 +39,8 @@ Route::get('setlocale/{locale}', function ($locale) {
             $user->locale = $locale;
             $user->update();
         }
+    } else {
+        $locale = Config::get('app.locale');
     }
     session(['locale' => $locale]);
     Cookie::queue('locale', $locale, 60);

@@ -5,19 +5,19 @@
  */
 
 return [
-    'auth'         => [
+    'auth'                   => [
         'account'  => 'Tienes una cuenta? Inicio de sesión',
         'forgot'   => 'Forgot Password?',
         'remember' => 'Acuérdate De Mí',
     ],
 
-    'actions'      => [
+    'actions'                => [
         'add'    => 'Añadir ',
         'merge'  => 'Merge',
         'remove' => 'Quitar ',
     ],
 
-    'admin'        => [
+    'admin'                  => [
         'upload' => [
             'count'    => 'Antes de subir de :número de registros, éxito.',
             'evtdata'  => 'Caso de los registros de',
@@ -30,11 +30,11 @@ return [
         ],
     ],
 
-    'alt_txt'      => [
+    'alt_txt'                => [
         'avatar' => 'Avatar De Usuario/Imagen',
     ],
 
-    'buttons'      => [
+    'buttons'                => [
         'add_disc'       => 'es-Add Discount',
         'add_def_disc'   => 'es-Add Default Organizational Discount Codes',
         'add_tkt'        => 'es-Add Tickets',
@@ -84,7 +84,7 @@ return [
         'wait'           => 'es-Join the Wait List',
     ],
 
-    'codes'        => [
+    'codes'                  => [
         'invalid_code' => 'es-Invalid Code: \':code\'',
         'invalid_id'   => 'es-The :id is not valid.',
         'valid'        => 'es-Code: \':code\' provides a :disc discount.',
@@ -95,18 +95,18 @@ return [
     ],
 
     // Common words that are often reused
-    'common'       => [
+    'common'                 => [
         'reminder' => 'es-Reminder',
     ],
 
-    'directions'   => [
+    'directions'             => [
         'org' => [
             'fullname' => 'es-Enter complete, formal/corporate name',
             'display'  => 'es-Enter display name',
         ],
     ],
 
-    'errors'       => [
+    'errors'                 => [
         'become_error'              => 'es-The id entered, :id, is invalid.',
         'corruption'                => 'es-Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check',
         'event'                     => 'es-Please select an event.',
@@ -135,16 +135,16 @@ return [
         'user_not_found'            => 'es-Unable to find user. Please select from search or create new.',
     ],
 
-    'flashes'      => [
+    'flashes'                => [
         'merge_failure'    => 'The attempt to merge the records has failed.<br />:e',
         'password_success' => 'The password for the account with the login: :login was set successfully.',
     ],
 
-    'email_txt'    => [
+    'email_txt'              => [
         'for_det_visit' => 'For details, visit',
     ],
 
-    'event_types'  => [
+    'event_types'            => [
         'Chapter Meeting'  => 'es-Chapter Meeting|Chapter Meetings',
         'Roundtable'       => 'es-Roundtable|Roundtables',
         'PD Day'           => 'es-PDC|PDCs',
@@ -154,7 +154,7 @@ return [
         'Annual Meeting'   => 'es-Annual Meeting|Annual Meetings',
     ],
 
-    'fields'       => [
+    'fields'                 => [
 
         'abstract'                => 'es-Abstract',
         'aCost'                   => 'es-Additional Cost',
@@ -269,7 +269,7 @@ return [
         'loc_name'                => 'es-Location Name',
         'login'                   => 'es-Email Address',
         //'login' => 'Login',es-
-        'member'=> 'es-Member',
+        'member'                  => 'es-Member',
         'memcost'                 => 'es-PMI Member Cost',
         'memprice'                => 'es-Member Price',
         'midName'                 => 'es-Middle Name',
@@ -354,7 +354,7 @@ return [
         'org_path'                => 'es-Organization Path',
     ],
 
-    'headers'      => [
+    'headers'                => [
         'acc_lookup'          => 'es-Account Lookup',
         'accept_cash'         => 'es-Do you want to allow attendees to \'PayattheDoor ? \'',
         'add'                 => 'es-Add Event Type|Add Additional Event Types',
@@ -582,24 +582,24 @@ return [
         'create_user'         => 'es-Create User',
     ],
 
-    'subheaders'   => [
+    'subheaders'             => [
         'expand_min' => 'es-Click the arrow to expand this section.',
     ],
 
-    'instructions' => [
-        'add_speaker'      => 'es-to add speakers to this list, register the person to an event using a speaker discount code.',
-        'bar_chart'        => 'es-Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.',
-        'become_instr'     => 'es-Find a person by searching for that person\'s first or last name, email address, or PMI ID',
-        'become_id'        => 'es-Enter the first (left-most) number from the field above. ',
-        'bundle_setup'     => 'es-If you need to create a \'bundle\' ticket, do so after adding <b>all</b> of its component (non-bundle) tickets.',
-        'card_error'       => 'es-There was an error with the card used.  ',
-        'customURL'        => 'es-Please enter a custom URL.',
-        'early_bird'       => 'es-<span style=\'color:red;\'>Act Now!</span> Early Bird Pricing in Effect until ',
-        'early_values'     => 'es-Changing the date or discount percent will apply to all associated tickets shown below or created.',
-        'ev_defaults'      => 'es-Default values for this event only.',
-        'ev_discounts'     => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here are active for this event.<br>' .
+    'instructions'           => [
+        'add_speaker'                 => 'es-to add speakers to this list, register the person to an event using a speaker discount code.',
+        'bar_chart'                   => 'es-Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.',
+        'become_instr'                => 'es-Find a person by searching for that person\'s first or last name, email address, or PMI ID',
+        'become_id'                   => 'es-Enter the first (left-most) number from the field above. ',
+        'bundle_setup'                => 'es-If you need to create a \'bundle\' ticket, do so after adding <b>all</b> of its component (non-bundle) tickets.',
+        'card_error'                  => 'es-There was an error with the card used.  ',
+        'customURL'                   => 'es-Please enter a custom URL.',
+        'early_bird'                  => 'es-<span style=\'color:red;\'>Act Now!</span> Early Bird Pricing in Effect until ',
+        'early_values'                => 'es-Changing the date or discount percent will apply to all associated tickets shown below or created.',
+        'ev_defaults'                 => 'es-Default values for this event only.',
+        'ev_discounts'                => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here are active for this event.<br>' .
         'Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.',
-        'ev_loc'           => 'es-This is a listing of locations used for all of the events that have been entered.
+        'ev_loc'                      => 'es-This is a listing of locations used for all of the events that have been entered.
                     <ul>
                     <li>You can add new locations here <b>OR</b> when adding/editing an event.</li>
                     <li>To edit any field, click on the table cell, edit the value and hit enter.</li>
@@ -612,7 +612,7 @@ return [
                     location.<br/>
                     </li>
                     </ul>',
-        'group_reg'        => 'es-You can register up to 15 attendees for this event at a time.<br />
+        'group_reg'                   => 'es-You can register up to 15 attendees for this event at a time.<br />
                         <b>Please keep the following in mind:</b>
                         <ul>
                         <li>Attendees will need to have records in this system.  You can find them by typing
@@ -621,80 +621,80 @@ return [
                         <li>If this event has sessions, you will <b>NOT</b> be able to select them for the attendees.</li>
                         <li>An email confirmation will be sent to each attendee, with a link to select sessions if applicable.</li>
                         </ul>',
-        'group_reg_search' => 'es-Type at least 3 characters.  The more unique, the better your chances of narrowing down your selection.',
-        'inactive'         => 'es-This event is no longer active.',
-        'link_sess_1'      => 'es-Click this checkbox to indicate that this session will overlap other session time slots.',
-        'link_sess_2'      => 'es-Click this checkbox to indicate that this session time is overlapped by the session \'above\' this one.',
-        'login'            => 'es-You have an account that we\'ve created for you. Please click the login button.
+        'group_reg_search'            => 'es-Type at least 3 characters.  The more unique, the better your chances of narrowing down your selection.',
+        'inactive'                    => 'es-This event is no longer active.',
+        'link_sess_1'                 => 'es-Click this checkbox to indicate that this session will overlap other session time slots.',
+        'link_sess_2'                 => 'es-Click this checkbox to indicate that this session time is overlapped by the session \'above\' this one.',
+        'login'                       => 'es-You have an account that we\'ve created for you. Please click the login button.
                      mCentric has emailed you instructions to reset your password if necessary.<br /> If you do not receive the email: :admin',
-        'login_new'        => 'es-You have an account that we\'ve created for you, but no password has been set.
+        'login_new'                   => 'es-You have an account that we\'ve created for you, but no password has been set.
                      mCentric has emailed you instructions to set your password if necessary.<br /> If you do not receive the email: :admin',
-        'max_reached'      => 'es-Maximum attendees reached. You can request a session change at the conference if there is space.',
-        'mbr_price'        => 'es-Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.',
-        'mbr_search'       => 'es-<ol><li>Type a few characters of a first or last name, email address or PMI ID.</li><li>Hit enter, or click the button, to display all results.</li></ol>',
-        'merge_dupe'       => 'es-{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.',
-        'merge_notes'      => 'es-{p}<b class=\'red\'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
+        'max_reached'                 => 'es-Maximum attendees reached. You can request a session change at the conference if there is space.',
+        'mbr_price'                   => 'es-Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.',
+        'mbr_search'                  => 'es-<ol><li>Type a few characters of a first or last name, email address or PMI ID.</li><li>Hit enter, or click the button, to display all results.</li></ol>',
+        'merge_dupe'                  => 'es-{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.',
+        'merge_notes'                 => 'es-{p}<b class=\'red\'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
                             <p></p><b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI\'s records for PDU reconciliation.' .
         '|{l}<b class=\'red\'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.',
-        'merge_overwrite'  => 'es-If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.',
-        'merge_survive'    => 'es-{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.',
-        'name_change'      => 'es-You need to contact PMI directly to change this data.',
-        'name_change_ok'   => 'es-You are able to edit these fields as an Admin.  Please only do so if you know PMI\'s records reflect the change.',
-        'need_to_login'    => 'es-An mCentric account was found for you. <b style=\'color:red;\'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.',
-        'no_deadbeats'     => 'es-There are no pending payments for this event at this time.',
-        'no_event'         => 'es-Cannot find event',
-        'no_events'        => 'es-There are no <b class=\'red\'>active</b> future events at this time.',
-        'no_fut_events'    => 'es-You have not registered for any upcoming events.',
-        'no_org'           => 'es-The requested organization does not exist.',
-        'no_org_disc'      => 'es-<b style=\'color: darkorange;\'>WARNING:</b><br />No organizational discounts have been added to
+        'merge_overwrite'             => 'es-If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.',
+        'merge_survive'               => 'es-{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.',
+        'name_change'                 => 'es-You need to contact PMI directly to change this data.',
+        'name_change_ok'              => 'es-You are able to edit these fields as an Admin.  Please only do so if you know PMI\'s records reflect the change.',
+        'need_to_login'               => 'es-An mCentric account was found for you. <b style=\'color:red;\'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.',
+        'no_deadbeats'                => 'es-There are no pending payments for this event at this time.',
+        'no_event'                    => 'es-Cannot find event',
+        'no_events'                   => 'es-There are no <b class=\'red\'>active</b> future events at this time.',
+        'no_fut_events'               => 'es-You have not registered for any upcoming events.',
+        'no_org'                      => 'es-The requested organization does not exist.',
+        'no_org_disc'                 => 'es-<b style=\'color: darkorange;\'>WARNING:</b><br />No organizational discounts have been added to
                           this event.  If you wish to add them, do it now via the button below.',
-        'no_password'      => 'es-An mCentric account was found for you and its password has not been set. ' .
+        'no_password'                 => 'es-An mCentric account was found for you and its password has not been set. ' .
         'You will need to set it and login to complete your registration. ' .
         'Click to <a style="color: red;" href="' . env("APP_URL") . ' /password/reset">reset it now.</a>',
-            'no_pmiID'                    => 'es-Or, if you do not have a PMI ID, enter your email address.',
-            'no_pmiID_zero'               => 'es-Enter 0 if you are not a PMI member',
-            'no_reg_sess'                 => 'es-You have not yet registered for sessions. You can do so below.',
-            'no_reg_sess_init'            => 'es-Please make session selections below.  You will be able to make changes to your selections prior to the event.',
-            'no_regs'                     => 'es-There are no attendees registered for this event at this time.',
-            'no_user_pass'                => 'es-This user has not set a password.',
-            'no_waits'                    => 'es-There are no interrupted or wait listed registrations for this event at this time.',
-            'not_self'                    => 'es-If you are not logged in, and do not already have an account, this first ticket must be for you.',
-            'one-at-time'                 => 'es-The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.',
-            'org_disc'                    => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here will be applied to all new events as they are created.' .
-            '<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
-            'pmiID'                       => 'es-Please enter your PMI Identification Number.',
-            'pmiID_found'                 => 'es-<h2>An mCentric account was found for PMI ID: :pmiID.</h2>' .
-            'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
-            'pmi_pass'                    => 'es-{0}<p>The acccount password has been set. <br />' .
-            'If you don\'t remember your password, you can <a class=\'red\' href=\'/password/reset\'>reset</a> it.  Otherwise, <a class=\'red\' href=\'/login\'>login</a>.<br />' .
-            '<a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Reset Password</a> &nbsp; <a class=\'btn btn-success btn-xs\' href=\'/login\'>Login</a> </p>' .
-            '|{1}<p>The account password has <b class=\'red\'>not</b> been set. <br />' .
-            'If you have access to the login email, you can <a class=\'red\' href=\'/password/reset\'>begin</a> the password setting process now.<br />
+        'no_pmiID'                    => 'es-Or, if you do not have a PMI ID, enter your email address.',
+        'no_pmiID_zero'               => 'es-Enter 0 if you are not a PMI member',
+        'no_reg_sess'                 => 'es-You have not yet registered for sessions. You can do so below.',
+        'no_reg_sess_init'            => 'es-Please make session selections below.  You will be able to make changes to your selections prior to the event.',
+        'no_regs'                     => 'es-There are no attendees registered for this event at this time.',
+        'no_user_pass'                => 'es-This user has not set a password.',
+        'no_waits'                    => 'es-There are no interrupted or wait listed registrations for this event at this time.',
+        'not_self'                    => 'es-If you are not logged in, and do not already have an account, this first ticket must be for you.',
+        'one-at-time'                 => 'es-The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.',
+        'org_disc'                    => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here will be applied to all new events as they are created.' .
+        '<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
+        'pmiID'                       => 'es-Please enter your PMI Identification Number.',
+        'pmiID_found'                 => 'es-<h2>An mCentric account was found for PMI ID: :pmiID.</h2>' .
+        'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
+        'pmi_pass'                    => 'es-{0}<p>The acccount password has been set. <br />' .
+        'If you don\'t remember your password, you can <a class=\'red\' href=\'/password/reset\'>reset</a> it.  Otherwise, <a class=\'red\' href=\'/login\'>login</a>.<br />' .
+        '<a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Reset Password</a> &nbsp; <a class=\'btn btn-success btn-xs\' href=\'/login\'>Login</a> </p>' .
+        '|{1}<p>The account password has <b class=\'red\'>not</b> been set. <br />' .
+        'If you have access to the login email, you can <a class=\'red\' href=\'/password/reset\'>begin</a> the password setting process now.<br />
              <a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Set Password</a></p>' .
-            '<p>If you do not receive an email with a link to set your password, check your spam folder and/or email
+        '<p>If you do not receive an email with a link to set your password, check your spam folder and/or email
              :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>',
-            'pmi_emails'                  => 'es-The following email address(es) are associated with this account: <ul>:emails</ul><p></p>' .
-            'If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email',
-            'pmiID_not_found'             => 'es-{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|' .
-            '[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.',
-            'postRegInfo'                 => 'es-Anything added here will be displayed and emailed to attendees AFTER they\'ve registered.',
-            'pro_change_err'              => 'es-There was an error while attempting to change your profile.',
-            'pw_conf'                     => 'es-Confirm your password',
-            'pw_set'                      => 'es-Set a password',
-            'quantity'                    => 'es-The quantity for at least one ticket must be greater than 0.',
-            'reg_sess'                    => 'es-You can review and/or modify your session registrations below.',
-            'role_toggle'                 => 'es-The role :role was toggled for :person.',
-            'role_txt'                    => 'es-The values in these tables are not editable and are here for informational purposes only.',
-            'select_event'                => 'es-Select the event for registration',
-            'survey_instructions'         => 'es-Please provide your objective feedback so that we may continuously improve the value
+        'pmi_emails'                  => 'es-The following email address(es) are associated with this account: <ul>:emails</ul><p></p>' .
+        'If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email',
+        'pmiID_not_found'             => 'es-{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|' .
+        '[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.',
+        'postRegInfo'                 => 'es-Anything added here will be displayed and emailed to attendees AFTER they\'ve registered.',
+        'pro_change_err'              => 'es-There was an error while attempting to change your profile.',
+        'pw_conf'                     => 'es-Confirm your password',
+        'pw_set'                      => 'es-Set a password',
+        'quantity'                    => 'es-The quantity for at least one ticket must be greater than 0.',
+        'reg_sess'                    => 'es-You can review and/or modify your session registrations below.',
+        'role_toggle'                 => 'es-The role :role was toggled for :person.',
+        'role_txt'                    => 'es-The values in these tables are not editable and are here for informational purposes only.',
+        'select_event'                => 'es-Select the event for registration',
+        'survey_instructions'         => 'es-Please provide your objective feedback so that we may continuously improve the value
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.',
-            'sold_out'                    => 'es-Sold Out! Register to add yourself to the wait list.',
-            'sold_out2'                   => 'es-This ticket is sold out.',
-            'tkt_setup'                   => 'es-Creating additional tickets is typically only necessary for Professional Development Day events.',
-            'total_caveat'                => 'es-Total does NOT reflect updates due to refunds.',
-            'tracks'                      => 'es-Here are this event\'s :n tracks and its sessions from which attendees can choose
+        'sold_out'                    => 'es-Sold Out! Register to add yourself to the wait list.',
+        'sold_out2'                   => 'es-This ticket is sold out.',
+        'tkt_setup'                   => 'es-Creating additional tickets is typically only necessary for Professional Development Day events.',
+        'total_caveat'                => 'es-Total does NOT reflect updates due to refunds.',
+        'tracks'                      => 'es-Here are this event\'s :n tracks and its sessions from which attendees can choose
                      to participate.<br/> This does not show any full-group keynotes, lunch or evening sessions.',
-            'track_setup'                 => 'es-
+        'track_setup'                 => 'es-
             <li>If the majority of your times are standard for the event tracks, choose Yes to begin. <br/>
                 You can change this later to edit the unique track/session times.
             </li>
@@ -705,489 +705,494 @@ return [
             <li>PDU values are calculated based on the end date/time - start date/time.</li>
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
         ',
-            'userid'                      => 'es-This has been autopopulated and cannot be edited.',
-            'waitlist'                    => 'es-Registering will secure a spot on the wait list. You will not be charged at this time.|
+        'userid'                      => 'es-This has been autopopulated and cannot be edited.',
+        'waitlist'                    => 'es-Registering will secure a spot on the wait list. You will not be charged at this time.|
                    Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
-            'select_default_organization' => 'es-Select One Organization to make it your default and switch to it',
+        'select_default_organization' => 'es-Select One Organization to make it your default and switch to it',
+    ],
+
+    'mCentric_text'          => [
+        'hosted_event' => 'es-mCentric-hosted :org Event',
+    ],
+
+    'messages'               => [
+        'bad_regID'                    => 'es-Invalid registration ID used.',
+        'become'                       => 'es-You are emulating the experience for: :name.  ',
+        'confirm_msg'                  => 'es-A confirmation email was sent to: :name.',
+        'credit_info'                  => 'es-Your credit/debit card information is not stored on this server and is safe.',
+        'loading'                      => 'es-Loading',
+        'loc_merge'                    => 'es-LocationID :id2 merged into :id. :count events were updated to locationID :id.',
+        'merge_sub'                    => 'es-Your mCentric account for :name events',
+        'merge_msg1'                   => 'es-An officer/admin with :orgname recently merged accounts associated with you.',
+        'merge_msg2'                   => 'es-The account with :email2 was merged into :email1 and the password was swapped as well.',
+        'merge_succ'                   => 'es-:model record: :record1 was successfully merged into :record2.',
+        'no_curr_pass_match'           => 'es-The current password did not match.',
+        'no_events'                    => 'es-There are no :which events in the system.',
+        'no_sessions'                  => 'es-No session selections have been made. You can do so <a href=":link">here</a>.',
+        'no_switch'                    => 'es-Please see the registration desk to change session registration.',
+        'partial_fail'                 => 'es-The attempt to get a partial refund failed with order: :rfid.',
+        'pass_change'                  => 'es-The password was changed successfully.',
+        'pass_change_for'              => 'es-The password for :name was changed successfully.',
+        'receipt_recreated'            => 'es-Your receipt was successfully recreated.',
+        'reg_success'                  => 'es-:name was successfully checked into the session.',
+        'saved'                        => 'es-saved',
+        'sess_saved'                   => 'es-Your session choices for :reg were :verb.',
+        'survey_confirm'               => 'es-Are you sure you want to email all checked in attendees the survey?',
+        'thanks'                       => 'es-Thank you for using mCentric with :orgname.',
+        'undo_login'                   => 'es-Your login was successfully changed back to :email.  A confirmation email has been sent to that address.',
+        'unknown'                      => 'es-Unknown',
+        'updated'                      => 'es-updated',
+        'user_created'                 => 'es-The new user was created.  Go to the user\'s profile. :profile_button',
+        'user_create_fail'             => 'es-An unknown error occurred during account creation.  ',
+        'visit_mCentric'               => 'es-Visit mCentric',
+        'please_wait'                  => 'es-Please wait while this content loads.',
+        'org_default_update_success'   => 'es-Your default Organization Updated',
+        'new_org_created_successfully' => 'es-New Org Created Successfully.',
+    ],
+
+    'modals'                 => [
+        'gConfirm'   => 'es-Attendee Confirmation',
+        'default'    => 'es-Default Title',
+        'confirm'    => 'es-The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
+        'confirm2'   => 'es-The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
+        'login_msg'  => 'es-If registering resulted in mCentric telling you that an account exists for you, login or ' .
+        'click on the \'Forgot Your Password?\' link above and enter the email you used to register.<br>' .
+        'If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.',
+        'login_msg2' => 'es-If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.',
+        'loginform'  => 'es-Login Form',
+        'remember'   => 'es-Remember Me',
+        'forgot'     => 'es-Forgot Your Password?',
+    ],
+
+    'nav'                    => [
+        'b_admin'     => 'es-ADMIN',
+        'b_new'       => 'es-NEW',
+        'b_slow'      => 'es-SLOW',
+        'welcome'     => 'es-Welcome',
+        'con_link'    => 'es-Connect Linked-In',
+        'my_set'      => 'es-My Settings',
+        'ms_org'      => 'es-My Organizations',
+        'ms_dash'     => 'es-My Dashboard',
+        'ms_fut'      => 'es-My Future Events',
+        'ms_profile'  => 'es-My Profile',
+        'ms_edit'     => 'es-Edit Member Profile',
+        'admin'       => 'es-Admin Functions',
+        'ms_become'   => 'es-Become User',
+        'ad_new'      => 'es-Create New User',
+        'o_roles'     => 'es-Roles & Permissions',
+        'ad_panel'    => 'es-Admin Panel',
+        'o_upload'    => 'es-Upload Data',
+        'help'        => 'es-Help Desk',
+        'h_dash'      => 'es-Dashboard',
+        'h_active'    => 'es-Active Tickets',
+        'h_tkt'       => 'es-New Ticket',
+        'h_rpt'       => 'es-Reporting',
+        'org_set'     => 'es-Organization Settings',
+        'o_labels'    => 'es-Org Info &amp; Labels',
+        'o_defaults'  => 'es-Event Defaults',
+        'ev_mgmt'     => 'es-Event Management',
+        'ev_manage'   => 'es-Manage Events',
+        'ev_old'      => 'es-All Past Events',
+        'ev_add'      => 'es-Add Event',
+        'ev_loc'      => 'es-Location Management',
+        'ev_mt'       => 'es-Manage Event Tickets',
+        'ev_rpt'      => 'es-Event Reporting',
+        'ev_grp'      => 'es-Groups / Invoicing',
+        'spk_mgmt'    => 'es-Speaker Management',
+        's_list'      => 'es-Speakers List',
+        'spk_surveys' => 'es-Speaker Surveys',
+        's_new'       => 'es-New Report',
+        'mbr_mgmt'    => 'es-Member Management',
+        'm_list'      => 'es-Complete Member List',
+        'm_merge'     => 'es-Merge Members',
+        'm_rpt'       => 'es-Member Report',
+        'm_sch'       => 'es-Member Search',
+        'm_pass'      => 'es-Change Password',
+        'em_mktg'     => 'es-Email Marketing',
+        'e_camp'      => 'es-Campaigns',
+        'e_asset'     => 'es-Asset Library',
+        'e_list'      => 'es-List Maintenance',
+        'e_rpt'       => 'es-Reporting',
+        'coming'      => 'es-Coming Soon',
+        'c_set'       => 'es-Settings',
+        'c_full'      => 'es-Full Screen',
+        'c_lock'      => 'es-Lock',
+        'c_log'       => 'es-Logout',
+        'o_create'    => 'es-Create New Organization',
+        'en_local'    => 'Inglés',
+        'es_local'    => 'Spanish',
+    ],
+
+    'notifications'          => [
+        'hello'         => 'es-Hello :firstName,',
+        'thanks'        => 'es-Thank you for using mCentric with :org.',
+        'login'         => 'es-Login to mCentric',
+
+        // Wait List No More
+        'WLNM'          => [
+            'subject' => 'es-:org Event: You are off the wait list!',
+            'line1'   => 'es-A spot has opened up for :event.',
+            'line2'   => 'es-If you didn\'t already register, you may continue your registration.',
+            'action'  => 'es-Continue Registration',
         ],
 
-        'mCentric_text'    => [
-            'hosted_event' => 'es-mCentric-hosted :org Event',
+        // Set Your Password
+        'SYP'           => [
+            'subject' => 'es-Your mCentric Account: How to set/reset your password',
+            'line1'   => 'es-An mCentric account was setup for you by :name.',
+            'line2'   => 'es-If you have not yet set its password or do not remember it, you can reset it now using the button below.',
+            'line3'   => 'es-If you do not need to reset your password, you can this delete this email.',
+            'action'  => 'es-Reset Password',
         ],
 
-        'messages'         => [
-            'bad_regID'                    => 'es-Invalid registration ID used.',
-            'become'                       => 'es-You are emulating the experience for: :name.  ',
-            'confirm_msg'                  => 'es-A confirmation email was sent to: :name.',
-            'credit_info'                  => 'es-Your credit/debit card information is not stored on this server and is safe.',
-            'loading'                      => 'es-Loading',
-            'loc_merge'                    => 'es-LocationID :id2 merged into :id. :count events were updated to locationID :id.',
-            'merge_sub'                    => 'es-Your mCentric account for :name events',
-            'merge_msg1'                   => 'es-An officer/admin with :orgname recently merged accounts associated with you.',
-            'merge_msg2'                   => 'es-The account with :email2 was merged into :email1 and the password was swapped as well.',
-            'merge_succ'                   => 'es-:model record: :record1 was successfully merged into :record2.',
-            'no_curr_pass_match'           => 'es-The current password did not match.',
-            'no_events'                    => 'es-There are no :which events in the system.',
-            'no_sessions'                  => 'es-No session selections have been made. You can do so <a href=":link">here</a>.',
-            'no_switch'                    => 'es-Please see the registration desk to change session registration.',
-            'partial_fail'                 => 'es-The attempt to get a partial refund failed with order: :rfid.',
-            'pass_change'                  => 'es-The password was changed successfully.',
-            'pass_change_for'              => 'es-The password for :name was changed successfully.',
-            'receipt_recreated'            => 'es-Your receipt was successfully recreated.',
-            'reg_success'                  => 'es-:name was successfully checked into the session.',
-            'saved'                        => 'es-saved',
-            'sess_saved'                   => 'es-Your session choices for :reg were :verb.',
-            'survey_confirm'               => 'es-Are you sure you want to email all checked in attendees the survey?',
-            'thanks'                       => 'es-Thank you for using mCentric with :orgname.',
-            'undo_login'                   => 'es-Your login was successfully changed back to :email.  A confirmation email has been sent to that address.',
-            'unknown'                      => 'es-Unknown',
-            'updated'                      => 'es-updated',
-            'user_created'                 => 'es-The new user was created.  Go to the user\'s profile. :profile_button',
-            'user_create_fail'             => 'es-An unknown error occurred during account creation.  ',
-            'visit_mCentric'               => 'es-Visit mCentric',
-            'please_wait'                  => 'es-Please wait while this content loads.',
-            'org_default_update_success'   => 'es-Your default Organization Updated',
-            'new_org_created_successfully' => 'es-New Org Created Successfully.',
+        // Notify Registrant with Receipt
+        'RegNote'       => [
+            'subject'       => 'es-Your :org Event Receipt: :event',
+            'line1'         => 'es-You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.',
+            'action1'       => 'es-View/Download Your Receipt',
+            'action2'       => 'es-More Event Details...',
+            'line2'         => 'es-See you at the event!',
+            'postRegHeader' => 'es-Information for Confirmed Attendees',
         ],
 
-        'modals'           => [
-            'gConfirm'   => 'es-Attendee Confirmation',
-            'default'    => 'es-Default Title',
-            'confirm'    => 'es-The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
-            'confirm2'   => 'es-The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
-            'login_msg'  => 'es-If registering resulted in mCentric telling you that an account exists for you, login or ' .
-            'click on the \'Forgot Your Password?\' link above and enter the email you used to register.<br>' .
-            'If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.',
-            'login_msg2' => 'es-If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.',
-            'loginform'  => 'es-Login Form',
-            'remember'   => 'es-Remember Me',
-            'forgot'     => 'es-Forgot Your Password?',
+        // Send Survey
+        'SS'            => [
+            'subject'       => 'es-Survey for :org :event_type',
+            'line1'         => 'es-Thank you for attending our :etype, \':ename, \' on :date.',
+            'line2'         => 'es-Please spend 5 minutes to give us your feedback on the event and its speaker(s).',
+            'line3'         => 'es-This survey is for the PDC session named:  :name',
+            'action'        => 'es-Take Survey',
+            'post_mail_msg' => 'es-:count survey email sent to the attendee.  :c2 survey was already completed.|' .
+            ':count survey emails sent to the attendees. :c2 surveys were already completed',
         ],
 
-        'nav'              => [
-            'b_admin'     => 'es-ADMIN',
-            'b_new'       => 'es-NEW',
-            'b_slow'      => 'es-SLOW',
-            'welcome'     => 'es-Welcome',
-            'con_link'    => 'es-Connect Linked-In',
-            'my_set'      => 'es-My Settings',
-            'ms_org'      => 'es-My Organizations',
-            'ms_dash'     => 'es-My Dashboard',
-            'ms_fut'      => 'es-My Future Events',
-            'ms_profile'  => 'es-My Profile',
-            'ms_edit'     => 'es-Edit Member Profile',
-            'admin'       => 'es-Admin Functions',
-            'ms_become'   => 'es-Become User',
-            'ad_new'      => 'es-Create New User',
-            'o_roles'     => 'es-Roles & Permissions',
-            'ad_panel'    => 'es-Admin Panel',
-            'o_upload'    => 'es-Upload Data',
-            'help'        => 'es-Help Desk',
-            'h_dash'      => 'es-Dashboard',
-            'h_active'    => 'es-Active Tickets',
-            'h_tkt'       => 'es-New Ticket',
-            'h_rpt'       => 'es-Reporting',
-            'org_set'     => 'es-Organization Settings',
-            'o_labels'    => 'es-Org Info &amp; Labels',
-            'o_defaults'  => 'es-Event Defaults',
-            'ev_mgmt'     => 'es-Event Management',
-            'ev_manage'   => 'es-Manage Events',
-            'ev_old'      => 'es-All Past Events',
-            'ev_add'      => 'es-Add Event',
-            'ev_loc'      => 'es-Location Management',
-            'ev_mt'       => 'es-Manage Event Tickets',
-            'ev_rpt'      => 'es-Event Reporting',
-            'ev_grp'      => 'es-Groups / Invoicing',
-            'spk_mgmt'    => 'es-Speaker Management',
-            's_list'      => 'es-Speakers List',
-            'spk_surveys' => 'es-Speaker Surveys',
-            's_new'       => 'es-New Report',
-            'mbr_mgmt'    => 'es-Member Management',
-            'm_list'      => 'es-Complete Member List',
-            'm_merge'     => 'es-Merge Members',
-            'm_rpt'       => 'es-Member Report',
-            'm_sch'       => 'es-Member Search',
-            'm_pass'      => 'es-Change Password',
-            'em_mktg'     => 'es-Email Marketing',
-            'e_camp'      => 'es-Campaigns',
-            'e_asset'     => 'es-Asset Library',
-            'e_list'      => 'es-List Maintenance',
-            'e_rpt'       => 'es-Reporting',
-            'coming'      => 'es-Coming Soon',
-            'c_set'       => 'es-Settings',
-            'c_full'      => 'es-Full Screen',
-            'c_lock'      => 'es-Lock',
-            'c_log'       => 'es-Logout',
-            'o_create'    => 'es-Create New Organization',
-            'en_local'    => 'Inglés',
-            'es_local'    => 'Spanish',
+        // AccountCreation
+        'new_reg_acct'  => [
+            'subject' => 'es-Your mCentric account with :org',
+            'line1'   => 'es-An mCentric account was created for you during the registration of :ename.',
+            'line2'   => 'es-If you initiated this change, you can delete this email.',
         ],
 
-        'notifications'    => [
-            'hello'         => 'es-Hello :firstName,',
-            'thanks'        => 'es-Thank you for using mCentric with :org.',
-            'login'         => 'es-Login to mCentric',
-
-            // Wait List No More
-            'WLNM'          => [
-                'subject' => 'es-:org Event: You are off the wait list!',
-                'line1'   => 'es-A spot has opened up for :event.',
-                'line2'   => 'es-If you didn\'t already register, you may continue your registration.',
-                'action'  => 'es-Continue Registration',
-            ],
-
-            // Set Your Password
-            'SYP'           => [
-                'subject' => 'es-Your mCentric Account: How to set/reset your password',
-                'line1'   => 'es-An mCentric account was setup for you by :name.',
-                'line2'   => 'es-If you have not yet set its password or do not remember it, you can reset it now using the button below.',
-                'line3'   => 'es-If you do not need to reset your password, you can this delete this email.',
-                'action'  => 'es-Reset Password',
-            ],
-
-            // Notify Registrant with Receipt
-            'RegNote'       => [
-                'subject'       => 'es-Your :org Event Receipt: :event',
-                'line1'         => 'es-You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.',
-                'action1'       => 'es-View/Download Your Receipt',
-                'action2'       => 'es-More Event Details...',
-                'line2'         => 'es-See you at the event!',
-                'postRegHeader' => 'es-Information for Confirmed Attendees',
-            ],
-
-            // Send Survey
-            'SS'            => [
-                'subject'       => 'es-Survey for :org :event_type',
-                'line1'         => 'es-Thank you for attending our :etype, \':ename, \' on :date.',
-                'line2'         => 'es-Please spend 5 minutes to give us your feedback on the event and its speaker(s).',
-                'line3'         => 'es-This survey is for the PDC session named:  :name',
-                'action'        => 'es-Take Survey',
-                'post_mail_msg' => 'es-:count survey email sent to the attendee.  :c2 survey was already completed.|' .
-                ':count survey emails sent to the attendees. :c2 surveys were already completed',
-            ],
-
-            // AccountCreation
-            'new_reg_acct'  => [
-                'subject' => 'es-Your mCentric account with :org',
-                'line1'   => 'es-An mCentric account was created for you during the registration of :ename.',
-                'line2'   => 'es-If you initiated this change, you can delete this email.',
-            ],
-
-            // NewUserAcct
-            'new_user_acct' => [
-                'subject' => 'es-Your mCentric account with :org',
-                'line1'   => 'es-An mCentric account was setup for you by :name with :org.',
-                'line2'   => 'es-Your login is the email address where you are receiving this notification.',
-                'line3'   => 'es-The password that was set for you is: \':pass\'',
-            ],
-
+        // NewUserAcct
+        'new_user_acct' => [
+            'subject' => 'es-Your mCentric account with :org',
+            'line1'   => 'es-An mCentric account was setup for you by :name with :org.',
+            'line2'   => 'es-Your login is the email address where you are receiving this notification.',
+            'line3'   => 'es-The password that was set for you is: \':pass\'',
         ],
 
-        'public_marketing' => [
-            'main'       => [
-                'home'      => 'es-Home',
-                'imm'       => 'es-Integrated Member Management',
-                'mktg'      => 'es-Marketing',
-                'mktg_msg'  => 'es-<p>mCentric aggregates the data that you keep about your current and prospective members.
+    ],
+
+    'public_marketing'       => [
+        'main'       => [
+            'home'      => 'es-Home',
+            'imm'       => 'es-Integrated Member Management',
+            'mktg'      => 'es-Marketing',
+            'mktg_msg'  => 'es-<p>mCentric aggregates the data that you keep about your current and prospective members.
                         Segmenting your members based on the traits that are evident in your data allow for better targeting of your campaigns.</p>
                         <p>Need to see the list of members that are expiring this month? Next month?</p>',
-                'mail'      => 'es-Mailings',
-                'mail_msg'  => 'es-<p>With better segmentation capability and targeting, use mCentric\'s integrated email capabilities to
+            'mail'      => 'es-Mailings',
+            'mail_msg'  => 'es-<p>With better segmentation capability and targeting, use mCentric\'s integrated email capabilities to
                            execute specific campaigns and maintain contact with your constituents. </p>
                            <p>Why should maintaining lists of members be so difficult?</p>',
-                'meet'      => 'es-Meetings',
-                'meet_msg'  => 'es-<p>Need to advertise meetings or events regardless of entrance fees? mCentric can help you setup, advertise,
+            'meet'      => 'es-Meetings',
+            'meet_msg'  => 'es-<p>Need to advertise meetings or events regardless of entrance fees? mCentric can help you setup, advertise,
                            and sell tickets to your events. </p><p>If you\'re holding a no-fee event and still need these services,
                            mCentric can accommodate no-fee events that will not impact your bottom line.</p>',
-                'open1'     => 'es-mCentric was created with specific customization for organizations like Project Management Institute<sup>&reg;</sup> (PMI) chapters in mind.',
-                'open2'     => 'es-Whether your organization holds events, or wants to measure member engagement, mCentric can help.',
-                'read_more' => 'es-Read more about mCentric features available to chapters, associations, and other organizations.',
-                'view'      => 'es-View details',
-            ],
+            'open1'     => 'es-mCentric was created with specific customization for organizations like Project Management Institute<sup>&reg;</sup> (PMI) chapters in mind.',
+            'open2'     => 'es-Whether your organization holds events, or wants to measure member engagement, mCentric can help.',
+            'read_more' => 'es-Read more about mCentric features available to chapters, associations, and other organizations.',
+            'view'      => 'es-View details',
+        ],
 
-            'intro_line' => 'mCentric facilitates the following activities through the data it analyzes on your behalf: ',
+        'intro_line' => 'mCentric facilitates the following activities through the data it analyzes on your behalf: ',
 
-            'marketing'  => [
-                'title' => 'es-<span class=\'fas fa-tachometer-alt\'></span> mCentric-Facilitated Marketing',
-                'b1_t'  => 'es-<b><i style=\'color: black;\' class=\'far fa-newspaper\'></i> Subscription Management:</b>',
-                'b1'    => 'es-For as many lists as you maintain, members can opt in or out based on interest',
-                'b2_t'  => 'es-<b><i style=\'color: red;\' class=\'fas fa-bell\'></i> Scheduled Notifications:</b> ',
-                'b2'    => 'es-Setup automatic notifications based on what matters most to your chapter',
-                'b3_t'  => 'es-<b><i style=\'color: blue;\' class=\'fas fa-list-ul\'></i> Segmentation:</b>',
-                'b3'    => 'es-Create lists based traits or factors important to your chapter',
-            ],
+        'marketing'  => [
+            'title' => 'es-<span class=\'fas fa-tachometer-alt\'></span> mCentric-Facilitated Marketing',
+            'b1_t'  => 'es-<b><i style=\'color: black;\' class=\'far fa-newspaper\'></i> Subscription Management:</b>',
+            'b1'    => 'es-For as many lists as you maintain, members can opt in or out based on interest',
+            'b2_t'  => 'es-<b><i style=\'color: red;\' class=\'fas fa-bell\'></i> Scheduled Notifications:</b> ',
+            'b2'    => 'es-Setup automatic notifications based on what matters most to your chapter',
+            'b3_t'  => 'es-<b><i style=\'color: blue;\' class=\'fas fa-list-ul\'></i> Segmentation:</b>',
+            'b3'    => 'es-Create lists based traits or factors important to your chapter',
+        ],
 
-            'mailings'   => [
-                'title' => 'es-<span class="far fa-envelope"></span> mCentric-Facilitated Mailings',
-                'b1_t'  => 'es-<b><i style=\'color: green;\' class=\'fas fa-exclamation-triangle\'></i> Notifications:</b>',
-                'b1'    => 'es-Routine notifications can be automatically sent based on actions, timing, etc.',
-                'b2_t'  => 'es-<b><i style=\'color: brown;\' class=\'fas fa-list-ul\'></i> List Building:</b>',
-                'b2'    => 'es-Send email to people in your database according to event attendance, membership status, etc.',
-                'b3'    => 'es-',
-            ],
+        'mailings'   => [
+            'title' => 'es-<span class="far fa-envelope"></span> mCentric-Facilitated Mailings',
+            'b1_t'  => 'es-<b><i style=\'color: green;\' class=\'fas fa-exclamation-triangle\'></i> Notifications:</b>',
+            'b1'    => 'es-Routine notifications can be automatically sent based on actions, timing, etc.',
+            'b2_t'  => 'es-<b><i style=\'color: brown;\' class=\'fas fa-list-ul\'></i> List Building:</b>',
+            'b2'    => 'es-Send email to people in your database according to event attendance, membership status, etc.',
+            'b3'    => 'es-',
+        ],
 
-            'meetings'   => [
-                'title' => 'es-<span class="far fa-calendar-alt"></span> mCentric-Facilitated Meeting &amp; Event Management',
-                'b1_t'  => 'es-<b><i style=\'color: rebeccapurple;\' class=\'far fa-ticket-alt\'></i> Complex Ticket Pricing:</b>',
-                'b1'    => 'es-Create tickets with member, non-member, early bird, or other complex pricing;<br/>
+        'meetings'   => [
+            'title' => 'es-<span class="far fa-calendar-alt"></span> mCentric-Facilitated Meeting &amp; Event Management',
+            'b1_t'  => 'es-<b><i style=\'color: rebeccapurple;\' class=\'far fa-ticket-alt\'></i> Complex Ticket Pricing:</b>',
+            'b1'    => 'es-Create tickets with member, non-member, early bird, or other complex pricing;<br/>
                                 or bundle tickets together as necessary for particular events',
-                'b2_t'  => 'es-<b><i style=\'color: blue;\' class=\'fas fa-credit-card\'></i> Payment Processing:</b>',
-                'b2'    => 'es-Process payments with credit cards or allow attendees to pay at the door with cash or check',
-                'b3_t'  => 'es-<b><i style=\'color: red;\' class=\'fas fa-chart-bar\'></i> Real-Time Reporting:</b>',
-                'b3'    => 'es-Review reports that provide access to registration and session attendance detail',
-            ],
-
-            'management' => [
-                'title' => 'es-<span class="fas fa - users"></span> mCentric-Facilitated Membership Management',
-                'b1_t'  => 'es-<b><i style=\'color: purple;\' class=\'fas fa-chart-bar\'></i> Financial Reporting:</b>',
-                'b1'    => 'es-Track and manage event finances, including revenue sharing and other arrangements',
-                'b2_t'  => 'es-<b><i style=\'color: red;\' class=\'fas fa-chart-pie\'></i> Engagement Reporting:</b>',
-                'b2'    => 'es-Understand how engaged your members are and increase retention',
-                'b3_t'  => 'es-<b><i style=\'color: brown;\' class=\'fas fa-users\'></i> Contact Management:</b>',
-                'b3'    => 'es-Track, manage, and connect members and non-members alike',
-            ],
+            'b2_t'  => 'es-<b><i style=\'color: blue;\' class=\'fas fa-credit-card\'></i> Payment Processing:</b>',
+            'b2'    => 'es-Process payments with credit cards or allow attendees to pay at the door with cash or check',
+            'b3_t'  => 'es-<b><i style=\'color: red;\' class=\'fas fa-chart-bar\'></i> Real-Time Reporting:</b>',
+            'b3'    => 'es-Review reports that provide access to registration and session attendance detail',
         ],
 
-        'pdus'             => [
-            'lead'  => 'es-Leadership',
-            'strat' => 'es-Strategy',
-            'tech'  => 'es-Technical Skills',
+        'management' => [
+            'title' => 'es-<span class="fas fa - users"></span> mCentric-Facilitated Membership Management',
+            'b1_t'  => 'es-<b><i style=\'color: purple;\' class=\'fas fa-chart-bar\'></i> Financial Reporting:</b>',
+            'b1'    => 'es-Track and manage event finances, including revenue sharing and other arrangements',
+            'b2_t'  => 'es-<b><i style=\'color: red;\' class=\'fas fa-chart-pie\'></i> Engagement Reporting:</b>',
+            'b2'    => 'es-Understand how engaged your members are and increase retention',
+            'b3_t'  => 'es-<b><i style=\'color: brown;\' class=\'fas fa-users\'></i> Contact Management:</b>',
+            'b3'    => 'es-Track, manage, and connect members and non-members alike',
         ],
+    ],
 
-        'profile'          => [
-            'add_addr'    => 'es-Add Address',
-            'add_email'   => 'es-Add Email',
-            'add_number'  => 'es-Add Phone Number',
-            'addr'        => 'es-Address|Addresses',
-            'addr1'       => 'es-Address 1',
-            'addr1&2'     => 'es-Address 1 & 2',
-            'addr2'       => 'es-Address 2',
-            'addrs'       => 'es-{0}There are no addresses associated with this profile.|[1,Inf] The following addresses are associated with this profile.',
-            'cant_delete' => 'es-You cannot delete this address because it is your primary address (and login).  Change the login address above first.',
-            'change'      => 'es-Change ',
-            'city'        => 'es-City',
-            'country'     => 'es-Country',
-            'custom'      => 'es-Chapter Data',
-            'date_f'      => 'es-Important Chapter Dates',
-            'directions'  => [
-                'addr1'   => 'es-Enter address 1',
-                'addr2'   => 'es-Enter address 2',
-                'city'    => 'es-Enter city',
-                'country' => 'es-Enter country',
-                'state'   => 'es-Enter state',
-                'title'   => 'es-Enter title',
-                'type'    => 'es-Enter address type',
-                'zip'     => 'es-Enter zip',
-            ],
-            'ed_ad'       => 'es-Editable for Admins',
-            'emails'      => 'es-{0} There are no emails associated with this profile.|[1,Inf] The following email addresses are associated with this profile.',
-            'no_id'       => 'es-If this is empty, this profile does not have an associated PMI ID.',
-            'no_phone'    => 'es-There are no phone numbers associated with this profile.',
-            'pass'        => 'es- Password',
-            'pass_cur'    => 'es-Current Password',
-            'pass_mgmt'   => 'es-Password Management',
-            'primary'     => 'es-The primary address is the only one we\'ll use to contact you. It is also the one used for the mCentric login. (see above)',
-            'prof_info'   => 'es-Profile Information',
-            'spk_tab'     => 'es-Speaker Information',
-            'spk_info'    => 'es-Speaker features will appear here in a future update.  You can see this tab because you have been registered as a speaker at a past (or upcoming) event.',
-            'state'       => 'es-State',
-            'type'        => 'es-Type',
-            'uneditable'  => 'es-uneditable',
-            'zip'         => 'es-Zip',
+    'pdus'                   => [
+        'lead'  => 'es-Leadership',
+        'strat' => 'es-Strategy',
+        'tech'  => 'es-Technical Skills',
+    ],
+
+    'profile'                => [
+        'add_addr'    => 'es-Add Address',
+        'add_email'   => 'es-Add Email',
+        'add_number'  => 'es-Add Phone Number',
+        'addr'        => 'es-Address|Addresses',
+        'addr1'       => 'es-Address 1',
+        'addr1&2'     => 'es-Address 1 & 2',
+        'addr2'       => 'es-Address 2',
+        'addrs'       => 'es-{0}There are no addresses associated with this profile.|[1,Inf] The following addresses are associated with this profile.',
+        'cant_delete' => 'es-You cannot delete this address because it is your primary address (and login).  Change the login address above first.',
+        'change'      => 'es-Change ',
+        'city'        => 'es-City',
+        'country'     => 'es-Country',
+        'custom'      => 'es-Chapter Data',
+        'date_f'      => 'es-Important Chapter Dates',
+        'directions'  => [
+            'addr1'   => 'es-Enter address 1',
+            'addr2'   => 'es-Enter address 2',
+            'city'    => 'es-Enter city',
+            'country' => 'es-Enter country',
+            'state'   => 'es-Enter state',
+            'title'   => 'es-Enter title',
+            'type'    => 'es-Enter address type',
+            'zip'     => 'es-Enter zip',
         ],
+        'ed_ad'       => 'es-Editable for Admins',
+        'emails'      => 'es-{0} There are no emails associated with this profile.|[1,Inf] The following email addresses are associated with this profile.',
+        'no_id'       => 'es-If this is empty, this profile does not have an associated PMI ID.',
+        'no_phone'    => 'es-There are no phone numbers associated with this profile.',
+        'pass'        => 'es- Password',
+        'pass_cur'    => 'es-Current Password',
+        'pass_mgmt'   => 'es-Password Management',
+        'primary'     => 'es-The primary address is the only one we\'ll use to contact you. It is also the one used for the mCentric login. (see above)',
+        'prof_info'   => 'es-Profile Information',
+        'spk_tab'     => 'es-Speaker Information',
+        'spk_info'    => 'es-Speaker features will appear here in a future update.  You can see this tab because you have been registered as a speaker at a past (or upcoming) event.',
+        'state'       => 'es-State',
+        'type'        => 'es-Type',
+        'uneditable'  => 'es-uneditable',
+        'zip'         => 'es-Zip',
+    ],
 
-        'reg_status'       => [
-            'active'      => 'es-Active',
-            'canceled'    => 'es-Canceled',
-            'disc_exempt' => 'es-This ticket cannot be discounted.',
-            'door'        => 'es-At Door',
-            'mail_broken' => 'es-Mail is not working at the moment.  :org will email you a receipt.
+    'reg_status'             => [
+        'active'      => 'es-Active',
+        'canceled'    => 'es-Canceled',
+        'disc_exempt' => 'es-This ticket cannot be discounted.',
+        'door'        => 'es-At Door',
+        'mail_broken' => 'es-Mail is not working at the moment.  :org will email you a receipt.
                           See it now by going to: <a style="color:yellow;" href="' . env("APP_URL") . ' / upcoming">My Settings -> Future Events</a>.',
-            'free'        => 'es-No Charge',
-            'inactive'    => 'es-Inactive',
-            'msg_status'  => 'es-The registration with id: :id has been :verb',
-            'p_refunded'  => 'es-Partially Refunded',
-            'promoted'    => 'es-Promoted',
-            'p_canceled'  => 'es-Partially Canceled',
-            'pending'     => 'es-Payment Pending',
-            'processed'   => 'es-Processed',
-            'progress'    => 'es-In Progress',
-            'refunded'    => 'es-Refunded',
-            'wait'        => 'es-Wait List',
-        ],
+        'free'        => 'es-No Charge',
+        'inactive'    => 'es-Inactive',
+        'msg_status'  => 'es-The registration with id: :id has been :verb',
+        'p_refunded'  => 'es-Partially Refunded',
+        'promoted'    => 'es-Promoted',
+        'p_canceled'  => 'es-Partially Canceled',
+        'pending'     => 'es-Payment Pending',
+        'processed'   => 'es-Processed',
+        'progress'    => 'es-In Progress',
+        'refunded'    => 'es-Refunded',
+        'wait'        => 'es-Wait List',
+    ],
 
-        'reports'          => [
-            'ev_by_year'   => 'es-Number of Events Attended by Year',
-            'graph_years'  => 'es-Year Display',
-            'ind_brk'      => 'es-Identified Industry Breakdown',
-            'select_years' => 'es-Select Years to Display',
-        ],
+    'reports'                => [
+        'ev_by_year'   => 'es-Number of Events Attended by Year',
+        'graph_years'  => 'es-Year Display',
+        'ind_brk'      => 'es-Identified Industry Breakdown',
+        'select_years' => 'es-Select Years to Display',
+    ],
 
-        'surveys'          => [
-            'responses'       => [
-                'vg'  => 'es-Very Good',
-                'g'   => 'es-Good',
-                'ni'  => 'es-Needs Improvement',
-                'dne' => 'es-Did Not Engage',
-                'nc'  => 'es-No Comment',
-            ],
-            'complete_thanks' => 'es-Thank you for providing feedback.',
-            'engage'          => 'es-Speaker Engagement',
-            'q1'              => 'es-<b>Speaker Engagement:</b> speaker encouraged audience comments and participation.',
-            'take'            => 'es-Take-Aways',
-            'q2'              => 'es-<b>Take-Aways:</b> speaker provided knowledge/best practices that can be used on your next project.',
-            'content'         => 'es-Content/Depth',
-            'q3'              => 'es-<b>Content/Depth of Presentation:</b> level of content met expectations.',
-            'style'           => 'es-Style',
-            'q4'              => 'es-<b>Speaker Style:</b> presentation and speaker delivery encouraged learning.',
-            'favorite'        => 'es-Favorite Part',
-            'q5'              => 'es-What was your favorite part of the presentation?',
-            'suggestions'     => 'es-Suggestions',
-            'q6'              => 'es-What suggestions do you have to improve the presentation?',
-            'contact'         => 'es-Contact Info',
-            'q7'              => 'es-OPTIONAL: Check this box and include your contact info if you would like to speak to a volunteer organizer.',
-            'popup'           => 'es-Survey Comments',
-            'surveys'         => 'es-Surveys',
-            'submit'          => 'es-Submit Survey Responses',
-            'title'           => 'es-Please Record Your Session Feedback',
+    'surveys'                => [
+        'responses'       => [
+            'vg'  => 'es-Very Good',
+            'g'   => 'es-Good',
+            'ni'  => 'es-Needs Improvement',
+            'dne' => 'es-Did Not Engage',
+            'nc'  => 'es-No Comment',
         ],
+        'complete_thanks' => 'es-Thank you for providing feedback.',
+        'engage'          => 'es-Speaker Engagement',
+        'q1'              => 'es-<b>Speaker Engagement:</b> speaker encouraged audience comments and participation.',
+        'take'            => 'es-Take-Aways',
+        'q2'              => 'es-<b>Take-Aways:</b> speaker provided knowledge/best practices that can be used on your next project.',
+        'content'         => 'es-Content/Depth',
+        'q3'              => 'es-<b>Content/Depth of Presentation:</b> level of content met expectations.',
+        'style'           => 'es-Style',
+        'q4'              => 'es-<b>Speaker Style:</b> presentation and speaker delivery encouraged learning.',
+        'favorite'        => 'es-Favorite Part',
+        'q5'              => 'es-What was your favorite part of the presentation?',
+        'suggestions'     => 'es-Suggestions',
+        'q6'              => 'es-What suggestions do you have to improve the presentation?',
+        'contact'         => 'es-Contact Info',
+        'q7'              => 'es-OPTIONAL: Check this box and include your contact info if you would like to speak to a volunteer organizer.',
+        'popup'           => 'es-Survey Comments',
+        'surveys'         => 'es-Surveys',
+        'submit'          => 'es-Submit Survey Responses',
+        'title'           => 'es-Please Record Your Session Feedback',
+    ],
 
-        // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
-        'symbols'          => [
-            'card'          => '<i class=\'far fa-credit-card-front fa-fw\'></i>', // credit card
-            'cash'          => '<i class=\'fas fa-money-bill-alt fa-fw\'></i>', // physical currency
-            'check'         => '<i class=\'fas fa-money-check fa-fw\'></i>', // physical direction to draw on an account
-            'cur'           => '<i class=\'far fa-dollar-sign fa-fw\'></i>', // currency symbol
-            'cur_class'     => 'class=\'far fa-dollar-sign fa-fw\'', // currency symbol - class only (when tips are embedded)
-            'cur_class_5x'  => 'class=\'far fa-5x fa-dollar-sign fa-fw\'', // currency symbol - class only (when tips are embedded)
-            'restore'       => '<i class=\'fad fa-trash-restore-alt fa-fw\'></i>', // UNdelete symbol
-            'restore_class' => 'class=\'fad fa-trash-undo-alt fa-fw\'', // UNdelete symbol - class only (when tips are embedded)
-            'trash'         => '<i class=\'far fa-trash-alt fa-fw\'></i>', // delete symbol
-            'trash_class'   => 'class=\'far fa-trash-alt fa-fw\'', // delete symbol - class only (when tips are embedded)
-        ],
+    // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
+    'symbols'                => [
+        'card'          => '<i class=\'far fa-credit-card-front fa-fw\'></i>', // credit card
+        'cash'          => '<i class=\'fas fa-money-bill-alt fa-fw\'></i>', // physical currency
+        'check'         => '<i class=\'fas fa-money-check fa-fw\'></i>', // physical direction to draw on an account
+        'cur'           => '<i class=\'far fa-dollar-sign fa-fw\'></i>', // currency symbol
+        'cur_class'     => 'class=\'far fa-dollar-sign fa-fw\'', // currency symbol - class only (when tips are embedded)
+        'cur_class_5x'  => 'class=\'far fa-5x fa-dollar-sign fa-fw\'', // currency symbol - class only (when tips are embedded)
+        'restore'       => '<i class=\'fad fa-trash-restore-alt fa-fw\'></i>', // UNdelete symbol
+        'restore_class' => 'class=\'fad fa-trash-undo-alt fa-fw\'', // UNdelete symbol - class only (when tips are embedded)
+        'trash'         => '<i class=\'far fa-trash-alt fa-fw\'></i>', // delete symbol
+        'trash_class'   => 'class=\'far fa-trash-alt fa-fw\'', // delete symbol - class only (when tips are embedded)
+    ],
 
-        'tabs'             => [
-            'heat_map'  => 'es-Heat Map [Coming Soon]',
-            'mem_demo'  => 'es-Member Demographics',
-            'ticketing' => 'es-Event Ticketing',
-            'sessions'  => 'es-Event Sessions',
-        ],
+    'tabs'                   => [
+        'heat_map'  => 'es-Heat Map [Coming Soon]',
+        'mem_demo'  => 'es-Member Demographics',
+        'ticketing' => 'es-Event Ticketing',
+        'sessions'  => 'es-Event Sessions',
+    ],
 
-        'tooltips'         => [
-            'accept_cash'       => 'es-Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.',
-            'accommodate'       => 'es-We will do our best to accommodate you.',
-            'addl_ticket'       => 'es-If you are attempting to buy any tickets for members, they will need to purchase their ticket '
-            . 'separately to benefit from the member discount.',
-            'affiliation_tip'   => 'es-Ctrl-Click to select more than one affiliation.',
-            'allergenInfo_tip'  => 'es-Ctrl-Click to select more than one dietary restriction.',
-            'anoncat'           => 'es-These are the event categories where multiple tickets, if an attendee wishes to buy multiple'
-            . ' tickets, can be purchased without requiring the identification for every individual ticket.',
-            'bundle_include'    => 'es-Change to "Yes" to add each corresponding ticket to this bundle.',
-            'bundles'           => 'es-Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.',
-            'cant_cancel_reg'   => 'es-You cannot cancel this registration. Find an admin.',
-            'card'              => 'es-Click to continue payment by credit card.',
-            'cash'              => 'es-Click to acknowledge payment by cash.',
-            'certification_tip' => 'es-Please select the certification(s) you possess.',
-            'change_ticket'     => 'es-You can change the ticket that will be purchased if desired.',
-            'check'             => 'es-Click to acknowledge payment by check.',
-            'click_cancel_reg'  => 'es-Click to cancel this registration.',
-            'def_label'         => 'es-This is the label that will be given to the default ticket that is automatically created when events are created.',
-            'delete'            => 'es-Click to delete this item.',
-            'disc_chap'         => 'es-If your chapter offers member pricing to other chapters, name them here.  At a minimum, you must include your own chapter. Names must exactly match those listed below.',
-            'eb_percent'        => 'es-If your events have early bird pricing, this is the default percent discount for all events.  This can be changed or disabled at the time of individual event setup as needed.',
-            'eb_enddate'        => 'es-Upon event creation, this value is set to today(). If you do NOT want an early bird date, leave it alone and it will be ignored.
+    'tooltips'               => [
+        'accept_cash'       => 'es-Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.',
+        'accommodate'       => 'es-We will do our best to accommodate you.',
+        'addl_ticket'       => 'es-If you are attempting to buy any tickets for members, they will need to purchase their ticket '
+        . 'separately to benefit from the member discount.',
+        'affiliation_tip'   => 'es-Ctrl-Click to select more than one affiliation.',
+        'allergenInfo_tip'  => 'es-Ctrl-Click to select more than one dietary restriction.',
+        'anoncat'           => 'es-These are the event categories where multiple tickets, if an attendee wishes to buy multiple'
+        . ' tickets, can be purchased without requiring the identification for every individual ticket.',
+        'bundle_include'    => 'es-Change to "Yes" to add each corresponding ticket to this bundle.',
+        'bundles'           => 'es-Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.',
+        'cant_cancel_reg'   => 'es-You cannot cancel this registration. Find an admin.',
+        'card'              => 'es-Click to continue payment by credit card.',
+        'cash'              => 'es-Click to acknowledge payment by cash.',
+        'certification_tip' => 'es-Please select the certification(s) you possess.',
+        'change_ticket'     => 'es-You can change the ticket that will be purchased if desired.',
+        'check'             => 'es-Click to acknowledge payment by check.',
+        'click_cancel_reg'  => 'es-Click to cancel this registration.',
+        'def_label'         => 'es-This is the label that will be given to the default ticket that is automatically created when events are created.',
+        'delete'            => 'es-Click to delete this item.',
+        'disc_chap'         => 'es-If your chapter offers member pricing to other chapters, name them here.  At a minimum, you must include your own chapter. Names must exactly match those listed below.',
+        'eb_percent'        => 'es-If your events have early bird pricing, this is the default percent discount for all events.  This can be changed or disabled at the time of individual event setup as needed.',
+        'eb_enddate'        => 'es-Upon event creation, this value is set to today(). If you do NOT want an early bird date, leave it alone and it will be ignored.
                          Otherwise, edit this date so that it is in the future, but prior to the event start date.',
-            'email_tip'         => 'es-Changing your email address can only be done via your profile page.',
-            'etID'              => 'es-These event type IDs shown here can be referenced for website integration purposes.',
-            'event_cat'         => 'es-This is the default topic for your events.  These can be changed at the time of individual event setup as needed.',
-            'experience_tip'    => 'es-Please select the number of years of Project Management experience you possess.',
-            'fb'                => 'es-Enter the portion after fb.com/',
-            'group_reg'         => 'es-Enter a value here to set a price.  If you leave it empty, the price will be automatically determined.',
-            'hasFood'           => 'es-Events with food have additional questions asked of attendees.',
-            'hasTracks'         => 'es-Events with tracks require session setup.',
-            'linkedIn'          => 'es-This will connect to your account and save the URL to your LinkedIn photo for display in the mCentric navigation. No other information is shared at this time.',
-            'login'             => 'es-If you want your login to be a new email address, first add it to your account by clicking \'Add Email\' below.',
-            'max_set'           => 'es-Set to 0 if there is no maximum.',
-            'mr'                => 'es-Merge Record',
-            'near_chap'         => 'es-These are the most likely chapters of attendees of your events.  Put your chapter first, followed by other chapters, and end with \'Other\' and \'None of the above.\'',
-            'no_auth'           => 'es-You must be authorized to perform this function.',
-            'no_discount'       => 'es-Change to \'Yes\' to prevent ALL discount codes from affecting this ticket\'s price.  Early Bird pricing will still be possible.',
-            'no_switch'         => 'es-For events with sessions, if you prohibit session switching for a given session, this message would be displayed if an attendee attempts to ' .
-            'checkin to a session for which they have not already registered.',
-            'nope'              => 'es-This value cannot be edited or removed.',
-            'not_new'           => 'es-Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.',
-            'orgName'           => 'es-You can change the organization\'s display name. Ensure that it fits above.  Click name to edit.',
-            'orgStat1_tip'      => 'es-If you do not know or do not have a PMI Member ID, leave empty.',
-            'orgStat1_tip2'     => 'es-If your PMI Member ID is incorrect, :acs',
-            'pmi_tip'           => 'es-As a PMI Member, your name must match PMI\'s roster for PDU processing.  Therefore, you are not able to change it here.',
-            'pmt_msg'           => 'es-Are you sure you want to accept :method as payment?',
-            'postEventEditDays' => 'es-This is the number of days after an event during which it can still be edited.',
-            'ref_days'          => 'es-This is the number of days, PRIOR to an event, within which a refund is no longer possible.',
-            'reg_cancel'        => 'es-Cancel this registration attempt.',
-            'region_chap'       => 'es-If you host a regional event, all of the chapters will be listed.  Put your chapter first, followed by other chapters, and end with \'Other\' and \'None of the above.\'',
-            'sales_end'         => 'es-When should ticket sales end for this event?',
-            'select_all'        => 'es-Click to select all items.',
-            'speaker_choices'   => 'es-Register speakers using the \'Speaker\' discount to populate this dropdown list with speakers.',
-            'std_times'         => 'es-If most sessions follow the same schedule, choose Yes.  You can change this later
+        'email_tip'         => 'es-Changing your email address can only be done via your profile page.',
+        'etID'              => 'es-These event type IDs shown here can be referenced for website integration purposes.',
+        'event_cat'         => 'es-This is the default topic for your events.  These can be changed at the time of individual event setup as needed.',
+        'experience_tip'    => 'es-Please select the number of years of Project Management experience you possess.',
+        'fb'                => 'es-Enter the portion after fb.com/',
+        'group_reg'         => 'es-Enter a value here to set a price.  If you leave it empty, the price will be automatically determined.',
+        'hasFood'           => 'es-Events with food have additional questions asked of attendees.',
+        'hasTracks'         => 'es-Events with tracks require session setup.',
+        'linkedIn'          => 'es-This will connect to your account and save the URL to your LinkedIn photo for display in the mCentric navigation. No other information is shared at this time.',
+        'login'             => 'es-If you want your login to be a new email address, first add it to your account by clicking \'Add Email\' below.',
+        'max_set'           => 'es-Set to 0 if there is no maximum.',
+        'mr'                => 'es-Merge Record',
+        'near_chap'         => 'es-These are the most likely chapters of attendees of your events.  Put your chapter first, followed by other chapters, and end with \'Other\' and \'None of the above.\'',
+        'no_auth'           => 'es-You must be authorized to perform this function.',
+        'no_discount'       => 'es-Change to \'Yes\' to prevent ALL discount codes from affecting this ticket\'s price.  Early Bird pricing will still be possible.',
+        'no_switch'         => 'es-For events with sessions, if you prohibit session switching for a given session, this message would be displayed if an attendee attempts to ' .
+        'checkin to a session for which they have not already registered.',
+        'nope'              => 'es-This value cannot be edited or removed.',
+        'not_new'           => 'es-Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.',
+        'orgName'           => 'es-You can change the organization\'s display name. Ensure that it fits above.  Click name to edit.',
+        'orgStat1_tip'      => 'es-If you do not know or do not have a PMI Member ID, leave empty.',
+        'orgStat1_tip2'     => 'es-If your PMI Member ID is incorrect, :acs',
+        'pmi_tip'           => 'es-As a PMI Member, your name must match PMI\'s roster for PDU processing.  Therefore, you are not able to change it here.',
+        'pmt_msg'           => 'es-Are you sure you want to accept :method as payment?',
+        'postEventEditDays' => 'es-This is the number of days after an event during which it can still be edited.',
+        'ref_days'          => 'es-This is the number of days, PRIOR to an event, within which a refund is no longer possible.',
+        'reg_cancel'        => 'es-Cancel this registration attempt.',
+        'region_chap'       => 'es-If you host a regional event, all of the chapters will be listed.  Put your chapter first, followed by other chapters, and end with \'Other\' and \'None of the above.\'',
+        'sales_end'         => 'es-When should ticket sales end for this event?',
+        'select_all'        => 'es-Click to select all items.',
+        'speaker_choices'   => 'es-Register speakers using the \'Speaker\' discount to populate this dropdown list with speakers.',
+        'std_times'         => 'es-If most sessions follow the same schedule, choose Yes.  You can change this later
                         (after setting up the similar sessions) to adjust the times that are different.',
-            'suppress'          => 'es-Change to \'Yes\' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.',
-            'sure'              => 'es-Are you sure?',
-            'sure_become'       => 'es-Are you sure you want to become this user?',
-            'sure_cancel'       => 'es-Are you sure you want to cancel this registration?',
-            'sure_copy'         => 'es-Are you sure you want to make a copy of this event?',
-            'sure_del'          => 'es-Are you sure you want to delete this?',
-            'sure_refund'       => 'es-Are you sure you want to cancel this registration and issue a refund?',
-            'survey'            => 'es-Verify that you\'ve checked in attendees before mailing surveys.',
-            'tkt_avail'         => 'es-Tickets cannot be purchased after this date.  Default value: Event Start Date',
-            'tkt_label'         => 'es-This is the label users will see when purchasing a ticket. It will also appear on receipts.',
-            'tkt_no_del'        => 'es-The original ticket cannot be deleted. Please edit as needed.',
-            'va'                => 'es-View Activity',
-            'vep'               => 'es-View/Edit Profile',
-            'wait_cnv'          => 'es-Promote from Wait List',
-        ],
+        'suppress'          => 'es-Change to \'Yes\' if this ticket should NOT be individually purchasable. I.e.: it can only be purchased as part of a bundle.',
+        'sure'              => 'es-Are you sure?',
+        'sure_become'       => 'es-Are you sure you want to become this user?',
+        'sure_cancel'       => 'es-Are you sure you want to cancel this registration?',
+        'sure_copy'         => 'es-Are you sure you want to make a copy of this event?',
+        'sure_del'          => 'es-Are you sure you want to delete this?',
+        'sure_refund'       => 'es-Are you sure you want to cancel this registration and issue a refund?',
+        'survey'            => 'es-Verify that you\'ve checked in attendees before mailing surveys.',
+        'tkt_avail'         => 'es-Tickets cannot be purchased after this date.  Default value: Event Start Date',
+        'tkt_label'         => 'es-This is the label users will see when purchasing a ticket. It will also appear on receipts.',
+        'tkt_no_del'        => 'es-The original ticket cannot be deleted. Please edit as needed.',
+        'va'                => 'es-View Activity',
+        'vep'               => 'es-View/Edit Profile',
+        'wait_cnv'          => 'es-Promote from Wait List',
+    ],
 
-        'topBits'          => [
-            'admin'   => 'es-Admin Role',
-            'board'   => 'es-Board Role',
-            'dev'     => 'es-Developer Role',
-            'events'  => 'es-Events Role',
-            'mktg'    => 'es-Marketing Role',
-            'rt'      => 'es-Roundtable Role',
-            'speaker' => 'es-Speaker Role',
-            'spk_vol' => 'es-Speaker-Volunteer Role',
-            'vol'     => 'es-Volunteer Role',
+    'topBits'                => [
+        'admin'   => 'es-Admin Role',
+        'board'   => 'es-Board Role',
+        'dev'     => 'es-Developer Role',
+        'events'  => 'es-Events Role',
+        'mktg'    => 'es-Marketing Role',
+        'rt'      => 'es-Roundtable Role',
+        'speaker' => 'es-Speaker Role',
+        'spk_vol' => 'es-Speaker-Volunteer Role',
+        'vol'     => 'es-Volunteer Role',
 
-        ],
+    ],
 
-        // Variable Words
-        'var_words'        => [
-            'time_period' => 'es-{0}Upcoming|{1}Past',
-        ],
+    // Variable Words
+    'var_words'              => [
+        'time_period' => 'es-{0}Upcoming|{1}Past',
+    ],
 
-        'warning'          => [
-            'dupe_reg'                => 'es-FYI: You have already registered for this event. :names|FYI: The following people appear to have already registered for this event: :names',
-            'inactive_event'          => 'es-<b>Note:</b> You are previewing an event that is not yet active OR is in the past.',
-            'inactive_unlocked_event' => 'es-<b>Note:</b> This event is no longer active but you have been given permission to register.',
-            'inactive_event_url'      => 'es-This event\'s URL is no longer active.',
-            'no_switch'               => 'es-',
-            'slug_event_url'          => 'es-This event\'s URL will be: :url',
-        ],
+    'warning'                => [
+        'dupe_reg'                => 'es-FYI: You have already registered for this event. :names|FYI: The following people appear to have already registered for this event: :names',
+        'inactive_event'          => 'es-<b>Note:</b> You are previewing an event that is not yet active OR is in the past.',
+        'inactive_unlocked_event' => 'es-<b>Note:</b> This event is no longer active but you have been given permission to register.',
+        'inactive_event_url'      => 'es-This event\'s URL is no longer active.',
+        'no_switch'               => 'es-',
+        'slug_event_url'          => 'es-This event\'s URL will be: :url',
+    ],
 
-        'yesno_check'      => [
-            'no'  => 'No',
-            'yes' => 'Yes',
-        ],
+    'yesno_check'            => [
+        'no'  => 'No',
+        'yes' => 'Yes',
+    ],
 
-        'exceptions'       => [
-            'query_exception'     => 'es-Resource you are looking for has been either moved/deleted/does not exist',
-            'bad_url_link'        => 'es-The link you are trying to access has been expired.',
-            'forbidden'           => 'es-You are not authorized to access this page.',
-            'page_expired'        => 'es-Page Expired.',
-            'too_many_request'    => 'es-Too Many Requests, Rate limit exceeded.',
-            'service_unavailable' => 'es-Service Unavailable, Please try again after sometime.',
-            'error_500'           => 'es-Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-            'no_msg_available'    => 'es-Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-            'page_no_found'       => 'es-Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
-        ],
-
-    ];
+    'exceptions'             => [
+        'query_exception'     => 'es-Resource you are looking for has been either moved/deleted/does not exist',
+        'bad_url_link'        => 'es-The link you are trying to access has been expired.',
+        'forbidden'           => 'es-You are not authorized to access this page.',
+        'page_expired'        => 'es-Page Expired.',
+        'too_many_request'    => 'es-Too Many Requests, Rate limit exceeded.',
+        'service_unavailable' => 'es-Service Unavailable, Please try again after sometime.',
+        'error_500'           => 'es-Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'no_msg_available'    => 'es-Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'page_no_found'       => 'es-Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
+    ],
+    'page_generic_exception' => [
+        'report_this'   => 'es-Report This?',
+        'report_issue'  => 'es-Report Issue',
+        'btn_go'        => 'es-Go!',
+        'place_subject' => 'es-Subject',
+    ],
+];

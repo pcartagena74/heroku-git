@@ -5,19 +5,19 @@
  */
 
 return [
-    'auth'             => [
+    'auth'                   => [
         'account'  => 'Have an account?  Login',
         'forgot'   => 'Forgot Password?',
         'remember' => 'Remember Me',
     ],
 
-    'actions'          => [
+    'actions'                => [
         'add'    => 'Add ',
         'merge'  => "Merge",
         'remove' => 'Remove ',
     ],
 
-    'admin'            => [
+    'admin'                  => [
         'upload' => [
             'count'    => 'Prior upload of :count records, successful.',
             'evtdata'  => 'Event registration records',
@@ -30,11 +30,11 @@ return [
         ],
     ],
 
-    'alt_txt'          => [
+    'alt_txt'                => [
         'avatar' => 'User Avatar/Image',
     ],
 
-    'buttons'          => [
+    'buttons'                => [
         'add_disc'       => 'Add Discount',
         'add_def_disc'   => 'Add Default Organizational Discount Codes',
         'add_tkt'        => "Add Tickets",
@@ -84,7 +84,7 @@ return [
         'wait'           => 'Join the Wait List',
     ],
 
-    'codes'            => [
+    'codes'                  => [
         'invalid_code' => "Invalid Code: ':code'",
         'invalid_id'   => "The :id is not valid.",
         'valid'        => "Code: ':code' provides a :disc discount.",
@@ -95,18 +95,18 @@ return [
     ],
 
     // Common words that are often reused
-    'common'           => [
+    'common'                 => [
         'reminder' => "Reminder",
     ],
 
-    'directions'       => [
+    'directions'             => [
         'org' => [
             'fullname' => "Enter complete, formal/corporate name",
             'display'  => "Enter display name",
         ],
     ],
 
-    'errors'           => [
+    'errors'                 => [
         'become_error'              => 'The id entered, :id, is invalid.',
         'corruption'                => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'event'                     => 'Please select an event.',
@@ -135,16 +135,16 @@ return [
         'user_not_found'            => 'Unable to find user. Please select from search or create new.',
     ],
 
-    'flashes'          => [
+    'flashes'                => [
         'merge_failure'    => "The attempt to merge the records has failed.<br />:e",
         'password_success' => "The password for the account with the login: :login was set successfully.",
     ],
 
-    'email_txt'        => [
+    'email_txt'              => [
         'for_det_visit' => 'For details, visit',
     ],
 
-    'event_types'      => [
+    'event_types'            => [
         'Chapter Meeting'  => 'Chapter Meeting|Chapter Meetings',
         'Roundtable'       => 'Roundtable|Roundtables',
         'PD Day'           => 'PDC|PDCs',
@@ -154,7 +154,7 @@ return [
         'Annual Meeting'   => 'Annual Meeting|Annual Meetings',
     ],
 
-    'fields'           => [
+    'fields'                 => [
 
         'abstract'                => 'Abstract',
         'aCost'                   => 'Additional Cost',
@@ -355,7 +355,7 @@ return [
         'org_path'                => 'Organization Path',
     ],
 
-    'headers'          => [
+    'headers'                => [
         'acc_lookup'          => "Account Lookup",
         'accept_cash'         => "Do you want to allow attendees to 'Pay at the Door?'",
         'add'                 => 'Add Event Type|Add Additional Event Types',
@@ -584,11 +584,11 @@ return [
         'create_user'         => 'Create User',
     ],
 
-    'subheaders'       => [
+    'subheaders'             => [
         'expand_min' => "Click the arrow to expand this section.",
     ],
 
-    'instructions'     => [
+    'instructions'           => [
         'add_speaker'                 => "to add speakers to this list, register the person to an event using a speaker discount code.",
         'bar_chart'                   => "Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.",
         'become_instr'                => "Find a person by searching for that person's first or last name, email address, or PMI ID",
@@ -713,11 +713,11 @@ return [
         'select_default_organization' => 'Select One Organization to make it your default and switch to it',
     ],
 
-    'mCentric_text'    => [
+    'mCentric_text'          => [
         'hosted_event' => "mCentric-hosted :org Event",
     ],
 
-    'messages'         => [
+    'messages'               => [
         'bad_regID'                    => "Invalid registration ID used.",
         'become'                       => "You are emulating the experience for: :name.  ",
         'confirm_msg'                  => "A confirmation email was sent to: :name.",
@@ -752,7 +752,7 @@ return [
         'new_org_created_successfully' => 'New Org Created Successfully.',
     ],
 
-    'modals'           => [
+    'modals'                 => [
         'gConfirm'   => 'Attendee Confirmation',
         'default'    => 'Default Title',
         'confirm'    => 'The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
@@ -766,7 +766,7 @@ return [
         'forgot'     => 'Forgot Your Password?',
     ],
 
-    'nav'              => [
+    'nav'                    => [
         'b_admin'     => "ADMIN",
         'b_new'       => "NEW",
         'b_slow'      => "SLOW",
@@ -826,7 +826,7 @@ return [
         'ad_new_org'  => 'Create New Organization',
     ],
 
-    'notifications'    => [
+    'notifications'          => [
         'hello'         => "Hello :firstName,",
         'thanks'        => "Thank you for using mCentric with :org.",
         'login'         => "Login to mCentric",
@@ -886,7 +886,7 @@ return [
 
     ],
 
-    'public_marketing' => [
+    'public_marketing'       => [
         'main'       => [
             'home'      => 'Home',
             'imm'       => "Integrated Member Management",
@@ -951,13 +951,13 @@ return [
         ],
     ],
 
-    'pdus'             => [
+    'pdus'                   => [
         'lead'  => 'Leadership',
         'strat' => 'Strategy',
         'tech'  => 'Technical Skills',
     ],
 
-    'profile'          => [
+    'profile'                => [
         'add_addr'    => 'Add Address',
         'add_email'   => 'Add Email',
         'add_number'  => 'Add Phone Number',
@@ -999,7 +999,7 @@ return [
         'zip'         => 'Zip',
     ],
 
-    'reg_status'       => [
+    'reg_status'             => [
         'active'      => 'Active',
         'canceled'    => 'Canceled',
         'disc_exempt' => 'This ticket cannot be discounted.',
@@ -1019,14 +1019,14 @@ return [
         'wait'        => 'Wait List',
     ],
 
-    'reports'          => [
+    'reports'                => [
         'ev_by_year'   => "Number of Events Attended by Year",
         'graph_years'  => "Year Display",
         'ind_brk'      => "Identified Industry Breakdown",
         'select_years' => "Select Years to Display",
     ],
 
-    'surveys'          => [
+    'surveys'                => [
         'responses'       => [
             'vg'  => 'Very Good',
             'g'   => 'Good',
@@ -1056,7 +1056,7 @@ return [
     ],
 
     // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
-    'symbols'          => [
+    'symbols'                => [
         'card'          => "<i class='far fa-credit-card-front fa-fw'></i>", // credit card
         'cash'          => "<i class='fas fa-money-bill-alt fa-fw'></i>", // physical currency
         'check'         => "<i class='fas fa-money-check fa-fw'></i>", // physical direction to draw on an account
@@ -1069,14 +1069,14 @@ return [
         'trash_class'   => "class='far fa-trash-alt fa-fw'", // delete symbol - class only (when tips are embedded)
     ],
 
-    'tabs'             => [
+    'tabs'                   => [
         'heat_map'  => "Heat Map [Coming Soon]",
         'mem_demo'  => "Member Demographics",
         'ticketing' => 'Event Ticketing',
         'sessions'  => 'Event Sessions',
     ],
 
-    'tooltips'         => [
+    'tooltips'               => [
         'accept_cash'       => "Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.",
         'accommodate'       => 'We will do our best to accommodate you.',
         'addl_ticket'       => "If you are attempting to buy any tickets for members, they will need to purchase their ticket "
@@ -1149,7 +1149,7 @@ return [
         'wait_cnv'          => 'Promote from Wait List',
     ],
 
-    'topBits'          => [
+    'topBits'                => [
         'admin'   => "Admin Role",
         'board'   => "Board Role",
         'dev'     => "Developer Role",
@@ -1163,11 +1163,11 @@ return [
     ],
 
     // Variable Words
-    'var_words'        => [
+    'var_words'              => [
         'time_period' => "{0}Upcoming|{1}Past",
     ],
 
-    'warning'          => [
+    'warning'                => [
         'dupe_reg'                => "FYI: You have already registered for this event. :names|FYI: The following people appear to have already registered for this event: :names",
         'inactive_event'          => "<b>Note:</b> You are previewing an event that is not yet active OR is in the past.",
         'inactive_unlocked_event' => "<b>Note:</b> This event is no longer active but you have been given permission to register.",
@@ -1176,12 +1176,12 @@ return [
         'slug_event_url'          => "This event's URL will be: :url",
     ],
 
-    'yesno_check'      => [
+    'yesno_check'            => [
         'no'  => 'No',
         'yes' => 'Yes',
     ],
 
-    'exceptions'       => [
+    'exceptions'             => [
         'query_exception'     => 'Resource you are looking for has been either moved/deleted/does not exist',
         'bad_url_link'        => 'The link you are trying to access has been expired.',
         'forbidden'           => 'You are not authorized to access this page.',
@@ -1192,7 +1192,14 @@ return [
         'no_msg_available'    => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'       => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
     ],
-    'validation'       => [
+    'validation'             => [
         'create_org_existing_user' => 'Please select one existing user',
+    ],
+
+    'page_generic_exception' => [
+        'report_this'   => 'Report This?',
+        'report_issue'  => 'Report Issue',
+        'btn_go'        => 'Go!',
+        'place_subject' => 'Subject',
     ],
 ];

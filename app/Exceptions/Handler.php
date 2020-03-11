@@ -13,10 +13,6 @@ use InvalidArgumentException;
 
 class Handler extends ExceptionHandler
 {
-    public function __construct()
-    {
-
-    }
     /**
      * A list of the exception types that should not be reported.
      *
@@ -55,7 +51,7 @@ class Handler extends ExceptionHandler
             //$airbrakeNotifier = \App::make('Airbrake\Notifier');
             //$airbrakeNotifier->notify($exception);
         }
-
+        //below line is causing issue in laravel default exception handler if public constructor method is defined here so removed that method
         parent::report($exception);
     }
 
@@ -68,8 +64,18 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($request->hasCookie('locale')) {
+            $cookie = $request->cookie('locale');
+            $locale = strlen($cookie) > 2 ? decrypt($cookie,false) : $cookie;
+            if(in_array($locale, \Config::get('app.locales'))){
+                app()->setLocale($locale);
+            } else {
+                app()->setLocale($locale);
+            }
+        }
+
         if (env('APP_ENV') == 'local') {
-            return parent::render($request, $exception);
+            // return parent::render($request, $exception);
         }
 
         if ($exception instanceof \Illuminate\Database\QueryException) {
@@ -78,7 +84,6 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \jdavidbakr\MailTracker\Exceptionmails\BadUrlLink) {
             return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
         }
-
         if ($this->isHttpException($exception)) {
             switch ($exception->getStatusCode()) {
                 case 404:
@@ -107,6 +112,7 @@ class Handler extends ExceptionHandler
             }
 
         }
+
         if ($exception instanceof TokenMismatchException) {
             return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
         }
