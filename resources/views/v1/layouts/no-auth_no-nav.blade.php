@@ -65,7 +65,7 @@
                 </div>
                 <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">@lang('messages.buttons.login')</button>
                 <div class="form-group">
-                    <div class="col-md-1 col-md-offset-4">
+                    <div class="col-md-1 col-md-offset-1">
                         <div class="checkbox">
                             <label style="color: white;">
                                 <nobr><input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -75,6 +75,11 @@
                                 <a style="color: white;" href="/password/reset">@lang('messages.auth.forgot')</a>
                             </label>
                         </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-1">
+                        @include('v1.parts.locale',['member'=>false])
                     </div>
                 </div>
             </form>

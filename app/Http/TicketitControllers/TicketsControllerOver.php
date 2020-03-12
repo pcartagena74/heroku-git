@@ -2,6 +2,7 @@
 
 namespace App\Http\TicketitControllers;
 
+use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\TicketOver as Ticket;
 use App\Person;
 use Cache;
@@ -9,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Models;
-use App\Models\Ticketit\AgentOver as Agent;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
 use \Kordy\Ticketit\Helpers\LaravelVersion;
@@ -40,7 +40,7 @@ class TicketsControllerOver extends TicketController
         $user   = $this->agent->find(auth()->user()->id);
         $person = Person::find(auth()->user()->id);
         $orgId  = $person->defaultOrgID;
-        
+
         if ($user->isAdmin()) {
             if ($complete) {
                 $collection = Ticket::complete($orgId);
@@ -240,6 +240,44 @@ class TicketsControllerOver extends TicketController
 
         // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index');
         return redirect()->route(Setting::grab('main_route') . '.index');
+    }
+
+    /**
+     * store new ticket via ajax agent auto assigned
+     * @param  Request $request
+     * @return json
+     */
+    public function storeAjax(Request $request)
+    {
+        $this->validate($request, [
+            'subject' => 'required|min:3',
+            'content' => 'required|min:6',
+            'url'     => 'required',
+        ]);
+        $ticket   = new Ticket();
+        $page_url = $request->input('url');
+        $referrer = $request->headers->get('referer');
+        if ($referrer != $request->input('url')) {
+            $page_url = $referrer;
+        }
+        $ticket->subject = $request->subject;
+
+        $ticket->setPurifiedContent($request->get('content') . ' <br> URL: ' . $referrer);
+
+        $ticket->priority_id = 2;
+        $ticket->category_id = 4;
+
+        $ticket->status_id = Setting::grab('default_status_id');
+        $ticket->user_id   = auth()->user()->id;
+        $person            = Person::find(auth()->user()->id);
+        $ticket->orgId     = $person->defaultOrgID;
+
+        $ticket->autoSelectAgent();
+
+        $ticket->save();
+
+        // session()->flash('status', trans('ticketit::lang.the-ticket-has-been-created'));
+        return response()->json(['success' => true, 'message' => trans('ticketit::lang.the-ticket-has-been-created')]);
     }
 
     /**
