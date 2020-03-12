@@ -26,6 +26,9 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
             $field_name => 'ticket',
         ],
     ]);
+    //added by mufaddal for context ticket
+    Route::post("$main_route_path/storeAjax", $new_tickets_path . '@storeAjax')
+        ->name("$main_route.storeAjax");
 
     //Ticket Comments public route
     $field_name = last(explode('/', "$main_route_path-comment"));

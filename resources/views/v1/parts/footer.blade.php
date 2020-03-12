@@ -4,6 +4,8 @@
  * Created: 2/2/2017
  */
 ?>
+@php
+/*
 <style>
     .main_container .right_col  > *:nth-last-child(2):not(footer)  {
         margin-bottom: 25px;
@@ -16,7 +18,6 @@
         z-index: 999;
     }
     .language-button {
-        /*position: absolute;*/
         right: 0;
         top: 12px;
         z-index: 999;
@@ -57,6 +58,8 @@
     }
     @endif
 </style>
+*/
+@endphp
 <p></p>
 <footer>
     <div class="pull-right footer-logo">
@@ -68,10 +71,10 @@
         <img alt="mCentric" class="footer__logo" src="{{ env('APP_URL') }}/images/mCentric_logo_blue.png" style="height: 25px;"/>
         @endif
     </div>
-     @if(Entrust::hasRole('Developer'))
+     @if(Entrust::hasRole('Developer') && false)
     <div class="pull-right dropdown language-button">
         <button aria-expanded="true" aria-haspopup="true" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="dropdownMenu1" type="button">
-            Launguage ({{session('locale')}})
+            <i class="far fa-globe"></i> ({{session('locale')}})
             <span class="caret">
             </span>
         </button>
