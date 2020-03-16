@@ -4,8 +4,8 @@ namespace App\Models\Ticketit;
 
 use App\Models\Ticketit\TicketOver as Ticketit;
 use Auth;
+use Illuminate\Support\Facades\DB;
 use Kordy\Ticketit\Models\Agent as User;
-use Zizaco\Entrust\Entrust;
 
 class AgentOver extends User
 {
@@ -22,7 +22,7 @@ class AgentOver extends User
      */
     public function scopeAgents($query, $paginate = false)
     {
-        $user = User::whereHas('roles', function($q){$q->whereIn('name', ['Admin']);})->get();
+        $user = User::whereHas('roles', function ($q) {$q->whereIn('name', ['Admin']);})->get();
         if ($paginate) {
             return $query->where('ticketit_agent', '1')->paginate($paginate, ['*'], 'agents_page');
         } else {
@@ -99,11 +99,28 @@ class AgentOver extends User
     {
         //as we want to have agent who are admin of particular org we can use entrust. we have already
         //updated entrust to check org id for all roles.
+        //as per new requirement by Phil Mar 13, 2020
+        //admin can assign ticket to developer to do so we need admin and developer both to be agents.
+        //developer can belongs to any org
+        //agent will only be from same org.
+        //so manually quering db as exsiting roles are tied with org id(for developer).
         if (isset($id)) {
-            $user  = User::where('id',$id)->get()->first();
+            $is_developer = DB::table('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where(['roles.name' => 'Developer', 'role_user.user_id' => $id])->get();
+            if ($is_developer->count() > 0) {
+                return true;
+            }
+            $user         = User::where('id', $id)->get()->first();
             return $user->hasRole(['Admin']);
         }
         if (auth()->check()) {
+            $is_developer = DB::table('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where(['roles.name' => 'Developer', 'role_user.user_id' => auth()->user()->id])->get();
+            if ($is_developer->count() > 0) {
+                return true;
+            }
             return auth()->user()->hasRole(['Admin']);
         }
 
@@ -152,7 +169,7 @@ class AgentOver extends User
      */
     public static function isTicketOwner($id)
     {
-        $ticket = Ticket::find($id);
+        $ticket = TicketOver::find($id);
         return $ticket && auth()->check() &&
         auth()->user()->id == $ticket->user->id;
     }
@@ -252,6 +269,7 @@ class AgentOver extends User
         return $this->hasMany(Ticketit::class, 'agent_id')->whereNull('completed_at');
     }
 
+
     /**
      * Get related user total tickets.
      */
@@ -275,4 +293,5 @@ class AgentOver extends User
     {
         return $this->hasMany(Ticketit::class, 'user_id')->whereNull('completed_at');
     }
+
 }

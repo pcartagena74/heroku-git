@@ -40,7 +40,6 @@ class TicketsControllerOver extends TicketController
         $user   = $this->agent->find(auth()->user()->id);
         $person = Person::find(auth()->user()->id);
         $orgId  = $person->defaultOrgID;
-
         if ($user->isAdmin()) {
             if ($complete) {
                 $collection = Ticket::complete($orgId);
@@ -296,7 +295,16 @@ class TicketsControllerOver extends TicketController
         $close_perm  = $this->permToClose($id);
         $reopen_perm = $this->permToReopen($id);
 
-        $cat_agents = Models\Category::find($ticket->category_id)->agents()->agentsLists();
+        //removing category agent as it envolves changing laravel default add role remove role to add remove entires from tickeit it as well and will have same effect without it.
+        // $cat_agents = Models\Category::find($ticket->category_id)->agents()->agentsLists();
+        $cat_agents = Person::whereIn('personID', function ($q) {
+            $q->select('user_id')
+                ->from('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where('roles.name', 'Developer')
+                ->orWhere('roles.name', 'Admin');
+        })->get()->pluck('login','personID')->toArray();
+        
         if (is_array($cat_agents)) {
             $agent_lists = ['auto' => 'Auto Select'] + $cat_agents;
         } else {
