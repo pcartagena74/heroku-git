@@ -301,7 +301,7 @@ class TicketsControllerOver extends TicketController
             $q->select('user_id')
                 ->from('role_user')
                 ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Developer')
+                ->where('roles.name', 'Developer');
         })->get()->pluck('login','personID')->toArray();
         
         if (is_array($cat_agents)) {
