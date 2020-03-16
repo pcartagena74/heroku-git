@@ -125,6 +125,7 @@ foreach($locations as $l){
 @endsection
 
 @section('modals')
+    @include('v1.modals.context_sensitive_issue')
     <div class="modal fade" id="address_modal" tabindex="-1" role="dialog" aria-labelledby="address_label"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
