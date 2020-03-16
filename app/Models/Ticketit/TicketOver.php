@@ -259,8 +259,7 @@ class TicketOver extends Ticket
             $q->select('user_id')
                 ->from('role_user')
                 ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Developer')
-                ->orWhere('roles.name', 'Admin');
+                ->where('roles.name', 'Admin');
         })->get();
         $count          = 0;
         $lowest_tickets = 1000000;
