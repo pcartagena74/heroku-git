@@ -294,12 +294,4 @@ class AgentOver extends User
         return $this->hasMany(Ticketit::class, 'user_id')->whereNull('completed_at');
     }
 
-
-    /**
-     * Get related agent tickets.
-     */
-    public function agentOpenTicketsUser()
-    {
-        return $this->hasMany(Ticketit::class, 'agent_id')->whereNull('completed_at');
-    }
 }
