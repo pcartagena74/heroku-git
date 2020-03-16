@@ -462,15 +462,13 @@ $currentOrg = $currentPerson->defaultOrg;
                                 </tr>
                             </thead>
                             <tbody>
-                                @for($n=1; $n<=5; $n++)
-                                <tr ($n="" <?php="" id="et_{{ $n }}_row" if="">
-                                    1) echo(' style="display:none"'); ?>>
-                                    <td>
-                                        <input class="form-control input-sm" name="eventType-{{ $n }}" placeholder="Event Type" type="text">
-                                        </input>
+                                 @for($n=1; $n<=5; $n++)
+                                <tr id="et_{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
+                                    <td><input name='eventType-{{ $n }}' type='text' placeholder='Event Type'
+                                               class='form-control input-sm'>
                                     </td>
                                 </tr>
-                                @endfor
+                            @endfor
                             </tbody>
                         </table>
                         <div class="col-md-6 col-sm-6 col-xs-12">
