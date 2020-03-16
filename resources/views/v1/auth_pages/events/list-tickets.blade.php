@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: This is the display page for Ticket Adding, Editing and Deleting for an Individual Event
  * Created: 2/9/2017
@@ -14,7 +14,7 @@ $tc = 0; $bc = 0;  $bi = 0;
 
 $default = Org::find($event->orgID);
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
@@ -483,6 +483,7 @@ $default = Org::find($event->orgID);
 @endsection
 
 @section('modals')
+@include('v1.modals.context_sensitive_issue')
 <div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="ticket_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

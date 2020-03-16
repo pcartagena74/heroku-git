@@ -341,4 +341,5 @@ $counter = 0;
 
 @section('modals')
     @include('v1.modals.dynamic', ['header' => trans('messages.headers.mAct'), 'url' => 'activity'])
+    @include('v1.modals.context_sensitive_issue')
 @endsection

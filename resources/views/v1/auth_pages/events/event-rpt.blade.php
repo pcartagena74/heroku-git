@@ -815,4 +815,5 @@ include('v1.parts.ajax_console')
 @endsection
 
 @section('modals')
+@include('v1.modals.context_sensitive_issue')
 @endsection

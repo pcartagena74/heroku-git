@@ -55,4 +55,5 @@ foreach($speakers as $speaker){
 
 @section('modals')
     @include('v1.modals.dynamic', ['header' => trans('messages.headers.sAct'), 'url' => 'speakers'])
+    @include('v1.modals.context_sensitive_issue')
 @endsection
