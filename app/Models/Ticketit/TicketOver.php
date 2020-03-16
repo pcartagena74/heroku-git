@@ -7,6 +7,7 @@ use App\Models\Ticketit\CategoryOver as Category;
 use App\Person;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Jenssegers\Date\Date;
 use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Traits\ContentEllipse;
@@ -46,9 +47,16 @@ class TicketOver extends Ticket
         if (auth()->user()->id == 1) {
             return $query->whereNotNull('completed_at');
         } else {
-            $person = Person::find(auth()->user()->id);
-            $orgId  = $person->defaultOrgID;
-            return $query->whereNotNull('completed_at')->where('orgId', $orgId);
+            $is_developer = DB::table('role_user')->select('user_id')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where(['roles.name' => 'Developer', 'role_user.user_id' => auth()->user()->id])->get();
+            if ($is_developer->count() > 0) {
+                return $query->whereNotNull('completed_at');
+            } else {
+                $person = Person::find(auth()->user()->id);
+                $orgId  = $person->defaultOrgID;
+                return $query->whereNotNull('completed_at')->where('orgId', $orgId);
+            }
         }
     }
 
@@ -63,10 +71,17 @@ class TicketOver extends Ticket
         if (auth()->user()->id == 1) {
             return $query->whereNull('completed_at');
         } else {
-            $person = Person::find(auth()->user()->id);
-            $orgId  = $person->defaultOrgID;
-            return $query->whereNull('completed_at')->where('orgId', $orgId);
+            $is_developer = DB::table('role_user')->select('user_id')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where(['roles.name' => 'Developer', 'role_user.user_id' => auth()->user()->id])->get();
+            if ($is_developer->count() > 0) {
+                return $query->whereNull('completed_at');
+            } else {
+                $person = Person::find(auth()->user()->id);
+                $orgId  = $person->defaultOrgID;
+                return $query->whereNull('completed_at')->where('orgId', $orgId);
 
+            }
         }
     }
 
@@ -204,12 +219,21 @@ class TicketOver extends Ticket
     public function scopeAgentUserTickets($query, $id)
     {
         //added admin check for agent
-        $user = User::where('id',$id)->get()->first();
+        $user = User::where('id', $id)->get()->first();
         if ($user->hasRole(['Admin'])) {
             return $query->where(function ($subquery) use ($id) {
                 $subquery->where('agent_id', $id)->orWhere('user_id', $id);
             });
         } else {
+            $is_developer = DB::table('role_user')->select('user_id')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where(['roles.name' => 'Developer', 'role_user.user_id' => $id])->get();
+            if ($is_developer->count() > 0) {
+                return $query->where(function ($subquery) use ($id) {
+                    $subquery->where('user_id', $id)->orwhere('agent_id', $id);
+                    $subquery->where('agent_id', $id)->orWhere('user_id', $id);
+                });
+            }
             return $query->where(function ($subquery) use ($id) {
                 $subquery->where('user_id', $id);
             });
@@ -225,25 +249,37 @@ class TicketOver extends Ticket
     {
         $cat_id = $this->category_id;
         $orgId  = $this->orgId;
-        $agents = Category::find($cat_id)->agents()->with(['agentOpenTickets' => function ($query) use ($orgId) {
-            $query->addSelect(['id', 'agent_id']);
-            $query->where('orgId', $orgId);
-        }])->get();
+        //removed as to add category with agent it will required changes in add roles and remove roles methods.
+        // $agents = Category::find($cat_id)->agents()->with(['agentOpenTickets' => function ($query) use ($orgId) {
+        //     $query->addSelect(['id', 'agent_id']);
+        //     $query->where('orgId', $orgId);
+        // }])->get();
+
+        $agents = Person::whereIn('personID', function ($q) {
+            $q->select('user_id')
+                ->from('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where('roles.name', 'Developer')
+                ->orWhere('roles.name', 'Admin');
+        })->get();
         $count          = 0;
         $lowest_tickets = 1000000;
-        // If no agent selected, select the admin
-        $first_admin = Agent::admins()->first();
 
-        $selected_agent_id = $first_admin->id;
+        // If no agent selected, select the admin
+        // as phil is the default admin removed this query from below
+        // $first_admin = Agent::admins()->first();
+        // $selected_agent_id = $first_admin->id;
+
+        $selected_agent_id = 1;
         foreach ($agents as $agent) {
             if ($count == 0) {
-                $lowest_tickets    = $agent->agentOpenTickets->count();
-                $selected_agent_id = $agent->id;
+                $lowest_tickets    = $this->agentOpenTicketsCount($agent->personID);
+                $selected_agent_id = $agent->personID;
             } else {
-                $tickets_count = $agent->agentOpenTickets->count();
+                $tickets_count = $this->agentOpenTicketsCount($agent->personID);
                 if ($tickets_count < $lowest_tickets) {
                     $lowest_tickets    = $tickets_count;
-                    $selected_agent_id = $agent->id;
+                    $selected_agent_id = $agent->personID;
                 }
             }
             $count++;
@@ -251,5 +287,10 @@ class TicketOver extends Ticket
         $this->agent_id = $selected_agent_id;
 
         return $this;
+    }
+
+    public function agentOpenTicketsCount($agent_id)
+    {
+        return $this->where('agent_id', $agent_id)->get()->count();
     }
 }
