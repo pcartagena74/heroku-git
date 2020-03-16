@@ -302,7 +302,6 @@ class TicketsControllerOver extends TicketController
                 ->from('role_user')
                 ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
                 ->where('roles.name', 'Developer')
-                ->orWhere('roles.name', 'Admin');
         })->get()->pluck('login','personID')->toArray();
         
         if (is_array($cat_agents)) {
