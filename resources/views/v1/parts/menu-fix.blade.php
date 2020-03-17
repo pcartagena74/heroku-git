@@ -39,7 +39,6 @@ if(isset($tag) && isset($newTxt)) {
         var url      = window.location.href;
         $SIDEBAR_MENU.find('a[href="'+url+'"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
             setContentHeight();
-            console.log('here',url);
         }).parent().addClass('active');
 
         @if($txtChange)

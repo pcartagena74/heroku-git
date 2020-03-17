@@ -67,6 +67,17 @@ try{
                         </li>
                     </ul>
                 </li>
+                @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                <li class="nav-item dropdown">
+                    <a aria-expanded="false" class="dropdown-toggle info-number" data-toggle="dropdown" href="{{route('tickets.index')}}" id="navbarDropdown1">
+                        <i class="far fa-fw fa-ticket-alt">
+                        </i>
+                        <span class="badge bg-green">
+                            {{getActiveTicketCountAgent()}}
+                        </span>
+                    </a>
+                </li>
+                @endif
                 @include('v1.parts.locale',['member'=>true])
             </ul>
         </nav>

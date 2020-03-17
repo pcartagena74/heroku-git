@@ -353,6 +353,7 @@ return [
         'admin_contact_statement' => 'Admin Contact Statement',
         'tech_contact_statement'  => 'Tech Contact Statement',
         'org_path'                => 'Organization Path',
+        'filter_tickets'           => 'Filter Tickets',
     ],
 
     'headers'                => [
@@ -825,6 +826,7 @@ return [
         'es_local'      => 'Español',
         'ad_new_org'    => 'Create New Organization',
         'context_issue' => 'Report Issue',
+        'my_support'    => 'My Support',
     ],
 
     'notifications'          => [
@@ -1202,5 +1204,10 @@ return [
         'report_issue'  => 'Report Issue',
         'btn_go'        => 'Go!',
         'place_subject' => 'Subject',
+    ],
+    'filter_tickets_options' => [
+        'all'=>'All',
+        'created'=>'Created by me',
+        'assigned'=>'Assigned to me',
     ],
 ];
