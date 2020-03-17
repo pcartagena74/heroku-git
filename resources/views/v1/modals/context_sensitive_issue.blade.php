@@ -41,6 +41,22 @@
                         </span>
                     </div>
                 </div>
+                @if(Entrust::hasRole('Admin') || Entrust::can('Developer'))
+                <div class="row">
+                    <div class="form-group">
+                        {!! CollectiveForm::label('agent_id', trans('ticketit::lang.agent') . trans('ticketit::lang.colon'), [
+                            'class' => 'col-lg-4 control-label'
+                        ]) !!}
+                        <div class="col-lg-8">
+                            {!! CollectiveForm::select(
+                                'agent_id',
+                                getAgentList(),
+                                'auto',
+                                ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                </div>
+                @endif
                 <div class="error" id="ticket-errors">
                 </div>
             </div>

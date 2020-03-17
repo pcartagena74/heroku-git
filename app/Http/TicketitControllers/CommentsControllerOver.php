@@ -1,16 +1,16 @@
 <?php
 
-namespace Kordy\Ticketit\Controllers;
+namespace App\Http\TicketitControllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Kordy\Ticketit\Controllers\CommentsController as CommentsController;
 use Kordy\Ticketit\Models;
 
-class CommentsController extends Controller
+class CommentsControllerOver extends CommentsController
 {
     public function __construct()
     {
-        $this->middleware('Kordy\Ticketit\Middleware\IsAdminMiddleware', ['only' => ['edit', 'update', 'destroy']]);
+        $this->middleware('\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver', ['only' => ['edit', 'update', 'destroy']]);
         $this->middleware('Kordy\Ticketit\Middleware\ResAccessMiddleware', ['only' => 'store']);
     }
 
@@ -44,8 +44,8 @@ class CommentsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'ticket_id'   => 'required|exists:ticketit,id',
-            'content'     => 'required|min:6',
+            'ticket_id' => 'required|exists:ticketit,id',
+            'content'   => 'required|min:6',
         ]);
 
         $comment = new Models\Comment();
@@ -53,11 +53,17 @@ class CommentsController extends Controller
         $comment->setPurifiedContent($request->get('content'));
 
         $comment->ticket_id = $request->get('ticket_id');
-        $comment->user_id = \Auth::user()->id;
+        $comment->user_id   = \Auth::user()->id;
         $comment->save();
 
-        $ticket = Models\Ticket::find($comment->ticket_id);
+        $ticket             = Models\Ticket::find($comment->ticket_id);
         $ticket->updated_at = $comment->created_at;
+        if ($ticket->user_id != auth()->user()->id) {
+            $ticket->user_read = 0;
+        }
+        if ($ticket->agent_id != auth()->user()->id) {
+            $ticket->agent_read = 0;
+        }
         $ticket->save();
 
         return back()->with('status', trans('ticketit::lang.comment-has-been-added-ok'));

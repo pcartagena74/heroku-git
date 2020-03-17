@@ -4,6 +4,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
 
     $ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController';
     $new_tickets_path = 'App\Http\TicketitControllers\TicketsControllerOver';
+    $new_tickets_comment_path = 'App\Http\TicketitControllers\CommentsControllerOver';
     //Route::group(['middleware' => '', function () use ($main_route) {
     //Ticket public route
     Route::get("$main_route_path/complete", $new_tickets_path . '@indexComplete')
@@ -12,6 +13,14 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ->name("$main_route.data");
 
     $field_name = last(explode('/', $main_route_path));
+
+    //added by mufaddal for context ticket
+    Route::post("$main_route_path/storeAjax", $new_tickets_path . '@storeAjax')
+        ->name("$main_route.storeAjax");
+        
+    Route::get("$main_route_path/my-tickets", $new_tickets_path . '@myTickets')
+        ->name("$main_route.my-tickets");
+        
     Route::resource($main_route_path, $new_tickets_path, [
         'names'      => [
             'index'   => $main_route . '.index',
@@ -26,13 +35,10 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
             $field_name => 'ticket',
         ],
     ]);
-    //added by mufaddal for context ticket
-    Route::post("$main_route_path/storeAjax", $new_tickets_path . '@storeAjax')
-        ->name("$main_route.storeAjax");
 
     //Ticket Comments public route
     $field_name = last(explode('/', "$main_route_path-comment"));
-    Route::resource("$main_route_path-comment", 'Kordy\Ticketit\Controllers\CommentsController', [
+    Route::resource("$main_route_path-comment", $new_tickets_comment_path, [
         'names'      => [
             'index'   => "$main_route-comment.index",
             'store'   => "$main_route-comment.store",

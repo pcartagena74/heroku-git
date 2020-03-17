@@ -200,7 +200,7 @@ class RoleController extends Controller
 
         //check if user has any role associated if not do not run below code
         //not needed now as orgname role is not needed admin will be the admin of that org
-        if (isset($person->org_role_id()->id)) {
+        if (isset($person->org_role_id()->id) && false) {
             // Check to see if a role for the orgName is in the DB...
             if (!$person->roles->contains('id', $person->org_role_id()->id)) {
                 $orgID_needed = 1;

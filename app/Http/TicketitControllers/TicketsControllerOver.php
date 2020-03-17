@@ -7,6 +7,7 @@ use App\Models\Ticketit\TicketOver as Ticket;
 use App\Person;
 use Cache;
 use Carbon\Carbon;
+use Entrust;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Models;
@@ -60,6 +61,9 @@ class TicketsControllerOver extends TicketController
             }
         }
 
+        // if ($complete == 'my-ticket') {
+        //     $collection = Ticket::userTickets($user->id)->active($orgId);
+        // }
         $collection
             ->join('users', 'users.id', '=', 'ticketit.user_id')
             ->join('ticketit_statuses', 'ticketit_statuses.id', '=', 'ticketit.status_id')
@@ -78,8 +82,9 @@ class TicketsControllerOver extends TicketController
                 'users.name AS owner',
                 'ticketit.agent_id',
                 'ticketit_categories.name AS category',
+                'ticketit.agent_id AS agent_id',
+                'ticketit.user_id AS user_id',
             ]);
-
         $collection = $datatables->of($collection);
 
         $this->renderTicketTable($collection);
@@ -89,7 +94,7 @@ class TicketsControllerOver extends TicketController
         // method rawColumns was introduced in laravel-datatables 7, which is only compatible with >L5.4
         // in previous laravel-datatables versions escaping columns wasn't defaut
         if (LaravelVersion::min('5.4')) {
-            $collection->rawColumns(['subject', 'status', 'priority', 'category', 'agent']);
+            $collection->rawColumns(['subject', 'status', 'priority', 'category', 'agent', 'agent_id', 'user_id']);
         }
 
         return $collection->make(true);
@@ -127,9 +132,21 @@ class TicketsControllerOver extends TicketController
         });
 
         $collection->editColumn('agent', function ($ticket) {
-            $ticket = $this->tickets->find($ticket->id);
+            // $ticket = $this->tickets->find($ticket->id);
+            // return e($ticket->agent->name);
+            // removed as now we are not using ticketit agent table for same.
+            $ticket = Person::where('personID', $ticket->agent_id)->get()->first();
+            return e($ticket->login);
+        });
 
-            return e($ticket->agent->name);
+        // added by mufaddal for filter
+        $collection->editColumn('agent_id', function ($ticket) {
+            $ticket = Person::where('personID', $ticket->agent_id)->get()->first();
+            return e($ticket->login);
+        });
+        $collection->editColumn('user_id', function ($ticket) {
+            $ticket = Person::where('personID', $ticket->user_id)->get()->first();
+            return e($ticket->login);
         });
 
         return $collection;
@@ -143,7 +160,7 @@ class TicketsControllerOver extends TicketController
     public function index()
     {
         $complete = false;
-
+        markReadActiveTicketCountUser();
         return view('ticketit::index', compact('complete'));
     }
 
@@ -271,7 +288,13 @@ class TicketsControllerOver extends TicketController
         $person            = Person::find(auth()->user()->id);
         $ticket->orgId     = $person->defaultOrgID;
 
-        $ticket->autoSelectAgent();
+        if (empty($request->input('agent_id'))) {
+            $ticket->autoSelectAgent();
+        } else if ($request->input('agent_id') == 'auto') {
+            $ticket->autoSelectAgent();
+        } else {
+            $ticket->agent_id = $request->input('agent_id');
+        }
 
         $ticket->save();
 
@@ -297,21 +320,12 @@ class TicketsControllerOver extends TicketController
 
         //removing category agent as it envolves changing laravel default add role remove role to add remove entires from tickeit it as well and will have same effect without it.
         // $cat_agents = Models\Category::find($ticket->category_id)->agents()->agentsLists();
-        $cat_agents = Person::whereIn('personID', function ($q) {
-            $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Developer');
-        })->get()->pluck('login','personID')->toArray();
-        
-        if (is_array($cat_agents)) {
-            $agent_lists = ['auto' => 'Auto Select'] + $cat_agents;
-        } else {
-            $agent_lists = ['auto' => 'Auto Select'];
+        $agent_lists = getAgentList($ticket);
+        $comments    = $ticket->comments()->paginate(Setting::grab('paginate_items'));
+        if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
+            $ticket->agent_read = 1;
+            $ticket->save();
         }
-
-        $comments = $ticket->comments()->paginate(Setting::grab('paginate_items'));
-
         return view('ticketit::tickets.show',
             compact('ticket', 'status_lists', 'priority_lists', 'category_lists', 'agent_lists', 'comments',
                 'close_perm', 'reopen_perm'));
@@ -351,7 +365,10 @@ class TicketsControllerOver extends TicketController
         } else {
             $ticket->agent_id = $request->input('agent_id');
         }
-
+        $ticket->user_read = 0;
+        if ($ticket->agent_id != auth()->user()->id) {
+            $ticket->agent_read = 0;
+        }
         $ticket->save();
 
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-modified'));
@@ -424,6 +441,13 @@ class TicketsControllerOver extends TicketController
             }
 
             $subject = $ticket->subject;
+            if ($ticket->user_id != auth()->user()->id) {
+                $ticket->user_read = 0;
+            }
+            if ($ticket->agent_id != auth()->user()->id) {
+                $ticket->agent_read = 0;
+            }
+
             $ticket->save();
 
             session()->flash('status', trans('ticketit::lang.the-ticket-has-been-reopened', ['name' => $subject]));
@@ -576,5 +600,11 @@ class TicketsControllerOver extends TicketController
         $performance_average = $performance_count / $counter;
 
         return $performance_average;
+    }
+
+    public function myTickets(Request $request)
+    {
+        $complete = 'my-ticket';
+        return view('ticketit::tickets.my_tickets', compact('complete'));
     }
 }

@@ -339,6 +339,15 @@ try{
                             </ul>
                         </li>
                         @endif
+                        <li style="display: none">
+                            <a href="{{ route('tickets.my-tickets')}}">
+                                <i class="fas fa-fw fa-ticket-alt">
+                                </i>
+                                @lang('messages.nav.my_support')
+                                <span class="far fa-pull-right">
+                                </span>
+                            </a>
+                        </li>
                         <li class="">
                             <a>
                                 <i class="far fa-fw fa-ticket-alt">
@@ -358,6 +367,14 @@ try{
                                 <li>
                                     <a href="{{ url('tickets')}}">
                                         @lang('messages.nav.h_active')
+                                        @php
+                                            $ticket_count = getActiveTicketCountUser();
+                                        @endphp
+                                        @if($ticket_count > 0)
+                                            <span class="badge bg-green">
+                                                {{$ticket_count }}
+                                            </span>
+                                        @endif
                                     </a>
                                 </li>
                                 <li>

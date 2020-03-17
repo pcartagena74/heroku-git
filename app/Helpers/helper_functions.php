@@ -5,13 +5,12 @@
  */
 
 use App\Email;
+use App\Models\Ticketit\TicketOver;
 use App\Org;
 use App\OrgPerson;
 use App\Person;
-use Intervention\Image\ImageManagerStatic as Image;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
-use League\Flysystem\AdapterInterface;
-
+use Intervention\Image\ImageManagerStatic as Image;
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -22,8 +21,8 @@ use League\Flysystem\AdapterInterface;
  */
 function extract_images($html, $orgID)
 {
-    $dom = new \DOMDocument();
-    $org = Org::find($orgID);
+    $dom     = new \DOMDocument();
+    $org     = Org::find($orgID);
     $updated = 0;
 
     try {
@@ -46,9 +45,9 @@ function extract_images($html, $orgID)
 
                 // @see http://image.intervention.io/api/
                 $image = Image::make($src)
-                    // resize if required
-                    /* ->resize(300, 200) */
-                    ->encode($mimetype, 100);   // encode file to the specified mimetype
+                // resize if required
+                /* ->resize(300, 200) */
+                    ->encode($mimetype, 100); // encode file to the specified mimetype
 
                 //Flysystem::connection('s3_media')->put($event_filename, $contents);
                 $s3m = Flysystem::connection('s3_media');
@@ -88,9 +87,9 @@ function check_exists($model, $doFlash, $var_array)
     switch ($model) {
         case 'p':
             list($first, $last, $login) = $var_array;
-            $p = Person::where([
+            $p                          = Person::where([
                 ['firstName', '=', $first],
-                ['lastName', '=', $last]
+                ['lastName', '=', $last],
             ])
                 ->orWhere('login', '=', $login)
                 ->orWhereHas('emails', function ($q) use ($login) {
@@ -104,7 +103,7 @@ function check_exists($model, $doFlash, $var_array)
                 }
                 $details .= "</ul>";
 
-                if($doFlash){
+                if ($doFlash) {
                     request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                 }
                 return 1;
@@ -112,14 +111,14 @@ function check_exists($model, $doFlash, $var_array)
             break;
         case 'e':
             list($email) = $var_array;
-            $e = Email::where('emailADDR', '=', $email)->first();
+            $e           = Email::where('emailADDR', '=', $email)->first();
             if (null !== $e) {
                 $p = Person::find($e->personID);
                 $details .= '<li>' . $email . "</li>";
                 $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                 $details .= "<li>$existing</li>";
                 $details .= "</ul>";
-                if($doFlash){
+                if ($doFlash) {
                     request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                 }
                 return 1;
@@ -135,7 +134,7 @@ function check_exists($model, $doFlash, $var_array)
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                     $details .= "<li>$existing</li>";
                     $details .= "</ul>";
-                    if($doFlash){
+                    if ($doFlash) {
                         request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                     }
                     return 1;
@@ -164,8 +163,8 @@ function plink($regID, $personID)
 function et_translate($term)
 {
     $x = 'messages.event_types.';
-    if (Lang::has($x.$term)) {
-        return trans_choice($x.$term, 1);
+    if (Lang::has($x . $term)) {
+        return trans_choice($x . $term, 1);
     } else {
         return $term;
     }
@@ -177,23 +176,24 @@ function et_translate($term)
  * @param $type
  * @return string
  */
-function li_print_array($array, $type){
+function li_print_array($array, $type)
+{
     //dd($array);
-    switch($type){
+    switch ($type) {
         case "ol":
             $start = "<OL>";
-            $end = "</OL>";
+            $end   = "</OL>";
             break;
         case "ul":
             $start = "<UL>";
-            $end = "</UL>";
+            $end   = "</UL>";
             break;
     }
     $output = $start;
-    foreach($array as $item){
-        $reg = $item['reg'];
+    foreach ($array as $item) {
+        $reg  = $item['reg'];
         $name = $item['name'];
-        $form = Form::open(['method'  => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->regfinance->regID]]);
+        $form = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->regfinance->regID]]);
         $form .= Form::submit(trans('messages.buttons.reg_can'), array('class' => 'btn btn-primary btn-xs'));
         $form .= Form::close();
         $output .= "<li>$name $form</li>";
@@ -211,7 +211,7 @@ Deleting - no need to have had this helper...
  * @param $delimeter
  * @return array
 function into_array($string, $delimeter) {
-    return(explode($delimeter, $string));
+return(explode($delimeter, $string));
 }
  */
 
@@ -221,11 +221,101 @@ function into_array($string, $delimeter) {
  * @param $p
  * @return boolean
  */
-function assoc_email($email, $p) {
+function assoc_email($email, $p)
+{
     $e = Email::where('emailADDR', '=', $email)->first();
-    if(null === $e || $e->personID != $p->personID){
+    if (null === $e || $e->personID != $p->personID) {
         return 0;
     } else {
         return 1;
+    }
+}
+
+if (!function_exists('getAgentList')) {
+    /**
+     * get ticketit agent list from ticket or from current user
+     * @param  ticket collection $ticket
+     * @return array of agent
+     */
+    function getAgentList($ticket = null)
+    {
+        $orgId = 0;
+        if (empty($ticket)) {
+            $person = Person::find(auth()->user()->id);
+            $orgId  = $person->defaultOrgID;
+        } else {
+            $orgId = $ticket->orgId;
+        }
+        $dev_agents = Person::whereIn('personID', function ($q) {
+            $q->select('user_id')
+                ->from('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where('roles.name', 'Developer');
+        })->get()->pluck('login', 'personID')->toArray();
+
+        $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
+            $q->select('user_id')
+                ->from('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where('roles.name', 'Admin')
+                ->where('roles.orgId', $orgId);
+        })->get()->pluck('login', 'personID')->toArray();
+
+        $dev_agents = array_map(function ($value) {
+            return $value . '(Developer)';
+        }, $dev_agents);
+
+        $agent_lists = ['auto' => 'Auto Select'];
+        if (is_array($dev_agents)) {
+            $agent_lists += $dev_agents;
+        }
+
+        if (is_array($admin_agents)) {
+            foreach ($admin_agents as $key => $value) {
+                if (array_key_exists($key, $agent_lists)) {
+                    $agent_lists[$key] = $value . '(Admin and Developer)';
+                } else {
+                    $agent_lists[$key] = $value . '(Admin)';
+                }
+            }
+        }
+        return $agent_lists;
+    }
+}
+
+if (!function_exists('getActiveTicketCountUser')) {
+    function getActiveTicketCountUser()
+    {
+        return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0])
+            ->whereNull('completed_at')
+            ->get()->count();
+    }
+}
+
+if (!function_exists('markReadActiveTicketCountUser')) {
+    function markReadActiveTicketCountUser()
+    {
+        return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0])
+            ->whereNull('completed_at')->update(['user_read' => 1]);
+    }
+}
+
+if (!function_exists('markUnreadTicketUser')) {
+    function markUnreadTicketUser($ticket_id)
+    {
+        if (empty($ticket_id)) {
+            return;
+        }
+        return TicketOver::where(['id' => $ticket_id])
+            ->update(['user_read' => 0]);
+    }
+}
+
+if (!function_exists('getActiveTicketCountAgent')) {
+    function getActiveTicketCountAgent()
+    {
+        return TicketOver::where(['agent_id' => auth()->user()->id, 'agent_read' => 0])
+            ->whereNull('completed_at')
+            ->get()->count();
     }
 }
