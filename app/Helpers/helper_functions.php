@@ -273,9 +273,9 @@ if (!function_exists('getAgentList')) {
         if (is_array($admin_agents)) {
             foreach ($admin_agents as $key => $value) {
                 if (array_key_exists($key, $agent_lists)) {
-                    $agent_lists[$key] = $value . '(Admin and Developer)';
+                    $agent_lists[$key] = $value . ' (Admin and Developer)';
                 } else {
-                    $agent_lists[$key] = $value . '(Admin)';
+                    $agent_lists[$key] = $value . ' (Admin)';
                 }
             }
         }
@@ -284,6 +284,10 @@ if (!function_exists('getAgentList')) {
 }
 
 if (!function_exists('getActiveTicketCountUser')) {
+    /**
+     * get logged in user active ticket count
+     * @return int ticket count
+     */
     function getActiveTicketCountUser()
     {
         return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0])
@@ -293,6 +297,10 @@ if (!function_exists('getActiveTicketCountUser')) {
 }
 
 if (!function_exists('markReadActiveTicketCountUser')) {
+    /**
+     * mark logged user all open ticket as read
+     * @return bool 
+     */
     function markReadActiveTicketCountUser()
     {
         return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0])
@@ -301,6 +309,11 @@ if (!function_exists('markReadActiveTicketCountUser')) {
 }
 
 if (!function_exists('markUnreadTicketUser')) {
+    /**
+     * make a specific user ticket as unread
+     * @param  int $ticket_id ticket id
+     * @return bool 
+     */
     function markUnreadTicketUser($ticket_id)
     {
         if (empty($ticket_id)) {
@@ -312,6 +325,10 @@ if (!function_exists('markUnreadTicketUser')) {
 }
 
 if (!function_exists('getActiveTicketCountAgent')) {
+    /**
+     * get all active ticket of loggedin user 
+     * @return int count
+     */
     function getActiveTicketCountAgent()
     {
         return TicketOver::where(['agent_id' => auth()->user()->id, 'agent_read' => 0])

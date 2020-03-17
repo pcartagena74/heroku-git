@@ -58,6 +58,7 @@ class CommentsControllerOver extends CommentsController
 
         $ticket             = Models\Ticket::find($comment->ticket_id);
         $ticket->updated_at = $comment->created_at;
+        //added by mufaddal for user / agent badge count
         if ($ticket->user_id != auth()->user()->id) {
             $ticket->user_read = 0;
         }
