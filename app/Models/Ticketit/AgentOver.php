@@ -157,7 +157,7 @@ class AgentOver extends User
     {
         return auth()->check() &&
         Auth::user()->ticketit_agent &&
-        Auth::user()->id == Ticket::find($id)->agent->id;
+        Auth::user()->id == TicketOver::find($id)->agent->id;
     }
 
     /**

@@ -22,7 +22,7 @@ class TicketsControllerOver extends TicketController
     protected $currentPerson;
     public function __construct(Ticket $tickets, Agent $agent)
     {
-        $this->middleware('\Kordy\Ticketit\Middleware\ResAccessMiddleware', ['only' => ['show']]);
+        $this->middleware('\App\Http\Middleware\Ticketit\ResAccessMiddlewareOver', ['only' => ['show']]);
         $this->middleware('\App\Http\Middleware\Ticketit\IsAgentMiddlewareOver', ['only' => ['edit', 'update']]);
         $this->middleware('\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver', ['only' => ['destroy']]);
 

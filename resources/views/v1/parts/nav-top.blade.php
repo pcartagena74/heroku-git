@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Navigation bar across top-right
  * Created: 2/2/2017
@@ -6,8 +6,7 @@
  * May need to revisit once sessions and globals are decided post laravel authorization
  */
 
-$currentPerson = App\Person::find(auth()->
-user()->id);
+$currentPerson = App\Person::find(auth()->user()->id);
 
 try{
     $x = getimagesize($currentPerson->avatarURL);
@@ -17,7 +16,7 @@ try{
     $badge_color = "bg-red";
     $currentPerson->save();
 }
-?>
+@endphp
 <div class="top_nav">
     <div class="nav_menu">
         <nav>
