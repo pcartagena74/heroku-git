@@ -8,6 +8,7 @@
     <div class="panel-body">
         <div id="message">
         </div>
+        @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
         <form>
             <div class="form-group col-sm-6">
                 <div id="search-button-group">
@@ -39,6 +40,7 @@
                 --}}
             </div>
         </form>
+        @endif
         @include('ticketit::tickets.partials.datatable')
     </div>
 </div>
