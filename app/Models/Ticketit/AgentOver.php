@@ -4,6 +4,7 @@ namespace App\Models\Ticketit;
 
 use App\Models\Ticketit\TicketOver as Ticketit;
 use Auth;
+use Entrust;
 use Illuminate\Support\Facades\DB;
 use Kordy\Ticketit\Models\Agent as User;
 
@@ -105,20 +106,16 @@ class AgentOver extends User
         //agent will only be from same org.
         //so manually quering db as exsiting roles are tied with org id(for developer).
         if (isset($id)) {
-            $is_developer = DB::table('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where(['roles.name' => 'Developer', 'role_user.user_id' => $id])->get();
-            if ($is_developer->count() > 0) {
+            $is_developer = self::checkUserIsDeveloper($id);
+            if ($is_developer) {
                 return true;
             }
-            $user         = User::where('id', $id)->get()->first();
+            $user = User::where('id', $id)->get()->first();
             return $user->hasRole(['Admin']);
         }
         if (auth()->check()) {
-            $is_developer = DB::table('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where(['roles.name' => 'Developer', 'role_user.user_id' => auth()->user()->id])->get();
-            if ($is_developer->count() > 0) {
+            $is_developer = self::checkUserIsDeveloper(auth()->user()->id);
+            if ($is_developer) {
                 return true;
             }
             return auth()->user()->hasRole(['Admin']);
@@ -155,9 +152,8 @@ class AgentOver extends User
      */
     public static function isAssignedAgent($id)
     {
-        return auth()->check() &&
-        Auth::user()->ticketit_agent &&
-        Auth::user()->id == TicketOver::find($id)->agent->id;
+        $is_admin = Entrust::hasRole('Admin');
+        return auth()->check() && (($is_admin && Auth::user()->id == TicketOver::find($id)->agent->id) || self::checkUserIsDeveloper(Auth::user()->id));
     }
 
     /**
@@ -269,7 +265,6 @@ class AgentOver extends User
         return $this->hasMany(Ticketit::class, 'agent_id')->whereNull('completed_at');
     }
 
-
     /**
      * Get related user total tickets.
      */
@@ -294,4 +289,16 @@ class AgentOver extends User
         return $this->hasMany(Ticketit::class, 'user_id')->whereNull('completed_at');
     }
 
+    /**
+     * check if given user is a developer
+     * @param  int $user_id
+     * @return bool true/false
+     */
+    protected static function checkUserIsDeveloper($user_id)
+    {
+        $role = DB::table('role_user')
+            ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+            ->where(['roles.name' => 'Developer', 'role_user.user_id' => $user_id])->get();
+        return $role->count() > 0;
+    }
 }

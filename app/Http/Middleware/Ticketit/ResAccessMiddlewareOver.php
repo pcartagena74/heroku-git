@@ -44,8 +44,8 @@ class ResAccessMiddlewareOver extends ResAccessMiddleware
         if ($request->route()->getName() == Setting::grab('main_route') . '-comment.store') {
             $ticket_id = $request->get('ticket_id');
         }
-
-        // Assigned Agent has access in the restricted mode enabled
+        
+        // assigned Agent has access in the restricted mode enabled
         if (Agent::isAgent() && Agent::isAssignedAgent($ticket_id)) {
             return $next($request);
         }
