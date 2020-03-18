@@ -105,6 +105,7 @@ class AgentOver extends User
         //developer can belongs to any org
         //agent will only be from same org.
         //so manually quering db as exsiting roles are tied with org id(for developer).
+        
         if (isset($id)) {
             $is_developer = self::checkUserIsDeveloper($id);
             if ($is_developer) {

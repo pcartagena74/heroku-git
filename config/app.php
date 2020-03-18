@@ -78,7 +78,7 @@ return [
      */
 
     'locale'          => 'en',
-    'locales'         => ['en','es'],
+    'locales'         => ['en', 'es'],
 
     /*
     |--------------------------------------------------------------------------
@@ -188,7 +188,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
     ],
 
     /*
