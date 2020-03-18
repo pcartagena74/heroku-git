@@ -326,6 +326,7 @@ class TicketsControllerOver extends TicketController
             $ticket->agent_read = 1;
             $ticket->save();
         }
+       
         return view('ticketit::tickets.show',
             compact('ticket', 'status_lists', 'priority_lists', 'category_lists', 'agent_lists', 'comments',
                 'close_perm', 'reopen_perm'));

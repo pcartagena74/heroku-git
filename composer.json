@@ -69,9 +69,12 @@
         "classmap": ["database/seeds", "database/factories"],
         "files": ["app/Helpers/helper_functions.php"]
     },
+    "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php"],
+    "files": ["app/Vendor/Ticketit/TicketItComposer.php"],
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "vendor\\kordy\\ticketit\\src\\ViewComposers\\": "app/Vendor/Ticketit/"
         }
     },
     "minimum-stability": "dev",
