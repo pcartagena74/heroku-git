@@ -64,26 +64,27 @@
 	        ],
 	    });
 
-    $('#filter_owner').on('change', function () {
-	    var val = this.value;
-	    var id = '{{auth()->user()->id}}';
-	    if(val == 'all'){
+	function changeSearch(search_by,ths){
+		var id = '{{auth()->user()->id}}';
+		$('#search-button-group .btn').removeClass('active');
+		$(ths).addClass('active');
+		if(search_by == 'all'){
 	    	table.columns().search('').draw();
 	    }
-	    if(val == 'created') {
+	    if(search_by == 'created') {
 		    table.columns(6)
 		        .search(id)
 		        .columns(4)
 		        .search('')
 		        .draw();
 		}
-		if(val == 'assigned') {
+		if(search_by == 'assigned') {
 		    table.columns(4)
 		        .search(id)
 		        .columns(6)
 		        .search('')
 		        .draw();
 		}
-	});
+	}
 </script>
 @append
