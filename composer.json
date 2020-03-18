@@ -66,11 +66,10 @@
         "psr-4": {
             "App\\": "app/"
         },
+        "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php"],
         "classmap": ["database/seeds", "database/factories"],
-        "files": ["app/Helpers/helper_functions.php"]
+        "files": ["app/Helpers/helper_functions.php", "app/Vendor/Ticketit/TicketItComposer.php"]
     },
-    "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php"],
-    "files": ["app/Vendor/Ticketit/TicketItComposer.php"],
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
