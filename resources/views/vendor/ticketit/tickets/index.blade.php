@@ -10,9 +10,21 @@
         </div>
         <form>
             <div class="form-group col-sm-6">
-                <label>
-                    {{ trans('messages.fields.filter_tickets') }}
-                </label>
+                <div id="search-button-group">
+                    <label>
+                        {{ trans('messages.fields.filter_tickets') }}
+                    </label>
+                    <button class="btn btn-primary active" onclick="changeSearch('all',this)" type="button">
+                        {{ trans('messages.filter_tickets_options.all') }}
+                    </button>
+                    <button class="btn btn-primary" onclick="changeSearch('created',this)" type="button">
+                        {{ trans('messages.filter_tickets_options.created') }}
+                    </button>
+                    <button class="btn btn-primary" onclick="changeSearch('assigned',this)" type="button">
+                        {{ trans('messages.filter_tickets_options.assigned') }}
+                    </button>
+                </div>
+                {{--
                 <select class="form-control input-sm" id="filter_owner">
                     <option value="all">
                         {{ trans('messages.filter_tickets_options.all') }}
@@ -20,10 +32,11 @@
                     <option value="created">
                         {{ trans('messages.filter_tickets_options.created') }}
                     </option>
-                    <option value="assigned">
+                    <option value="created">
                         {{ trans('messages.filter_tickets_options.assigned') }}
                     </option>
                 </select>
+                --}}
             </div>
         </form>
         @include('ticketit::tickets.partials.datatable')
