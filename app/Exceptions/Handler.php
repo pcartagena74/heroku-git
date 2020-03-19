@@ -75,13 +75,13 @@ class Handler extends ExceptionHandler
         }
 
         if (env('APP_ENV') == 'local') {
-            // return parent::render($request, $exception);
+            return parent::render($request, $exception);
         }
 
         if ($exception instanceof Illuminate\Validation\ValidationException) {
             return parent::render($request, $exception);
         }
-        
+
         if ($exception instanceof \Illuminate\Database\QueryException) {
             return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
         }
@@ -131,10 +131,6 @@ class Handler extends ExceptionHandler
             } else {
                 return response()->view('errors.genericException', ['code' => 500, 'description' => trans('messages.exceptions.error_500')], 500);
             }
-        }
-
-        if ($exception instanceof Illuminate\Validation\ValidationException) {
-            return parent::render($request, $exception);
         }
 
         if ($exception) {

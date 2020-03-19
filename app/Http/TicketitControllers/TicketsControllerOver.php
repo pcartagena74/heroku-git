@@ -14,6 +14,7 @@ use Kordy\Ticketit\Models;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
 use \Kordy\Ticketit\Helpers\LaravelVersion;
+use Validator;
 
 class TicketsControllerOver extends TicketController
 {
@@ -273,7 +274,7 @@ class TicketsControllerOver extends TicketController
                 'url'         => 'required',
             ]);
             if (!$validator->passes()) {
-                return response()->json(['success' => false, 'error' => $validator->errors()]);
+                return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
         } else {
             $validator = Validator::make($request->all(), [
@@ -282,7 +283,7 @@ class TicketsControllerOver extends TicketController
                 'url'     => 'required',
             ]);
             if (!$validator->passes()) {
-                return response()->json(['success' => false, 'error' => $validator->errors()]);
+                return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
 
         }
