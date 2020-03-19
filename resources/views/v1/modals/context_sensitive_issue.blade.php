@@ -145,7 +145,10 @@
                     $('#context_issue_success').find('.modal-body').html(result.message);
                     $('#context_issue_success').modal('show');
                 } else {
-                    console.log('');
+                     $.each(result.errors,function(key,value){
+                        var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value[0]+'</div>';
+                        $('#ticket-errors').append(str);
+                    });
                 }
             },
             error(xhr,status,error){
