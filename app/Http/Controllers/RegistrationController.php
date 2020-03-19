@@ -270,13 +270,14 @@ class RegistrationController extends Controller
         if ($refunded->isNotEmpty()) {
             $total_cc_from_refund       = 0;
             $total_handling_from_refund = 0;
+            // dd($refunded);
             foreach ($refunded as $key => $value) {
                 $total_cc_from_refund += $value->ccFee;
                 $total_handling_from_refund += $value->handleFee;
                 $discPie->push($value);
             }
             $subtotal->ccFee += $total_cc_from_refund;
-            $subtotal->handleFee += $total_cc_from_refund;
+            $subtotal->handleFee += $total_handling_from_refund;
             $subtotal->orgAmt -= $total_cc_from_refund + $total_handling_from_refund;
         }
 
