@@ -271,8 +271,8 @@ class RegistrationController extends Controller
             $total_cc_from_refund       = 0;
             $total_handling_from_refund = 0;
             foreach ($refunded as $key => $value) {
-                $total_cc_from_refund += $value->ccFee;
-                $total_handling_from_refund += $value->handleFee;
+                $total_cc_from_refund += abs($value->ccFee);
+                $total_handling_from_refund += abs($value->handleFee);
                 $discPie->push($value);
             }
             $subtotal->ccFee += $total_cc_from_refund;
