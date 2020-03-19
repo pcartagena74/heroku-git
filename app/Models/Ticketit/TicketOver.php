@@ -268,7 +268,7 @@ class TicketOver extends Ticket
                     ->from('role_user')
                     ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
                     ->where('roles.name', '=', 'Developer');
-            })->get()->pluck('login', 'personID')->toArray();
+            })->get();
         } else {
             // assign to developer only
             $agents = Person::whereIn('personID', function ($q) use ($orgId) {
@@ -282,7 +282,7 @@ class TicketOver extends Ticket
                     ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
                     ->where('roles.name', '=', 'Admin')
                     ->where('roles.orgId', $orgId);
-            })->get()->pluck('login', 'personID')->toArray();
+            })->get();
         }
         $count          = 0;
         $lowest_tickets = 1000000;
@@ -313,6 +313,6 @@ class TicketOver extends Ticket
 
     public function agentOpenTicketsCount($agent_id)
     {
-        return $this->where('agent_id', $agent_id)->get()->count();
+        return DB::table('ticketit')->where('agent_id', $agent_id)->select('id')->get()->count();
     }
 }
