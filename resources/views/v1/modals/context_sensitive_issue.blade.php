@@ -41,24 +41,40 @@
                         </span>
                     </div>
                 </div>
-                @if(Entrust::hasRole('Admin') || Entrust::can('Developer'))
-                <div class="row">
-                    <div class="form-group">
-                        {!! CollectiveForm::label('agent_id', trans('ticketit::lang.agent') . trans('ticketit::lang.colon'), [
-                            'class' => 'col-lg-4 control-label'
-                        ]) !!}
-                        <div class="col-lg-8">
-                            {!! CollectiveForm::select(
-                                'agent_id',
-                                getAgentList(),
-                                'auto',
-                                ['class' => 'form-control']) !!}
+                @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
+                <div class="form-inline row">
+                    <div class="form-group col-lg-4">
+                        {!! CollectiveForm::label('priority', trans('ticketit::lang.priority') . trans('ticketit::lang.colon'), ['class' => 'col-lg-6 control-label']) !!}
+                        <div class="col-lg-6">
+                            {!! CollectiveForm::select('priority_id', getTicketPriorities(), 2, ['class' => 'form-control', 'required' => 'required','id'=>'ticket_priority']) !!}
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        {!! CollectiveForm::label('category', trans('ticketit::lang.category') . trans('ticketit::lang.colon'), ['class' => 'col-lg-6 control-label']) !!}
+                        <div class="col-lg-6">
+                            {!! CollectiveForm::select('category_id', getTicketCategories(), null, ['class' => 'form-control', 'required' => 'required','id'=>'ticket_category']) !!}
                         </div>
                     </div>
                 </div>
-                @endif
-                <div class="error" id="ticket-errors">
-                </div>
+                <br>
+                    <div class="form-inline row">
+                        <div class="form-group col-lg-12">
+                            {!! CollectiveForm::label('agent_id', trans('ticketit::lang.agent') . trans('ticketit::lang.colon'), [
+                            'class' => 'col-lg-2 control-label'
+                        ]) !!}
+                            <div class="col-lg-10">
+                                {!! CollectiveForm::select(
+                                'agent_id',
+                                getAgentList(),
+                                'auto',
+                                ['class' => 'form-control','id'=>'ticket_agent']) !!}
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="error" id="ticket-errors">
+                    </div>
+                </br>
             </div>
             <div class="modal-footer">
                 <div class="container">
@@ -109,13 +125,20 @@
     $('#submitTicket').click(function(){
         var subject = $('#ticket_subject').val();
         var content = $('#ticket_content').val();
-        $('#ticket-errors').html('');
         var url = window.location.href;
+        var data = { content:content,subject:subject,url:url };
+        @if(Entrust::hasRole('Admin') || Entrust::can('Developer'))
+        var priority = $('#ticket_priority').val();
+        var category = $('#ticket_category').val();
+        var agent = $('#ticket_agent').val();
+        data = { content:content,subject:subject,url:url,priority_id:priority,category_id:category,agent_id:agent};
+        @endif
+        $('#ticket-errors').html('');
         $.ajax({
             url: '{{route("tickets.storeAjax")}}', 
             method:'POST',
             dataType:'json',
-            data: { content:content,subject:subject,url:url },
+            data: data,
             success: function(result){
                 if(result.success == true){
                     $('#context_issue').modal('hide');
