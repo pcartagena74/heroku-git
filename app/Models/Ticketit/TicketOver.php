@@ -245,7 +245,7 @@ class TicketOver extends Ticket
      *
      * @return Ticket
      */
-    public function autoSelectAgent()
+    public function autoSelectAgent($dev = false)
     {
         $cat_id = $this->category_id;
         $orgId  = $this->orgId;
@@ -254,14 +254,36 @@ class TicketOver extends Ticket
         //     $query->addSelect(['id', 'agent_id']);
         //     $query->where('orgId', $orgId);
         // }])->get();
-
-        $agents = Person::whereIn('personID', function ($q) use ($orgId) {
-            $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Admin')
-                ->where('role_user.orgId', $orgId);
-        })->get();
+        $agents = [];
+        if ($dev == false) {
+            // assign to admin only
+            $agents = Person::whereIn('personID', function ($q) use ($orgId) {
+                $q->select('user_id')
+                    ->from('role_user')
+                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->where('roles.name', 'Admin')
+                    ->where('roles.orgId', $orgId);
+            })->whereNotIn('personID', function ($q) use ($orgId) {
+                $q->select('user_id')
+                    ->from('role_user')
+                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->where('roles.name', '=', 'Developer');
+            })->get()->pluck('login', 'personID')->toArray();
+        } else {
+            // assign to developer only
+            $agents = Person::whereIn('personID', function ($q) use ($orgId) {
+                $q->select('user_id')
+                    ->from('role_user')
+                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->where('roles.name', 'Developer');
+            })->whereNotIn('personID', function ($q) use ($orgId) {
+                $q->select('user_id')
+                    ->from('role_user')
+                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->where('roles.name', '=', 'Admin')
+                    ->where('roles.orgId', $orgId);
+            })->get()->pluck('login', 'personID')->toArray();
+        }
         $count          = 0;
         $lowest_tickets = 1000000;
 

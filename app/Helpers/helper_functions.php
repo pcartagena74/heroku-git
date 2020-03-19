@@ -9,6 +9,7 @@ use App\Models\Ticketit\TicketOver;
 use App\Org;
 use App\OrgPerson;
 use App\Person;
+use App\User;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Intervention\Image\ImageManagerStatic as Image;
 /**
@@ -239,19 +240,37 @@ if (!function_exists('getAgentList')) {
      */
     function getAgentList($ticket = null)
     {
-        $orgId = 0;
+        $orgId       = 0;
+        $agent_lists = ['auto' => 'Auto Select'];
         if (empty($ticket)) {
             $person = Person::find(auth()->user()->id);
             $orgId  = $person->defaultOrgID;
         } else {
             $orgId = $ticket->orgId;
         }
-        $dev_agents = Person::whereIn('personID', function ($q) {
-            $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Developer');
-        })->get()->pluck('login', 'personID')->toArray();
+
+        $user = User::where('id', auth()->user()->id)->get()->first();
+        //get list of admins only for use with admin role
+        if ($user->hasRole(['Admin']) && !$user->hasRole(['Developer'])) {
+            $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
+                $q->select('user_id')
+                    ->from('role_user')
+                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->where('roles.name', 'Admin')
+                    ->where('roles.orgId', $orgId);
+            })->whereNotIn('personID', function ($q) use ($orgId) {
+                $q->select('user_id')
+                    ->from('role_user')
+                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->where('roles.name', '=', 'Developer');
+            })->get()->pluck('login', 'personID')->toArray();
+
+            $agent_lists['auto_dev'] = 'Developer Queue';
+            if (is_array($admin_agents)) {
+                $agent_lists += $admin_agents;
+            }
+            return $agent_lists;
+        }
 
         $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
             $q->select('user_id')
@@ -261,11 +280,18 @@ if (!function_exists('getAgentList')) {
                 ->where('roles.orgId', $orgId);
         })->get()->pluck('login', 'personID')->toArray();
 
+        $dev_agents = Person::whereIn('personID', function ($q) {
+            $q->select('user_id')
+                ->from('role_user')
+                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->where('roles.name', 'Developer');
+        })->get()->pluck('login', 'personID')->toArray();
         $dev_agents = array_map(function ($value) {
             return $value . '(Developer)';
         }, $dev_agents);
 
-        $agent_lists = ['auto' => 'Auto Select'];
+        $agent_lists['auto_dev'] = 'Developer Queue';
+
         if (is_array($dev_agents)) {
             $agent_lists += $dev_agents;
         }
@@ -290,7 +316,9 @@ if (!function_exists('getActiveTicketCountUser')) {
      */
     function getActiveTicketCountUser()
     {
-        return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0])
+        $person = Person::find(auth()->user()->id);
+        $orgId  = $person->defaultOrgID;
+        return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
     }
@@ -299,7 +327,9 @@ if (!function_exists('getActiveTicketCountUser')) {
 if (!function_exists('showActiveTicketUser')) {
     function showActiveTicketUser()
     {
-        return TicketOver::where(['user_id' => auth()->user()->id])
+        $person = Person::find(auth()->user()->id);
+        $orgId  = $person->defaultOrgID;
+        return TicketOver::where(['user_id' => auth()->user()->id, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
     }
@@ -312,7 +342,9 @@ if (!function_exists('markReadActiveTicketCountUser')) {
      */
     function markReadActiveTicketCountUser()
     {
-        return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0])
+        $person = Person::find(auth()->user()->id);
+        $orgId  = $person->defaultOrgID;
+        return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')->update(['user_read' => 1]);
     }
 }
@@ -340,7 +372,9 @@ if (!function_exists('getActiveTicketCountAgent')) {
      */
     function getActiveTicketCountAgent()
     {
-        return TicketOver::where(['agent_id' => auth()->user()->id, 'agent_read' => 0])
+        $person = Person::find(auth()->user()->id);
+        $orgId  = $person->defaultOrgID;
+        return TicketOver::where(['agent_id' => auth()->user()->id, 'agent_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
     }
