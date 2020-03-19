@@ -14,6 +14,7 @@ use Kordy\Ticketit\Models;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
 use \Kordy\Ticketit\Helpers\LaravelVersion;
+use Validator;
 
 class TicketsControllerOver extends TicketController
 {
@@ -265,19 +266,25 @@ class TicketsControllerOver extends TicketController
     public function storeAjax(Request $request)
     {
         if (Agent::isAdmin() || Agent::isAgent()) {
-            $this->validate($request, [
+            $validator = Validator::make($request->all(), [
                 'subject'     => 'required|min:3',
                 'content'     => 'required|min:6',
                 'priority_id' => 'required|exists:ticketit_priorities,id',
                 'category_id' => 'required|exists:ticketit_categories,id',
                 'url'         => 'required',
             ]);
+            if (!$validator->passes()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()]);
+            }
         } else {
-            $this->validate($request, [
+            $validator = Validator::make($request->all(), [
                 'subject' => 'required|min:3',
                 'content' => 'required|min:6',
                 'url'     => 'required',
             ]);
+            if (!$validator->passes()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()]);
+            }
 
         }
 
