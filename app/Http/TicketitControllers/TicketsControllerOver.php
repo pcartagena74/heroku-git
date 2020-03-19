@@ -291,6 +291,8 @@ class TicketsControllerOver extends TicketController
             $ticket->autoSelectAgent();
         } else if ($request->input('agent_id') == 'auto') {
             $ticket->autoSelectAgent();
+        } else if ($request->input('agent_id') == 'auto_dev') {
+            $ticket->autoSelectAgent('dev');
         } else {
             $ticket->agent_id = $request->input('agent_id');
         }
@@ -366,6 +368,8 @@ class TicketsControllerOver extends TicketController
 
         if ($request->input('agent_id') == 'auto') {
             $ticket->autoSelectAgent();
+        } else if ($request->input('agent_id') == 'auto_dev') {
+            $ticket->autoSelectAgent('dev');
         } else {
             $ticket->agent_id = $request->input('agent_id');
         }

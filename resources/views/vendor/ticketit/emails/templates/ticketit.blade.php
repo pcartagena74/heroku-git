@@ -141,7 +141,7 @@
                                                     </center>
                                                 </td>
                                             </tr>
-                                            @if(App\Models\Ticketit\AgentOver::isAdmin())
+                                            @if(auth()->user()->id == 1)
                                             <tr>
                                                 <td>
                                                     <div>

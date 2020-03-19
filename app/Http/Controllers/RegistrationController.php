@@ -203,6 +203,29 @@ class RegistrationController extends Controller
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
 
+        $refunded = Registration::where([
+            ['eventID', '=', $event->eventID],
+        ])
+            ->whereHas('regfinance', function ($query) {
+                $query->whereNotIn('pmtType', ['pending', 'Processed']);
+                $query->where('pmtRecd', '=', 1);
+                $query->withTrashed();
+            })
+            ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+                                    sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee,
+                                    sum(ccFee) as ccFee, sum(subtotal) as cost'))
+            ->withTrashed()
+            ->whereNotIn('regStatus', ['pending', 'Processed'])
+            ->groupBy('discountCode')
+            ->orderBy('cnt', 'desc')->get();
+
+        foreach ($refunded as $key => $value) {
+            if ($value->discountCode == '' || $value->discountCode === null || $value->discountCode == '0') {
+                $value->discountCode = 'N/A (Refunded)';
+            } else {
+                $value->discountCode = $value->discountCode . ' (Refunded)';
+            }
+        }
         $discountCounts = Registration::select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
                                     sum(ccFee) as ccFee, sum(mcentricFee) as handleFee'))
             ->where([
@@ -242,6 +265,20 @@ class RegistrationController extends Controller
                 $query->whereNotIn('pmtType', ['pending']);
                 $query->whereNull('deleted_at');
             })->first();
+
+        // for calculating all the refuned cc and handlefee
+        if ($refunded->isNotEmpty()) {
+            $total_cc_from_refund       = 0;
+            $total_handling_from_refund = 0;
+            foreach ($refunded as $key => $value) {
+                $total_cc_from_refund += $value->ccFee;
+                $total_handling_from_refund += $value->handleFee;
+                $discPie->push($value);
+            }
+            $subtotal->ccFee += $total_cc_from_refund;
+            $subtotal->handleFee += $total_cc_from_refund;
+            $subtotal->orgAmt -= $total_cc_from_refund + $total_handling_from_refund;
+        }
 
         $discPie->put(count($discPie), $subtotal);
         if ($lessCounts !== null && $lessCounts->cnt > 0) {
