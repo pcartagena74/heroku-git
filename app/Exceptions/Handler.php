@@ -75,7 +75,7 @@ class Handler extends ExceptionHandler
         }
 
         if (env('APP_ENV') == 'local') {
-            return parent::render($request, $exception);
+            // return parent::render($request, $exception);
         }
 
         if ($exception instanceof \Illuminate\Database\QueryException) {
@@ -117,17 +117,20 @@ class Handler extends ExceptionHandler
         if ($exception instanceof AuthenticationException) {
             return parent::render($request, $exception);
         }
-        
+
         if ($exception instanceof TokenMismatchException) {
             return redirect(route('dashboard'))->with('alert-info', 'Session expired. Please try again');
         }
-
         if ($exception instanceof InvalidArgumentException) {
             if (env('APP_ENV') == 'local') {
                 dd(get_defined_vars());
             } else {
                 return response()->view('errors.genericException', ['code' => 500, 'description' => trans('messages.exceptions.error_500')], 500);
             }
+        }
+
+        if ($exception instanceof Illuminate\Validation\ValidationException) {
+            return parent::render($request, $exception);
         }
 
         if ($exception) {
@@ -148,6 +151,7 @@ class Handler extends ExceptionHandler
                 }
             }
         }
+
         return parent::render($request, $exception);
     }
 

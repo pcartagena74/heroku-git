@@ -151,7 +151,7 @@
             error(xhr,status,error){
                 if(xhr.responseJSON.errors){
                     $.each(xhr.responseJSON.errors,function(key,value){
-                        console.log(value[0]);
+                        
                         var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value[0]+'</div>';
                         $('#ticket-errors').append(str);
                     });
