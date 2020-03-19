@@ -160,7 +160,6 @@ class TicketsControllerOver extends TicketController
     public function index()
     {
         $complete = false;
-        markReadActiveTicketCountUser();
         return view('ticketit::index', compact('complete'));
     }
 
@@ -326,7 +325,11 @@ class TicketsControllerOver extends TicketController
             $ticket->agent_read = 1;
             $ticket->save();
         }
-       
+        if (auth()->user()->id == $ticket->user_id) {
+            $ticket->user_read = 1;
+            $ticket->save();
+        }
+
         return view('ticketit::tickets.show',
             compact('ticket', 'status_lists', 'priority_lists', 'category_lists', 'agent_lists', 'comments',
                 'close_perm', 'reopen_perm'));

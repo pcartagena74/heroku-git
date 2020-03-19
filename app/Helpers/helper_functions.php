@@ -296,10 +296,19 @@ if (!function_exists('getActiveTicketCountUser')) {
     }
 }
 
+if (!function_exists('showActiveTicketUser')) {
+    function showActiveTicketUser()
+    {
+        return TicketOver::where(['user_id' => auth()->user()->id])
+            ->whereNull('completed_at')
+            ->get()->count();
+    }
+}
+
 if (!function_exists('markReadActiveTicketCountUser')) {
     /**
      * mark logged user all open ticket as read
-     * @return bool 
+     * @return bool
      */
     function markReadActiveTicketCountUser()
     {
@@ -312,7 +321,7 @@ if (!function_exists('markUnreadTicketUser')) {
     /**
      * make a specific user ticket as unread
      * @param  int $ticket_id ticket id
-     * @return bool 
+     * @return bool
      */
     function markUnreadTicketUser($ticket_id)
     {
@@ -326,7 +335,7 @@ if (!function_exists('markUnreadTicketUser')) {
 
 if (!function_exists('getActiveTicketCountAgent')) {
     /**
-     * get all active ticket of loggedin user 
+     * get all active ticket of loggedin user
      * @return int count
      */
     function getActiveTicketCountAgent()

@@ -348,6 +348,7 @@ try{
                                 </span>
                             </a>
                         </li>
+                        @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
                         <li class="">
                             <a>
                                 <i class="far fa-fw fa-ticket-alt">
@@ -371,9 +372,9 @@ try{
                                             $ticket_count = getActiveTicketCountUser();
                                         @endphp
                                         @if($ticket_count > 0)
-                                            <span class="badge bg-green">
-                                                {{$ticket_count }}
-                                            </span>
+                                        <span class="badge bg-green">
+                                            {{$ticket_count }}
+                                        </span>
                                         @endif
                                     </a>
                                 </li>
@@ -389,6 +390,7 @@ try{
                                 </li>
                             </ul>
                         </li>
+                        @endif
                     </ul>
                 </div>
             </div>
