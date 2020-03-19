@@ -78,6 +78,10 @@ class Handler extends ExceptionHandler
             // return parent::render($request, $exception);
         }
 
+        if ($exception instanceof Illuminate\Validation\ValidationException) {
+            return parent::render($request, $exception);
+        }
+        
         if ($exception instanceof \Illuminate\Database\QueryException) {
             return response()->view('errors.genericException', ['code' => 400, 'description' => trans('messages.exceptions.query_exception')], 400);
         }
