@@ -181,7 +181,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return array
      */
-    protected function PCS()
+    public function PCS()
     {
         // seconds expected for L5.8<=, minutes before that
         $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
@@ -264,11 +264,23 @@ class TicketsControllerOver extends TicketController
      */
     public function storeAjax(Request $request)
     {
-        $this->validate($request, [
-            'subject' => 'required|min:3',
-            'content' => 'required|min:6',
-            'url'     => 'required',
-        ]);
+        if (Agent::isAdmin() || Agent::isAgent()) {
+            $this->validate($request, [
+                'subject'     => 'required|min:3',
+                'content'     => 'required|min:6',
+                'priority_id' => 'required|exists:ticketit_priorities,id',
+                'category_id' => 'required|exists:ticketit_categories,id',
+                'url'         => 'required',
+            ]);
+        } else {
+            $this->validate($request, [
+                'subject' => 'required|min:3',
+                'content' => 'required|min:6',
+                'url'     => 'required',
+            ]);
+
+        }
+
         $ticket   = new Ticket();
         $page_url = $request->input('url');
         $referrer = $request->headers->get('referer');
@@ -279,8 +291,15 @@ class TicketsControllerOver extends TicketController
 
         $ticket->setPurifiedContent($request->get('content') . ' <br> URL: ' . $referrer);
 
-        $ticket->priority_id = 2;
         $ticket->category_id = 4;
+        $ticket->priority_id = 2;
+
+        if (!empty($request->input('category_id'))) {
+            $ticket->category_id = $request->input('category_id');
+        }
+        if (!empty($request->input('priority_id'))) {
+            $ticket->priority_id = $request->input('priority_id');
+        }
 
         $ticket->status_id = Setting::grab('default_status_id');
         $ticket->user_id   = auth()->user()->id;

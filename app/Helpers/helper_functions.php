@@ -12,6 +12,7 @@ use App\Person;
 use App\User;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Intervention\Image\ImageManagerStatic as Image;
+
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -377,5 +378,29 @@ if (!function_exists('getActiveTicketCountAgent')) {
         return TicketOver::where(['agent_id' => auth()->user()->id, 'agent_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
+    }
+}
+
+if (!function_exists('getTicketCategories')) {
+    /**
+     * get all active ticket of loggedin user
+     * @return int count
+     */
+    function getTicketCategories()
+    {
+        list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+        return $categories;
+    }
+}
+
+if (!function_exists('getTicketPriorities')) {
+    /**
+     * get all active ticket of loggedin user
+     * @return int count
+     */
+    function getTicketPriorities()
+    {
+        list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+        return $priorities;
     }
 }

@@ -378,7 +378,8 @@ try{
                                         @endif
                                     </a>
                                 </li>
-                                <li>
+                                @php /*
+                                <li style="display: none">
                                     <a href="{{ url('tickets/create')}}">
                                         @lang('messages.nav.h_tkt')
                                     </a>
@@ -388,6 +389,8 @@ try{
                                         @lang('messages.nav.h_rpt')
                                     </a>
                                 </li>
+                                */
+                                @endphp
                             </ul>
                         </li>
                         @endif
