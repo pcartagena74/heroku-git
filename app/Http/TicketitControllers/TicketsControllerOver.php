@@ -13,8 +13,8 @@ use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Models;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
-use \Kordy\Ticketit\Helpers\LaravelVersion;
 use Validator;
+use \Kordy\Ticketit\Helpers\LaravelVersion;
 
 class TicketsControllerOver extends TicketController
 {
@@ -495,14 +495,15 @@ class TicketsControllerOver extends TicketController
 
     public function agentSelectList($category_id, $ticket_id)
     {
-        $cat_agents = Models\Category::find($category_id)->agents()->agentsLists();
-        if (is_array($cat_agents)) {
-            $agents = ['auto' => 'Auto Select'] + $cat_agents;
-        } else {
-            $agents = ['auto' => 'Auto Select'];
-        }
-
-        $selected_Agent = $this->tickets->find($ticket_id)->agent->id;
+        // $cat_agents = Models\Category::find($category_id)->agents()->agentsLists();
+        // if (is_array($cat_agents)) {
+        //     $agents = ['auto' => 'Auto Select'] + $cat_agents;
+        // } else {
+        //     $agents = ['auto' => 'Auto Select'];
+        // }
+        $ticket         = $this->tickets->find($ticket_id);
+        $agents         = getAgentList($ticket);
+        $selected_Agent = $ticket->agent->id;
         $select         = '<select class="form-control" id="agent_id" name="agent_id">';
         foreach ($agents as $id => $name) {
             $selected = ($id == $selected_Agent) ? 'selected' : '';
