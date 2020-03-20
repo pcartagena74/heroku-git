@@ -57,21 +57,6 @@ try{
                                 @lang('messages.nav.context_issue')
                             </a>
                         </li>
-                        @if(showActiveTicketUser())
-                        <li>
-                            <a href="{{url('tickets')}}">
-                                @php 
-                                    $unread_ticket = getActiveTicketCountUser();
-                                @endphp
-                                @lang('messages.nav.active_issue')
-                                @if($unread_ticket > 0)
-                                <span class="badge bg-green">
-                                    {{$unread_ticket}}
-                                </span>
-                                @endif
-                            </a>
-                        </li>
-                        @endif
                         <li>
                             <a href="/logout">
                                 <i class="fa fa-sign-out pull-right">
