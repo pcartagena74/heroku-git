@@ -11,7 +11,7 @@ class CommentsControllerOver extends CommentsController
     public function __construct()
     {
         $this->middleware('\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver', ['only' => ['edit', 'update', 'destroy']]);
-        $this->middleware('Kordy\Ticketit\Middleware\ResAccessMiddleware', ['only' => 'store']);
+        $this->middleware('\App\Http\Middleware\Ticketit\ResAccessMiddlewareOver', ['only' => 'store']);
     }
 
     /**
