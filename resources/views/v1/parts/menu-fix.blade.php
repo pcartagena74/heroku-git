@@ -37,9 +37,13 @@ if(isset($tag) && isset($newTxt)) {
         };
         //added as for ticketit we don't have $path variable also this will remove dependency on $path vairable and avoid any conflict in future
         var url      = window.location.href;
+        @if(!empty($url_override))
+            url = '{{$url_override}}';
+        @endif
         $SIDEBAR_MENU.find('a[href="'+url+'"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
             setContentHeight();
         }).parent().addClass('active');
+
 
         @if($txtChange)
         $("{!! $tag !!}").text('{!! $newTxt !!}');

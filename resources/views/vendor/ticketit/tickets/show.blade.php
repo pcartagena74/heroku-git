@@ -3,13 +3,20 @@
 @section('content')
         @include('ticketit::shared.header')
         @include('ticketit::tickets.partials.ticket_body')
-        <br>
-        <h2>{{ trans('ticketit::lang.comments') }}</h2>
-        @include('ticketit::tickets.partials.comments')
+<br>
+    <h2>
+        {{ trans('ticketit::lang.comments') }}
+    </h2>
+    @include('ticketit::tickets.partials.comments')
         {!! $comments->render() !!}
         @include('ticketit::tickets.partials.comment_form')
 @endsection
 
+@if($u->isAgent() || $u->isAdmin())
+@section('scripts')
+    @include('v1.parts.menu-fix', array('url_override' => url('tickets')))
+@endsection
+@endif
 @section('footer')
     <script>
         $(document).ready(function() {
@@ -45,3 +52,4 @@
     </script>
     @include('ticketit::tickets.partials.summernote')
 @append
+</br>

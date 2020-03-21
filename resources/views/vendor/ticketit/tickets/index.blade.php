@@ -50,3 +50,7 @@
         @include('ticketit::tickets.partials.datatable')
     </div>
 </div>
+
+@section('scripts')
+    @include('v1.parts.menu-fix', array('url_override' => url('tickets')))
+@endsection
