@@ -222,7 +222,8 @@ class TicketOver extends Ticket
         $user = User::where('id', $id)->get()->first();
         if ($user->hasRole(['Admin'])) {
             return $query->where(function ($subquery) use ($id) {
-                $subquery->where('agent_id', $id)->orWhere('user_id', $id);
+                // remove so all admin can see that org tickets
+                // $subquery->where('agent_ids', $id)->orWhere('user_id', $id);
             });
         } else {
             $is_developer = DB::table('role_user')->select('user_id')
@@ -231,7 +232,6 @@ class TicketOver extends Ticket
             if ($is_developer->count() > 0) {
                 return $query->where(function ($subquery) use ($id) {
                     $subquery->where('user_id', $id)->orwhere('agent_id', $id);
-                    $subquery->where('agent_id', $id)->orWhere('user_id', $id);
                 });
             }
             return $query->where(function ($subquery) use ($id) {

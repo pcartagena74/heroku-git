@@ -111,7 +111,11 @@ Route::get('/storage/events/{filename}', function ($filename) {
 // Dashboard or Regular User "Home"
 Route::get('/dashboard', 'ActivityController@index')->name('dashboard');
 Route::post('/networking', 'ActivityController@networking'); // Ajax
-Route::get('/home', 'ActivityController@index');
+// Route::get('/home', 'ActivityController@index');
+// as its create confict in left me adding a redirection to dashboard
+Route::get('/home', function () {
+    return redirect('dashboard');
+})->middleware('auth');
 Route::get('/upcoming', 'ActivityController@future_index')->name('upcoming_events');
 Route::post('/update_sessions/{reg}', 'RegSessionController@update_sessions')->name('update_sessions');
 Route::post('/event_checkin/{event}/{session?}', 'RegSessionController@store')->name('default_sess_checkin');

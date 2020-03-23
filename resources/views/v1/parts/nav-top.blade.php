@@ -69,7 +69,7 @@ try{
                 @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
                 <li class="nav-item dropdown">
                     <a aria-expanded="false" class="dropdown-toggle info-number" href="{{route('tickets.index')}}" id="navbarDropdown1">
-                        <i class="far fa-fw fa-ticket-alt">
+                        <i class="far fa-fw fa-ticket-alt" style="white-space:nowrap;">
                         </i>
                         <span class="badge bg-green">
                             {{getActiveTicketCountAgent()}}
