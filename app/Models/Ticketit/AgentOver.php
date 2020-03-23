@@ -119,6 +119,7 @@ class AgentOver extends User
             if ($is_developer) {
                 return true;
             }
+            dd(auth()->user()->hasRole(['Admin']));
             return auth()->user()->hasRole(['Admin']);
         }
 

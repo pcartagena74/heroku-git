@@ -26,12 +26,10 @@ class ResAccessMiddlewareOver extends ResAccessMiddleware
 
         // All Agents have access in none restricted mode
         if (Setting::grab('agent_restrict') == 'no') {
-            dd('here');
             if (Agent::isAgent()) {
                 return $next($request);
             }
         }
-        dd('here1');
         // if this is a ticket show page
         if ($request->route()->getName() == Setting::grab('main_route') . '.show') {
             if (LaravelVersion::lt('5.2.0')) {
