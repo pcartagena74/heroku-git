@@ -223,7 +223,7 @@ class TicketOver extends Ticket
         if ($user->hasRole(['Admin'])) {
             return $query->where(function ($subquery) use ($id) {
                 // remove so all admin can see that org tickets
-                $subquery->where('agent_ids', $id)->orWhere('user_id', $id);
+                // $subquery->where('agent_ids', $id)->orWhere('user_id', $id);
             });
         } else {
             $is_developer = DB::table('role_user')->select('user_id')
