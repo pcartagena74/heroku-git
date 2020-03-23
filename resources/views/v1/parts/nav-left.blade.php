@@ -384,7 +384,7 @@ try{
                                     <a href="{{ url('tickets')}}">
                                         @lang('messages.nav.h_active')
                                         @php
-                                            $ticket_count = getActiveTicketCountUser();
+                                            $ticket_count = getActiveTicketCountAgent();
                                         @endphp
                                         @if($ticket_count > 0)
                                         <span class="badge bg-green">

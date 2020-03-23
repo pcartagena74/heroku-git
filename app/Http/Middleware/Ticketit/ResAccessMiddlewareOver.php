@@ -30,7 +30,6 @@ class ResAccessMiddlewareOver extends ResAccessMiddleware
                 return $next($request);
             }
         }
-
         // if this is a ticket show page
         if ($request->route()->getName() == Setting::grab('main_route') . '.show') {
             if (LaravelVersion::lt('5.2.0')) {

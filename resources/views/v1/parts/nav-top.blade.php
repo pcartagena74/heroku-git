@@ -74,6 +74,8 @@ try{
                         <span class="badge bg-green">
                             {{getActiveTicketCountAgent()}}
                         </span>
+                        <span>
+                        </span>
                     </a>
                 </li>
                 @endif
