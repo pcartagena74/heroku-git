@@ -29,7 +29,7 @@ class Campaign extends Model
 
     public function urls()
     {
-        return $this->hasManyThrough(UrlClick::class, EmailSent::class, 'campaignID', 'sent_email_id', 'id', 'id');
+        return $this->hasManyThrough(UrlClick::class, EmailSent::class, 'campaignID', 'sent_email_id', 'campaignID', 'id');
     }
 
     public function email_count()

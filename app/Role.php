@@ -6,7 +6,7 @@
 
 namespace App;
 
-use Zizaco\Entrust\EntrustRole;
+use App\Models\Entrust\EntrustRoleOver as EntrustRole;
 //use Spatie\Activitylog\Traits\LogsActivity;
 
 class Role extends EntrustRole
@@ -29,4 +29,6 @@ class Role extends EntrustRole
     {
         return $this->belongsToMany(Permission::class);
     }
+
+    
 }

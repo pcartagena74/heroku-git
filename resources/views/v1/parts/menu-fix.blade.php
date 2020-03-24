@@ -35,10 +35,15 @@ if(isset($tag) && isset($newTxt)) {
 
             $RIGHT_COL.css('min-height', contentHeight);
         };
-
-        $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}{{ $path }}"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+        //added as for ticketit we don't have $path variable also this will remove dependency on $path vairable and avoid any conflict in future
+        var url      = window.location.href;
+        @if(!empty($url_override))
+            url = '{{$url_override}}';
+        @endif
+        $SIDEBAR_MENU.find('a[href="'+url+'"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
             setContentHeight();
         }).parent().addClass('active');
+
 
         @if($txtChange)
         $("{!! $tag !!}").text('{!! $newTxt !!}');

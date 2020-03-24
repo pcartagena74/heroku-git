@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: The page to show all Event-related statistics
  * Created: 5/11/2017
@@ -220,7 +220,9 @@ $disc_headers = [trans('messages.headers.code'), trans('messages.fields.count'),
 $disc_rows = [];
 
 foreach ($discPie as $d) {
-    array_push($disc_rows, [$d->discountCode, $d->cnt,
+    array_push($disc_rows, [
+        $d->discountCode, 
+        $d->cnt,
         trans('messages.symbols.cur') . number_format($d->cost, 2, '.', ','),
         trans('messages.symbols.cur') . number_format($d->ccFee, 2, '.', ','),
         trans('messages.symbols.cur') . number_format($d->handleFee, 2, '.', ','),
@@ -244,7 +246,7 @@ if ($event->hasTracks && $event->isSymmetric) {
 
 $es = $event->default_session();
 $count = 0;
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
@@ -815,4 +817,5 @@ include('v1.parts.ajax_console')
 @endsection
 
 @section('modals')
+@include('v1.modals.context_sensitive_issue')
 @endsection

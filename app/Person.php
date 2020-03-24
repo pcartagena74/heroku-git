@@ -15,23 +15,24 @@ class Person extends Model
     use Notifiable;
 
     // The table
-    protected $table = 'person';
+    protected $table      = 'person';
     protected $primaryKey = 'personID';
-    const CREATED_AT = 'createDate';
-    const UPDATED_AT = 'updateDate';
-    protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
-    protected $hidden = ['remember_token'];
+    const CREATED_AT      = 'createDate';
+    const UPDATED_AT      = 'updateDate';
+    protected $dates      = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
+    protected $hidden     = ['remember_token'];
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id');
+        // we need to get default person org id so running another query to fetch same
+        $person = Person::find(auth()->user()->id);
+        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')->where('person_role.org_id', $person->defaultOrgID);
     }
 
     public function orgs()
     {
         return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID');
     }
-
 
     public function emails()
     {
@@ -117,7 +118,7 @@ class Person extends Model
                 $join->on('person.personID', '=', 'org-person.personID')
                     ->where([
                         ['org-person.orgID', '=', $orgID],
-                        ['person.personID', '=', $personID]
+                        ['person.personID', '=', $personID],
                     ])->whereNotNull('OrgStat1');
             })->select('OrgStat1')->first();
     }
@@ -130,7 +131,7 @@ class Person extends Model
     public function add_speaker_role()
     {
 
-        $org_role = $this->org_role_id()->id;
+        $org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
         if (!$this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role);
@@ -140,7 +141,7 @@ class Person extends Model
         }
         $s = Speaker::find($this->personID);
         if ($s === null) {
-            $s = new Speaker;
+            $s     = new Speaker;
             $s->id = $this->personID;
             $s->save();
         }

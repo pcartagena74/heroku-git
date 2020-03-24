@@ -100,7 +100,7 @@ $currentOrg    = $currentPerson->defaultOrg;
 @endsection
 
 @section('modals')
-
+    @include('v1.modals.context_sensitive_issue')
     <div class="modal fade" id="discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_label"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -250,3 +250,4 @@ $currentOrg    = $currentPerson->defaultOrg;
 @endsection
 
 @endif
+

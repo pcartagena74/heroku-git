@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Campaign;
+use App\Jobs\CampaignEmail;
 use App\Org;
 use App\Person;
-use App\Campaign;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Collection;
+use Mail;
 
 class CampaignController extends Controller
 {
@@ -22,10 +24,9 @@ class CampaignController extends Controller
         //->with('emails', 'emails.urls', 'email_count', 'emails.url_count')
 
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
-                             ->with('emails.click_count')
-                             ->withCount('emails', 'urls')
-                             ->get();
-//dd($campaigns);
+            ->with('emails.click_count')
+            ->withCount('emails', 'urls')
+            ->get();
         return view('v1.auth_pages.campaigns.campaigns', compact('campaigns'));
     }
 
@@ -71,9 +72,13 @@ class CampaignController extends Controller
         $note = request()->input('note');
         for ($i = 1; $i <= 5; $i++) {
             $e = request()->input('email' . $i);
-            if ($e != null) {
+            if (!empty($e)) {
                 request()->session()->flash('alert-info', "Test message(s) sent.");
                 array_push($test_emails, $e);
+                /**
+                 * below is to set queue for email its a sample for bulk emailing
+                 */
+                // dispatch(new \App\Jobs\SendEmailJob($campaigns[0]));
                 Mail::send(
                     'v1.auth_pages.campaigns.generic_campaign_email',
                     ['content' => $c->content],
@@ -88,7 +93,7 @@ class CampaignController extends Controller
                 );
             }
         }
-        return redirect(env('APP_URL')."/campaigns");
+        return redirect(env('APP_URL') . "/campaigns");
     }
 
     /**
@@ -142,4 +147,5 @@ class CampaignController extends Controller
     {
         //
     }
+
 }

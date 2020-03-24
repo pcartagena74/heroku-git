@@ -95,7 +95,7 @@ $orgLogoPath = DB::table('organization')
 
 $currentPerson = $current_person;
 $currentOrg    = $org;
-
+$logo = '';
 try {
     if ($org->orgLogo !== null) {
         $s3m = Flysystem::connection('s3_media');
@@ -109,7 +109,7 @@ try {
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
-@if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+@if((Entrust::can('event-management'))
     || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
 @section('content')

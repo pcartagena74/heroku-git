@@ -2,19 +2,18 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use App\Traits\EntrustUserTraitOver;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Validation\Concerns\ValidatesAttributes;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanResetPassword
 {
     use Billable;
     use Notifiable;
     use ValidatesRequests;
-    use EntrustUserTrait;
+    use EntrustUserTraitOver;
 
     protected $table = 'users';
     protected $dates = ['createDate', 'updateDate', 'trial_ends_at', 'subscription_ends_at', 'last_login'];
@@ -28,7 +27,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
      * @var array
      */
     protected $fillable = [
-        'email', 'login', 'password',
+        'id', 'email', 'name', 'login', 'password', 'ticketit_agent',
     ];
 
     /**
@@ -61,6 +60,8 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
+        // we need to get default person org id so running another query to fetch same
+        $person = Person::find(auth()->user()->id);
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgId', $person->defaultOrgID);
     }
 }

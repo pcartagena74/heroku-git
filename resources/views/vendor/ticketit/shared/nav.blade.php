@@ -1,31 +1,36 @@
+@php 
+$ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController';
+$new_tickets_path = '\App\Http\TicketitControllers\TicketsControllerOver';
+
+@endphp
 <div class="panel panel-default">
     <div class="panel-body">
         <ul class="nav nav-pills">
-            <li role="presentation" class="{!! $tools->fullUrlIs(action('\Kordy\Ticketit\Controllers\TicketsController@index')) ? "active" : "" !!}">
-                <a href="{{ action('\Kordy\Ticketit\Controllers\TicketsController@index') }}">{{ trans('ticketit::lang.nav-active-tickets') }}
+            <li role="presentation" class="{!! $tools->fullUrlIs(route(App\Models\Ticketit\SettingOver::grab('main_route') . '.index')) ? "active" : "" !!}">
+                <a href="{{ route(App\Models\Ticketit\SettingOver::grab('main_route') . '.index') }}">{{ trans('ticketit::lang.nav-active-tickets') }}
                     <span class="badge">
                          <?php 
                             if ($u->isAdmin()) {
-                                echo Kordy\Ticketit\Models\Ticket::active()->count();
+                                echo App\Models\Ticketit\TicketOver::active()->count();
                             } elseif ($u->isAgent()) {
-                                echo Kordy\Ticketit\Models\Ticket::active()->agentUserTickets($u->id)->count();
+                                echo App\Models\Ticketit\TicketOver::active()->agentUserTickets($u->id)->count();
                             } else {
-                                echo Kordy\Ticketit\Models\Ticket::userTickets($u->id)->active()->count();
+                                echo App\Models\Ticketit\TicketOver::userTickets($u->id)->active()->count();
                             }
                         ?>
                     </span>
                 </a>
             </li>
-            <li role="presentation" class="{!! $tools->fullUrlIs(action('\Kordy\Ticketit\Controllers\TicketsController@indexComplete')) ? "active" : "" !!}">
-                <a href="{{ action('\Kordy\Ticketit\Controllers\TicketsController@indexComplete') }}">{{ trans('ticketit::lang.nav-completed-tickets') }}
+            <li role="presentation" class="{!! $tools->fullUrlIs(action($new_tickets_path.'@indexComplete')) ? "active" : "" !!}">
+                <a href="{{ action($new_tickets_path.'@indexComplete') }}">{{ trans('ticketit::lang.nav-completed-tickets') }}
                     <span class="badge">
                         <?php 
                             if ($u->isAdmin()) {
-                                echo Kordy\Ticketit\Models\Ticket::complete()->count();
+                                echo App\Models\Ticketit\TicketOver::complete()->count();
                             } elseif ($u->isAgent()) {
-                                echo Kordy\Ticketit\Models\Ticket::complete()->agentUserTickets($u->id)->count();
+                                echo App\Models\Ticketit\TicketOver::complete()->agentUserTickets($u->id)->count();
                             } else {
-                                echo Kordy\Ticketit\Models\Ticket::userTickets($u->id)->complete()->count();
+                                echo App\Models\Ticketit\TicketOver::userTickets($u->id)->complete()->count();
                             }
                         ?>
                     </span>
@@ -56,9 +61,9 @@
                         <li role="presentation"  class="{!! $tools->fullUrlIs(action('\Kordy\Ticketit\Controllers\PrioritiesController@index').'*') ? "active" : "" !!}">
                             <a href="{{ action('\Kordy\Ticketit\Controllers\PrioritiesController@index') }}">{{ trans('ticketit::admin.nav-priorities') }}</a>
                         </li>
-                        <li role="presentation"  class="{!! $tools->fullUrlIs(action('\Kordy\Ticketit\Controllers\AgentsController@index').'*') ? "active" : "" !!}">
+                        {{-- <li role="presentation"  class="{!! $tools->fullUrlIs(action('\Kordy\Ticketit\Controllers\AgentsController@index').'*') ? "active" : "" !!}">
                             <a href="{{ action('\Kordy\Ticketit\Controllers\AgentsController@index') }}">{{ trans('ticketit::admin.nav-agents') }}</a>
-                        </li>
+                        </li> --}}
                         <li role="presentation"  class="{!! $tools->fullUrlIs(action('\Kordy\Ticketit\Controllers\CategoriesController@index').'*') ? "active" : "" !!}">
                             <a href="{{ action('\Kordy\Ticketit\Controllers\CategoriesController@index') }}">{{ trans('ticketit::admin.nav-categories') }}</a>
                         </li>

@@ -12,7 +12,10 @@ $header = '';
 
 @section('content')
 
-    @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management'))
+    {{-- @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management')) --}}
+        {{-- || Entrust::hasRole('Developer') || Entrust::hasRole('Admin')) // getting $currentOrg as null --}}
+
+    @if((Entrust::can('event-management'))
         || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
         @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
@@ -15,30 +15,24 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('login');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
+            $table->integer('id', true)->unsigned();
+            $table->string('login')->unique('users_login_uindex');
+            $table->string('name');
+            $table->string('password')->nullable();
+            $table->string('remember_token', 100)->nullable();
+            $table->dateTime('last_login')->nullable();
+            $table->string('email');
             $table->string('stripe_id')->nullable();
-            $table->string('card_brand')->nullable();
-            $table->string('card_last_four')->nullable();
-            $table->timestamp('trial_ends_at')->nullable();
-            $table->timestamp('subscription_ends_at')->nullable();
-            $table->timestamps();
+            $table->string('stripeEmail')->nullable();
+            $table->string('card_brand', 25)->nullable();
+            $table->string('card_last_four', 4)->nullable();
+            $table->dateTime('trial_ends_at')->nullable();
+            $table->boolean('isOrgUser')->default(0);
+            $table->timestamp('subscription_ends_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('createDate')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
 
-        Schema::create('subscriptions', function ($table) {
-            $table->increments('id');
-            $table->integer('user_id');
-            $table->string('name');
-            $table->string('stripe_id');
-            $table->string('stripe_plan');
-            $table->integer('quantity');
-            $table->timestamp('trial_ends_at')->nullable();
-            $table->timestamp('ends_at')->nullable();
-            $table->timestamps();
-        });
     }
 
     /**
