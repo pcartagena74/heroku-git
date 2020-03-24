@@ -26,8 +26,8 @@ class EmailListController extends Controller
         $rows                = [];
         $ids                 = [];
         $defaults            = EmailList::where('orgID', 1)->get();
-        $lists = EmailList::where('orgID', $this->currentPerson->defaultOrgID)->get();
-        $today = Carbon::now();
+        $lists               = EmailList::where('orgID', $this->currentPerson->defaultOrgID)->get();
+        $today               = Carbon::now();
 
         foreach ($defaults as $l) {
             if ($l->foundation == 'everyone') {
