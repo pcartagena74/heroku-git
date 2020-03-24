@@ -12,11 +12,10 @@
         @include('ticketit::tickets.partials.comment_form')
 @endsection
 
-@if($u->isAgent() || $u->isAdmin())
 @section('scripts')
     @include('v1.parts.menu-fix', array('url_override' => url('tickets')))
 @endsection
-@endif
+
 @section('footer')
     <script>
         $(document).ready(function() {
