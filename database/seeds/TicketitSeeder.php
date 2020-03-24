@@ -9,8 +9,12 @@ class TicketitSeeder extends Seeder
     public $config = [];
 
     public $update_setting = [
-        'routes'       => '/app/routes/ticketit.php',
-        'email.footer' => 'Powered by mCentric',
+        'routes'            => '/app/routes/ticketit.php',
+        'email.footer'      => 'Powered by mCentric',
+        'master_template'   => 'v1.auth_pages.page-tmp',
+        'email.signoff'     => 'Thank you for your patience.',
+        'agent_restrict'    => 'no',
+        'email.footer_link' => 'https://www.mcentric.org',
     ];
     public $categories = [
         'Bug Report'          => '#FF0000',
