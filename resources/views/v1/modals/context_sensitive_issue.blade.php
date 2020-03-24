@@ -127,7 +127,7 @@
         var content = $('#ticket_content').val();
         var url = window.location.href;
         var data = { content:content,subject:subject,url:url };
-        @if(Entrust::hasRole('Admin') || Entrust::can('Developer'))
+        @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
         var priority = $('#ticket_priority').val();
         var category = $('#ticket_category').val();
         var agent = $('#ticket_agent').val();
