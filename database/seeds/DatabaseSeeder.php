@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             PermissionTableSeeder::class,
             RoleTableSeeder::class,
+            EmailBuilderSeeder::class,
+            TicketitSeeder::class,
         ]);
 
         $roles      = Role::find([9, 8]);

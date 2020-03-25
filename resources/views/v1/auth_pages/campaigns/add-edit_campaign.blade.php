@@ -23,105 +23,117 @@ $topBits = '';  // remove this if this was set in the controller
 
     @include('v1.parts.start_content', ['header' => ' Campaign Message',
              'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="panel">
-            <a class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion"
-               href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                <i class="panel-title">Message Header</i>
-            </a>
-            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                <div class="panel-body">
-                    <div class="form-group col-sm-6 col-xs-12">
-                        @if($campaign == null)
+<div aria-multiselectable="true" class="accordion" id="accordion" role="tablist">
+    <div class="panel">
+        <a aria-controls="collapseOne" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" id="headingOne" role="tab">
+            <i class="panel-title">
+                Message Header
+            </i>
+        </a>
+        <div aria-labelledby="headingOne" class="panel-collapse collapse in" id="collapseOne" role="tabpanel">
+            <div class="panel-body">
+                <div class="form-group col-sm-6 col-xs-12">
+                    @if($campaign == null)
                             {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name')) !!}
                         @else
                             {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name')) !!}
                         @endif
-                    </div>
-                    <div class="form-group col-sm-6 col-xs-12">
-                        @if($campaign == null)
+                </div>
+                <div class="form-group col-sm-6 col-xs-12">
+                    @if($campaign == null)
                             {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email')) !!}
                         @else
                             {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email')) !!}
                         @endif
-                    </div>
-                    <div class="form-group col-sm-12 col-xs-12">
-                        @if($campaign == null)
+                </div>
+                <div class="form-group col-sm-12 col-xs-12">
+                    @if($campaign == null)
                             {!! Form::text('subject', '', array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line')) !!}
                         @else
                             {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line')) !!}
                         @endif
-                    </div>
-                    <div class="form-group col-sm-12 col-xs-12">
-                        @if($campaign == null)
+                </div>
+                <div class="form-group col-sm-12 col-xs-12">
+                    @if($campaign == null)
                             {!! Form::text('preheader', '', array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line')) !!}
                         @else
                             {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line')) !!}
                         @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="panel">
-            <a class="panel-heading" role="tab" id="headingTwo" data-toggle="collapse" data-parent="#accordion"
-               href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                <i class="panel-title">Message Body</i>
-            </a>
-            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                <div class="panel-body">
-                    @if($campaign == null)
-                        {!! Form::textarea('content', '', array('class' => 'form-control rich')) !!}
-                    @else
-                        {!! Form::textarea('content', $campaign->content, array('class' => 'form-control rich')) !!}
-                    @endif
-                </div>
-            </div>
-        </div>
-        <div class="panel">
-            <a class="panel-heading" role="tab" id="headingThree" data-toggle="collapse" data-parent="#accordion"
-               href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                <i class="panel-title">Email List</i>
-            </a>
-            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                <div class="panel-body">
-                    @if($campaign == null)
-                    @else
-                    @endif
                 </div>
             </div>
         </div>
     </div>
-    @include('v1.parts.end_content')
+    <div class="panel">
+        <a aria-controls="collapseTwo" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseTwo" id="headingTwo" role="tab">
+            <i class="panel-title">
+                Message Body
+            </i>
+        </a>
+        <div aria-labelledby="headingTwo" class="panel-collapse collapse" id="collapseTwo" role="tabpanel">
+            <div class="panel-body">
+                <button class="btn btn-info btn-lg" data-target="#emailBuilderModal" data-toggle="modal" type="button">
+                    Show Email Builder
+                </button>
+                @include('v1.auth_pages.campaigns.email_builder')
+                <div class="modal fade" id="emailBuilderModal" role="dialog">
+                    <div class="modal-dialog">
+                    </div>
+                </div>
+                {{-- @if($campaign == null)
+                        {!! Form::textarea('content', '', array('class' => 'form-control rich')) !!}
+                    @else
+                        {!! Form::textarea('content', $campaign->content, array('class' => 'form-control rich')) !!}
+                    @endif --}}
+            </div>
+        </div>
+    </div>
+    <div class="panel">
+        <a aria-controls="collapseThree" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" id="headingThree" role="tab">
+            <i class="panel-title">
+                Email List
+            </i>
+        </a>
+        <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
+            <div class="panel-body">
+                @if($campaign == null)
+                    @else
+                    @endif
+            </div>
+        </div>
+    </div>
+</div>
+@include('v1.parts.end_content')
     {{-- Test Email Div --}}
-    <div>
-        @include('v1.parts.start_content', ['header' => 'Test Emails',
+<div>
+    @include('v1.parts.start_content', ['header' => 'Test Emails',
                  'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-
-        <div class="form-group">
-            {!! Form::label('email1', 'Enter up to 5 email addresses:') !!}
+    <div class="form-group">
+        {!! Form::label('email1', 'Enter up to 5 email addresses:') !!}
             {!! Form::email('email1', $org->adminEmail, array('class' => 'form-control input-sm')) !!}
             @if($campaign == null)
             @else
             @endif
-        </div>
-        <div class="form-group">
-            {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+    </div>
+    <div class="form-group">
+        {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
                 'id' => 'email2')) !!}
-        </div>
-        <div class="form-group">
-            {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+    </div>
+    <div class="form-group">
+        {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
                 'id' => 'email3')) !!}
-        </div>
-        <div class="form-group">
-            {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+    </div>
+    <div class="form-group">
+        {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email4')) !!}
-        </div>
-        <div class="form-group">
-            {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+    </div>
+    <div class="form-group">
+        {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email5')) !!}
-        </div>
-        <a id="add_email" onclick="add_email();">Add Another</a>
-        <p>
+    </div>
+    <a id="add_email" onclick="add_email();">
+        Add Another
+    </a>
+    <p>
         <div class="form-group">
             {!! Form::label('note', 'Personal Note') !!}
             {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4',
@@ -131,45 +143,55 @@ $topBits = '';  // remove this if this was set in the controller
             {!! Form::submit('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked')) !!}
         </div>
         @include('v1.parts.end_content')
-    </div>
-
-    @include('v1.parts.start_content', ['header' => 'Campaign Scheduling',
+    </p>
+</div>
+@include('v1.parts.start_content', ['header' => 'Campaign Scheduling',
              'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-
-    <div class="form-group">
+<div class="form-group">
+    @if($campaign == null)
+    <div class="col-sm-3">
+        {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}
+    </div>
+    <div class="col-sm-5" style="text-align: center;">
+        {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
+    </div>
+    <div class="col-sm-3">
+        {!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}
+    </div>
+    @else
+    <div class="col-sm-3">
+        {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}
+    </div>
+    <div class="col-sm-5" style="text-align: center;">
+        {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
+    </div>
+    <div class="col-sm-3">
+        {!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}
+    </div>
+    @endif
+</div>
+<p>
+</p>
+<div id="schedule" style="display: none;">
+    {!! Form::label('schedule', 'Release Date') !!}
         @if($campaign == null)
-            <div class="col-sm-3">{!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}</div>
-            <div class="col-sm-5" style="text-align: center;">
-                {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
-            </div>
-            <div class="col-sm-3">{!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}</div>
-        @else
-            <div class="col-sm-3"> {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!} </div>
-            <div class="col-sm-5" style="text-align: center;">
-                {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
-            </div>
-            <div class="col-sm-3">{!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}</div>
-        @endif
+    <div class="form-group col-sm-12">
+        {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left')) !!}
+        <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
+        </span>
     </div>
-    <p>&nbsp;</p>
-    <div id="schedule" style="display: none;">
-        {!! Form::label('schedule', 'Release Date') !!}
-        @if($campaign == null)
-            <div class="form-group col-sm-12">
-                {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left')) !!}
-                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
-            </div>
-        @else
-            <div class="form-group col-sm-12">
-                {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left')) !!}
-                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
-            </div>
-        @endif
+    @else
+    <div class="form-group col-sm-12">
+        {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left')) !!}
+        <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
+        </span>
     </div>
-    <div class="form-group">
-        {!! Form::submit('Send Now', array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id' => 'clicked')) !!}
-    </div>
-    @include('v1.parts.end_content')
+    @endif
+</div>
+<div class="form-group">
+    {!! Form::submit('Send Now', array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id' => 'clicked')) !!}
+</div>
+@include('v1.parts.end_content')
 
     @if($campaign === null)
     @else
@@ -186,8 +208,8 @@ $topBits = '';  // remove this if this was set in the controller
 @section('scripts')
     @include('v1.parts.footer-tinymce2')
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule', 'time' => 'true', 'single' => 'true'])
-    <script>
-        var x = 2;
+<script>
+    var x = 2;
         function add_email() {
             $('#email' + x).show();
             x += 1;
@@ -198,9 +220,9 @@ $topBits = '';  // remove this if this was set in the controller
         $(document).ready(function () {
             $('#schedule').val(moment(new Date($('#schedule').val())).format("MM/DD/YYYY HH:mm A"));
         });
-    </script>
-    <script>
-        $(document).ready(function () {
+</script>
+<script>
+    $(document).ready(function () {
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());
@@ -224,9 +246,9 @@ $topBits = '';  // remove this if this was set in the controller
             $("#add").text('Edit Event');
             @endif
         });
-    </script>
-    <script>
-        $('#send').on('change', function () {
+</script>
+<script>
+    $('#send').on('change', function () {
             $("#schedule").toggle();
             if($("#clicked").val() == 'Send Now'){
                 $("#clicked").val('Schedule');
@@ -234,12 +256,12 @@ $topBits = '';  // remove this if this was set in the controller
                 $("#clicked").val('Send Now');
             }
         });
-    </script>
-    <script>
-        $('form').submit(function () {
+</script>
+<script>
+    $('form').submit(function () {
             $('#schedule').each(function () {
                 $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
             });
         });
-    </script>
+</script>
 @endsection

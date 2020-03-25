@@ -404,3 +404,17 @@ if (!function_exists('getTicketPriorities')) {
         return $priorities;
     }
 }
+
+if (!function_exists('get_template_builder_blocks_category')) {
+    function get_template_builder_category()
+    {
+        return App\Models\EmailBlockCategory::all()->toArray();
+    }
+}
+
+if (!function_exists('get_template_builder_blocks_category')) {
+    function get_template_builder_block_category($email_cat_id)
+    {
+        return App\Models\EmailBlock::where('cat_id', $email_cat_id)->get()->toArray();
+    }
+}

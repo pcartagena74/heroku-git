@@ -224,14 +224,37 @@ class EmailListController extends Controller
         $include_string      = '';
         $exclude_string      = '';
 
-        $name        = request()->input('name');
-        $description = request()->input('description');
-        $foundation  = request()->input('foundation');
-        $include     = request()->input('include');
-        $exclude     = request()->input('exclude');
+        $name         = request()->input('name');
+        $description  = request()->input('description');
+        $foundation   = request()->input('foundation');
+        $include      = request()->input('include');
+        $exclude      = request()->input('exclude');
+        $year_date    = $request->input('eventStartDate');
+        $include_list = [];
+        $exclue_list  = [];
+        
+        foreach ($include as $event_id) {
+            if (strpos('current-year#', $event_id) === 0) {
+                $event_id =
+                $include_list . push(explode($event_id, ','));
+            } else {
+                $include_list[] = $event_id;
+            }
+        }
 
-        $include !== null ? $include_string = $foundation . "," . implode(',', $include) :
-        $include_string                     = $foundation;
+        foreach ($exclude as $event_id) {
+            if (strpos('current-year#', $event_id) === 0) {
+                $exclue_list . push(explode($event_id, ','));
+            } else {
+                $exclue_list[] = $event_id;
+            }
+        }
+        dd($include_list, $exclue_list);
+        if ($include == $exclude) {
+            $include !== null ? $include_string = $foundation . "," . implode(',', $include) :
+            $include_string                     = $foundation;
+        }
+
         $exclude !== null ? $exclude_string = implode(',', $exclude) : $exclude_string = null;
 
         if ($include === null && $foundation == 'none') {

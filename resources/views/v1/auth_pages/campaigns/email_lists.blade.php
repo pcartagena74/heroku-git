@@ -61,7 +61,7 @@ $topBits = '';  // remove this if this was set in the controller
             <br/>
             @include('v1.parts.start_content', ['header' => "Create New List", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
                 @if($emailList === null)
-                    {!! Form::open(array('url' => env('APP_URL')."/list", 'method' => 'post')) !!}
+                    {!! Form::open(array('url' => env('APP_URL')."/list", 'method' => 'post','id'=>'create_email_list_form')) !!}
                 @else
                     {!! Form::model($emailList, array('url' => env('APP_URL')."/list/".$emailList->id, 'method' => 'patch')) !!}
                 @endif
@@ -122,9 +122,95 @@ $topBits = '';  // remove this if this was set in the controller
                 <br/>
             </div>
             @include('v1.parts.end_content')
-
-
-                @include('v1.parts.start_content', ['header' => "Inclusions: Include attendees of...", 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+            <!-----------dragable list start ---------->
+            <div class="col-md-6 col-xs-6 ">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>
+                            Inclusions: Include attendees of...
+                            <small>
+                            </small>
+                        </h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>
+                                <a class="collapse-link">
+                                    <i aria-hidden="true" class="fa fa-chevron-up">
+                                    </i>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="clearfix">
+                        </div>
+                    </div>
+                    <div class="x_content" ondragover="allowDrop(event)" ondrop="drop(event,this,'include[]')" style="display: block;">
+                        <div style="width: 100%">
+                            Drop Here
+                        </div>
+                        <div class="clearfix" draggable="true" id="this-year-event" ondragstart="drag(event)">
+                            <div class="col-md-6">
+                                {!! Form::checkbox('include[]', 'current-year#'.$ytd_events, false, array('class' => 'flat')) !!}
+                            {!! Form::label('include', "This Year's Events") !!}
+                             {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control', 'required', 'id' => 'eventStartDate') ) !!}
+                            </div>
+                        </div>
+                        <div class="clearfix" draggable="true" id="last-year-event" ondragstart="drag(event)">
+                            {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat','id'=>'last-year-event')) !!}
+                            {!! Form::label('include', "Last Year's Events") !!}
+                        </div>
+                        {{--
+                        <div class="clearfix" draggable="true" id="all-event" ondragstart="drag(event)">
+                            {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','id'=>'all-event')) !!}
+                            {!! Form::label('include[]', 'All PD Day Events') !!}
+                        </div>
+                        --}}
+                        @foreach($excludes as $e)
+                            @php
+                                $name = substr($e->eventName, 0, 60);
+                                if(strlen($name) == 60) {
+                                    $name .= "...";
+                                }
+                            @endphp
+                        <div class="clearfix" draggable="true" id="event_{{$e->eventID}}" ondragstart="drag(event)">
+                            {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!}
+                            {!! Form::label('include', $name, array('textWrap' => 'true')) !!}
+                            <br/>
+                        </div>
+                        @endforeach
+                    </div>
+                    <!-- x_content -->
+                </div>
+                <!-- x_panel -->
+            </div>
+            <div class="col-md-6 col-xs-6 ">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>
+                            Exclusions: Exclude attendees of...
+                            <small>
+                            </small>
+                        </h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>
+                                <a class="collapse-link">
+                                    <i aria-hidden="true" class="fa fa-chevron-up">
+                                    </i>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="clearfix">
+                        </div>
+                    </div>
+                    <div class="x_content" ondragover="allowDrop(event)" ondrop="drop(event,this,'exclude[]')" style="display: block;">
+                        <div style="width: 100%">
+                            Drop Here
+                        </div>
+                    </div>
+                    <!-- x_content -->
+                </div>
+                <!-- x_panel -->
+            </div>
+            <!-----------dragable list end --------->
+            {{-- @include('v1.parts.start_content', ['header' => "Inclusions: Include attendees of...", 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                 {!! Form::checkbox('include[]', $ytd_events, false, array('class' => 'flat')) !!}
                 {!! Form::label('include[]', "This Year's Events") !!}
@@ -137,16 +223,15 @@ $topBits = '';  // remove this if this was set in the controller
             <br/>
             @include('v1.parts.end_content')
 
-                @include('v1.parts.start_content', ['header' => "Exclusions: Exclude attendees of...", 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_content', ['header' => "Inclusions: Include attendees of...", 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
                 @foreach($excludes as $e)
-            <?php
-                    $name = substr($e->
-            eventName, 0, 60);
-                    if(strlen($name) == 60) {
-                        $name .= "...";
-                    }
-                    ?>
+                    @php
+                        $name = substr($e->eventName, 0, 60);
+                        if(strlen($name) == 60) {
+                            $name .= "...";
+                        }
+                    @endphp
             <nobr>
                 {!! Form::checkbox('exclude[]', $e->eventID, false, array('class' => 'flat')) !!}
                         {!! Form::label('exclude[]', $name, array('textWrap' => 'true')) !!}
@@ -154,27 +239,72 @@ $topBits = '';  // remove this if this was set in the controller
             </nobr>
             @endforeach
 
-                @include('v1.parts.end_content')
+                @include('v1.parts.end_content') --}}
 
-                {!! Form::submit('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm')) !!}
+                {{-- {!! Form::submit('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm')) !!} --}}
+                {!! Form::button('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'create_list()')) !!}
                 {!! Form::close() !!}
-                @include('v1.parts.end_content')
+                {{-- @include('v1.parts.end_content') --}}
         </div>
     </div>
 </div>
 @endsection
-
-
-
+3.19
+.10
+4.04
+.50
 @section('scripts')
 <script>
     //redirection to a specific tab
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
         });
-</script>
-<script>
+
+    function create_list(){
+        var formElements = [];
+        $('#create_email_list_form :input[type=checkbox],#create_email_list_form :input[type=text]').each(function(){
+            formElements.push($(this));
+        });
+        console.log('create',$('#create_email_list_form').serializeArray());
+
+        var someForm = $('#create_email_list_form');
+
+        $.each(someForm[0].elements, function(index, elem){
+            console.log('here',elem);
+        });
+
+    }
+    function allowDrop(ev) {
+      ev.preventDefault();
+      if (ev.target.getAttribute("draggable") == "true"){
+        ev.dataTransfer.dropEffect = "none"; // dropping is not allowed[]
+      } else {
+        ev.dataTransfer.dropEffect = "all"; // drop it like it's hot
+      }
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text/plain", ev.target.id);
+    }
+
+    function drop(ev,el,type) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      el.appendChild(document.getElementById(data));
+      $('#'+data).find('input[type=checkbox]').attr('name',type);
+    }
+
     $(document).ready(function () {
+          $('#eventStartDate').daterangepicker({
+                    timePicker: false,
+                    autoUpdateInput: true,
+                    showDropdowns: true,
+                    startDate: moment().startOf('year'),
+                    endDate: moment().endOf('year'),
+                    locale: {
+                        format: 'M/D/Y h:mm A'
+                    }
+                });
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());
