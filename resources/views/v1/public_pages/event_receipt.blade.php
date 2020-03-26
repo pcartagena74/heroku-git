@@ -53,7 +53,7 @@ $eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
 
 $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
 
-$event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
+$event_url = trans('messages.email_txt.for_det_visit') . ": " .  urlencode(env('APP_URL') . "/events/$event->slug");
 $yahoo_url =
     "http://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
 $google_url =
