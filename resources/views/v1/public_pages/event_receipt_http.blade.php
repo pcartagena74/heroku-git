@@ -8,7 +8,19 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        @include('v1.parts.header_meta')
+        <meta charset="utf-8"/>
+        <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
+        <meta content="Integrated Member Management, Email Marketing, Event Registration, Surveys" name="description"/>
+        <meta content="mCentric / Efcico Corporation" name="author"/>
+        <meta content="{{ csrf_token() }}" name="csrf-token"/>
+        @if(Auth::user())
+    @if(!auth()->user()->remember_token)
+        <meta content="3600;url={{ str_replace('https', 'http', env('APP_URL')) }}/logout" http-equiv="refresh"/>
+        @endif
+@endif
+        <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric.ico" rel="icon"/>
+        <base href="{{ str_replace('https', 'http', env('APP_URL')) }}"/>
         <title>
             mCentric
         </title>
@@ -26,9 +38,11 @@
     </head>
 </html>
 --}}
-{{-- <link crossorigin="anonymous" href="http://pro.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-87DrmpqHRiY8hPLIr7ByqhPIywuSsjuQAfMXAE0sMUpY3BM7nXjf+mLIUSvhDArs" rel="stylesheet"/>
+{{--
+<link crossorigin="anonymous" href="http://pro.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-87DrmpqHRiY8hPLIr7ByqhPIywuSsjuQAfMXAE0sMUpY3BM7nXjf+mLIUSvhDArs" rel="stylesheet"/>
 <script crossorigin="anonymous" src="http://kit.fontawesome.com/d28859cec2.js">
-</script> --}}
+</script>
+--}}
 <link href="http://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/css/custom.min.css" rel="stylesheet"/>
 <link href="{{ str_replace('https', 'http', env('APP_URL'))}}/css/jumbotron.css" rel="stylesheet"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
@@ -541,7 +555,7 @@ $deletion = 0;
             <footer>
                 <div class="pull-right">
                     @if(!Auth::check())
-                    <a href="{{ env('APP_URL') }}">
+                    <a href="{{ str_replace('https', 'http', env('APP_URL')) }}">
                         <img alt="mCentric" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_logo_blue.png" style="height: 25px;"/>
                     </a>
                     @else
