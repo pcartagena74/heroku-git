@@ -429,9 +429,9 @@ class RegFinanceController extends Controller
                 ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
             );
         } catch (\Exception $exception) {
-            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
-                ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
-            // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
+            // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
+                // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
+            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
         }
 
         $client = new S3Client([
