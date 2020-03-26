@@ -55,9 +55,9 @@ $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)
 
 $event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
 $yahoo_url =
-    "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
+    "http://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
 $google_url =
-    "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
+    "http://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
 $event_filename = 'event_' . $event->eventID . '.ics';
 
 $client = new S3Client([
@@ -74,8 +74,8 @@ $s3fs = new Filesystem($adapter);
 $ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET1'), $event_filename);
 
 /* Links to share
-http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=https://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
-http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect_uri=https://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link=https://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message=I+am+going+to+this+event.
+http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=http://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
+http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect_uri=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message=I+am+going+to+this+event.
 http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru.com%2Fevents%2FAPR2017CM%2Fcode%2CY0YFBmUErN%2Ftype%2Cl%2F&title=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&summary=I+am+going+to+this+event&source=MyEventGuru
 an email url to a form
 */
