@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Event Receipt
  * Created: 3/26/17 and updated on 10/25/2019
@@ -6,28 +6,29 @@
  * Literal COPY of group_receipt.blade.php
  */
 
-use App\Person;
-use App\Ticket;
+use App\RegSession;
+use App\EventSession;
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
+use App\Registration;
+use App\Person;
+use App\Ticket;
 
 $tcount = 0;
-$today  = Carbon\Carbon::now();
+$today = Carbon\Carbon::now();
 
-// For discount comparison.  Need to see if $today >
-ticket->earlyBirdEndDate
+// For discount comparison.  Need to see if $today > ticket->earlyBirdEndDate
 // Also need to show the "Early Bird" based on whether it was true when purchased -- BUT also need catch
 // the potential continued purchases after the end (or change from At Door to credit but allowing it)
 $compareDate = $today;
 
 $string = '';
 
-$allergens      = DB::table('allergens')->select('allergen', 'allergen')->get();
+$allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
 $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-if ($event->eventTypeID == 5) {
-    // This is a regional event so do that instead
+if($event->eventTypeID == 5){ // This is a regional event so do that instead
     $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
     $array    = explode(',', $chapters->regionChapters);
 } else {
@@ -36,9 +37,8 @@ if ($event->eventTypeID == 5) {
 }
 
 $i = 0;
-foreach ($array as $chap) {
-    $i++;
-    $chap                  = trim($chap);
+foreach($array as $chap) {
+    $i++; $chap = trim($chap);
     $affiliation_array[$i] = $chap;
 }
 
@@ -63,32 +63,32 @@ $event_filename = 'event_' . $event->eventID . '.ics';
 $client = new S3Client([
     'credentials' => [
         'key'    => env('AWS_KEY'),
-        'secret' => env('AWS_SECRET'),
+        'secret' => env('AWS_SECRET')
     ],
-    'region'      => env('AWS_REGION'),
-    'version'     => 'latest',
+    'region' => env('AWS_REGION'),
+    'version' => 'latest',
 ]);
 
 $adapter = new AwsS3Adapter($client, env('AWS_BUCKET1'));
-$s3fs    = new Filesystem($adapter);
-$ics     = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET1'), $event_filename);
+$s3fs = new Filesystem($adapter);
+$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET1'), $event_filename);
 
 /* Links to share
 http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url;=http://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via;=myeventguru
 http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect;_uri=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link;=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description;=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message;=I+am+going+to+this+event.
 http://www.linkedin.com/shareArticle?mini=true&url;=https%3A%2F%2Fwww.myeventguru.com%2Fevents%2FAPR2017CM%2Fcode%2CY0YFBmUErN%2Ftype%2Cl%2F&title;=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&summary;=I+am+going+to+this+event&source;=MyEventGuru
 an email url to a form
- */
+*/
 
 $header = trans('messages.headers.reg') . " ";
-if ($rf->pmtRecd) {
+if($rf->pmtRecd){
     $header .= trans('messages.headers.receipt');
 } else {
     $header .= trans('messages.headers.invoice');
 }
 // To track whether there were any parts of the registration canceled/refunded
 $deletion = 0;
-?>
+@endphp
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
@@ -141,12 +141,11 @@ $deletion = 0;
             </div>
         </div>
         @foreach($rf->registrations as $reg)
-        <?php
-$tcount++;
-$person = Person::find($reg->
-        personID);
-$ticket = Ticket::find($reg->ticketID);
-?>
+        @php
+            $tcount++;
+            $person = Person::find($reg->personID);
+            $ticket = Ticket::find($reg->ticketID);
+            @endphp
         <div class="myrow col-md-12 col-sm-12">
             <div class="col-md-2 col-sm-2" style="text-align:center;">
                 @if($reg->deleted_at)
@@ -438,25 +437,25 @@ $ticket = Ticket::find($reg->ticketID);
                         <tr valign="middle">
                             <td style="text-align: center;">
                                 <a href="{{ $ics }}" target="_new">
-                                    <img height="50" src="{{ str_replace('https','http',env('APP_URL')) }}/images/outlook.jpg" width="50">
+                                    <img height="50" src="{{ env('APP_URL') }}/images/outlook.jpg" width="50">
                                     </img>
                                 </a>
                             </td>
                             <td style="text-align: center;">
                                 <a href="{{ $google_url }}" target="_new">
-                                    <img height="50" src="{{ str_replace('https','http',env('APP_URL')) }}/images/google.jpg" width="50">
+                                    <img height="50" src="{{ env('APP_URL') }}/images/google.jpg" width="50">
                                     </img>
                                 </a>
                             </td>
                             <td style="text-align: center;">
                                 <a href="{{ $yahoo_url }}" target="_new">
-                                    <img height="50" src="{{ str_replace('https','http',env('APP_URL')) }}/images/yahoo.jpg" width="50">
+                                    <img height="50" src="{{ env('APP_URL') }}/images/yahoo.jpg" width="50">
                                     </img>
                                 </a>
                             </td>
                             <td style="text-align: center;">
                                 <a href="{{ $ics }}" target="_new">
-                                    <img height="50" src="{{ str_replace('https','http',env('APP_URL')) }}/images/ical.jpg" width="50">
+                                    <img height="50" src="{{ env('APP_URL') }}/images/ical.jpg" width="50">
                                     </img>
                                 </a>
                             </td>
