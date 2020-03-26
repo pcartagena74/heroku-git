@@ -26,9 +26,9 @@
     </head>
 </html>
 --}}
-<link crossorigin="anonymous" href="http://pro.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-87DrmpqHRiY8hPLIr7ByqhPIywuSsjuQAfMXAE0sMUpY3BM7nXjf+mLIUSvhDArs" rel="stylesheet"/>
+{{-- <link crossorigin="anonymous" href="http://pro.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-87DrmpqHRiY8hPLIr7ByqhPIywuSsjuQAfMXAE0sMUpY3BM7nXjf+mLIUSvhDArs" rel="stylesheet"/>
 <script crossorigin="anonymous" src="http://kit.fontawesome.com/d28859cec2.js">
-</script>
+</script> --}}
 <link href="http://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/css/custom.min.css" rel="stylesheet"/>
 <link href="{{ str_replace('https', 'http', env('APP_URL'))}}/css/jumbotron.css" rel="stylesheet"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
