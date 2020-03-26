@@ -430,7 +430,7 @@ class RegFinanceController extends Controller
             );
         } catch (\Exception $exception) {
             // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
-            // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
+            //     ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
         }
 
