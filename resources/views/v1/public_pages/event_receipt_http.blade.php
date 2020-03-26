@@ -7,16 +7,47 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
-    @include('v1.parts.header_simple_no-auth')
-    <!-- Google Tag Manager -->
-    <script>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    <head>
+        @include('v1.parts.header_meta')
+        <title>
+            mCentric
+        </title>
+        {{--
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+            --}}
+            <link href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet">
+                {{--
+                <script crossorigin="anonymous" defer="" integrity="sha384-d84LGg2pm9KhR4mCAs3N29GQ4OYNy+K+FBHX8WhimHpPm86c839++MDABegrZ3gn" src="https://pro.fontawesome.com/releases/v5.0.13/js/all.js">
+                </script>
+                <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+                    <script crossorigin="anonymous" defer="" integrity="sha384-d84LGg2pm9KhR4mCAs3N29GQ4OYNy+K+FBHX8WhimHpPm86c839++MDABegrZ3gn" src="https://pro.fontawesome.com/releases/v5.0.13/js/all.js">
+                    </script>
+                    --}}
+                    <link crossorigin="anonymous" href="http://pro.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-87DrmpqHRiY8hPLIr7ByqhPIywuSsjuQAfMXAE0sMUpY3BM7nXjf+mLIUSvhDArs" rel="stylesheet">
+                        <script crossorigin="anonymous" src="http://kit.fontawesome.com/d28859cec2.js">
+                        </script>
+                        <link href="http://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/css/custom.min.css" rel="stylesheet">
+                            <link href="{{ str_replace('https', 'http', env('APP_URL'))}}/css/jumbotron.css" rel="stylesheet">
+                                <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+                                </script>
+                                <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+                                </script>
+                                <!-- Google Tag Manager -->
+                                <script>
+                                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        'http://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-K4MGRCX');
-    </script>
-    <!-- End Google Tag Manager -->
+                                </script>
+                                <!-- End Google Tag Manager -->
+                            </link>
+                        </link>
+                    </link>
+                </link>
+            </link>
+        </link>
+    </head>
 </html>
 <body class="nav-md footer_fixed">
     <!-- Google Tag Manager (noscript) -->
@@ -510,9 +541,19 @@ $deletion = 0;
             {{--
     @include('v1.parts.footer_script')
 --}}
-    @include('v1.parts.footer')
-    @yield('scripts')
-    @yield('modals')
+            <p>
+            </p>
+            <footer>
+                <div class="pull-right">
+                    @if(!Auth::check())
+                    <a href="{{ env('APP_URL') }}">
+                        <img alt="mCentric" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_logo_blue.png" style="height: 25px;"/>
+                    </a>
+                    @else
+                    <img alt="mCentric" hspace="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_logo_blue.png" style="height: 25px;"/>
+                    @endif
+                </div>
+            </footer>
         </div>
     </div>
 </body>
