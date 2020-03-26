@@ -421,7 +421,7 @@ class RegFinanceController extends Controller
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
 
         try {
-            $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+            $pdf = PDF::loadView('v1.public_pages.event_receipt_http', $x);
 
             Flysystem::connection('s3_receipts')->put(
                 $receipt_filename,
