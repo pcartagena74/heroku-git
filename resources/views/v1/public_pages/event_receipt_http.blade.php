@@ -1,4 +1,44 @@
-@php
+<?php
+/**
+ * Comment: Template for pages without authentication
+ * Created: 2/2/2017
+ */
+//<script src='https://www.google.com/recaptcha/api.js'>
+?>
+<!DOCTYPE html>
+<html lang="en">
+    @include('v1.parts.header_simple_no-auth')
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-K4MGRCX');
+    </script>
+    <!-- End Google Tag Manager -->
+</html>
+<body class="nav-md footer_fixed">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe height="0" src="http://www.googletagmanager.com/ns.html?id=GTM-K4MGRCX" style="display:none;visibility:hidden" width="0">
+        </iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;">
+                <a class="navbar-brand" href="{{ str_replace('https', 'http', env('APP_URL')) }}/">
+                    <img alt="m|Centric" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_logo.png" style="height: 25px; vertical-align: top;"/>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="container body col-md-12 col-sm-12 col-xs-12">
+        <div class="main_container bit">
+            @include('v1.parts.error')
+
+    @php
 /**
  * Comment: Event Receipt
  * Created: 3/26/17 and updated on 10/25/2019
@@ -89,168 +129,167 @@ if($rf->pmtRecd){
 // To track whether there were any parts of the registration canceled/refunded
 $deletion = 0;
 @endphp
-@extends('v1.layouts.no-auth_simple')
 
-@section('content')
+
     @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-<div class="whole">
-    {{--
-    <div class="left col-md-7 col-sm-7">
-        --}}
-        <div class="myrow col-md-12 col-sm-12">
-            <div class="col-md-2 col-sm-2" style="text-align:center;">
-                <h1 class="far fa-5x fa-calendar-alt">
-                </h1>
-            </div>
-            <div class="col-md-7 col-sm-7">
-                <h2>
-                    <b>
-                        {{ $event->eventName }}
-                    </b>
-                </h2>
-                <div style="margin-left: 10px;">
-                    {{ $event->eventStartDate->format('n/j/Y g:i A') }}
+            <div class="whole">
+                {{--
+                <div class="left col-md-7 col-sm-7">
+                    --}}
+                    <div class="myrow col-md-12 col-sm-12">
+                        <div class="col-md-2 col-sm-2" style="text-align:center;">
+                            <h1 class="far fa-5x fa-calendar-alt">
+                            </h1>
+                        </div>
+                        <div class="col-md-7 col-sm-7">
+                            <h2>
+                                <b>
+                                    {{ $event->eventName }}
+                                </b>
+                            </h2>
+                            <div style="margin-left: 10px;">
+                                {{ $event->eventStartDate->format('n/j/Y g:i A') }}
                     - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
-                    <br>
-                        {{ $loc->locName }}
-                        <br>
-                            {{ $loc->addr1 }}
-                            <i class="fas fa-circle fa-xs">
-                            </i>
-                            {{ $loc->city }},
+                                <br>
+                                    {{ $loc->locName }}
+                                    <br>
+                                        {{ $loc->addr1 }}
+                                        <i class="fas fa-circle fa-xs">
+                                        </i>
+                                        {{ $loc->city }},
                     {{ $loc->state }} {{ $loc->zip }}
-                        </br>
-                    </br>
-                </div>
-                <br/>
-                <b style="color:red;">
-                    @lang('messages.headers.purchased'):
-                </b>
-                {{ $rf->createDate->format('n/j/Y') }}
-                <b style="color:red;">
-                    @lang('messages.headers.at')
-                </b>
-                {{ $rf->createDate->format('g:i A') }}
+                                    </br>
+                                </br>
+                            </div>
+                            <br/>
+                            <b style="color:red;">
+                                @lang('messages.headers.purchased'):
+                            </b>
+                            {{ $rf->createDate->format('n/j/Y') }}
+                            <b style="color:red;">
+                                @lang('messages.headers.at')
+                            </b>
+                            {{ $rf->createDate->format('g:i A') }}
                 @if($rf->cost > 0 && $rf->pmtRecd == 0)
-                <h1 style="color:red;">
-                    @lang('messages.headers.bal_due')
-                </h1>
-                @endif
-            </div>
-            <div class="col-md-3 col-sm-3">
-            </div>
-        </div>
-        @foreach($rf->registrations as $reg)
+                            <h1 style="color:red;">
+                                @lang('messages.headers.bal_due')
+                            </h1>
+                            @endif
+                        </div>
+                        <div class="col-md-3 col-sm-3">
+                        </div>
+                    </div>
+                    @foreach($rf->registrations as $reg)
         @php
             $tcount++;
             $person = Person::find($reg->personID);
             $ticket = Ticket::find($reg->ticketID);
             @endphp
-        <div class="myrow col-md-12 col-sm-12">
-            <div class="col-md-2 col-sm-2" style="text-align:center;">
-                @if($reg->deleted_at)
-                <h1 class="fas fa-5x fa-user red">
-                </h1>
-                @else
-                <h1 class="fas fa-5x fa-user">
-                </h1>
-                @endif
-            </div>
-            <div class="col-md-10 col-sm-10">
-                <table class="table jambo_table table-bordered table-condensed table-striped">
-                    <tr>
-                        <thead>
-                            <th colspan="4" style="text-align: left;">
-                                {{ strtoupper($reg->membership) }}
+                    <div class="myrow col-md-12 col-sm-12">
+                        <div class="col-md-2 col-sm-2" style="text-align:center;">
+                            @if($reg->deleted_at)
+                            <h1 class="fas fa-5x fa-user red">
+                            </h1>
+                            @else
+                            <h1 class="fas fa-5x fa-user">
+                            </h1>
+                            @endif
+                        </div>
+                        <div class="col-md-10 col-sm-10">
+                            <table class="table jambo_table table-bordered table-condensed table-striped">
+                                <tr>
+                                    <thead>
+                                        <th colspan="4" style="text-align: left;">
+                                            {{ strtoupper($reg->membership) }}
                                 {{ strtoupper(__('messages.fields.ticket')) }}:
                                 #{{ $tcount }}
                                 @if($reg->deleted_at)
-                                <span class="yellow">
-                                    @if($reg->subtotal > 0)
+                                            <span class="yellow">
+                                                @if($reg->subtotal > 0)
                                             {{ strtoupper(__('messages.headers.refunded')) }}
                                         @else
                                             {{ strtoupper(__('messages.headers.canceled')) }}
                                         @endif
-                                </span>
-                                @endif
-                                <span style="float: right;">
-                                    @lang('messages.fields.reg_id')#:
+                                            </span>
+                                            @endif
+                                            <span style="float: right;">
+                                                @lang('messages.fields.reg_id')#:
                                     @if($reg->deleted_at)
                                         {{ $reg->regID }}
                                     @else
-                                    <span style="color:yellow;">
-                                        {{ $reg->regID }}
-                                    </span>
-                                    @endif
-                                </span>
-                            </th>
-                        </thead>
-                    </tr>
-                    <tr>
-                        <th style="text-align: left; color:darkgreen;">
-                            @lang('messages.fields.ticket')
-                        </th>
-                        <th style="text-align: left; color:darkgreen;">
-                            @lang('messages.fields.oCost')
-                        </th>
-                        <th style="text-align: left; color:darkgreen;">
-                            {{ trans_choice('messages.fields.disc', 2) }}
-                        </th>
-                        <th style="text-align: left; color:darkgreen;">
-                            @lang('messages.fields.subtotal')
-                        </th>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">
-                            {{ $ticket->ticketLabel }}
-                        </td>
-                        <td style="text-align: left;">
-                            <i class="far fa-dollar-sign">
-                            </i>
-                            @if($reg->membership == 'Member')
+                                                <span style="color:yellow;">
+                                                    {{ $reg->regID }}
+                                                </span>
+                                                @endif
+                                            </span>
+                                        </th>
+                                    </thead>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: left; color:darkgreen;">
+                                        @lang('messages.fields.ticket')
+                                    </th>
+                                    <th style="text-align: left; color:darkgreen;">
+                                        @lang('messages.fields.oCost')
+                                    </th>
+                                    <th style="text-align: left; color:darkgreen;">
+                                        {{ trans_choice('messages.fields.disc', 2) }}
+                                    </th>
+                                    <th style="text-align: left; color:darkgreen;">
+                                        @lang('messages.fields.subtotal')
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left;">
+                                        {{ $ticket->ticketLabel }}
+                                    </td>
+                                    <td style="text-align: left;">
+                                        <i class="far fa-dollar-sign">
+                                        </i>
+                                        @if($reg->membership == 'Member')
                                     {{ number_format($ticket->memberBasePrice, 2, ".", ",") }}
                                 @else
                                     {{ number_format($ticket->nonmbrBasePrice, 2, ".", ",") }}
                                 @endif
-                        </td>
-                        @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
+                                    </td>
+                                    @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
                                 @if($reg->discountCode)
-                        <td style="text-align: left;">
-                            @lang('messages.headers.earlybird'), {{ $reg->discountCode }}
-                        </td>
-                        @else
-                        <td style="text-align: left;">
-                            @lang('messages.headers.earlybird')
-                        </td>
-                        @endif
+                                    <td style="text-align: left;">
+                                        @lang('messages.headers.earlybird'), {{ $reg->discountCode }}
+                                    </td>
+                                    @else
+                                    <td style="text-align: left;">
+                                        @lang('messages.headers.earlybird')
+                                    </td>
+                                    @endif
                             @else
                                 @if($reg->discountCode)
-                        <td style="text-align: left;">
-                            {{ $reg->discountCode }}
-                        </td>
-                        @else
-                        <td style="text-align: left;">
-                            --
-                        </td>
-                        @endif
+                                    <td style="text-align: left;">
+                                        {{ $reg->discountCode }}
+                                    </td>
+                                    @else
+                                    <td style="text-align: left;">
+                                        --
+                                    </td>
+                                    @endif
                             @endif
-                        <td style="text-align: left;">
-                            <i class="far fa-dollar-sign">
-                            </i>
-                            {{ number_format($reg->subtotal, 2, ".", ",") }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th colspan="2" style="width: 50%; text-align: left;">
-                            @lang('messages.headers.att_info')
-                        </th>
-                        <th colspan="2" style="width: 50%; text-align: left;">
-                            @lang('messages.headers.event_info')
-                        </th>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="text-align: left;">
-                            @if($person->prefix)
+                                    <td style="text-align: left;">
+                                        <i class="far fa-dollar-sign">
+                                        </i>
+                                        {{ number_format($reg->subtotal, 2, ".", ",") }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2" style="width: 50%; text-align: left;">
+                                        @lang('messages.headers.att_info')
+                                    </th>
+                                    <th colspan="2" style="width: 50%; text-align: left;">
+                                        @lang('messages.headers.event_info')
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: left;">
+                                        @if($person->prefix)
                                     {{ $person->prefix }}
                                 @endif
                                 {{ $person->firstName }}
@@ -264,15 +303,15 @@ $deletion = 0;
                                 @if($person->suffix)
                                     {{ $person->suffix }}
                                 @endif
-                            <nobr>
-                                [ {{ $person->login }} ]
-                            </nobr>
-                            @if($person->orgperson->OrgStat1)
-                            <br/>
-                            {{ $org->OSN1 }}: {{ $person->orgperson->OrgStat1 }}
+                                        <nobr>
+                                            [ {{ $person->login }} ]
+                                        </nobr>
+                                        @if($person->orgperson->OrgStat1)
+                                        <br/>
+                                        {{ $org->OSN1 }}: {{ $person->orgperson->OrgStat1 }}
                                     @endif
-                            <br/>
-                            @if($person->compName)
+                                        <br/>
+                                        @if($person->compName)
                                     @if($person->title)
                                         {{ $person->title }}
                                     @else
@@ -288,184 +327,192 @@ $deletion = 0;
                                 @endif
                                 @if($person->indName !== null)
                                     @lang('messages.headers.inthe') {{ $person->indName }} @lang('messages.headers.ind')
-                            <br/>
-                            @endif
+                                        <br/>
+                                        @endif
 
                                 @if($person->affiliation)
-                            <br/>
-                            @lang('messages.headers.aff_with'): {{ $person->affiliation }}
+                                        <br/>
+                                        @lang('messages.headers.aff_with'): {{ $person->affiliation }}
                                 @endif
-                        </td>
-                        <td colspan="2" style="text-align: left;">
-                            <b>
-                                @lang('messages.headers.roster_add'):
-                            </b>
-                            {{ $reg->canNetwork
+                                    </td>
+                                    <td colspan="2" style="text-align: left;">
+                                        <b>
+                                            @lang('messages.headers.roster_add'):
+                                        </b>
+                                        {{ $reg->canNetwork
                                                                             ? trans('messages.yesno_check.yes')
                                                                             : trans('messages.yesno_check.no') }}
-                            <br/>
-                            <b>
-                                @lang('messages.headers.certs'):
-                            </b>
-                            : {{ $person->certifications }}
-                            <br/>
-                            <b>
-                                @lang('messages.fields.pdu_sub'):
-                            </b>
-                            {{ $reg->isAuthPDU
+                                        <br/>
+                                        <b>
+                                            @lang('messages.headers.certs'):
+                                        </b>
+                                        : {{ $person->certifications }}
+                                        <br/>
+                                        <b>
+                                            @lang('messages.fields.pdu_sub'):
+                                        </b>
+                                        {{ $reg->isAuthPDU
                                                                             ? trans('messages.yesno_check.yes')
                                                                             : trans('messages.yesno_check.no') }}
-                            <br/>
-                            @if($reg->allergenInfo)
-                            <b>
-                                @lang('messages.fields.diet_info'):
-                            </b>
-                            {{ $reg->allergenInfo }}
-                            <br/>
-                            @if($reg->eventNotes)
+                                        <br/>
+                                        @if($reg->allergenInfo)
+                                        <b>
+                                            @lang('messages.fields.diet_info'):
+                                        </b>
+                                        {{ $reg->allergenInfo }}
+                                        <br/>
+                                        @if($reg->eventNotes)
                                         {{ $reg->eventNotes }}
-                            <br/>
-                            @endif
+                                        <br/>
+                                        @endif
                                 @endif
-                        </td>
-                    </tr>
-                </table>
-                @if($reg->ticket->has_sessions())
+                                    </td>
+                                </tr>
+                            </table>
+                            @if($reg->ticket->has_sessions())
                         @include('v1.parts.session_print', ['event' => $rf->event, 'ticket' => $reg->ticket, 'rf' => $rf, 'reg' => $reg])
                     @endif
-            </div>
-        </div>
-        @endforeach
-        <div class="myrow col-md-12 col-sm-12">
-            <div class="col-md-2 col-sm-2" style="text-align:center;">
-                <h1 class="far fa-5x fa-dollar-sign">
-                </h1>
-            </div>
-            <div class="col-md-7 col-sm-7">
-                @if($deletion)
-                <p class="red">
-                    <b>
-                        @lang('messages.headers.note'):
-                    </b>
-                    @lang('messages.instructions.total_caveat')
-                </p>
-                @else
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="myrow col-md-12 col-sm-12">
+                        <div class="col-md-2 col-sm-2" style="text-align:center;">
+                            <h1 class="far fa-5x fa-dollar-sign">
+                            </h1>
+                        </div>
+                        <div class="col-md-7 col-sm-7">
+                            @if($deletion)
+                            <p class="red">
+                                <b>
+                                    @lang('messages.headers.note'):
+                                </b>
+                                @lang('messages.instructions.total_caveat')
+                            </p>
+                            @else
                      
                 @endif
-            </div>
-            <div class="col-md-3 col-sm-3">
-                <table class="table table-striped table-condensed jambo_table">
-                    <thead>
-                        <tr>
-                            <th style="text-align: center;">
-                                @lang('messages.fields.total')
-                            </th>
-                        </tr>
-                    </thead>
-                    <tr>
-                        <td style="text-align: center;">
-                            <b>
-                                <i class="far fa-dollar-sign">
-                                </i>
-                                {{ number_format($rf->cost, 2, '.', ',') }}
-                            </b>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <hr>
-            @if($event->postRegInfo)
-            <div class="col-sm-2">
-            </div>
-            <div class="col-sm-10">
-                @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
+                        </div>
+                        <div class="col-md-3 col-sm-3">
+                            <table class="table table-striped table-condensed jambo_table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">
+                                            @lang('messages.fields.total')
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <b>
+                                            <i class="far fa-dollar-sign">
+                                            </i>
+                                            {{ number_format($rf->cost, 2, '.', ',') }}
+                                        </b>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                        @if($event->postRegInfo)
+                        <div class="col-sm-2">
+                        </div>
+                        <div class="col-sm-10">
+                            @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
                          'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
                 {!! $event->postRegInfo ?? '' !!}
                 @include('v1.parts.end_content')
-            </div>
-            @endif
-            <hr>
-                <div class="col-sm-12">
-                    <h4>
-                        @lang('messages.headers.add_to_cal')
-                    </h4>
-                    @if(0)
-                    <table class="table borderless">
-                        <tr>
-                            <td style="text-align: center;">
-                                <a href="{{ $ics }}" target="_new">
-                                    <h2 class="fal fa-4x fa-calendar-alt" style="color: gold;">
-                                    </h2>
-                                </a>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ $google_url }}" target="_new">
-                                    <span class="far fa-stack fa-lg fa-2x">
-                                        <h1 class="far fa-4x fa-square fa-stack-2x" style="color: red;">
-                                        </h1>
-                                        <h1 class="far fa-1x fa-google fa-stack-1x" style="color: white;">
-                                        </h1>
-                                    </span>
-                                </a>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ $yahoo_url }}" target="_new">
-                                    <span class="far fa-stack fa-lg fa-2x">
-                                        <h1 class="far fa-3x fa-square fa-stack-2x" style="color: rebeccapurple;">
-                                        </h1>
-                                        <h1 class="far fa-1x fa-yahoo fa-stack-1x" style="color: white;">
-                                        </h1>
-                                    </span>
-                                </a>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ $ics }}" target="_new">
-                                    <span class="far fa-stack fa-lg fa-2x">
-                                        <h2 class="fal fa-3x fa-calendar-alt fa-stack-2x" style="color: red;">
-                                        </h2>
-                                        <h2 class="fa-stack-1x" style="text-align: center; color: black; margin-top:1em;">
-                                            ICS
-                                        </h2>
-                                    </span>
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                    @else
-                    <table class="table borderless">
-                        <tr valign="middle">
-                            <td style="text-align: center;">
-                                <a href="{{ $ics }}" target="_new">
-                                    <img height="50" src="{{ env('APP_URL') }}/images/outlook.jpg" width="50">
-                                    </img>
-                                </a>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ $google_url }}" target="_new">
-                                    <img height="50" src="{{ env('APP_URL') }}/images/google.jpg" width="50">
-                                    </img>
-                                </a>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ $yahoo_url }}" target="_new">
-                                    <img height="50" src="{{ env('APP_URL') }}/images/yahoo.jpg" width="50">
-                                    </img>
-                                </a>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ $ics }}" target="_new">
-                                    <img height="50" src="{{ env('APP_URL') }}/images/ical.jpg" width="50">
-                                    </img>
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                    @endif
+                        </div>
+                        @endif
+                        <hr>
+                            <div class="col-sm-12">
+                                <h4>
+                                    @lang('messages.headers.add_to_cal')
+                                </h4>
+                                @if(0)
+                                <table class="table borderless">
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $ics }}" target="_new">
+                                                <h2 class="fal fa-4x fa-calendar-alt" style="color: gold;">
+                                                </h2>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $google_url }}" target="_new">
+                                                <span class="far fa-stack fa-lg fa-2x">
+                                                    <h1 class="far fa-4x fa-square fa-stack-2x" style="color: red;">
+                                                    </h1>
+                                                    <h1 class="far fa-1x fa-google fa-stack-1x" style="color: white;">
+                                                    </h1>
+                                                </span>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $yahoo_url }}" target="_new">
+                                                <span class="far fa-stack fa-lg fa-2x">
+                                                    <h1 class="far fa-3x fa-square fa-stack-2x" style="color: rebeccapurple;">
+                                                    </h1>
+                                                    <h1 class="far fa-1x fa-yahoo fa-stack-1x" style="color: white;">
+                                                    </h1>
+                                                </span>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $ics }}" target="_new">
+                                                <span class="far fa-stack fa-lg fa-2x">
+                                                    <h2 class="fal fa-3x fa-calendar-alt fa-stack-2x" style="color: red;">
+                                                    </h2>
+                                                    <h2 class="fa-stack-1x" style="text-align: center; color: black; margin-top:1em;">
+                                                        ICS
+                                                    </h2>
+                                                </span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @else
+                                <table class="table borderless">
+                                    <tr valign="middle">
+                                        <td style="text-align: center;">
+                                            <a href="{{ $ics }}" target="_new">
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/outlook.jpg" width="50">
+                                                </img>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $google_url }}" target="_new">
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/google.jpg" width="50">
+                                                </img>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $yahoo_url }}" target="_new">
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/yahoo.jpg" width="50">
+                                                </img>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="{{ $ics }}" target="_new">
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/ical.jpg" width="50">
+                                                </img>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @endif
+                            </div>
+                        </hr>
+                    </hr>
                 </div>
-            </hr>
-        </hr>
+                @include('v1.parts.end_content')
+            </div>
+            {{--
+    @include('v1.parts.footer_script')
+--}}
+    @include('v1.parts.footer')
+    @yield('scripts')
+    @yield('modals')
+        </div>
     </div>
-    @include('v1.parts.end_content')
-@endsection
-</div>
+</body>
