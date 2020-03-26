@@ -238,7 +238,7 @@ class RegFinanceController extends Controller
                         'source' => $stripeToken,
                     ));
                 } catch (\Exception $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error8') . $exception->getMessage());
                     return back()->withInput();
                 }
 
@@ -261,25 +261,25 @@ class RegFinanceController extends Controller
                         array('idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats . '-' . $rf->registrations->first()->regID)
                     );
                 } catch (Card $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error1') . $exception->getMessage());
                     return back()->withInput();
                 } catch (InvalidRequest $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error2') . $exception->getMessage());
                     return back()->withInput();
                 } catch (Authentication $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error3') . $exception->getMessage());
                     return back()->withInput();
                 } catch (ApiConnection $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error4') . $exception->getMessage());
                     return back()->withInput();
                 } catch (Permission $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error5') . $exception->getMessage());
                     return back()->withInput();
                 } catch (Base $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error6') . $exception->getMessage());
                     return back()->withInput();
                 } catch (\Exception $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error7') . $exception->getMessage());
                     return back()->withInput();
                 }
                 $rf->stripeChargeID = $charge->id;
@@ -434,9 +434,9 @@ class RegFinanceController extends Controller
                 ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
             );
         } catch (\Exception $exception) {
-            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
+            request()->session()->flash('alert-warning', $exception->getMessage());
         }
-
+        dd($pdf->output());
         $client = new S3Client([
             'credentials' => [
                 'key' => env('AWS_KEY'),
