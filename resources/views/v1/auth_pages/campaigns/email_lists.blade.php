@@ -245,14 +245,12 @@ $topBits = '';  // remove this if this was set in the controller
                 {!! Form::button('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'create_list()')) !!}
                 {!! Form::close() !!}
                 {{-- @include('v1.parts.end_content') --}}
+                <div class="errors" id="errors"></div>
         </div>
     </div>
 </div>
 @endsection
-3.19
-.10
-4.04
-.50
+
 @section('scripts')
 <script>
     //redirection to a specific tab
@@ -261,18 +259,40 @@ $topBits = '';  // remove this if this was set in the controller
         });
 
     function create_list(){
-        var formElements = [];
+        var formElements = {'include[]':[],'exclude[]':[]};
         $('#create_email_list_form :input[type=checkbox],#create_email_list_form :input[type=text]').each(function(){
-            formElements.push($(this));
+            var current = $(this);
+            var input_name = $(this).attr('name');
+            var val  = $(this).val(); 
+            if($(this).attr('type') == 'checkbox' && $(this).prop("checked") == true){
+                formElements[input_name].push(val);
+            } else if($(this).attr('type') == 'text') {
+                formElements[input_name] = val;
+            }
         });
-        console.log('create',$('#create_email_list_form').serializeArray());
-
-        var someForm = $('#create_email_list_form');
-
-        $.each(someForm[0].elements, function(index, elem){
-            console.log('here',elem);
+        // var obj = Object.assign({}, formElements);
+        console.log('here',formElements);
+        $.ajax({
+            url: '{{route("EmailList.Save")}}', 
+            method:'POST',
+            dataType:'json',
+            data: formElements,
+            success: function(result){
+                if(result.success == true){
+                    
+                } else {
+                     $.each(result.errors,function(key,value){
+                        var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value[0]+'</div>';
+                        $('#errors').append(str);
+                    });
+                }
+            },
+            error(xhr,status,error){
+                console.log(status);
+            }
         });
-
+        console.log('create',formElements);
+        
     }
     function allowDrop(ev) {
       ev.preventDefault();
@@ -296,13 +316,13 @@ $topBits = '';  // remove this if this was set in the controller
 
     $(document).ready(function () {
           $('#eventStartDate').daterangepicker({
-                    timePicker: false,
                     autoUpdateInput: true,
                     showDropdowns: true,
                     startDate: moment().startOf('year'),
                     endDate: moment().endOf('year'),
+                    timePicker: false,
                     locale: {
-                        format: 'M/D/Y h:mm A'
+                        format: 'M/D/Y'
                     }
                 });
             var setContentHeight = function () {

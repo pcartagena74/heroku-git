@@ -7,6 +7,7 @@ use App\Event;
 use App\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Validator;
 
 class EmailListController extends Controller
 {
@@ -223,6 +224,13 @@ class EmailListController extends Controller
         $this->currentPerson = Person::find(auth()->id());
         $include_string      = '';
         $exclude_string      = '';
+        $validator           = Validator::make($request->all(), [
+            'name'        => 'required|max:255',
+            'description' => 'nullable|min:3',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
+        }
 
         $name         = request()->input('name');
         $description  = request()->input('description');
@@ -231,34 +239,55 @@ class EmailListController extends Controller
         $exclude      = request()->input('exclude');
         $year_date    = $request->input('eventStartDate');
         $include_list = [];
-        $exclue_list  = [];
-        
-        foreach ($include as $event_id) {
-            if (strpos('current-year#', $event_id) === 0) {
-                $event_id =
-                $include_list . push(explode($event_id, ','));
-            } else {
-                $include_list[] = $event_id;
-            }
-        }
+        $exclude_list = [];
 
-        foreach ($exclude as $event_id) {
-            if (strpos('current-year#', $event_id) === 0) {
-                $exclue_list . push(explode($event_id, ','));
-            } else {
-                $exclue_list[] = $event_id;
+        $has_this_year = false;
+        if (!empty($include)) {
+            foreach ($include as $event_id) {
+                if (strpos($event_id, 'current-year#') === 0) {
+                    $has_this_year = true;
+                    $list          = str_replace('current-year#', '', $event_id);
+                    $list          = array_flip(explode(',', $list));
+                    $include_list  = array_replace($include_list, $list);
+                } else {
+                    $include_list[$event_id] = $event_id;
+                }
             }
         }
-        dd($include_list, $exclue_list);
-        if ($include == $exclude) {
-            $include !== null ? $include_string = $foundation . "," . implode(',', $include) :
-            $include_string                     = $foundation;
+        if (!empty($exclude)) {
+            foreach ($exclude as $event_id) {
+                if (strpos($event_id, 'last-year#') === 0) {
+                    $list         = str_replace('last-year#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $exclude_list = array_replace($exclude_list, $list);
+                } else {
+                    $exclude_list[$event_id] = $event_id;
+                }
+            }
+        }
+        if ($has_this_year) {
+            $date       = explode('-', $year_date);
+            $from       = date('Y-m-d', strtotime($date[0]));
+            $to         = date('Y-m-d', strtotime($date[1]));
+            $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+        }
+        
+        if (empty($foundation) && empty($include_list) && empty($exclude_list)) {
+            return response()->json(['error' => trans('messages.errors.no_member_for_list')]);
+        }
+        dd('here');
+        if (empty($include) && $foundation) {
+            if ($include == $exclude) {
+                $include !== null ? $include_string = $foundation . "," . implode(',', $include) :
+                $include_string                     = $foundation;
+            }
         }
 
         $exclude !== null ? $exclude_string = implode(',', $exclude) : $exclude_string = null;
 
         if ($include === null && $foundation == 'none') {
             request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
+
             return redirect()->back();
         }
 
