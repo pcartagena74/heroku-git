@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
     "content-hash": "0c30ecf444d4d2e1a756e46a5ac1e0cd",
-=======
-    "content-hash": "8ceee4864ee3e0699a1552b0d4ca1c86",
->>>>>>> replacing tickit service provider
     "packages": [
         {
             "name": "aws/aws-php-sns-message-validator",
@@ -65,7 +61,6 @@
         },
         {
             "name": "aws/aws-sdk-php",
-<<<<<<< HEAD
             "version": "3.133.44",
             "source": {
                 "type": "git",
@@ -76,18 +71,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/00df425deebdde3f3bebfde446a4250695dc47e4",
                 "reference": "00df425deebdde3f3bebfde446a4250695dc47e4",
-=======
-            "version": "3.133.45",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "928a23e2ee7e195a66f93d0758895e26958c3b7d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/928a23e2ee7e195a66f93d0758895e26958c3b7d",
-                "reference": "928a23e2ee7e195a66f93d0758895e26958c3b7d",
->>>>>>> replacing tickit service provider
                 "shasum": ""
             },
             "require": {
@@ -158,11 +141,7 @@
                 "s3",
                 "sdk"
             ],
-<<<<<<< HEAD
             "time": "2020-03-25T18:15:47+00:00"
-=======
-            "time": "2020-03-26T18:12:15+00:00"
->>>>>>> replacing tickit service provider
         },
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -4083,7 +4062,6 @@
         },
         {
             "name": "nesbot/carbon",
-<<<<<<< HEAD
             "version": "2.32.0",
             "source": {
                 "type": "git",
@@ -4094,18 +4072,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/7410a349613bf32d02d8aaed1c669698ddd2b718",
                 "reference": "7410a349613bf32d02d8aaed1c669698ddd2b718",
-=======
-            "version": "2.32.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "ecb525c766deb3bbbb6a0082ea0e41d3d9ae477c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/ecb525c766deb3bbbb6a0082ea0e41d3d9ae477c",
-                "reference": "ecb525c766deb3bbbb6a0082ea0e41d3d9ae477c",
->>>>>>> replacing tickit service provider
                 "shasum": ""
             },
             "require": {
@@ -4163,11 +4129,7 @@
                 "datetime",
                 "time"
             ],
-<<<<<<< HEAD
             "time": "2020-03-24T16:01:47+00:00"
-=======
-            "time": "2020-03-26T13:04:10+00:00"
->>>>>>> replacing tickit service provider
         },
         {
             "name": "nikic/php-parser",
