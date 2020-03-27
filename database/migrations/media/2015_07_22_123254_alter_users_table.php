@@ -2,11 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 
-class AddForeignKeysToUsersTable extends Migration
+class AlterUsersTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -15,7 +13,8 @@ class AddForeignKeysToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreign('id', 'fk-u-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->boolean('ticketit_admin')->default(0);
+            $table->boolean('ticketit_agent')->default(0);
         });
     }
 
@@ -27,8 +26,7 @@ class AddForeignKeysToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('fk-u-personID');
+            $table->dropColumn(['ticketit_admin', 'ticketit_agent']);
         });
     }
-
 }
