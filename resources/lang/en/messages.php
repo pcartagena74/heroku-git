@@ -1190,18 +1190,20 @@ return [
     ],
 
     'exceptions'             => [
-        'query_exception'     => 'Resource you are looking for has been either moved/deleted/does not exist',
-        'bad_url_link'        => 'The link you are trying to access has been expired.',
-        'forbidden'           => 'You are not authorized to access this page.',
-        'page_expired'        => 'Page Expired.',
-        'too_many_request'    => 'Too Many Requests, Rate limit exceeded.',
-        'service_unavailable' => 'Service Unavailable, Please try again after sometime.',
-        'error_500'           => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-        'no_msg_available'    => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-        'page_no_found'       => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
+        'query_exception'           => 'Resource you are looking for has been either moved/deleted/does not exist',
+        'bad_url_link'              => 'The link you are trying to access has been expired.',
+        'forbidden'                 => 'You are not authorized to access this page.',
+        'page_expired'              => 'Page Expired.',
+        'too_many_request'          => 'Too Many Requests, Rate limit exceeded.',
+        'service_unavailable'       => 'Service Unavailable, Please try again after sometime.',
+        'error_500'                 => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'no_msg_available'          => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'page_no_found'             => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
+        'bad_url_link_mail_tracker' => 'Oops, the link you are using has expired.',
     ],
     'validation'             => [
         'create_org_existing_user' => 'Please select one existing user',
+
     ],
 
     'page_generic_exception' => [

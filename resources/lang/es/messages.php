@@ -1189,15 +1189,16 @@ return [
     ],
 
     'exceptions'             => [
-        'query_exception'     => 'es-Resource you are looking for has been either moved/deleted/does not exist',
-        'bad_url_link'        => 'es-The link you are trying to access has been expired.',
-        'forbidden'           => 'es-You are not authorized to access this page.',
-        'page_expired'        => 'es-Page Expired.',
-        'too_many_request'    => 'es-Too Many Requests, Rate limit exceeded.',
-        'service_unavailable' => 'es-Service Unavailable, Please try again after sometime.',
-        'error_500'           => 'es-Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-        'no_msg_available'    => 'es-Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-        'page_no_found'       => 'es-Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
+        'query_exception'           => 'es-Resource you are looking for has been either moved/deleted/does not exist',
+        'bad_url_link'              => 'es-The link you are trying to access has been expired.',
+        'forbidden'                 => 'es-You are not authorized to access this page.',
+        'page_expired'              => 'es-Page Expired.',
+        'too_many_request'          => 'es-Too Many Requests, Rate limit exceeded.',
+        'service_unavailable'       => 'es-Service Unavailable, Please try again after sometime.',
+        'error_500'                 => 'es-Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'no_msg_available'          => 'es-Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'page_no_found'             => 'es-Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
+        'bad_url_link_mail_tracker' => 'es-Oops, the link you are using has expired.',
     ],
 
     'validation'             => [
