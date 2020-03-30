@@ -1195,7 +1195,7 @@ return [
         'error_500'                 => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'no_msg_available'          => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'             => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
-        'bad_url_link_mail_tracker' => 'Oops, the link you are using has expired.',
+        'bad_url_link_mail_tracker' => 'Oops, the link you are using is stale or expired.',
     ],
     'validation'             => [
         'create_org_existing_user' => 'Please select one existing user',
