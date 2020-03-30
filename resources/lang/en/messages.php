@@ -133,7 +133,8 @@ return [
         'google_recaptcha'          => 'Complete the reCAPTCHA to submit the request.',
         'google_recaptcha_required' => 'Please Complete the reCAPTCHA to submit the request.',
         'user_not_found'            => 'Unable to find user. Please select from search or create new.',
-        'no_member_for_list'        => 'The list you are trying to create has no member. Please try changing your foundation or inclusion or exclusion',
+        'no_member_for_list'        => 'You need to choose a foundation or events to include.',
+        'no_foundation_or_include'  => 'You need to choose a foundation or events to include.',
     ],
 
     'flashes'                => [
@@ -584,6 +585,7 @@ return [
         'select_user'         => 'Select User',
         'select_user_hint'    => 'Type a few characters of a first or last name, email address or PMI ID.',
         'create_user'         => 'Create User',
+        '',
     ],
 
     'subheaders'             => [
@@ -752,6 +754,7 @@ return [
         'please_wait'                  => "Please wait while this content loads.",
         'org_default_update_success'   => 'Your default Organization Updated',
         'new_org_created_successfully' => 'New Org Created Successfully.',
+        'email_list_created'           => 'Email List :name created successfully.',
     ],
 
     'modals'                 => [

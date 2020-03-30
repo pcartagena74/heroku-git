@@ -245,7 +245,8 @@ $topBits = '';  // remove this if this was set in the controller
                 {!! Form::button('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'create_list()')) !!}
                 {!! Form::close() !!}
                 {{-- @include('v1.parts.end_content') --}}
-                <div class="errors" id="errors"></div>
+            <div class="errors" id="errors">
+            </div>
         </div>
     </div>
 </div>
@@ -260,7 +261,7 @@ $topBits = '';  // remove this if this was set in the controller
 
     function create_list(){
         var formElements = {'include[]':[],'exclude[]':[]};
-        $('#create_email_list_form :input[type=checkbox],#create_email_list_form :input[type=text]').each(function(){
+        $('#create_email_list_form :input[type=checkbox],#create_email_list_form :input[type=text],#create_email_list_form :input[type=radio]').each(function(){
             var current = $(this);
             var input_name = $(this).attr('name');
             var val  = $(this).val(); 
@@ -268,10 +269,12 @@ $topBits = '';  // remove this if this was set in the controller
                 formElements[input_name].push(val);
             } else if($(this).attr('type') == 'text') {
                 formElements[input_name] = val;
+            } else if($(this).attr('type') == 'radio' && $(this).prop("checked") == true) {
+                formElements[input_name] = val;
             }
         });
-        // var obj = Object.assign({}, formElements);
-        console.log('here',formElements);
+        $('#errors').html('');
+        // console.log('here',formElements);
         $.ajax({
             url: '{{route("EmailList.Save")}}', 
             method:'POST',
@@ -279,20 +282,26 @@ $topBits = '';  // remove this if this was set in the controller
             data: formElements,
             success: function(result){
                 if(result.success == true){
-                    
+                    window.location = result.redirect_url;
                 } else {
-                     $.each(result.errors,function(key,value){
-                        var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value[0]+'</div>';
+                    if(result.errors_validation){
+                        $.each(result.errors_validation,function(key,value){
+                            var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value[0]+'</div>';
                         $('#errors').append(str);
-                    });
+                        });
+                    }
+                    if(result.errors){
+                         $.each(result.errors,function(key,value){
+                            var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value+'</div>';
+                            $('#errors').append(str);
+                        });
+                    }
                 }
             },
             error(xhr,status,error){
                 console.log(status);
             }
         });
-        console.log('create',formElements);
-        
     }
     function allowDrop(ev) {
       ev.preventDefault();

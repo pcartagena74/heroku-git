@@ -229,7 +229,7 @@ class EmailListController extends Controller
             'description' => 'nullable|min:3',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
+            return response()->json(['success' => false, 'errors_validation' => $validator->errors()]);
         }
 
         $name         = request()->input('name');
@@ -241,14 +241,26 @@ class EmailListController extends Controller
         $include_list = [];
         $exclude_list = [];
 
-        $has_this_year = false;
+        $has_this_year   = false;
+        $current_year_in = '';
         if (!empty($include)) {
             foreach ($include as $event_id) {
                 if (strpos($event_id, 'current-year#') === 0) {
-                    $has_this_year = true;
-                    $list          = str_replace('current-year#', '', $event_id);
-                    $list          = array_flip(explode(',', $list));
-                    $include_list  = array_replace($include_list, $list);
+                    $date       = explode('-', $year_date);
+                    $from       = date('Y-m-d', strtotime($date[0]));
+                    $to         = date('Y-m-d', strtotime($date[1]));
+                    $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+                    foreach ($event_list as $key => $value) {
+                        $include_list[$value['eventID']] = $value['eventID'];
+                    }
+                    // $has_this_year = 'include';
+                    // $list          = str_replace('current-year#', '', $event_id);
+                    // $list          = array_flip(explode(',', $list));
+                    // $include_list  = array_replace($include_list, $list);
+                } else if (strpos($event_id, 'last-year#') === 0) {
+                    $list         = str_replace('last-year#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $include_list = array_replace($include_list, $list);
                 } else {
                     $include_list[$event_id] = $event_id;
                 }
@@ -256,7 +268,15 @@ class EmailListController extends Controller
         }
         if (!empty($exclude)) {
             foreach ($exclude as $event_id) {
-                if (strpos($event_id, 'last-year#') === 0) {
+                if (strpos($event_id, 'current-year#') === 0) {
+                    $date       = explode('-', $year_date);
+                    $from       = date('Y-m-d', strtotime($date[0]));
+                    $to         = date('Y-m-d', strtotime($date[1]));
+                    $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+                    foreach ($event_list as $key => $value) {
+                        $exclude_list[$value['eventID']] = $value['eventID'];
+                    }
+                } else if (strpos($event_id, 'last-year#') === 0) {
                     $list         = str_replace('last-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $exclude_list = array_replace($exclude_list, $list);
@@ -265,31 +285,37 @@ class EmailListController extends Controller
                 }
             }
         }
-        if ($has_this_year) {
-            $date       = explode('-', $year_date);
-            $from       = date('Y-m-d', strtotime($date[0]));
-            $to         = date('Y-m-d', strtotime($date[1]));
-            $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+        // if ($has_this_year != false) {
+        //     $date       = explode('-', $year_date);
+        //     $from       = date('Y-m-d', strtotime($date[0]));
+        //     $to         = date('Y-m-d', strtotime($date[1]));
+        //     $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+        //     foreach ($event_list as $key => $value) {
+        //         if ($has_this_year == 'include') {
+        //             $include_list[$value['eventID']] = $value['eventID'];
+        //         } else if ($has_this_year == 'exclude') {
+        //             $exclude_list[$value['eventID']] = $value['eventID'];
+        //         }
+        //     }
+        // }
+
+        // dd($foundation, $include_list, $exclude_list);
+        if ($foundation == 'none' && empty($include_list) && empty($exclude_list)) {
+            return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_member_for_list')]]);
         }
-        
-        if (empty($foundation) && empty($include_list) && empty($exclude_list)) {
-            return response()->json(['error' => trans('messages.errors.no_member_for_list')]);
-        }
-        dd('here');
-        if (empty($include) && $foundation) {
-            if ($include == $exclude) {
-                $include !== null ? $include_string = $foundation . "," . implode(',', $include) :
-                $include_string                     = $foundation;
-            }
+        if ($foundation == 'none' && empty($include_list)) {
+            // request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
+            return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_foundation_or_include')]]);
         }
 
-        $exclude !== null ? $exclude_string = implode(',', $exclude) : $exclude_string = null;
-
-        if ($include === null && $foundation == 'none') {
-            request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
-
-            return redirect()->back();
+        if (empty($include_list) && $foundation) {
+            $include_string = $foundation;
         }
+        $exclude !== null ? $exclude_string = implode(',', $exclude_list) : $exclude_string = null;
+
+        /* start show result before save */
+        //ask phil if we need to check in advance that if a list has some contact or not
+        /* end show result before save */
 
         $e           = new EmailList;
         $e->orgID    = $this->currentPerson->defaultOrgID;
@@ -298,8 +324,9 @@ class EmailListController extends Controller
         $e->included = $include_string;
         $e->excluded = $exclude_string;
         $e->save();
-
-        return redirect(env('APP_URL') . '/lists');
+        request()->session()->flash('alert-success', trans('messages.messages.email_list_created', ['name' => $name]));
+        return response()->json(['success' => true, 'redirect_url' => url('lists')]);
+        // return redirect(env('APP_URL') . '/lists');
     }
 
     /**
