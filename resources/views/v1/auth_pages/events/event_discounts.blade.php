@@ -191,7 +191,7 @@ $currentOrg    = $currentPerson->defaultOrg;
         });
     </script>
 @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add',
-         'newTxt' => trans('messages.fields.event') . " " . trans('messages.fields.disc')))
+         'newTxt' => trans('messages.fields.event') . " " . trans('messages.fields.disc'),'url_override'=>url('event/create')))
     <script>
         $(document).ready(function () {
             var i = 2;
