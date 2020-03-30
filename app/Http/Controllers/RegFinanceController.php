@@ -233,7 +233,7 @@ class RegFinanceController extends Controller
                         'source' => $stripeToken,
                     ));
                 } catch (\Exception $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage() . ' Line: ' . $exception->getLine() . ' File: ' . $exception->getFile());
                     return back()->withInput();
                 }
 
@@ -433,7 +433,6 @@ class RegFinanceController extends Controller
                 // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
         }
-
         $client = new S3Client([
             'credentials' => [
                 'key'    => env('AWS_KEY'),
