@@ -558,9 +558,9 @@ try {
         });
     </script>
     @if($page_title == trans('messages.headers.event_edit') || $event === null)
-        @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.fields.edit_event')))
+        @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.fields.edit_event'),'url_override'=>url('event/create')))
     @else
-        @include('v1.parts.menu-fix', array('path' => '/event/create'))
+        @include('v1.parts.menu-fix', array('path' => '/event/create','url_override'=>url('event/create')))
     @endif
 @endsection
 
