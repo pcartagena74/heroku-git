@@ -813,7 +813,7 @@ include('v1.parts.ajax_console')
         });
         document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
     </script>
-    @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.nav.ev_rpt')))
+    @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.nav.ev_rpt'),'url_override'=>url('event/create')))
 @endsection
 
 @section('modals')

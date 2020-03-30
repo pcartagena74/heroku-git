@@ -233,7 +233,8 @@ class RegFinanceController extends Controller
                         'source' => $stripeToken,
                     ));
                 } catch (\Exception $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage() . ' Line: ' . $exception->getLine() . ' File: ' . $exception->getFile());
+                    // request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage() . ' Line: ' . $exception->getLine() . ' File: ' . $exception->getFile());
+                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error'));
                     return back()->withInput();
                 }
 
