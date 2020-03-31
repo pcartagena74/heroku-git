@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "7.3.16",
+        "alexusmai/laravel-file-manager": "^2.4",
         "barryvdh/laravel-ide-helper": "^2.6",
         "barryvdh/laravel-snappy": "^0.4.4",
         "bugsnag/bugsnag-laravel": "^2.15",

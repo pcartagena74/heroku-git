@@ -348,6 +348,8 @@ Route::get('snaptest', function () {
     return PDF::loadFile(env('APP_URL') . "/show_orig/159")->inline('blah.pdf');
 });
 
+Route::get('library','LibraryController@index');
+
 // Route::any('{all}', function () {
 //     return view('errors.404');
 // })->where('all', '.*');
