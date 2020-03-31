@@ -2,19 +2,18 @@
 
 namespace Kordy\Ticketit;
 
+use App\Http\TicketitControllers\NotificationsControllerOver as NotificationsController;
+use App\Models\Ticketit\TicketOver as Ticket;
 use Collective\Html\FormFacade as CollectiveForm;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Kordy\Ticketit\Console\Htmlify;
 use Kordy\Ticketit\Controllers\InstallController;
-use Kordy\Ticketit\Controllers\NotificationsController;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models\Comment;
 use Kordy\Ticketit\Models\Setting;
-use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\ViewComposers\TicketItComposer;
 
 class TicketitServiceProvider extends ServiceProvider
@@ -32,7 +31,7 @@ class TicketitServiceProvider extends ServiceProvider
         }
         $installer = new InstallController();
         // if a migration or new setting is missing scape to the installation
-        // as 
+        // as
         if (empty($installer->inactiveMigrations()) && !$installer->inactiveSettings() || true) {
             // Send the Agent User model to the view under $u
             // Send settings to views under $setting
@@ -61,7 +60,6 @@ class TicketitServiceProvider extends ServiceProvider
                     $notification->newComment($comment);
                 }
             });
-
             // Send notification when ticket status is modified
             Ticket::updating(function ($modified_ticket) {
                 if (Setting::grab('status_notification')) {
@@ -92,41 +90,41 @@ class TicketitServiceProvider extends ServiceProvider
                 return true;
             });
 
-            $this->loadTranslationsFrom(__DIR__.'/Translations', 'ticketit');
+            $this->loadTranslationsFrom(__DIR__ . '/Translations', 'ticketit');
 
-            $viewsDirectory = __DIR__.'/Views/bootstrap3';
+            $viewsDirectory = __DIR__ . '/Views/bootstrap3';
             if (Setting::grab('bootstrap_version') == '4') {
-                $viewsDirectory = __DIR__.'/Views/bootstrap4';
+                $viewsDirectory = __DIR__ . '/Views/bootstrap4';
             }
 
             $this->loadViewsFrom($viewsDirectory, 'ticketit');
 
             $this->publishes([$viewsDirectory => base_path('resources/views/vendor/ticketit')], 'views');
-            $this->publishes([__DIR__.'/Translations' => base_path('resources/lang/vendor/ticketit')], 'lang');
-            $this->publishes([__DIR__.'/Public' => public_path('vendor/ticketit')], 'public');
-            $this->publishes([__DIR__.'/Migrations' => base_path('database/migrations')], 'db');
+            $this->publishes([__DIR__ . '/Translations' => base_path('resources/lang/vendor/ticketit')], 'lang');
+            $this->publishes([__DIR__ . '/Public' => public_path('vendor/ticketit')], 'public');
+            $this->publishes([__DIR__ . '/Migrations' => base_path('database/migrations')], 'db');
 
             // Check public assets are present, publish them if not
-//            $installer->publicAssets();
+            //            $installer->publicAssets();
 
-            $main_route = Setting::grab('main_route');
-            $main_route_path = Setting::grab('main_route_path');
-            $admin_route = Setting::grab('admin_route');
+            $main_route       = Setting::grab('main_route');
+            $main_route_path  = Setting::grab('main_route_path');
+            $admin_route      = Setting::grab('admin_route');
             $admin_route_path = Setting::grab('admin_route_path');
 
             if (file_exists(Setting::grab('routes'))) {
                 include Setting::grab('routes');
             } else {
-                include __DIR__.'/routes.php';
+                include __DIR__ . '/routes.php';
             }
         } elseif (Request::path() == 'tickets-install'
-                || Request::path() == 'tickets-upgrade'
-                || Request::path() == 'tickets'
-                || Request::path() == 'tickets-admin'
-                || (isset($_SERVER['ARTISAN_TICKETIT_INSTALLING']) && $_SERVER['ARTISAN_TICKETIT_INSTALLING'])) {
-            $this->loadTranslationsFrom(__DIR__.'/Translations', 'ticketit');
-            $this->loadViewsFrom(__DIR__.'/Views/bootstrap3', 'ticketit');
-            $this->publishes([__DIR__.'/Migrations' => base_path('database/migrations')], 'db');
+            || Request::path() == 'tickets-upgrade'
+            || Request::path() == 'tickets'
+            || Request::path() == 'tickets-admin'
+            || (isset($_SERVER['ARTISAN_TICKETIT_INSTALLING']) && $_SERVER['ARTISAN_TICKETIT_INSTALLING'])) {
+            $this->loadTranslationsFrom(__DIR__ . '/Translations', 'ticketit');
+            $this->loadViewsFrom(__DIR__ . '/Views/bootstrap3', 'ticketit');
+            $this->publishes([__DIR__ . '/Migrations' => base_path('database/migrations')], 'db');
 
             $authMiddleware = Helpers\LaravelVersion::authMiddleware();
 
