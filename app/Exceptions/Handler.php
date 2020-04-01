@@ -74,8 +74,8 @@ class Handler extends ExceptionHandler
             }
         }
 
+        return parent::render($request, $exception);
         if (env('APP_ENV') == 'local') {
-            // return parent::render($request, $exception);
         }
 
         if ($exception instanceof Illuminate\Validation\ValidationException) {
