@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Validator;
 
 class UploadController extends Controller
 {
@@ -87,10 +88,28 @@ class UploadController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $what                = request()->input('data_type');
         $filename            = $_FILES['filename']['tmp_name'];
+        $validate            = Validator::make(
+            [
+                'data_type' => $request->input('data_type'),
+                'filename'  => $request->file('filename'),
+                'extension' => strtolower($request->file('filename')->getClientOriginalExtension()),
+            ],
+            [
+                'filename'  => 'required',
+                'extension' => 'required|in:xlsx,ods,csv',
+                'data_type' => 'required',
+            ],
+            [
+                'extension.in' => trans('messages.validation.file_required_extension'),
+            ]
+        );
 
+        if ($validate->fails()) {
+            return Redirect::back()->withErrors($validate->errors());
+        }
         $tmp_path = request()->file('filename')->store('', 'local');
         $path     = storage_path('app') . '/' . $tmp_path;
-        //dd($path);
+        // dd($path);
         $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
@@ -121,7 +140,7 @@ class UploadController extends Controller
                 PersonStaging::insertIgnore($this->person_staging_master);
                 $this->person_staging_master = [];
                 $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
-            ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
+                    ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
                 // previously used method
 
                 // $this->timeMem('starttime');
