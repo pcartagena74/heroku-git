@@ -72,8 +72,8 @@ Route::get('/mail', function () {
 })->name('mail');
 Route::get('/mtgs', function () {
     return view('v1.public_pages.details');
-})->name('mtgs');
-
+})->name('mtgs')
+;
 Route::get('/pmi_lookup/{org}', 'OrgPersonController@index');
 Route::post('/pmi_lookup', 'OrgPersonController@find');
 Route::get('/pmi_account/{person}', 'OrgPersonController@show');
