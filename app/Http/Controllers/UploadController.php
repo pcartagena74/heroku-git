@@ -1967,6 +1967,7 @@ class UploadController extends Controller
                     break;
                 }
             }
+            $any_op = new Collection($any_op[0]);
         }
 
         $prefix = trim(ucwords($row['prefix']));
@@ -2126,6 +2127,7 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
+            
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
@@ -2137,7 +2139,7 @@ class UploadController extends Controller
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get(['personID'])])->get();
+                $p = Person::where(['personID' => $any_op->get('personID')])->get();
                 // $this->timeMem('11 op and any op check 2148');
                 $p = $p[0];
             }
@@ -2292,16 +2294,16 @@ class UploadController extends Controller
                 }
             }
 
-            if (isset($row['pmi_join_date'])) {
+            if (!empty($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
-            if (isset($row['chapter_join_date'])) {
+            if (!empty($row['chapter_join_date'])) {
                 $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
             }
-            if (isset($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (isset($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = auth()->user()->id;
