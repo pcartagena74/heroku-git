@@ -2137,7 +2137,7 @@ class UploadController extends Controller
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get(['personID'])])->get();
+                $p = Person::where(['personID' => $any_op->get('personID')])->get();
                 // $this->timeMem('11 op and any op check 2148');
                 $p = $p[0];
             }
