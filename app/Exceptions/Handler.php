@@ -75,7 +75,7 @@ class Handler extends ExceptionHandler
         }
 
         if (env('APP_ENV') == 'local') {
-            // return parent::render($request, $exception);
+            return parent::render($request, $exception);
         }
 
         if ($exception instanceof Illuminate\Validation\ValidationException) {
@@ -87,7 +87,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof \jdavidbakr\MailTracker\Exceptions\BadUrlLink) {
-            return response()->view('errors.genericException', ['code' => 404, 'description' => trans('messages.exceptions.bad_url_link_mail_tracker')], 404);
+            return response()->view('v1.public_pages.error_display', ['code' => 404, 'message' => trans('messages.exceptions.bad_url_link_mail_tracker')], 404);
         }
         if ($this->isHttpException($exception)) {
             switch ($exception->getStatusCode()) {
