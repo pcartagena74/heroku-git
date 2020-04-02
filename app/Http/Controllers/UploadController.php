@@ -1967,6 +1967,7 @@ class UploadController extends Controller
                     break;
                 }
             }
+            $any_op = new Collection($any_op[0]);
         }
 
         $prefix = trim(ucwords($row['prefix']));
@@ -2126,6 +2127,7 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
+            
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
