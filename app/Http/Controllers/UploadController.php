@@ -2294,16 +2294,16 @@ class UploadController extends Controller
                 }
             }
 
-            if (isset($row['pmi_join_date'])) {
+            if (!empty($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
-            if (isset($row['chapter_join_date'])) {
+            if (!empty($row['chapter_join_date'])) {
                 $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
             }
-            if (isset($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (isset($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = auth()->user()->id;
