@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Validator;
 
 class UploadController extends Controller
 {
@@ -87,10 +88,28 @@ class UploadController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
         $what                = request()->input('data_type');
         $filename            = $_FILES['filename']['tmp_name'];
+        $validate            = Validator::make(
+            [
+                'data_type' => $request->input('data_type'),
+                'filename'  => $request->file('filename'),
+                'extension' => strtolower($request->file('filename')->getClientOriginalExtension()),
+            ],
+            [
+                'filename'  => 'required',
+                'extension' => 'required|in:xlsx,ods,csv',
+                'data_type' => 'required',
+            ],
+            [
+                'extension.in' => trans('messages.validation.file_required_extension'),
+            ]
+        );
 
+        if ($validate->fails()) {
+            return Redirect::back()->withErrors($validate->errors());
+        }
         $tmp_path = request()->file('filename')->store('', 'local');
         $path     = storage_path('app') . '/' . $tmp_path;
-        //dd($path);
+        // dd($path);
         $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
@@ -121,7 +140,7 @@ class UploadController extends Controller
                 PersonStaging::insertIgnore($this->person_staging_master);
                 $this->person_staging_master = [];
                 $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
-            ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
+                    ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
                 // previously used method
 
                 // $this->timeMem('starttime');
@@ -1948,6 +1967,7 @@ class UploadController extends Controller
                     break;
                 }
             }
+            $any_op = new Collection($any_op[0]);
         }
 
         $prefix = trim(ucwords($row['prefix']));
@@ -2107,6 +2127,7 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
+            
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
@@ -2118,7 +2139,7 @@ class UploadController extends Controller
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get(['personID'])])->get();
+                $p = Person::where(['personID' => $any_op->get('personID')])->get();
                 // $this->timeMem('11 op and any op check 2148');
                 $p = $p[0];
             }
@@ -2273,16 +2294,16 @@ class UploadController extends Controller
                 }
             }
 
-            if (isset($row['pmi_join_date'])) {
+            if (!empty($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
-            if (isset($row['chapter_join_date'])) {
+            if (!empty($row['chapter_join_date'])) {
                 $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
             }
-            if (isset($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (isset($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = auth()->user()->id;
