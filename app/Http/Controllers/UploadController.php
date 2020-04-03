@@ -2132,7 +2132,7 @@ class UploadController extends Controller
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
 
-                print_r($op,$any_op);
+                var_dump([$op,$any_op]);
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
