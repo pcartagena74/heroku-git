@@ -2140,14 +2140,17 @@ class UploadController extends Controller
                 // dd($p->first());
                 // $this->timeMem('10 op and any op check 2142');
                 $p = $p->first();
+                var_dump('here');
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
                 $p = DB::table('person')->where(['personID' => $any_op->get('personID')])->limit(1)->get();
                 // $this->timeMem('11 op and any op check 2148');
                 $p = $p->first();
+                var_dump('here1');
             }
 
+            dd($p);
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
 
