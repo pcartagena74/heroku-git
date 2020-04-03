@@ -2137,7 +2137,6 @@ class UploadController extends Controller
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
                 $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
-                dd($p);
                 // $this->timeMem('10 op and any op check 2142');
                 $p = $p[0];
             } else {
