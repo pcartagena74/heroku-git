@@ -2225,13 +2225,13 @@ class UploadController extends Controller
                 }
             }
         }
-        dd($p);
         if ($update_existing_record && !empty($p)) {
             $ary = [];
             if (strlen($prefix) > 0) {
                 $ary['prefix'] = $prefix;
             }
             $ary['firstName'] = $first;
+            dd($p->prefName);
             try {
                 if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
