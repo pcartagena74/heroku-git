@@ -2132,12 +2132,12 @@ class UploadController extends Controller
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
 
+                print_r($op,$any_op);
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
                 $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
-                print_r($op);
                 // dd($p->first());
                 // $this->timeMem('10 op and any op check 2142');
                 $p = $p->first();
