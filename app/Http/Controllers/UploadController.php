@@ -2147,8 +2147,8 @@ class UploadController extends Controller
                 // $this->timeMem('11 op and any op check 2148');
                 $p = $p->first();
             }
-
-            var_dump($p->personID);
+            var_dump(getType($p));
+            // dd(getType($p));
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
 
