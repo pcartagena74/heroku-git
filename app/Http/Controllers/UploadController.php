@@ -2180,6 +2180,7 @@ class UploadController extends Controller
             }
             // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
         } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
+            $emchk1 = $emchk1[0];
             // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
             $p = Person::where(['personID' => $emchk1->personID])->get();
             // $this->timeMem('14 get person 2180');
@@ -2197,6 +2198,7 @@ class UploadController extends Controller
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
         } elseif ($emchk2->isNotEmpty() && !empty($em2) && $em2 != '' && $em2 != ' ') {
+            $emchk2 = $emchk2[0];
             // email2 was found in the database
             // $p  = Person::where(['personID' => $emchk2->personID])->get();
             // $p  = $p[0];
