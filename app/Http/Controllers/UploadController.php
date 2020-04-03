@@ -1974,7 +1974,6 @@ class UploadController extends Controller
             }
             $any_op = new Collection($any_op[0]);
         }
-
         $prefix = trim(ucwords($row['prefix']));
         // First & Last Name string detection of all-caps or all-lower.
         // Do not ucwords all entries just in case "DeFrancesco" type names exist
@@ -2034,7 +2033,6 @@ class UploadController extends Controller
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-                
         // $this->timeMem('5 $pchk ');
 
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
@@ -2133,23 +2131,25 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
-
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
-                //
-                $p = Person::where(['personID' => $op->get('personID')])->get();
+                $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
+                // dd($p->first());
                 // $this->timeMem('10 op and any op check 2142');
-                $p = $p[0];
+                $p = $p->first();
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get('personID')])->get();
+                $p = DB::table('person')->where(['personID' => $any_op->get('personID')])->limit(1)->get();
                 // $this->timeMem('11 op and any op check 2148');
-                $p = $p[0];
+                $p = $p->first();
             }
-
+            if (empty($p->personID)) {
+                return;
+            }
+            // dd(getType($p));
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
 
