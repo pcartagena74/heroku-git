@@ -2150,7 +2150,7 @@ class UploadController extends Controller
                 $p = $p->first();
                 echo 'any op : ' . var_dump([$p->personID, $any_op->get('personID')]) . '<br>';
             }
-            if(empty($p))
+            if(empty($p->personID))
             {
                 return;
             }
