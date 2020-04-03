@@ -22,6 +22,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Validator;
@@ -107,10 +109,12 @@ class UploadController extends Controller
         if ($validate->fails()) {
             return Redirect::back()->withErrors($validate->errors());
         }
-        $tmp_path = request()->file('filename')->store('', 'local');
-        $path     = storage_path('app') . '/' . $tmp_path;
-        // dd($path);
-        $eventID = request()->input('eventID');
+        $file      = $request->file('filename');
+        $extension = $file->getClientOriginalExtension();
+        $file_name = Str::random(40) . '.' . $extension;
+        $tmp_path  = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
+        $path      = Storage::disk('local')->path($file_name);
+        $eventID   = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
             // go back with message
@@ -119,7 +123,6 @@ class UploadController extends Controller
 
         switch ($what) {
             case 'mbrdata':
-
                 $collection                  = (new FastExcel)->import($path);
                 $currentPerson               = Person::where('personID', auth()->user()->id)->get();
                 $currentPerson               = (object) $currentPerson[0]->toArray();
@@ -133,8 +136,10 @@ class UploadController extends Controller
                         $key1       = strtolower(str_replace(' ', '_', $key1));
                         $var[$key1] = $value1;
                     }
-                    $this->storeImportDataDB($var, $currentPerson, $count);
-                    $count++;
+                    if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
+                        $this->storeImportDataDB($var, $currentPerson, $count);
+                        $count++;
+                    }
                 }
                 $this->bulkInsertAll();
                 PersonStaging::insertIgnore($this->person_staging_master);
@@ -2127,7 +2132,7 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
-            
+
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
@@ -2184,10 +2189,10 @@ class UploadController extends Controller
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get();
                 // $this->timeMem('15 get org person 2187');
+                if ($op->isEmpty()) {$need_op_record = 1;}
             } catch (Exception $ex) {
-                dd([$emchk1, $em1]);
+                // dd([$emchk1, $em1]);
             }
-            if ($op->isEmpty()) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
         } elseif ($emchk2->isNotEmpty() && !empty($em2) && $em2 != '' && $em2 != ' ') {
@@ -2256,7 +2261,7 @@ class UploadController extends Controller
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
-                dd($p);
+                // dd($p);
             }
 
         }
