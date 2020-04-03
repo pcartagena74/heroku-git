@@ -2034,6 +2034,9 @@ class UploadController extends Controller
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
+        if ($pchk->isNotEmpty()) {
+            $pchk = $pchk[0];
+        }
         // $this->timeMem('5 $pchk ');
 
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
@@ -2098,7 +2101,7 @@ class UploadController extends Controller
                 // Emails didn't match for some reason but found a first/last name match
                 // Recheck to see if there's just 1 match
                 // no need to query again as we donot have filter for now
-                $p = $pchk[0];
+                $p = $pchk;
                 // $pchk_count = Person::where([
                 //     ['firstName', '=', $first],
                 //     ['lastName', '=', $last],
@@ -2233,7 +2236,7 @@ class UploadController extends Controller
             }
             $ary['firstName'] = $first;
             try {
-                if ($p->prefName === null) {
+                if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
                 }
                 if (strlen($midName) > 0) {
@@ -2243,13 +2246,13 @@ class UploadController extends Controller
                 if (strlen($suffix) > 0) {
                     $ary['suffix'] = $suffix;
                 }
-                if ($p->title === null || $pchk !== null) {
+                if (empty($p->title) || $pchk !== null) {
                     $ary['title'] = $title;
                 }
-                if ($p->compName === null || $pchk !== null) {
+                if (empty($p->compName) || $pchk !== null) {
                     $ary['compName'] = $compName;
                 }
-                if ($p->affiliation === null) {
+                if (empty($p->affiliation)) {
                     $ary['affiliation'] = $currentPerson->affiliation;
                 }
 
