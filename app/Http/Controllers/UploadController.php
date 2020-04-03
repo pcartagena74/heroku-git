@@ -2233,7 +2233,7 @@ class UploadController extends Controller
             }
             $ary['firstName'] = $first;
             try {
-                if ($p->prefName === null) {
+                if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
                 }
                 if (strlen($midName) > 0) {
@@ -2261,7 +2261,7 @@ class UploadController extends Controller
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
-                // dd($p);
+                dd($p);
             }
 
         }
