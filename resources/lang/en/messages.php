@@ -1200,7 +1200,6 @@ return [
     'validation'             => [
         'create_org_existing_user' => 'Please select one existing user',
         'file_required_extension'  => 'The file must be one of the following types xlsx, ods, csv type.',
-
     ],
 
     'page_generic_exception' => [
