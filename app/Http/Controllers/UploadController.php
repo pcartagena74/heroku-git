@@ -2034,9 +2034,7 @@ class UploadController extends Controller
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-        if ($pchk->isNotEmpty()) {
-            $pchk = $pchk[0];
-        }
+                
         // $this->timeMem('5 $pchk ');
 
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
@@ -2101,7 +2099,7 @@ class UploadController extends Controller
                 // Emails didn't match for some reason but found a first/last name match
                 // Recheck to see if there's just 1 match
                 // no need to query again as we donot have filter for now
-                $p = $pchk;
+                $p = $pchk[0];
                 // $pchk_count = Person::where([
                 //     ['firstName', '=', $first],
                 //     ['lastName', '=', $last],
@@ -2212,7 +2210,7 @@ class UploadController extends Controller
             $pchk = null;
         } elseif ($pchk->isNotEmpty()) {
             // Everything else was null but firstName & lastName matches someone
-            $p                      = $pchk;
+            $p                      = $pchk[0];
             $update_existing_record = 1;
 
             // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
