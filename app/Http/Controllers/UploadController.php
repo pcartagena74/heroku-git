@@ -2131,6 +2131,8 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
+            var_dump([$op->isNotEmpty(), $any_op->isNotEmpty()]);
+            echo '<br>';
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
@@ -2148,6 +2150,8 @@ class UploadController extends Controller
                 $p = $p->first();
                 echo 'any op : ' . var_dump([$p->personID, $any_op->get('personID')]) . '<br>';
             }
+
+            var_dump($p);echo '<br>';
             // dd(getType($p));
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
