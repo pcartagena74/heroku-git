@@ -2209,7 +2209,7 @@ class UploadController extends Controller
             $pchk = null;
         } elseif ($pchk->isNotEmpty()) {
             // Everything else was null but firstName & lastName matches someone
-            $p                      = $pchk;
+            $p                      = $pchk[0];
             $update_existing_record = 1;
 
             // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
@@ -2225,13 +2225,13 @@ class UploadController extends Controller
                 }
             }
         }
+        
         if ($update_existing_record && !empty($p)) {
             $ary = [];
             if (strlen($prefix) > 0) {
                 $ary['prefix'] = $prefix;
             }
             $ary['firstName'] = $first;
-            dd($p->prefName);
             try {
                 if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
