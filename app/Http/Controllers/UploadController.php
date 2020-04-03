@@ -2225,7 +2225,7 @@ class UploadController extends Controller
                 }
             }
         }
-
+        dd($p);
         if ($update_existing_record && !empty($p)) {
             $ary = [];
             if (strlen($prefix) > 0) {
@@ -2233,7 +2233,7 @@ class UploadController extends Controller
             }
             $ary['firstName'] = $first;
             try {
-                if ($p->prefName === null) {
+                if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
                 }
                 if (strlen($midName) > 0) {
@@ -2243,13 +2243,13 @@ class UploadController extends Controller
                 if (strlen($suffix) > 0) {
                     $ary['suffix'] = $suffix;
                 }
-                if ($p->title === null || $pchk !== null) {
+                if (empty($p->title) || $pchk !== null) {
                     $ary['title'] = $title;
                 }
-                if ($p->compName === null || $pchk !== null) {
+                if (empty($p->compName) || $pchk !== null) {
                     $ary['compName'] = $compName;
                 }
-                if ($p->affiliation === null) {
+                if (empty($p->affiliation)) {
                     $ary['affiliation'] = $currentPerson->affiliation;
                 }
 
