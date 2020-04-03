@@ -2136,14 +2136,13 @@ class UploadController extends Controller
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
-                //
-                $p = Person::where(['personIDs' => $op->get('personID')])->limit(1)->get();
+                $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
                 // $this->timeMem('10 op and any op check 2142');
                 $p = $p[0];
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get('personID')])->limit(1)->get();
+                $p = DB::table('person')->where(['personID' => $any_op->get('personID')])->limit(1)->get();
                 // $this->timeMem('11 op and any op check 2148');
                 $p = $p[0];
             }
