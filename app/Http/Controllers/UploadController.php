@@ -2139,7 +2139,6 @@ class UploadController extends Controller
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
                 //
                 $p = Person::where(['personID' => $op->get('personID')])->get();
-                dd($p);
                 // $this->timeMem('10 op and any op check 2142');
                 $p = $p[0];
             } else {
