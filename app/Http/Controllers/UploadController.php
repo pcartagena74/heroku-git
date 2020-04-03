@@ -1974,7 +1974,6 @@ class UploadController extends Controller
             }
             $any_op = new Collection($any_op[0]);
         }
-        dd($op);
         $prefix = trim(ucwords($row['prefix']));
         // First & Last Name string detection of all-caps or all-lower.
         // Do not ucwords all entries just in case "DeFrancesco" type names exist
@@ -2140,6 +2139,7 @@ class UploadController extends Controller
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
                 //
                 $p = Person::where(['personID' => $op->get('personID')])->get();
+                dd($p);
                 // $this->timeMem('10 op and any op check 2142');
                 $p = $p[0];
             } else {
