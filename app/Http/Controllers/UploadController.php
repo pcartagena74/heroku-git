@@ -2150,7 +2150,10 @@ class UploadController extends Controller
                 $p = $p->first();
                 echo 'any op : ' . var_dump([$p->personID, $any_op->get('personID')]) . '<br>';
             }
-
+            if(empty($p))
+            {
+                return;
+            }
             var_dump($p);echo '<br>';
             // dd(getType($p));
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
