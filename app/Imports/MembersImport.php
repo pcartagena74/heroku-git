@@ -33,26 +33,6 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public $address_master;
     public $person_staging_master;
 
-    /**
-     * @param Collection $rows
-     * Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-    public function collection(Collection $rows)
-    {
-
-        $currentPerson = Person::find(auth()->user()->id);
-        $count         = 0;
-        foreach ($rows as $row) {
-            storeImportDataDB($row, $currentPerson, $count);
-            // $this->storeImportDataDB($row, $currentPerson, $count);
-            $count++;
-        }
-
-        request()->session()->flash('alert-success', trans('messages.admin.upload.loaded',
-            ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
-    }
-
     public function storeImportDataDB($row, $currentPerson, $count_g)
     {
         DB::connection()->disableQueryLog();
@@ -744,8 +724,18 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
      * Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function collection_old(Collection $rows)
+    public function collection(Collection $rows)
     {
+        //  $currentPerson = Person::find(auth()->user()->id);
+        // $count         = 0;
+        // foreach ($rows as $row) {
+        //     storeImportDataDB($row, $currentPerson, $count);
+        //     // $this->storeImportDataDB($row, $currentPerson, $count);
+        //     $count++;
+        // }
+
+        // request()->session()->flash('alert-success', trans('messages.admin.upload.loaded',
+        //     ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
 
         $currentPerson = Person::find(auth()->user()->id);
         $count         = 0;
@@ -853,40 +843,40 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
                 // If email1 is not null or blank, use it as primary to login, etc.
                 if ($em1 !== null && $em1 != "" && $em1 != " " && $p->login === null) {
-                    $p->login = $em1;
-                    $p->save();
-                    $u->id    = $p->personID;
-                    $u->login = $em1;
-                    $u->name  = $em1;
-                    $u->email = $em1;
-                    $u->save();
+                    // $p->login = $em1;
+                    // $p->save();
+                    // $u->id    = $p->personID;
+                    // $u->login = $em1;
+                    // $u->name  = $em1;
+                    // $u->email = $em1;
+                    // $u->save();
 
-                    $e            = new Email;
-                    $e->personID  = $p->personID;
-                    $e->emailADDR = $em1;
-                    $e->isPrimary = 1;
-                    $e->creatorID = auth()->user()->id;
-                    $e->updaterID = auth()->user()->id;
-                    $e->save();
+                    // $e            = new Email;
+                    // $e->personID  = $p->personID;
+                    // $e->emailADDR = $em1;
+                    // $e->isPrimary = 1;
+                    // $e->creatorID = auth()->user()->id;
+                    // $e->updaterID = auth()->user()->id;
+                    // $e->save();
 
                     // Otherwise, try with email #2
                 } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && $p->login === null) {
-                    $p->login = $em2;
-                    $p->save();
-                    $u->id    = $p->personID;
-                    $u->login = $em2;
-                    $u->name  = $em2;
-                    $u->email = $em2;
-                    $u->save();
+                    // $p->login = $em2;
+                    // $p->save();
+                    // $u->id    = $p->personID;
+                    // $u->login = $em2;
+                    // $u->name  = $em2;
+                    // $u->email = $em2;
+                    // $u->save();
 
-                    $e            = new Email;
-                    $e->personID  = $p->personID;
-                    $e->emailADDR = $em2;
-                    $e->isPrimary = 1;
-                    $e->creatorID = auth()->user()->id;
-                    $e->updaterID = auth()->user()->id;
+                    // $e            = new Email;
+                    // $e->personID  = $p->personID;
+                    // $e->emailADDR = $em2;
+                    // $e->isPrimary = 1;
+                    // $e->creatorID = auth()->user()->id;
+                    // $e->updaterID = auth()->user()->id;
                     try {
-                        $e->save();
+                        // $e->save();
                     } catch (\Exception $exception) {
                         // There was an error with saving the email -- likely an integrity constraint.
                     }
@@ -916,22 +906,22 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
                 // If email 1 exists and was used as primary but email 2 was also provided and unique, add it.
                 if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $chk2) {
-                    $e            = new Email;
-                    $e->personID  = $p->personID;
-                    $e->emailADDR = $em2;
-                    $e->creatorID = auth()->user()->id;
-                    $e->updaterID = auth()->user()->id;
+                    // $e            = new Email;
+                    // $e->personID  = $p->personID;
+                    // $e->emailADDR = $em2;
+                    // $e->creatorID = auth()->user()->id;
+                    // $e->updaterID = auth()->user()->id;
                     try {
-                        $e->save();
+                        // $e->save();
                     } catch (\Exception $exception) {
                         // There was an error with saving the email -- likely an integrity constraint.
                     }
                 } elseif ($em2 !== null && $em2 == strtolower($chk2)) {
-                    if ($emchk2->personID != $p->personID) {
-                        $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
-                        $emchk2->personID  = $p->personID;
-                        $emchk2->save();
-                    }
+                    // if ($emchk2->personID != $p->personID) {
+                    //     $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
+                    //     $emchk2->personID  = $p->personID;
+                    //     $emchk2->save();
+                    // }
                 }
             } elseif ($op !== null || $any_op !== null) {
                 // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
@@ -948,36 +938,36 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
                 // Because we should have found a person record, determine if we should create and associate email records
                 if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != strtolower($chk1) && $em1 != strtolower($chk2)) {
-                    $e            = new Email;
-                    $e->personID  = $p->personID;
-                    $e->emailADDR = $em1;
-                    // We do not need to override existing primary settings
-                    // $e->isPrimary = 1;
-                    $e->creatorID = auth()->user()->id;
-                    $e->updaterID = auth()->user()->id;
-                    $e->save();
+                    // $e            = new Email;
+                    // $e->personID  = $p->personID;
+                    // $e->emailADDR = $em1;
+                    // // We do not need to override existing primary settings
+                    // // $e->isPrimary = 1;
+                    // $e->creatorID = auth()->user()->id;
+                    // $e->updaterID = auth()->user()->id;
+                    // $e->save();
                 } elseif ($em1 !== null && $em1 == strtolower($chk1)) {
-                    if ($emchk1->personID != $p->personID) {
-                        $emchk1->debugNote = "ugh!  Was: $emchk1->personID; Should be: $p->personID";
-                        $emchk1->personID  = $p->personID;
-                        $emchk1->save();
-                    }
+                    // if ($emchk1->personID != $p->personID) {
+                    //     $emchk1->debugNote = "ugh!  Was: $emchk1->personID; Should be: $p->personID";
+                    //     $emchk1->personID  = $p->personID;
+                    //     $emchk1->save();
+                    // }
                 }
                 if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != strtolower($chk1) && $em2 != strtolower($chk2) && $em2 != $em1) {
-                    $e            = new Email;
-                    $e->personID  = $p->personID;
-                    $e->emailADDR = $em2;
-                    // We do not need to override existing primary settings
-                    // $e->isPrimary = 1;
-                    $e->creatorID = auth()->user()->id;
-                    $e->updaterID = auth()->user()->id;
-                    $e->save();
+                    // $e            = new Email;
+                    // $e->personID  = $p->personID;
+                    // $e->emailADDR = $em2;
+                    // // We do not need to override existing primary settings
+                    // // $e->isPrimary = 1;
+                    // $e->creatorID = auth()->user()->id;
+                    // $e->updaterID = auth()->user()->id;
+                    // $e->save();
                 } elseif ($em2 !== null && $em2 == strtolower($chk2)) {
-                    if ($emchk2->personID != $p->personID) {
-                        $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
-                        $emchk2->personID  = $p->personID;
-                        $emchk2->save();
-                    }
+                    // if ($emchk2->personID != $p->personID) {
+                    //     $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
+                    //     $emchk2->personID  = $p->personID;
+                    //     $emchk2->save();
+                    // }
                 }
             } elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
                 // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
@@ -1006,10 +996,10 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
                 // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
                 // can be done to pick the right one...
-                $op = OrgPerson::where([
-                    ['personID', $p->personID],
-                    ['orgID', $currentPerson->defaultOrgID],
-                ])->first();
+                // $op = OrgPerson::where([
+                //     ['personID', $p->personID],
+                //     ['orgID', $currentPerson->defaultOrgID],
+                // ])->first();
 
                 if ($op === null) {
                     $need_op_record = 1;
@@ -1045,7 +1035,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
                 $p->updaterID    = auth()->user()->id;
                 $p->defaultOrgID = $currentPerson->defaultOrgID;
-                $p->save();
+                // $p->save();
             }
 
             $memClass  = trim(ucwords($row['chapter_member_class']));
@@ -1094,12 +1084,12 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                     $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
                 }
                 $newOP->creatorID = auth()->user()->id;
-                $newOP->save();
+                // $newOP->save();
 
-                if ($p->defaultOrgPersonID === null) {
-                    $p->defaultOrgPersonID = $newOP->id;
-                    $p->save();
-                }
+                // if ($p->defaultOrgPersonID === null) {
+                //     $p->defaultOrgPersonID = $newOP->id;
+                //     $p->save();
+                // }
             } else {
                 // We'll update some fields on the off chance they weren't properly filled in a previous creation
                 $newOP = $op;
@@ -1135,7 +1125,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                     $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
                 }
                 $newOP->updaterID = auth()->user()->id;
-                $newOP->save();
+                // $newOP->save();
             }
 
             // Add the person-specific records as needed
@@ -1172,7 +1162,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                 }
                 $addr->creatorID = auth()->user()->id;
                 $addr->updaterID = auth()->user()->id;
-                $addr->save();
+                // $addr->save();
             }
 
             $hp = trim($row['home_phone']);
@@ -1191,13 +1181,13 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                 $fone->phoneType   = 'Home';
                 $fone->creatorID   = auth()->user()->id;
                 $fone->updaterID   = auth()->user()->id;
-                $fone->save();
+                // $fone->save();
             } elseif (strlen($hp) > 7 && $fone !== null) {
-                if ($fone->personID != $p->personID) {
-                    $fone->debugNote = "ugh!  Was: $fone->personID; Should be: $p->personID";
-                    $fone->personID  = $p->personID;
-                    $fone->save();
-                }
+                // if ($fone->personID != $p->personID) {
+                //     $fone->debugNote = "ugh!  Was: $fone->personID; Should be: $p->personID";
+                //     $fone->personID  = $p->personID;
+                //     $fone->save();
+                // }
             }
 
             $wp = trim($row['work_phone']);
@@ -1216,12 +1206,12 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                 $fone->phoneType   = 'Work';
                 $fone->creatorID   = auth()->user()->id;
                 $fone->updaterID   = auth()->user()->id;
-                $fone->save();
+                // $fone->save();
             } elseif (strlen($wp) > 7 && $fone !== null) {
                 if ($fone->personID != $p->personID) {
                     $fone->debugNote = "ugh!  Was: $fone->personID; Should be: $p->personID";
                     $fone->personID  = $p->personID;
-                    $fone->save();
+                    // $fone->save();
                 }
             }
 
@@ -1241,28 +1231,28 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                 $fone->phoneType   = 'Mobile';
                 $fone->creatorID   = auth()->user()->id;
                 $fone->updaterID   = auth()->user()->id;
-                $fone->save();
+                // $fone->save();
             } elseif (strlen($mp) > 7 && $fone !== null) {
-                if ($fone->personID != $p->personID) {
-                    $fone->debugNote = "ugh!  Was: $fone->personID; Should be: $p->personID";
-                    $fone->personID  = $p->personID;
-                    $fone->save();
-                }
+                // if ($fone->personID != $p->personID) {
+                //     $fone->debugNote = "ugh!  Was: $fone->personID; Should be: $p->personID";
+                //     $fone->personID  = $p->personID;
+                //     $fone->save();
+                // }
             }
 
-            $ps               = new PersonStaging;
-            $ps->personID     = $p->personID;
-            $ps->prefix       = $prefix;
-            $ps->firstName    = $first;
-            $ps->midName      = $midName;
-            $ps->lastName     = $last;
-            $ps->suffix       = $suffix;
-            $ps->login        = $p->login;
-            $ps->title        = $title;
-            $ps->compName     = $compName;
-            $ps->defaultOrgID = $currentPerson->defaultOrgID;
-            $ps->creatorID    = auth()->user()->id;
-            $ps->save();
+            // $ps               = new PersonStaging;
+            // $ps->personID     = $p->personID;
+            // $ps->prefix       = $prefix;
+            // $ps->firstName    = $first;
+            // $ps->midName      = $midName;
+            // $ps->lastName     = $last;
+            // $ps->suffix       = $suffix;
+            // $ps->login        = $p->login;
+            // $ps->title        = $title;
+            // $ps->compName     = $compName;
+            // $ps->defaultOrgID = $currentPerson->defaultOrgID;
+            // $ps->creatorID    = auth()->user()->id;
+            // $ps->save();
         }
 
         request()->session()->flash('alert-success', trans('messages.admin.upload.loaded',
