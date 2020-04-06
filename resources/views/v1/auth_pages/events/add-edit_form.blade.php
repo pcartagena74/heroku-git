@@ -426,6 +426,8 @@ try {
             $('#city').removeAttr('required');
             $('#state').removeAttr('required');
             $('#zip').removeAttr('required');
+            show = 0;
+            hide = 1;
         @else
             $('#addr1').required = true;
             $('#addr2').required = true;
