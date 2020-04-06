@@ -22,6 +22,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Validator;
@@ -107,10 +109,12 @@ class UploadController extends Controller
         if ($validate->fails()) {
             return Redirect::back()->withErrors($validate->errors());
         }
-        $tmp_path = request()->file('filename')->store('', 'local');
-        $path     = storage_path('app') . '/' . $tmp_path;
-        // dd($path);
-        $eventID = request()->input('eventID');
+        $file      = $request->file('filename');
+        $extension = $file->getClientOriginalExtension();
+        $file_name = Str::random(40) . '.' . $extension;
+        $tmp_path  = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
+        $path      = Storage::disk('local')->path($file_name);
+        $eventID   = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
             // go back with message
@@ -119,7 +123,6 @@ class UploadController extends Controller
 
         switch ($what) {
             case 'mbrdata':
-
                 $collection                  = (new FastExcel)->import($path);
                 $currentPerson               = Person::where('personID', auth()->user()->id)->get();
                 $currentPerson               = (object) $currentPerson[0]->toArray();
@@ -133,8 +136,10 @@ class UploadController extends Controller
                         $key1       = strtolower(str_replace(' ', '_', $key1));
                         $var[$key1] = $value1;
                     }
-                    $this->storeImportDataDB($var, $currentPerson, $count);
-                    $count++;
+                    if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
+                        $this->storeImportDataDB($var, $currentPerson, $count);
+                        $count++;
+                    }
                 }
                 $this->bulkInsertAll();
                 PersonStaging::insertIgnore($this->person_staging_master);
@@ -1969,7 +1974,6 @@ class UploadController extends Controller
             }
             $any_op = new Collection($any_op[0]);
         }
-
         $prefix = trim(ucwords($row['prefix']));
         // First & Last Name string detection of all-caps or all-lower.
         // Do not ucwords all entries just in case "DeFrancesco" type names exist
@@ -2127,23 +2131,25 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
-            
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
-                //
-                $p = Person::where(['personID' => $op->get('personID')])->get();
+                $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
+                // dd($p->first());
                 // $this->timeMem('10 op and any op check 2142');
-                $p = $p[0];
+                $p = $p->first();
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get('personID')])->get();
+                $p = DB::table('person')->where(['personID' => $any_op->get('personID')])->limit(1)->get();
                 // $this->timeMem('11 op and any op check 2148');
-                $p = $p[0];
+                $p = $p->first();
             }
-
+            if (empty($p->personID)) {
+                return;
+            }
+            // dd(getType($p));
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
 
@@ -2174,6 +2180,7 @@ class UploadController extends Controller
             }
             // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
         } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
+            $emchk1 = $emchk1[0];
             // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
             $p = Person::where(['personID' => $emchk1->personID])->get();
             // $this->timeMem('14 get person 2180');
@@ -2184,13 +2191,14 @@ class UploadController extends Controller
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get();
                 // $this->timeMem('15 get org person 2187');
+                if ($op->isEmpty()) {$need_op_record = 1;}
             } catch (Exception $ex) {
-                dd([$emchk1, $em1]);
+                // dd([$emchk1, $em1]);
             }
-            if ($op->isEmpty()) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
         } elseif ($emchk2->isNotEmpty() && !empty($em2) && $em2 != '' && $em2 != ' ') {
+            $emchk2 = $emchk2[0];
             // email2 was found in the database
             // $p  = Person::where(['personID' => $emchk2->personID])->get();
             // $p  = $p[0];
@@ -2204,7 +2212,7 @@ class UploadController extends Controller
             $pchk = null;
         } elseif ($pchk->isNotEmpty()) {
             // Everything else was null but firstName & lastName matches someone
-            $p                      = $pchk;
+            $p                      = $pchk[0];
             $update_existing_record = 1;
 
             // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
@@ -2228,7 +2236,7 @@ class UploadController extends Controller
             }
             $ary['firstName'] = $first;
             try {
-                if ($p->prefName === null) {
+                if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
                 }
                 if (strlen($midName) > 0) {
@@ -2238,13 +2246,13 @@ class UploadController extends Controller
                 if (strlen($suffix) > 0) {
                     $ary['suffix'] = $suffix;
                 }
-                if ($p->title === null || $pchk !== null) {
+                if (empty($p->title) || $pchk !== null) {
                     $ary['title'] = $title;
                 }
-                if ($p->compName === null || $pchk !== null) {
+                if (empty($p->compName) || $pchk !== null) {
                     $ary['compName'] = $compName;
                 }
-                if ($p->affiliation === null) {
+                if (empty($p->affiliation)) {
                     $ary['affiliation'] = $currentPerson->affiliation;
                 }
 
