@@ -7,6 +7,7 @@ ini_set('max_execution_time', 0);
 use App\Address;
 use App\Email;
 use App\Event;
+use App\Imports\MembersImport;
 use App\OrgPerson;
 use App\Person;
 use App\PersonStaging;
@@ -25,7 +26,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel as Excel;
-use Rap2hpoutre\FastExcel\FastExcel;
 use Validator;
 
 class UploadController extends Controller
@@ -123,49 +123,49 @@ class UploadController extends Controller
 
         switch ($what) {
             case 'mbrdata':
-                $collection                  = (new FastExcel)->import($path);
-                $currentPerson               = Person::where('personID', auth()->user()->id)->get();
-                $currentPerson               = (object) $currentPerson[0]->toArray();
-                $rows                        = $this->rowsConsumer();
-                $count                       = 0;
-                $log                         = array();
-                $this->person_staging_master = [];
-                foreach ($collection as $key => $value) {
-                    $var = array();
-                    foreach ($value as $key1 => $value1) {
-                        $key1       = strtolower(str_replace(' ', '_', $key1));
-                        $var[$key1] = $value1;
-                    }
-                    if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
-                        $this->storeImportDataDB($var, $currentPerson, $count);
-                        $count++;
-                    }
-                }
-                $this->bulkInsertAll();
-                PersonStaging::insertIgnore($this->person_staging_master);
-                $this->person_staging_master = [];
-                $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
-                    ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
+                // $collection                  = (new FastExcel)->import($path);
+                // $currentPerson               = Person::where('personID', auth()->user()->id)->get();
+                // $currentPerson               = (object) $currentPerson[0]->toArray();
+                // $rows                        = $this->rowsConsumer();
+                // $count                       = 0;
+                // $log                         = array();
+                // $this->person_staging_master = [];
+                // foreach ($collection as $key => $value) {
+                //     $var = array();
+                //     foreach ($value as $key1 => $value1) {
+                //         $key1       = strtolower(str_replace(' ', '_', $key1));
+                //         $var[$key1] = $value1;
+                //     }
+                //     if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
+                //         $this->storeImportDataDB($var, $currentPerson, $count);
+                //         $count++;
+                //     }
+                // }
+                // $this->bulkInsertAll();
+                // PersonStaging::insertIgnore($this->person_staging_master);
+                // $this->person_staging_master = [];
+                // $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
+                //     ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
                 // previously used method
 
                 // $this->timeMem('starttime');
-                // $import = new MembersImport();
-                // try {
-                //     $this->counter = $import->import($path);
-                //     $this->counter = \Excel::import(new MembersImport, $path);
-                // $this->timeMem('endime');
+                $import = new MembersImport();
+                try {
+                    $this->counter = $import->import($path);
+                    $this->counter = \Excel::import(new MembersImport, $path);
+                    $this->timeMem('endime');
 
-                // } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                //     $failures = $e->failures();
+                } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                    $failures = $e->failures();
 
-                //     foreach ($failures as $failure) {
-                //         // $failure->row(); // row that went wrong
-                //         // $failure->attribute(); // either heading key (if using heading row concern) or column index
-                //         // $failure->errors(); // Actual error messages from Laravel validator
-                //         // $failure->values(); // The values of the row that has failed.
-                //         request()->session()->flash('alert-warning', $failure->row(), $failure->values());
-                //     }
-                // }
+                    foreach ($failures as $failure) {
+                        // $failure->row(); // row that went wrong
+                        // $failure->attribute(); // either heading key (if using heading row concern) or column index
+                        // $failure->errors(); // Actual error messages from Laravel validator
+                        // $failure->values(); // The values of the row that has failed.
+                        request()->session()->flash('alert-warning', $failure->row(), $failure->values());
+                    }
+                }
 
                 break;
 
