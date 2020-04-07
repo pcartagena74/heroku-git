@@ -655,7 +655,7 @@ class EventController extends Controller
             $loc->city      = request()->input('city');
             $loc->state     = request()->input('state');
             $loc->zip       = request()->input('zip');
-            $loc->isVirtual = $loc_virtual
+            $loc->isVirtual = $loc_virtual;
             $loc->updaterID = $this->currentPerson->personID;
             $loc->save();
             // if not and also not empty, grab location and save data
@@ -668,7 +668,7 @@ class EventController extends Controller
             $loc->city      = request()->input('city');
             $loc->state     = request()->input('state');
             $loc->zip       = request()->input('zip');
-            $loc->isVirtual = $loc_virtual
+            $loc->isVirtual = $loc_virtual;
             $loc->updaterID = $this->currentPerson->personID;
             $loc->save();
             $event->locationID = $loc->locID;
@@ -684,7 +684,7 @@ class EventController extends Controller
                 $loc->city      = request()->input('city');
                 $loc->state     = request()->input('state');
                 $loc->zip       = request()->input('zip');
-                $loc->isVirtual = $loc_virtual
+                $loc->isVirtual = $loc_virtual;
                 $loc->creatorID = $this->currentPerson->personID;
                 $loc->updaterID = $this->currentPerson->personID;
                 $loc->save();
