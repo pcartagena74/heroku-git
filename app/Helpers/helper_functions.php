@@ -801,8 +801,8 @@ if (!function_exists('storeImportDataDB')) {
             // $newOP->save(); update
             // $this->timeMem('19 new po update 2312');
             // if ($p->defaultOrgPersonID === null) {
-                // DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
-                // $this->timeMem('20 person update 2315');
+            // DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
+            // $this->timeMem('20 person update 2315');
             // }
         } else {
             // We'll update some fields on the off chance they weren't properly filled in a previous creation
@@ -957,4 +957,20 @@ if (!function_exists('storeImportDataDB')) {
         gc_collect_cycles();
     }
 
+}
+
+if (!function_exists('isDate')) {
+    function isDate($value)
+    {
+        if (!$value) {
+            return false;
+        } else {
+            $date = date_parse($value);
+            if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
+                return checkdate($date['month'], $date['day'], $date['year']);
+            } else {
+                return false;
+            }
+        }
+    }
 }

@@ -2035,6 +2035,7 @@ class UploadController extends Controller
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
+
         // $this->timeMem('5 $pchk ');
 
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
@@ -2078,21 +2079,23 @@ class UploadController extends Controller
                 $this->insertEmail($personID = $p->personID, $email = $em1, $primary = 1);
 
                 // Otherwise, try with email #2
-            } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && $p->login === null) {
-                $p->login = $em2;
-                $p->save();
-                $u->id    = $p->personID;
-                $u->login = $em2;
-                $u->name  = $em2;
-                $u->email = $em2;
-                $u->save();
+            } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && empty($p_array['login'])) {
+                $p_array['login'] = $em2;
+                $p                = Person::create($p_array);
+                $u_array          = [
+                    'id'    => $p->personID,
+                    'login' => $em2,
+                    'name'  => $em2,
+                    'email' => $em2,
+                ];
+                $u = User::create($u_array);
                 $this->insertEmail($personID = $p->personID, $email = $em2, $primary = 1);
                 try {
 
                 } catch (\Exception $exception) {
                     // There was an error with saving the email -- likely an integrity constraint.
                 }
-            } elseif ($pchk !== null) {
+            } elseif ($pchk->isNotEmpty()) {
                 // I don't think this code can actually run.
                 // The $pchk check in the outer loop is what this should have been.
 
@@ -2100,6 +2103,7 @@ class UploadController extends Controller
                 // Recheck to see if there's just 1 match
                 // no need to query again as we donot have filter for now
                 $p = $pchk[0];
+
                 // $pchk_count = Person::where([
                 //     ['firstName', '=', $first],
                 //     ['lastName', '=', $last],
@@ -2117,6 +2121,7 @@ class UploadController extends Controller
                 // Better to abandon; avoid $p->save();
                 // Technically, should not ever get here because we check ahead of time.
                 // break;
+                return;
             }
 
             // If email 1 exists and was used as primary but email 2 was also provided and unique, add it.
@@ -2181,7 +2186,7 @@ class UploadController extends Controller
                 }
             }
             // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
-        } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
+        } elseif ($emchk1->isNotEmpty() && !empty($emchk1[0]) && !empty($em1) && $em1 != '' && $em1 != ' ') {
             $emchk1 = $emchk1[0];
             // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
             $p = Person::where(['personID' => $emchk1->personID])->get();
@@ -2199,7 +2204,8 @@ class UploadController extends Controller
             }
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
-        } elseif ($emchk2->isNotEmpty() && !empty($em2) && $em2 != '' && $em2 != ' ') {
+        } elseif ($emchk2->isNotEmpty() && !empty($emchk2[0]) && !empty($em2) && $em2 != '' && $em2 != ' ') {
+
             $emchk2 = $emchk2[0];
             // email2 was found in the database
             // $p  = Person::where(['personID' => $emchk2->personID])->get();
@@ -2266,7 +2272,7 @@ class UploadController extends Controller
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
-                dd($p);
+                // dd($p);
             }
 
         }
@@ -2304,16 +2310,16 @@ class UploadController extends Controller
                 }
             }
 
-            if (!empty($row['pmi_join_date'])) {
+            if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
-            if (!empty($row['chapter_join_date'])) {
+            if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
                 $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
             }
-            if (!empty($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (!empty($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = auth()->user()->id;
@@ -2350,16 +2356,16 @@ class UploadController extends Controller
                         $ary['OrgStat4'] = $chapRenew;
                     }
                 }
-                if (!empty($row['pmi_join_date'])) {
+                if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                     $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
                 }
-                if (!empty($row['chapter_join_date'])) {
+                if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
                     $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
                 }
-                if (!empty($row['pmi_expiration'])) {
+                if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                     $ary['RelDate3'] = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
                 }
-                if (!empty($row['pmi_expiration'])) {
+                if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
                     $ary['RelDate4'] = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
                 }
                 $ary['updaterID'] = auth()->user()->id;
