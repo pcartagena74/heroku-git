@@ -751,6 +751,7 @@ return [
         'please_wait'                  => "Please wait while this content loads.",
         'org_default_update_success'   => 'Your default Organization Updated',
         'new_org_created_successfully' => 'New Org Created Successfully.',
+        'import_file_queued'           => 'Import is queued. You will be notified via email when its completed.',
     ],
 
     'modals'                 => [
@@ -886,6 +887,12 @@ return [
             'line1'   => "An mCentric account was setup for you by :name with :org.",
             'line2'   => "Your login is the email address where you are receiving this notification.",
             'line3'   => "The password that was set for you is: ':pass'",
+        ],
+
+        //Member import complete
+        'member_import' => [
+            'subject' => 'Import completed.',
+            'line1'   => 'Your member import is completed.',
         ],
 
     ],
