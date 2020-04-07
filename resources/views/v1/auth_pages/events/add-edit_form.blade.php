@@ -87,8 +87,10 @@ $defaults = DB::table('organization')
 //                        ['isDeleted', 0]
 //                    ])->orderBy('locName', 'asc')->get(); not used 
 
-$loc_list = ['' => 'Existing Location'] + Location::where(['orgID'=>$current_person->defaultOrgID])
-            ->orderBy('locName')->pluck('locName', 'locID','isVirtual')->toArray();
+// $loc_list = ['' => 'Existing Location'] + Location::where(['orgID'=>$current_person->defaultOrgID])
+//             ->orderBy('locName')->pluck('locName', 'locID','isVirtual')->toArray();
+//             
+$loc_list = ['' => 'Existing Location'];            
 $locations = Location::select('locName', 'locID','isVirtual')->where(['orgID'=>$current_person->defaultOrgID])
             ->orderBy('locName')->get();
 $loc_list_html = '<option value="">Existing Location</option>';
