@@ -751,7 +751,7 @@ return [
         'please_wait'                  => "Please wait while this content loads.",
         'org_default_update_success'   => 'Your default Organization Updated',
         'new_org_created_successfully' => 'New Org Created Successfully.',
-        'import_file_queued'           => 'Import is queued. You will be notified via email when its completed.',
+        'import_file_queued'           => 'Import is queued. You will be notified via email when its complete.',
     ],
 
     'modals'                 => [
