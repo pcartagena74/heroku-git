@@ -7,7 +7,7 @@
     } else {
         factory(window.jQuery);
     }
-};
+});
 (function ($) {
     $.extend(true, $.summernote.lang, {
         'en-US': {
@@ -176,4 +176,4 @@
             }
         }
     });
-}));
+});
