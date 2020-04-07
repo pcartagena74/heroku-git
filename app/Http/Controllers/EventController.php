@@ -434,6 +434,7 @@ class EventController extends Controller
                 $loc->zip       = request()->input('zip');
                 $loc->creatorID = $this->currentPerson->personID;
                 $loc->updaterID = $this->currentPerson->personID;
+                $loc->isVirtual = request()->input('virtual');
                 $loc->save();
                 $event->locationID = $loc->locID;
             }
@@ -448,6 +449,7 @@ class EventController extends Controller
             $loc->zip       = request()->input('zip');
             $loc->creatorID = $this->currentPerson->personID;
             $loc->updaterID = $this->currentPerson->personID;
+            $loc->isVirtual = request()->input('virtual');
             $loc->save();
             $event->locationID = $loc->locID;
         }
