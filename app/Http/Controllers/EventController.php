@@ -416,7 +416,10 @@ class EventController extends Controller
             request()->session()->flash('alert-danger', "Please set a custom URL and validate it before proceeding.");
             return back()->withInput();
         }
-
+        $loc_virtual = request()->input('virtual');
+        if(empty($loc_virtual)){
+            $loc_virtual = 0;
+        }
         if (request()->input('locationID') != '') {
             $location = Location::find(request()->input('locationID'));
             $locName  = request()->input('locName');
@@ -434,7 +437,7 @@ class EventController extends Controller
                 $loc->zip       = request()->input('zip');
                 $loc->creatorID = $this->currentPerson->personID;
                 $loc->updaterID = $this->currentPerson->personID;
-                $loc->isVirtual = request()->input('virtual');
+                $loc->isVirtual = $loc_virtual;
                 $loc->save();
                 $event->locationID = $loc->locID;
             }
@@ -449,7 +452,7 @@ class EventController extends Controller
             $loc->zip       = request()->input('zip');
             $loc->creatorID = $this->currentPerson->personID;
             $loc->updaterID = $this->currentPerson->personID;
-            $loc->isVirtual = request()->input('virtual');
+            $loc->isVirtual = $loc_virtual;
             $loc->save();
             $event->locationID = $loc->locID;
         }
