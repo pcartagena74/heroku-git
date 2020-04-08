@@ -116,7 +116,7 @@ class UploadController extends Controller
         $tmp_path  = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
         $path      = Storage::disk('local')->path($file_name);
         // dd(storage_path($file_name));
-        $eventID   = request()->input('eventID');
+        $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
             // go back with message
@@ -157,9 +157,11 @@ class UploadController extends Controller
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
                     $import = new MembersImport($currentPerson);
-                    $var = Excel::queueImport(new MembersImport($currentPerson), $file_name,'local')
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson,$import->getProcessedRowCount())]);
-                    requestBin((array)$var);
+                    $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
+                        ->allOnConnection('database')
+                        ->allOnQueue('default');
+                    requestBin((array) $var);
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
