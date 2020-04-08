@@ -24,7 +24,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, WithBatchInserts, ShouldQueue
 {
 
-    use Importable, SkipsFailures, ExcelMemberImportTrait;
+    use Importable, ExcelMemberImportTrait;
     public $starttime;
     public $phone_master;
     public $email_master;
@@ -52,7 +52,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
         $count = 0;
         foreach ($rows as $row) {
             requestBin($row->toArray());
-             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
+            if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson);
             }
