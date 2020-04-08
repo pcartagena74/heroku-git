@@ -24,7 +24,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
 {
 
-    use Importable, SkipsFailures, ExcelMemberImportTrait;
+    use ExcelMemberImportTrait;
     public $starttime;
     public $phone_master;
     public $email_master;
