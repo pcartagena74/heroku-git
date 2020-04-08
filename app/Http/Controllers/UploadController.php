@@ -159,6 +159,7 @@ class UploadController extends Controller
                     $import = new MembersImport($currentPerson);
                     $var = Excel::queueImport(new MembersImport($currentPerson), $file_name,'local')
                         ->chain([new NotifyUserOfCompletedImport($currentPerson,$import->getProcessedRowCount())]);
+                    requestBin((array)$var);
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
