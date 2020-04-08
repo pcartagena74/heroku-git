@@ -51,7 +51,24 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     {
         $count = 0;
         foreach ($rows as $row) {
-            var_dump($row);
+            // API URL
+            $url = 'https://enpfjlvpu0oo.x.pipedream.net';
+            // Create a new cURL resource
+            $ch = curl_init($url);
+            // Setup request to send json via POST
+            $payload = json_encode(array("user" => $row));
+            // Attach encoded JSON string to the POST fields
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            // Set the content type to application/json
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            // Return response instead of outputting
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            // Execute the POST request
+            $result = curl_exec($ch);
+            // Close cURL resource
+            curl_close($ch);
+
+          
             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson);

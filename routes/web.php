@@ -47,6 +47,10 @@ Route::get('setlocale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
+Route::get('/httpbin', function () {
+    $result = file_get_contents('http://requestbin.net/r/1gm2w681');
+    echo $result;
+});
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 
