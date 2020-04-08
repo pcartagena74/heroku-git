@@ -13,15 +13,15 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+// use Maatwebsite\Excel\Concerns\SkipsFailures;
+// use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, SkipsOnFailure, WithBatchInserts, ShouldQueue
+class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, WithBatchInserts, ShouldQueue
 {
 
     use Importable, SkipsFailures, ExcelMemberImportTrait;
