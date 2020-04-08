@@ -162,10 +162,10 @@ class UploadController extends Controller
                     //     ->allOnConnection('database')
                     //     ->allOnQueue('default');
 
-                        // ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                     $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
-                        ->allOnConnection('database')
-                        ->allOnQueue('default');
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                        ->onConnection('database')
+                        ->onQueue('default');
                     requestBin((array) $var);
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
