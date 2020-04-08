@@ -21,7 +21,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
+class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, ShouldQueue
 {
 
     use Importable, SkipsFailures, ExcelMemberImportTrait;
