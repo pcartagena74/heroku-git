@@ -156,9 +156,14 @@ class UploadController extends Controller
 
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
-                    $import = new MembersImport($currentPerson);
-                    $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
+                    // $import = new MembersImport($currentPerson);
+                    // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
+                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
+                    //     ->allOnConnection('database')
+                    //     ->allOnQueue('default');
+
+                    $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                         ->allOnConnection('database')
                         ->allOnQueue('default');
                     requestBin((array) $var);
