@@ -13,18 +13,18 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
-// use Maatwebsite\Excel\Concerns\SkipsFailures;
-// use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, WithBatchInserts, ShouldQueue
+class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
 {
 
-    use Importable, ExcelMemberImportTrait;
+    use Importable, SkipsFailures, ExcelMemberImportTrait;
     public $starttime;
     public $phone_master;
     public $email_master;
@@ -52,7 +52,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
         $count = 0;
         foreach ($rows as $row) {
             requestBin($row->toArray());
-            if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
+             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson);
             }
