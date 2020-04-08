@@ -21,9 +21,10 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, SkipsOnFailure, WithBatchInserts, ShouldQueue
+class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, SkipsOnFailure, ShouldQueue
 {
 
+    // WithBatchInserts only works with toModel concern
     use Importable, SkipsFailures, ExcelMemberImportTrait;
     public $starttime;
     public $phone_master;
