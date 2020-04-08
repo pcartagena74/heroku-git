@@ -156,8 +156,7 @@ class UploadController extends Controller
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
                     $import = new MembersImport($currentPerson);
-                    $import->path($path);
-                    Excel::queueImport($import, $path)
+                    Excel::queueImport($import, $file)
                         ->chain([new NotifyUserOfCompletedImport($currentPerson,$import->getProcessedRowCount())]);
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
