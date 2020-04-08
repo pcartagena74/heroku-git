@@ -51,11 +51,11 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     {
         $count = 0;
         foreach ($rows as $row) {
+            var_dump($row);
             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson);
             }
-            dd($row);
         }
         $this->row_count += $count;
         return;
