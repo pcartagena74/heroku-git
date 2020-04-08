@@ -892,7 +892,7 @@ return [
         //Member import complete
         'member_import' => [
             'subject' => 'es-Import completed.',
-            'line1'   => 'es-Your member import is completed.',
+            'line1'   => 'es- :name your member import is completed.',
         ],
 
     ],

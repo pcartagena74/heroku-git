@@ -152,11 +152,12 @@ class UploadController extends Controller
                 // $this->timeMem('starttime');
                 // break; /// not to run on live
                 try {
+
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
-
-                    Excel::queueImport(new MembersImport($currentPerson), $path)
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson)]);
+                    $import = new MembersImport($currentPerson);
+                    Excel::queueImport($import, $path)
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson,$import->getProcessedRowCount())]);
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {

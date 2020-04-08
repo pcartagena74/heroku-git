@@ -33,6 +33,9 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public $row_count = 0;
     public $currentPerson;
 
+    public $tries   = 3;
+    public $timeout = 120;
+
     public function __construct($currentPerson)
     {
         $this->currentPerson = $currentPerson;

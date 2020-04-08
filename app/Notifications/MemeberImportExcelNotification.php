@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Person;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -19,10 +20,10 @@ class MemeberImportExcelNotification extends Notification
      * @return void
      */
     // public function __construct(Person $person, $records)
-    public function __construct()
+    public function __construct(Person $person, $records)
     {
-        // $this->person  = $person;
-        // $this->records = $records;
+        $this->person  = $person;
+        $this->records = $records;
     }
 
     /**
@@ -47,10 +48,13 @@ class MemeberImportExcelNotification extends Notification
         // $o     = Org::find($this->person->defaultOrgID);
         // $name  = $o->orgName;
         // $ename = $this->event->eventName;
-        // $name = $this->person->firstName . ' ' . $this->person->lastName;
+        $name = trim($this->person->firstName . ' ' . $this->person->lastName);
+        if (empty($name)) {
+            $name = $this->person->login;
+        }
         return (new MailMessage)
             ->subject(trans('messages.notifications.member_import.subject'))
-            ->line(trans('messages.notifications.member_import.line1'));
+            ->line(trans('messages.notifications.member_import.line1', ['user' => $name, 'count' => $this->records]));
     }
 
     /**

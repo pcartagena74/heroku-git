@@ -15,14 +15,16 @@ class NotifyUserOfCompletedImport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $person;
+    public $count;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Person $person)
+    public function __construct(Person $person,$count)
     {
         $this->person = $person;
+        $this->count = $count;
     }
 
     /**
@@ -32,6 +34,6 @@ class NotifyUserOfCompletedImport implements ShouldQueue
      */
     public function handle()
     {
-        $this->person->notify(new MemeberImportExcelNotification());
+        $this->person->notify(new MemeberImportExcelNotification($this->person,$this->count));
     }
 }

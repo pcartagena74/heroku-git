@@ -892,7 +892,7 @@ return [
         //Member import complete
         'member_import' => [
             'subject' => 'Import completed.',
-            'line1'   => 'Your member import is completed.',
+            'line1'   => ':user your member import is completed.',
         ],
 
     ],
