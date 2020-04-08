@@ -55,6 +55,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson);
             }
+            dd($row);
         }
         $this->row_count += $count;
         return;

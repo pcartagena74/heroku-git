@@ -139,7 +139,7 @@ trait ExcelMemberImportTrait
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-        dd($row,$op,$any_op,$emchk1,$emchk2);
+        
         // $this->timeMem('5 $pchk ');
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
