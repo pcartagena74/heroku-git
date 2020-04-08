@@ -40,7 +40,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public function __construct($currentPerson)
     {
         $this->currentPerson = $currentPerson;
-
+        requestBin(['in'=>'inside construct member import']);
     }
 
     /**
@@ -50,6 +50,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
      */
     public function collection(Collection $rows)
     {
+        requestBin(['in'=>'inside construct member import']);
         $count = 0;
         foreach ($rows as $row) {
             requestBin($row->toArray());
