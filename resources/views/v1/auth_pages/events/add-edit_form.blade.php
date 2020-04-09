@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: This is the form that will serve for both creation and editing of an event
  * Created: 2/11/2017
@@ -80,14 +80,34 @@ $defaults = DB::table('organization')
               ->select('orgZone', 'orgCategory', 'orgName', 'eventEmail')
               ->where('orgID', $current_person->defaultOrgID)->first();
 
-$locations = DB::table('event-location')
-               ->where(
-                   [
-                       ['orgID', $current_person->defaultOrgID],
-                       ['isDeleted', 0]
-                   ])->orderBy('locName', 'asc')->get();
+// $locations = DB::table('event-location')
+//                ->where(
+//                    [
+//                        ['orgID', $current_person->defaultOrgID],
+//                        ['isDeleted', 0]
+//                    ])->orderBy('locName', 'asc')->get(); not used 
 
-$loc_list = ['' => 'Existing Location'] + Location::orderBy('locName')->pluck('locName', 'locID')->toArray();
+// $loc_list = ['' => 'Existing Location'] + Location::where(['orgID'=>$current_person->defaultOrgID])
+//             ->orderBy('locName')->pluck('locName', 'locID','isVirtual')->toArray();
+//             
+$loc_list = ['' => 'Existing Location'];            
+$locations = Location::select('locName', 'locID','isVirtual')->where(['orgID'=>$current_person->defaultOrgID])
+            ->orderBy('locName')->get();
+$loc_list_html = '<option value="">Existing Location</option>';
+$loc_list_virtual_html = '<option value="">Existing Location</option>';
+
+foreach ($locations as $key => $value) {
+    $select = '';
+    if(!empty($event->locationID) && $value->locID == $event->locationID){
+        $select = 'selected';
+    }
+    $val = str_replace("'","\'",$value->locName);
+    if($value->isVirtual){
+        $loc_list_virtual_html .= '<option value="'.$value->locID.'" '.$select.'>'.$val.'</option>';
+    } else {
+        $loc_list_html .= '<option value="'.$value->locID.'" '.$select.'>'.$val.'</option>';
+    }
+}
 
 $orgLogoPath = DB::table('organization')
                  ->select('orgPath', 'orgLogo')
@@ -105,7 +125,7 @@ try {
     $logo = '';
 }
 
-?>
+@endphp 
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -419,19 +439,23 @@ try {
 
         show = 1;
         hide = 0;
-
+        
         @if($exLoc->isVirtual)
             $('#addr1').removeAttr('required');
             $('#addr2').removeAttr('required');
             $('#city').removeAttr('required');
             $('#state').removeAttr('required');
             $('#zip').removeAttr('required');
+            show = 0;
+            hide = 1;
+            $('#org_location_list').empty().append('{!! $loc_list_virtual_html !!}');
         @else
             $('#addr1').required = true;
             $('#addr2').required = true;
             $('#city').required = true;
             $('#state').required = true;
             $('#zip').required = true;
+            $('#org_location_list').empty().append('{!! $loc_list_html !!}');
         @endif
 
         function toggleShow() {
@@ -447,6 +471,8 @@ try {
                 $('#city').removeAttr('required');
                 $('#state').removeAttr('required');
                 $('#zip').removeAttr('required');
+                $('#org_location_list').empty().append('{!! $loc_list_virtual_html !!}');
+                $('#org_location_list').val('');
             } else {
                 show = 1;
                 hide = 0;
@@ -455,7 +481,15 @@ try {
                 $('#city').required = true;
                 $('#state').required = true;
                 $('#zip').required = true;
+                $('#org_location_list').empty().append('{!! $loc_list_html !!}');
+                $('#org_location_list').val('');
             }
+            $('#locName').val('');
+            $('#addr1').val('');
+            $('#addr2').val('');
+            $('#city').val('');
+            $('#state').val('');
+            $('#zip').val('');
         }
         $(document).ready(function () {
             // We'll help out users by populating the end date/time based on the start
@@ -558,9 +592,9 @@ try {
         });
     </script>
     @if($page_title == trans('messages.headers.event_edit') || $event === null)
-        @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.fields.edit_event'),'url_override'=>url('event/create')))
+        @include('v1.parts.menu-fix', array('path' => 'event/create', 'tag' => '#add', 'newTxt' => trans('messages.fields.edit_event'),'url_override'=>url('event/create')))
     @else
-        @include('v1.parts.menu-fix', array('path' => '/event/create','url_override'=>url('event/create')))
+        @include('v1.parts.menu-fix', array('path' => 'event/create','url_override'=>url('event/create')))
     @endif
 @endsection
 

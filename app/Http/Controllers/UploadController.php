@@ -7,6 +7,8 @@ ini_set('max_execution_time', 0);
 use App\Address;
 use App\Email;
 use App\Event;
+use App\Imports\MembersImport;
+use App\Jobs\NotifyUserOfCompletedImport;
 use App\OrgPerson;
 use App\Person;
 use App\PersonStaging;
@@ -22,8 +24,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel as Excel;
-use Rap2hpoutre\FastExcel\FastExcel;
 use Validator;
 
 class UploadController extends Controller
@@ -107,9 +110,12 @@ class UploadController extends Controller
         if ($validate->fails()) {
             return Redirect::back()->withErrors($validate->errors());
         }
-        $tmp_path = request()->file('filename')->store('', 'local');
-        $path     = storage_path('app') . '/' . $tmp_path;
-        // dd($path);
+        $file      = $request->file('filename');
+        $extension = $file->getClientOriginalExtension();
+        $file_name = Str::random(40) . '.' . $extension;
+        $tmp_path  = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
+        $path      = Storage::disk('local')->path($file_name);
+        // dd(storage_path($file_name));
         $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
@@ -119,48 +125,61 @@ class UploadController extends Controller
 
         switch ($what) {
             case 'mbrdata':
-
-                $collection                  = (new FastExcel)->import($path);
-                $currentPerson               = Person::where('personID', auth()->user()->id)->get();
-                $currentPerson               = (object) $currentPerson[0]->toArray();
-                $rows                        = $this->rowsConsumer();
-                $count                       = 0;
-                $log                         = array();
-                $this->person_staging_master = [];
-                foreach ($collection as $key => $value) {
-                    $var = array();
-                    foreach ($value as $key1 => $value1) {
-                        $key1       = strtolower(str_replace(' ', '_', $key1));
-                        $var[$key1] = $value1;
-                    }
-                    $this->storeImportDataDB($var, $currentPerson, $count);
-                    $count++;
-                }
-                $this->bulkInsertAll();
-                PersonStaging::insertIgnore($this->person_staging_master);
-                $this->person_staging_master = [];
-                $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
-                    ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
+                // $collection                  = (new FastExcel)->import($path);
+                // $currentPerson               = Person::where('personID', auth()->user()->id)->get();
+                // $currentPerson               = (object) $currentPerson[0]->toArray();
+                // $rows                        = $this->rowsConsumer();
+                // $count                       = 0;
+                // $log                         = array();
+                // $this->person_staging_master = [];
+                // foreach ($collection as $key => $value) {
+                //     $var = array();
+                //     foreach ($value as $key1 => $value1) {
+                //         $key1       = strtolower(str_replace(' ', '_', $key1));
+                //         $var[$key1] = $value1;
+                //     }
+                //     if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
+                //         $this->storeImportDataDB($var, $currentPerson, $count);
+                //         $count++;
+                //     }
+                // }
+                // $this->bulkInsertAll();
+                // PersonStaging::insertIgnore($this->person_staging_master);
+                // $this->person_staging_master = [];
+                // $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
+                //     ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
                 // previously used method
 
                 // $this->timeMem('starttime');
-                // $import = new MembersImport();
-                // try {
-                //     $this->counter = $import->import($path);
-                //     $this->counter = \Excel::import(new MembersImport, $path);
-                // $this->timeMem('endime');
+                // break; /// not to run on live
+                try {
 
-                // } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                //     $failures = $e->failures();
+                    $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
+                    // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
+                    // $import = new MembersImport($currentPerson);
+                    // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
+                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
+                    //     ->allOnConnection('database')
+                    //     ->allOnQueue('default');
 
-                //     foreach ($failures as $failure) {
-                //         // $failure->row(); // row that went wrong
-                //         // $failure->attribute(); // either heading key (if using heading row concern) or column index
-                //         // $failure->errors(); // Actual error messages from Laravel validator
-                //         // $failure->values(); // The values of the row that has failed.
-                //         request()->session()->flash('alert-warning', $failure->row(), $failure->values());
-                //     }
-                // }
+                    $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                        ->onConnection('database')
+                        ->onQueue('default');
+                    requestBin((array) $var);
+                    request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
+
+                } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                    // $failures = $e->failures();
+
+                    // foreach ($failures as $failure) {
+                    //     // $failure->row(); // row that went wrong
+                    //     // $failure->attribute(); // either heading key (if using heading row concern) or column index
+                    //     // $failure->errors(); // Actual error messages from Laravel validator
+                    //     // $failure->values(); // The values of the row that has failed.
+                    //     request()->session()->flash('alert-warning', $failure->row(), $failure->values());
+                    // }
+                }
 
                 break;
 
@@ -1969,7 +1988,6 @@ class UploadController extends Controller
             }
             $any_op = new Collection($any_op[0]);
         }
-
         $prefix = trim(ucwords($row['prefix']));
         // First & Last Name string detection of all-caps or all-lower.
         // Do not ucwords all entries just in case "DeFrancesco" type names exist
@@ -2029,6 +2047,7 @@ class UploadController extends Controller
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
+
         // $this->timeMem('5 $pchk ');
 
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
@@ -2072,21 +2091,23 @@ class UploadController extends Controller
                 $this->insertEmail($personID = $p->personID, $email = $em1, $primary = 1);
 
                 // Otherwise, try with email #2
-            } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && $p->login === null) {
-                $p->login = $em2;
-                $p->save();
-                $u->id    = $p->personID;
-                $u->login = $em2;
-                $u->name  = $em2;
-                $u->email = $em2;
-                $u->save();
+            } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && empty($p_array['login'])) {
+                $p_array['login'] = $em2;
+                $p                = Person::create($p_array);
+                $u_array          = [
+                    'id'    => $p->personID,
+                    'login' => $em2,
+                    'name'  => $em2,
+                    'email' => $em2,
+                ];
+                $u = User::create($u_array);
                 $this->insertEmail($personID = $p->personID, $email = $em2, $primary = 1);
                 try {
 
                 } catch (\Exception $exception) {
                     // There was an error with saving the email -- likely an integrity constraint.
                 }
-            } elseif ($pchk !== null) {
+            } elseif ($pchk->isNotEmpty()) {
                 // I don't think this code can actually run.
                 // The $pchk check in the outer loop is what this should have been.
 
@@ -2094,6 +2115,7 @@ class UploadController extends Controller
                 // Recheck to see if there's just 1 match
                 // no need to query again as we donot have filter for now
                 $p = $pchk[0];
+
                 // $pchk_count = Person::where([
                 //     ['firstName', '=', $first],
                 //     ['lastName', '=', $last],
@@ -2111,6 +2133,7 @@ class UploadController extends Controller
                 // Better to abandon; avoid $p->save();
                 // Technically, should not ever get here because we check ahead of time.
                 // break;
+                return;
             }
 
             // If email 1 exists and was used as primary but email 2 was also provided and unique, add it.
@@ -2127,23 +2150,25 @@ class UploadController extends Controller
             }
 
         } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
-            
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
             if ($op->isNotEmpty()) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
-                //
-                $p = Person::where(['personID' => $op->get('personID')])->get();
+                $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
+                // dd($p->first());
                 // $this->timeMem('10 op and any op check 2142');
-                $p = $p[0];
+                $p = $p->first();
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = Person::where(['personID' => $any_op->get('personID')])->get();
+                $p = DB::table('person')->where(['personID' => $any_op->get('personID')])->limit(1)->get();
                 // $this->timeMem('11 op and any op check 2148');
-                $p = $p[0];
+                $p = $p->first();
             }
-
+            if (empty($p->personID)) {
+                return;
+            }
+            // dd(getType($p));
             // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
 
@@ -2173,7 +2198,8 @@ class UploadController extends Controller
                 }
             }
             // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
-        } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
+        } elseif ($emchk1->isNotEmpty() && !empty($emchk1[0]) && !empty($em1) && $em1 != '' && $em1 != ' ') {
+            $emchk1 = $emchk1[0];
             // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
             $p = Person::where(['personID' => $emchk1->personID])->get();
             // $this->timeMem('14 get person 2180');
@@ -2184,13 +2210,15 @@ class UploadController extends Controller
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get();
                 // $this->timeMem('15 get org person 2187');
+                if ($op->isEmpty()) {$need_op_record = 1;}
             } catch (Exception $ex) {
-                dd([$emchk1, $em1]);
+                // dd([$emchk1, $em1]);
             }
-            if ($op->isEmpty()) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
-        } elseif ($emchk2->isNotEmpty() && !empty($em2) && $em2 != '' && $em2 != ' ') {
+        } elseif ($emchk2->isNotEmpty() && !empty($emchk2[0]) && !empty($em2) && $em2 != '' && $em2 != ' ') {
+
+            $emchk2 = $emchk2[0];
             // email2 was found in the database
             // $p  = Person::where(['personID' => $emchk2->personID])->get();
             // $p  = $p[0];
@@ -2204,7 +2232,7 @@ class UploadController extends Controller
             $pchk = null;
         } elseif ($pchk->isNotEmpty()) {
             // Everything else was null but firstName & lastName matches someone
-            $p                      = $pchk;
+            $p                      = $pchk[0];
             $update_existing_record = 1;
 
             // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
@@ -2228,7 +2256,7 @@ class UploadController extends Controller
             }
             $ary['firstName'] = $first;
             try {
-                if ($p->prefName === null) {
+                if (empty($p->prefName)) {
                     $ary['prefName'] = $first;
                 }
                 if (strlen($midName) > 0) {
@@ -2238,13 +2266,13 @@ class UploadController extends Controller
                 if (strlen($suffix) > 0) {
                     $ary['suffix'] = $suffix;
                 }
-                if ($p->title === null || $pchk !== null) {
+                if (empty($p->title) || $pchk !== null) {
                     $ary['title'] = $title;
                 }
-                if ($p->compName === null || $pchk !== null) {
+                if (empty($p->compName) || $pchk !== null) {
                     $ary['compName'] = $compName;
                 }
-                if ($p->affiliation === null) {
+                if (empty($p->affiliation)) {
                     $ary['affiliation'] = $currentPerson->affiliation;
                 }
 
@@ -2256,7 +2284,7 @@ class UploadController extends Controller
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
-                dd($p);
+                // dd($p);
             }
 
         }
@@ -2294,16 +2322,16 @@ class UploadController extends Controller
                 }
             }
 
-            if (!empty($row['pmi_join_date'])) {
+            if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
-            if (!empty($row['chapter_join_date'])) {
+            if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
                 $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
             }
-            if (!empty($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (!empty($row['pmi_expiration'])) {
+            if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = auth()->user()->id;
@@ -2340,16 +2368,16 @@ class UploadController extends Controller
                         $ary['OrgStat4'] = $chapRenew;
                     }
                 }
-                if (!empty($row['pmi_join_date'])) {
+                if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                     $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
                 }
-                if (!empty($row['chapter_join_date'])) {
+                if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
                     $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
                 }
-                if (!empty($row['pmi_expiration'])) {
+                if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                     $ary['RelDate3'] = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
                 }
-                if (!empty($row['pmi_expiration'])) {
+                if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
                     $ary['RelDate4'] = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
                 }
                 $ary['updaterID'] = auth()->user()->id;

@@ -754,6 +754,7 @@ return [
         'org_default_update_success'   => 'es-Your default Organization Updated',
         'new_org_created_successfully' => 'es-New Org Created Successfully.',
         'email_list_created'           => 'es-Email List created successfully.',
+        'import_file_queued'           => 'es-Import is queued. You will be notified via email when its complete.',
     ],
 
     'modals'                 => [
@@ -889,6 +890,12 @@ return [
             'line1'   => 'es-An mCentric account was setup for you by :name with :org.',
             'line2'   => 'es-Your login is the email address where you are receiving this notification.',
             'line3'   => 'es-The password that was set for you is: \':pass\'',
+        ],
+
+        //Member import complete
+        'member_import' => [
+            'subject' => 'es-Import completed.',
+            'line1'   => 'es- :name your member import is completed.',
         ],
 
     ],

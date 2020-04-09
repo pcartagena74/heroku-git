@@ -252,7 +252,7 @@ try{
                             </a>
                             <ul class="nav child_menu">
                                 <li>
-                                    <a href="{{ url('search')}}/">
+                                    <a href="{{ url('search')}}">
                                         @lang('messages.nav.m_sch')
                                     </a>
                                 </li>

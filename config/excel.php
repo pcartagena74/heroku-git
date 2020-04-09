@@ -164,7 +164,7 @@ return [
         | storing reading or downloading. Here you can customize that path.
         |
         */
-        'local_path'  => sys_get_temp_dir(),
+        'local_path'  => storage_path('app'),
 
         /*
         |--------------------------------------------------------------------------
@@ -180,7 +180,7 @@ return [
         | in conjunction with queued imports and exports.
         |
         */
-        'remote_disk' => null,
+        'remote_disk' => 'local',
 
     ],
 ];
