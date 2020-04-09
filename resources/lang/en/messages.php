@@ -1193,20 +1193,20 @@ return [
     ],
 
     'exceptions'             => [
-        'query_exception'           => 'Resource you are looking for has been either moved/deleted/does not exist',
-        'bad_url_link'              => 'The link you are trying to access has been expired.',
+        'query_exception'           => 'The resource you are looking for has been moved or no longer exists.',
+        'bad_url_link'              => 'The link you are trying to access has expired.',
         'forbidden'                 => 'You are not authorized to access this page.',
         'page_expired'              => 'Page Expired.',
-        'too_many_request'          => 'Too Many Requests, Rate limit exceeded.',
-        'service_unavailable'       => 'Service Unavailable, Please try again after sometime.',
-        'error_500'                 => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'too_many_request'          => 'Too Many Requests - Rate limit exceeded.',
+        'service_unavailable'       => 'Service Unavailable. Please try again later.',
+        'error_500'                 => '<p>Internal Server Error Occurred.</p> We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'no_msg_available'          => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'             => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
-        'bad_url_link_mail_tracker' => 'Oops, the link you are using has expired.',
+        'bad_url_link_mail_tracker' => 'Oops, the link you are trying to access has expired.',
     ],
     'validation'             => [
         'create_org_existing_user' => 'Please select one existing user',
-        'file_required_extension'  => 'The file must be one of the following types xlsx, ods, csv type.',
+        'file_required_extension'  => 'The file must be one of the following types: xlsx, ods, or csv.',
     ],
 
     'page_generic_exception' => [
@@ -1219,5 +1219,12 @@ return [
         'all'      => 'All',
         'created'  => 'Created by me',
         'assigned' => 'Assigned to me',
+    ],
+
+    'functions' => [
+        'merge' => [
+            'assoc_emails' => "La siguiente dirección de correo electrónico está asociada con cualquier cuenta.
+                               Todos estarán asociados con <b>\"The Keeper\"</b> después de la fusión.",
+        ],
     ],
 ];

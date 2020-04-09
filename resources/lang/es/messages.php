@@ -7,13 +7,13 @@
 return [
     'auth'                   => [
         'account'  => 'Tienes una cuenta? Inicio de sesión',
-        'forgot'   => 'Forgot Password?',
+        'forgot'   => '¿Olvidó su contraseña?',
         'remember' => 'Acuérdate De Mí',
     ],
 
     'actions'                => [
         'add'    => 'Añadir ',
-        'merge'  => 'Merge',
+        'merge'  => 'Fusionar',
         'remove' => 'Quitar ',
     ],
 
@@ -1220,5 +1220,11 @@ return [
         'all'      => 'es-All',
         'created'  => 'es-Created by me',
         'assigned' => 'es-Assigned to me',
+    ],
+
+    'functions' => [
+        'merge' => [
+            'assoc_emails' => "es-",
+        ],
     ],
 ];
