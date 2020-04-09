@@ -22,7 +22,6 @@ $url = url($path);
 if(!empty($url_override)){
     // $url = '{{$url_override}}';
 }
-        
 @endphp
 <script>
     $(document).ready(function () {
