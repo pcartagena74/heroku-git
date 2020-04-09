@@ -35,12 +35,11 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public $currentPerson;
 
     public $tries   = 3;
-    public $timeout = 120;
+    public $timeout = 160;
 
     public function __construct($currentPerson)
     {
         $this->currentPerson = $currentPerson;
-        requestBin(['in'=>'inside construct member import']);
     }
 
     /**
@@ -50,11 +49,9 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
      */
     public function collection(Collection $rows)
     {
-        requestBin(['in'=>'inside construct member import']);
         $count = 0;
         foreach ($rows as $row) {
-            requestBin($row->toArray());
-             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
+            if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson);
             }
@@ -591,7 +588,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 100;
     }
 
     public function batchSize(): int

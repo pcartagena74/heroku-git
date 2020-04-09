@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: An includeable script to fix left nav display
  * Created: 11/19/2017
@@ -18,7 +18,12 @@ if(isset($tag) && isset($newTxt)) {
 } else {
     $txtChange = 0;
 }
-?>
+$url = url($path);
+if(!empty($url_override)){
+    // $url = '{{$url_override}}';
+}
+        
+@endphp
 <script>
     $(document).ready(function () {
         var setContentHeight = function () {
@@ -35,12 +40,7 @@ if(isset($tag) && isset($newTxt)) {
 
             $RIGHT_COL.css('min-height', contentHeight);
         };
-        //added as for ticketit we don't have $path variable also this will remove dependency on $path vairable and avoid any conflict in future
-        var url      = window.location.href;
-        @if(!empty($url_override))
-            url = '{{$url_override}}';
-        @endif
-        $SIDEBAR_MENU.find('a[href="'+url+'"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+        $SIDEBAR_MENU.find('a[href="{{ $url }}"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
             setContentHeight();
         }).parent().addClass('active');
 
