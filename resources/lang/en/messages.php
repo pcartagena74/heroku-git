@@ -1202,11 +1202,11 @@ return [
         'error_500'                 => '<p>Internal Server Error Occurred.</p> We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'no_msg_available'          => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'             => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
-        'bad_url_link_mail_tracker' => 'Oops, the link you are trying to access has expired.',
+        'bad_url_link_mail_tracker' => 'Oops, the link you are using has expired.',
     ],
     'validation'             => [
         'create_org_existing_user' => 'Please select one existing user',
-        'file_required_extension'  => 'The file must be one of the following types: xlsx, ods, or csv.',
+        'file_required_extension'  => 'The file must be one of the following types xlsx, ods, csv type.',
     ],
 
     'page_generic_exception' => [
@@ -1223,8 +1223,8 @@ return [
 
     'functions' => [
         'merge' => [
-            'assoc_emails' => "La siguiente dirección de correo electrónico está asociada con cualquier cuenta.
-                               Todos estarán asociados con <b>\"The Keeper\"</b> después de la fusión.",
+            'assoc_emails' => "The following email address are associated with either account.
+                               They will all be associated with <b>\"The Keeper\"</b> post-merge.",
         ],
     ],
 ];

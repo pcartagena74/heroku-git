@@ -1224,7 +1224,8 @@ return [
 
     'functions' => [
         'merge' => [
-            'assoc_emails' => "es-",
+            'assoc_emails' => "La siguiente dirección de correo electrónico está asociada con cualquier cuenta.
+                               Todos estarán asociados con <b>\"El Guardado\"</b> después de la fusión.",
         ],
     ],
 ];
