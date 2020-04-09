@@ -8,6 +8,7 @@ use App\Address;
 use App\Email;
 use App\Event;
 use App\Imports\MembersImport;
+use App\Jobs\NotifyUserOfCompletedImport;
 use App\OrgPerson;
 use App\Person;
 use App\PersonStaging;
@@ -26,7 +27,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel as Excel;
-use Rap2hpoutre\FastExcel\FastExcel;
 use Validator;
 
 class UploadController extends Controller
@@ -115,7 +115,8 @@ class UploadController extends Controller
         $file_name = Str::random(40) . '.' . $extension;
         $tmp_path  = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
         $path      = Storage::disk('local')->path($file_name);
-        $eventID   = request()->input('eventID');
+        // dd(storage_path($file_name));
+        $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
             // go back with message
@@ -124,49 +125,60 @@ class UploadController extends Controller
 
         switch ($what) {
             case 'mbrdata':
-                $collection                  = (new FastExcel)->import($path);
-                $currentPerson               = Person::where('personID', auth()->user()->id)->get();
-                $currentPerson               = (object) $currentPerson[0]->toArray();
-                $rows                        = $this->rowsConsumer();
-                $count                       = 0;
-                $log                         = array();
-                $this->person_staging_master = [];
-                foreach ($collection as $key => $value) {
-                    $var = array();
-                    foreach ($value as $key1 => $value1) {
-                        $key1       = strtolower(str_replace(' ', '_', $key1));
-                        $var[$key1] = $value1;
-                    }
-                    if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
-                        $this->storeImportDataDB($var, $currentPerson, $count);
-                        $count++;
-                    }
-                }
-                $this->bulkInsertAll();
-                PersonStaging::insertIgnore($this->person_staging_master);
-                $this->person_staging_master = [];
-                $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
-                    ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
+                // $collection                  = (new FastExcel)->import($path);
+                // $currentPerson               = Person::where('personID', auth()->user()->id)->get();
+                // $currentPerson               = (object) $currentPerson[0]->toArray();
+                // $rows                        = $this->rowsConsumer();
+                // $count                       = 0;
+                // $log                         = array();
+                // $this->person_staging_master = [];
+                // foreach ($collection as $key => $value) {
+                //     $var = array();
+                //     foreach ($value as $key1 => $value1) {
+                //         $key1       = strtolower(str_replace(' ', '_', $key1));
+                //         $var[$key1] = $value1;
+                //     }
+                //     if (!empty($var['pmi_id']) && (!empty($var['primary_email']) || !empty($var['alternate_email']))) {
+                //         $this->storeImportDataDB($var, $currentPerson, $count);
+                //         $count++;
+                //     }
+                // }
+                // $this->bulkInsertAll();
+                // PersonStaging::insertIgnore($this->person_staging_master);
+                // $this->person_staging_master = [];
+                // $request->session()->flash('alert-success', trans('messages.admin.upload.loaded',
+                //     ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
                 // previously used method
 
                 // $this->timeMem('starttime');
-                break; /// not to run on live
-                $import = new MembersImport();
+                // break; /// not to run on live
                 try {
-                    $this->counter = $import->import($path);
-                    $this->counter = \Excel::import(new MembersImport, $path);
-                    $this->timeMem('endime');
+
+                    $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
+                    // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
+                    // $import = new MembersImport($currentPerson);
+                    // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
+                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
+                    //     ->allOnConnection('database')
+                    //     ->allOnQueue('default');
+
+                    $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                        ->onConnection('database')
+                        ->onQueue('default');
+                    requestBin((array) $var);
+                    request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                    $failures = $e->failures();
+                    // $failures = $e->failures();
 
-                    foreach ($failures as $failure) {
-                        // $failure->row(); // row that went wrong
-                        // $failure->attribute(); // either heading key (if using heading row concern) or column index
-                        // $failure->errors(); // Actual error messages from Laravel validator
-                        // $failure->values(); // The values of the row that has failed.
-                        request()->session()->flash('alert-warning', $failure->row(), $failure->values());
-                    }
+                    // foreach ($failures as $failure) {
+                    //     // $failure->row(); // row that went wrong
+                    //     // $failure->attribute(); // either heading key (if using heading row concern) or column index
+                    //     // $failure->errors(); // Actual error messages from Laravel validator
+                    //     // $failure->values(); // The values of the row that has failed.
+                    //     request()->session()->flash('alert-warning', $failure->row(), $failure->values());
+                    // }
                 }
 
                 break;

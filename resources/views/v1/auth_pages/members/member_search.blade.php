@@ -119,7 +119,7 @@ if ($mbr_list){
         });
     </script>
     @endif
-    @include('v1.parts.menu-fix', array('path' => '/search'))
+    @include('v1.parts.menu-fix', array('path' => 'search'))
 @endsection
 
 @section('modals')
