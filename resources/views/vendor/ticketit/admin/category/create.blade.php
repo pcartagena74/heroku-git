@@ -9,3 +9,6 @@
         {!! CollectiveForm::close() !!}
     </div>
 @stop
+@section('scripts')
+    @include('v1.parts.menu-fix', array('path' => url('tickets-admin')))
+@endsection

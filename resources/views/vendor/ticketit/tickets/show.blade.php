@@ -13,7 +13,7 @@
 @endsection
 
 @section('scripts')
-    @include('v1.parts.menu-fix', array('url_override' => url('tickets')))
+    @include('v1.parts.menu-fix', array('path' => url('tickets')))
 @endsection
 
 @section('footer')

@@ -26,7 +26,7 @@
                 <div class="form-group">
                     {!! CollectiveForm::label('subject', trans('ticketit::lang.subject') . trans('ticketit::lang.colon'), ['class' => 'col-lg-2 control-label']) !!}
                     <div class="col-lg-10">
-                        {!! CollectiveForm::text('subject', null, ['class' => 'form-control', 'required' => 'required' ,'id'=>'ticket_subject']) !!}
+                        {!! CollectiveForm::text('subject', null, ['class' => 'form-control' ,'id'=>'ticket_subject']) !!}
                         <span class="help-block">
                             {!! trans('ticketit::lang.create-ticket-brief-issue') !!}
                         </span>
@@ -35,7 +35,7 @@
                 <div class="form-group">
                     {!! CollectiveForm::label('content', trans('ticketit::lang.description') . trans('ticketit::lang.colon'), ['class' => 'col-lg-2 control-label']) !!}
                     <div class="col-lg-10">
-                        {!! CollectiveForm::textarea('content', null, ['class' => 'form-control summernote-editor', 'rows' => '5', 'required' => 'required','id'=>'ticket_content']) !!}
+                        {!! CollectiveForm::textarea('content', null, ['class' => 'form-control summernote-editor', 'rows' => '5','id'=>'ticket_content']) !!}
                         <span class="help-block">
                             {!! trans('ticketit::lang.create-ticket-describe-issue') !!}
                         </span>
@@ -46,13 +46,13 @@
                     <div class="form-group col-lg-4">
                         {!! CollectiveForm::label('priority', trans('ticketit::lang.priority') . trans('ticketit::lang.colon'), ['class' => 'col-lg-6 control-label']) !!}
                         <div class="col-lg-6">
-                            {!! CollectiveForm::select('priority_id', getTicketPriorities(), 2, ['class' => 'form-control', 'required' => 'required','id'=>'ticket_priority']) !!}
+                            {!! CollectiveForm::select('priority_id', getTicketPriorities(), 2, ['class' => 'form-control', 'id'=>'ticket_priority']) !!}
                         </div>
                     </div>
                     <div class="form-group col-lg-4">
                         {!! CollectiveForm::label('category', trans('ticketit::lang.category') . trans('ticketit::lang.colon'), ['class' => 'col-lg-6 control-label']) !!}
                         <div class="col-lg-6">
-                            {!! CollectiveForm::select('category_id', getTicketCategories(), null, ['class' => 'form-control', 'required' => 'required','id'=>'ticket_category']) !!}
+                            {!! CollectiveForm::select('category_id', getTicketCategories(), null, ['class' => 'form-control', 'id'=>'ticket_category']) !!}
                         </div>
                     </div>
                 </div>
@@ -103,8 +103,7 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-success">
-                    {{trans('ticketit::lang.the-ticket-has-been-created')
-                                            }}
+                    {{trans('ticketit::lang.the-ticket-has-been-created')}}
                 </div>
             </div>
             <div class="modal-footer">

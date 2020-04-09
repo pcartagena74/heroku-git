@@ -977,6 +977,7 @@ if (!function_exists('isDate')) {
 
 
 function requestBin($data){
+    return;
     // API URL
             $url = 'https://enpfjlvpu0oo.x.pipedream.net';
             // Create a new cURL resource
