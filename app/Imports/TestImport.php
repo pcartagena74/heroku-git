@@ -27,8 +27,8 @@ class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, With
      */
     public function collection(Collection $collection)
     {
+            dd('should execute this');
         foreach ($collection as $row) {
-            requestBin($row->toArray());
 
         }
 
