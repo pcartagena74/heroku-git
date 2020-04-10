@@ -31,6 +31,8 @@ class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, With
             requestBin($row->toArray());
 
         }
+
+        return $collection;
     }
 
     public function getProcessedRowCount(): int
