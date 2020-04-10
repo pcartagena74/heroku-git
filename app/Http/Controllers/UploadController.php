@@ -158,7 +158,7 @@ class UploadController extends Controller
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
                     // $import = new MembersImport($currentPerson);
                     $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                         ->onConnection('database')
                         ->onQueue('default');
                     dd($var);
