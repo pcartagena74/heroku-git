@@ -1044,10 +1044,10 @@ var returnVal;
                 if (_this.config.onAfterLoad !== undefined) {
                     _this.config.onAfterLoad();
                 }
-                _this.makeSortable();
-                // setTimeout(function() {
-                //     _this.makeSortable();
-                // }, 2000);
+                // _this.makeSortable();
+                setTimeout(function() {
+                    _this.makeSortable();
+                }, 2000);
                 jQuery('.content-main').attr('data-width', '600px');
                 jQuery('.main').css('width', '600px');
             });

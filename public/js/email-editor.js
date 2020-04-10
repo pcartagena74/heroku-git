@@ -763,7 +763,7 @@ $(document).on('click', '.modal .btn-upload', function() {
     var form_data = new FormData();
     form_data.append('file', file_data);
     $.ajax({
-        url: 'upload.php', // point to server-side PHP script
+        url: base_url+'upload.php', // point to server-side PHP script
         dataType: 'text', // what to expect back from the PHP script, if anything
         cache: false,
         contentType: false,
@@ -847,10 +847,10 @@ $(document).on('click', '.btn-save-template', function() {
         },
         success: function(data) {
         //  console.log(data);
-            if (data=== 'ok') {
+            if (data.success === true) {
                 $('#popup_save_template').modal('hide');
             } else {
-              $('.input-error').text('Problem in server');
+              $('.input-error').text(data.error);
             }
         },
         error: function(error) {

@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('trans_choice', function ($expression) {
             return "<?php trans_choice({$expression}); ?>";
         });
+        
     }
 
     /**

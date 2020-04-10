@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Campaign;
+use App\Models\EmailCampaignTemplateBlock;
 use App\Org;
 use App\Person;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class CampaignController extends Controller
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
             ->with('emails.click_count')
             ->withCount('emails', 'urls')
+            ->orderBy('campaignID', 'DESC')
             ->get();
         return view('v1.auth_pages.campaigns.campaigns', compact('campaigns'));
     }
@@ -41,12 +43,44 @@ class CampaignController extends Controller
     {
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
+        // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
         return view('v1.auth_pages.campaigns.email_builder', compact('org'));
     }
+    public function storeEmailTemplate(Request $request)
+    {
+        $c                   = new Campaign;
+        $this->currentPerson = Person::find(auth()->id());
+        $c->orgID            = $this->currentPerson->defaultOrgID;
+        $c->title            = $request->input('name');
+        $c->fromName         = $request->input('from_name');
+        $c->fromEmail        = $request->input('from_email');
+        $c->replyEmail       = $request->input('from_email');
+        // $c->subject          = request()->input('subject');
+        $c->subject   = 'subject';
+        $c->preheader = request()->input('preheader');
+        $c->creatorID = $this->currentPerson->personID;
+        $c->updaterID = $this->currentPerson->personID;
+        $c->save();
+        $content = $request->input('contentArr');
+        foreach ($content as $key => $value) {
+            if (isset($value['id'])) {
+                EmailCampaignTemplateBlock::create([
+                    'campaign_id' => $c->campaignID,
+                    'block_id'    => $value['id'],
+                    'content'     => $value['content'],
+                ]);
+            }
+        }
+        return response()->json(['success' => true, 'message' => 'Template Saved']);
+    }
 
+    public function loadEmailTemplate()
+    {
+
+    }
     public function createTemplatePreview(Request $request)
     {
-        $html = $request->input('html');
+        $html     = $request->input('html');
         $todayh   = getdate();
         $filename = "email-editor-" . $todayh['seconds'] . $todayh['minutes'] . $todayh['hours'] . $todayh['mday'] . $todayh['mon'] . $todayh['year'];
 
@@ -70,14 +104,14 @@ class CampaignController extends Controller
         fclose($fp);
 
         //create zip document
-        $zip = new ZipArchive();
+        // $zip = new ZipArchive();
 
-        $zip->open($zipFilename, ZipArchive::CREATE);
-        $zip->addFile($newHtmlFilename, 'index.html');
-        $zip->close();
+        // $zip->open($zipFilename, ZipArchive::CREATE);
+        // $zip->addFile($newHtmlFilename, 'index.html');
+        // $zip->close();
         //remove html file
         //unlink($newHtmlFilename);
-
+        $zipFileUrl              = url('/');
         $response                = array();
         $response['code']        = 0;
         $response['url']         = $zipFileUrl;
@@ -148,7 +182,10 @@ class CampaignController extends Controller
      */
     public function show($id)
     {
-        //
+        $this->currentPerson = Person::find(auth()->id());
+        $org                 = Org::find($this->currentPerson->defaultOrgID);
+        // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
+        return view('v1.auth_pages.campaigns.email_builder', compact('org'));
     }
 
     public function show_campaign(Campaign $campaign)
@@ -166,7 +203,7 @@ class CampaignController extends Controller
     {
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
-        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('campaign', 'org'));
+        return view('v1.auth_pages.campaigns.email_builder', compact('campaign', 'org'));
     }
 
     /**

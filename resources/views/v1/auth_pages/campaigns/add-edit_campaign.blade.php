@@ -60,33 +60,13 @@ $topBits = '';  // remove this if this was set in the controller
                             {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line')) !!}
                         @endif
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel">
-        <a aria-controls="collapseTwo" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseTwo" id="headingTwo" role="tab">
-            <i class="panel-title">
-                Message Body
-            </i>
-        </a>
-        <div aria-labelledby="headingTwo" class="panel-collapse collapse" id="collapseTwo" role="tabpanel">
-            <div class="panel-body">
-                <button class="btn btn-info btn-lg" data-target="#emailBuilderModal" data-toggle="modal" type="button">
-                    Show Email Builder
-                </button>
-                @include('v1.auth_pages.campaigns.email_builder')
-                <div class="modal fade" id="emailBuilderModal" role="dialog">
-                    <div class="modal-dialog">
-                    </div>
+                <div class="form-group col-sm-12 col-xs-12 clear-fix">
+                    @include('v1.auth_pages.campaigns.email_builder')
                 </div>
-                {{-- @if($campaign == null)
-                        {!! Form::textarea('content', '', array('class' => 'form-control rich')) !!}
-                    @else
-                        {!! Form::textarea('content', $campaign->content, array('class' => 'form-control rich')) !!}
-                    @endif --}}
             </div>
         </div>
     </div>
+
     <div class="panel">
         <a aria-controls="collapseThree" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" id="headingThree" role="tab">
             <i class="panel-title">

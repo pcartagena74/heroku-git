@@ -302,7 +302,10 @@ Route::post('/campaign', 'CampaignController@store');
 Route::get('/campaign/{campaign}', 'CampaignController@show');
 Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
+// Email Builder Routes
 
+Route::post('/storeEmailTemplate','CampaignController@storeEmailTemplate');
+// Email Builder Routes ends
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
