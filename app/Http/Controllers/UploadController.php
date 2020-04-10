@@ -161,7 +161,8 @@ class UploadController extends Controller
                     //     ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
                     //     ->allOnConnection('database')
                     //     ->allOnQueue('default');
-
+                    $var = NotifyUserOfCompletedImport::dispatch($currentPerson, 1);
+                    dd($var);
                     $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
                         ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                         ->onConnection('database')
