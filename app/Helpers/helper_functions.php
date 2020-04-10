@@ -409,7 +409,7 @@ if (!function_exists('getTicketPriorities')) {
         return $priorities;
     }
 }
-if (!function_exists('storeImportDataDB')) {
+if (!function_exists('storeImportDataDBs')) {
 
     $starttime;
     $phone_master;
@@ -419,7 +419,7 @@ if (!function_exists('storeImportDataDB')) {
     /*
     all insert and update are commented from this code for testing on live
      */
-    function storeImportDataDB($row, $currentPerson, $count_g = null)
+    function storeImportDataDBs($row, $currentPerson, $count_g = null)
     {
         DB::connection()->disableQueryLog();
 

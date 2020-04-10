@@ -21,7 +21,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, SkipsOnFailure, ShouldQueue
+class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, SkipsOnFailure, ShouldQueue
 {
 
     // WithBatchInserts only works with toModel concern
@@ -55,7 +55,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, S
             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 requestBin($row->toArray());
                 ++$count;
-                $this->storeImportDataDB($row->toArray(), $this->currentPerson);
+                $this->storeImportDataDB($row->toArray(), $this->currentPerson,'asdfsdaf');
             }
         }
         $this->row_count += $count;
