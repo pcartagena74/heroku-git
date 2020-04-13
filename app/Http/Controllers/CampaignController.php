@@ -7,13 +7,17 @@ use App\Models\EmailCampaignTemplateBlock;
 use App\Org;
 use App\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Mail;
 
 class CampaignController extends Controller
 {
+    protected $currentPerson;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->currentPerson = Person::find(auth()->id());
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +48,7 @@ class CampaignController extends Controller
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
-        return view('v1.auth_pages.campaigns.email_builder', compact('org'));
+        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org'));
     }
     public function storeEmailTemplate(Request $request)
     {
@@ -74,9 +78,67 @@ class CampaignController extends Controller
         return response()->json(['success' => true, 'message' => 'Template Saved']);
     }
 
-    public function loadEmailTemplate()
+    public function updateEmailTemplate(Request $request)
     {
+        $campaign_id = $request->input('id');
+        $campaign    = Campaign::find($campaign_id);
+        if (empty($campaign)) {
+            return response()->json(['success' => false, 'message' => 'Campaign not found!']);
+        }
+        // $campaign->title            = $request->input('name');
+        // $campaign->fromName         = $request->input('from_name');
+        // $campaign->fromEmail        = $request->input('from_email');
+        // $campaign->replyEmail       = $request->input('from_email');
+        // $campaign->subject          = request()->input('subject');
+        $campaign->subject   = 'subject';
+        $campaign->preheader = request()->input('preheader');
+        $campaign->updaterID = $this->currentPerson->personID;
+        $campaign->save();
+        $content = $request->input('contentArr');
+        if (!empty($content) && count($content) > 0) {
+            EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->delete();
+            foreach ($content as $key => $value) {
+                if (isset($value['id'])) {
+                    EmailCampaignTemplateBlock::create([
+                        'campaign_id' => $campaign->campaignID,
+                        'block_id'    => $value['id'],
+                        'content'     => trim($value['content']),
+                    ]);
+                }
+            }
+        }
+        // request()->session()->flash('alert-success', "Template Updated.");
+        return response()->json(['success' => true, 'message' => 'Template Updated']);
+    }
 
+    public function getEmailTemplates(Request $request)
+    {
+        $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)->orderBy('campaignID', 'desc')->paginate(10);
+        $pages     = $campaigns->links();
+        return response()->json(['success' => true, 'list' => $campaigns, 'pages' => $pages->toHtml()]);
+    }
+
+    public function storeEmailTemplateForPreview(Request $request)
+    {
+        $html      = $request->input('html');
+        $file_name = Str::random(40) . '.html';
+        $tmp_path  = Storage::disk('local')->put($file_name,
+            view('v1.auth_pages.campaigns.preview_email_template')
+                ->with(['html' => $html])->render());
+        return response()->json(['success' => true, 'preview_url' => url('preview-email-template', $file_name)]);
+    }
+
+    public function previewEmailTemplate(Request $request, $filename)
+    {
+        return Storage::disk('local')->get($filename);
+    }
+    public function getEmailTemplateBlocks(Request $request)
+    {
+        $campaign = Campaign::find($request->input('id'));
+        if (empty($campaign)) {
+            return response()->json(['success' => false, 'message' => 'Template not found!']);
+        }
+        return response()->json(['success' => true, 'blocks' => $campaign->template_blocks]);
     }
     public function createTemplatePreview(Request $request)
     {

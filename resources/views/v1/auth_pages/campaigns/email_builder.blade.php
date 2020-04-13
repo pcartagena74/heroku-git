@@ -14,7 +14,7 @@ $topBits = '';
 $blocks_category=get_template_builder_category();
 
 
-$actual_link = url('/');
+$actual_link = url('/').'/';
 $_outputHtml='';
 for ($i = 0; $i < sizeof($blocks_category); $i++) {
  $_outputHtml .= '
@@ -232,4 +232,29 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js">
 </script>
 @include('v1.auth_pages.campaigns.scripts.email_builder-js')
+<!-- Modal Dialog -->
+<div aria-hidden="true" aria-labelledby="popup_edit_template" class="modal fade" id="popup_edit_template" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
+                    {{ trans('ticketit::lang.flash-x') }}
+                </button>
+                <h4 class="modal-title">
+                    {{ trans('messages.email_builder_popup.edit_success.title') }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ trans('messages.email_builder_popup.edit_success.body') }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" type="button">
+                    {{ trans('messages.email_builder_popup.edit_success.btn_ok') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

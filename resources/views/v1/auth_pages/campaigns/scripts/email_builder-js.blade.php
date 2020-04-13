@@ -1,7 +1,6 @@
 <script>
     var _is_demo = false;
-var base_url = '{!! url('/') !!}';
-
+var base_url = '{!! url('/').'/' !!}';
 function loadImages() {
     $.ajax({
         url: 'get-files.php',
@@ -57,12 +56,12 @@ var _emailBuilder = $('.editor').emailBuilder({
     showCollapseMenuinBottom: true,
     //setting items
     showSettingsBar: true,
-    showSettingsPreview: false,
+    showSettingsPreview: true,
     showSettingsExport: false,
     showSettingsImport: false,
     showSettingsSendMail: false,
     showSettingsSave: true,
-    showSettingsLoadTemplate: false,
+    showSettingsLoadTemplate: true,
     //show context menu
     showContextMenu: true,
     showContextMenu_FontFamily: true,
@@ -158,7 +157,39 @@ var _emailBuilder = $('.editor').emailBuilder({
     },
     onBeforeSettingsSaveButtonClick: function(e) {
         console.log('onBeforeSaveButtonClick html');
-        //e.preventDefault();
+        @if(!empty($campaign->campaignID))
+            e.preventDefault();
+            var arr = [];
+            $('.content-main .sortable-row-content').each(function(i, item) {
+                _dataId = $(this).attr('data-id');
+                _html = $(this).html();
+                arr[i] = {
+                    id: _dataId,
+                    content: _html
+                };
+            });
+            $.ajax({
+                url: '{{ url('updateEmailTemplate') }}',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    contentArr: arr,
+                    id: {{$campaign->campaignID}}
+                },
+                success: function(data) {
+                    //  console.log(data);
+                    if (data.success === true) {
+                        $('#popup_edit_template').modal('show');
+                    } else {
+                        $('.input-error').text(data.message);
+                    }
+                },
+                error: function(error) {
+                    $('.input-error').text('Internal error');
+                }
+            });
+        @endif
+
         //  if (_is_demo) {
         //      $('#popup_demo').modal('show');
         //      e.preventDefault();//return false
@@ -185,17 +216,18 @@ var _emailBuilder = $('.editor').emailBuilder({
     onSettingsPreviewButtonClick: function(e, getHtml) {
         console.log('onPreviewButtonClick html');
         $.ajax({
-            url: 'export.php',
+            url: base_url + 'storeEmailTemplateForPreview',
             type: 'POST',
             data: {
                 html: getHtml
             },
             dataType: 'json',
             success: function(data) {
-                if (data.code == -5) {
-                    $('#popup_demo').modal('show');
-                    return;
-                } else if (data.code == 0) {
+                // if (data.success == true) {
+                //     $('#popup_demo').modal('show');
+                //     return;
+                // } 
+                if (data.success == true) {
                     $('#previewModalFrame').attr('src', data.preview_url);
                     $('.preview_url').html('<a href="' + data.preview_url + '" target="_blank">' + data.preview_url + '</a>');
                     $('#previewModal').modal('show');
@@ -234,25 +266,9 @@ var _emailBuilder = $('.editor').emailBuilder({
         //e.preventDefault();
     },
     onBeforeSettingsLoadTemplateButtonClick: function(e) {
+        console.log('onBeforeSettingsLoadTemplateButtonClick');
         $('.template-list').html('<div style="text-align:center">Loading...</div>');
-        $.ajax({
-            url: 'load_templates.php',
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                if (data.code == 0) {
-                    _templateItems = '';
-                    _templateListItems = data.files;
-                    for (var i = 0; i < data.files.length; i++) {
-                        _templateItems += '<div class="template-item" data-id="' + data.files[i].id + '">' + '<div class="template-item-delete" data-id="' + data.files[i].id + '">' + '<i class="fa fa-trash-o"></i>' + '</div>' + '<div class="template-item-icon">' + '<i class="fa fa-file-text-o"></i>' + '</div>' + '<div class="template-item-name">' + data.files[i].name + '</div>' + '</div>';
-                    }
-                    $('.template-list').html(_templateItems);
-                } else if (data.code == 1) {
-                    $('.template-list').html('<div style="text-align:center">No items</div>');
-                }
-            },
-            error: function() {}
-        });
+        load_template_data();
     },
     onSettingsSendMailButtonClick: function(e) {
         console.log('onSettingsSendMailButtonClick html');
@@ -296,15 +312,16 @@ var _emailBuilder = $('.editor').emailBuilder({
         loadImages();
     },
     onBeforePopupSelectTemplateButtonClick: function(dataId) {
+        console.log('onBeforePopupSelectTemplateButtonClick');
         $.ajax({
-            url: 'get_template_blocks.php',
+            url: base_url+'getEmailTemplateBlocks',
             type: 'POST',
-            //dataType: 'json',
+            dataType: 'json',
             data: {
                 id: dataId
             },
             success: function(data) {
-                data = JSON.parse(data);
+                // data = JSON.parse(data);
                 $('.content-wrapper .email-editor-elements-sortable').html('');
                 for (var i = 0; i < data.blocks.length; i++) {
                     _content = '';
@@ -321,7 +338,8 @@ var _emailBuilder = $('.editor').emailBuilder({
                 $('.input-error').text('Internal error');
             }
         });
-        //_emailBuilder.makeSortable();
+        _emailBuilder.makeSortable();
+        return;
     },
     onBeforePopupSelectImageButtonClick: function(e) {
         console.log('onBeforePopupSelectImageButtonClick html');
@@ -345,8 +363,7 @@ var _emailBuilder = $('.editor').emailBuilder({
                 contentArr: arr
             },
             success: function(data) {
-                //  console.log(data);
-                if (data === 'ok') {
+                if (data.success === true) {
                     $('#popup_save_template').modal('hide');
                 } else {
                     $('.input-error').text('Problem in server');
@@ -395,6 +412,39 @@ _emailBuilder.setAfterLoad(function(e) {
     $('.elements-db').remove();
 });
 
+$(document).on('click', '.template-list-pagination .pagination a', function(event){
+  event.preventDefault(); 
+  var page = $(this).attr('href').split('page=')[1];
+  load_template_data(page);
+ });
+
+function load_template_data(page){
+        var url = base_url + 'getEmailTemplates';
+        if(!isNaN(page)) {
+            url = url + '?page='+page;
+        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.success == true) {
+                    _templateItems = '';
+                    var list = data.list.data;
+                    _templateListItems = data.list;
+                    for (var i = 0; i < list.length; i++) {
+                        _templateItems += '<div class="template-item" data-id="' + list[i].campaignID + '">' + '<div class="template-item-delete" data-id="' + list[i].campaignID + '">' + '<i class="fa fa-trash-o"></i>' + '</div>' + '<div class="template-item-icon">' + '<i class="fa fa-file-text-o fa-3x"></i>' + '</div>' + '<div class="template-item-name">' + list[i].title + '</div>' + '</div>';
+                    }
+                    $('.template-list').html(_templateItems);
+                    $('.template-list-pagination').html(data.pages);
+                } else {
+                    $('.template-list').html('<div style="text-align:center">No items</div>');
+                }
+            },
+            error: function() {}
+        });
+}
+
 
 @if(isset($campaign->template_blocks))
 
@@ -403,19 +453,21 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         $('.content-wrapper .email-editor-elements-sortable').html('');
         _emailBuilder.makeSortable();
     },2000);
-    for (var i = 0; i < data.length; i++) {
+    if(data.length > 0) {
         _content = '';
-        _content += '<div class="sortable-row">' + '<div class="sortable-row-container">' + ' <div class="sortable-row-actions">';
-        _content += '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>';
-        _content += '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>';
-        _content += '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>';
-        _content += '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>';
-        _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + data[i].property.split(',')[0] + '  >' + data[i].content + '</div></div></div>';
+        for (var i = 0; i < data.length; i++) {
+            _content += '<div class="sortable-row">' + '<div class="sortable-row-container">' + ' <div class="sortable-row-actions">';
+            _content += '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>';
+            _content += '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>';
+            _content += '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>';
+            _content += '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>';
+            _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + data[i].property.split(',')[0] + '  >' + data[i].content + '</div></div></div>';
+            // _emailBuilder.makeSortable();
+        }
         setTimeout(function() {
             $('.content-wrapper .email-editor-elements-sortable').append(_content);
                     _emailBuilder.makeSortable();
         }, 2000);
-        // _emailBuilder.makeSortable();
     }
 @endif
 </script>

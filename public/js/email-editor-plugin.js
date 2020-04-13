@@ -4,11 +4,9 @@ var returnVal;
  * Author: Rufat Askerov
  * Author Uri : https://cidcode.net
  */
-
 ;
 (function(factory) {
     "use strict";
-
     if (typeof define === 'function' && define.amd) { // AMD
         define(['jquery'], factory);
     } else if (typeof exports == "object" && typeof module == "object") { // CommonJS
@@ -18,7 +16,6 @@ var returnVal;
     }
 })(function($, undefined) {
     "use strict";
-
     // -------------------------- variables -------------------------- //
     //left menu all items
     var _tabMenuItems = {
@@ -81,15 +78,12 @@ var returnVal;
             parentSelector: 'tab-property'
         }
     };
-
-
     /**
      * Using all variables in plugin
      */
     var _language = [];
     var _aceEditor, _popup_save_template, _popup_editor, _blankPageHtml, _popup_send_email, _popup_demo, _popup_load_template;
-    var _this, _nav, _result, _ytbUrl,_popupImportContent , _balContentWrapper, _removeClass, videoid, _getHtml, _addClass, _popupImagesContent, _loadPageHtml, _padding, _selection, _span, _menuType, _top, _left, _contentText, _spanId, _dataId, _outputSideBar, _url, _width, _outputContent, _class, _socialRow, _socialType, _val, _menu, _value, _activeElement, _href, _html, _dataTypes, _typeArr, _arrSize, _style, _aceEditor, _parentSelector, _parent, _arrElement, _outputHtml, _settings, _tabElements, _tabProperty, _items, _contentMenu, _generatedElements, _elementsContainer, _elements, _element, _tabSelector, _menuItem, _tabMenuItem, _accordionMenuItem, _dataValue;
-
+    var _this, _nav, _result, _ytbUrl, _popupImportContent, _balContentWrapper, _removeClass, videoid, _getHtml, _addClass, _popupImagesContent, _loadPageHtml, _padding, _selection, _span, _menuType, _top, _left, _contentText, _spanId, _dataId, _outputSideBar, _url, _width, _outputContent, _class, _socialRow, _socialType, _val, _menu, _value, _activeElement, _href, _html, _dataTypes, _typeArr, _arrSize, _style, _aceEditor, _parentSelector, _parent, _arrElement, _outputHtml, _settings, _tabElements, _tabProperty, _items, _contentMenu, _generatedElements, _elementsContainer, _elements, _element, _tabSelector, _menuItem, _tabMenuItem, _accordionMenuItem, _dataValue;
     var EmailBuilder = function(elem, options) {
         //Private variables
         this.elem = elem;
@@ -99,20 +93,18 @@ var returnVal;
     };
     EmailBuilder.prototype = {
         defaults: {
-            siteBaseUrl:'',
+            siteBaseUrl: '',
             //global settings
             elementJsonUrl: 'elements.json',
-            elementsHTML:'',
+            elementsHTML: '',
             langJsonUrl: 'lang.json',
             lang: 'en',
             loading_color1: '#3B7694',
             loading_color2: '#09181F',
             showLoading: true,
-
             blankPageHtmlUrl: 'template-blank-page.html',
             // when page load showing this html
             loadPageHtmlUrl: 'template-load-page.html',
-
             //show context menu
             showContextMenu: true,
             showContextMenu_FontFamily: true,
@@ -122,7 +114,6 @@ var returnVal;
             showContextMenu_Underline: true,
             showContextMenu_Strikethrough: true,
             showContextMenu_Hyperlink: true,
-
             //left menu
             showElementsTab: true,
             showPropertyTab: true,
@@ -130,7 +121,6 @@ var returnVal;
             showBlankPageButton: true,
             showCollapseMenuinBottom: true, //btn-collapse-bottom
             showMobileView: true,
-
             //setting items
             showSettingsBar: true,
             showSettingsPreview: true,
@@ -139,13 +129,11 @@ var returnVal;
             showSettingsSendMail: true,
             showSettingsSave: true,
             showSettingsLoadTemplate: true,
-
             //show or hide elements actions
             showRowMoveButton: true,
             showRowRemoveButton: true,
             showRowDuplicateButton: true,
             showRowCodeEditorButton: true,
-
             //events of settings
             onSettingsPreviewButtonClick: function(e) {},
             onSettingsExportButtonClick: function(e) {},
@@ -153,7 +141,6 @@ var returnVal;
             onSettingsSaveButtonClick: function(e) {},
             onBeforeSettingsLoadTemplateButtonClick: function(e) {},
             onSettingsSendMailButtonClick: function(e) {},
-
             //events in modal
             onBeforeChangeImageClick: function(e) {},
             onBeforePopupSelectImageButtonClick: function(e) {},
@@ -162,23 +149,17 @@ var returnVal;
             onPopupSendMailButtonClick: function(e) {},
             onPopupUploadImageButtonClick: function(e) {},
             onTemplateDeleteButtonClick: function(e) {},
-
             //selected element events
             onBeforeRowRemoveButtonClick: function(e) {},
             onAfterRowRemoveButtonClick: function(e) {},
-
             onBeforeRowDuplicateButtonClick: function(e) {},
             onAfterRowDuplicateButtonClick: function(e) {},
-
             onBeforeRowEditorButtonClick: function(e) {},
             onAfterRowEditorButtonClick: function(e) {},
-
             onBeforeShowingEditorPopup: function(e) {},
             onAfterLoad: function(e) {},
-
             onElementDragStart: function(e) {},
             onElementDragFinished: function(e, contentHtml) {},
-
             onUpdateButtonClick: function(e) {}
         },
         /**
@@ -187,10 +168,8 @@ var returnVal;
         init: function() {
             _this = this;
             _this.config = $.extend({}, this.defaults, this.options);
-
             //show loading
             _this.show_loading();
-
             $.ajax({
                 url: _this.config.loadPageHtmlUrl,
                 data: '',
@@ -203,9 +182,6 @@ var returnVal;
                     console.error('Has error');
                 }
             });
-
-
-
             return this;
         },
         /**
@@ -223,405 +199,66 @@ var returnVal;
          * Generate output information
          */
         generate: function(elementsHtml) {
-            _nav = '<div class="nav">' +
-                '<ul class="left-menu">';
+            _nav = '<div class="nav">' + '<ul class="left-menu">';
             if (_this.config.showElementsTab == true) {
-                _nav += '<li class="menu-item tab-selector active" data-tab-selector="tab-elements">' +
-                    '<i class="fa fa-puzzle-piece"></i>' +
-                    '<span class="menu-name">' + _this.langArr.elementsTab + '</span>' +
-                    '</li>';
+                _nav += '<li class="menu-item tab-selector active" data-tab-selector="tab-elements">' + '<i class="fa fa-puzzle-piece"></i>' + '<span class="menu-name">' + _this.langArr.elementsTab + '</span>' + '</li>';
             }
-
             if (_this.config.showPropertyTab == true) {
-                _nav += '<li class="menu-item tab-selector" data-tab-selector="tab-property">' +
-                    '<i class="fa fa-pencil"></i>' +
-                    '<span class="menu-name">' + _this.langArr.propertyTab + '</span>' +
-                    '</li>';
+                _nav += '<li class="menu-item tab-selector" data-tab-selector="tab-property">' + '<i class="fa fa-pencil"></i>' + '<span class="menu-name">' + _this.langArr.propertyTab + '</span>' + '</li>';
             }
-
             if (_this.config.showBlankPageButton == true) {
-                _nav += '<li class="menu-item blank-page">' +
-                    '<i class="fa fa-file"></i>' +
-                    '<span class="menu-name">' + _this.langArr.blankPage + '</span>' +
-                    '</li>';
+                _nav += '<li class="menu-item blank-page">' + '<i class="fa fa-file"></i>' + '<span class="menu-name">' + _this.langArr.blankPage + '</span>' + '</li>';
             }
-
             if (_this.config.showCollapseMenu == true) {
                 _class = '';
                 if (_this.config.showCollapseMenuinBottom == true) {
                     _class = 'btn-collapse-bottom ';
                 }
-
-                _nav += '<li class="menu-item collapse ' + _class + '">' +
-                    '<i class="fa fa-chevron-circle-left"></i>' +
-                    '<span class="menu-name">' + _this.langArr.collapseMenu + '</span>' +
-                    '</li>';
+                _nav += '<li class="menu-item collapse ' + _class + '">' + '<i class="fa fa-chevron-circle-left"></i>' + '<span class="menu-name">' + _this.langArr.collapseMenu + '</span>' + '</li>';
             }
             _nav += '</ul></div>';
-
             _settings = '';
             if (_this.config.showSettingsBar == true) {
-
-
-
-                _settings = '<div class="settings">' +
-                    '<ul>';
+                _settings = '<div class="settings">' + '<ul>';
                 if (_this.config.showSettingsPreview == true) {
-                    _settings += '<li class="setting-item preview" data-toggle="tooltip" title="' + _this.langArr.settingsPreview + '">' +
-                        '<i class="fa fa-eye"></i>' +
-                        '</li>';
+                    _settings += '<li class="setting-item preview" data-toggle="tooltip" title="' + _this.langArr.settingsPreview + '">' + '<i class="fa fa-eye"></i>' + '</li>';
                 }
-
                 if (_this.config.showSettingsExport == true) {
-                    _settings += '<li class="setting-item export" data-toggle="tooltip" title="' + _this.langArr.settingsExport + '">' +
-                        '<i class="fa fa-download  "></i>' +
-                        '</li>';
+                    _settings += '<li class="setting-item export" data-toggle="tooltip" title="' + _this.langArr.settingsExport + '">' + '<i class="fa fa-download  "></i>' + '</li>';
                 }
                 if (_this.config.showSettingsImport == true) {
-                    _settings += '<li class="setting-item import" data-toggle="tooltip" title="' + _this.langArr.settingsImport + '">' +
-                        '<i class="fa fa-upload"></i>' +
-                        '</li>';
+                    _settings += '<li class="setting-item import" data-toggle="tooltip" title="' + _this.langArr.settingsImport + '">' + '<i class="fa fa-upload"></i>' + '</li>';
                 }
                 if (_this.config.showSettingsSave == true) {
-                    _settings += '<li class="setting-item save-template" data-toggle="tooltip" title="' + _this.langArr.settingsSaveTemplate + '">' +
-                        '<i class="fa fa-floppy-o"></i>' +
-                        '</li>';
+                    _settings += '<li class="setting-item save-template" data-toggle="tooltip" title="' + _this.langArr.settingsSaveTemplate + '">' + '<i class="fa fa-floppy-o"></i>' + '</li>';
                 }
-
                 if (_this.config.showSettingsLoadTemplate == true) {
-                    _settings += '<li class="setting-item load-templates" data-toggle="tooltip" title="' + _this.langArr.settingsLoadTemplate + '">' +
-                        '<i class="fa fa-file-text"></i>' +
-                        '</li>';
+                    _settings += '<li class="setting-item load-templates" data-toggle="tooltip" title="' + _this.langArr.settingsLoadTemplate + '">' + '<i class="fa fa-file-text"></i>' + '</li>';
                 }
-
                 if (_this.config.showSettingsSendMail == true) {
-                    _settings += '<li class="setting-item send-email" data-toggle="tooltip" title="' + _this.langArr.settingsSendMail + '">' +
-                        '<i class="fa fa-envelope"></i>' +
-                        '</li>';
+                    _settings += '<li class="setting-item send-email" data-toggle="tooltip" title="' + _this.langArr.settingsSendMail + '">' + '<i class="fa fa-envelope"></i>' + '</li>';
                 }
                 if (_this.config.showMobileView == true) {
-                    _settings += '<li class="setting-item other-devices" data-toggle="tooltip" title="" data-original-title="' + _this.langArr.setttingsMobileViewTitle + '">' +
-                        '<i class="fa fa-mobile"></i>' +
-                        '</li>' +
-                        '<div class="setting-content">' +
-                        '  <div class="setting-content-item other-devices">' +
-                        '    <ul>' +
-                        '    <li class="setting-device-tab mobile " data-tab="mobile-content">' +
-                        '    <i class="fa fa-mobile"></i>' +
-                        '    </li>' +
-                        '    <li class="setting-device-tab desktop active" data-tab="desktop-content">' +
-                        '    <i class="fa fa-desktop"></i>' +
-                        '    </li>' +
-                        '    </ul>' +
-                        '    <div>' +
-                        '      <div class="mobile-content setting-device-content ">' + _this.langArr.setttingsMobileViewMobileDesc + '</div>' +
-                        '      <div class="desktop-content setting-device-content active">' + _this.langArr.setttingsMobileViewDesktopDesc + '</div>' +
-                        '    </div>' +
-                        '  </div>  ' +
-                        '</div>';
+                    _settings += '<li class="setting-item other-devices" data-toggle="tooltip" title="" data-original-title="' + _this.langArr.setttingsMobileViewTitle + '">' + '<i class="fa fa-mobile"></i>' + '</li>' + '<div class="setting-content">' + '  <div class="setting-content-item other-devices">' + '    <ul>' + '    <li class="setting-device-tab mobile " data-tab="mobile-content">' + '    <i class="fa fa-mobile"></i>' + '    </li>' + '    <li class="setting-device-tab desktop active" data-tab="desktop-content">' + '    <i class="fa fa-desktop"></i>' + '    </li>' + '    </ul>' + '    <div>' + '      <div class="mobile-content setting-device-content ">' + _this.langArr.setttingsMobileViewMobileDesc + '</div>' + '      <div class="desktop-content setting-device-content active">' + _this.langArr.setttingsMobileViewDesktopDesc + '</div>' + '    </div>' + '  </div>  ' + '</div>';
                 }
                 /*
                  */
                 _settings += '</ul></div>';
             }
-
             _tabElements = _this.config.elementsHTML; //'<div class="tab-elements element-tab active"><ul class="elements-accordion">' + elementsHtml + '</ul></div>';
-
             //  _tabProperty='<div class="tab-property element-tab"><ul class="elements-accordion"><li class="elements-accordion-item" data-type="background"><a class="elements-accordion-item-title">Background</a><div class="elements-accordion-item-content clearfix"><div id="bg-color" class="bg-color bg-item" setting-type="background-color"><i class="fa fa-adjust"></i></div><!-- <div class="bg-item bg-image" setting-type="background-image"><i class="fa fa-image"></i></div>--></div></li><li class="elements-accordion-item" data-type="padding"><a class="elements-accordion-item-title">Padding</a><div class="elements-accordion-item-content"><div class=" element-boxs clearfix "><div class="big-box col-sm-6 "><input type="text" class="form-control padding all" setting-type="padding"></div><div class="small-boxs col-sm-6"><div class="row"><input type="text" class="form-control padding number" setting-type="padding-top"></div><div class="row clearfix"><div class="col-sm-6"><input type="text" class="form-control padding number" setting-type="padding-left"></div><div class="col-sm-6"><input type="text" class="form-control padding number" setting-type="padding-right"></div></div><div class="row"><input type="text" class="form-control padding number" setting-type="padding-bottom"></div></div></div></div></li><li class="elements-accordion-item" data-type="border-radius"><a class="elements-accordion-item-title">Border Radius</a><div class="elements-accordion-item-content"><div class=" element-boxs border-radius-box clearfix "><div class="big-box col-sm-6 "><input type="text" class="form-control border-radius all" setting-type="border-radius"></div><div class="small-boxs col-sm-6"><div class="row clearfix"><div class="col-sm-6"><input type="text" class="form-control border-radius" setting-type="border-top-left-radius"></div><div class="col-sm-6"><input type="text" class="form-control border-radius" setting-type="border-top-right-radius"></div></div><div class="row clearfix margin"><div class="col-sm-6"><input type="text" class="form-control border-radius" setting-type="border-bottom-left-radius"></div><div class="col-sm-6"><input type="text" class="form-control border-radius" setting-type="border-bottom-right-radius"></div></div></div></div></div></li><li class="elements-accordion-item" data-type="text-style"><a class="elements-accordion-item-title">Text Style</a><div class="elements-accordion-item-content"><div class="element-boxs text-style-box clearfix "><div class="element-font-family col-sm-8"><select class="form-control font-family" setting-type="font-family"><option value="Arial">Arial</option><option value="Helvetica">Helvetica</option><option value="Georgia">Georgia</option><option value="Times New Roman">Times New Roman</option><option value="Verdana">Verdana</option><option value="Tahoma">Tahoma</option><option value="Calibri">Calibri</option></select></div><div class="element-font-size col-sm-4"><input type="text" name="name" class="form-control number" value="14" setting-type="font-size" /></div><div class="icon-boxs text-icons clearfix"><div class="icon-box-item fontStyle" setting-type="font-style" setting-value="italic"><i class="fa fa-italic"></i></div><div class="icon-box-item active underline " setting-type="text-decoration" setting-value="underline"><i class="fa fa-underline"></i></div><div class="icon-box-item line " setting-type="text-decoration" setting-value="line-through"><i class="fa fa-strikethrough"></i></div></div><div class="icon-boxs align-icons clearfix"><div class="icon-box-item left active"><i class="fa fa-align-left"></i></div><div class="icon-box-item center "><i class="fa fa-align-center"></i></div><div class="icon-box-item right"><i class="fa fa-align-right"></i></div></div><div class="clearfix"></div><div class="icon-boxs text-icons "><div id="text-color" class="icon-box-item text-color" setting-type="color"></div>Text Color </div><div class="icon-boxs font-icons clearfix"><div class="icon-box-item" setting-type="bold"><i class="fa fa-bold"></i></div></div></div></div></li><li class="elements-accordion-item" data-type="social-content"><a class="elements-accordion-item-title">Social content</a><div class="elements-accordion-item-content"><div class="col-sm-12 social-content-box"><div class="row" data-social-type="instagram"><label class="small-title">Instagram</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" />Show </label></div><div class="row" data-social-type="pinterest"><label class="small-title">Pinterest</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" />Show </label></div><div class="row" data-social-type="google-plus"><label class="small-title">Google+</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" checked />Show </label></div><div class="row" data-social-type="facebook"><label class="small-title">Facebook</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" checked />Show </label></div><div class="row" data-social-type="twitter"><label class="small-title">Twitter</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" checked />Show </label></div><div class="row" data-social-type="linkedin"><label class="small-title">Linkedin</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" checked />Show </label></div><div class="row" data-social-type="youtube"><label class="small-title">Youtube</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" checked />Show </label></div><div class="row" data-social-type="skype"><label class="small-title">Skype</label><input type="text" name="name" value="#" class="social-input" /><label class="checkbox-title"><input type="checkbox" name="name" checked />Show </label></div></div></div></li><li class="elements-accordion-item" data-type="youtube-frame"><a class="elements-accordion-item-title">Youtube</a><div class="elements-accordion-item-content"><div class="social-content-box "><label>Youtube Video ID</label><input type="text" class=" youtube" setting-type=""></div></div></li><li class="elements-accordion-item" data-type="hyperlink"><a class="elements-accordion-item-title">Hyperlink</a><div class="elements-accordion-item-content"><div class="social-content-box "><label>Url</label><input type="text" class="hyperlink-url" setting-type=""></div></div></li></ul></div>';
-            _tabProperty = '<div class="tab-property element-tab">' +
-                ' <ul class="elements-accordion">' +
-                ' <li class="elements-accordion-item" data-type="background">' +
-                '   <a class="elements-accordion-item-title">' + _this.langArr.propertyBG + '</a>' +
-                '   <div class="elements-accordion-item-content clearfix">' +
-                '   <div id="bg-color" class="bg-color bg-item" setting-type="background-color">' +
-                '   <i class="fa fa-adjust"></i>' +
-                ' </div>' +
-                ' </div>' +
-                ' </li>' +
-                '   <li class="elements-accordion-item" data-type="padding">' +
-                '     <a class="elements-accordion-item-title">' + _this.langArr.propertyPadding + '</a>' +
-                '   <div class="elements-accordion-item-content">' +
-                '     <div class=" element-boxs clearfix ">' +
-                '       <div class="big-box col-sm-6 ">' +
-                '         <input type="text" class="form-control padding all" setting-type="padding">' +
-                '   </div>' +
-                ' <div class="small-boxs col-sm-6">' +
-                ' <div class="row">' +
-                '   <input type="text" class="form-control padding number" setting-type="padding-top">' +
-                '   </div>' +
-                '   <div class="row clearfix">' +
-                '     <div class="col-sm-6">' +
-                '         <input type="text" class="form-control padding number" setting-type="padding-left">' +
-                '   </div>' +
-                '   <div class="col-sm-6">' +
-                ' <input type="text" class="form-control padding number" setting-type="padding-right">' +
-                ' </div>' +
-                ' </div>' +
-                '   <div class="row">' +
-                '   <input type="text" class="form-control padding number" setting-type="padding-bottom">' +
-                '   </div>' +
-                '   </div>' +
-                ' </div>' +
-                '   </div>' +
-                '   </li>' +
-                '   <li class="elements-accordion-item" data-type="border-radius">' +
-                '   <a class="elements-accordion-item-title">' + _this.langArr.propertyBorderRadius + '</a>' +
-                '   <div class="elements-accordion-item-content">' +
-                '   <div class=" element-boxs border-radius-box clearfix ">' +
-                '   <div class="big-box col-sm-6 ">' +
-                '     <input type="text" class="form-control border-radius all" setting-type="border-radius">' +
-                '     </div>' +
-                '   <div class="small-boxs col-sm-6">' +
-                '     <div class="row clearfix">' +
-                '   <div class="col-sm-6">' +
-                '     <input type="text" class="form-control border-radius" setting-type="border-top-left-radius">' +
-                '     </div>' +
-                ' <div class="col-sm-6">' +
-                '   <input type="text" class="form-control border-radius" setting-type="border-top-right-radius">' +
-                '   </div>' +
-                ' </div>' +
-                '   <div class="row clearfix margin">' +
-                '   <div class="col-sm-6">' +
-                '   <input type="text" class="form-control border-radius" setting-type="border-bottom-left-radius">' +
-                '   </div>' +
-                ' <div class="col-sm-6">' +
-                ' <input type="text" class="form-control border-radius" setting-type="border-bottom-right-radius">' +
-                ' </div>' +
-                ' </div>' +
-                ' </div>' +
-                ' </div>' +
-                ' </div>' +
-                ' </li>' +
-                ' <li class="elements-accordion-item" data-type="text-style">' +
-                '   <a class="elements-accordion-item-title">' + _this.langArr.propertyTextStyle + '</a>' +
-                '   <div class="elements-accordion-item-content">' +
-                '   <div class="element-boxs text-style-box clearfix ">' +
-                '   <div class="element-font-family col-sm-8">' +
-                '   <select class="form-control font-family" setting-type="font-family">' +
-                '     <option value="Arial">Arial</option>' +
-                '   <option value="Helvetica">Helvetica</option>' +
-                ' <option value="Georgia">Georgia</option>' +
-                '<option value="Times New Roman">Times New Roman</option>' +
-                '<option value="Verdana">Verdana</option>' +
-                '<option value="Tahoma">Tahoma</option>' +
-                '<option value="Calibri">Calibri</option>' +
-                '</select>' +
-                '</div>' +
-                '<div class="element-font-size col-sm-4">' +
-                '  <input type="text" name="name" class="form-control number" value="14" setting-type="font-size" />' +
-                '</div>' +
-                '<div class="icon-boxs text-icons clearfix">' +
-                '<div class="icon-box-item fontStyle" setting-type="font-style" setting-value="italic">' +
-                '<i class="fa fa-italic"></i>' +
-                '</div>' +
-                '<div class="icon-box-item active underline " setting-type="text-decoration" setting-value="underline">' +
-                '<i class="fa fa-underline"></i>' +
-                '</div>' +
-                '<div class="icon-box-item line " setting-type="text-decoration" setting-value="line-through">' +
-                '  <i class="fa fa-strikethrough"></i>' +
-                '</div>' +
-                '</div>' +
-                '<div class="icon-boxs align-icons clearfix">' +
-                '<div class="icon-box-item left active">' +
-                '<i class="fa fa-align-left"></i>' +
-                '</div>' +
-                '<div class="icon-box-item center ">' +
-                '  <i class="fa fa-align-center"></i>' +
-                '</div>' +
-                '<div class="icon-box-item right">' +
-                '  <i class="fa fa-align-right"></i>' +
-                '  </div>' +
-                '</div>' +
-                '  <div class="clearfix"></div>' +
-                '  <div class="icon-boxs text-icons ">' +
-                '  <div id="text-color" class="icon-box-item text-color" setting-type="color">' +
-                '  </div>' +
-                '  Text Color' +
-                '  </div>' +
-                '<div class="icon-boxs font-icons clearfix">' +
-                '<div class="icon-box-item" setting-type="bold">' +
-                '<i class="fa fa-bold"></i>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '  </li>' +
-                '<li class="elements-accordion-item" data-type="social-content">' +
-                '  <a class="elements-accordion-item-title">' + _this.langArr.propertySocialContent + '</a>' +
-                '<div class="elements-accordion-item-content">' +
-                '  <div class="col-sm-12 social-content-box">' +
-                '  <div class="row" data-social-type="instagram">' +
-                '<label class="small-title">Instagram</label>' +
-                '<input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '<input type="checkbox" name="name" /> Show' +
-                '</label>' +
-                '</div>' +
-                '  <div class="row" data-social-type="pinterest">' +
-                '<label class="small-title">Pinterest</label>' +
-                '  <input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '<input type="checkbox" name="name" /> Show' +
-                '  </label>' +
-                '</div>' +
-                '<div class="row" data-social-type="google-plus">' +
-                '  <label class="small-title">Google+</label>' +
-                '<input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '  <input type="checkbox" name="name" checked /> Show' +
-                '</label>' +
-                '</div>' +
-                '  <div class="row" data-social-type="facebook">' +
-                '  <label class="small-title">Facebook</label>' +
-                '  <input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '<input type="checkbox" name="name" checked /> Show' +
-                '</label>' +
-                '</div>' +
-                '  <div class="row" data-social-type="twitter">' +
-                '<label class="small-title">Twitter</label>' +
-                '<input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '  <input type="checkbox" name="name" checked /> Show' +
-                '</label>' +
-                '</div>' +
-                '<div class="row" data-social-type="linkedin">' +
-                '<label class="small-title">Linkedin</label>' +
-                '<input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '<input type="checkbox" name="name" checked /> Show' +
-                '</label>' +
-                '</div>' +
-                '<div class="row" data-social-type="youtube">' +
-                '  <label class="small-title">Youtube</label>' +
-                '  <input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '  <input type="checkbox" name="name" checked /> Show' +
-                '  </label>' +
-                '</div>' +
-                '<div class="row" data-social-type="skype">' +
-                '<label class="small-title">Skype</label>' +
-                '  <input type="text" name="name" value="#" class="social-input" />' +
-                '<label class="checkbox-title">' +
-                '  <input type="checkbox" name="name" checked /> Show' +
-                '</label>' +
-                '</div>' +
-                '</div>' +
-                '  </div>' +
-                '</li>' +
-                '<li class="elements-accordion-item" data-type="youtube-frame">' +
-                '<a class="elements-accordion-item-title">Youtube</a>' +
-                '<div class="elements-accordion-item-content">' +
-                '<div class="social-content-box ">' +
-                '<label>Youtube Url</label>' +
-                '<input type="text" class=" youtube" setting-type="">' +
-                '</div>' +
-                '</div>' +
-                '</li>' +
-                '  <li class="elements-accordion-item" data-type="width">' +
-                '<a class="elements-accordion-item-title">' + _this.langArr.propertyEmailWidth + '</a>' +
-                '<div class="elements-accordion-item-content">' +
-                '  <div class="social-content-box ">' +
-                '<label>Width</label>' +
-                '<input type="text" class="email-width number" setting-type="">' +
-                '<span class="help">' + _this.langArr.propertyEmailWidthHelp + '</span>' +
-                '  </div>' +
-                '</div>' +
-                '</li>' +
-                '<li class="elements-accordion-item" data-type="image-settings">' +
-                '<a class="elements-accordion-item-title">' + _this.langArr.propertyImageSettings + '</a>' +
-                '<div class="elements-accordion-item-content">' +
-                '<div class="social-content-box ">' +
-                '<div class="change-image">' + _this.langArr.propertyChangeImage + '</div>' +
-                '<label>Image width</label>' +
-                '<input type="text" class="image-width  image-size " setting-type="" >' +
-                '<label>Image height</label>' +
-                '<input type="text" class="image-height  image-size" setting-type="">' +
-                '</div>' +
-                '</div>' +
-                '</li>' +
-                '<li class="elements-accordion-item" data-type="hyperlink">' +
-                '<a class="elements-accordion-item-title">' + _this.langArr.propertyHyperlink + '</a>' +
-                '<div class="elements-accordion-item-content">' +
-                '<div class="social-content-box ">' +
-                '<label>Url</label>' +
-                '<input type="text" class="hyperlink-url" setting-type="">' +
-                '</div>' +
-                '</div>' +
-                '  </li>' +
-                '<li class="elements-accordion-item" data-type="button">' +
-                '<a class="elements-accordion-item-title">' + _this.langArr.propertyButton + '</a>' +
-                '<div class="elements-accordion-item-content">' +
-                '<div class="social-content-box ">' +
-                '<label>Text</label>' +
-                '<input type="text" class="button-text" setting-type="">' +
-                '</div>' +
-                '<div class="social-content-box ">' +
-                '<label>Hyperlink</label>' +
-                '<input type="text" class="button-hyperlink" setting-type="">' +
-                '</div>' +
-                '<div class="social-content-box ">' +
-                '<label>Text color</label><br>' +
-                ' <div id="button-text-color" class="bg-color bg-item" setting-type="">' +
-                '   <i class="fa fa-adjust"></i>' +
-                ' </div>' +
-                '</div><br>' +
-                '<div class="social-content-box ">' +
-                '<br><label>Background color</label><br>' +
-                ' <div id="button-bg-color" class="bg-color bg-item" setting-type="">' +
-                '   <i class="fa fa-adjust"></i>' +
-                ' </div>' +
-                '</div>' +
-                '<div class="social-content-box "><br><br>' +
-
-                '<label class="checkbox-title"><input type="checkbox" name="button-full-width" class="button-full-width"> Full width</label>' +
-                '</div>' +
-
-
-                '</div>' +
-                '  </li>' +
-                '</ul>' +
-                '</div>';
+            _tabProperty = '<div class="tab-property element-tab">' + ' <ul class="elements-accordion">' + ' <li class="elements-accordion-item" data-type="background">' + '   <a class="elements-accordion-item-title">' + _this.langArr.propertyBG + '</a>' + '   <div class="elements-accordion-item-content clearfix">' + '   <div id="bg-color" class="bg-color bg-item" setting-type="background-color">' + '   <i class="fa fa-adjust"></i>' + ' </div>' + ' </div>' + ' </li>' + '   <li class="elements-accordion-item" data-type="padding">' + '     <a class="elements-accordion-item-title">' + _this.langArr.propertyPadding + '</a>' + '   <div class="elements-accordion-item-content">' + '     <div class=" element-boxs clearfix ">' + '       <div class="big-box col-sm-6 ">' + '         <input type="text" class="form-control padding all" setting-type="padding">' + '   </div>' + ' <div class="small-boxs col-sm-6">' + ' <div class="row">' + '   <input type="text" class="form-control padding number" setting-type="padding-top">' + '   </div>' + '   <div class="row clearfix">' + '     <div class="col-sm-6">' + '         <input type="text" class="form-control padding number" setting-type="padding-left">' + '   </div>' + '   <div class="col-sm-6">' + ' <input type="text" class="form-control padding number" setting-type="padding-right">' + ' </div>' + ' </div>' + '   <div class="row">' + '   <input type="text" class="form-control padding number" setting-type="padding-bottom">' + '   </div>' + '   </div>' + ' </div>' + '   </div>' + '   </li>' + '   <li class="elements-accordion-item" data-type="border-radius">' + '   <a class="elements-accordion-item-title">' + _this.langArr.propertyBorderRadius + '</a>' + '   <div class="elements-accordion-item-content">' + '   <div class=" element-boxs border-radius-box clearfix ">' + '   <div class="big-box col-sm-6 ">' + '     <input type="text" class="form-control border-radius all" setting-type="border-radius">' + '     </div>' + '   <div class="small-boxs col-sm-6">' + '     <div class="row clearfix">' + '   <div class="col-sm-6">' + '     <input type="text" class="form-control border-radius" setting-type="border-top-left-radius">' + '     </div>' + ' <div class="col-sm-6">' + '   <input type="text" class="form-control border-radius" setting-type="border-top-right-radius">' + '   </div>' + ' </div>' + '   <div class="row clearfix margin">' + '   <div class="col-sm-6">' + '   <input type="text" class="form-control border-radius" setting-type="border-bottom-left-radius">' + '   </div>' + ' <div class="col-sm-6">' + ' <input type="text" class="form-control border-radius" setting-type="border-bottom-right-radius">' + ' </div>' + ' </div>' + ' </div>' + ' </div>' + ' </div>' + ' </li>' + ' <li class="elements-accordion-item" data-type="text-style">' + '   <a class="elements-accordion-item-title">' + _this.langArr.propertyTextStyle + '</a>' + '   <div class="elements-accordion-item-content">' + '   <div class="element-boxs text-style-box clearfix ">' + '   <div class="element-font-family col-sm-8">' + '   <select class="form-control font-family" setting-type="font-family">' + '     <option value="Arial">Arial</option>' + '   <option value="Helvetica">Helvetica</option>' + ' <option value="Georgia">Georgia</option>' + '<option value="Times New Roman">Times New Roman</option>' + '<option value="Verdana">Verdana</option>' + '<option value="Tahoma">Tahoma</option>' + '<option value="Calibri">Calibri</option>' + '</select>' + '</div>' + '<div class="element-font-size col-sm-4">' + '  <input type="text" name="name" class="form-control number" value="14" setting-type="font-size" />' + '</div>' + '<div class="icon-boxs text-icons clearfix">' + '<div class="icon-box-item fontStyle" setting-type="font-style" setting-value="italic">' + '<i class="fa fa-italic"></i>' + '</div>' + '<div class="icon-box-item active underline " setting-type="text-decoration" setting-value="underline">' + '<i class="fa fa-underline"></i>' + '</div>' + '<div class="icon-box-item line " setting-type="text-decoration" setting-value="line-through">' + '  <i class="fa fa-strikethrough"></i>' + '</div>' + '</div>' + '<div class="icon-boxs align-icons clearfix">' + '<div class="icon-box-item left active">' + '<i class="fa fa-align-left"></i>' + '</div>' + '<div class="icon-box-item center ">' + '  <i class="fa fa-align-center"></i>' + '</div>' + '<div class="icon-box-item right">' + '  <i class="fa fa-align-right"></i>' + '  </div>' + '</div>' + '  <div class="clearfix"></div>' + '  <div class="icon-boxs text-icons ">' + '  <div id="text-color" class="icon-box-item text-color" setting-type="color">' + '  </div>' + '  Text Color' + '  </div>' + '<div class="icon-boxs font-icons clearfix">' + '<div class="icon-box-item" setting-type="bold">' + '<i class="fa fa-bold"></i>' + '</div>' + '</div>' + '</div>' + '</div>' + '  </li>' + '<li class="elements-accordion-item" data-type="social-content">' + '  <a class="elements-accordion-item-title">' + _this.langArr.propertySocialContent + '</a>' + '<div class="elements-accordion-item-content">' + '  <div class="col-sm-12 social-content-box">' + '  <div class="row" data-social-type="instagram">' + '<label class="small-title">Instagram</label>' + '<input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '<input type="checkbox" name="name" /> Show' + '</label>' + '</div>' + '  <div class="row" data-social-type="pinterest">' + '<label class="small-title">Pinterest</label>' + '  <input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '<input type="checkbox" name="name" /> Show' + '  </label>' + '</div>' + '<div class="row" data-social-type="google-plus">' + '  <label class="small-title">Google+</label>' + '<input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '  <input type="checkbox" name="name" checked /> Show' + '</label>' + '</div>' + '  <div class="row" data-social-type="facebook">' + '  <label class="small-title">Facebook</label>' + '  <input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '<input type="checkbox" name="name" checked /> Show' + '</label>' + '</div>' + '  <div class="row" data-social-type="twitter">' + '<label class="small-title">Twitter</label>' + '<input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '  <input type="checkbox" name="name" checked /> Show' + '</label>' + '</div>' + '<div class="row" data-social-type="linkedin">' + '<label class="small-title">Linkedin</label>' + '<input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '<input type="checkbox" name="name" checked /> Show' + '</label>' + '</div>' + '<div class="row" data-social-type="youtube">' + '  <label class="small-title">Youtube</label>' + '  <input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '  <input type="checkbox" name="name" checked /> Show' + '  </label>' + '</div>' + '<div class="row" data-social-type="skype">' + '<label class="small-title">Skype</label>' + '  <input type="text" name="name" value="#" class="social-input" />' + '<label class="checkbox-title">' + '  <input type="checkbox" name="name" checked /> Show' + '</label>' + '</div>' + '</div>' + '  </div>' + '</li>' + '<li class="elements-accordion-item" data-type="youtube-frame">' + '<a class="elements-accordion-item-title">Youtube</a>' + '<div class="elements-accordion-item-content">' + '<div class="social-content-box ">' + '<label>Youtube Url</label>' + '<input type="text" class=" youtube" setting-type="">' + '</div>' + '</div>' + '</li>' + '  <li class="elements-accordion-item" data-type="width">' + '<a class="elements-accordion-item-title">' + _this.langArr.propertyEmailWidth + '</a>' + '<div class="elements-accordion-item-content">' + '  <div class="social-content-box ">' + '<label>Width</label>' + '<input type="text" class="email-width number" setting-type="">' + '<span class="help">' + _this.langArr.propertyEmailWidthHelp + '</span>' + '  </div>' + '</div>' + '</li>' + '<li class="elements-accordion-item" data-type="image-settings">' + '<a class="elements-accordion-item-title">' + _this.langArr.propertyImageSettings + '</a>' + '<div class="elements-accordion-item-content">' + '<div class="social-content-box ">' + '<div class="change-image">' + _this.langArr.propertyChangeImage + '</div>' + '<label>Image width</label>' + '<input type="text" class="image-width  image-size " setting-type="" >' + '<label>Image height</label>' + '<input type="text" class="image-height  image-size" setting-type="">' + '</div>' + '</div>' + '</li>' + '<li class="elements-accordion-item" data-type="hyperlink">' + '<a class="elements-accordion-item-title">' + _this.langArr.propertyHyperlink + '</a>' + '<div class="elements-accordion-item-content">' + '<div class="social-content-box ">' + '<label>Url</label>' + '<input type="text" class="hyperlink-url" setting-type="">' + '</div>' + '</div>' + '  </li>' + '<li class="elements-accordion-item" data-type="button">' + '<a class="elements-accordion-item-title">' + _this.langArr.propertyButton + '</a>' + '<div class="elements-accordion-item-content">' + '<div class="social-content-box ">' + '<label>Text</label>' + '<input type="text" class="button-text" setting-type="">' + '</div>' + '<div class="social-content-box ">' + '<label>Hyperlink</label>' + '<input type="text" class="button-hyperlink" setting-type="">' + '</div>' + '<div class="social-content-box ">' + '<label>Text color</label><br>' + ' <div id="button-text-color" class="bg-color bg-item" setting-type="">' + '   <i class="fa fa-adjust"></i>' + ' </div>' + '</div><br>' + '<div class="social-content-box ">' + '<br><label>Background color</label><br>' + ' <div id="button-bg-color" class="bg-color bg-item" setting-type="">' + '   <i class="fa fa-adjust"></i>' + ' </div>' + '</div>' + '<div class="social-content-box "><br><br>' + '<label class="checkbox-title"><input type="checkbox" name="button-full-width" class="button-full-width"> Full width</label>' + '</div>' + '</div>' + '  </li>' + '</ul>' + '</div>';
             _elementsContainer = '<div class="elements-container">' + _tabElements + _tabProperty + '</div>';
             _elements = '<div class="elements">' + _elementsContainer + _settings + '</div>';
-
             _outputSideBar = '<aside class="left-menu-container clearfix scroll-view">' + _nav + _elements + '</aside>';
-            _outputContent = '<div class="content">' +
-                '<div id="editorContent" class="content-wrapper" data-types="background,padding,width">' +
-                '<div class="content-main lg-width">' +
-                '<div class="email-editor-elements-sortable">' +
-                '<div class="sortable-row">' +
-                '<div class="sortable-row-container">' +
-                '<div class="sortable-row-actions">' +
-                '<div class="row-move row-action">' +
-                '<i class="fa fa-arrows-alt"></i>' +
-                '</div>' +
-                '<div class="row-remove row-action">' +
-                '<i class="fa fa-remove"></i>' +
-                '</div>' +
-                '<div class="row-duplicate row-action">' +
-                '<i class="fa fa-files-o"></i>' +
-                '</div>' +
-                '<div class="row-code row-action">' +
-                '<i class="fa fa-code"></i>' +
-                '</div>' +
-                '</div>' +
-                '<div class="sortable-row-content">' +
-                _loadPageHtml +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
+            _outputContent = '<div class="content">' + '<div id="editorContent" class="content-wrapper" data-types="background,padding,width">' + '<div class="content-main lg-width">' + '<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _loadPageHtml + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>';
             _contentMenu = '';
             // if (_this.config.showContextMenu == true) {
             //     _contentMenu = '<div class="context-menu">' +
             //         '<ul class="context-menu-items">';
             //     if (_this.config.showContextMenu_FontFamily == true) {
             //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-family">' +
-            //             '	<div>' +
+            //             '    <div>' +
             //             '<select class="form-control font-family" >' +
             //             '<option value="Arial" selected="selected">Arial</option>' +
             //             '<option value="Helvetica">Helvetica</option>' +
@@ -706,202 +343,30 @@ var returnVal;
             //         '</div>' +
             //         '</div>';
             // }
-
             _outputHtml = '<div class="editor-container clearfix"> ' + _outputSideBar + _outputContent + _contentMenu + '</div>';
             _this.generatePopups();
             _this.display(_outputHtml);
-
-
             _this.default_func();
             _this.events();
-
         },
         /**
          * Generate popups html
          */
         generatePopups: function() {
-          _popupImportContent = '<div class="modal fade popupimport" id="popupimport" role="dialog">' +
-                  '<div class="modal-dialog">' +
-                  '<div class="modal-content">' +
-                  '<div class="modal-header">' +
-                  '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                  '<h4 class="modal-title">' + _this.langArr.popupImportTitle + '</h4>' +
-                  '</div>' +
-                  '<div class="modal-body">' +
-                  '<div class="row">' +
-                  '<div class="col-sm-6">' +
-                  '<input type="file" class="input-import-file" >' +
-                  '<span>-allowed only html file </span>'+
-                  '</div>' +
-
-                  '</div>' +
-
-                  '</div>' +
-                  '<div class="modal-footer">' +
-                  '<button type="button" class="btn btn-success btn-import" >' + _this.langArr.popupImportUpload + '</button>' +
-                  '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' +
-                  '</div>' +
-                  '</div>' +
-                  '</div>' +
-                  '</div>';
-
-
-                 jQuery(_popupImportContent).appendTo('body');
-
-            _popupImagesContent = '<div class="modal fade popup_images" id="popup_images" role="dialog">' +
-                '<div class="modal-dialog">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                '<h4 class="modal-title">' + _this.langArr.popupImageTitle + '</h4>' +
-                '</div>' +
-                '<div class="modal-body">' +
-                '<div class="row">' +
-                '<div class="col-sm-6">' +
-                '<input type="file" class="input-file" accept="image/*" >' +
-                '</div>' +
-                '<div class="col-sm-6">' +
-                '<button class="btn-upload">' + _this.langArr.popupImageUpload + '</button>' +
-                '</div>' +
-                '</div>' +
-                '<div class="upload-images">' +
-                ' <div class="row">     ' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-success btn-select" >' + _this.langArr.popupImageOk + '</button>' +
-                '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-
-
+            _popupImportContent = '<div class="modal fade popupimport" id="popupimport" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupImportTitle + '</h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-sm-6">' + '<input type="file" class="input-import-file" >' + '<span>-allowed only html file </span>' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-import" >' + _this.langArr.popupImportUpload + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' + '</div>' + '</div>' + '</div>' + '</div>';
+            jQuery(_popupImportContent).appendTo('body');
+            _popupImagesContent = '<div class="modal fade popup_images" id="popup_images" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupImageTitle + '</h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-sm-6">' + '<input type="file" class="input-file" accept="image/*" >' + '</div>' + '<div class="col-sm-6">' + '<button class="btn-upload">' + _this.langArr.popupImageUpload + '</button>' + '</div>' + '</div>' + '<div class="upload-images">' + ' <div class="row">     ' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-select" >' + _this.langArr.popupImageOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popupImagesContent).appendTo('body');
-
-            _popup_save_template = '<div class="modal fade " id="popup_save_template" role="dialog">' +
-                '<div class="modal-dialog">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                '<h4 class="modal-title">' + _this.langArr.popupSaveTemplateTitle + '<br>' +
-                '<small>' + _this.langArr.popupSaveTemplateSubTitle + '</small></h4>' +
-                '</div>' +
-                '<div class="modal-body">' +
-                '<div class="row">' +
-                '<div class="col-sm-12">' +
-                '<input type="text" class="form-control template-name" placeholder="' + _this.langArr.popupSaveTemplatePLaceHolder + '"  >' +
-                '<br>' +
-                '<label class="input-error" style="color:red"></label>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-success btn-save-template" >' + _this.langArr.popupSaveTemplateOk + '</button>' +
-                '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupSaveTemplateClose + '</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
+            _popup_save_template = '<div class="modal fade " id="popup_save_template" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupSaveTemplateTitle + '<br>' + '<small>' + _this.langArr.popupSaveTemplateSubTitle + '</small></h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-sm-12">' + '<input type="text" class="form-control template-name" placeholder="' + _this.langArr.popupSaveTemplatePLaceHolder + '"  >' + '<br>' + '<label class="input-error" style="color:red"></label>' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-save-template" >' + _this.langArr.popupSaveTemplateOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupSaveTemplateClose + '</button>' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popup_save_template).appendTo('body');
-
-            _popup_editor = '<div class="modal fade modal-wide" id="popup_editor" role="dialog">' +
-                '<div class="modal-dialog modal-lg">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                '<h4 class="modal-title">' + _this.langArr.popupEditorTitle + '<br/>' +
-                '  <small></small></h4>' +
-                '  </div>' +
-                '<div class="modal-body">' +
-                '<div id="editorHtml" class="">' +
-                '</div>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-success btn-save-editor" >' + _this.langArr.popupEditorOk + '</button>' +
-                '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupEditorClose + '</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-
+            _popup_editor = '<div class="modal fade modal-wide" id="popup_editor" role="dialog">' + '<div class="modal-dialog modal-lg">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupEditorTitle + '<br/>' + '  <small></small></h4>' + '  </div>' + '<div class="modal-body">' + '<div id="editorHtml" class="">' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-save-editor" >' + _this.langArr.popupEditorOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupEditorClose + '</button>' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popup_editor).appendTo('body');
-
-
-            _popup_send_email = '<div class="modal fade " id="popup_send_email" role="dialog">' +
-                '<div class="modal-dialog">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                '<h4 class="modal-title">' + _this.langArr.popupSendEmailTitle + '<br>' +
-                '<small>' + _this.langArr.popupSendEmailSubTitle + '</small></h4>' +
-                '  </div>' +
-                '<div class="modal-body">' +
-                '  <div class="row">' +
-                '<div class="col-sm-12">' +
-                '  <input type="email" class="form-control recipient-email" placeholder="' + _this.langArr.popupSendEmailPlaceHolder + '"  >' +
-
-                ' <br> <label>Select attachment</label><input type="file" id="send_attachments" multiple=""  />' +
-                '<br>' +
-                '<label class="popup_send_email_output" style="color:red"></label>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-success btn-send-email-template" >' + _this.langArr.popupSendEmailOk + '</button>' +
-                '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupSendEmailClose + '</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-
+            _popup_send_email = '<div class="modal fade " id="popup_send_email" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupSendEmailTitle + '<br>' + '<small>' + _this.langArr.popupSendEmailSubTitle + '</small></h4>' + '  </div>' + '<div class="modal-body">' + '  <div class="row">' + '<div class="col-sm-12">' + '  <input type="email" class="form-control recipient-email" placeholder="' + _this.langArr.popupSendEmailPlaceHolder + '"  >' + ' <br> <label>Select attachment</label><input type="file" id="send_attachments" multiple=""  />' + '<br>' + '<label class="popup_send_email_output" style="color:red"></label>' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-send-email-template" >' + _this.langArr.popupSendEmailOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupSendEmailClose + '</button>' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popup_send_email).appendTo('body');
-
-            _popup_demo = '<div class="modal fade " id="popup_demo" role="dialog">' +
-                '<div class="modal-dialog">' +
-                '  <div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                '<h4 class="modal-title">Demo<br>' +
-                '</h4>' +
-                '  </div>' +
-                '<div class="modal-body">' +
-                '<label  style="color:red">This is demo version. There is not access to use more.' +
-                'If you want to more please buy plugin.<a href="https://codecanyon.net/item/email-newsletter-builder-php-version/18060733" title="Buy">Buy Plugin</a></label>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
-                '  </div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-
+            _popup_demo = '<div class="modal fade " id="popup_demo" role="dialog">' + '<div class="modal-dialog">' + '  <div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">Demo<br>' + '</h4>' + '  </div>' + '<div class="modal-body">' + '<label  style="color:red">This is demo version. There is not access to use more.' + 'If you want to more please buy plugin.<a href="https://codecanyon.net/item/email-newsletter-builder-php-version/18060733" title="Buy">Buy Plugin</a></label>' + '</div>' + '<div class="modal-footer">' + '  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' + '  </div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popup_demo).appendTo('body');
-
-            _popup_load_template = '<div class="modal fade " id="popup_load_template" role="dialog">' +
-                '<div class="modal-dialog">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                '<h4 class="modal-title">' + _this.langArr.popupLoadTemplateTitle + '<br>' +
-                '<small>' + _this.langArr.popupLoadTemplateSubtitle + '</small></h4>' +
-                '</div>' +
-                '<div class="modal-body">' +
-                '<div class="template-list">' +
-                '</div>' +
-                '<label class="template-load-error" style="color:red"></label>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-success btn-load-template" >' + _this.langArr.popupLoadTemplateOk + '</button>' +
-                '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupLoadTemplateClose + '</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-
+            _popup_load_template = '<div class="modal fade " id="popup_load_template" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupLoadTemplateTitle + '<br>' + '<small>' + _this.langArr.popupLoadTemplateSubtitle + '</small></h4>' + '</div>' + '<div class="modal-body">' + '<div class="template-list">' + '</div>' + '<label class="template-load-error" style="color:red"></label>' + '</div>' + '<div class="modal-footer"><div class="template-list-pagination"></div>' + '<button type="button" class="btn btn-success btn-load-template" >' + _this.langArr.popupLoadTemplateOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupLoadTemplateClose + '</button>' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popup_load_template).appendTo('body');
-
         },
         /**
          * show output in page
@@ -921,7 +386,6 @@ var returnVal;
             });
             //make bootstrap tooltip
             jQuery('[data-toggle="tooltip"]').tooltip();
-
             // set colorpicker  default values and chnaged events
             _this.$elem.find('#bg-color').ColorPicker({
                 color: '#fff',
@@ -954,7 +418,6 @@ var returnVal;
                     _this.changeSettings($('#text-color').attr('setting-type'), '#' + hex);
                 }
             });
-
             //show content edit on page load
             setTimeout(function() {
                 jQuery('.content-wrapper').click();
@@ -962,43 +425,34 @@ var returnVal;
             }, 100);
             _this.makeSortable();
             //_this.tabMenu('typography');
-
             _aceEditor = ace.edit("editorHtml");
             _aceEditor.setTheme("ace/theme/monokai");
             _aceEditor.getSession().setMode("ace/mode/html");
-
             _this.tinymceContextMenu();
-
             _this.remove_row_elements();
-
             $('.content-wrapper').removeAttr('contenteditable');
-
             _this.commandsUndoManager();
         },
         /**
          * Remove row buttons
          */
         remove_row_elements: function() {
-
             jQuery('.sortable-row-actions').html('');
             if (_this.config.showRowMoveButton == false) {
                 jQuery('.row-move').remove();
             } else {
                 jQuery('.sortable-row-actions').append('<div class="row-move row-action"><i class="fa fa-arrows-alt"></i></div>');
             }
-
             if (_this.config.showRowRemoveButton == false) {
                 jQuery('.row-remove').remove();
             } else {
                 jQuery('.sortable-row-actions').append('<div class="row-remove row-action"><i class="fa fa-remove"></i></div>');
             }
-
             if (_this.config.showRowDuplicateButton == false) {
                 jQuery('.row-duplicate').remove();
             } else {
                 jQuery('.sortable-row-actions').append('<div class="row-duplicate row-action"><i class="fa fa-files-o"></i></div>');
             }
-
             if (_this.config.showRowCodeEditorButton == false) {
                 jQuery('.row-code').remove();
             } else {
@@ -1009,18 +463,14 @@ var returnVal;
          *  Get content active element for change setting
          */
         getActiveElementContent: function() {
-
             _element = _this.$elem.find('.sortable-row.active .sortable-row-content .element-content');
-
             //element-contenteditable active
             if (_element.find('[contenteditable="true"]').hasClass('element-contenteditable')) {
                 _element = _element.find('.element-contenteditable.active');
             }
-
             if (_this.$elem.find('.content-wrapper').hasClass('active')) {
                 _element = _this.$elem.find('.content-wrapper');
             }
-
             return _element;
         },
         /**
@@ -1039,7 +489,6 @@ var returnVal;
          *  All events
          */
         events: function() {
-
             jQuery(function() {
                 if (_this.config.onAfterLoad !== undefined) {
                     _this.config.onAfterLoad();
@@ -1051,7 +500,6 @@ var returnVal;
                 jQuery('.content-main').attr('data-width', '600px');
                 jQuery('.main').css('width', '600px');
             });
-
             //left menu tab click
             _this.$elem.find('.tab-selector').on('click', function() {
                 _element = $(this);
@@ -1062,7 +510,6 @@ var returnVal;
                 _element = $(this);
                 _this.menuAccordionClick(_element, false);
             });
-
             _this.$elem.find('.collapse').on('click', function() {
                 _element = $(this);
                 _dataValue = _element.attr('data-value');
@@ -1095,7 +542,6 @@ var returnVal;
                     _element.attr('data-value', 'closed');
                 }
             });
-
             _this.$elem.find('.blank-page').on('click', function() {
                 _element = $(this);
                 //console.log(_this.langArr.modalDeleteTitle);
@@ -1112,43 +558,13 @@ var returnVal;
                     cancelButtonClass: 'btn btn-danger',
                     buttonsStyling: false
                 }).then(function() {
-                    _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' +
-                        '<div class="sortable-row">' +
-                        '<div class="sortable-row-container">' +
-                        '<div class="sortable-row-actions">' +
-                        '<div class="row-move row-action">' +
-                        '<i class="fa fa-arrows-alt"></i>' +
-                        '</div>' +
-                        '<div class="row-remove row-action">' +
-                        '<i class="fa fa-remove"></i>' +
-                        '</div>' +
-                        '<div class="row-duplicate row-action">' +
-                        '<i class="fa fa-files-o"></i>' +
-                        '</div>' +
-                        '<div class="row-code row-action">' +
-
-                        '<i class="fa fa-code"></i>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="sortable-row-content">' +
-                        _blankPageHtml +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>');
+                    _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _blankPageHtml + '</div>' + '</div>' + '</div>' + '</div>');
                     _this.makeSortable();
                     _this.remove_row_elements();
-
                     jQuery('.project-container').hide();
                     jQuery('.project-name').attr('data-id', '');
-
-                }, function(dismiss) {
-
-                });
-
-
+                }, function(dismiss) {});
             });
-
             _this.$elem.find('.elements-container .sortable-row-content').each(function(i) {
                 // _element = $(this);
                 // (function(_element) {
@@ -1157,7 +573,6 @@ var returnVal;
                 //     });
                 // }(_element));
             });
-
             _this.$elem.find(".elements-list .elements-list-item").draggable({
                 connectToSortable: ".email-editor-elements-sortable",
                 helper: "clone",
@@ -1175,17 +590,15 @@ var returnVal;
                     ui.helper.find('.preview').hide();
                     ui.helper.find('.view').show()
                     //$(this).find('.demo').show();
-
                     if (_this.config.onElementDragStart !== undefined) {
                         _this.config.onElementDragStart(event);
                     }
                 },
                 stop: function(event, ui) {
-                  var _dataId=ui.helper.find('.view .sortable-row-content').attr('data-id');
+                    var _dataId = ui.helper.find('.view .sortable-row-content').attr('data-id');
                     _this.$elem.find(".elements-container").css({
                         'overflow': 'hidden'
                     });
-
                     ui.helper.html(ui.helper.find('.view').html());
                     //ui.helper.remove();
                     //_this.$elem.find('.email-editor-elements-sortable').append(ui.helper.find('.view').html());
@@ -1195,17 +608,12 @@ var returnVal;
                     });
                     //
                     //$(ui.helper).remove();
-
-
                     var contentHtml = _this.getContentHtml();
                     if (_this.config.onElementDragFinished !== undefined) {
-                        _this.config.onElementDragFinished(event, contentHtml,_dataId);
+                        _this.config.onElementDragFinished(event, contentHtml, _dataId);
                     }
-
-
                 }
             });
-
             _this.$elem.on('click', '.content-wrapper', function(event) {
                 _this.$elem.find('.sortable-row.active').removeClass('active');
                 _this.$elem.find('.sortable-row .element-contenteditable.active').removeClass('.element-contenteditable .active');
@@ -1229,21 +637,14 @@ var returnVal;
                 _this.$elem.find('[setting-type="padding-bottom"]').val(jQuery(this).css('padding-bottom').replace('px', ''));
                 _this.$elem.find('[setting-type="padding-left"]').val(jQuery(this).css('padding-left').replace('px', ''));
                 _this.$elem.find('[setting-type="padding-right"]').val(jQuery(this).css('padding-right').replace('px', ''));
-
                 //  _this.$elem.find('.email-width').val(jQuery('.content-main').width());
                 _this.$elem.find('.email-width').val(jQuery('.main').width() == '100' ? '600' : jQuery('.main').width());
-
                 _this.tabMenu(_typeArr[0]);
             });
-
             _this.events_of_row();
-
             _this.events_of_property();
-
             _this.events_of_popup();
-
             _this.events_of_setting();
-
             _this.remove_row_elements();
         },
         /**
@@ -1252,7 +653,6 @@ var returnVal;
         events_of_row: function() {
             //remove button
             _this.$elem.on('click', '.sortable-row .row-remove', function(e) {
-
                 if (_this.config.onBeforeRemoveButtonClick !== undefined) {
                     _this.config.onBeforeRemoveButtonClick(e);
                 }
@@ -1260,18 +660,15 @@ var returnVal;
                 if (e.isDefaultPrevented() == true) {
                     return false;
                 }
-
                 if (_this.$elem.find('.content .sortable-row').length == 1) {
                     alert('At least should be 1 item');
                     return;
                 }
                 jQuery(this).parents('.sortable-row').remove();
-
                 if (_this.config.onAfterRemoveButtonClick !== undefined) {
                     _this.config.onAfterRemoveButtonClick(e);
                 }
             });
-
             //duplicate button
             _this.$elem.on('click', '.sortable-row .row-duplicate', function(e) {
                 if (_this.config.onBeforeRowDuplicateButtonClick !== undefined) {
@@ -1292,12 +689,10 @@ var returnVal;
                 _parent.addClass('active');
                 //_parent.after('<div class="sortable-row">'+ _parent.html()+"</div>");
                 _parent.clone().insertAfter(_parentSelector + '.active');
-
                 if (_this.config.onAfterRowDuplicateButtonClick !== undefined) {
                     _this.config.onAfterRowDuplicateButtonClick(e);
                 }
             });
-
             //code button . for showing code editor popup
             _this.$elem.on('click', '.sortable-row .row-code', function(e) {
                 if (_this.config.onBeforeRowEditorButtonClick !== undefined) {
@@ -1310,11 +705,9 @@ var returnVal;
                 jQuery(this).parents('.sortable-row').addClass('code-editor');
                 _html = jQuery(this).parents('.sortable-row').find('.sortable-row-content').html();
                 _aceEditor.session.setValue(_html);
-
                 if (_this.config.onAfterRowEditorButtonClick !== undefined) {
                     _this.config.onAfterRowEditorButtonClick(e);
                 }
-
                 if (_this.config.onBeforeShowingEditorPopup !== undefined) {
                     _this.config.onBeforeShowingEditorPopup(e);
                 }
@@ -1323,20 +716,17 @@ var returnVal;
                 }
                 jQuery('#popup_editor').modal('show');
             });
-
             _this.$elem.on('click', '.element-content', function(event) {
                 jQuery('.content-wrapper').removeClass('active');
                 _this.$elem.find('[contenteditable="true"]').removeClass('element-contenteditable active');
                 _this.sortableClick(jQuery(this));
                 event.stopPropagation();
             });
-
             _this.$elem.on('click', '[contenteditable="true"]', function(event) {
                 jQuery('.content-wrapper').removeClass('active');
                 _this.$elem.find('.content [contenteditable="true"]').removeClass('element-contenteditable active')
                 jQuery(this).addClass('element-contenteditable active');
                 _this.sortableClick(jQuery(this));
-
                 event.stopPropagation();
             });
         },
@@ -1355,7 +745,6 @@ var returnVal;
                 jQuery('.content-main').attr('data-width', _val);
                 jQuery('.main').css('width', _val + 'px');
             });
-
             //hyperlink
             _this.$elem.on('keyup', '.elements-accordion-item-content .hyperlink-url', function(event) {
                 _element = jQuery(this);
@@ -1363,7 +752,6 @@ var returnVal;
                 _activeElement = _this.getActiveElementContent();
                 _activeElement.attr('href', _val);
             });
-
             _this.$elem.on('keyup', '.elements-accordion-item-content .button-text', function(event) {
                 _element = jQuery(this);
                 _val = _element.val();
@@ -1376,7 +764,6 @@ var returnVal;
                 _activeElement = _this.getActiveElementContent();
                 _activeElement.find('a').attr('href', _val);
             });
-
             _this.$elem.on('change', '.elements-accordion-item-content .button-full-width', function(event) {
                 _element = jQuery(this);
                 _activeElement = _this.getActiveElementContent();
@@ -1386,7 +773,6 @@ var returnVal;
                     _activeElement.find('a').css('display', 'inline-block');
                 }
             });
-
             //youtube
             _this.$elem.on('keyup', '.elements-accordion-item-content .youtube', function(event) {
                 _element = jQuery(this);
@@ -1396,7 +782,6 @@ var returnVal;
                 console.log(_this.getYoutubeVideoId(_val));
                 _activeElement.find('table').css('background-image', "url('https://img.youtube.com/vi/" + _this.getYoutubeVideoId(_val) + "/sddefault.jpg')");
             });
-
             //text style
             _this.$elem.on('click', '.text-icons .icon-box-item', function(event) {
                 _element = jQuery(this);
@@ -1419,8 +804,6 @@ var returnVal;
                 }
                 _this.changeSettings('text-decoration', _value);
             });
-
-
             //font
             _this.$elem.on('click', '.font-icons .icon-box-item', function(event) {
                 _element = jQuery(this);
@@ -1435,7 +818,6 @@ var returnVal;
                     _this.changeSettings('font-weight', '');
                 }
             });
-
             //align
             _this.$elem.on('click', '.align-icons .icon-box-item', function(event) {
                 _element = jQuery(this);
@@ -1450,14 +832,11 @@ var returnVal;
                 }
                 _this.changeSettings('text-align', _value);
             });
-
-
             //chnage form cpntrol value for select
             _this.$elem.on('change', '.left-menu-container  .form-control', function(event) {
                 _element = jQuery(this);
                 _this.changeSettings(_element.attr('setting-type'), _element.val());
             });
-
             //chnage form cpntrol value for input
             _this.$elem.on('keyup', '.left-menu-container .form-control', function(event) {
                 _element = jQuery(this);
@@ -1469,7 +848,6 @@ var returnVal;
                 }
                 _this.changeSettings(_element.attr('setting-type'), _element.val() + 'px');
             });
-
             //social
             _this.$elem.on('keyup', '.social-content-box .social-input', function(event) {
                 _element = jQuery(this);
@@ -1480,18 +858,15 @@ var returnVal;
                     _activeElement.find('a.' + _socialType).attr('href', _val);
                 }
             });
-
             //image-size
             _this.$elem.on('keyup', '.image-size', function(event) {
                 _activeElement = _this.getActiveElementContent();
-
                 if (jQuery(this).hasClass('image-height')) {
                     _activeElement.find('.content-image').css('height', jQuery(this).val());
                 } else if (jQuery(this).hasClass('image-width')) {
                     _activeElement.find('.content-image').css('width', jQuery(this).val());
                 }
             });
-
             //number
             _this.$elem.on('keydown', '.number', function(e) {
                 // Allow: backspace, delete, tab, escape, enter and .
@@ -1513,7 +888,6 @@ var returnVal;
                     e.preventDefault();
                 }
             });
-
             //example
             _this.$elem.on('change', '.social-content-box .checkbox-title input', function(event) {
                 _socialType = jQuery(this).parents('.row').attr('data-social-type');
@@ -1524,8 +898,6 @@ var returnVal;
                     _activeElement.find('a.' + _socialType).hide();
                 }
             });
-
-
         },
         /**
          * Get video id from youtube url
@@ -1537,13 +909,11 @@ var returnVal;
             } else {
                 return '';
             }
-
         },
         /**
          *  Events for Settings
          */
         events_of_setting: function() {
-
             //other-devices
             _this.$elem.on('click', '.setting-item.other-devices', function(event) {
                 _element = jQuery(this);
@@ -1556,11 +926,9 @@ var returnVal;
                     _element.addClass('active');
                 }
             });
-
             //other devices content
             _this.$elem.on('click', '.setting-content .setting-device-tab', function(event) {
                 _element = jQuery(this);
-
                 _parent = _element.parents('.setting-content');
                 _parent.find('.setting-device-tab').removeClass('active');
                 _element.addClass('active');
@@ -1585,10 +953,8 @@ var returnVal;
                 _this.$elem.find('.content-main').removeClass(_removeClass);
                 _this.$elem.find('.content-main').addClass(_addClass);
             });
-
             //laod templates button
             _this.$elem.on('click', '.setting-item.load-templates', function(event) {
-
                 if (_this.config.onBeforeSettingsLoadTemplateButtonClick !== undefined) {
                     _this.config.onBeforeSettingsLoadTemplateButtonClick(event);
                 }
@@ -1599,7 +965,6 @@ var returnVal;
                 jQuery('.btn-load-template').hide();
                 $('#popup_load_template').modal('show');
             });
-
             //export click
             _this.$elem.on('click', '.setting-item.export', function(event) {
                 _getHtml = _this.getContentHtml();
@@ -1611,7 +976,6 @@ var returnVal;
                     return false;
                 }
             });
-
             //preview click
             _this.$elem.on('click', '.setting-item.preview', function(event) {
                 _getHtml = _this.getContentHtml();
@@ -1624,15 +988,15 @@ var returnVal;
                 }
             });
             //preview click
-                      _this.$elem.on('click', '.setting-item.import', function(event) {
-                          if (_this.config.onSettingsImportClick !== undefined) {
-                              _this.config.onSettingsImportClick(event);
-                          }
-                          //if user want stop this action : e.preventDefault();
-                          if (event.isDefaultPrevented() == true) {
-                              return false;
-                          }
-                      });
+            _this.$elem.on('click', '.setting-item.import', function(event) {
+                if (_this.config.onSettingsImportClick !== undefined) {
+                    _this.config.onSettingsImportClick(event);
+                }
+                //if user want stop this action : e.preventDefault();
+                if (event.isDefaultPrevented() == true) {
+                    return false;
+                }
+            });
             //save-template click
             _this.$elem.on('click', '.setting-item.save-template', function(event) {
                 if (_this.config.onBeforeSettingsSaveButtonClick !== undefined) {
@@ -1642,23 +1006,17 @@ var returnVal;
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
-
                 jQuery('.input-error').text('');
                 jQuery('.template-name').val('');
                 jQuery('#popup_save_template').modal('show');
             });
-
-
             //btn-save-template
             jQuery('#popup_save_template').on('click', '.btn-save-template', function(event) {
-
                 jQuery('.input-error').text('');
                 if (jQuery('.template-name').val().length < 1) {
                     jQuery('.input-error').text(_this.langArr.popupSaveTemplateError);
                     return false;
                 }
-
                 if (_this.config.onPopupSaveButtonClick !== undefined) {
                     _this.config.onPopupSaveButtonClick(event);
                 }
@@ -1666,13 +1024,9 @@ var returnVal;
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
             });
-
             //btn-save-template
             jQuery(document).on('click', '.btn-save', function(event) {
-
-
                 if (_this.config.onUpdateButtonClick !== undefined) {
                     _this.config.onUpdateButtonClick(event);
                 }
@@ -1680,15 +1034,12 @@ var returnVal;
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
             });
             //send-email
             _this.$elem.on('click', '.setting-item.send-email', function(event) {
-
                 if (_this.config.onSettingsSendMailButtonClick !== undefined) {
                     _this.config.onSettingsSendMailButtonClick(event);
                 }
-
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
@@ -1696,9 +1047,7 @@ var returnVal;
                 jQuery('#send_attachments').val('');
                 jQuery('.popup_send_email_output').text('');
                 jQuery('#popup_send_email').modal('show');
-
             });
-
             jQuery('#popup_send_email').on('click', '.btn-send-email-template', function(event) {
                 _element = $(this);
                 if ($(this).hasClass('has-loading')) {
@@ -1706,9 +1055,7 @@ var returnVal;
                 }
                 _element.addClass('has-loading');
                 _element.text(_this.langArr.loading);
-
                 _getHtml = _this.getContentHtml();
-
                 if (_this.config.onPopupSendMailButtonClick !== undefined) {
                     _this.config.onPopupSendMailButtonClick(event, _getHtml);
                 }
@@ -1716,133 +1063,101 @@ var returnVal;
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
             });
             //open modal for change image
             _this.$elem.on('click', '.change-image', function(event) {
-
                 if (_this.config.onBeforeChangeImageClick !== undefined) {
                     _this.config.onBeforeChangeImageClick(event);
                 }
-
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
                 jQuery('#popup_images').modal('show');
-
             });
             jQuery('#popupimport').on('click', '.btn-import', function(event) {
-
-                            if (_this.config.onBeforePopupBtnImportClick !== undefined) {
-                                _this.config.onBeforePopupBtnImportClick(event);
-                            }
-
-                            if (event.isDefaultPrevented() == true) {
-                                return false;
-                            }
-
-
-                            jQuery('#popupimport').modal('hide');
-                            _this.makeSortable();
-              });
-
-
+                if (_this.config.onBeforePopupBtnImportClick !== undefined) {
+                    _this.config.onBeforePopupBtnImportClick(event);
+                }
+                if (event.isDefaultPrevented() == true) {
+                    return false;
+                }
+                jQuery('#popupimport').modal('hide');
+                _this.makeSortable();
+            });
             //select image
             jQuery('#popup_images').on('click', '.upload-image-item', function(event) {
                 jQuery('.modal .upload-image-item').removeClass('active');
                 jQuery(this).addClass('active');
             });
-
             //change select image button click
             jQuery('#popup_images').on('click', '.btn-select', function(event) {
-
                 if (_this.config.onBeforePopupSelectImageButtonClick !== undefined) {
                     _this.config.onBeforePopupSelectImageButtonClick(event);
                 }
-
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
-
                 _url = jQuery('.modal').find('.upload-image-item.active').attr('src');
                 _this.getActiveElementContent().find('.content-image').attr('src', _url);
                 jQuery('#popup_images').modal('hide');
             });
-
             jQuery('#popup_load_template').on('click', '.template-list .template-item', function(event) {
-
                 jQuery('.template-list .template-item').removeClass('active');
                 jQuery(this).addClass('active');
                 jQuery('.btn-load-template').show();
             });
             jQuery('#popup_load_template').on('click', '.template-item-delete', function(event) {
-
                 _dataId = jQuery(this).parents('.template-item').attr('data-id');
                 event.stopPropagation();
                 if (_this.config.onTemplateDeleteButtonClick !== undefined) {
                     _this.config.onTemplateDeleteButtonClick(event, _dataId, jQuery(this).parents('.template-item'));
                 }
-
             });
             jQuery('#popup_load_template').on('click', '.btn-load-template', function(event) {
-              _dataId = jQuery('.template-list .template-item.active').attr('data-id');
-
+                _dataId = jQuery('.template-list .template-item.active').attr('data-id');
                 if (_this.config.onBeforePopupSelectTemplateButtonClick !== undefined) {
                     _this.config.onBeforePopupSelectTemplateButtonClick(_dataId);
                 }
-
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
                 //search template in array
                 var result = jQuery.grep(_templateListItems, function(e) {
-                    return e.id == _dataId;
+                    // return e.id == _dataId; // we have key as campaignID
+                    return e.campaignID == _dataId;
                 });
                 if (result.length == 0) {
                     //show error
                     jQuery('.template-load-error').text('An error has occurred');
                 }
-            //    _contentText = jQuery('<div/>').html(result[0].content).text();
-
-
-                jQuery('.header .project-name').html(result[0].name);
+                // jQuery('.header .project-name').html(result[0].name);//we have key as title
+                jQuery('.header .project-name').html(result[0].title);
                 jQuery('.header .project-name').attr('data-id', _dataId);
                 jQuery('.project-container').show();
-
-              //  jQuery('.content-wrapper').html(_contentText);
-                 jQuery('#popup_load_template').modal('hide');
-                 _this.makeSortable();
+                //  jQuery('.content-wrapper').html(_contentText);
+                jQuery('#popup_load_template').modal('hide');
+                _this.makeSortable();
                 event.stopPropagation();
             });
-
             jQuery('body').on('click', '.btn-upload', function(event) {
-
                 if (_this.config.onPopupUploadImageButtonClick !== undefined) {
                     _this.config.onPopupUploadImageButtonClick(event);
                 }
-
                 if (event.isDefaultPrevented() == true) {
                     return false;
                 }
-
-
             });
-
         },
         /**
          *  Events of popup save
          */
         events_of_popup: function() {
-
             //save code editor
             jQuery('#popup_editor').on('click', '.btn-save-editor', function() {
                 jQuery('.sortable-row.code-editor .sortable-row-content').html(_aceEditor.getSession().getValue());
                 jQuery('#popup_editor').modal('hide');
                 jQuery('.sortable-row.code-editor').removeClass('code-editor');
             });
-
         },
         /**
          *  Left menu tab click event
@@ -1916,14 +1231,11 @@ var returnVal;
                 '-webkit-text-size-adjust': '100%',
                 '-ms-text-size-adjust': '100%'
             });
-
-
             _html = '';
             _this.$elem.find('.content .content-wrapper .sortable-row').each(function() {
                 _html += jQuery(this).find('.sortable-row-content').html().split('contenteditable="true"').join('');
             });
             _width = jQuery('.content-main').attr('data-width') == '100' ? '600' : jQuery('.content-main').attr('data-width'); //$('.content-main').css('width');
-
             if (typeof _width == 'undefined') {
                 _width = '600px';
             }
@@ -1931,7 +1243,6 @@ var returnVal;
             _style += 'background:' + jQuery('.content-wrapper').css('background') + ';';
             _padding = 'padding:' + jQuery('.content-wrapper').css('padding');
             _result = '<div class="email-content" style="' + _style + '">' + _html + '</div>';
-
             _result = '<table width="100%" cellspacing="0" cellpadding="0" border="0" style="' + _style + '"><tbody><tr><td><div style="margin:0 auto;width:' + _width + ';' + _padding + '">' + _html + '</div></td></tr></table>';
             return _result;
         },
@@ -1940,7 +1251,7 @@ var returnVal;
          */
         generateElements: function() {
             _outputHtml = '';
-              _this.generate(_outputHtml);
+            _this.generate(_outputHtml);
             // $.ajax({
             //     url: _this.config.elementJsonUrl,
             //     data: '',
@@ -2038,7 +1349,6 @@ var returnVal;
             if (typeof _dataTypes == 'undefined') {
                 return;
             }
-
             if (_dataTypes.length < 1) {
                 return;
             }
@@ -2053,7 +1363,7 @@ var returnVal;
                     _accordionMenuItem.hide();
                 }
             }
-            var lastType=_element.find('.sortable-row-content').attr('data-last-type');
+            var lastType = _element.find('.sortable-row-content').attr('data-last-type');
             // console.log(lastType);
             // if (lastType===undefined) {
             //   lastType=_element.find('.sortable-row-content').attr('data-types').split(',')[0];
@@ -2109,7 +1419,6 @@ var returnVal;
             if (_element.css('font-style').indexOf('italic') > -1) {
                 _this.$elem.find('.tab-property .text-icons .icon-box-item.fontStyle').addClass('active');
             }
-
             if (_element.hasClass('social-content')) {
                 $('.content .sortable-row.active .sortable-row-content .element-content.social-content a').each(function() {
                     _socialType = jQuery(this).attr('class');
@@ -2124,10 +1433,8 @@ var returnVal;
             }
             if (_element.hasClass('youtube-frame')) {
                 _ytbUrl = _element.find('a').attr('href');
-
                 _this.$elem.find('.youtube').val(_ytbUrl);
             }
-
             //hyperlink
             if (_element.hasClass('hyperlink')) {
                 _href = _element.attr('href');
@@ -2136,22 +1443,18 @@ var returnVal;
             if (_element.hasClass('button-1')) {
                 _href = _element.find('a').text();
                 _this.$elem.find('.button-text').val($.trim(_href));
-
                 _href = _element.find('a').attr('href');
                 _this.$elem.find('.button-hyperlink').val($.trim(_href));
             }
             //image size
             _this.$elem.find('.tab-property .elements-accordion-item .image-width').val(_element.find('.content-image').css('width'));
             _this.$elem.find('.tab-property .elements-accordion-item .image-height').val(_element.find('.content-image').css('height'));
-
         },
         /**
          * Change active element settings
          */
         changeSettings: function(type, value) {
             _activeElement = _this.getActiveElementContent();
-
-
             if (type == 'font-size') {
                 _activeElement.find('>h1,>h4').css(type, value);
             } else if (type == 'background-image') {
@@ -2161,13 +1464,11 @@ var returnVal;
                     'background-repeat': 'no-repeat'
                 });
             }
-
             if (_activeElement.hasClass('button-1') && type == 'border-radius') {
                 _activeElement.find('a').css(type, value);
             } else {
                 _activeElement.css(type, value);
             }
-
             if (type == 'background-color' && _activeElement.hasClass('content-wrapper')) {
                 _this.$elem.find('.content-main').css('background-color', value);
             }
@@ -2224,7 +1525,6 @@ var returnVal;
             }
             //default options
             _toolBar += ' | alignleft aligncenter alignright alignjustify | bullist numlist | forecolor backcolor |  unlink removeformat  ';
-
             tinymce.init({
                 selector: 'div.content-wrapper',
                 theme: 'inlite',
@@ -2247,7 +1547,6 @@ var returnVal;
                     jQuery.each(data, function(i, val) {
                         _language[i] = val[0];
                     });
-
                     //set language data to private variable
                     _this.langArr = _language[_this.config.lang];
                     _this.generateElements();
@@ -2272,17 +1571,12 @@ var returnVal;
                 }
             });
         },
-
         /**
          * Undo /redo
          */
-        commandsUndoManager: function() {
-
-        }
+        commandsUndoManager: function() {}
     };
-
     $.fn.emailBuilder = function(options) {
-
         var _emailBuilder;
         /**
          * Set elements json file url, include which elements want to show in email builder
@@ -2315,7 +1609,6 @@ var returnVal;
         this.setLoadPageHtmlUrl = function(loadPageHtmlUrl) {
             _emailBuilder.config.loadPageHtmlUrl = loadPageHtmlUrl;
         }
-
         /**
          * Show or hide context menu in editor
          */
@@ -2328,7 +1621,6 @@ var returnVal;
         this.setShowContextMenu_FontFamily = function(showContextMenu_FontFamily) {
             _emailBuilder.config.showContextMenu_FontFamily = showContextMenu_FontFamily;
         }
-
         /**
          * Show or hide font size option context menu in editor
          */
@@ -2365,10 +1657,6 @@ var returnVal;
         this.setShowContextMenu_Hyperlink = function(showContextMenu_Hyperlink) {
             _emailBuilder.config.showContextMenu_Hyperlink = showContextMenu_Hyperlink;
         }
-
-
-
-
         /**
          * Show or hide elements tab in left menu
          */
@@ -2399,8 +1687,6 @@ var returnVal;
         this.setShowCollapseMenuinBottom = function(showCollapseMenuinBottom) {
             _emailBuilder.config.showCollapseMenuinBottom = showCollapseMenuinBottom;
         }
-
-
         /**
          * Set value show or hide settings bar
          */
@@ -2437,8 +1723,6 @@ var returnVal;
         this.setShowSettingsLoadTemplate = function(showSettingsLoadTemplate) {
             _emailBuilder.config.showSettingsLoadTemplate = showSettingsLoadTemplate;
         }
-
-
         /**
          * Set value show or hide 'Move' button in actions row item
          */
@@ -2463,16 +1747,12 @@ var returnVal;
         this.setShowRowCodeEditorButton = function(showRowCodeEditorButton) {
             _emailBuilder.config.showRowCodeEditorButton = showRowCodeEditorButton;
         }
-
         /**
          * Init email builder any time
          */
         this.init = function() {
             _emailBuilder.init();
         }
-
-
-
         /**
          * Set settings preview button click event
          */
@@ -2509,7 +1789,6 @@ var returnVal;
         this.setSettingsSendMailButtonClick = function(func) {
             _emailBuilder.config.onSettingsSendMailButtonClick = func;
         }
-
         /** Set Before 'change image'  click event*/
         this.setBeforeChangeImageClick = function(func) {
             _emailBuilder.config.onBeforeChangeImageClick = func;
@@ -2544,7 +1823,6 @@ var returnVal;
         this.setPopupUploadImageButtonClick = function(func) {
             _emailBuilder.config.onPopupUploadImageButtonClick = func;
         }
-
         /**
          * Set Before clicking 'Remove' button in element settings
          */
@@ -2599,7 +1877,6 @@ var returnVal;
         this.getContentHtml = function() {
             return _emailBuilder.getContentHtml();
         }
-
         this.makeSortable = function() {
             _emailBuilder.makeSortable();
         }
@@ -2609,7 +1886,6 @@ var returnVal;
         });
     };
 });
-
 jQuery.fn.hasParent = function(e) {
     return (jQuery(this).parents(e).length == 1 ? true : false);
 }

@@ -1224,4 +1224,12 @@ return [
         'created'  => 'es-Created by me',
         'assigned' => 'es-Assigned to me',
     ],
+
+    'email_builder_popup'    => [
+        'edit_success' => [
+            'title'   => 'es-Notification',
+            'body' => 'es-Template saved successfully',
+            'btn_ok'  => 'es-Close',
+        ],
+    ],
 ];

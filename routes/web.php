@@ -304,7 +304,12 @@ Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
 // Email Builder Routes
 
-Route::post('/storeEmailTemplate','CampaignController@storeEmailTemplate');
+Route::post('/storeEmailTemplate', 'CampaignController@storeEmailTemplate');
+Route::post('/updateEmailTemplate', 'CampaignController@updateEmailTemplate');
+Route::get('/getEmailTemplates', 'CampaignController@getEmailTemplates'); //ajax;
+Route::post('/getEmailTemplateBlocks', 'CampaignController@getEmailTemplateBlocks'); //ajax;
+Route::post('/storeEmailTemplateForPreview', 'CampaignController@storeEmailTemplateForPreview'); //ajax;
+Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmailTemplate');
 // Email Builder Routes ends
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
