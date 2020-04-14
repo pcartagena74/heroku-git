@@ -27,12 +27,12 @@ $topBits = '';  // remove this if this was set in the controller
         $opens = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('opens');
         $clicks = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('clicks');
 @endphp
-        @if($c == $campaigns->first())
+        {{-- @if($c == $campaigns->first()) --}}
 <div class="col-md-10 col-xs-10">
     <div class="x_panel">
         <div class="x_title">
             <h2>
-                <a href="{!! env('APP_URL') !!}/campaign/{!! $c->campaignID !!}/edit">
+                <a href="{!! url('campaign',$c->campaignID,'edit') !!}">
                     {!! $c->title !!}
                 </a>
                 <small>
@@ -159,7 +159,7 @@ $topBits = '';  // remove this if this was set in the controller
     </div>
     <!-- x_panel -->
 </div>
-@else
+{{-- @else
 <div class="col-md-10 col-xs-10">
     <div class="x_panel collapsed">
         <div class="x_title">
@@ -283,7 +283,7 @@ $topBits = '';  // remove this if this was set in the controller
     </div>
     <!-- x_panel -->
 </div>
-@endif
+@endif --}}
 
     @endforeach
 

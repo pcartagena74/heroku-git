@@ -365,6 +365,7 @@ var _emailBuilder = $('.editor').emailBuilder({
             success: function(data) {
                 if (data.success === true) {
                     $('#popup_save_template').modal('hide');
+                    window.location.href = data.redirect_url;
                 } else {
                     $('.input-error').text('Problem in server');
                 }
@@ -445,9 +446,7 @@ function load_template_data(page){
         });
 }
 
-
 @if(isset($campaign->template_blocks))
-
 var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
     setTimeout(function() {
         $('.content-wrapper .email-editor-elements-sortable').html('');

@@ -75,7 +75,7 @@ class CampaignController extends Controller
                 ]);
             }
         }
-        return response()->json(['success' => true, 'message' => 'Template Saved']);
+        return response()->json(['success' => true, 'message' => 'Template Saved', 'redirect_url' => url('campaign', $c->campaignID)]);
     }
 
     public function updateEmailTemplate(Request $request)
@@ -140,48 +140,7 @@ class CampaignController extends Controller
         }
         return response()->json(['success' => true, 'blocks' => $campaign->template_blocks]);
     }
-    public function createTemplatePreview(Request $request)
-    {
-        $html     = $request->input('html');
-        $todayh   = getdate();
-        $filename = "email-editor-" . $todayh['seconds'] . $todayh['minutes'] . $todayh['hours'] . $todayh['mday'] . $todayh['mon'] . $todayh['year'];
 
-        $newHtmlFilename = EXPORTS_DIRECTORY . $filename . '.html';
-        $zipFilename     = EXPORTS_DIRECTORY . $filename . '.zip';
-        $zipFileUrl      = EXPORTS_URL . $filename . '.zip';
-        $htmlFileUrl     = EXPORTS_URL . $filename . '.html';
-
-        //read email template
-        $templateContent = file_get_contents("template.html", true);
-
-        //create new document
-        $new_content = $html;
-
-        //view in browser link
-        $new_content = str_replace('#view_web', $htmlFileUrl, $new_content);
-
-        $content = str_replace('[email-body]', $new_content, $templateContent);
-        $fp      = fopen($newHtmlFilename, "wb");
-        fwrite($fp, $content);
-        fclose($fp);
-
-        //create zip document
-        // $zip = new ZipArchive();
-
-        // $zip->open($zipFilename, ZipArchive::CREATE);
-        // $zip->addFile($newHtmlFilename, 'index.html');
-        // $zip->close();
-        //remove html file
-        //unlink($newHtmlFilename);
-        $zipFileUrl              = url('/');
-        $response                = array();
-        $response['code']        = 0;
-        $response['url']         = $zipFileUrl;
-        $response['preview_url'] = $htmlFileUrl;
-        $response['html']        = $new_content;
-
-        return $request->response;
-    }
     /**
      * Store a newly created resource in storage.
      *
@@ -244,10 +203,10 @@ class CampaignController extends Controller
      */
     public function show($id)
     {
+        $campaign            = Campaign::findOrFail($id);
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
-        // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
-        return view('v1.auth_pages.campaigns.email_builder', compact('org'));
+        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign'));
     }
 
     public function show_campaign(Campaign $campaign)
@@ -265,7 +224,11 @@ class CampaignController extends Controller
     {
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
-        return view('v1.auth_pages.campaigns.email_builder', compact('campaign', 'org'));
+        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign'));
+
+        // $this->currentPerson = Person::find(auth()->id());
+        // $org                 = Org::find($this->currentPerson->defaultOrgID);
+        // return view('v1.auth_pages.campaigns.email_builder', compact('campaign', 'org'));
     }
 
     /**
@@ -291,4 +254,28 @@ class CampaignController extends Controller
         //
     }
 
+    public function sendTestEmail(Request $request)
+    {
+        $email = $request->input('email');
+        if (empty($email)) {
+            $email = 'mufaddal@systango.com';
+        }
+        $id       = 69;
+        $campaign = Campaign::where('campaignID', $id)->get()->first();
+        $html     = replaceUserDataInEmailTemplate($email, $campaign);
+        $html     = view('v1.auth_pages.campaigns.preview_email_template')
+            ->with(['html' => $html])->render();
+        Mail::send(
+            'v1.auth_pages.campaigns.preview_email_template',
+            ['html' => $html],
+            function ($message) use ($campaign, $email) {
+                $message->from($campaign->fromEmail, $campaign->fromName);
+                $message->sender($campaign->fromEmail, $campaign->fromName);
+                $message->to($email, $name = null);
+                $message->subject($campaign->subject);
+                // Create a custom header that we can later retrieve
+                //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
+            }
+        );
+    }
 }

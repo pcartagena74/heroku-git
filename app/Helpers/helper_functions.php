@@ -410,7 +410,6 @@ if (!function_exists('getTicketPriorities')) {
     }
 }
 
-
 if (!function_exists('get_template_builder_blocks_category')) {
     function get_template_builder_category()
     {
@@ -976,12 +975,17 @@ if (!function_exists('storeImportDataDB')) {
 }
 
 if (!function_exists('isDate')) {
-    function isDate($value)
+    /**
+     * check if given string is date type
+     * @param  string  $date_str date
+     * @return boolean        true/false
+     */
+    function isDate($date_str)
     {
-        if (!$value) {
+        if (!$date_str) {
             return false;
         } else {
-            $date = date_parse($value);
+            $date = date_parse($date_str);
             if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
                 return checkdate($date['month'], $date['day'], $date['year']);
             } else {
@@ -991,24 +995,93 @@ if (!function_exists('isDate')) {
     }
 }
 
-
-function requestBin($data){
-    return;
-    // API URL
-            $url = 'https://enpfjlvpu0oo.x.pipedream.net';
-            // Create a new cURL resource
-            $ch = curl_init($url);
-            // Setup request to send json via POST
-            $payload = json_encode(array("user" => $data));
-            // Attach encoded JSON string to the POST fields
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-            // Set the content type to application/json
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-            // Return response instead of outputting
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            // Execute the POST request
-            $result = curl_exec($ch);
-            // Close cURL resource
-            curl_close($ch);
+if (!function_exists('requestBin')) {
+    /**
+     * send data to request bin for queue debug
+     * @param  array $data
+     */
+    function requestBin($data)
+    {
+        return;
+        // API URL
+        $url = 'https://enpfjlvpu0oo.x.pipedream.net';
+        // Create a new cURL resource
+        $ch = curl_init($url);
+        // Setup request to send json via POST
+        $payload = json_encode(array("user" => $data));
+        // Attach encoded JSON string to the POST fields
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        // Set the content type to application/json
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        // Return response instead of outputting
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Execute the POST request
+        $result = curl_exec($ch);
+        // Close cURL resource
+        curl_close($ch);
+    }
 }
 
+if (!function_exists('replaceUserDataInEmailTemplate')) {
+    function replaceUserDataInEmailTemplate($email, $campaign)
+    {
+        $raw_html = '';
+        foreach ($campaign->template_blocks as $key => $value) {
+            $raw_html .= $value->content;
+        }
+        $person = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
+        if (!empty($person)) {
+
+        }
+        $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
+        $org_name     = '';
+        if (!empty($organization)) {
+            $org_name = $organization->orgName;
+        }
+
+        $mapping = [
+            '[PREFIX]'           => $person->prefix,
+            '[FIRSTNAME]'        => $person->firstName,
+            '[MIDDLENAME]'       => $person->midName,
+            '[LASTNAME]'         => $person->lastName,
+            '[SUFFIX]'           => $person->suffix,
+            '[PREFNAME]'         => $person->prefName,
+            '[LOGINEMAIL]'       => $person->login,
+            '[ORGANIZATIONNAME]' => $org_name,
+            '[TITLE]'            => $person->title,
+            '[COMPANYNAME]'      => $person->compName,
+            '[INDUSTRY]'         => $person->indName,
+            '[EXPERINCE]'        => $person->experience,
+            '[ALLERGENNOTE]'     => $person->allergenNote,
+            '[SPECIALNEEDS]'     => $person->specialNeeds,
+            '[CHAPTERROLE]'      => $person->chapterRole,
+            '[AFFILIATION]'      => $person->affiliation,
+            '[TWITTERHANDLE]'    => $person->twitterHandle,
+            '[CERTIFICATIONS]'   => $person->certifications,
+            '[OrgStat1]'         => $person->orgperson->OrgStat1,
+            '[OrgStat2]'         => $person->orgperson->OrgStat2,
+            '[OrgStat3]'         => $person->orgperson->OrgStat3,
+            '[OrgStat4]'         => $person->orgperson->OrgStat4,
+            '[OrgStat5]'         => $person->orgperson->OrgStat5,
+            '[OrgStat6]'         => $person->orgperson->OrgStat6,
+            '[OrgStat7]'         => $person->orgperson->OrgStat7,
+            '[OrgStat8]'         => $person->orgperson->OrgStat8,
+            '[OrgStat9]'         => $person->orgperson->OrgStat9,
+            '[OrgStat10]'        => $person->orgperson->OrgStat10,
+            '[RELDATE1]'         => $person->orgperson->RelDate1,
+            '[RELDATE2]'         => $person->orgperson->RelDate2,
+            '[RELDATE3]'         => $person->orgperson->RelDate3,
+            '[RELDATE4]'         => $person->orgperson->RelDate4,
+            '[RELDATE5]'         => $person->orgperson->RelDate5,
+            '[RELDATE6]'         => $person->orgperson->RelDate6,
+            '[RELDATE7]'         => $person->orgperson->RelDate7,
+            '[RELDATE8]'         => $person->orgperson->RelDate8,
+            '[RELDATE9]'         => $person->orgperson->RelDate9,
+            '[RELDATE10]'        => $person->orgperson->RelDate10,
+
+        ];
+        return str_replace(array_keys($mapping), $mapping, $raw_html);
+        // dd($person);
+
+    }
+}
