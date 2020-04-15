@@ -39,7 +39,8 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
     public function __construct($currentPerson)
     {
-        $this->currentPerson = $currentPerson;
+        $this->currentPerson = new Collection($currentPerson->toArray());
+        requestBin(['in'=>'constructor member import']);
     }
 
     /**
@@ -52,8 +53,9 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
         $count = 0;
         foreach ($rows as $row) {
             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
+                requestBin($row->toArray());
                 ++$count;
-                $this->storeImportDataDB($row->toArray(), $this->currentPerson);
+                $this->storeImportDataDB($row->toArray(), $this->currentPerson,'asdfsdaf');
             }
         }
         $this->row_count += $count;

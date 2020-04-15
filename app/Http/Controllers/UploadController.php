@@ -8,6 +8,7 @@ use App\Address;
 use App\Email;
 use App\Event;
 use App\Imports\MembersImport;
+use App\Imports\TestImport;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\OrgPerson;
 use App\Person;
@@ -157,16 +158,20 @@ class UploadController extends Controller
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
                     // $import = new MembersImport($currentPerson);
-                    // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
-                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, $import->getProcessedRowCount())])
-                    //     ->allOnConnection('database')
-                    //     ->allOnQueue('default');
-
-                    $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
+                    
+                    $var = (new TestImport($currentPerson))->queue($file_name, 'local')
                         ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                         ->onConnection('database')
                         ->onQueue('default');
-                    requestBin((array) $var);
+                    dd($var);
+                    $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                        ->onConnection('database')
+                        ->onQueue('default');
+                    // $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
+                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                    //     ->onConnection('database')
+                    //     ->onQueue('default');
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {

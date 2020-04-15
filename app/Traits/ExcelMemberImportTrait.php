@@ -139,7 +139,7 @@ trait ExcelMemberImportTrait
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-
+        
         // $this->timeMem('5 $pchk ');
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
@@ -163,7 +163,6 @@ trait ExcelMemberImportTrait
                 'affiliation'  => $currentPerson->affiliation,
             ];
             $update_existing_record = 0;
-
             // If email1 is not null or blank, use it as primary to login, etc.
             if ($em1 !== null && $em1 != "" && $em1 != " ") {
                 $p_array['login'] = $em1;
