@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mail;
+use Spatie\Browsershot\Browsershot;
+use Spatie\Image\Manipulations;
 
 class CampaignController extends Controller
 {
@@ -50,6 +52,12 @@ class CampaignController extends Controller
         // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
         return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org'));
     }
+
+    /**
+     * create campiagn and store template
+     * @param  Request $request
+     * @return json
+     */
     public function storeEmailTemplate(Request $request)
     {
         $c                   = new Campaign;
@@ -78,6 +86,11 @@ class CampaignController extends Controller
         return response()->json(['success' => true, 'message' => 'Template Saved', 'redirect_url' => url('campaign', $c->campaignID)]);
     }
 
+    /**
+     * update campaign
+     * @param  Request $request
+     * @return json
+     */
     public function updateEmailTemplate(Request $request)
     {
         $campaign_id = $request->input('id');
@@ -111,6 +124,11 @@ class CampaignController extends Controller
         return response()->json(['success' => true, 'message' => 'Template Updated']);
     }
 
+    /**
+     * get email template list for popup with pagination
+     * @param  Request $request
+     * @return json with pagination html
+     */
     public function getEmailTemplates(Request $request)
     {
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)->orderBy('campaignID', 'desc')->paginate(10);
@@ -118,6 +136,11 @@ class CampaignController extends Controller
         return response()->json(['success' => true, 'list' => $campaigns, 'pages' => $pages->toHtml()]);
     }
 
+    /**
+     * store email template html for preview
+     * @param  Request $request 
+     * @return json
+     */
     public function storeEmailTemplateForPreview(Request $request)
     {
         $html      = $request->input('html');
@@ -125,13 +148,31 @@ class CampaignController extends Controller
         $tmp_path  = Storage::disk('local')->put($file_name,
             view('v1.auth_pages.campaigns.preview_email_template')
                 ->with(['html' => $html])->render());
+
+        $img = Browsershot::html($html)
+            ->fullPage()
+            ->fit(Manipulations::FIT_CONTAIN, 400, 400)
+            ->save(Storage::disk('public')->path($file_name . '.png'));
         return response()->json(['success' => true, 'preview_url' => url('preview-email-template', $file_name)]);
     }
 
+
+    /**
+     * preview saved template
+     * @param  Request $request  
+     * @param  string  $filename 
+     * @return json
+     */
     public function previewEmailTemplate(Request $request, $filename)
     {
         return Storage::disk('local')->get($filename);
     }
+
+    /**
+     * get only blocks of email template used after loading  popup
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function getEmailTemplateBlocks(Request $request)
     {
         $campaign = Campaign::find($request->input('id'));
@@ -253,7 +294,12 @@ class CampaignController extends Controller
     {
         //
     }
-
+    
+    /**
+     * test method to check variable parsing
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function sendTestEmail(Request $request)
     {
         $email = $request->input('email');
