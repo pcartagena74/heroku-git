@@ -11,17 +11,17 @@ class EmailBuilderSeeder extends Seeder
      */
     public function run()
     {
-        // EmailBlockCategory::insert([
-        //     ['id' => 1, 'name' => 'Typography'],
-        //     ['id' => 2, 'name' => 'Media'],
-        //     ['id' => 3, 'name' => 'Layout'],
-        //     ['id' => 4, 'name' => 'Button'],
-        //     ['id' => 5, 'name' => 'Social'],
-        //     ['id' => 6, 'name' => 'Footer'],
-        //     ['id' => 7, 'name' => 'User Info'],
-        //     ['id' => 8, 'name' => 'User Org Info'],
-        // ]);
-        // EmailBlockCategory::insert();
+        EmailBlockCategory::insert([
+            ['id' => 1, 'name' => 'Typography'],
+            ['id' => 2, 'name' => 'Media'],
+            ['id' => 3, 'name' => 'Layout'],
+            ['id' => 4, 'name' => 'Button'],
+            ['id' => 5, 'name' => 'Social'],
+            ['id' => 6, 'name' => 'Footer'],
+            ['id' => 7, 'name' => 'User Info'],
+            ['id' => 8, 'name' => 'User Org Info'],
+        ]);
+        EmailBlockCategory::insert();
         // insert into email block category
         DB::insert("INSERT INTO `email_blocks` (`id`, `cat_id`, `icon`, `property`, `name`, `html`, `used_count`, `is_active`)
                 VALUES
