@@ -310,6 +310,7 @@ Route::get('/getEmailTemplates', 'CampaignController@getEmailTemplates'); //ajax
 Route::post('/getEmailTemplateBlocks', 'CampaignController@getEmailTemplateBlocks'); //ajax;
 Route::post('/storeEmailTemplateForPreview', 'CampaignController@storeEmailTemplateForPreview'); //ajax;
 Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmailTemplate');
+Route::get('/email-template-thumb/{filename}', 'CampaignController@getemailTemplateThumbnailImage');
 Route::get('/send-test-email', 'CampaignController@sendTestEmail');
 // Email Builder Routes ends
 // ----------------------------------------------------------------------------------

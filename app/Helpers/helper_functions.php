@@ -1022,22 +1022,34 @@ if (!function_exists('requestBin')) {
 }
 
 if (!function_exists('replaceUserDataInEmailTemplate')) {
-    function replaceUserDataInEmailTemplate($email, $campaign)
+    function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null)
     {
-        $raw_html = '';
-        foreach ($campaign->template_blocks as $key => $value) {
-            $raw_html .= $value->content;
-        }
-        $person = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
-        if (!empty($person)) {
 
-        }
-        $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
+        $person       = '';
+        $organization = '';
         $org_name     = '';
+
+        if ($for_preview) {
+            if (!empty($raw_html)) {
+                $person       = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
+                $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
+            } else {
+                return $raw_html;
+            }
+        } else {
+            $raw_html = '';
+            foreach ($campaign->template_blocks as $key => $value) {
+                $raw_html .= $value->content;
+            }
+            $person       = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
+            $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
+        }
+        if (empty($person) || empty($organization)) {
+            return $raw_html;
+        }
         if (!empty($organization)) {
             $org_name = $organization->orgName;
         }
-
         $mapping = [
             '[PREFIX]'           => $person->prefix,
             '[FIRSTNAME]'        => $person->firstName,
@@ -1057,16 +1069,16 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             '[AFFILIATION]'      => $person->affiliation,
             '[TWITTERHANDLE]'    => $person->twitterHandle,
             '[CERTIFICATIONS]'   => $person->certifications,
-            '[OrgStat1]'         => $person->orgperson->OrgStat1,
-            '[OrgStat2]'         => $person->orgperson->OrgStat2,
-            '[OrgStat3]'         => $person->orgperson->OrgStat3,
-            '[OrgStat4]'         => $person->orgperson->OrgStat4,
-            '[OrgStat5]'         => $person->orgperson->OrgStat5,
-            '[OrgStat6]'         => $person->orgperson->OrgStat6,
-            '[OrgStat7]'         => $person->orgperson->OrgStat7,
-            '[OrgStat8]'         => $person->orgperson->OrgStat8,
-            '[OrgStat9]'         => $person->orgperson->OrgStat9,
-            '[OrgStat10]'        => $person->orgperson->OrgStat10,
+            '[ORGSTAT1]'         => $person->orgperson->OrgStat1,
+            '[ORGSTAT2]'         => $person->orgperson->OrgStat2,
+            '[ORGSTAT3]'         => $person->orgperson->OrgStat3,
+            '[ORGSTAT4]'         => $person->orgperson->OrgStat4,
+            '[ORGSTAT5]'         => $person->orgperson->OrgStat5,
+            '[ORGSTAT6]'         => $person->orgperson->OrgStat6,
+            '[ORGSTAT7]'         => $person->orgperson->OrgStat7,
+            '[ORGSTAT8]'         => $person->orgperson->OrgStat8,
+            '[ORGSTAT9]'         => $person->orgperson->OrgStat9,
+            '[ORGSTAT10]'        => $person->orgperson->OrgStat10,
             '[RELDATE1]'         => $person->orgperson->RelDate1,
             '[RELDATE2]'         => $person->orgperson->RelDate2,
             '[RELDATE3]'         => $person->orgperson->RelDate3,
@@ -1077,11 +1089,7 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             '[RELDATE8]'         => $person->orgperson->RelDate8,
             '[RELDATE9]'         => $person->orgperson->RelDate9,
             '[RELDATE10]'        => $person->orgperson->RelDate10,
-
         ];
         return str_replace(array_keys($mapping), $mapping, $raw_html);
-        // dd($person);
-
     }
 }
-

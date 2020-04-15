@@ -138,12 +138,13 @@ class CampaignController extends Controller
 
     /**
      * store email template html for preview
-     * @param  Request $request 
+     * @param  Request $request
      * @return json
      */
     public function storeEmailTemplateForPreview(Request $request)
     {
         $html      = $request->input('html');
+        $html      = replaceUserDataInEmailTemplate($email = null, $campaign = null, $for_preview = true, $raw_html = $html);
         $file_name = Str::random(40) . '.html';
         $tmp_path  = Storage::disk('local')->put($file_name,
             view('v1.auth_pages.campaigns.preview_email_template')
@@ -152,20 +153,40 @@ class CampaignController extends Controller
         $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 400, 400)
-            ->save(Storage::disk('public')->path($file_name . '.png'));
+            ->save(Storage::disk('local')->path($file_name . '.png'));
         return response()->json(['success' => true, 'preview_url' => url('preview-email-template', $file_name)]);
     }
 
-
     /**
      * preview saved template
-     * @param  Request $request  
-     * @param  string  $filename 
+     * @param  Request $request
+     * @param  string  $filename
      * @return json
      */
     public function previewEmailTemplate(Request $request, $filename)
     {
-        return Storage::disk('local')->get($filename);
+        if (Storage::disk('local')->exists($filename)) {
+            return Storage::disk('local')->get($filename);
+        } else {
+            abort(404);
+        }
+    }
+
+    /**
+     * show thumbnail image
+     * @param  Request $request
+     * @param  string  $filename
+     * @return json
+     */
+    public function getemailTemplateThumbnailImage(Request $request, $filename)
+    {
+        if (Storage::disk('local')->exists($filename)) {
+            $path    = Storage::disk('local')->path($filename);
+            $headers = ["Content-Type" => 'image/png'];
+            return response()->file($path, $headers);
+        } else {
+            abort(404);
+        }
     }
 
     /**
@@ -294,7 +315,7 @@ class CampaignController extends Controller
     {
         //
     }
-    
+
     /**
      * test method to check variable parsing
      * @param  Request $request [description]
