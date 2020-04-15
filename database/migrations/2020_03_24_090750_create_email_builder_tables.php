@@ -13,7 +13,7 @@ class CreateEmailBuilderTables extends Migration
      */
     public function up()
     {
-        Schema::create('email_block_categorys', function (Blueprint $table) {
+        Schema::create('email_block_categories', function (Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->string('name', 50)->nullable();
         });
