@@ -215,10 +215,10 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
 </script>
 <!--for ace editor  -->
-<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript">
 </script>
 <!--for tinymce  -->
-<script src="http://cdn.tinymce.com/4/tinymce.min.js">
+<script src="https://cdn.tinymce.com/4/tinymce.min.js">
 </script>
 <script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
 </script>
