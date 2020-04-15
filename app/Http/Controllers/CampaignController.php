@@ -149,7 +149,9 @@ class CampaignController extends Controller
         $tmp_path  = Storage::disk('local')->put($file_name,
             view('v1.auth_pages.campaigns.preview_email_template')
                 ->with(['html' => $html])->render());
-
+        // Build pack is needed in heroku to run this 
+        // also below argunment are not safe but are requied to run this library on heroku
+        //https://github.com/jontewks/puppeteer-heroku-buildpack
         $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 400, 400)
