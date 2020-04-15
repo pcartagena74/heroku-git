@@ -123,7 +123,7 @@ class ReadChunk implements ShouldQueue
         );
         $worksheet = $spreadsheet->getActiveSheet();
         $rows = $worksheet->toArray();
-        dd($rows);
+        requestBin($rows);
         if ($sheet->getHighestRow() < $this->startRow) {
             $sheet->disconnect();
 
