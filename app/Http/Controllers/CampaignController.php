@@ -153,6 +153,7 @@ class CampaignController extends Controller
         $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 400, 400)
+            ->addChromiumArguments(['--no-sandbox', '--disable-setuid-sandbox'])
             ->save(Storage::disk('local')->path($file_name . '.png'));
         return response()->json(['success' => true, 'preview_url' => url('preview-email-template', $file_name)]);
     }
