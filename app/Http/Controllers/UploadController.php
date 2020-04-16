@@ -7,7 +7,7 @@ ini_set('max_execution_time', 0);
 use App\Address;
 use App\Email;
 use App\Event;
-use App\Imports\TestImport;
+use App\Imports\MembersImport;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\OrgPerson;
 use App\Person;
@@ -160,19 +160,19 @@ class UploadController extends Controller
                     // $import = new MembersImport($currentPerson);
 
                     // $var = (new TestImport($currentPerson))->queue($file_name, 'local')
-                    $var = Excel::import(new TestImport($currentPerson), $path)
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                        ->onConnection('database')
-                        ->onQueue('default');
+                    // $var = Excel::import(new TestImport($currentPerson), $path)
+                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                    //     ->onConnection('database')
+                    //     ->onQueue('default');
 
                     // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
                     //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                     //     ->onConnection('database')
                     //     ->onQueue('default');
-                    // $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
-                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                    //     ->onConnection('database')
-                    //     ->onQueue('default');
+                    $var = (new MembersImport($currentPerson))->queue($path)
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                        ->onConnection('database')
+                        ->onQueue('default');
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {

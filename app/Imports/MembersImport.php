@@ -39,7 +39,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
     public function __construct($currentPerson)
     {
-        $this->currentPerson = new Collection($currentPerson->toArray());
+        $this->currentPerson = $currentPerson;
         requestBin(['in'=>'constructor member import']);
     }
 
