@@ -8,7 +8,6 @@ use App\Address;
 use App\Email;
 use App\Event;
 use App\Imports\MembersImport;
-use App\Imports\TestImport;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\OrgPerson;
 use App\Person;
@@ -110,6 +109,7 @@ class UploadController extends Controller
         if ($validate->fails()) {
             return Redirect::back()->withErrors($validate->errors());
         }
+
         $file      = $request->file('filename');
         $extension = $file->getClientOriginalExtension();
         $file_name = Str::random(40) . '.' . $extension;
@@ -131,19 +131,20 @@ class UploadController extends Controller
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
                     // $import = new MembersImport($currentPerson);
 
-                    $var = (new TestImport($currentPerson))->queue($file_name, 'local')
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                        ->onConnection('database')
-                        ->onQueue('default');
-                    dd($var);
-                    $var = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                        ->onConnection('database')
-                        ->onQueue('default');
-                    // $var = (new MembersImport($currentPerson))->queue($file_name, 'local')
+                    // $var = (new TestImport($currentPerson))->queue($file_name, 'local')
+                    // $var = Excel::import(new TestImport($currentPerson), $path)
                     //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                     //     ->onConnection('database')
                     //     ->onQueue('default');
+
+                    // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
+                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                    //     ->onConnection('database')
+                    //     ->onQueue('default');
+                    $var = (new MembersImport($currentPerson))->queue($path)
+                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
+                        ->onConnection('database')
+                        ->onQueue('default');
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
