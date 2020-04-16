@@ -100,7 +100,7 @@ class ReadChunk implements ShouldQueue
         if ($this->sheetImport instanceof WithCustomValueBinder) {
             Cell::setValueBinder($this->sheetImport);
         }
-        // requestBin($this->sheetImport));
+
         $headingRow = HeadingRowExtractor::headingRow($this->sheetImport);
         $filter = new ChunkReadFilter(
             $headingRow,
