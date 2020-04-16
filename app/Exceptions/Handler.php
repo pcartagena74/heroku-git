@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
@@ -133,6 +134,9 @@ class Handler extends ExceptionHandler
             }
         }
 
+        if ($exception instanceof ModelNotFoundException) {
+            return parent::render($request, $exception);
+        }
         if ($exception) {
             if (env('APP_ENV') != 'local') {
                 $error_code = 500;

@@ -180,7 +180,7 @@ return [
         | in conjunction with queued imports and exports.
         |
         */
-        'remote_disk' => 'local',
+        'remote_disk' => 's3_receipts',
 
     ],
 ];
