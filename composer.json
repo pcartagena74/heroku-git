@@ -66,9 +66,9 @@
         "psr-4": {
             "App\\": "app/"
         },
-        "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php","vendor/kordy/ticketit/src/TicketitServiceProvider.php","vendor/maatwebsite/excel/src/Jobs/ReadChunk.php"],
+        "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php","vendor/kordy/ticketit/src/TicketitServiceProvider.php"],
         "classmap": ["database/seeds", "database/factories"],
-        "files": ["app/Helpers/helper_functions.php", "app/Vendor/Ticketit/TicketItComposer.php","app/Vendor/Ticketit/TicketitServiceProvider.php","app/Vendor/Maatwebsite/Excel/ReadChunk.php"]
+        "files": ["app/Helpers/helper_functions.php", "app/Vendor/Ticketit/TicketItComposer.php","app/Vendor/Ticketit/TicketitServiceProvider.php"]
     },
     "autoload-dev": {
         "psr-4": {
