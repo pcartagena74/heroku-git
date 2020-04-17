@@ -1226,10 +1226,17 @@ return [
     ],
 
     'email_builder_popup'    => [
-        'edit_success' => [
-            'title'   => 'es-Notification',
-            'body' => 'es-Template saved successfully',
-            'btn_ok'  => 'es-Close',
+        'edit_success'     => [
+            'title'  => 'es-Campaign',
+            'body'   => 'es-Template saved successfully',
+            'btn_ok' => 'es-Close',
+        ],
+        'save_before_exit' => [
+            'title'      => 'es-Confirm your action',
+            'body'       => 'es-Save changes before closing?',
+            'btn_ok'     => 'es-Save',
+            'btn_no'     => 'es-Close without saving',
+            'btn_cancel' => 'es-Cancel',
         ],
     ],
 ];

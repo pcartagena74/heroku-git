@@ -1,14 +1,3 @@
-@php 
-if(!isset($campaign)) {
-    $campaign = '';
-}
-
-$topBits = ''; 
-
-@endphp
-@extends('v1.layouts.auth_email_builder', ['topBits' => $topBits])
-
-@section('content')
 @php
 
 $blocks_category=get_template_builder_category();
@@ -212,13 +201,13 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 </div>
 <script src="{{url('vendor/jquery-nicescroll/dist/jquery.nicescroll.min.js')}}">
 </script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
-</script>
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+</script> -->
 <!--for ace editor  -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript">
 </script>
 <!--for tinymce  -->
-<script src="https://cdn.tinymce.com/4/tinymce.min.js">
+<script src="http://cdn.tinymce.com/4/tinymce.min.js">
 </script>
 <script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
 </script>
@@ -229,7 +218,7 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <!--for bootstrap-tour  -->
 <script src="{{url('vendor/bootstrap-tour/build/js/bootstrap-tour.min.js')}}">
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js">
 </script>
 @include('v1.auth_pages.campaigns.scripts.email_builder-js')
 <!-- Modal Dialog -->
@@ -238,7 +227,9 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
         <div class="modal-content">
             <div class="modal-header">
                 <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
-                    {{ trans('ticketit::lang.flash-x') }}
+                    <span aria-hidden="true">
+                        ×
+                    </span>
                 </button>
                 <h4 class="modal-title">
                     {{ trans('messages.email_builder_popup.edit_success.title') }}
@@ -257,4 +248,35 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
         </div>
     </div>
 </div>
-@endsection
+<div aria-hidden="true" aria-labelledby="popup_save_before_exit" class="modal fade" id="popup_save_before_exit" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">
+                        ×
+                    </span>
+                </button>
+                <h4 class="modal-title">
+                    {{ trans('messages.email_builder_popup.save_before_exit.title') }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ trans('messages.email_builder_popup.save_before_exit.body') }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" onclick="setExitPopButtonValue('yes')" type="button">
+                    {{ trans('messages.email_builder_popup.save_before_exit.btn_ok') }}
+                </button>
+                <button class="btn btn-success" onclick="setExitPopButtonValue('no')" type="button">
+                    {{ trans('messages.email_builder_popup.save_before_exit.btn_no') }}
+                </button>
+                <button class="btn btn-success" data-dismiss="modal" type="button">
+                    {{ trans('messages.email_builder_popup.save_before_exit.btn_cancel') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

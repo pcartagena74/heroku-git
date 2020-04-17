@@ -17,6 +17,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
+use Spatie\Browsershot\Browsershot;
+use Spatie\Image\Manipulations;
 
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
@@ -1091,5 +1093,48 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             '[RELDATE10]'        => $person->orgperson->RelDate10,
         ];
         return str_replace(array_keys($mapping), $mapping, $raw_html);
+    }
+}
+
+if (!function_exists('generateEmailTemplateThumbnail')) {
+    function generateEmailTemplateThumbnail($html, $campaign)
+    {
+        $file_name = generateEmailTemplateThumbnailName($campaign);
+        $html      = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
+        $img       = Browsershot::html($html)
+            ->fullPage()
+            ->fit(Manipulations::FIT_CONTAIN, 70, 120)
+            ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
+            ->save(Storage::disk('local')->path($file_name));
+        return Storage::disk('local')->path($file_name);
+    }
+}
+
+if (!function_exists('generateEmailTemplateThumbnailName')) {
+    function generateEmailTemplateThumbnailName($campaign)
+    {
+        //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . strtotime($campaign->createDate) . '.png';
+    }
+}
+
+if (!function_exists('getEmailTemplateThumbnailName')) {
+    function getEmailTemplateThumbnailName($campaign)
+    {
+        //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . strtotime($campaign->createDate) . '.png';
+    }
+}
+
+if (!function_exists('getEmailTemplateThumbnailURL')) {
+    function getEmailTemplateThumbnailURL($campaign)
+    {
+        $file_name = getEmailTemplateThumbnailName($campaign);
+        if (Storage::disk('local')->exists($file_name)) {
+            return url('email-template-thumb', $file_name);
+        } else {
+            return url('images/mCentric_square.png');
+
+        }
     }
 }

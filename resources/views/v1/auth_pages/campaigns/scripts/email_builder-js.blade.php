@@ -113,6 +113,7 @@ var _emailBuilder = $('.editor').emailBuilder({
     },
     onElementDragStart: function(e) {},
     onElementDragFinished: function(e, contentHtml, dataId) {
+        console.log('here1');
         //not required
         // $.ajax({
         //         url: 'update_block_info.php',
@@ -168,18 +169,29 @@ var _emailBuilder = $('.editor').emailBuilder({
                     content: _html
                 };
             });
+            var name = $("#edit_campaign input[name=name]").val();
+            var from_name = $("#edit_campaign input[name=from_name]").val();
+            var from_email = $("#edit_campaign input[name=from_email]").val();
+            var subject = $("#edit_campaign input[name=subject]").val();
+            var preheader = $("#edit_campaign input[name=preheader]").val();
             $.ajax({
                 url: '{{ url('updateEmailTemplate') }}',
                 type: 'POST',
                 dataType: 'json',
                 data: {
+                    name: name,
                     contentArr: arr,
-                    id: {{$campaign->campaignID}}
+                    id: {{$campaign->campaignID}},
+                    from_name: from_name,
+                    from_email: from_email,
+                    subject: subject,
+                    preheader: preheader
                 },
                 success: function(data) {
                     //  console.log(data);
                     if (data.success === true) {
                         $('#popup_edit_template').modal('show');
+                        _isDirty = false;
                     } else {
                         $('.input-error').text(data.message);
                     }
@@ -188,6 +200,14 @@ var _emailBuilder = $('.editor').emailBuilder({
                     $('.input-error').text('Internal error');
                 }
             });
+        @else
+            //value not setting working on it
+            var name = $('.template-name').val('{{$campaign_name}}');
+            console.log('here','{{$campaign_name}}',$.trim(name).length);
+            if($.trim(name).length == 0 ){
+                console.log('indse');
+                $('.template-name').html('dfdfd');
+            }
         @endif
 
         //  if (_is_demo) {
@@ -354,20 +374,30 @@ var _emailBuilder = $('.editor').emailBuilder({
                 content: _html
             };
         });
+        var from_name = $("#save_campaign input[name=from_name]").val();
+        var from_email = $("#save_campaign input[name=from_email]").val();
+        var subject = $("#save_campaign input[name=subject]").val();
+        var preheader = $("#save_campaign input[name=preheader]").val();
         $.ajax({
             url: '{{ url('storeEmailTemplate') }}',
             type: 'POST',
             dataType: 'json',
             data: {
                 name: $('.template-name').val(),
-                contentArr: arr
+                contentArr: arr,
+                from_name: from_name,
+                from_email: from_email,
+                subject: subject,
+                preheader: preheader
             },
             success: function(data) {
                 if (data.success === true) {
                     $('#popup_save_template').modal('hide');
                     window.location.href = data.redirect_url;
                 } else {
-                    $('.input-error').text('Problem in server');
+                    $.each(data.errors,function(key,value) {
+                        $('.input-error').append(value+'</br>');
+                    });
                 }
             },
             error: function(error) {
@@ -408,9 +438,11 @@ var _emailBuilder = $('.editor').emailBuilder({
         });
     }
 });
+var _loaded = false;
 _emailBuilder.setAfterLoad(function(e) {
     _emailBuilder.makeSortable();
     $('.elements-db').remove();
+    _loaded = true;
 });
 
 $(document).on('click', '.template-list-pagination .pagination a', function(event){
@@ -445,6 +477,12 @@ function load_template_data(page){
             error: function() {}
         });
 }
+var _isDirty = false;
+$("body").on('DOMSubtreeModified', ".content-wrapper .email-editor-elements-sortable", function() {
+    if(_loaded){
+        _isDirty = true;
+    }
+});
 
 @if(isset($campaign->template_blocks))
 var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
@@ -455,12 +493,17 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
     if(data.length > 0) {
         _content = '';
         for (var i = 0; i < data.length; i++) {
+            console.log(data[i].property);
             _content += '<div class="sortable-row">' + '<div class="sortable-row-container">' + ' <div class="sortable-row-actions">';
             _content += '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>';
             _content += '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>';
             _content += '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>';
             _content += '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>';
-            _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + data[i].property.split(',')[0] + '  >' + data[i].content + '</div></div></div>';
+            var property = '';
+            if(data[i].property){
+                property = data[i].property.split(',')[0];
+            }
+            _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + property + '  >' + data[i].content + '</div></div></div>';
             // _emailBuilder.makeSortable();
         }
         setTimeout(function() {
@@ -469,4 +512,34 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         }, 2000);
     }
 @endif
+
+    var _popup_exit_btn_yes = false;
+    var _popup_exit_btn_no = false;
+    var _popup_exit_btn_cancel = false;
+    $('#hide-etb').on('click', function() {
+      if(_isDirty){
+        $('#popup_save_before_exit').modal('show');
+      }
+    });
+    function closeEmailBuilderPopup(){
+      $('.etb-wrapper').removeClass('is-active')
+      $('.etb-wrapper').parent().parent().removeClass('in')
+      $('#show-etb').parent().removeClass('collapsed');
+      $('#show-etb').parent().attr('aria-expanded', true);
+      $('body').removeClass('no-scroll');
+    }
+    function setExitPopButtonValue(btn_press){
+        switch(btn_press) {
+          case 'yes':
+            $('#popup_save_before_exit').modal('hide');
+            $('.setting-item.save-template').trigger('click');
+            _popup_exit_btn_yes = false;
+            break;
+          case 'no':
+            $('#popup_save_before_exit').modal('hide');
+            closeEmailBuilderPopup();     
+            _popup_exit_btn_no = false;
+            break;
+        }
+    }
 </script>

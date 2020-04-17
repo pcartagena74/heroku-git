@@ -388,7 +388,7 @@ li {
     width: 380px;
     float: left;
     position: fixed;
-    height: 90%;
+    height: 100%;
     z-index: 50;
 }
 #email_builder_master .colorpicker {
@@ -399,7 +399,11 @@ li {
 #email_builder_master .left-menu-container .nav {
     width: 70px;
     float: left;
-    height: 90%;
+    height: 100%;
+}
+#email_builder_master .left-menu-container .nav .left-menu li.menu-item.active {
+  background-color: #1C2A33;
+  color: #5D8397;
 }
 #email_builder_master .left-menu-container .nav .left-menu li.menu-item {
     background-color: transparent;
@@ -434,7 +438,7 @@ li {
     width: 310px;
     float: left;
     position: absolute;
-    height: 90%;
+    height: 100%;
     left: 70px;
 }
 #email_builder_master .left-menu-container .elements .elements-container {
@@ -566,9 +570,13 @@ li {
     padding: 3px 0;
     display: none;
 }
+#email_builder_master .left-menu-container .elements .elements-container .elements-list {
+  word-spacing: -4px;
+}
 #email_builder_master .left-menu-container .elements .elements-container .elements-list li {
     display: inline-block;
     margin: 5px 0 3px 1px;
+    word-spacing: initial;
 }
 #email_builder_master .left-menu-container .elements .elements-container .elements-list .elements-list-item {
     z-index: 111;
@@ -661,14 +669,14 @@ li {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 40px;
+    /* height: 40px; */
 }
 #email_builder_master .left-menu-container .elements .settings .setting-item {
-    padding: 10px;
+    padding: 6px 10px;
     display: inline-block;
     cursor: pointer;
-    width: 16.6%;
-    font-size: 20px;
+    width: 14%;
+    font-size: 18px;
     outline: 0 !important;
     text-align: center;
 }
@@ -3087,4 +3095,120 @@ li {
     margin: 0;
     overflow: visible;
     clip: auto;
+}
+
+
+/* Load Template Modal */
+.template-list .template-item {
+  text-align: center;
+  display: inline-block;
+  padding: 10px;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  position: relative
+}
+
+.template-list .template-item.active {
+  background-color: #e6e6e6
+}
+
+.template-list .template-item:hover {
+  background-color: #f3f3f3
+}
+
+.template-list .template-item:hover .template-item-delete {
+  display: block
+}
+
+.template-list .template-item .template-item-icon .fa {
+  font-size: 80px
+}
+
+.template-list .template-item .template-item-name {
+  margin: 5px 0 0
+}
+
+.template-list .template-item .template-item-delete {
+  display: none;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  font-size: 18px;
+  padding: 0 5px;
+  background: #f3f3f3;
+}
+
+/* Custom CSS */
+.etb-wrapper {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 99999;
+}
+.etb-wrapper.is-active {
+  display: block;
+}
+.etb-wrapper__close-btn {
+  position: absolute;
+  top: 0;
+  right: 17px;
+  padding: 15px;
+  font-size: 16px;
+  z-index: 2;
+}
+.etb-wrapper__close-btn:hover {
+  cursor: pointer;
+}
+.etb-wrapper__inner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+.etb-wrapper__inner-footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 40px;
+  background: #fff;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+}
+/* .etb-wrapper__inner-footer-logo {} */
+
+.etb-wrapper #email_builder_master .left-menu-container,
+.etb-wrapper #email_builder_master .content-wrapper {
+  margin-top: 0 !important;
+}
+
+.swal2-container {
+  z-index: 999999!important;
+}
+.modal {
+  z-index: 999999;
+}
+.modal .btn-save-template {
+  margin-bottom: 0;
+}
+
+.no-scroll {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
 }

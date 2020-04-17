@@ -34,7 +34,7 @@
     display: inline-block
 }
 #email_builder_master .content-wrapper, .left-menu-container {
-    height: calc(100% - 60px)!important;
+    height: calc(100% - 40px)!important;
     margin-top: 60px!important
 }
 #email_builder_master .btn-save:hover {

@@ -16,9 +16,9 @@ $topBits = '';  // remove this if this was set in the controller
 @section('content')
 
     @if($campaign == null)
-        {!! Form::open(array('url' => env('APP_URL')."/campaign", 'method' => 'post')) !!}
+        {!! Form::open(array('url' => url('campaign'), 'method' => 'post' ,'id'=>'save_campaign','onsubmit'=>'return false;')) !!}
     @else
-        {!! Form::model($campaign, array('url' => env('APP_URL')."/campaign", 'method' => 'post')) !!}
+        {!! Form::model($campaign, array('url' => env('APP_URL')."/campaign", 'method' => 'post','id'=>'edit_campaign','onsubmit'=>'return false;')) !!}
     @endif
 
     @include('v1.parts.start_content', ['header' => ' Campaign Message',
@@ -27,11 +27,16 @@ $topBits = '';  // remove this if this was set in the controller
     <div class="panel">
         <a aria-controls="collapseOne" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" id="headingOne" role="tab">
             <i class="panel-title">
-                Message Header
+                {{ trans('messages.fields.camp_message_header') }}
             </i>
         </a>
         <div aria-labelledby="headingOne" class="panel-collapse collapse in" id="collapseOne" role="tabpanel">
             <div class="panel-body">
+                @if(!empty($campaign))
+                <div class="form-group col-sm-12 col-xs-12">
+                    {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title')) !!}
+                </div>
+                @endif
                 <div class="form-group col-sm-6 col-xs-12">
                     @if($campaign == null)
                             {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name')) !!}
@@ -61,16 +66,14 @@ $topBits = '';  // remove this if this was set in the controller
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12 clear-fix">
-                    @include('v1.auth_pages.campaigns.email_builder')
                 </div>
             </div>
         </div>
     </div>
-
     <div class="panel">
         <a aria-controls="collapseThree" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" id="headingThree" role="tab">
             <i class="panel-title">
-                Email List
+                {{ trans('messages.fields.camp_email_list') }}
             </i>
         </a>
         <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
@@ -78,6 +81,31 @@ $topBits = '';  // remove this if this was set in the controller
                 @if($campaign == null)
                     @else
                     @endif
+            </div>
+        </div>
+    </div>
+    <div class="panel">
+        <a aria-controls="collapseFour" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseFour" id="headingFour" role="tab">
+            <i class="panel-title" id="show-etb">
+                @if(empty($campaign))
+                    {{ trans('messages.fields.camp_create_email_template') }}
+                @else
+                    {{ trans('messages.fields.camp_edit_email_template') }}
+                @endif
+            </i>
+        </a>
+        <div aria-labelledby="headingFour" class="panel-collapse collapse" id="collapseFour" role="tabpanel">
+            <div class="panel-body">
+                <div class="etb-wrapper">
+                    <i class="fa fa-close etb-wrapper__close-btn" id="hide-etb">
+                    </i>
+                    <div class="etb-wrapper__inner">
+                        @include('v1.auth_pages.campaigns.email_builder')
+                        <div class="etb-wrapper__inner-footer">
+                            <img alt="mcentric logo" class="etb-wrapper__inner-footer-logo" src="/images/mCentric_logo_blue.png"/>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -117,10 +145,10 @@ $topBits = '';  // remove this if this was set in the controller
         <div class="form-group">
             {!! Form::label('note', 'Personal Note') !!}
             {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4',
-                'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
+                'placeholder' => 'Enter a note that will appear at the top of the test message.(work under progress for this section)')) !!}
         </div>
         <div class="form-group">
-            {!! Form::submit('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked')) !!}
+            {!! Form::button('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'javascript:void(0)')) !!}
         </div>
         @include('v1.parts.end_content')
     </p>
@@ -203,6 +231,9 @@ $topBits = '';  // remove this if this was set in the controller
 </script>
 <script>
     $(document).ready(function () {
+            function sendTestEmail(){
+                alert('work under progress');
+            }
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());
@@ -225,23 +256,28 @@ $topBits = '';  // remove this if this was set in the controller
             @if($campaign !== null)
             $("#add").text('Edit Event');
             @endif
-        });
-</script>
-<script>
-    $('#send').on('change', function () {
-            $("#schedule").toggle();
-            if($("#clicked").val() == 'Send Now'){
-                $("#clicked").val('Schedule');
-            } else {
-                $("#clicked").val('Send Now');
-            }
-        });
-</script>
-<script>
-    $('form').submit(function () {
-            $('#schedule').each(function () {
-                $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
+
+            $('#show-etb').on('click', function() {
+              $('.etb-wrapper').addClass('is-active')
+              $('body').addClass('no-scroll');
             });
+            
+    $('#send').on('change', function () {
+        $("#schedule").toggle();
+        if($("#clicked").val() == 'Send Now'){
+            $("#clicked").val('Schedule');
+        } else {
+            $("#clicked").val('Send Now');
+        }
+    });
+    $('form').submit(function () {
+        $('#schedule').each(function () {
+            $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
         });
+    });
+
+    
+
+});//ready end
 </script>
 @endsection

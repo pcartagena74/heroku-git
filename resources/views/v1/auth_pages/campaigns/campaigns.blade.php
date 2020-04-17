@@ -32,8 +32,10 @@ $topBits = '';  // remove this if this was set in the controller
     <div class="x_panel">
         <div class="x_title">
             <h2>
-                <a href="{!! url('campaign',$c->campaignID,'edit') !!}">
-                    {!! $c->title !!}
+                <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
+                    <img class="img-thumbnail" height="120px" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px">
+                        {!! $c->title !!}
+                    </img>
                 </a>
                 <small>
                     {!! $status !!}
@@ -87,78 +89,78 @@ $topBits = '';  // remove this if this was set in the controller
             <div class="clearfix">
             </div>
         </div>
-        <div class="x_content">
-            @if($c->sendDate)
-            <div class="row tile_count">
-                <div class="col-sm-2 tile_stats_count" style="text-align: center;">
-                    <div class="count green tiles-stats">
-                        {{ $opens }}
-                    </div>
-                    <small>
-                        OPENS
-                    </small>
-                </div>
-                <div class="col-sm-3">
-                    <br/>
-                    <small>
-                        OPEN RATE
-                    </small>
-                    <div class="progress progress_sm">
-                        <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-green" role="progressbar">
-                        </div>
-                    </div>
-                    {{--
-                    <div class="progress progress_sm">
-                        <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-blue" role="progressbar">
-                        </div>
-                    </div>
-                    <small>
-                        AVERAGE OPENS PER EMAIL
-                    </small>
-                    --}}
-                </div>
-                <div class="col-sm-2 tile_stats_count" style="text-align: center;">
-                    <div class="count green tiles-stats">
-                        {!! $clicks !!}
-                    </div>
-                    <small>
-                        CLICKS
-                    </small>
-                </div>
-                <div class="col-sm-3">
-                    <br/>
-                    <small>
-                        CLICK RATE
-                    </small>
-                    <div class="progress progress_sm">
-                        <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-green" role="progressbar">
-                        </div>
-                    </div>
-                    {{--
-                    <div class="progress progress_sm">
-                        <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-blue" role="progressbar">
-                        </div>
-                    </div>
-                    <small>
-                        AVERAGE CLICKS PER URL
-                    </small>
-                    --}}
-                </div>
-                <div class="col-sm-2 tile_stats_count" style="text-align: center;">
-                    <div class="count green tiles-stats">
-                        {!! $c->emails_count !!}
-                    </div>
-                    <small>
-                        EMAILS SENT
-                    </small>
+    </div>
+</div>
+<div class="x_content">
+    @if($c->sendDate)
+    <div class="row tile_count">
+        <div class="col-sm-2 tile_stats_count" style="text-align: center;">
+            <div class="count green tiles-stats">
+                {{ $opens }}
+            </div>
+            <small>
+                OPENS
+            </small>
+        </div>
+        <div class="col-sm-3">
+            <br/>
+            <small>
+                OPEN RATE
+            </small>
+            <div class="progress progress_sm">
+                <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-green" role="progressbar">
                 </div>
             </div>
-            @endif
+            {{--
+            <div class="progress progress_sm">
+                <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-blue" role="progressbar">
+                </div>
+            </div>
+            <small>
+                AVERAGE OPENS PER EMAIL
+            </small>
+            --}}
         </div>
-        <!-- x_content -->
+        <div class="col-sm-2 tile_stats_count" style="text-align: center;">
+            <div class="count green tiles-stats">
+                {!! $clicks !!}
+            </div>
+            <small>
+                CLICKS
+            </small>
+        </div>
+        <div class="col-sm-3">
+            <br/>
+            <small>
+                CLICK RATE
+            </small>
+            <div class="progress progress_sm">
+                <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-green" role="progressbar">
+                </div>
+            </div>
+            {{--
+            <div class="progress progress_sm">
+                <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ $c->emails_count }}" class="progress-bar bg-blue" role="progressbar">
+                </div>
+            </div>
+            <small>
+                AVERAGE CLICKS PER URL
+            </small>
+            --}}
+        </div>
+        <div class="col-sm-2 tile_stats_count" style="text-align: center;">
+            <div class="count green tiles-stats">
+                {!! $c->emails_count !!}
+            </div>
+            <small>
+                EMAILS SENT
+            </small>
+        </div>
     </div>
-    <!-- x_panel -->
+    @endif
 </div>
+<!-- x_content -->
+<!-- x_panel -->
 {{-- @else
 <div class="col-md-10 col-xs-10">
     <div class="x_panel collapsed">
