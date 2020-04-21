@@ -3,11 +3,11 @@
 var base_url = '{!! url('/').'/' !!}';
 function loadImages() {
     $.ajax({
-        url: 'get-files.php',
+        url: base_url+'getExisitingFile',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-            if (data.code == 0) {
+            if (data.success == true) {
                 _output = '';
                 for (var k in data.files) {
                     if (typeof data.files[k] !== 'function') {

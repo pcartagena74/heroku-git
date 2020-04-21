@@ -1024,6 +1024,14 @@ if (!function_exists('requestBin')) {
 }
 
 if (!function_exists('replaceUserDataInEmailTemplate')) {
+    /**
+     * replace text placeholder with actual data from database
+     * @param  string  $email       user email whose data needed to be replaced by placeholder
+     * @param  object  $campaign    the campaign object
+     * @param  boolean $for_preview true if using for preview only false while sending actual email
+     * @param  string  $raw_html    html string used when for_preview is true
+     * @return string               replaced html
+     */
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null)
     {
 
@@ -1097,6 +1105,12 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
 }
 
 if (!function_exists('generateEmailTemplateThumbnail')) {
+    /**
+     * Generate thumbnail from email html
+     * @param  string $html     email html
+     * @param  object $campaign campaign object for name
+     * @return string           file path
+     */
     function generateEmailTemplateThumbnail($html, $campaign)
     {
         $file_name = generateEmailTemplateThumbnailName($campaign);
@@ -1111,6 +1125,11 @@ if (!function_exists('generateEmailTemplateThumbnail')) {
 }
 
 if (!function_exists('generateEmailTemplateThumbnailName')) {
+    /**
+     * generate email template thumbnail name
+     * @param  object $campaign campaign object
+     * @return string           template thumbnail name
+     */
     function generateEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
@@ -1119,6 +1138,11 @@ if (!function_exists('generateEmailTemplateThumbnailName')) {
 }
 
 if (!function_exists('getEmailTemplateThumbnailName')) {
+    /**
+     * same as generate just for sake of naming convension
+     * @param  [type] $campaign [description]
+     * @return [type]           [description]
+     */
     function getEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
@@ -1127,6 +1151,11 @@ if (!function_exists('getEmailTemplateThumbnailName')) {
 }
 
 if (!function_exists('getEmailTemplateThumbnailURL')) {
+    /**
+     * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
+     * @param  object $campaign campaign object
+     * @return string           URL for thumbnail
+     */
     function getEmailTemplateThumbnailURL($campaign)
     {
         $file_name = getEmailTemplateThumbnailName($campaign);
@@ -1136,5 +1165,53 @@ if (!function_exists('getEmailTemplateThumbnailURL')) {
             return url('images/mCentric_square.png');
 
         }
+    }
+}
+
+if (!function_exists('getAllDirectoryPathFM')) {
+
+    function getAllDirectoryPathFM($org)
+    {
+        // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
+        $base_path        = $org->orgPath . '/';
+        $path['event']    = $base_path . 'events_files';
+        $path['campaign'] = $base_path . 'campaign_files';
+        $path['orgPath']  = $org->orgPath;
+        return $path;
+    }
+
+}
+
+if (!function_exists('generateDirectoriesForOrg')) {
+    function generateDirectoriesForOrg($org)
+    {
+        $path = getAllDirectoryPathFM($org);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['orgPath']) == false) {
+            Storage::disk(getDefaultDiskFM())->makeDirectory($path['orgPath']);
+        }
+        foreach ($path as $key => $value) {
+            // dd($value, Storage::disk(getDefaultDiskFM())->exists($value));
+            if (Storage::disk(getDefaultDiskFM())->exists($value) == false) {
+                $var = Storage::disk(getDefaultDiskFM())->makeDirectory($value);
+                // $var = File::makeDirectory($value, 755, true);
+                // dd($var);
+            }
+        }
+    }
+}
+
+if (!function_exists('getDefaultPathFM')) {
+    function getDefaultPathFM()
+    {
+        $currentPerson = Person::find(auth()->user()->id);
+        $org           = $currentPerson->defaultOrg;
+        return $org->orgPath . '/';
+    }
+}
+
+if (!function_exists('getDefaultDiskFM')) {
+    function getDefaultDiskFM()
+    {
+        return 's3_media';
     }
 }

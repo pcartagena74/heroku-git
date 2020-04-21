@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LibraryController extends Controller
 {
@@ -14,5 +16,14 @@ class LibraryController extends Controller
     {
         return view('v1.auth_pages.library.index');
 
+    }
+
+    public function getExisitingFile()
+    {
+        $currentPerson = Person::find(auth()->user()->id);
+        $currentOrg    = $currentPerson->defaultOrg;
+        $list          = getAllDirectoryPathFM($currentOrg);
+        $files         = Storage::disk(getDefaultDiskFM())->files($list['campaign']);
+        return response()->json(['success' => true, 'files' => $files]);
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
-use Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository;
-use Alexusmai\LaravelFileManager\Services\ConfigService\DefaultConfigRepository;
+// use Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository;
+// use Alexusmai\LaravelFileManager\Services\ConfigService\DefaultConfigRepository;
+use App\Vendor\Alexusmai\LaravelFileManager\Services\ACLServices\MCACLRepository;
+use App\Vendor\Alexusmai\LaravelFileManager\Services\ConfigServices\MCConfigRepository;
 
 return [
 
@@ -10,14 +12,14 @@ return [
      *
      * Default - DefaultConfigRepository get config from this file
      */
-    'configRepository'  => DefaultConfigRepository::class,
+    'configRepository'  => MCConfigRepository::class,
 
     /**
      * ACL rules repository
      *
      * Default - ConfigACLRepository (see rules in - aclRules)
      */
-    'aclRepository'     => ConfigACLRepository::class,
+    'aclRepository'     => MCACLRepository::class,
 
     //********* Default configuration for DefaultConfigRepository **************
 
@@ -25,7 +27,7 @@ return [
      * List of disk names that you want to use
      * (from config/filesystems)
      */
-    'diskList'          => ['public', 's3_media', 'events'],
+    'diskList'          => ['s3_media'],
 
     /**
      * Default disk for left manager
@@ -104,7 +106,7 @@ return [
      *
      * default - false(OFF)
      */
-    'acl'               => false,
+    'acl'               => true,
 
     /**
      * Hide files and folders from file-manager if user doesn't have access
@@ -120,7 +122,7 @@ return [
      *
      * whitelist - Deny anything(access - 0 - deny), that not allowed by the ACL rules list
      */
-    'aclStrategy'       => 'blacklist',
+    'aclStrategy'       => 'whitelist',
 
     /**
      * ACL Rules cache

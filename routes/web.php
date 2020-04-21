@@ -359,10 +359,10 @@ Route::get('snaptest', function () {
 });
 
 Route::get('library', 'LibraryController@index');
-
-Route::group(['prefix' => 'library-manager', 'middleware' => ['auth']], function () {
-    \UniSharp\LaravelFilemanager\Lfm::routes();
-});
+Route::get('getExisitingFile', 'LibraryController@getExisitingFile');
+// Route::group(['prefix' => 'library-manager', 'middleware' => ['auth']], function () {
+//     \UniSharp\LaravelFilemanager\Lfm::routes();
+// });
 // Route::any('{all}', function () {
 //     return view('errors.404');
 // })->where('all', '.*');
