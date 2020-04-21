@@ -360,6 +360,7 @@ Route::get('snaptest', function () {
 
 Route::get('library', 'LibraryController@index');
 Route::get('getExisitingFile', 'LibraryController@getExisitingFile');
+Route::get('/{org_path}/{folder_name}/{file_name}', 'LibraryController@getFile');
 // Route::group(['prefix' => 'library-manager', 'middleware' => ['auth']], function () {
 //     \UniSharp\LaravelFilemanager\Lfm::routes();
 // });

@@ -12,7 +12,9 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 @section('header')
-{{-- <link href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" rel="stylesheet"/> --}}
+{{--
+<link href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" rel="stylesheet"/>
+--}}
 {{--
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet"/>
 --}}
@@ -30,7 +32,6 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
 @section('scripts')
 <script src="{{ asset('vendor/file-manager/js/file-manager.js') }}">
 </script>
-
 @endsection
 @section('footer')
 @endsection

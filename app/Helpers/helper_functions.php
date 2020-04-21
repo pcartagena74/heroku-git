@@ -1212,6 +1212,6 @@ if (!function_exists('getDefaultPathFM')) {
 if (!function_exists('getDefaultDiskFM')) {
     function getDefaultDiskFM()
     {
-        return 's3_media';
+        return 'local';
     }
 }

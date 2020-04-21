@@ -355,7 +355,7 @@ var returnVal;
         generatePopups: function() {
             _popupImportContent = '<div class="modal fade popupimport" id="popupimport" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupImportTitle + '</h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-sm-6">' + '<input type="file" class="input-import-file" >' + '<span>-allowed only html file </span>' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-import" >' + _this.langArr.popupImportUpload + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popupImportContent).appendTo('body');
-            _popupImagesContent = '<div class="modal fade popup_images" id="popup_images" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupImageTitle + '</h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-sm-6">' + '<input type="file" class="input-file" accept="image/*" >' + '</div>' + '<div class="col-sm-6">' + '<button class="btn-upload">' + _this.langArr.popupImageUpload + '</button>' + '</div>' + '</div>' + '<div class="upload-images">' + ' <div class="row">     ' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-select" >' + _this.langArr.popupImageOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' + '</div>' + '</div>' + '</div>' + '</div>';
+            _popupImagesContent = '<div class="modal fade popup_images" id="popup_images" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupImageTitle + '</h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="input-group">' + '<input aria-describedby="button-image" aria-label="Image" class="form-control" id="image_label" name="image" type="text">' + '<div class="input-group-append">' + '<button class="btn btn-outline-secondary" id="button-image" type="button"> Select </button>' + '</div>' + '</input>' + '</div>' + '<div class="col-sm-6">' + '<input type="file" class="input-file" accept="image/*" >' + '</div>' + '<div class="col-sm-6">' + '<button class="btn-upload">' + _this.langArr.popupImageUpload + '</button>' + '</div>' + '</div>' + '<div class="upload-images">' + ' <div class="row">     ' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-select" >' + _this.langArr.popupImageOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupImageClose + '</button> ' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popupImagesContent).appendTo('body');
             _popup_save_template = '<div class="modal fade " id="popup_save_template" role="dialog">' + '<div class="modal-dialog">' + '<div class="modal-content">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal">&times;</button>' + '<h4 class="modal-title">' + _this.langArr.popupSaveTemplateTitle + '<br>' + '<small>' + _this.langArr.popupSaveTemplateSubTitle + '</small></h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-sm-12">' + '<input type="text" class="form-control template-name" placeholder="' + _this.langArr.popupSaveTemplatePLaceHolder + '"  >' + '<br>' + '<label class="input-error" style="color:red"></label>' + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-success btn-save-template" >' + _this.langArr.popupSaveTemplateOk + '</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">' + _this.langArr.popupSaveTemplateClose + '</button>' + '</div>' + '</div>' + '</div>' + '</div>';
             jQuery(_popup_save_template).appendTo('body');
@@ -1574,7 +1574,14 @@ var returnVal;
         /**
          * Undo /redo
          */
-        commandsUndoManager: function() {}
+        commandsUndoManager: function() {},
+        /**
+         * 
+         */
+        setImageFileManager: function(url) {
+            console.log('editgor js')
+            _this.getActiveElementContent().find('.content-image').attr('src', url);
+        }
     };
     $.fn.emailBuilder = function(options) {
         var _emailBuilder;
@@ -1879,6 +1886,10 @@ var returnVal;
         }
         this.makeSortable = function() {
             _emailBuilder.makeSortable();
+        }
+
+        this.setImageFileManager = function(url) {
+            _emailBuilder.setImageFileManager(url);
         }
         return this.each(function() {
             _emailBuilder = new EmailBuilder(this, options);

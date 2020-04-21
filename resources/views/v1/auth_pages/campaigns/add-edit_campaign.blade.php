@@ -85,7 +85,7 @@ $topBits = '';  // remove this if this was set in the controller
         </div>
     </div>
     <div class="panel">
-        <a aria-controls="collapseFour" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseFour" id="headingFour" role="tab">
+        <a aria-controls="collapseFour" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseFour" id="headingFour" role="tab">
             <i class="panel-title" id="show-etb">
                 @if(empty($campaign))
                     {{ trans('messages.fields.camp_create_email_template') }}

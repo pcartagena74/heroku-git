@@ -23,7 +23,32 @@ class LibraryController extends Controller
         $currentPerson = Person::find(auth()->user()->id);
         $currentOrg    = $currentPerson->defaultOrg;
         $list          = getAllDirectoryPathFM($currentOrg);
-        $files         = Storage::disk(getDefaultDiskFM())->files($list['campaign']);
-        return response()->json(['success' => true, 'files' => $files]);
+        // $files         = Storage::disk(getDefaultDiskFM())->files($list['campaign']);
+        $files = array_filter(Storage::disk(getDefaultDiskFM())->files($list['campaign']), function ($file) {
+            return preg_match('/^.*\.(jpg|jpeg|png|gif)$/i', $file);
+        });
+        $file_list_url = [];
+        foreach ($files as $key => $value) {
+            // $file_list_url[] = url($value);
+            $file_list_url[] = Storage::disk(getDefaultDiskFM())->url($value);
+        }
+        return response()->json(['success' => true, 'files' => $file_list_url]);
+    }
+
+    public function getFile(Request $request, $org_path, $folder_name, $file_name)
+    {
+        if (empty($org_path) || empty($folder_name) || empty($file_name)) {
+            abort(404);
+        }
+        $path = $org_path . '\\' . $folder_name . '\\' . $file_name;
+        if (Storage::disk(getDefaultDiskFM())->exists($path)) {
+            $content = Storage::disk(getDefaultDiskFM())->get($path);
+            // $headers = ["Content-Type" => mime_content_type($path)];
+            header('Content-Type: ' . mime_content_type(Storage::disk(getDefaultDiskFM())->path($path)));
+            echo file_get_contents($content);
+            // return response()->file($path, $headers);
+        } else {
+            abort(404);
+        }
     }
 }

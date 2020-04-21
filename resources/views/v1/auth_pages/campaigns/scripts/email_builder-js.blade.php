@@ -11,7 +11,8 @@ function loadImages() {
                 _output = '';
                 for (var k in data.files) {
                     if (typeof data.files[k] !== 'function') {
-                        _output += "<div class='col-sm-3'>" + "<img class='upload-image-item' src='" + data.directory + data.files[k] + "' alt='" + data.files[k] + "' data-url='" + data.directory + data.files[k] + "'>" + "</div>";
+                        // _output += "<div class='col-sm-3'>" + "<img class='upload-image-item' src='" + data.directory + data.files[k] + "' alt='" + data.files[k] + "' data-url='" + data.directory + data.files[k] + "'>" + "</div>";
+                         _output += "<div class='col-sm-3'>" + "<img class='upload-image-item' src='" + data.files[k] + "' alt='" + data.files[k] + "' data-url='" + data.files[k] + "' height=\"100px\" width=\"100px\" >" + "</div>";
                         // console.log("Key is " + k + ", value is" + data.files[k]);
                     }
                 }
@@ -113,7 +114,6 @@ var _emailBuilder = $('.editor').emailBuilder({
     },
     onElementDragStart: function(e) {},
     onElementDragFinished: function(e, contentHtml, dataId) {
-        console.log('here1');
         //not required
         // $.ajax({
         //         url: 'update_block_info.php',
@@ -329,7 +329,10 @@ var _emailBuilder = $('.editor').emailBuilder({
     },
     onBeforeChangeImageClick: function(e) {
         console.log('onBeforeChangeImageClick html');
-        loadImages();
+        e.preventDefault();
+        //added code to open filemanager 
+        window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+        // loadImages();
     },
     onBeforePopupSelectTemplateButtonClick: function(dataId) {
         console.log('onBeforePopupSelectTemplateButtonClick');
@@ -541,5 +544,19 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
             _popup_exit_btn_no = false;
             break;
         }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('button-image').addEventListener('click', (event) => {
+            event.preventDefault();
+            console.log('here');
+            window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+        });
+    });
+    // set file link
+    function fmSetLink($url) {
+        console.log('heresetlink');
+        _emailBuilder.setImageFileManager($url);
+      // document.getElementById('image_label').value = $url;
     }
 </script>
