@@ -32,7 +32,7 @@ class TicketitServiceProvider extends ServiceProvider
         $installer = new InstallController();
         // if a migration or new setting is missing scape to the installation
         // as
-        if (empty($installer->inactiveMigrations()) && !$installer->inactiveSettings() || true) {
+        if (empty($installer->inactiveMigrations()) && !$installer->inactiveSettings() && false) {
             // Send the Agent User model to the view under $u
             // Send settings to views under $setting
 

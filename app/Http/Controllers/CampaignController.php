@@ -359,7 +359,7 @@ class CampaignController extends Controller
         $html     = replaceUserDataInEmailTemplate($email, $campaign);
         $html     = view('v1.auth_pages.campaigns.preview_email_template')
             ->with(['html' => $html])->render();
-        Mail::send(
+        $mail = Mail::send(
             'v1.auth_pages.campaigns.preview_email_template',
             ['html' => $html],
             function ($message) use ($campaign, $email) {
@@ -371,5 +371,33 @@ class CampaignController extends Controller
                 //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
             }
         );
+        dd($mail);
+    }
+
+    public function copy(Request $request, $campaign_id)
+    {
+        $campaign            = Campaign::findOrFail($campaign_id);
+        $campaign_name_count = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
+            ->where('title', 'LIKE', "$campaign->title%")
+            ->get()->count();
+        // dd($campaign_name_count->toSql(), $campaign_name_count->getBindings());
+        $new_campaign = $campaign->replicate();
+        if ($campaign_name_count == 0) {
+            $new_campaign->title = $campaign->title . ' -Copy';
+        } else {
+            $new_campaign->title = $campaign->title . ' -Copy ' . ++$campaign_name_count;
+        }
+        if (count($new_campaign->title) > 55) {
+            $new_campaign->title = $campaign->title;
+        }
+        $new_campaign->save();
+        $email_block = EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->get();
+        foreach ($email_block as $key => $value) {
+            $new_block              = $value->replicate();
+            $new_block->campaign_id = $new_campaign->campaignID;
+            $new_block->save();
+        }
+        request()->session()->flash('alert-success', trans('messages.messages.campaign_copied_successfully'));
+        return redirect(url('campaign', $new_campaign->campaignID, 'edit'));
     }
 }

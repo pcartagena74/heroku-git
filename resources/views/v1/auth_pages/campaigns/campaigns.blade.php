@@ -60,19 +60,19 @@ $topBits = '';  // remove this if this was set in the controller
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="#">
+                            <a href="{!! url('campaign',[$c->campaignID,'copy']) !!}">
                                 Copy
                             </a>
                         </li>
                         @if($c->sendDate)
                         <li>
-                            <a href="#">
+                            <a href="{!! url('campaign',[$c->campaignID,'delete']) !!}">
                                 Delete
                             </a>
                         </li>
                         @else
                         <li>
-                            <a href="#">
+                            <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
                                 Edit
                             </a>
                         </li>

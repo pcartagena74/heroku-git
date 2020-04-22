@@ -4,6 +4,7 @@ namespace App\Vendor\Alexusmai\LaravelFileManager\Services\ACLServices;
 
 use Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository;
 use App\Person;
+use Entrust;
 
 /**
  * Class ConfigACLRepository
@@ -37,17 +38,28 @@ class MCACLRepository implements ACLRepository
         $path          = getAllDirectoryPathFM($currentOrg);
         generateDirectoriesForOrg($currentOrg);
         if (\Auth::id() === 1) {
+            return [];
+        }
+        if (Entrust::hasRole('Developer')) {
             return [
-                ['disk' => 's3_media', 'path' => '*', 'access' => 2],
+                ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1], // only read
+                ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1], // only read
+                ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // read and write
+                ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2], // read and write
+                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1], // read and write
+                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2], // read and write
             ];
         }
-        return [
+        $rule_array = [
             ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1], // only read
             ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1], // only read
-            ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // read and write
-            ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1], // read and write
+            ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // read
             ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2], // read and write
-            ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2], // read and write
         ];
+        if (Entrust::hasRole('Marketing') || Entrust::hasRole('Admin')) {
+            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1]; // read
+            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2]; // read and write
+        }
+        return $rule_array;
     }
 }

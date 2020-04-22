@@ -63,7 +63,7 @@ class AdminController extends Controller
     {
         $validation_rules = [
             'orgName'               => 'required|min:3|max:50',
-            'orgPath'               => 'required|min:3|max:50',
+            'orgPath'               => 'required|min:3|max:50|alpha_num|unique:organization,orgpath',
             'formalName'            => 'nullable|max:255',
             'orgAddr1'              => 'nullable|max:255',
             'orgAddr2'              => 'nullable|max:255',
@@ -161,7 +161,8 @@ class AdminController extends Controller
         $password              = request()->input('password');
         $notify                = request()->input('notify');
         $password_confirmation = request()->input('password_confirmation');
-
+        // create org name path on selected disk
+        generateDirectoriesForOrg($org);
         if ($password !== null) {
             // validate password matching
             $validator = Validator::make($request->all(), [

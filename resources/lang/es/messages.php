@@ -135,6 +135,7 @@ return [
         'user_not_found'            => 'es-Unable to find user. Please select from search or create new.',
         'no_member_for_list'        => 'es-You need to choose a foundation or events to include.',
         'no_foundation_or_include'  => 'es-You need to choose a foundation or events to include.',
+        'storage_full'              => 'es-You have reach your storage quota please remove some files and try again.',
     ],
 
     'flashes'                => [
@@ -755,6 +756,7 @@ return [
         'new_org_created_successfully' => 'es-New Org Created Successfully.',
         'email_list_created'           => 'es-Email List created successfully.',
         'import_file_queued'           => 'es-Import is queued. You will be notified via email when its complete.',
+        'campaign_copied_successfully' => 'es-Campaign copied successfully.',
     ],
 
     'modals'                 => [

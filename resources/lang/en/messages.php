@@ -135,6 +135,7 @@ return [
         'user_not_found'            => 'Unable to find user. Please select from search or create new.',
         'no_member_for_list'        => 'You need to choose a foundation or events to include.',
         'no_foundation_or_include'  => 'You need to choose a foundation or events to include.',
+        'storage_full'              => 'You have reach your storage quota please remove some files and try again.',
     ],
 
     'flashes'                => [
@@ -361,8 +362,6 @@ return [
         'camp_create_email_template' => 'Create Email Template',
         'camp_edit_email_template'   => 'Edit Email Template',
         'camp_message_header'        => 'Message Header',
-        'camp_message_header'        => 'Message Header',
-
     ],
 
     'headers'                => [
@@ -592,7 +591,6 @@ return [
         'select_user'         => 'Select User',
         'select_user_hint'    => 'Type a few characters of a first or last name, email address or PMI ID.',
         'create_user'         => 'Create User',
-        '',
     ],
 
     'subheaders'             => [
@@ -763,6 +761,7 @@ return [
         'new_org_created_successfully' => 'New Org Created Successfully.',
         'email_list_created'           => 'Email List :name created successfully.',
         'import_file_queued'           => 'Import is queued. You will be notified via email when its complete.',
+        'campaign_copied_successfully' => 'Campaign copied successfully.',
     ],
 
     'modals'                 => [

@@ -302,6 +302,8 @@ Route::post('/campaign', 'CampaignController@store');
 Route::get('/campaign/{campaign}', 'CampaignController@show');
 Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
+Route::get('/campaign/{campaign}/copy', 'CampaignController@copy');
+// Route::patch('/campaign/{campaign}', 'CampaignController@update');
 // Email Builder Routes
 
 Route::post('/storeEmailTemplate', 'CampaignController@storeEmailTemplate');
@@ -361,6 +363,7 @@ Route::get('snaptest', function () {
 Route::get('library', 'LibraryController@index');
 Route::get('getExisitingFile', 'LibraryController@getExisitingFile');
 Route::get('/{org_path}/{folder_name}/{file_name}', 'LibraryController@getFile');
+Route::post('/get_complete_url', 'LibraryController@getCompleteURL');
 // Route::group(['prefix' => 'library-manager', 'middleware' => ['auth']], function () {
 //     \UniSharp\LaravelFilemanager\Lfm::routes();
 // });

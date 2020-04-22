@@ -36,8 +36,9 @@ class MCConfigRepository implements ConfigRepository
      */
     public function getLeftDisk():  ? string
     {
+        //helper function to make it global
         return getDefaultDiskFM();
-        return config('file-manager.leftDisk');
+        // return config('file-manager.leftDisk');
     }
 
     /**
@@ -49,8 +50,9 @@ class MCConfigRepository implements ConfigRepository
      */
     public function getRightDisk() :  ? string
     {
+        //helper function to make it global
         return getDefaultDiskFM();
-        return config('file-manager.rightDisk');
+        // return config('file-manager.rightDisk');
     }
 
     /**
@@ -62,8 +64,9 @@ class MCConfigRepository implements ConfigRepository
      */
     public function getLeftPath() :  ? string
     {
+        //helper function to make it global
         return getDefaultPathFM();
-        return config('file-manager.leftPath');
+        // return config('file-manager.leftPath');
     }
 
     /**
@@ -75,8 +78,9 @@ class MCConfigRepository implements ConfigRepository
      */
     public function getRightPath() :  ? string
     {
+        //helper function to make it global
         return getDefaultPathFM();
-        return config('file-manager.rightPath');
+        // return config('file-manager.rightPath');
     }
 
     /**

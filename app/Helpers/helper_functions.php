@@ -1174,9 +1174,9 @@ if (!function_exists('getAllDirectoryPathFM')) {
     {
         // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
         $base_path        = $org->orgPath . '/';
-        $path['event']    = $base_path . 'events_files';
-        $path['campaign'] = $base_path . 'campaign_files';
-        $path['orgPath']  = $org->orgPath;
+        $path['event']    = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
+        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
+        $path['orgPath']  = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
         return $path;
     }
 
@@ -1190,11 +1190,8 @@ if (!function_exists('generateDirectoriesForOrg')) {
             Storage::disk(getDefaultDiskFM())->makeDirectory($path['orgPath']);
         }
         foreach ($path as $key => $value) {
-            // dd($value, Storage::disk(getDefaultDiskFM())->exists($value));
             if (Storage::disk(getDefaultDiskFM())->exists($value) == false) {
                 $var = Storage::disk(getDefaultDiskFM())->makeDirectory($value);
-                // $var = File::makeDirectory($value, 755, true);
-                // dd($var);
             }
         }
     }
@@ -1205,13 +1202,19 @@ if (!function_exists('getDefaultPathFM')) {
     {
         $currentPerson = Person::find(auth()->user()->id);
         $org           = $currentPerson->defaultOrg;
-        return $org->orgPath . '/';
+        return Storage::disk(getDefaultDiskFM())->path($org->orgPath);
     }
 }
 
 if (!function_exists('getDefaultDiskFM')) {
     function getDefaultDiskFM()
     {
-        return 'local';
+        return 's3_media';
+    }
+}
+if (!function_exists('getAllDiskFM')) {
+    function getAllDiskFM()
+    {
+        return ['public', 's3_receipts', 's3_media', 'events'];
     }
 }

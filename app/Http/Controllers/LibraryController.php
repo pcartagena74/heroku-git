@@ -51,4 +51,13 @@ class LibraryController extends Controller
             abort(404);
         }
     }
+
+    public function getCompleteURL(Request $request)
+    {
+        $url = $request->input('url');
+        if (!empty(trim($url))) {
+            return Storage::disk(getDefaultDiskFM())->url($url);
+        }
+        return response()->json(['success' => false, 'url' => $url]);
+    }
 }
