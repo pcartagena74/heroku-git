@@ -176,6 +176,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Laravel\Dusk\DuskServiceProvider::class,
         Kordy\Ticketit\TicketitServiceProvider::class,
 
         // Laravel\Cashier\CashierServiceProvider::class,
