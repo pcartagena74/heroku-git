@@ -151,6 +151,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                         </table>
                         @if($model2)
                             {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
+                            {!! Form::close() !!}
                         @endif
                     </div>
                     @if(isset($model2))

@@ -36,4 +36,9 @@ class Org extends Model
         // NOT NOT NOT a relationship return but a true function
         return EventType::whereIn('orgID', array(1, $this->orgID))->get();
     }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class,'orgID', 'orgID');
+    }
 }

@@ -80,13 +80,6 @@ try{
                                 </span>
                             </a>
                             <ul class="nav child_menu">
-                                @if (count($currentPerson->orgs)>1)
-                                <li>
-                                    <a href="{{ url('orgsettings')}}">
-                                        @lang('messages.nav.ms_org')
-                                    </a>
-                                </li>
-                                @endif
                                 <li>
                                     <a href="{{ url('dashboard')}}">
                                         @lang('messages.nav.ms_dash')
@@ -102,6 +95,13 @@ try{
                                         @lang('messages.nav.ms_profile')
                                     </a>
                                 </li>
+                                @if (count($currentPerson->orgs)>1)
+                                    <li>
+                                        <a href="{{ url('orgsettings')}}">
+                                            @lang('messages.nav.ms_org')
+                                        </a>
+                                    </li>
+                                @endif
                                 @if(showActiveTicketUser())
                                 <li>
                                     <a href="{{url('tickets')}}">

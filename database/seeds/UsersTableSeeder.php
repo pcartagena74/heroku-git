@@ -26,7 +26,7 @@ class UsersTableSeeder extends Seeder
 
         $org       = new Org;
         $org->orgName = 'First Organization';
-        $org->orgPath = 'First Organization Path';
+        $org->orgPath = '/firstorg';
         $org->save();
 
 

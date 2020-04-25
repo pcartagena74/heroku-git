@@ -28,6 +28,7 @@ class Event extends Model
 
     protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'slug', 'hasTracks'];
     protected static $ignoreChangedAttributes = ['createDate'];
+    protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
 
     public function location()
     {
@@ -62,6 +63,12 @@ class Event extends Model
     public function org()
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
+    }
+
+    public function main_session()
+    {
+        return $this->hasOne(EventSession::class,'sessionID', 'mainSession');
+
     }
 
     public static function events_this_year()

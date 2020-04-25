@@ -628,7 +628,7 @@ class RegFinanceController extends Controller
                     ])->first();
                     if (null !== $dCode && $dCode->percent > 0) {
                         $reg->subtotal = $reg->subtotal - ($reg->subtotal * $dCode->percent / 100);
-                    } else {
+                    } elseif (null != $dCode && $dCode->flatAmt > 0) {
                         $reg->subtotal = $reg->subtotal - $dCode->flatAmt;
                     }
                     if ($reg->subtotal < 0) {

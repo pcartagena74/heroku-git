@@ -1,7 +1,9 @@
-<?php
+@php
 /**
  * Comment: Confirmation screen post and Stripe Payment Processing for Group Registration
  * Created: 8/21/2017
+ *
+ * @var $event, $quantity, $org, $loc, $rf
  */
 
 use App\EventSession;
@@ -39,8 +41,8 @@ if($event->isSymmetric && $event->hasTracks) {
     $width   = number_format(80 / $event->hasTracks, 0, '', '');
     $mw      = number_format(85 / $event->hasTracks, 0, '', '');
 }
+@endphp
 
-?>
 @extends('v1.layouts.auth')
 
 

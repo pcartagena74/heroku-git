@@ -38,10 +38,9 @@ $topBits = '';
 
 $cats = DB::table('event-category')
           ->select('catID', 'catTXT')
-          ->where([
-              ['isActive', 1],
-              ['orgID', $current_person->defaultOrgID]
-          ])->get();
+          ->where('isActive', 1)
+          ->whereIn('orgID', [1, $current_person->defaultOrgID])
+          ->get();
 
 $categories = $cats->pluck('catTXT', 'catID');
 
@@ -91,7 +90,7 @@ $defaults = DB::table('organization')
 //             ->orderBy('locName')->pluck('locName', 'locID','isVirtual')->toArray();
 //             
 $loc_list = ['' => 'Existing Location'];            
-$locations = Location::select('locName', 'locID','isVirtual')->where(['orgID'=>$current_person->defaultOrgID])
+$locations = Location::select('locName', 'locID','isVirtual')->whereIn('orgID', [1, $current_person->defaultOrgID])
             ->orderBy('locName')->get();
 $loc_list_html = '<option value="">Existing Location</option>';
 $loc_list_virtual_html = '<option value="">Existing Location</option>';
