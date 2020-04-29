@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Campaign;
+use App\Jobs\SendCampaignEmail;
 use App\Models\EmailCampaignTemplateBlock;
+use App\Models\EmailQueue;
 use App\Org;
 use App\Person;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mail;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
+use Validator;
 
 class CampaignController extends Controller
 {
@@ -48,82 +52,67 @@ class CampaignController extends Controller
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         $campaign_name       = 'Untitled Template ' . date('Y-m-d H:i:s', time());
+        $list_dp             = $this->generateEmailList();
+
         // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
-        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign_name'));
+        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign_name', 'list_dp'));
     }
-
-    /**
-     * create campiagn and store template
-     * @param  Request $request
-     * @return json
-     */
-    public function storeEmailTemplate(Request $request)
+    private function storeCampaignEmailTemplate($request, $new_campaign = false)
     {
-
-        $content = $request->input('contentArr');
-        if (empty($content)) {
-            return response()->json(['success' => false, 'errors' => ['Template Empty please some elements']]);
-        }
-        $c                   = new Campaign;
+        $campaign            = new Campaign;
         $this->currentPerson = Person::find(auth()->id());
-        $c->orgID            = $this->currentPerson->defaultOrgID;
-        $c->title            = $request->input('name');
-        $c->fromName         = $request->input('from_name');
-        $c->fromEmail        = $request->input('from_email');
-        $c->replyEmail       = $request->input('from_email');
-        $c->subject          = request()->input('subject');
-        $c->preheader        = request()->input('preheader');
-        $c->creatorID        = $this->currentPerson->personID;
-        $c->updaterID        = $this->currentPerson->personID;
-        if (empty(request()->input('subject'))) {
-            $c->subject = $c->title;
+        $campaign->orgID     = $this->currentPerson->defaultOrgID;
+        $campaign_name       = 'Untitled Template ' . date('Y-m-d H:i:s', time());
+        $campaign->title     = $request->input('name');
+        if ($new_campaign) {
+            $campaign->title = $campaign_name;
         }
-        $c->save();
+        $campaign->fromName    = $request->input('from_name');
+        $campaign->fromEmail   = $request->input('from_email');
+        $campaign->replyEmail  = $request->input('from_email');
+        $campaign->subject     = $request->input('subject');
+        $campaign->preheader   = $request->input('preheader');
+        $campaign->emailListID = $request->input('email_list');
+        $campaign->creatorID   = $this->currentPerson->personID;
+        $campaign->updaterID   = $this->currentPerson->personID;
+        $campaign->content     = $request->input('content');
+        $content               = $request->input('contentArr');
+        if (empty(request()->input('subject'))) {
+            $campaign->subject = $campaign->title;
+        }
+        $campaign->save();
         $raw_html = '';
         foreach ($content as $key => $value) {
             if (isset($value['id'])) {
                 EmailCampaignTemplateBlock::create([
-                    'campaign_id' => $c->campaignID,
+                    'campaign_id' => $campaign->campaignID,
                     'block_id'    => $value['id'],
                     'content'     => $value['content'],
                 ]);
                 $raw_html .= $value['content'];
             } else {
                 EmailCampaignTemplateBlock::create([
-                    'campaign_id' => $c->campaignID,
+                    'campaign_id' => $campaign->campaignID,
                     'block_id'    => 0,
                     'content'     => $value['content'],
                 ]);
                 $raw_html .= $value['content'];
             }
         }
-        generateEmailTemplateThumbnail($html = $raw_html, $campaign = $c, $currentPerson = $this->currentPerson);
-        return response()->json(['success' => true, 'message' => 'Template Saved', 'redirect_url' => url('campaign', $c->campaignID)]);
+        return $campaign;
     }
 
-    /**
-     * update campaign
-     * @param  Request $request
-     * @return json
-     */
-    public function updateEmailTemplate(Request $request)
+    private function updateCampaignEmailTemplate($campaign, $request)
     {
-        $campaign_id = $request->input('id');
-        $campaign    = Campaign::find($campaign_id);
-        if (empty($campaign)) {
-            return response()->json(['success' => false, 'errors' => ['Campaign not found!']]);
-        }
-        $content = $request->input('contentArr');
-        if (empty($content)) {
-            return response()->json(['success' => false, 'errors' => ['Template Empty please some elements']]);
-        }
-
-        $campaign->title      = $request->input('name');
-        $campaign->fromName   = $request->input('from_name');
-        $campaign->fromEmail  = $request->input('from_email');
-        $campaign->replyEmail = $request->input('from_email');
-        $campaign->subject    = $request->input('subject');
-        $campaign->preheader  = request()->input('preheader');
+        $campaign->title       = $request->input('name');
+        $campaign->fromName    = $request->input('from_name');
+        $campaign->fromEmail   = $request->input('from_email');
+        $campaign->replyEmail  = $request->input('from_email');
+        $campaign->subject     = $request->input('subject');
+        $campaign->preheader   = $request->input('preheader');
+        $campaign->emailListID = $request->input('email_list');
+        $campaign->content     = $request->input('content');
+        $content               = $request->input('contentArr');
         if (empty($campaign->subject)) {
             $campaign->subject = $campaign->title;
         }
@@ -145,7 +134,54 @@ class CampaignController extends Controller
             }
         }
         generateEmailTemplateThumbnail($html = $raw_html, $campaign = $campaign, $currentPerson = $this->currentPerson);
-        return response()->json(['success' => true, 'message' => 'Template Updated']);
+    }
+    /**
+     * create campiagn and store template
+     * @param  Request $request
+     * @return json
+     */
+    public function storeEmailTemplate(Request $request)
+    {
+
+        $content = $request->input('contentArr');
+        if (empty($content)) {
+            return response()->json(['success' => false, 'errors' => ['Template Empty please some elements']]);
+        }
+        $campaign = $this->storeCampaignEmailTemplate($request);
+        generateEmailTemplateThumbnail($html = $raw_html, $campaign = $c, $currentPerson = $this->currentPerson);
+        return response()->json(['success' => true, 'message' => 'Template Saved', 'redirect_url' => url('campaign', $campaign->campaignID)]);
+    }
+
+    /**
+     * update campaign
+     * @param  Request $request
+     * @return json
+     */
+    public function updateEmailTemplate(Request $request)
+    {
+        $campaign_id      = $request->input('id');
+        $campaign         = Campaign::find($campaign_id);
+        $current_datetime = Carbon::now()->toDateTimeString();
+        if (empty($campaign)) {
+            return response()->json(['success' => false, 'errors' => ['Campaign not found!']]);
+        }
+        $content = $request->input('contentArr');
+        if (empty($content)) {
+            return response()->json(['success' => false, 'errors' => ['Template Empty please some elements']]);
+        }
+        if (!empty($campaign->sendDate)) {
+            if (!empty($campaign->scheduleDate) && $campaign->scheduleDate > $current_datetime) {
+                EmailQueue::where('campaign_id', $campaign->campaignID)->delete();
+                updateCampaignEmailTemplate($campaign, $request);
+            } else {
+                $campaign = $this->storeCampaignEmailTemplate($request, true);
+                request()->session()->flash('alert-success', trans('messages.messages.campaign_created_from_existing_successfully'));
+                return response()->json(['success' => true, 'message' => 'Template Updated', 'redirect' => url('campaign', $campaign->campaignID, 'edit')]);
+            }
+        } else {
+            updateCampaignEmailTemplate($campaign, $request);
+            return response()->json(['success' => true, 'message' => 'Template Updated']);
+        }
     }
 
     /**
@@ -155,8 +191,14 @@ class CampaignController extends Controller
      */
     public function getEmailTemplates(Request $request)
     {
-        $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)->orderBy('campaignID', 'desc')->paginate(10);
-        $pages     = $campaigns->links();
+        $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
+            ->orWhere('orgID', 1)
+            ->orderBy('orgID', 'ASC')
+            ->orderBy('campaignID', 'desc')->paginate(10);
+        $pages = $campaigns->links();
+        foreach ($campaigns as $key => $value) {
+            $campaigns[$key]->thumbnail = getEmailTemplateThumbnailURL($value);
+        }
         return response()->json(['success' => true, 'list' => $campaigns, 'pages' => $pages->toHtml()]);
     }
 
@@ -175,7 +217,7 @@ class CampaignController extends Controller
                 ->with(['html' => $html])->render());
         // Build pack is needed in heroku to run this
         // also below argunment are not safe but are requied to run this library on heroku
-        //https://github.com/jontewks/puppeteer-heroku-buildpack
+        //https://github.com/jontewks/puppeteer-heroku-buildpack and node
         $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 400, 400)
@@ -295,7 +337,9 @@ class CampaignController extends Controller
         $campaign            = Campaign::findOrFail($id);
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
-        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign'));
+        $list_dp             = $this->generateEmailList();
+        $current_datetime    = Carbon::now()->toDateTimeString();
+        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign', 'list_dp', 'current_datetime'));
     }
 
     public function show_campaign(Campaign $campaign)
@@ -313,13 +357,29 @@ class CampaignController extends Controller
     {
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
-        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign'));
+        $list_dp             = $this->generateEmailList();
+        $current_datetime    = Carbon::now()->toDateTimeString();
+        return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign', 'list_dp', 'current_datetime'));
 
         // $this->currentPerson = Person::find(auth()->id());
         // $org                 = Org::find($this->currentPerson->defaultOrgID);
         // return view('v1.auth_pages.campaigns.email_builder', compact('campaign', 'org'));
     }
 
+    private function generateEmailList()
+    {
+        $list_dp     = [];
+        $list_dp[''] = 'Select Mailing List';
+        $defaults    = getDefaultEmailList($this->currentPerson, $for_select = true);
+        $lists       = getEmailList($this->currentPerson, $for_select = true);
+        foreach ($defaults as $key => $value) {
+            $list_dp[$value['id']] = $value['name'] . '(' . $value['count'] . ')';
+        }
+        foreach ($lists as $key => $value) {
+            $list_dp[$value['id']] = $value['name'] . '(' . $value['count'] . ')';
+        }
+        return $list_dp;
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -350,28 +410,54 @@ class CampaignController extends Controller
      */
     public function sendTestEmail(Request $request)
     {
-        $email = $request->input('email');
-        if (empty($email)) {
-            $email = 'mufaddal@systango.com';
+        $currentPerson = $this->currentPerson;
+        $email_1       = $request->input('email1');
+        $email_2       = $request->input('email2');
+        $email_3       = $request->input('email3');
+        $email_4       = $request->input('email4');
+        $email_5       = $request->input('email5');
+        $valid_email   = [];
+        if (!empty($email_1) && filter_var($email_1, FILTER_VALIDATE_EMAIL)) {
+            $valid_email[] = $email_1;
         }
-        $id       = 69;
-        $campaign = Campaign::where('campaignID', $id)->get()->first();
-        $html     = replaceUserDataInEmailTemplate($email, $campaign);
-        $html     = view('v1.auth_pages.campaigns.preview_email_template')
-            ->with(['html' => $html])->render();
-        $mail = Mail::send(
-            'v1.auth_pages.campaigns.preview_email_template',
-            ['html' => $html],
-            function ($message) use ($campaign, $email) {
-                $message->from($campaign->fromEmail, $campaign->fromName);
-                $message->sender($campaign->fromEmail, $campaign->fromName);
-                $message->to($email, $name = null);
-                $message->subject($campaign->subject);
-                // Create a custom header that we can later retrieve
-                //$message->getHeaders()->addTextHeader('X-Model-ID',$model->id);
+        if (!empty($email_2) && filter_var($email_2, FILTER_VALIDATE_EMAIL)) {
+            $valid_email[] = $email_2;
+        }
+        if (!empty($email_3) && filter_var($email_3, FILTER_VALIDATE_EMAIL)) {
+            $valid_email[] = $email_3;
+        }
+        if (!empty($email_4) && filter_var($email_4, FILTER_VALIDATE_EMAIL)) {
+            $valid_email[] = $email_4;
+        }
+        if (!empty($email_5) && filter_var($email_5, FILTER_VALIDATE_EMAIL)) {
+            $valid_email[] = $email_5;
+        }
+        if (count($valid_email) == 0) {
+            return response()->json(['success' => false, 'message' => trans('messages.errors.no_valid_email')]);
+        }
+        $html = $request->input('html');
+        if (empty($html)) {
+            return response()->json(['success' => false, 'message' => trans('messages.errors.empty_template')]);
+        }
+        $note     = $request->input('note');
+        $campaign = $request->input('campaign');
+        $subject  = 'Test Email';
+        if (!empty($campaign)) {
+            $campaign = Campaign::where('campaignID', $campaign)->get()->first();
+            if (!empty($campaign)) {
+                $subject = 'Test : ' . $campaign->subject;
+            }
+        }
+        $html = replaceUserDataInEmailTemplate(null, null, true, $html);
+        $mail = Mail::send('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $note],
+            function ($message) use ($currentPerson, $valid_email, $subject) {
+                $message->from($currentPerson->login);
+                $message->sender($currentPerson->login);
+                $message->to($valid_email);
+                $message->subject($subject);
             }
         );
-        dd($mail);
+        return response()->json(['success' => true, 'message' => trans('messages.messages.test_email_sent')]);
     }
 
     public function copy(Request $request, $campaign_id)
@@ -380,24 +466,101 @@ class CampaignController extends Controller
         $campaign_name_count = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
             ->where('title', 'LIKE', "$campaign->title%")
             ->get()->count();
-        // dd($campaign_name_count->toSql(), $campaign_name_count->getBindings());
         $new_campaign = $campaign->replicate();
         if ($campaign_name_count == 0) {
-            $new_campaign->title = $campaign->title . ' -Copy';
+            $new_campaign->title = $campaign->title . '-Copy';
         } else {
-            $new_campaign->title = $campaign->title . ' -Copy ' . ++$campaign_name_count;
+            if (strpos($campaign->title, '-Copy')) {
+                $new_name = substr($campaign->title, 0, strpos($campaign->title, '-Copy'));
+            }
         }
-        if (count($new_campaign->title) > 55) {
+        if (strlen($new_campaign->title) > 55) {
             $new_campaign->title = $campaign->title;
         }
         $new_campaign->save();
         $email_block = EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->get();
+        $raw_html    = '';
         foreach ($email_block as $key => $value) {
             $new_block              = $value->replicate();
             $new_block->campaign_id = $new_campaign->campaignID;
             $new_block->save();
+            $raw_html .= $new_block->content;
         }
+        generateEmailTemplateThumbnail($html = $raw_html, $campaign = $new_campaign, $currentPerson = $this->currentPerson);
         request()->session()->flash('alert-success', trans('messages.messages.campaign_copied_successfully'));
         return redirect(url('campaign', $new_campaign->campaignID, 'edit'));
+    }
+
+    public function sendCampaign(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'schedule' => 'nullable|date',
+            'campaign' => 'required|exists:org-campaign,campaignID',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors_validation' => $validator->errors()]);
+        }
+        $schedule      = $request->input('schedule');
+        $campaign_id   = $request->input('campaign');
+        $campaign      = Campaign::where('campaignID', $campaign_id)->get()->first();
+        $date_schedule = '';
+        if (!empty($schedule)) {
+            $date_time              = explode(' ', $schedule, 2);
+            $date                   = date("Y-m-d", strtotime($date_time[0]));
+            $time                   = date("H:i", strtotime($date_time[1]));
+            $dt                     = $date . ' ' . $time;
+            $date                   = Carbon::createFromFormat('Y-m-d H:i', $dt);
+            $date_schedule          = $date->format('Y-m-d H:i:s');
+            $campaign->scheduleDate = $date_schedule;
+            $campaign->save();
+        }
+        $list_id      = $campaign->emailListID;
+        $org_id       = $this->currentPerson->defaultOrgID;
+        $contacts     = getEmailListContact($list_id, $org_id);
+        $insert_queue = [];
+        foreach ($contacts as $key => $value) {
+            $value     = 'mufaddal@systango.com'; /// for testing only
+            $to_insert = ['campaign_id' => $campaign_id, 'org_id' => $org_id, 'email_id' => $value];
+            if (!empty($schedule)) {
+                $to_insert['scheduled_datetime'] = $date_schedule;
+            }
+            $insert_queue[] = $to_insert;
+        }
+        $var = EmailQueue::insert($insert_queue);
+
+        if ($var) {
+            // $campaign->sendDate = Carbon::now(); // remove for testing only
+            $campaign->save();
+            dispatch(new SendCampaignEmail());
+            request()->session()->flash('alert-success', trans('messages.messages.campaign_copied_successfully'));
+            return response()->json(['success' => true, 'message' => trans('messages.messages.test_email_sent'), 'redirect' => url('campaign', $campaign->campaignID)]);
+        }
+    }
+    public function deleteCampaign(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'campaign' => 'required|exists:org-campaign,campaignID',
+        ]);
+        if ($validator->fails()) {
+            $error = $validator->errors();
+            $error = $error->all();
+            return response()->json(['success' => false, 'message' => $error[0]]);
+        }
+        $campaign_id = $request->input('campaign');
+
+        $campaign = Campaign::where('campaignID', $campaign_id)->get()->first();
+        if (empty($campaign)) {
+            return response()->json(['success' => false, 'message' => trans('messages.errors.campaign_not_exist')]);
+        }
+        if (empty($campaign->sendDate)) {
+            EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->delete();
+            $campaign->delete();
+            return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
+        } else if (!empty($campaign->sendDate) && (empty($campaign->scheduleDate) || !empty($campaign->scheduleDate))) {
+            EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->delete();
+            EmailQueue::where('campaign_id', $campaign->campaignID)->delete();
+            $campaign->delete();
+            return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
+        }
     }
 }

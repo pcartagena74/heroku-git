@@ -303,6 +303,7 @@ Route::get('/campaign/{campaign}', 'CampaignController@show');
 Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
 Route::get('/campaign/{campaign}/copy', 'CampaignController@copy');
+Route::post('/deleteCampaign', 'CampaignController@deleteCampaign');
 // Route::patch('/campaign/{campaign}', 'CampaignController@update');
 // Email Builder Routes
 
@@ -313,7 +314,9 @@ Route::post('/getEmailTemplateBlocks', 'CampaignController@getEmailTemplateBlock
 Route::post('/storeEmailTemplateForPreview', 'CampaignController@storeEmailTemplateForPreview'); //ajax;
 Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmailTemplate');
 Route::get('/email-template-thumb/{filename}', 'CampaignController@getemailTemplateThumbnailImage');
-Route::get('/send-test-email', 'CampaignController@sendTestEmail');
+Route::post('/send-test-email', 'CampaignController@sendTestEmail');
+Route::post('/sendCampaign', 'CampaignController@sendCampaign');
+
 // Email Builder Routes ends
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');

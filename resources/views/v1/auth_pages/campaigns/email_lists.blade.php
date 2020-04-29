@@ -157,12 +157,10 @@ $topBits = '';  // remove this if this was set in the controller
                             {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat','id'=>'last-year-event')) !!}
                             {!! Form::label('include', "Last Year's Events") !!}
                         </div>
-                        {{--
                         <div class="clearfix" draggable="true" id="all-event" ondragstart="drag(event)">
                             {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','id'=>'all-event')) !!}
                             {!! Form::label('include[]', 'All PD Day Events') !!}
                         </div>
-                        --}}
                         @foreach($excludes as $e)
                             @php
                                 $name = substr($e->eventName, 0, 60);

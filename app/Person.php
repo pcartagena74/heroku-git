@@ -146,4 +146,9 @@ class Person extends Model
             $s->save();
         }
     }
+
+    public function email()
+    {
+        return $this->hasMany(Email::class, 'personID', 'personID')->where('isPrimary', 1);
+    }
 }

@@ -6,6 +6,7 @@
 
 use App\Address;
 use App\Email;
+use App\EmailList;
 use App\Models\Ticketit\TicketOver;
 use App\Org;
 use App\OrgPerson;
@@ -1048,8 +1049,10 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             }
         } else {
             $raw_html = '';
-            foreach ($campaign->template_blocks as $key => $value) {
-                $raw_html .= $value->content;
+            if (empty($campaign->content)) {
+                foreach ($campaign->template_blocks as $key => $value) {
+                    $raw_html .= $value->content;
+                }
             }
             $person       = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
             $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
@@ -1113,14 +1116,22 @@ if (!function_exists('generateEmailTemplateThumbnail')) {
      */
     function generateEmailTemplateThumbnail($html, $campaign)
     {
+        if (empty($html) || empty($campaign)) {
+            return false;
+        }
         $file_name = generateEmailTemplateThumbnailName($campaign);
         $html      = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
+        $org       = Org::where('orgID', $campaign->orgID)->get()->first();
+        $path      = getAllDirectoryPathFM($org);
+        $full_path = $path['campaign'] . '/thumb/' . $file_name;
         $img       = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 70, 120)
             ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
-            ->save(Storage::disk('local')->path($file_name));
-        return Storage::disk('local')->path($file_name);
+            ->screenshot();
+        // ->save(Storage::disk('local')->path($full_path));
+        Storage::disk(getDefaultDiskFM())->put($full_path, $img);
+        return Storage::disk(getDefaultDiskFM())->url($full_path);
     }
 }
 
@@ -1158,9 +1169,10 @@ if (!function_exists('getEmailTemplateThumbnailURL')) {
      */
     function getEmailTemplateThumbnailURL($campaign)
     {
+        $path      = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk('local')->exists($file_name)) {
-            return url('email-template-thumb', $file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->url($path['campaign'] . '/thumb/' . $file_name);
         } else {
             return url('images/mCentric_square.png');
 
@@ -1169,14 +1181,18 @@ if (!function_exists('getEmailTemplateThumbnailURL')) {
 }
 
 if (!function_exists('getAllDirectoryPathFM')) {
-
-    function getAllDirectoryPathFM($org)
+    function getAllDirectoryPathFM($org = null)
     {
+        if (empty($org)) {
+            $currentPerson = Person::find(auth()->user()->id);
+            $org           = $currentPerson->defaultOrg;
+        }
         // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
-        $base_path        = $org->orgPath . '/';
-        $path['event']    = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
-        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
-        $path['orgPath']  = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
+        $base_path              = $org->orgPath . '/';
+        $path['event']          = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
+        $path['campaign']       = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
+        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files/thumb');
+        $path['orgPath']        = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
         return $path;
     }
 
@@ -1215,6 +1231,285 @@ if (!function_exists('getDefaultDiskFM')) {
 if (!function_exists('getAllDiskFM')) {
     function getAllDiskFM()
     {
-        return ['public', 's3_receipts', 's3_media', 'events'];
+        // return ['public', 's3_receipts', 's3_media', 'events'];
+        return ['s3_media'];
+    }
+}
+if (!function_exists('getEmailList')) {
+    function getEmailList($currentPerson, $for_select = false)
+    {
+        $rows        = [];
+        $lists       = EmailList::where('orgID', $currentPerson->defaultOrgID)->get();
+        $select_rows = [];
+        $today       = Carbon::now();
+        foreach ($lists as $l) {
+            $included   = explode(',', $l->included);
+            $foundation = $l->foundation;
+            $excluded   = explode(',', $l->excluded);
+
+            // foundations are either filters (when $included !== null) or true foundations
+            if ($included != null) {
+                switch ($foundation) {
+                    case "none":
+                    case "everyone":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                                $q->whereIn('eventID', $included);
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "pmiid":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                                $q->whereIn('eventID', $included);
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) {
+                                $q->whereNotNull('OrgStat1');
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "nonexpired":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                                $q->whereIn('eventID', $included);
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) use ($today) {
+                                $q->whereNotNull('OrgStat1');
+                                $q->whereDate('RelDate4', '>=', $today);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                }
+            } else {
+                // $included === null
+                switch ($foundation) {
+                    case "none":
+                    // none with a null $included is not possible
+                    case "everyone":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereDoesntHave('registrations', function ($q) use ($excluded) {
+                                $q->whereIn('eventID', $excluded);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "pmiid":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($excluded) {
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) use ($today) {
+                                $q->whereNotNull('OrgStat1');
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "nonexpired":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($excluded) {
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) use ($today) {
+                                $q->whereNotNull('OrgStat1');
+                                $q->whereDate('RelDate4', '>=', $today);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                }
+            }
+
+            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y')]);
+            array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
+        }
+        if ($for_select) {
+            return $select_rows;
+        } else {
+            return $rows;
+        }
+    }
+}
+if (!function_exists('getDefaultEmailList')) {
+    function getDefaultEmailList($currentPerson, $for_select = false)
+    {
+        $defaults    = EmailList::where('orgID', 1)->get();
+        $rows        = [];
+        $select_rows = [];
+        foreach ($defaults as $l) {
+            if ($l->foundation == 'everyone') {
+                $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                    $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                })->count();
+            } elseif ($l->foundation == 'pmiid') {
+                $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                    $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                })->whereHas('orgperson', function ($q) {
+                    $q->whereNotNull('OrgStat1');
+                })->count();
+            } elseif ($l->foundation == 'nonexpired') {
+                $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                    $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                })->whereHas('orgperson', function ($q) {
+                    $q->whereDate('RelDate4', '>=', Carbon::now());
+                })->count();
+            } else {
+                // For default lists, we shouldn't ever get here
+                $c = 0;
+            }
+            array_push($rows, [$l->listName, $c, $l->created_at->format('n/j/Y')]);
+            array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
+        }
+        if ($for_select) {
+            return $select_rows;
+        } else {
+            return $rows;
+        }
+    }
+}
+
+if (!function_exists('getEmailListContact')) {
+    function getEmailListContact($list_id, $org_id)
+    {
+        $list       = EmailList::whereId($list_id)->get()->first();
+        $rows       = [];
+        $included   = explode(',', $list->included);
+        $foundation = $list->foundation;
+        $excluded   = explode(',', $list->excluded);
+        $today      = Carbon::now();
+        // foundations are either filters (when $included !== null) or true foundations
+        if ($included != null) {
+            switch ($foundation) {
+                case "none":
+                case "everyone":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                            $q->whereIn('eventID', $included);
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "pmiid":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                            $q->whereIn('eventID', $included);
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) {
+                            $q->whereNotNull('OrgStat1');
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "nonexpired":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                            $q->whereIn('eventID', $included);
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) use ($today) {
+                            $q->whereNotNull('OrgStat1');
+                            $q->whereDate('RelDate4', '>=', $today);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+            }
+        } else {
+            // $included === null
+            switch ($foundation) {
+                case "none":
+                // none with a null $included is not possible
+                case "everyone":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereDoesntHave('registrations', function ($q) use ($excluded) {
+                            $q->whereIn('eventID', $excluded);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "pmiid":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($excluded) {
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) use ($today) {
+                            $q->whereNotNull('OrgStat1');
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "nonexpired":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($excluded) {
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) use ($today) {
+                            $q->whereNotNull('OrgStat1');
+                            $q->whereDate('RelDate4', '>=', $today);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+            } //switch end
+        } //else end
+        $email_list = [];
+        foreach ($c as $key => $value) {
+            if (!empty($value->email[0])) {
+                $email_list[] = $value->email[0]->emailADDR;
+            } else {
+                $email_list[] = $value->login;
+            }
+        }
+        return $email_list;
+    } //function end
+}
+if (!function_exists('convertToDatePickerFormat')) {
+    function convertToDatePickerFormat($date_time)
+    {
+        $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
+        return $date->format('m/d/Y h:mm A');
     }
 }

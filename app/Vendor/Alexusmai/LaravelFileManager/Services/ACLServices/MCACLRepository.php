@@ -38,7 +38,7 @@ class MCACLRepository implements ACLRepository
         $path          = getAllDirectoryPathFM($currentOrg);
         generateDirectoriesForOrg($currentOrg);
         if (\Auth::id() === 1) {
-            return [];
+            return config('file-manager.aclRules')[$this->getUserID()] ?? [];
         }
         if (Entrust::hasRole('Developer')) {
             return [

@@ -84,6 +84,8 @@ var returnVal;
     var _language = [];
     var _aceEditor, _popup_save_template, _popup_editor, _blankPageHtml, _popup_send_email, _popup_demo, _popup_load_template;
     var _this, _nav, _result, _ytbUrl, _popupImportContent, _balContentWrapper, _removeClass, videoid, _getHtml, _addClass, _popupImagesContent, _loadPageHtml, _padding, _selection, _span, _menuType, _top, _left, _contentText, _spanId, _dataId, _outputSideBar, _url, _width, _outputContent, _class, _socialRow, _socialType, _val, _menu, _value, _activeElement, _href, _html, _dataTypes, _typeArr, _arrSize, _style, _aceEditor, _parentSelector, _parent, _arrElement, _outputHtml, _settings, _tabElements, _tabProperty, _items, _contentMenu, _generatedElements, _elementsContainer, _elements, _element, _tabSelector, _menuItem, _tabMenuItem, _accordionMenuItem, _dataValue;
+    //added for listing;
+    var _templateListItems;
     var EmailBuilder = function(elem, options) {
         //Private variables
         this.elem = elem;
@@ -137,7 +139,7 @@ var returnVal;
             //events of settings
             onSettingsPreviewButtonClick: function(e) {},
             onSettingsExportButtonClick: function(e) {},
-            onBeforeSettingsSaveButtonClick: function(e) {},
+            onBeforeSettingsSaveButtonClick: function(e, getHtml) {},
             onSettingsSaveButtonClick: function(e) {},
             onBeforeSettingsLoadTemplateButtonClick: function(e) {},
             onSettingsSendMailButtonClick: function(e) {},
@@ -145,7 +147,7 @@ var returnVal;
             onBeforeChangeImageClick: function(e) {},
             onBeforePopupSelectImageButtonClick: function(e) {},
             onBeforePopupSelectTemplateButtonClick: function(e) {},
-            onPopupSaveButtonClick: function(e) {},
+            onPopupSaveButtonClick: function(e,getHtml) {},
             onPopupSendMailButtonClick: function(e) {},
             onPopupUploadImageButtonClick: function(e) {},
             onTemplateDeleteButtonClick: function(e) {},
@@ -1000,7 +1002,8 @@ var returnVal;
             //save-template click
             _this.$elem.on('click', '.setting-item.save-template', function(event) {
                 if (_this.config.onBeforeSettingsSaveButtonClick !== undefined) {
-                    _this.config.onBeforeSettingsSaveButtonClick(event);
+                    _getHtml = _this.getContentHtml();
+                    _this.config.onBeforeSettingsSaveButtonClick(event, _getHtml);
                 }
                 //if user want stop this action : e.preventDefault();
                 if (event.isDefaultPrevented() == true) {
@@ -1018,7 +1021,8 @@ var returnVal;
                     return false;
                 }
                 if (_this.config.onPopupSaveButtonClick !== undefined) {
-                    _this.config.onPopupSaveButtonClick(event);
+                    _getHtml = _this.getContentHtml();
+                    _this.config.onPopupSaveButtonClick(event, _getHtml);
                 }
                 //if user want stop this action : e.preventDefault();
                 if (event.isDefaultPrevented() == true) {
@@ -1139,7 +1143,7 @@ var returnVal;
                 _this.makeSortable();
                 event.stopPropagation();
             });
-            jQuery('body').on('click', '.btn-upload', function(event) {
+            jQuery('#email_builder_master').on('click', '.btn-upload', function(event) {
                 if (_this.config.onPopupUploadImageButtonClick !== undefined) {
                     _this.config.onPopupUploadImageButtonClick(event);
                 }
@@ -1579,8 +1583,11 @@ var returnVal;
          * 
          */
         setImageFileManager: function(url) {
-            console.log('editgor js')
             _this.getActiveElementContent().find('.content-image').attr('src', url);
+        },
+        setTemplateListItems: function(templateListItems) {
+            //to set templateListitem variable used to get template title
+            _templateListItems = templateListItems;
         }
     };
     $.fn.emailBuilder = function(options) {
@@ -1887,9 +1894,12 @@ var returnVal;
         this.makeSortable = function() {
             _emailBuilder.makeSortable();
         }
-
         this.setImageFileManager = function(url) {
             _emailBuilder.setImageFileManager(url);
+        }
+        this.setTemplateListItems = function(items) {
+            //to set templateListitem variable used to get template title
+            _emailBuilder.setTemplateListItems(items);
         }
         return this.each(function() {
             _emailBuilder = new EmailBuilder(this, options);

@@ -22,7 +22,7 @@ class MCConfigRepository implements ConfigRepository
     {
         // return config('file-manager.diskList'); remove false when move to staging
         if (\Auth::id() === 1) {
-            return ['public', 's3_receipts', 's3_media', 'events'];
+            return ['s3_media', 's3_receipts', 'events'];
         }
         return [getDefaultDiskFM()];
     }
@@ -188,6 +188,9 @@ class MCConfigRepository implements ConfigRepository
      */
     public function getAclStrategy(): string
     {
+        if (\Auth::id() === 1) {
+            return 'blacklist';
+        }
         return config('file-manager.aclStrategy');
     }
 

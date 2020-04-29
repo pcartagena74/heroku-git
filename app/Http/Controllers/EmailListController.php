@@ -26,146 +26,11 @@ class EmailListController extends Controller
         $this->currentPerson = Person::find(auth()->id());
         $rows                = [];
         $ids                 = [];
-        $defaults            = EmailList::where('orgID', 1)->get();
-        $lists               = EmailList::where('orgID', $this->currentPerson->defaultOrgID)->get();
-        $today               = Carbon::now();
+        $defaults            = getDefaultEmailList($this->currentPerson);
 
-        foreach ($defaults as $l) {
-            if ($l->foundation == 'everyone') {
-                $c = Person::whereHas('orgs', function ($q) {
-                    $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                })
-                    ->count();
-            } elseif ($l->foundation == 'pmiid') {
-                $c = Person::whereHas('orgs', function ($q) {
-                    $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                })
-                    ->whereHas('orgperson', function ($q) {
-                        $q->whereNotNull('OrgStat1');
-                    })
-                    ->count();
-            } elseif ($l->foundation == 'nonexpired') {
-                $c = Person::whereHas('orgs', function ($q) {
-                    $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                })
-                    ->whereHas('orgperson', function ($q) {
-                        $q->whereDate('RelDate4', '>=', Carbon::now());
-                    })
-                    ->count();
-            } else {
-                // For default lists, we shouldn't ever get here
-                $c = 0;
-            }
-            array_push($rows, [$l->listName, $c, $l->created_at->format('n/j/Y')]);
-        }
-        $defaults = $rows;
-        $rows     = [];
+        $lists = getEmailList($this->currentPerson);
 
-        foreach ($lists as $l) {
-            $included   = explode(',', $l->included);
-            $foundation = $l->foundation;
-            $excluded   = explode(',', $l->excluded);
-
-            // foundations are either filters (when $included !== null) or true foundations
-            if ($included != null) {
-                switch ($foundation) {
-                    case "none":
-                    case "everyone":
-                        $c = Person::whereHas('orgs', function ($q) {
-                            $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                        })
-                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
-                                $q->whereIn('eventID', $included);
-                                $q->whereNotIn('eventID', $excluded);
-                            })
-                            ->distinct()
-                            ->select('person.personID')
-                            ->count();
-                        break;
-                    case "pmiid":
-                        $c = Person::whereHas('orgs', function ($q) {
-                            $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                        })
-                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
-                                $q->whereIn('eventID', $included);
-                                $q->whereNotIn('eventID', $excluded);
-                            })
-                            ->whereHas('orgperson', function ($q) {
-                                $q->whereNotNull('OrgStat1');
-                            })
-                            ->distinct()
-                            ->select('person.personID')
-                            ->count();
-                        break;
-                    case "nonexpired":
-                        $c = Person::whereHas('orgs', function ($q) {
-                            $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                        })
-                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
-                                $q->whereIn('eventID', $included);
-                                $q->whereNotIn('eventID', $excluded);
-                            })
-                            ->whereHas('orgperson', function ($q) use ($today) {
-                                $q->whereNotNull('OrgStat1');
-                                $q->whereDate('RelDate4', '>=', $today);
-                            })
-                            ->distinct()
-                            ->select('person.personID')
-                            ->count();
-                        break;
-                }
-            } else {
-                // $included === null
-                switch ($foundation) {
-                    case "none":
-                    // none with a null $included is not possible
-                    case "everyone":
-                        $c = Person::whereHas('orgs', function ($q) {
-                            $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                        })
-                            ->whereDoesntHave('registrations', function ($q) use ($excluded) {
-                                $q->whereIn('eventID', $excluded);
-                            })
-                            ->distinct()
-                            ->select('person.personID')
-                            ->count();
-                        break;
-                    case "pmiid":
-                        $c = Person::whereHas('orgs', function ($q) {
-                            $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                        })
-                            ->whereHas('registrations', function ($q) use ($excluded) {
-                                $q->whereNotIn('eventID', $excluded);
-                            })
-                            ->whereHas('orgperson', function ($q) use ($today) {
-                                $q->whereNotNull('OrgStat1');
-                            })
-                            ->distinct()
-                            ->select('person.personID')
-                            ->count();
-                        break;
-                    case "nonexpired":
-                        $c = Person::whereHas('orgs', function ($q) {
-                            $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
-                        })
-                            ->whereHas('registrations', function ($q) use ($excluded) {
-                                $q->whereNotIn('eventID', $excluded);
-                            })
-                            ->whereHas('orgperson', function ($q) use ($today) {
-                                $q->whereNotNull('OrgStat1');
-                                $q->whereDate('RelDate4', '>=', $today);
-                            })
-                            ->distinct()
-                            ->select('person.personID')
-                            ->count();
-                        break;
-                }
-            }
-
-            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y')]);
-        }
-        $lists = $rows;
-
+        $today = Carbon::now();
         // list of eventIDs from this year's events
         $e = Event::whereYear('eventStartDate', '=', date('Y'))
             ->whereDate('eventStartDate', '<', $today)
@@ -307,22 +172,25 @@ class EmailListController extends Controller
             // request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
             return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_foundation_or_include')]]);
         }
-
+        $include_string = implode(',', $include_list);
+        $exclude_string = implode(',', $exclude_list);
         if (empty($include_list) && $foundation) {
             $include_string = $foundation;
         }
-        $exclude !== null ? $exclude_string = implode(',', $exclude_list) : $exclude_string = null;
+        // $exclude !== null ? $exclude_string = implode(',', $exclude_list) : $exclude_string = null;
 
+        // dd($foundation, $include_string, $exclude_string);
         /* start show result before save */
         //ask phil if we need to check in advance that if a list has some contact or not
         /* end show result before save */
 
-        $e           = new EmailList;
-        $e->orgID    = $this->currentPerson->defaultOrgID;
-        $e->listName = $name;
-        $e->listDesc = $description;
-        $e->included = $include_string;
-        $e->excluded = $exclude_string;
+        $e             = new EmailList;
+        $e->orgID      = $this->currentPerson->defaultOrgID;
+        $e->listName   = $name;
+        $e->listDesc   = $description;
+        $e->included   = $include_string;
+        $e->excluded   = $exclude_string;
+        $e->foundation = $foundation;
         $e->save();
         request()->session()->flash('alert-success', trans('messages.messages.email_list_created', ['name' => $name]));
         return response()->json(['success' => true, 'redirect_url' => url('lists')]);

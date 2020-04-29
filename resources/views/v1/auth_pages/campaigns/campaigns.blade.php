@@ -28,12 +28,12 @@ $topBits = '';  // remove this if this was set in the controller
         $clicks = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('clicks');
 @endphp
         {{-- @if($c == $campaigns->first()) --}}
-<div class="col-md-10 col-xs-10">
+<div class="col-md-10 col-xs-10 campaign-panel-{{$c->campaignID}}">
     <div class="x_panel">
         <div class="x_title">
             <h2>
                 <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
-                    <img class="img-thumbnail" height="120px" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px">
+                    <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px">
                         {!! $c->title !!}
                     </img>
                 </a>
@@ -64,23 +64,15 @@ $topBits = '';  // remove this if this was set in the controller
                                 Copy
                             </a>
                         </li>
-                        @if($c->sendDate)
-                        <li>
-                            <a href="{!! url('campaign',[$c->campaignID,'delete']) !!}">
-                                Delete
-                            </a>
-                        </li>
-                        @else
                         <li>
                             <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
                                 Edit
                             </a>
                         </li>
-                        @endif
                     </ul>
                 </li>
                 <li>
-                    <a class="close-link">
+                    <a href="javascript:void(0)" onclick="deleteCampaign('{{$c->title}}','{{$c->campaignID}}')">
                         <i class="fa fa-close">
                         </i>
                     </a>
@@ -91,7 +83,7 @@ $topBits = '';  // remove this if this was set in the controller
         </div>
     </div>
 </div>
-<div class="x_content">
+<div class="x_content campaign-panel-{{$c->campaignID}}">
     @if($c->sendDate)
     <div class="row tile_count">
         <div class="col-sm-2 tile_stats_count" style="text-align: center;">
@@ -297,12 +289,105 @@ $topBits = '';  // remove this if this was set in the controller
 <script>
     $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
+    var delete_campaign_id = '';
+    function deleteCampaign(title,id){
+        delete_campaign_id = id;
+        $('#popup-confirm-campaign-delete').find('.modal-body').html('{{trans('messages.campaign_delete_popup.body')}} '+ title + ' ?')
+        $('#popup-confirm-campaign-delete').modal('show');
+    }
+
+    function setExitPopButtonValue(btn_press){
+        switch(btn_press) {
+          case 'yes':
+            $('#popup-confirm-campaign-delete').modal('hide');
+            $.ajax({
+                url: '{{ url('deleteCampaign') }}',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    campaign:delete_campaign_id
+                },
+                success: function(data) {
+                    if(data.success == false){
+                        $('#popup-campaign-delete-success').find('.modal-title').html("{{ trans('messages.campaign_delete_popup_success.title_error') }}");
+                        $('#popup-campaign-delete-success').find('.modal-body').html(data.message)
+                        $('#popup-campaign-delete-success').modal('show');
+                    } else {
+                        $('.campaign-panel-'+delete_campaign_id).hide();
+                        $('#popup-campaign-delete-success').find('.modal-title').html("{{ trans('messages.campaign_delete_popup_success.title') }}");
+                        $('#popup-campaign-delete-success').find('.modal-body').html(data.message)
+                        $('#popup-campaign-delete-success').modal('show');
+                    }
+                    delete_campaign_id = '';
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            });
+            break;
+        }
+    }
 </script>
 @endsection
 
 @section('modals')
 @include('v1.modals.context_sensitive_issue')
-    {{--
+<div aria-hidden="true" aria-labelledby="popup-confirm-campaign-delete" class="modal fade" id="popup-confirm-campaign-delete" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">
+                        ×
+                    </span>
+                </button>
+                <h4 class="modal-title">
+                    {{ trans('messages.campaign_delete_popup.title') }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ trans('messages.campaign_delete_popup.body') }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" onclick="setExitPopButtonValue('yes')" type="button">
+                    {{ trans('messages.campaign_delete_popup.btn_ok') }}
+                </button>
+                <button class="btn btn-success" data-dismiss="modal" type="button">
+                    {{ trans('messages.campaign_delete_popup.btn_cancel') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div aria-hidden="true" aria-labelledby="popup-campaign-delete-success" class="modal fade" id="popup-campaign-delete-success" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">
+                        ×
+                    </span>
+                </button>
+                <h4 class="modal-title">
+                    {{ trans('messages.campaign_delete_popup_success.title') }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ trans('messages.campaign_delete_popup_success.body') }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" data-dismiss="modal" type="button">
+                    {{ trans('messages.campaign_delete_popup_success.btn_ok') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{{--
 <div aria-hidden="true" aria-labelledby="campaign_label" class="modal fade" id="campaign_modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

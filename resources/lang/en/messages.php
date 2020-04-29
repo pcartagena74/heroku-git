@@ -5,19 +5,19 @@
  */
 
 return [
-    'auth'                   => [
+    'auth'                          => [
         'account'  => 'Have an account?  Login',
         'forgot'   => 'Forgot Password?',
         'remember' => 'Remember Me',
     ],
 
-    'actions'                => [
+    'actions'                       => [
         'add'    => 'Add ',
         'merge'  => "Merge",
         'remove' => 'Remove ',
     ],
 
-    'admin'                  => [
+    'admin'                         => [
         'upload' => [
             'count'    => 'Prior upload of :count records, successful.',
             'evtdata'  => 'Event registration records',
@@ -30,11 +30,11 @@ return [
         ],
     ],
 
-    'alt_txt'                => [
+    'alt_txt'                       => [
         'avatar' => 'User Avatar/Image',
     ],
 
-    'buttons'                => [
+    'buttons'                       => [
         'add_disc'       => 'Add Discount',
         'add_def_disc'   => 'Add Default Organizational Discount Codes',
         'add_tkt'        => "Add Tickets",
@@ -84,7 +84,7 @@ return [
         'wait'           => 'Join the Wait List',
     ],
 
-    'codes'                  => [
+    'codes'                         => [
         'invalid_code' => "Invalid Code: ':code'",
         'invalid_id'   => "The :id is not valid.",
         'valid'        => "Code: ':code' provides a :disc discount.",
@@ -95,18 +95,18 @@ return [
     ],
 
     // Common words that are often reused
-    'common'                 => [
+    'common'                        => [
         'reminder' => "Reminder",
     ],
 
-    'directions'             => [
+    'directions'                    => [
         'org' => [
             'fullname' => "Enter complete, formal/corporate name",
             'display'  => "Enter display name",
         ],
     ],
 
-    'errors'                 => [
+    'errors'                        => [
         'become_error'              => 'The id entered, :id, is invalid.',
         'corruption'                => "Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check",
         'event'                     => 'Please select an event.',
@@ -136,18 +136,21 @@ return [
         'no_member_for_list'        => 'You need to choose a foundation or events to include.',
         'no_foundation_or_include'  => 'You need to choose a foundation or events to include.',
         'storage_full'              => 'You have reach your storage quota please remove some files and try again.',
+        'no_valid_email'            => 'Please enter atlest one valid email address',
+        'empty_template'            => 'Please select some element in email template',
+        'campaign_not_exist'        => 'Campaign does not exist',
     ],
 
-    'flashes'                => [
+    'flashes'                       => [
         'merge_failure'    => "The attempt to merge the records has failed.<br />:e",
         'password_success' => "The password for the account with the login: :login was set successfully.",
     ],
 
-    'email_txt'              => [
+    'email_txt'                     => [
         'for_det_visit' => 'For details, visit',
     ],
 
-    'event_types'            => [
+    'event_types'                   => [
         'Chapter Meeting'  => 'Chapter Meeting|Chapter Meetings',
         'Roundtable'       => 'Roundtable|Roundtables',
         'PD Day'           => 'PDC|PDCs',
@@ -157,7 +160,7 @@ return [
         'Annual Meeting'   => 'Annual Meeting|Annual Meetings',
     ],
 
-    'fields'                 => [
+    'fields'                        => [
 
         'abstract'                   => 'Abstract',
         'aCost'                      => 'Additional Cost',
@@ -364,7 +367,7 @@ return [
         'camp_message_header'        => 'Message Header',
     ],
 
-    'headers'                => [
+    'headers'                       => [
         'acc_lookup'          => "Account Lookup",
         'accept_cash'         => "Do you want to allow attendees to 'Pay at the Door?'",
         'add'                 => 'Add Event Type|Add Additional Event Types',
@@ -593,11 +596,11 @@ return [
         'create_user'         => 'Create User',
     ],
 
-    'subheaders'             => [
+    'subheaders'                    => [
         'expand_min' => "Click the arrow to expand this section.",
     ],
 
-    'instructions'           => [
+    'instructions'                  => [
         'add_speaker'                 => "to add speakers to this list, register the person to an event using a speaker discount code.",
         'bar_chart'                   => "Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.",
         'become_instr'                => "Find a person by searching for that person's first or last name, email address, or PMI ID",
@@ -722,49 +725,52 @@ return [
         'select_default_organization' => 'Select One Organization to make it your default and switch to it',
     ],
 
-    'mCentric_text'          => [
+    'mCentric_text'                 => [
         'hosted_event' => "mCentric-hosted :org Event",
     ],
 
-    'messages'               => [
-        'bad_regID'                    => "Invalid registration ID used.",
-        'become'                       => "You are emulating the experience for: :name.  ",
-        'confirm_msg'                  => "A confirmation email was sent to: :name.",
-        'credit_info'                  => "Your credit/debit card information is not stored on this server and is safe.",
-        'loading'                      => "Loading",
-        'loc_merge'                    => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
-        'merge_sub'                    => "Your mCentric account for :name events",
-        'merge_msg1'                   => "An officer/admin with :orgname recently merged accounts associated with you.",
-        'merge_msg2'                   => "The account with :email2 was merged into :email1 and the password was swapped as well.",
-        'merge_succ'                   => ":model record: :record1 was successfully merged into :record2.",
-        'no_curr_pass_match'           => "The current password did not match.",
-        'no_events'                    => "There are no :which events in the system.",
-        'no_sessions'                  => "No session selections have been made. You can do so <a href=':link'>here</a>.",
-        'no_switch'                    => "Please see the registration desk to change session registration.",
-        'partial_fail'                 => "The attempt to get a partial refund failed with order: :rfid.",
-        'pass_change'                  => "The password was changed successfully.",
-        'pass_change_for'              => "The password for :name was changed successfully.",
-        'receipt_recreated'            => 'Your receipt was successfully recreated.',
-        'reg_success'                  => ":name was successfully checked into the session.",
-        'saved'                        => 'saved',
-        'sess_saved'                   => "Your session choices for :reg were :verb.",
-        'survey_confirm'               => "Are you sure you want to email all checked in attendees the survey?",
-        'thanks'                       => "Thank you for using mCentric with :orgname.",
-        'undo_login'                   => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
-        'unknown'                      => "Unknown",
-        'updated'                      => 'updated',
-        'user_created'                 => "The new user was created.  Go to the user's profile. :profile_button",
-        'user_create_fail'             => "An unknown error occurred during account creation.  ",
-        'visit_mCentric'               => "Visit mCentric",
-        'please_wait'                  => "Please wait while this content loads.",
-        'org_default_update_success'   => 'Your default Organization Updated',
-        'new_org_created_successfully' => 'New Org Created Successfully.',
-        'email_list_created'           => 'Email List :name created successfully.',
-        'import_file_queued'           => 'Import is queued. You will be notified via email when its complete.',
-        'campaign_copied_successfully' => 'Campaign copied successfully.',
+    'messages'                      => [
+        'bad_regID'                      => "Invalid registration ID used.",
+        'become'                         => "You are emulating the experience for: :name.  ",
+        'confirm_msg'                    => "A confirmation email was sent to: :name.",
+        'credit_info'                    => "Your credit/debit card information is not stored on this server and is safe.",
+        'loading'                        => "Loading",
+        'loc_merge'                      => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
+        'merge_sub'                      => "Your mCentric account for :name events",
+        'merge_msg1'                     => "An officer/admin with :orgname recently merged accounts associated with you.",
+        'merge_msg2'                     => "The account with :email2 was merged into :email1 and the password was swapped as well.",
+        'merge_succ'                     => ":model record: :record1 was successfully merged into :record2.",
+        'no_curr_pass_match'             => "The current password did not match.",
+        'no_events'                      => "There are no :which events in the system.",
+        'no_sessions'                    => "No session selections have been made. You can do so <a href=':link'>here</a>.",
+        'no_switch'                      => "Please see the registration desk to change session registration.",
+        'partial_fail'                   => "The attempt to get a partial refund failed with order: :rfid.",
+        'pass_change'                    => "The password was changed successfully.",
+        'pass_change_for'                => "The password for :name was changed successfully.",
+        'receipt_recreated'              => 'Your receipt was successfully recreated.',
+        'reg_success'                    => ":name was successfully checked into the session.",
+        'saved'                          => 'saved',
+        'sess_saved'                     => "Your session choices for :reg were :verb.",
+        'survey_confirm'                 => "Are you sure you want to email all checked in attendees the survey?",
+        'thanks'                         => "Thank you for using mCentric with :orgname.",
+        'undo_login'                     => "Your login was successfully changed back to :email.  A confirmation email has been sent to that address.",
+        'unknown'                        => "Unknown",
+        'updated'                        => 'updated',
+        'user_created'                   => "The new user was created.  Go to the user's profile. :profile_button",
+        'user_create_fail'               => "An unknown error occurred during account creation.  ",
+        'visit_mCentric'                 => "Visit mCentric",
+        'please_wait'                    => "Please wait while this content loads.",
+        'org_default_update_success'     => 'Your default Organization Updated',
+        'new_org_created_successfully'   => 'New Org Created Successfully.',
+        'email_list_created'             => 'Email List :name created successfully.',
+        'import_file_queued'             => 'Import is queued. You will be notified via email when its complete.',
+        'campaign_copied_successfully'   => 'Campaign copied successfully.',
+        'campaign_created_from_existing' => 'New Campaign created successfully from existing.',
+        'test_email_sent'                => 'Email sent successfully!',
+        'campaign_deleted'               => 'Campaign deleted successfully!',
     ],
 
-    'modals'                 => [
+    'modals'                        => [
         'gConfirm'   => 'Attendee Confirmation',
         'default'    => 'Default Title',
         'confirm'    => 'The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
@@ -778,7 +784,7 @@ return [
         'forgot'     => 'Forgot Your Password?',
     ],
 
-    'nav'                    => [
+    'nav'                           => [
         'b_admin'       => "ADMIN",
         'b_new'         => "NEW",
         'b_slow'        => "SLOW",
@@ -841,7 +847,7 @@ return [
         'active_issue'  => 'My Support Tickets',
     ],
 
-    'notifications'          => [
+    'notifications'                 => [
         'hello'         => "Hello :firstName,",
         'thanks'        => "Thank you for using mCentric with :org.",
         'login'         => "Login to mCentric",
@@ -907,7 +913,7 @@ return [
 
     ],
 
-    'public_marketing'       => [
+    'public_marketing'              => [
         'main'       => [
             'home'      => 'Home',
             'imm'       => "Integrated Member Management",
@@ -972,13 +978,13 @@ return [
         ],
     ],
 
-    'pdus'                   => [
+    'pdus'                          => [
         'lead'  => 'Leadership',
         'strat' => 'Strategy',
         'tech'  => 'Technical Skills',
     ],
 
-    'profile'                => [
+    'profile'                       => [
         'add_addr'    => 'Add Address',
         'add_email'   => 'Add Email',
         'add_number'  => 'Add Phone Number',
@@ -1020,7 +1026,7 @@ return [
         'zip'         => 'Zip',
     ],
 
-    'reg_status'             => [
+    'reg_status'                    => [
         'active'      => 'Active',
         'canceled'    => 'Canceled',
         'disc_exempt' => 'This ticket cannot be discounted.',
@@ -1040,14 +1046,14 @@ return [
         'wait'        => 'Wait List',
     ],
 
-    'reports'                => [
+    'reports'                       => [
         'ev_by_year'   => "Number of Events Attended by Year",
         'graph_years'  => "Year Display",
         'ind_brk'      => "Identified Industry Breakdown",
         'select_years' => "Select Years to Display",
     ],
 
-    'surveys'                => [
+    'surveys'                       => [
         'responses'       => [
             'vg'  => 'Very Good',
             'g'   => 'Good',
@@ -1077,7 +1083,7 @@ return [
     ],
 
     // Symbols used below may be localized if appropriate with icons at https://fontawesome.com/
-    'symbols'                => [
+    'symbols'                       => [
         'card'          => "<i class='far fa-credit-card-front fa-fw'></i>", // credit card
         'cash'          => "<i class='fas fa-money-bill-alt fa-fw'></i>", // physical currency
         'check'         => "<i class='fas fa-money-check fa-fw'></i>", // physical direction to draw on an account
@@ -1090,14 +1096,14 @@ return [
         'trash_class'   => "class='far fa-trash-alt fa-fw'", // delete symbol - class only (when tips are embedded)
     ],
 
-    'tabs'                   => [
+    'tabs'                          => [
         'heat_map'  => "Heat Map [Coming Soon]",
         'mem_demo'  => "Member Demographics",
         'ticketing' => 'Event Ticketing',
         'sessions'  => 'Event Sessions',
     ],
 
-    'tooltips'               => [
+    'tooltips'                      => [
         'accept_cash'       => "Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.",
         'accommodate'       => 'We will do our best to accommodate you.',
         'addl_ticket'       => "If you are attempting to buy any tickets for members, they will need to purchase their ticket "
@@ -1170,7 +1176,7 @@ return [
         'wait_cnv'          => 'Promote from Wait List',
     ],
 
-    'topBits'                => [
+    'topBits'                       => [
         'admin'   => "Admin Role",
         'board'   => "Board Role",
         'dev'     => "Developer Role",
@@ -1184,11 +1190,11 @@ return [
     ],
 
     // Variable Words
-    'var_words'              => [
+    'var_words'                     => [
         'time_period' => "{0}Upcoming|{1}Past",
     ],
 
-    'warning'                => [
+    'warning'                       => [
         'dupe_reg'                => "FYI: You have already registered for this event. :names|FYI: The following people appear to have already registered for this event: :names",
         'inactive_event'          => "<b>Note:</b> You are previewing an event that is not yet active OR is in the past.",
         'inactive_unlocked_event' => "<b>Note:</b> This event is no longer active but you have been given permission to register.",
@@ -1197,12 +1203,12 @@ return [
         'slug_event_url'          => "This event's URL will be: :url",
     ],
 
-    'yesno_check'            => [
+    'yesno_check'                   => [
         'no'  => 'No',
         'yes' => 'Yes',
     ],
 
-    'exceptions'             => [
+    'exceptions'                    => [
         'query_exception'           => 'Resource you are looking for has been either moved/deleted/does not exist',
         'bad_url_link'              => 'The link you are trying to access has been expired.',
         'forbidden'                 => 'You are not authorized to access this page.',
@@ -1214,24 +1220,24 @@ return [
         'page_no_found'             => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
         'bad_url_link_mail_tracker' => 'Oops, the link you are using has expired.',
     ],
-    'validation'             => [
+    'validation'                    => [
         'create_org_existing_user' => 'Please select one existing user',
         'file_required_extension'  => 'The file must be one of the following types xlsx, ods, csv type.',
     ],
 
-    'page_generic_exception' => [
+    'page_generic_exception'        => [
         'report_this'   => 'Report This?',
         'report_issue'  => 'Report Issue',
         'btn_go'        => 'Go!',
         'place_subject' => 'Subject',
     ],
-    'filter_tickets_options' => [
+    'filter_tickets_options'        => [
         'all'      => 'All',
         'created'  => 'Created by me',
         'assigned' => 'Assigned to me',
     ],
 
-    'email_builder_popup'    => [
+    'email_builder_popup'           => [
         'edit_success'     => [
             'title'  => 'Campaign',
             'body'   => 'Template saved successfully',
@@ -1244,5 +1250,19 @@ return [
             'btn_no'     => 'Close without saving',
             'btn_cancel' => 'Cancel',
         ],
+    ],
+
+    'campaign_delete_popup'         => [
+        'title'      => 'Confirm your action',
+        'body'       => 'Do you want to delete campaign ',
+        'btn_ok'     => 'Delete',
+        'btn_cancel' => 'Cancel',
+    ],
+    'campaign_delete_popup_success' => [
+        'title'       => 'Success',
+        'title_error' => 'Error',
+        'body'        => 'Do you want to delete campaign ',
+        'btn_ok'      => 'Ok',
+        'btn_cancel'  => 'Cancel',
     ],
 ];

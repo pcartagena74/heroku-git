@@ -1,4 +1,4 @@
-<?php
+@php 
 /**
  * Comment: Display the form to store or update a new campaign
  * Created: 9/18/2017
@@ -10,20 +10,32 @@ if(!isset($campaign)) {
 
 $topBits = '';  // remove this if this was set in the controller
 
-?>
+$disable = '';
+$date_picker_schedule = '';
+if(!empty($campaign)){
+    if(!empty($campaign->scheduleDate) && $campaign->scheduleDate <= $current_datetime){
+        $disable = 'disabled';
+        $date_picker_schedule = convertToDatePickerFormat($campaign->scheduleDate);
+    }
+    if(empty($campaign->scheduleDate) && !empty($campaign->sendDate)){
+        $disable = 'disabled';
+    }
+}
+
+@endphp
+
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
 
+    @include('v1.parts.start_content', ['header' => ' Campaign Message',
+             'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+<div aria-multiselectable="true" class="accordion" id="accordion" role="tablist">
     @if($campaign == null)
         {!! Form::open(array('url' => url('campaign'), 'method' => 'post' ,'id'=>'save_campaign','onsubmit'=>'return false;')) !!}
     @else
         {!! Form::model($campaign, array('url' => env('APP_URL')."/campaign", 'method' => 'post','id'=>'edit_campaign','onsubmit'=>'return false;')) !!}
     @endif
-
-    @include('v1.parts.start_content', ['header' => ' Campaign Message',
-             'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-<div aria-multiselectable="true" class="accordion" id="accordion" role="tablist">
     <div class="panel">
         <a aria-controls="collapseOne" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" id="headingOne" role="tab">
             <i class="panel-title">
@@ -66,10 +78,17 @@ $topBits = '';  // remove this if this was set in the controller
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12 clear-fix">
+                    {{ trans('messages.fields.camp_email_list') }}
+                     @if($campaign == null)
+                        {!! Form::select('email_list', $list_dp, null, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
+                    @else
+                        {!! Form::select('email_list', $list_dp, $campaign->emailListID, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+    {{--
     <div class="panel">
         <a aria-controls="collapseThree" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" id="headingThree" role="tab">
             <i class="panel-title">
@@ -78,23 +97,24 @@ $topBits = '';  // remove this if this was set in the controller
         </a>
         <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
             <div class="panel-body">
-                @if($campaign == null)
-                    @else
-                    @endif
             </div>
         </div>
     </div>
-    <div class="panel">
-        <a aria-controls="collapseFour" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseFour" id="headingFour" role="tab">
+    --}}
+    <div class="panels">
+        <a class="panel-heading" href="javascript:void(0)" id="headingFour">
             <i class="panel-title" id="show-etb">
                 @if(empty($campaign))
                     {{ trans('messages.fields.camp_create_email_template') }}
                 @else
-                    {{ trans('messages.fields.camp_edit_email_template') }}
+                <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($campaign)}}" width="70px">
+                    {!! $campaign->title !!}
+                </img>
+                {{ trans('messages.fields.camp_edit_email_template') }}
                 @endif
             </i>
         </a>
-        <div aria-labelledby="headingFour" class="panel-collapse collapse" id="collapseFour" role="tabpanel">
+        <div class="panel-collapse">
             <div class="panel-body">
                 <div class="etb-wrapper">
                     <i class="fa fa-close etb-wrapper__close-btn" id="hide-etb">
@@ -109,131 +129,203 @@ $topBits = '';  // remove this if this was set in the controller
             </div>
         </div>
     </div>
+    {!! Form::close() !!}
 </div>
 @include('v1.parts.end_content')
     {{-- Test Email Div --}}
 <div>
     @include('v1.parts.start_content', ['header' => 'Test Emails',
                  'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <div class="form-group">
-        {!! Form::label('email1', 'Enter up to 5 email addresses:') !!}
+    <div id="test-email">
+        <div class="form-group">
+            {!! Form::label('email1', 'Enter up to 5 email addresses:') !!}
             {!! Form::email('email1', $org->adminEmail, array('class' => 'form-control input-sm')) !!}
             @if($campaign == null)
             @else
             @endif
-    </div>
-    <div class="form-group">
-        {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+        </div>
+        <div class="form-group">
+            {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
                 'id' => 'email2')) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+        </div>
+        <div class="form-group">
+            {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
                 'id' => 'email3')) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+        </div>
+        <div class="form-group">
+            {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email4')) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+        </div>
+        <div class="form-group">
+            {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email5')) !!}
-    </div>
-    <a id="add_email" onclick="add_email();">
-        Add Another
-    </a>
-    <p>
+        </div>
+        <a id="add_email" onclick="add_email();">
+            Add Another
+        </a>
+        <p>
+        </p>
         <div class="form-group">
             {!! Form::label('note', 'Personal Note') !!}
-            {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4',
-                'placeholder' => 'Enter a note that will appear at the top of the test message.(work under progress for this section)')) !!}
+            {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4','id'=>'text_note',
+                'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
         </div>
         <div class="form-group">
-            {!! Form::button('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'javascript:void(0)')) !!}
+            {!! Form::button('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail()')) !!}
+        </div>
+        <div class="form-group" id="response">
         </div>
         @include('v1.parts.end_content')
-    </p>
+    </div>
 </div>
 @include('v1.parts.start_content', ['header' => 'Campaign Scheduling',
              'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 <div class="form-group">
-    @if($campaign == null)
     <div class="col-sm-3">
         {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}
     </div>
+    @if(!empty($campaign->scheduleDate))
     <div class="col-sm-5" style="text-align: center;">
-        {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
-    </div>
-    <div class="col-sm-3">
-        {!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}
+        {!! Form::checkbox('send', '1', true, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
     </div>
     @else
-    <div class="col-sm-3">
-        {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}
-    </div>
     <div class="col-sm-5" style="text-align: center;">
-        {!! Form::checkbox('send', '1', false, array('class' => 'js-switch')) !!}
+        {!! Form::checkbox('send', '1', false, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
     </div>
+    @endif
     <div class="col-sm-3">
         {!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}
     </div>
+    @if(!empty($campaign))
+    @if(!empty($campaign->sendDate) && empty($campaign->scheduleDate))
+    <div class="row">
+        <div class="col-sm-12">
+            Campaign was sent on {{$campaign->sendDate}}
+        </div>
+    </div>
+    @endif
+    @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate <= $current_datetime)
+    <div class="row">
+        <div class="col-sm-12">
+            Campaign was sent on {{$campaign->scheduleDate}}
+        </div>
+    </div>
+    @endif
     @endif
 </div>
 <p>
 </p>
 <div id="schedule" style="display: none;">
     {!! Form::label('schedule', 'Release Date') !!}
-        @if($campaign == null)
+    @if($campaign == null)
     <div class="form-group col-sm-12">
-        {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left')) !!}
+        {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left','id'=>'schedule_date')) !!}
         <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
         </span>
     </div>
     @else
     <div class="form-group col-sm-12">
-        {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left')) !!}
+        {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left','id'=>'schedule_date',$disable)) !!}
         <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
         </span>
     </div>
     @endif
 </div>
 <div class="form-group">
-    {!! Form::submit('Send Now', array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id' => 'clicked')) !!}
+    {!! Form::button('Send Now', array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id'=>'send_now', 'onclick' => 'sendCampaign()',$disable)) !!}
 </div>
 @include('v1.parts.end_content')
-
-    @if($campaign === null)
-    @else
-    @endif
-
-    @if($campaign === null)
-    @else
-    @endif
-
-
 
 @endsection
 
 @section('scripts')
-    @include('v1.parts.footer-tinymce2')
-    @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule', 'time' => 'true', 'single' => 'true'])
-<script>
+    {{-- @include('v1.parts.footer-tinymce2') --}}
+    @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule_date', 'time' => 'true', 'single' => 'true'])
+<script type="text/javascript">
+    @if(!empty($campaign->scheduleDate))
+        $('#schedule_date').val('{{$date_picker_schedule}}');
+    @endif
     var x = 2;
-        function add_email() {
-            $('#email' + x).show();
-            x += 1;
-            if (x > 5) {
-                $('#add_email').hide();
-            }
+    function add_email() {
+        $('#email' + x).show();
+        x += 1;
+        if (x > 5) {
+            $('#add_email').hide();
         }
-        $(document).ready(function () {
-            $('#schedule').val(moment(new Date($('#schedule').val())).format("MM/DD/YYYY HH:mm A"));
+    }
+
+    function sendLater(){
+        if($('#send_later').is(':checked')){
+            $("#schedule").show();
+            $("#send_now").text('Schedule');
+        } else {
+            $("#schedule").hide();
+            $("#send_now").text('Send Now');
+        }
+    }
+
+    sendLater();
+    function sendTestEmail(){
+        var html = _emailBuilder.getContentHtml();
+        var email1 = $('#email1').val();
+        var email2 = $('#email2').val();
+        var email3 = $('#email3').val();
+        var email4 = $('#email4').val();
+        var email5 = $('#email5').val();
+        var note = $('#text_note').val();
+        var campaign = '';
+        @if($campaign != null)
+            campaign = {{$campaign->campaignID}}
+        @endif
+        $('#response').html('');
+        $.ajax({
+            url: '{{url('send-test-email')}}',
+            type: 'post',
+            dataType: 'json',
+            data: {note:note,email1:email1,email2:email2,email3:email3,email4:email4,email5:email5,html:html,campaign:campaign},
+            success: function(data) {
+                if (data.success == true) {
+                    var msg = '<div class="alert alert-success"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'
+                            + data.message +
+                            '</div>';
+                    $('#response').html(msg);
+                } else {
+                    var msg = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'
+                            + data.message +
+                            '</div>';
+                    $('#response').html(msg);
+                }
+            }, 
         });
-</script>
-<script>
+    }
+    function sendCampaign() {
+        var campaign = '';
+        @if(!empty($campaign->campaignID))
+        campaign = '{{$campaign->campaignID}}'
+        @endif
+        var schedule = '';
+        if($('#send_later').is(':checked')){
+            schedule = $('#schedule_date').val();
+        }
+        $.ajax({
+            url: '{{ url('sendCampaign') }}',
+            type: 'post',
+            dataType: 'json',       
+            data: {campaign:campaign,schedule:schedule},
+            success: function(data) {
+                if (data.success == true) {
+                    window.location.href = data.redirect;
+                } else {
+                    console.log('eerr',data.message);
+                    // window.href = data.success.redirect;
+                }
+            }, 
+        });
+    }
     $(document).ready(function () {
-            function sendTestEmail(){
-                alert('work under progress');
-            }
+        // $('#schedule').val(moment(new Date($('#schedule').val())).format("MM/DD/YYYY HH:mm A"));
+    });
+    $(document).ready(function () {
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());
@@ -262,22 +354,10 @@ $topBits = '';  // remove this if this was set in the controller
               $('body').addClass('no-scroll');
             });
             
-    $('#send').on('change', function () {
-        $("#schedule").toggle();
-        if($("#clicked").val() == 'Send Now'){
-            $("#clicked").val('Schedule');
-        } else {
-            $("#clicked").val('Send Now');
-        }
+    $('#send_later').on('change', function () {
+        sendLater();
     });
-    $('form').submit(function () {
-        $('#schedule').each(function () {
-            $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
-        });
-    });
-
     
-
 });//ready end
 </script>
 @endsection

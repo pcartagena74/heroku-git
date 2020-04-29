@@ -156,7 +156,7 @@ var _emailBuilder = $('.editor').emailBuilder({
         console.log('onBeforeShowingEditorPopup html');
         //e.preventDefault();
     },
-    onBeforeSettingsSaveButtonClick: function(e) {
+    onBeforeSettingsSaveButtonClick: function(e,getHtml) {
         console.log('onBeforeSaveButtonClick html');
         @if(!empty($campaign->campaignID))
             e.preventDefault();
@@ -174,6 +174,7 @@ var _emailBuilder = $('.editor').emailBuilder({
             var from_email = $("#edit_campaign input[name=from_email]").val();
             var subject = $("#edit_campaign input[name=subject]").val();
             var preheader = $("#edit_campaign input[name=preheader]").val();
+            var email_list = $("#email_list").val();
             $.ajax({
                 url: '{{ url('updateEmailTemplate') }}',
                 type: 'POST',
@@ -185,11 +186,16 @@ var _emailBuilder = $('.editor').emailBuilder({
                     from_name: from_name,
                     from_email: from_email,
                     subject: subject,
-                    preheader: preheader
+                    preheader: preheader,
+                    email_list: email_list,
+                    content: getHtml
                 },
                 success: function(data) {
                     //  console.log(data);
                     if (data.success === true) {
+                        if(data.redirect){
+                            window.location.href = data.redirect;
+                        }
                         $('#popup_edit_template').modal('show');
                         _isDirty = false;
                     } else {
@@ -353,7 +359,11 @@ var _emailBuilder = $('.editor').emailBuilder({
                     _content += '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>';
                     _content += '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>';
                     _content += '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>';
-                    _content += '</div>' + '<div class="sortable-row-content" data-id=' + data.blocks[i].block_id + ' data-types=' + data.blocks[i].property + '  data-last-type=' + data.blocks[i].property.split(',')[0] + '  >' + data.blocks[i].content + '</div></div></div>';
+                    let last_type = '';
+                    if(data.blocks[i].property){
+                        last_type = data.blocks[i].property.split(',')[0];
+                    }
+                    _content += '</div>' + '<div class="sortable-row-content" data-id=' + data.blocks[i].block_id + ' data-types=' + data.blocks[i].property + '  data-last-type=' + last_type + '  >' + data.blocks[i].content + '</div></div></div>';
                     $('.content-wrapper .email-editor-elements-sortable').append(_content);
                 }
             },
@@ -367,7 +377,7 @@ var _emailBuilder = $('.editor').emailBuilder({
     onBeforePopupSelectImageButtonClick: function(e) {
         console.log('onBeforePopupSelectImageButtonClick html');
     },
-    onPopupSaveButtonClick: function() {
+    onPopupSaveButtonClick: function(e,getHtml) {
         var arr = [];
         $('.content-main .sortable-row-content').each(function(i, item) {
             _dataId = $(this).attr('data-id');
@@ -381,6 +391,7 @@ var _emailBuilder = $('.editor').emailBuilder({
         var from_email = $("#save_campaign input[name=from_email]").val();
         var subject = $("#save_campaign input[name=subject]").val();
         var preheader = $("#save_campaign input[name=preheader]").val();
+        var email_list = $("#save_campaign input[name=email_list]").val();
         $.ajax({
             url: '{{ url('storeEmailTemplate') }}',
             type: 'POST',
@@ -391,7 +402,9 @@ var _emailBuilder = $('.editor').emailBuilder({
                 from_name: from_name,
                 from_email: from_email,
                 subject: subject,
-                preheader: preheader
+                preheader: preheader,
+                email_list: email_list,
+                content: getHtml
             },
             success: function(data) {
                 if (data.success === true) {
@@ -467,9 +480,17 @@ function load_template_data(page){
                 if (data.success == true) {
                     _templateItems = '';
                     var list = data.list.data;
-                    _templateListItems = data.list;
+                    _templateListItems = list;
+                    _emailBuilder.setTemplateListItems(list);
                     for (var i = 0; i < list.length; i++) {
-                        _templateItems += '<div class="template-item" data-id="' + list[i].campaignID + '">' + '<div class="template-item-delete" data-id="' + list[i].campaignID + '">' + '<i class="fa fa-trash-o"></i>' + '</div>' + '<div class="template-item-icon">' + '<i class="fa fa-file-text-o fa-3x"></i>' + '</div>' + '<div class="template-item-name">' + list[i].title + '</div>' + '</div>';
+                        _templateItems += '<div class="template-item" data-id="' + list[i].campaignID + '">' + '<div class="template-item-delete" data-id="' + list[i].campaignID + '">';
+                        _templateItems +='</div>' ;//use this or below one only div needs to get closed
+                        if(list[i].orgID == 1){
+                            // _templateItems +='</div>' ;
+                        } else {
+                            // _templateItems +='<i class="fa fa-trash-o"></i>' + '</div>' ;
+                        }
+                        _templateItems +='<div class="template-item-icon">' + '<img src="' + list[i].thumbnail + '" width="70px" height="100px"/>' + '</div>' + '<div class="template-item-name">' + list[i].title + '</div>' + '</div>';
                     }
                     $('.template-list').html(_templateItems);
                     $('.template-list-pagination').html(data.pages);
@@ -496,7 +517,6 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
     if(data.length > 0) {
         _content = '';
         for (var i = 0; i < data.length; i++) {
-            console.log(data[i].property);
             _content += '<div class="sortable-row">' + '<div class="sortable-row-container">' + ' <div class="sortable-row-actions">';
             _content += '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>';
             _content += '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>';
@@ -519,10 +539,13 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
     var _popup_exit_btn_yes = false;
     var _popup_exit_btn_no = false;
     var _popup_exit_btn_cancel = false;
+
     $('#hide-etb').on('click', function() {
-      if(_isDirty){
-        $('#popup_save_before_exit').modal('show');
-      }
+        if(_isDirty){
+            $('#popup_save_before_exit').modal('show');
+            return;
+        }
+        closeEmailBuilderPopup();
     });
     function closeEmailBuilderPopup(){
       $('.etb-wrapper').removeClass('is-active')
@@ -546,16 +569,18 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('button-image').addEventListener('click', (event) => {
-            event.preventDefault();
-            console.log('here');
-            window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
-        });
+    $('#button-image').on('click',function(event){
+        event.preventDefault();
+        window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
     });
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     document.getElementById('button-image').addEventListener('click', (event) => {
+    //         event.preventDefault();
+    //         window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+    //     });
+    // });
     // set file link
     function fmSetLink($url) {
-        console.log('heresetlink');
         _emailBuilder.setImageFileManager($url);
       // document.getElementById('image_label').value = $url;
     }

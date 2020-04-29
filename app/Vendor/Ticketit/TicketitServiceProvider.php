@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Kordy\Ticketit\Console\Htmlify;
-use Kordy\Ticketit\Controllers\InstallController;
+use App\Http\TicketitControllers\InstallControllerOver as InstallController;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models\Comment;
 use Kordy\Ticketit\Models\Setting;
@@ -31,8 +31,8 @@ class TicketitServiceProvider extends ServiceProvider
         }
         $installer = new InstallController();
         // if a migration or new setting is missing scape to the installation
-        // as
-        if (empty($installer->inactiveMigrations()) && !$installer->inactiveSettings() && false) {
+        // updated the migration file path for installcontroller it will only pick migration from current migration directory
+        if (empty($installer->inactiveMigrations()) && !$installer->inactiveSettings()) {
             // Send the Agent User model to the view under $u
             // Send settings to views under $setting
 
