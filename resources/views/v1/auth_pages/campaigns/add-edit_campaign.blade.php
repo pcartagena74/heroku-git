@@ -46,35 +46,35 @@ if(!empty($campaign)){
             <div class="panel-body">
                 @if(!empty($campaign))
                 <div class="form-group col-sm-12 col-xs-12">
-                    {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title')) !!}
+                    {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title','id'=>'campaign_title')) !!}
                 </div>
                 @endif
                 <div class="form-group col-sm-6 col-xs-12">
                     @if($campaign == null)
-                            {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name')) !!}
+                            {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name')) !!}
                         @else
-                            {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name')) !!}
+                            {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name')) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-6 col-xs-12">
                     @if($campaign == null)
-                            {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email')) !!}
+                            {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email')) !!}
                         @else
-                            {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email')) !!}
+                            {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email')) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12">
                     @if($campaign == null)
-                            {!! Form::text('subject', '', array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line')) !!}
+                            {!! Form::text('subject', '', array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject')) !!}
                         @else
-                            {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line')) !!}
+                            {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject')) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12">
                     @if($campaign == null)
-                            {!! Form::text('preheader', '', array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line')) !!}
+                            {!! Form::text('preheader', '', array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader')) !!}
                         @else
-                            {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line')) !!}
+                            {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader')) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12 clear-fix">
@@ -84,6 +84,8 @@ if(!empty($campaign)){
                     @else
                         {!! Form::select('email_list', $list_dp, $campaign->emailListID, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
                     @endif
+                </div>
+                <div class="form-group col-sm-12 col-xs-12 clear-fix" id="send_campaign_response">
                 </div>
             </div>
         </div>
@@ -171,7 +173,7 @@ if(!empty($campaign)){
                 'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
         </div>
         <div class="form-group">
-            {!! Form::button('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail()')) !!}
+            {!! Form::button('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)')) !!}
         </div>
         <div class="form-group" id="response">
         </div>
@@ -208,6 +210,13 @@ if(!empty($campaign)){
     <div class="row">
         <div class="col-sm-12">
             Campaign was sent on {{$campaign->scheduleDate}}
+        </div>
+    </div>
+    @endif
+    @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate > $current_datetime)
+    <div class="row">
+        <div class="col-sm-12">
+            Campaign is scheduled for {{$campaign->scheduleDate}}, thou you can change it.
         </div>
     </div>
     @endif
@@ -265,7 +274,7 @@ if(!empty($campaign)){
     }
 
     sendLater();
-    function sendTestEmail(){
+    function sendTestEmail(ths){
         var html = _emailBuilder.getContentHtml();
         var email1 = $('#email1').val();
         var email2 = $('#email2').val();
@@ -278,12 +287,14 @@ if(!empty($campaign)){
             campaign = {{$campaign->campaignID}}
         @endif
         $('#response').html('');
+        $(ths).attr("disabled", true);
         $.ajax({
             url: '{{url('send-test-email')}}',
             type: 'post',
             dataType: 'json',
             data: {note:note,email1:email1,email2:email2,email3:email3,email4:email4,email5:email5,html:html,campaign:campaign},
             success: function(data) {
+                $(ths).removeAttr('disabled');
                 if (data.success == true) {
                     var msg = '<div class="alert alert-success"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'
                             + data.message +
@@ -307,16 +318,28 @@ if(!empty($campaign)){
         if($('#send_later').is(':checked')){
             schedule = $('#schedule_date').val();
         }
+        var campaign_title = $('#campaign_title').val();
+        var from_name = $('#from_name').val();
+        var from_email = $('#from_email').val();
+        var subject = $('#subject').val();
+        var preheader = $('#preheader').val();
+        var email_list = $('#email_list').val();
         $.ajax({
             url: '{{ url('sendCampaign') }}',
             type: 'post',
             dataType: 'json',       
-            data: {campaign:campaign,schedule:schedule},
+            data: {campaign:campaign,schedule:schedule,campaign_title:campaign_title,from_name:from_name,from_email:from_email,subject:subject,preheader:preheader,email_list:email_list},
             success: function(data) {
                 if (data.success == true) {
                     window.location.href = data.redirect;
                 } else {
-                    console.log('eerr',data.message);
+                    var msg = '';
+                    $.each(data.validation_error,function(index,value){
+                        msg += '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'
+                            + value[0] +
+                            '</div>'; 
+                    })
+                    $('#send_campaign_response').html(msg);
                     // window.href = data.success.redirect;
                 }
             }, 

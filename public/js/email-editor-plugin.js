@@ -147,7 +147,7 @@ var returnVal;
             onBeforeChangeImageClick: function(e) {},
             onBeforePopupSelectImageButtonClick: function(e) {},
             onBeforePopupSelectTemplateButtonClick: function(e) {},
-            onPopupSaveButtonClick: function(e,getHtml) {},
+            onPopupSaveButtonClick: function(e, getHtml) {},
             onPopupSendMailButtonClick: function(e) {},
             onPopupUploadImageButtonClick: function(e) {},
             onTemplateDeleteButtonClick: function(e) {},
@@ -1118,29 +1118,41 @@ var returnVal;
                 }
             });
             jQuery('#popup_load_template').on('click', '.btn-load-template', function(event) {
-                _dataId = jQuery('.template-list .template-item.active').attr('data-id');
-                if (_this.config.onBeforePopupSelectTemplateButtonClick !== undefined) {
-                    _this.config.onBeforePopupSelectTemplateButtonClick(_dataId);
-                }
-                if (event.isDefaultPrevented() == true) {
-                    return false;
-                }
-                //search template in array
-                var result = jQuery.grep(_templateListItems, function(e) {
-                    // return e.id == _dataId; // we have key as campaignID
-                    return e.campaignID == _dataId;
-                });
-                if (result.length == 0) {
-                    //show error
-                    jQuery('.template-load-error').text('An error has occurred');
-                }
-                // jQuery('.header .project-name').html(result[0].name);//we have key as title
-                jQuery('.header .project-name').html(result[0].title);
-                jQuery('.header .project-name').attr('data-id', _dataId);
-                jQuery('.project-container').show();
-                //  jQuery('.content-wrapper').html(_contentText);
-                jQuery('#popup_load_template').modal('hide');
-                _this.makeSortable();
+                Swal({
+                    title: 'Are you sure?',
+                    text: "Existing template will be overwritten. Do you want to continue?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.value) {
+                        _dataId = jQuery('.template-list .template-item.active').attr('data-id');
+                        if (_this.config.onBeforePopupSelectTemplateButtonClick !== undefined) {
+                            _this.config.onBeforePopupSelectTemplateButtonClick(_dataId);
+                        }
+                        if (event.isDefaultPrevented() == true) {
+                            return false;
+                        }
+                        //search template in array
+                        var result = jQuery.grep(_templateListItems, function(e) {
+                            // return e.id == _dataId; // we have key as campaignID
+                            return e.campaignID == _dataId;
+                        });
+                        if (result.length == 0) {
+                            //show error
+                            jQuery('.template-load-error').text('An error has occurred');
+                        }
+                        // jQuery('.header .project-name').html(result[0].name);//we have key as title
+                        jQuery('.header .project-name').html(result[0].title);
+                        jQuery('.header .project-name').attr('data-id', _dataId);
+                        jQuery('.project-container').show();
+                        //  jQuery('.content-wrapper').html(_contentText);
+                        jQuery('#popup_load_template').modal('hide');
+                        _this.makeSortable();
+                    }
+                })
                 event.stopPropagation();
             });
             jQuery('#email_builder_master').on('click', '.btn-upload', function(event) {

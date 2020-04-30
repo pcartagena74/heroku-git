@@ -31,13 +31,17 @@ class EmailForQueuing extends Mailable
         try {
             $campaign = Campaign::where('campaignID', $this->email_queue->campaign_id)->get()->first();
             $html     = replaceUserDataInEmailTemplate($this->email_queue->email_id, $campaign);
-            return $this->view('v1.auth_pages.campaigns.email_template_with_note', ['html' => $campaign->content, 'note' => $campaign->perheader])
+            $reply_to = $campaign->replyEmail;
+            if (empty($reply_to)) {
+                $reply_to = $campaign->fromEmail;
+            }
+            return $this->view('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $campaign->perheader])
                 ->from($campaign->fromEmail, $campaign->fromName)
                 ->subject($campaign->subject)
-                ->replyTo($campaign->replyEmail);
+                ->replyTo($reply_to);
 
         } catch (Exception $ex) {
-            dd($ex->getMessage());
+            // dd($ex->getMessage());
         }
     }
 }

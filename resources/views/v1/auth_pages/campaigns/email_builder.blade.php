@@ -199,6 +199,8 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 </div>
 <div id="demp">
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js">
+</script>
 <script src="{{url('vendor/jquery-nicescroll/dist/jquery.nicescroll.min.js')}}">
 </script>
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
@@ -206,19 +208,20 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <!--for ace editor  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript">
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/theme-monokai.js" type="text/javascript">
+</script>
 <!--for tinymce  -->
 <script src="https://cdn.tinymce.com/4/tinymce.min.js">
 </script>
-<script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
-</script>
+{{-- <script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
+</script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.29.2/sweetalert2.all.js"></script>
 <script src="{{url('js/colorpicker.js')}}">
-</script>
-<script src="{{url('js/email-editor-plugin.js')}}">
 </script>
 <!--for bootstrap-tour  -->
 <script src="{{url('vendor/bootstrap-tour/build/js/bootstrap-tour.min.js')}}">
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js">
+<script src="{{url('js/email-editor-plugin.js')}}">
 </script>
 @include('v1.auth_pages.campaigns.scripts.email_builder-js')
 <!-- Modal Dialog -->

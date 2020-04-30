@@ -582,7 +582,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
-        // Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
         return redirect('/event-tickets/' . $event->eventID);
     }
@@ -806,7 +806,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
-        // Flysystem::connection('s3_events')->put($event_filename, $contents);
+        Flysystem::connection('s3_events')->put($event_filename, $contents);
 
         // Think about whether ticket modification should be done here.
         // Maybe catch the auto-created tickets when events are copied

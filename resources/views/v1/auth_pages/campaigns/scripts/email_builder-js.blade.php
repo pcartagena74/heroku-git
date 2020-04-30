@@ -527,7 +527,7 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
                 property = data[i].property.split(',')[0];
             }
             _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + property + '  >' + data[i].content + '</div></div></div>';
-            // _emailBuilder.makeSortable();
+            _emailBuilder.makeSortable();
         }
         setTimeout(function() {
             $('.content-wrapper .email-editor-elements-sortable').append(_content);
@@ -584,4 +584,8 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         _emailBuilder.setImageFileManager($url);
       // document.getElementById('image_label').value = $url;
     }
+
+    $(window).on('load',function(){
+    _emailBuilder.makeSortable();
+});
 </script>

@@ -1035,7 +1035,7 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
      */
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null)
     {
-
+        // $start = microtime(true);
         $person       = '';
         $organization = '';
         $org_name     = '';
@@ -1048,11 +1048,13 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
                 return $raw_html;
             }
         } else {
-            $raw_html = '';
+            $raw_html = '';    
             if (empty($campaign->content)) {
                 foreach ($campaign->template_blocks as $key => $value) {
                     $raw_html .= $value->content;
                 }
+            } else {
+                $raw_html = $campaign->content;
             }
             $person       = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
             $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
@@ -1103,6 +1105,9 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             '[RELDATE9]'         => $person->orgperson->RelDate9,
             '[RELDATE10]'        => $person->orgperson->RelDate10,
         ];
+        // $rep = str_replace(array_keys($mapping), $mapping, $raw_html);
+        // $test = (microtime(true) - $start) . "Seconds";
+        // dd($test);
         return str_replace(array_keys($mapping), $mapping, $raw_html);
     }
 }
