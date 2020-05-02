@@ -14,7 +14,7 @@ class AddForeignKeysToPersonEmailTable extends Migration {
 	{
 		Schema::table('person-email', function(Blueprint $table)
 		{
-			$table->foreign('personID', 'pe-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('personID', 'pe-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('CASCADE');
 		});
 	}
 

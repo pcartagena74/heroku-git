@@ -25,6 +25,7 @@
         "knplabs/knp-snappy": "^1.1",
         "kordy/ticketit": "^0.4.8",
         "laravel/cashier": "^9.3",
+        "laravel/dusk": "5.11.0",
         "laravel/framework": "5.8.22",
         "laravel/socialite": "^4.1",
         "laravel/tinker": "^1.0",

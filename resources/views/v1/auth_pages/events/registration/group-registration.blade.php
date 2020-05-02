@@ -1,15 +1,25 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 2/9/2017
+ * Updated 4/25/2020 - added detailed comments
+ *
+ * @var array $events - the list of upcoming events for this orgID
+ * @var string $title - Display: "Group Registration" . ": $event->eventName" when set
+ * --- vars passed when an event has been selected
+ * @var object $event - the specific event selected from this page's form
+ * @var array $tickets - list of ticketID/ticketLabels associated with $event for dropdown
+ * @var array $discounts - list of discounts associated with $event for dropdown
+ * @var bool $check - flag for whether "check in" button is pre-checked
+ *
  */
 
 $currentPerson = \App\Person::find(auth()->user()->id);
 $today = \Carbon\Carbon::now();
 
 $topBits = '';  // remove this if this was set in the controller
+@endphp
 
-?>
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 @section('content')
 

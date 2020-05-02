@@ -116,7 +116,8 @@ class TicketItNotification extends Notification
         }
 
         return $mail->line($content)
-            ->action('Click to here view ticket', route(SettingOver::grab('main_route') . '.show', $ticket->id));
+            ->action(trans('messages.notifications.ticketit.action'),
+                     route(SettingOver::grab('main_route') . '.show', $ticket->id));
     }
 
     /**

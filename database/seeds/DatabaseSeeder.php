@@ -19,7 +19,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
             PermissionTableSeeder::class,
-            RoleTableSeeder::class,
+            RoleSeeder::class,
+            EventTypeSeeder::class,
+            LocationSeeder::class,
+            CategorySeeder::class,
+            TimezoneSeeder::class,
+            UserRoleSeeder::class,
         ]);
 
         $roles      = Role::find([9, 8]);

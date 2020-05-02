@@ -2,6 +2,11 @@
 /**
  * Comment:
  * Created: 2/9/2017
+ *
+ * @var $letter
+ * @var $model1
+ * @var $model2
+ *
  */
 
 $topBits = '';  // remove this if this was set in the controller
@@ -149,12 +154,13 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                             @endforeach
                             </tbody>
                         </table>
-                @if($model2)
-                {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
 
-                {!! Form::close() !!}
-                @endif
-            </div>
+                        @if($model2)
+                            {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
+                            {!! Form::close() !!}
+                        @endif
+                    </div>
+
                     @if(isset($model2))
                         <div class="col-sm-3">
                             @include('v1.parts.start_content',
