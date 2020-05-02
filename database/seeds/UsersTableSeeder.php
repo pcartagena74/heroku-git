@@ -27,6 +27,8 @@ class UsersTableSeeder extends Seeder
         $org       = new Org;
         $org->orgName = 'First Organization';
         $org->orgPath = '/firstorg';
+        $org->eventEmail = 'events@gmail.com';
+        $org->orgZone = '-0500';                    // Default timezone of Eastern Standard Time
         $org->save();
 
 

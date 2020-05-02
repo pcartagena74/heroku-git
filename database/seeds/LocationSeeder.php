@@ -13,7 +13,8 @@ class LocationSeeder extends Seeder
     {
         $sql = "INSERT INTO `event-location`
                 VALUES 
-                    (0,1,'TBD',null,null,null,null,null,228,null,0,1,'2017-01-10 12:05:03',1,'2017-01-10 12:05:03',NULL,0)";
+                    (0,1,'TBD',null,null,null,null,null,228,null,0,1,'2017-01-10 12:05:03',1,'2017-01-10 12:05:03',NULL,0),
+                    (1,1,'Webinar / Virtual Event',null,null,null,null,null,228,null,1,1,'2017-01-10 12:05:03',1,'2017-01-10 12:05:03',NULL,0)";
 
         DB::beginTransaction();
         DB::insert($sql);

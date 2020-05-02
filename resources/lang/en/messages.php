@@ -5,6 +5,10 @@
  */
 
 return [
+   'app_params' => [
+       'date_format' => "m/d/Y h:i A",
+   ],
+
     'auth' => [
         'account' => 'Have an account?  Login',
         'forgot' => 'Forgot Password?',
@@ -266,6 +270,7 @@ return [
         'lastName' => 'Last Name',
         'limit' => 'Limit',
         'loc' => 'Location',
+        'loc_exist' => 'Existing Location',
         'loc_id' => 'Location ID',
         'loc_name' => 'Location Name',
         'login' => 'Email Address',

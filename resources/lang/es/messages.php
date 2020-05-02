@@ -5,6 +5,10 @@
  */
 
 return [
+    'app_params' => [
+        'date_format' => "m/d/Y h:i A",
+    ],
+
     'auth' => [
         'account' => 'Tienes una cuenta? Inicio de sesión',
         'forgot' => '¿Olvidó su contraseña?',
@@ -265,13 +269,14 @@ return [
         'last' => 'es-Last',
         'lastName' => 'es-Last Name',
         'limit' => 'es-Limit',
-        'loc' => 'es-Location',
-        'loc_id' => 'es-Location ID',
-        'loc_name' => 'es-Location Name',
-        'login' => 'es-Email Address',
-        //'login' => 'Login',es-
-        'member' => 'es-Member',
-        'memcost' => 'es-PMI Member Cost',
+        'loc' => 'Sitio',
+        'loc_exist' => 'Sitio Existente',
+        'loc_id' => 'ID de Sitio',
+        'loc_name' => 'Nombre del sitio',
+        'login' => 'Correo Electrónico',
+        //'login' => 'Login','es-',
+        'member' => 'Miembro',
+        'memcost' => 'Miembro de PMI Cost',
         'memprice' => 'es-Member Price',
         'midName' => 'es-Middle Name',
         'my_ticket' => 'es-Yes, I am buying this ticket for myself.',

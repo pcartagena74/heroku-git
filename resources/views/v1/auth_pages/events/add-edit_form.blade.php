@@ -1,130 +1,140 @@
 @php
-/**
- * Comment: This is the form that will serve for both creation and editing of an event
- * Created: 2/11/2017
- */
-use App\Location;
-use App\Event;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+    /**
+     * Comment: This is the form that will serve for both creation and editing of an event
+     * Created: 2/11/2017
+     *
+     * @var $current_person
+     *
+     */
+    use App\Location;
+    use App\Event;
+    use GrahamCampbell\Flysystem\Facades\Flysystem;
 
-$dateFormat = 'm/d/Y h:i A';
-$org = $current_person->defaultOrg;
+    $topBits = '';
+    $dateFormat = trans('messages.app_params.date_format');
+    $org = $current_person->defaultOrg;
 
-if(isset($event)) {
-    $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
-    $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
+    if(isset($event)) {
+        $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
+        $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
 
-    if($exLoc->isVirtual==1){
-        $show_virtual = true;
+        if($exLoc->isVirtual==1){
+            $show_virtual = true;
+        } else {
+            $show_virtual = false;
+        }
+
+    } elseif(old('eventStartDate')) {
+        $eventStartDate = date($dateFormat, strtotime(old('eventStartDate')));
+        $eventEndDate = date($dateFormat, strtotime(old('eventEndDate')));
+        $event          = new Event;
+        $exLoc          = new Location;
     } else {
-        $show_virtual = false;
+        $event          = new Event;
+        $exLoc          = new Location;
+        $eventStartDate = date($dateFormat, strtotime("now"));
+        $eventEndDate   = date($dateFormat, strtotime("now"));
     }
 
-} elseif(old('eventStartDate')) {
-    //$eventStartDate = DateTime::createFromFormat('m/d/Y h:M A', old('eventStartDate'))->format('Y-m-d');
-    $eventStartDate = date($dateFormat, strtotime(old('eventStartDate')));
-    $eventEndDate = date($dateFormat, strtotime(old('eventEndDate')));
-    $event          = new Event;
-    $exLoc          = new Location;
-} else {
-    $event          = new Event;
-    $exLoc          = new Location;
-    $eventStartDate = date($dateFormat, strtotime("now"));
-    $eventEndDate   = date($dateFormat, strtotime("now"));
-    //$eventStartDate = date('Y-m-d', strtotime("now"));
-    //$eventEndDate   = date('Y-m-d', strtotime("now"));
-}
-$topBits = '';
-
-$cats = DB::table('event-category')
-          ->select('catID', 'catTXT')
-          ->where('isActive', 1)
-          ->whereIn('orgID', [1, $current_person->defaultOrgID])
-          ->get();
-
-$categories = $cats->pluck('catTXT', 'catID');
-
-$oe_types = DB::table('org-event_types')
-              ->select('etID', 'etName')
+    $cats = DB::table('event-category')
+              ->select('catID', 'catTXT')
+              ->where('isActive', 1)
               ->whereIn('orgID', [1, $current_person->defaultOrgID])
-              ->whereNull('deleted_at')
               ->get();
 
-$event_types_tmp = $oe_types->pluck('etName', 'etID');
-$event_types_tmp = $oe_types->pluck('etName', 'etID')
-    ->map(function($item, $key) {
-        return Lang::has('messages.event_types.'.$item) ?
-            trans_choice('messages.event_types.'.$item, 1) : $item;
-    });
-$event_types = $event_types_tmp->toArray();
+    $categories = $cats->pluck('catTXT', 'catID');
 
-/*
-foreach ($event_types_tmp as $et => $etID) {
-    if(Lang::has('messages.event_types.'.$et)){
-        $et = trans_choice('messages.event_types.'.$et, 1);
-        array_push($event_types, [$et, $etID]);
-    } else {
-        array_push($event_types, [$et, $etID]);
+    $oe_types = DB::table('org-event_types')
+                  ->select('etID', 'etName')
+                  ->whereIn('orgID', [1, $current_person->defaultOrgID])
+                  ->whereNull('deleted_at')
+                  ->get();
+
+    //$event_types_tmp = $oe_types->pluck('etName', 'etID');
+    $event_types_tmp = $oe_types->pluck('etName', 'etID')
+        ->map(function($item, $key) {
+            return Lang::has('messages.event_types.'.$item) ?
+                trans_choice('messages.event_types.'.$item, 1) : $item;
+        });
+    $event_types = $event_types_tmp->toArray();
+
+    $tz = DB::table('timezone')->select('zoneName', 'zoneOffset')->get();
+
+    $timezones = $tz->pluck('zoneName', 'zoneOffset');
+
+    $defaults = DB::table('organization')
+                  ->select('orgZone', 'orgCategory', 'orgName', 'eventEmail')
+                  ->where('orgID', $current_person->defaultOrgID)->first();
+
+    // $locations = DB::table('event-location')
+    //                ->where(
+    //                    [
+    //                        ['orgID', $current_person->defaultOrgID],
+    //                        ['isDeleted', 0]
+    //                    ])->orderBy('locName', 'asc')->get(); not used
+
+    // $loc_list = ['' => 'Existing Location'] + Location::where(['orgID'=>$current_person->defaultOrgID])
+    //             ->orderBy('locName')->pluck('locName', 'locID','isVirtual')->toArray();
+    //
+    $loc_list = []; //['' => trans('messages.fields.loc_exist')];
+
+    // $def_loc holds default locations from orgID=1 that should be displayed at top of list
+    // items on this list are not necessarily virtual, but their address information is not relevant
+
+    $def_loc = Location::select(DB::raw('locName, locID, 1'))
+        ->whereIn('orgID', [1])
+        ->orderBy('locName')->get();
+
+    $locations = Location::select('locName', 'locID','isVirtual')
+        ->whereIn('orgID', [$current_person->defaultOrgID])
+        ->orderBy('locName')->get();
+
+    $loc_list_html = '<option value="">' .  trans('messages.fields.loc_exist') . '</option>';
+    $loc_list_virtual_html = '<option value="">' .  trans('messages.fields.loc_exist') . '</option>';
+
+    foreach ($def_loc as $key => $value) {
+        $select = '';
+        if(!empty($event->locationID) && $value->locID == $event->locationID){
+            $select = ' selected';
+        }
+        $val = str_replace("'","\'",$value->locName);
+        $loc_list_virtual_html .= '<option value="'.$value->locID.'"'.$select.'>'.$val.'</option>';
+        $loc_list_html .= '<option value="'.$value->locID.'"'.$select.'>'.$val.'</option>';
+        }
+
+    // This is suppressed if the current orgID=1 (probably the only orgID in DB if testing with it) to eliminate redundancy
+    if($current_person->defaultOrgID != 1) {
+        foreach ($locations as $key => $value) {
+            $select = '';
+            if(!empty($event->locationID) && $value->locID == $event->locationID){
+                $select = ' selected';
+            }
+            $val = str_replace("'","\'",$value->locName);
+            if($value->isVirtual){
+                $loc_list_virtual_html .= '<option value="'.$value->locID.'"'.$select.'>'.$val.'</option>';
+            } else {
+                $loc_list_html .= '<option value="'.$value->locID.'"'.$select.'>'.$val.'</option>';
+            }
+        }
     }
-}
 
-dd($event_types);
-*/
+    $orgLogoPath = DB::table('organization')
+                     ->select('orgPath', 'orgLogo')
+                     ->where('orgID', $current_person->defaultOrgID)->first();
 
-$tz = DB::table('timezone')->select('zoneName', 'zoneOffset')->get();
-
-$timezones = $tz->pluck('zoneName', 'zoneOffset');
-
-$defaults = DB::table('organization')
-              ->select('orgZone', 'orgCategory', 'orgName', 'eventEmail')
-              ->where('orgID', $current_person->defaultOrgID)->first();
-
-// $locations = DB::table('event-location')
-//                ->where(
-//                    [
-//                        ['orgID', $current_person->defaultOrgID],
-//                        ['isDeleted', 0]
-//                    ])->orderBy('locName', 'asc')->get(); not used 
-
-// $loc_list = ['' => 'Existing Location'] + Location::where(['orgID'=>$current_person->defaultOrgID])
-//             ->orderBy('locName')->pluck('locName', 'locID','isVirtual')->toArray();
-//             
-$loc_list = ['' => 'Existing Location'];            
-$locations = Location::select('locName', 'locID','isVirtual')->whereIn('orgID', [1, $current_person->defaultOrgID])
-            ->orderBy('locName')->get();
-$loc_list_html = '<option value="">Existing Location</option>';
-$loc_list_virtual_html = '<option value="">Existing Location</option>';
-
-foreach ($locations as $key => $value) {
-    $select = '';
-    if(!empty($event->locationID) && $value->locID == $event->locationID){
-        $select = 'selected';
-    }
-    $val = str_replace("'","\'",$value->locName);
-    if($value->isVirtual){
-        $loc_list_virtual_html .= '<option value="'.$value->locID.'" '.$select.'>'.$val.'</option>';
-    } else {
-        $loc_list_html .= '<option value="'.$value->locID.'" '.$select.'>'.$val.'</option>';
-    }
-}
-
-$orgLogoPath = DB::table('organization')
-                 ->select('orgPath', 'orgLogo')
-                 ->where('orgID', $current_person->defaultOrgID)->first();
-
-$currentPerson = $current_person;
-$currentOrg    = $org;
-$logo = '';
-try {
-    if ($org->orgLogo !== null) {
-        $s3m = Flysystem::connection('s3_media');
-        $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
-    }
-} catch (\League\Flysystem\Exception $exception) {
+    $currentPerson = $current_person;
+    $currentOrg    = $org;
     $logo = '';
-}
+    try {
+        if ($org->orgLogo !== null) {
+            $s3m = Flysystem::connection('s3_media');
+            $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
+        }
+    } catch (\League\Flysystem\Exception $exception) {
+        $logo = '';
+    }
 
-@endphp 
+@endphp
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -179,12 +189,14 @@ try {
         {!! Form::text('slug', old('slug'), $attributes = array('class'=>'form-control input-sm', 'maxlength' => '100', 'required', 'id' => 'slug') ) !!}
     </div>
     <div class="form-group col-md-3">
-        <a class="btn btn-primary btn-sm" id="validateSlug"><i class="">@lang('messages.fields.validate') @lang('messages.headers.avail')</i></a>
+        <a class="btn btn-primary btn-sm" id="validateSlug"><i
+                    class="">@lang('messages.fields.validate') @lang('messages.headers.avail')</i></a>
     </div>
     <div class="form-group col-md-3" id="slug_feedback">
     </div>
     <div class="form-group col-md-11 col-md-offset-1">
-        <b>URL will be: https://www.mCentric.org/events/<span id="curl" style="color:red;">{{ $event->slug ?? '' }}</span></b>
+        <b>URL will be: https://www.mCentric.org/events/<span id="curl"
+                                                              style="color:red;">{{ $event->slug ?? '' }}</span></b>
     </div>
     <div class="form-group col-md-12">
         {!! Form::label('eventDescription', trans('messages.headers.desc').'*', array('class' => 'control-label')) !!}
@@ -240,7 +252,8 @@ try {
         <span class="far fa-calendar fa-fw form-control-feedback left fa-border" aria-hidden="true"></span>
     </div>
 
-    <div class="form-group col-md-2" style="text-align: center; vertical-align: bottom;"><b> {{ strtolower(__('messages.headers.to')) }} </b></div>
+    <div class="form-group col-md-2" style="text-align: center; vertical-align: bottom;">
+        <b> {{ strtolower(__('messages.headers.to')) }} </b></div>
 
     <div class="form-group col-md-5">
         {!! Form::text('eventEndDate', $eventEndDate, $attributes = array('class'=>'form-control has-feedback-left', 'required', 'id' => 'eventEndDate') ) !!}
@@ -278,7 +291,7 @@ try {
     <div id="address_info"
     @if($event->eventID !== null)
         {!! $exLoc->isVirtual==1 ? 'style="display:none;"' : '' !!}
-    @endif
+            @endif
     >
         <div class="form-group col-md-12">
             {!! Form::text('addr1', old('addr1'),
@@ -308,7 +321,8 @@ try {
     </div>
 
     <div class="form-group col-md-3 col-md-offset-1">
-        {!! Form::label('virtual', trans('messages.headers.virtual'), array('class' => 'control-label')) !!} &nbsp; &nbsp;
+        {!! Form::label('virtual', trans('messages.headers.virtual'), array('class' => 'control-label')) !!} &nbsp;
+        &nbsp;
     </div>
     <div class="form-group col-md-8">
         {!! Form::label('virtual', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} &nbsp;
@@ -416,12 +430,12 @@ try {
     {{--
     @include('v1.parts.footer-tinymce')
     --}}
-<script>
-    $(document).ready(function () {
-        $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
-        $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
-    });
-</script>
+    <script>
+        $(document).ready(function () {
+            $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
+            $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
+        });
+    </script>
 
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventStartDate', 'time' => 'true', 'single' => 'true'])
     @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventEndDate', 'time' => 'true', 'single' => 'true'])
@@ -438,31 +452,33 @@ try {
 
         show = 1;
         hide = 0;
-        
-        @if($exLoc->isVirtual)
-            $('#addr1').removeAttr('required');
-            $('#addr2').removeAttr('required');
-            $('#city').removeAttr('required');
-            $('#state').removeAttr('required');
-            $('#zip').removeAttr('required');
-            show = 0;
-            hide = 1;
-            $('#org_location_list').empty().append('{!! $loc_list_virtual_html !!}');
+
+        @if($exLoc->isVirtual || $exLoc->orgID==1)
+        $('#addr1').removeAttr('required');
+        $('#addr2').removeAttr('required');
+        $('#city').removeAttr('required');
+        $('#state').removeAttr('required');
+        $('#zip').removeAttr('required');
+        show = 0;
+        hide = 1;
+        $('#org_location_list').empty().append('{!! $loc_list_virtual_html !!}');
         @else
-            $('#addr1').required = true;
-            $('#addr2').required = true;
-            $('#city').required = true;
-            $('#state').required = true;
-            $('#zip').required = true;
-            $('#org_location_list').empty().append('{!! $loc_list_html !!}');
+        $('#addr1').required = true;
+        $('#addr2').required = true;
+        $('#city').required = true;
+        $('#state').required = true;
+        $('#zip').required = true;
+        $('#org_location_list').empty().append('{!! $loc_list_html !!}');
+
         @endif
 
         function toggleShow() {
             $("#trackInput").toggle();
         }
+
         function toggleHide() {
             $("#address_info").toggle();
-            if(show){
+            if (show) {
                 show = 0;
                 hide = 1;
                 $('#addr1').removeAttr('required');
@@ -483,13 +499,14 @@ try {
                 $('#org_location_list').empty().append('{!! $loc_list_html !!}');
                 $('#org_location_list').val('');
             }
-            $('#locName').val('');
+            //$('#locName').val('');
             $('#addr1').val('');
             $('#addr2').val('');
             $('#city').val('');
             $('#state').val('');
             $('#zip').val('');
         }
+
         $(document).ready(function () {
             // We'll help out users by populating the end date/time based on the start
             $('#eventStartDate').on('change', function () {
@@ -535,11 +552,11 @@ try {
                             console.log(data);
                             $('#locName').val(data.locName);
                             @if(!$event->isVirtual)
-                                $('#addr1').val(data.addr1);
-                                $('#addr2').val(data.addr2);
-                                $('#city').val(data.city);
-                                $('#state').val(data.state);
-                                $('#zip').val(data.zip);
+                            $('#addr1').val(data.addr1);
+                            $('#addr2').val(data.addr2);
+                            $('#city').val(data.city);
+                            $('#state').val(data.state);
+                            $('#zip').val(data.zip);
                             @endif
                         },
                         error: function (data) {

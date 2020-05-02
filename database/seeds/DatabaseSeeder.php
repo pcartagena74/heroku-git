@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             EventTypeSeeder::class,
             LocationSeeder::class,
             CategorySeeder::class,
+            TimezoneSeeder::class,
             UserRoleSeeder::class,
         ]);
 
