@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\EmailCampaignTemplateBlock;
+use App\Models\EmailQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -41,6 +42,12 @@ class Campaign extends Model
             ->groupBy('campaignID');
     }
 
+    public function mailgun()
+    {
+        return $this->hasOne(EmailQueue::class, 'campaign_id', 'campaignID')
+            ->selectRaw('campaign_id, sum(sent) as sent, sum(failed) as failed, sum(click) as click, sum(delivered) as delivered, sum(open) as open,count(campaign_id) as total_sent')
+            ->groupBy('campaign_id');
+    }
     public function template_blocks()
     {
         return $this->hasMany(EmailCampaignTemplateBlock::class, 'campaign_id', 'campaignID')

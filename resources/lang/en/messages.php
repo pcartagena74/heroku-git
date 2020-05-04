@@ -761,13 +761,14 @@ return [
         'visit_mCentric'                 => "Visit mCentric",
         'please_wait'                    => "Please wait while this content loads.",
         'org_default_update_success'     => 'Your default Organization Updated',
-        'new_org_created_successfully'   => 'New Org Created Successfully.',
+        'new_org_created_successfully'   => 'New Organization Created Successfully.',
         'email_list_created'             => 'Email List :name created successfully.',
         'import_file_queued'             => 'Import is queued. You will be notified via email when its complete.',
         'campaign_copied_successfully'   => 'Campaign copied successfully.',
         'campaign_created_from_existing' => 'New Campaign created successfully from existing.',
         'test_email_sent'                => 'Email sent successfully!',
         'campaign_deleted'               => 'Campaign deleted successfully!',
+        'campaign_send'                  => 'Campaign Sent successfully!',
     ],
 
     'modals'                        => [

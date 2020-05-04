@@ -34,6 +34,7 @@ class EmailListController extends Controller
         // list of eventIDs from this year's events
         $e = Event::whereYear('eventStartDate', '=', date('Y'))
             ->whereDate('eventStartDate', '<', $today)
+            ->where('orgID', $this->currentPerson->defaultOrgID)
             ->select('eventID')
             ->get();
         foreach ($e as $id) {
@@ -45,6 +46,7 @@ class EmailListController extends Controller
         // list of eventIDs from last year's events
         $e = Event::whereYear('eventStartDate', '=', date('Y') - 1)
             ->select('eventID')
+            ->where('orgID', $this->currentPerson->defaultOrgID)
             ->get();
         foreach ($e as $id) {
             array_push($ids, $id->eventID);
@@ -52,7 +54,7 @@ class EmailListController extends Controller
         $last_year = implode(',', $ids);
         $ids       = [];
 
-        $e = Event::where('eventTypeID', '=', 3)->select('eventID')->get();
+        $e = Event::where('eventTypeID', '=', 3)->where('orgID', $this->currentPerson->defaultOrgID)->select('eventID')->get();
         foreach ($e as $id) {
             array_push($ids, $id->eventID);
         }

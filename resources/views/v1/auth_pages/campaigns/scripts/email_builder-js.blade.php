@@ -391,7 +391,8 @@ var _emailBuilder = $('.editor').emailBuilder({
         var from_email = $("#save_campaign input[name=from_email]").val();
         var subject = $("#save_campaign input[name=subject]").val();
         var preheader = $("#save_campaign input[name=preheader]").val();
-        var email_list = $("#save_campaign input[name=email_list]").val();
+        // var email_list = $("#save_campaign input[name=email_list]").val();
+        var email_list = $("#email_list").val();
         $.ajax({
             url: '{{ url('storeEmailTemplate') }}',
             type: 'POST',
@@ -456,7 +457,10 @@ var _emailBuilder = $('.editor').emailBuilder({
 });
 var _loaded = false;
 _emailBuilder.setAfterLoad(function(e) {
-    _emailBuilder.makeSortable();
+    setTimeout(function() {
+            _emailBuilder.makeSortable();
+        }, 0);
+    // _emailBuilder.makeSortable();
     $('.elements-db').remove();
     _loaded = true;
 });

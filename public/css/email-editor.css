@@ -3197,6 +3197,12 @@ li {
 .swal2-container {
   z-index: 999999!important;
 }
+.swal2-container .swal2-icon-text {
+    font-size: 60px;
+}
+.swal2-container.swal2-shown {
+    pointer-events: auto !important;
+}
 .modal {
   z-index: 999999;
 }
@@ -3211,4 +3217,24 @@ li {
   bottom: 0;
   left: 0;
   overflow: hidden;
+}
+
+#popup_load_template .template-list {
+    word-spacing: -4px;
+}
+#popup_load_template .template-list .template-item {
+    max-width: 25%;
+    width: 100%;
+    vertical-align: top;
+    word-spacing: initial;
+}
+
+
+#popup_editor #editorHtml {
+    height: 400px;
+}
+
+#popup_editor .modal-lg {
+    max-width: 90%;
+    width: 90%;
 }

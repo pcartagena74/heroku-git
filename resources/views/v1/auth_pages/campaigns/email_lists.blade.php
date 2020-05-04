@@ -124,7 +124,7 @@ $topBits = '';  // remove this if this was set in the controller
             @include('v1.parts.end_content')
             <!-----------dragable list start ---------->
             <div class="col-md-6 col-xs-6 ">
-                <div class="x_panel">
+                <div class="x_panel" ondragover="allowDrop(event)" ondrop="drop(event,this,'include[]')">
                     <div class="x_title">
                         <h2>
                             Inclusions: Include attendees of...
@@ -142,7 +142,7 @@ $topBits = '';  // remove this if this was set in the controller
                         <div class="clearfix">
                         </div>
                     </div>
-                    <div class="x_content" ondragover="allowDrop(event)" ondrop="drop(event,this,'include[]')" style="display: block;">
+                    <div class="x_content">
                         <div style="width: 100%">
                             Drop Here
                         </div>
@@ -154,12 +154,12 @@ $topBits = '';  // remove this if this was set in the controller
                             </div>
                         </div>
                         <div class="clearfix" draggable="true" id="last-year-event" ondragstart="drag(event)">
-                            {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat','id'=>'last-year-event')) !!}
+                            {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat')) !!}
                             {!! Form::label('include', "Last Year's Events") !!}
                         </div>
                         <div class="clearfix" draggable="true" id="all-event" ondragstart="drag(event)">
-                            {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','id'=>'all-event')) !!}
-                            {!! Form::label('include[]', 'All PD Day Events') !!}
+                            {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','onchange'=>'allPDEvent(this)','data-type'=>'all-events')) !!}
+                            {!! Form::label('include', 'All PD Day Events') !!}
                         </div>
                         @foreach($excludes as $e)
                             @php
@@ -180,7 +180,7 @@ $topBits = '';  // remove this if this was set in the controller
                 <!-- x_panel -->
             </div>
             <div class="col-md-6 col-xs-6 ">
-                <div class="x_panel">
+                <div class="x_panel" ondragover="allowDrop(event)" ondrop="drop(event,this,'exclude[]')">
                     <div class="x_title">
                         <h2>
                             Exclusions: Exclude attendees of...
@@ -198,7 +198,7 @@ $topBits = '';  // remove this if this was set in the controller
                         <div class="clearfix">
                         </div>
                     </div>
-                    <div class="x_content" ondragover="allowDrop(event)" ondrop="drop(event,this,'exclude[]')" style="display: block;">
+                    <div class="x_content">
                         <div style="width: 100%">
                             Drop Here
                         </div>
@@ -240,7 +240,7 @@ $topBits = '';  // remove this if this was set in the controller
                 @include('v1.parts.end_content') --}}
 
                 {{-- {!! Form::submit('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm')) !!} --}}
-                {!! Form::button('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'create_list()')) !!}
+                {!! Form::button('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'create_list(this)')) !!}
                 {!! Form::close() !!}
                 {{-- @include('v1.parts.end_content') --}}
             <div class="errors" id="errors">
@@ -257,7 +257,24 @@ $topBits = '';  // remove this if this was set in the controller
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
         });
 
-    function create_list(){
+        $('#create_email_list_form :input[type=checkbox]').on('ifChecked', function(event){
+            // var ths = $(event.currentTarget);
+            // if(ths.data('type') === 'all-events'){
+            //     console.log('here');
+            //     $('#create_email_list_form :input[type=checkbox]').iCheck('check');
+            //     // $('#create_email_list_form').find(':input[type=checkbox]').attr('checked','checked');
+            // }
+            // console.log(ths.data('type'),event.currentTarget);
+        });
+    function allPDEvent(ths){
+        console.log('here')
+        if($(ths).is(':checked')){
+            $('#create_email_list_form :input[type=checkbox]').each(function(){
+                $(this).attr('checked','checked');
+            });
+        }
+    }
+    function create_list(ths){
         var formElements = {'include[]':[],'exclude[]':[]};
         $('#create_email_list_form :input[type=checkbox],#create_email_list_form :input[type=text],#create_email_list_form :input[type=radio]').each(function(){
             var current = $(this);
@@ -271,6 +288,7 @@ $topBits = '';  // remove this if this was set in the controller
                 formElements[input_name] = val;
             }
         });
+        $(ths).attr("disabled", true);
         $('#errors').html('');
         // console.log('here',formElements);
         $.ajax({
@@ -279,6 +297,7 @@ $topBits = '';  // remove this if this was set in the controller
             dataType:'json',
             data: formElements,
             success: function(result){
+                $(ths).removeAttr("disabled");
                 if(result.success == true){
                     window.location = result.redirect_url;
                 } else {
@@ -297,6 +316,7 @@ $topBits = '';  // remove this if this was set in the controller
                 }
             },
             error(xhr,status,error){
+                $(ths).removeAttr("disabled");
                 console.log(status);
             }
         });

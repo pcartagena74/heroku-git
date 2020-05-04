@@ -22,7 +22,7 @@ class CampaignController extends Controller
     protected $currentPerson;
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['mailgunWebhook']]);
         $this->currentPerson = Person::find(auth()->id());
     }
     /**
@@ -36,6 +36,7 @@ class CampaignController extends Controller
 
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
             ->with('emails.click_count')
+            ->with('mailgun')
             ->withCount('emails', 'urls')
             ->orderBy('campaignID', 'DESC')
             ->get();
@@ -554,8 +555,8 @@ class CampaignController extends Controller
             $campaign->sendDate = Carbon::now(); // remove for testing only
             $campaign->save();
             dispatch(new SendCampaignEmail());
-            request()->session()->flash('alert-success', trans('messages.messages.campaign_copied_successfully'));
-            return response()->json(['success' => true, 'message' => trans('messages.messages.test_email_sent'), 'redirect' => url('campaign', $campaign->campaignID)]);
+            request()->session()->flash('alert-success', trans('messages.messages.campaign_send'));
+            return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_send'), 'redirect' => url('campaign', $campaign->campaignID)]);
         }
     }
     public function deleteCampaign(Request $request)
@@ -584,5 +585,32 @@ class CampaignController extends Controller
             $campaign->delete();
             return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
         }
+    }
+    public function mailgunWebhook(Request $request)
+    {
+        $response   = $request->all();
+        $event      = $response['event-data']['event'];
+        $message_id = $response['event-data']['message']['headers']['message-id'];
+        $email_db   = EmailQueue::where(['message_id' => $message_id])->get()->first();
+        switch ($event) {
+            case 'delivered':
+                $email_db->delivered = 1;
+                $email_db->save();
+                break;
+            case 'clicked':
+                $email_db->click = 1;
+                $email_db->save();
+                break;
+            case 'opened':
+                $email_db->open = 1;
+                $email_db->save();
+                break;
+
+            default:
+                # code...
+                break;
+        }
+        // Log::info('User failed to login.', ['id' => $event, 'message_id' => $message_id]);
+        return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
     }
 }

@@ -103,19 +103,19 @@ if(!empty($campaign)){
         </div>
     </div>
     --}}
-    <div class="panels">
+    <div class="panel">
         <a class="panel-heading" href="javascript:void(0)" id="headingFour">
             <i class="panel-title" id="show-etb">
                 @if(empty($campaign))
                     {{ trans('messages.fields.camp_create_email_template') }}
                 @else
                 <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($campaign)}}" width="70px">
-                    {!! $campaign->title !!}
+                    {!! $campaign->title !!} {{ trans('messages.fields.camp_edit_email_template') }}
                 </img>
-                {{ trans('messages.fields.camp_edit_email_template') }}
                 @endif
             </i>
         </a>
+        @if(empty($disable))
         <div class="panel-collapse">
             <div class="panel-body">
                 <div class="etb-wrapper">
@@ -130,6 +130,7 @@ if(!empty($campaign)){
                 </div>
             </div>
         </div>
+        @endif
     </div>
     {!! Form::close() !!}
 </div>
@@ -380,7 +381,7 @@ if(!empty($campaign)){
     $('#send_later').on('change', function () {
         sendLater();
     });
-    
+    _emailBuilder.makeSortable();
 });//ready end
 </script>
 @endsection

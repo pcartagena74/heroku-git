@@ -316,6 +316,7 @@ Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmai
 Route::get('/email-template-thumb/{filename}', 'CampaignController@getemailTemplateThumbnailImage');
 Route::post('/send-test-email', 'CampaignController@sendTestEmail');
 Route::post('/sendCampaign', 'CampaignController@sendCampaign');
+Route::post('/email_webhook', 'CampaignController@mailgunWebhook');
 
 // Email Builder Routes ends
 // ----------------------------------------------------------------------------------

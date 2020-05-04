@@ -498,7 +498,7 @@ var returnVal;
                 // _this.makeSortable();
                 setTimeout(function() {
                     _this.makeSortable();
-                }, 2000);
+                }, 200);
                 jQuery('.content-main').attr('data-width', '600px');
                 jQuery('.main').css('width', '600px');
             });
@@ -559,12 +559,14 @@ var returnVal;
                     confirmButtonClass: 'btn btn-success btn-margin',
                     cancelButtonClass: 'btn btn-danger',
                     buttonsStyling: false
-                }).then(function() {
-                    _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _blankPageHtml + '</div>' + '</div>' + '</div>' + '</div>');
-                    _this.makeSortable();
-                    _this.remove_row_elements();
-                    jQuery('.project-container').hide();
-                    jQuery('.project-name').attr('data-id', '');
+                }).then(function(result) {
+                    if(result.value){
+                        _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _blankPageHtml + '</div>' + '</div>' + '</div>' + '</div>');
+                        _this.makeSortable();
+                        _this.remove_row_elements();
+                        jQuery('.project-container').hide();
+                        jQuery('.project-name').attr('data-id', '');
+                    }
                 }, function(dismiss) {});
             });
             _this.$elem.find('.elements-container .sortable-row-content').each(function(i) {

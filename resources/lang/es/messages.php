@@ -764,6 +764,7 @@ return [
         'campaign_created_from_existing' => 'es-New Campaign created successfully from existing.',
         'test_email_sent'                => 'es-Email sent successfully!',
         'campaign_deleted'               => 'es-Campaign deleted successfully!',
+        'campaign_send'                  => 'es-Campaign Sent successfully!',
     ],
 
     'modals'                 => [
