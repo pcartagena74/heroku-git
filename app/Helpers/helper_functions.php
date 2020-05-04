@@ -315,6 +315,8 @@ if(!function_exists('location_triage')){
             request()->session()->flash('alert-warning', trans('messages.messages.loc_edit'));
         }
 
+        $loc->save();
+
         return $loc;
 
     }
