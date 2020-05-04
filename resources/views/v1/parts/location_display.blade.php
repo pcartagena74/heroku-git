@@ -24,15 +24,6 @@ if(!isset($time)){
     {{ $loc->locName }}
     <br/>
 @else
-    @if($map)
-        <div class="col-md-12 col-sm-12 col-xs-12" id="map_canvas" style="padding:15px;">
-            <iframe class="col-md-14 col-sm-12 col-xs-12" frameborder="ssss" marginheight="0" marginwidth="0"
-                    scrolling="no"
-                    src="https://maps.google.it/maps?q={{ $loc->addr1 }} {{ $loc->city }},
-                                        {{ $loc->state }} {{ $loc->zip }}&hl={{ $locale }}&output=embed">
-            </iframe>
-        </div>
-    @endif
     @if($time)
         {{ $event->eventStartDate->format('n/j/Y g:i A') }}
         - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
@@ -50,5 +41,15 @@ if(!isset($time)){
         @endif
         {{ $loc->city }}, {{ $loc->state }} {{ $loc->zip }}
         <br/>
+    @endif
+
+    @if($map)
+        <div class="col-md-12 col-sm-12 col-xs-12" id="map_canvas" style="padding:15px;">
+            <iframe class="col-md-14 col-sm-12 col-xs-12" frameborder="ssss" marginheight="0" marginwidth="0"
+                    scrolling="no"
+                    src="https://maps.google.it/maps?q={{ $loc->addr1 }} {{ $loc->city }},
+                                        {{ $loc->state }} {{ $loc->zip }}&hl={{ $locale }}&output=embed">
+            </iframe>
+        </div>
     @endif
 @endif

@@ -26,6 +26,7 @@ class EventRegistrationTest extends TestCase
         $this->user = User::find(1);
         $this->person = $this->user->person;
     }
+    
     /**
      * @test - Member Creation Test
      *         Member defined as org-person.OrgStat1 is not null
