@@ -424,44 +424,7 @@ class EventController extends Controller
 
         $loc = location_triage($request, $event, $this->currentPerson);
 
-        /*
-        if (request()->input('locationID') != '') {
-            $location = Location::find(request()->input('locationID'));
-            $locName = request()->input('locName');
-            $addr1 = request()->input('addr1');
-            if ($location->locName == $locName && $location->addr1 == $addr1) {
-                $event->locationID = $location->locID;
-            } else {
-                $loc = new Location;
-                $loc->orgID = $this->currentPerson->defaultOrgID;
-                $loc->locName = request()->input('locName');
-                $loc->addr1 = request()->input('addr1');
-                $loc->addr2 = request()->input('addr2');
-                $loc->city = request()->input('city');
-                $loc->state = request()->input('state');
-                $loc->zip = request()->input('zip');
-                $loc->creatorID = $this->currentPerson->personID;
-                $loc->updaterID = $this->currentPerson->personID;
-                $loc->isVirtual = $loc_virtual;
-                $loc->save();
-                $event->locationID = $loc->locID;
-            }
-        } else {
-            $loc = new Location;
-            $loc->orgID = $this->currentPerson->defaultOrgID;
-            $loc->locName = request()->input('locName');
-            $loc->addr1 = request()->input('addr1');
-            $loc->addr2 = request()->input('addr2');
-            $loc->city = request()->input('city');
-            $loc->state = request()->input('state');
-            $loc->zip = request()->input('zip');
-            $loc->creatorID = $this->currentPerson->personID;
-            $loc->updaterID = $this->currentPerson->personID;
-            $loc->isVirtual = $loc_virtual;
-            $loc->save();
-        }
-        */
-            $event->locationID = $loc->locID;
+        $event->locationID = $loc->locID;
 
         $event->orgID = $this->currentPerson->defaultOrgID;
         $event->eventName = request()->input('eventName');
@@ -645,61 +608,7 @@ class EventController extends Controller
 
         $loc = location_triage($request, $event, $this->currentPerson);
 
-        /*
-        $input_loc = request()->input('locationID');
-        // check to see if form loc == saved loc
-        // if so, grab location item and save data.
-        $loc_virtual = request()->input('virtual');
-        if (empty($loc_virtual)) {
-            $loc_virtual = 0;
-        }
-        if ($input_loc == $event->locationID) {
-            $loc = Location::find($event->locationID);
-            $loc->orgID = $event->orgID;
-            $loc->locName = request()->input('locName');
-            $loc->addr1 = request()->input('addr1');
-            $loc->addr2 = request()->input('addr2');
-            $loc->city = request()->input('city');
-            $loc->state = request()->input('state');
-            $loc->zip = request()->input('zip');
-            $loc->isVirtual = $loc_virtual;
-            $loc->updaterID = $this->currentPerson->personID;
-            $loc->save();
-            // if not and also not empty, grab location and save data
-        } elseif ($input_loc != $event->locationID && !empty($input_loc)) {
-            $loc = Location::find(request()->input('locationID'));
-            $loc->orgID = $event->orgID;
-            $loc->locName = request()->input('locName');
-            $loc->addr1 = request()->input('addr1');
-            $loc->addr2 = request()->input('addr2');
-            $loc->city = request()->input('city');
-            $loc->state = request()->input('state');
-            $loc->zip = request()->input('zip');
-            $loc->isVirtual = $loc_virtual;
-            $loc->updaterID = $this->currentPerson->personID;
-            $loc->save();
-            $event->locationID = $loc->locID;
-
-        } elseif (empty($input_loc)) {
-            // otherwise, the ID is empty and there is likely to be data because the field(s) are required
-            if (strlen(request()->input('locName') . request()->input('addr1')) > 3) {
-                $loc = new Location;
-                $loc->orgID = $event->orgID;
-                $loc->locName = request()->input('locName');
-                $loc->addr1 = request()->input('addr1');
-                $loc->addr2 = request()->input('addr2');
-                $loc->city = request()->input('city');
-                $loc->state = request()->input('state');
-                $loc->zip = request()->input('zip');
-                $loc->isVirtual = $loc_virtual;
-                $loc->creatorID = $this->currentPerson->personID;
-                $loc->updaterID = $this->currentPerson->personID;
-                $loc->save();
-                $event->locationID = $loc->locID;
-            }
-        }
-        */
-
+        $event->locationID = $loc->locID;
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if ($eventDescription !== null) {
