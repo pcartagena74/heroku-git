@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Display to keep a "you've become XYZ" banner persistent until ended
  * Created: 2/5/2019
@@ -19,7 +19,7 @@ $p = Person::find($become);
 Session::put('become', $become);
 Session::put('prior_id', $prior_id);
 Session::save();
-?>
+@endphp
 {!! Form::open(array('url' => env('APP_URL')."/become", 'method' => 'POST')) !!}
 {!! Form::hidden('new_id', $prior_id) !!}
 {!! Form::hidden('cancel', 1) !!}

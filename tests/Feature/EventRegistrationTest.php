@@ -18,6 +18,15 @@ class EventRegistrationTest extends TestCase
 
     // , RefreshDatabase;
 
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->org = Org::find(1);
+        $this->user = User::find(1);
+        $this->person = $this->user->person;
+    }
+    
     /**
      * @test - Member Creation Test
      *         Member defined as org-person.OrgStat1 is not null

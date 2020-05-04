@@ -5,9 +5,13 @@
  */
 
 return [
-   'app_params' => [
-       'date_format' => "m/d/Y h:i A",
-   ],
+    'app_defaults' => [
+        'orgID1' => "<b>Please do NOT perform any functions, testing, etc. using orgID=1.  Create another org.</b>",
+    ],
+
+    'app_params' => [
+        'date_format' => "m/d/Y h:i A",
+    ],
 
     'auth' => [
         'account' => 'Have an account?  Login',
@@ -730,6 +734,7 @@ return [
         'confirm_msg' => "A confirmation email was sent to: :name.",
         'credit_info' => "Your credit/debit card information is not stored on this server and is safe.",
         'loading' => "Loading",
+        'loc_edit' => "You cannot edit the event location you selected. <a href=':url'>Edit Event</a>",
         'loc_merge' => "LocationID :id2 merged into :id. :count events were updated to locationID :id.",
         'merge_sub' => "Your mCentric account for :name events",
         'merge_msg1' => "An officer/admin with :orgname recently merged accounts associated with you.",
