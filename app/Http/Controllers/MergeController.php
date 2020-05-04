@@ -177,7 +177,7 @@ class MergeController extends Controller
                 'firstName' => $person->firstName,
                 'lastName' => $person->lastName,
                 'login' => $person->login,
-                'OrgStat1' => $person->orgperson->OrgStat1
+                'OrgStat1' => $person->orgStat1()
             ));
         }
     }

@@ -421,6 +421,10 @@ class EventController extends Controller
         if (empty($loc_virtual)) {
             $loc_virtual = 0;
         }
+
+        $loc = location_triage($request, $event, $this->currentPerson);
+
+        /*
         if (request()->input('locationID') != '') {
             $location = Location::find(request()->input('locationID'));
             $locName = request()->input('locName');
@@ -455,8 +459,9 @@ class EventController extends Controller
             $loc->updaterID = $this->currentPerson->personID;
             $loc->isVirtual = $loc_virtual;
             $loc->save();
-            $event->locationID = $loc->locID;
         }
+        */
+            $event->locationID = $loc->locID;
 
         $event->orgID = $this->currentPerson->defaultOrgID;
         $event->eventName = request()->input('eventName');
@@ -637,6 +642,10 @@ class EventController extends Controller
         $original = $event->getOriginal();
 
         $this->currentPerson = Person::find(auth()->user()->id);
+
+        $loc = location_triage($request, $event, $this->currentPerson);
+
+        /*
         $input_loc = request()->input('locationID');
         // check to see if form loc == saved loc
         // if so, grab location item and save data.
@@ -671,8 +680,8 @@ class EventController extends Controller
             $loc->save();
             $event->locationID = $loc->locID;
 
-            // otherwise, the ID is empty but there might be data or not
         } elseif (empty($input_loc)) {
+            // otherwise, the ID is empty and there is likely to be data because the field(s) are required
             if (strlen(request()->input('locName') . request()->input('addr1')) > 3) {
                 $loc = new Location;
                 $loc->orgID = $event->orgID;
@@ -689,6 +698,8 @@ class EventController extends Controller
                 $event->locationID = $loc->locID;
             }
         }
+        */
+
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if ($eventDescription !== null) {

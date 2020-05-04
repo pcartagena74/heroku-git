@@ -1,10 +1,14 @@
 <?php
 /**
- * Comment: Localization strings for Message Strings in English
+ * Comment: Localization strings for Message Strings in Spanish
  * Created: 7/21/2018
  */
 
 return [
+    'app_defaults' => [
+        'orgID1' => "<b>Please do NOT perform any functions, testing, etc. using orgID=1.  Create another org.</b>",
+    ],
+
     'app_params' => [
         'date_format' => "m/d/Y h:i A",
     ],
@@ -726,10 +730,11 @@ return [
 
     'messages' => [
         'bad_regID' => 'es-Invalid registration ID used.',
-        'become' => 'es-You are emulating the experience for: :name.  ',
-        'confirm_msg' => 'es-A confirmation email was sent to: :name.',
-        'credit_info' => 'es-Your credit/debit card information is not stored on this server and is safe.',
-        'loading' => 'es-Loading',
+        'become' => 'Estás emulando la experiencia de: :name.  ',
+        'confirm_msg' => 'Se envió un email de confirmación a: :name.',
+        'credit_info' => 'La información de su tarjeta de crédito / débito no se almacena en este servidor y es segura.',
+        'loading' => 'Cargando',
+        'loc_edit' => "No puede editar el sitio que seleccionó. <a href=':url'>Editar Evento</a>",
         'loc_merge' => 'es-LocationID :id2 merged into :id. :count events were updated to locationID :id.',
         'merge_sub' => 'es-Your mCentric account for :name events',
         'merge_msg1' => 'es-An officer/admin with :orgname recently merged accounts associated with you.',

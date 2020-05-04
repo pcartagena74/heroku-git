@@ -18,7 +18,7 @@
         $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
         $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
 
-        if($exLoc->isVirtual==1){
+        if($exLoc->isVirtual==1 || $exLoc->orgID==1){
             $show_virtual = true;
         } else {
             $show_virtual = false;
@@ -270,6 +270,25 @@
     @include('v1.parts.start_content', ['header' => trans('messages.fields.event').' '. trans('messages.fields.loc'),
              'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
+    <div>
+        <div class="col-md-3 col-md-offset-1">
+            {!! Form::label('virtual', trans('messages.headers.virtual'), array('class' => 'control-label')) !!} &nbsp;
+
+        </div>
+        <div class="col-md-8">
+            {!! Form::label('virtual', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} &nbsp;
+            @if($event->eventID !== null)
+                {!! Form::checkbox('virtual', 1, $show_virtual,
+                    $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
+            @else
+                {!! Form::checkbox('virtual', 1, false,
+                    $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
+            @endif
+            {!! Form::label('virtual', trans('messages.yesno_check.yes'), array('class' => 'control-label')) !!}
+        </div>
+    </div>
+    &nbsp;<br />
+
     <div class="form-group">
         <div class="col-md-8">
             {!! Form::select('locationID', $loc_list, old('locationID'), array('class' =>'form-control input-sm', 'id'=>'org_location_list')) !!}
@@ -290,7 +309,7 @@
 
     <div id="address_info"
     @if($event->eventID !== null)
-        {!! $exLoc->isVirtual==1 ? 'style="display:none;"' : '' !!}
+        {!! $show_virtual ? 'style="display:none;"' : '' !!}
             @endif
     >
         <div class="form-group col-md-12">
@@ -320,21 +339,6 @@
         </div>
     </div>
 
-    <div class="form-group col-md-3 col-md-offset-1">
-        {!! Form::label('virtual', trans('messages.headers.virtual'), array('class' => 'control-label')) !!} &nbsp;
-        &nbsp;
-    </div>
-    <div class="form-group col-md-8">
-        {!! Form::label('virtual', trans('messages.yesno_check.no'), array('class' => 'control-label')) !!} &nbsp;
-        @if($event->eventID !== null)
-            {!! Form::checkbox('virtual', 1, $show_virtual,
-                $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
-        @else
-            {!! Form::checkbox('virtual', 1, false,
-                $attributes = array('class'=>'js-switch', 'id'=>'virtual', 'onchange' => 'javascript:toggleHide()')) !!}
-        @endif
-        {!! Form::label('virtual', trans('messages.yesno_check.yes'), array('class' => 'control-label')) !!}
-    </div>
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.contact_det'),

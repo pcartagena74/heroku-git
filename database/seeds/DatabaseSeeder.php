@@ -20,9 +20,12 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             PermissionTableSeeder::class,
             RoleSeeder::class,
+            CertificationSeeder::class,
             EventTypeSeeder::class,
+            IndustrySeeder::class,
             LocationSeeder::class,
             CategorySeeder::class,
+            PrefixSeeder::class,
             TimezoneSeeder::class,
             UserRoleSeeder::class,
         ]);
