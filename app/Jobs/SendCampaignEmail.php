@@ -48,7 +48,8 @@ class SendCampaignEmail implements ShouldQueue
                 }
                 $mg = Mailgun::create(env("MAILGUN_API_KEY")); // For US servers
                 //first domain parameter requires only domain in local we have to put api too which wont work here
-                $response = $mg->messages()->send('sandboxdbb4c7116f3a4e0d9ea8a9026d387e02.mailgun.org', [
+                // $response = $mg->messages()->send('sandboxdbb4c7116f3a4e0d9ea8a9026d387e02.mailgun.org', [
+                $response = $mg->messages()->send(env("MAILGUN_DOMAIN"), [
                     'from'    => $campaign->fromEmail,
                     'to'      => $value->email_id,
                     'subject' => $campaign->subject,

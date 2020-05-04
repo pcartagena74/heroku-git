@@ -542,7 +542,7 @@ class CampaignController extends Controller
         $insert_queue = [];
         EmailQueue::where('campaign_id', $campaign_id)->delete();
         foreach ($contacts as $key => $value) {
-            $value     = 'mufaddal@systango.com'; /// for testing only
+            // $value     = 'mufaddal@systango.com'; /// for testing only
             $to_insert = ['campaign_id' => $campaign_id, 'org_id' => $org_id, 'email_id' => $value];
             if (!empty($schedule)) {
                 $to_insert['scheduled_datetime'] = $date_schedule;
