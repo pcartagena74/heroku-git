@@ -1048,7 +1048,7 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
                 return $raw_html;
             }
         } else {
-            $raw_html = '';    
+            $raw_html = '';
             if (empty($campaign->content)) {
                 foreach ($campaign->template_blocks as $key => $value) {
                     $raw_html .= $value->content;
@@ -1515,6 +1515,6 @@ if (!function_exists('convertToDatePickerFormat')) {
     function convertToDatePickerFormat($date_time)
     {
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
-        return $date->format('m/d/Y h:mm A');
+        return $date->format('m/d/Y h:i A');
     }
 }

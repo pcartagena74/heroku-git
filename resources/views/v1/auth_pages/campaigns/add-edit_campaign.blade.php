@@ -250,8 +250,20 @@ if(!empty($campaign)){
 
 @section('scripts')
     {{-- @include('v1.parts.footer-tinymce2') --}}
-    @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule_date', 'time' => 'true', 'single' => 'true'])
+    {{-- @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule_date', 'time' => 'true', 'single' => 'true']) --}}
 <script type="text/javascript">
+    $('#schedule_date').daterangepicker({
+            timePicker: true,
+            autoUpdateInput: true,
+            singleDatePicker: true,
+            showDropdowns: true,
+            timePickerIncrement: 15,
+            locale: {
+                format: 'M/D/Y h:mm A'
+            },
+            minDate: moment(),
+        });
+
     @if(!empty($campaign->scheduleDate))
         $('#schedule_date').val('{{$date_picker_schedule}}');
     @endif
@@ -381,7 +393,6 @@ if(!empty($campaign)){
     $('#send_later').on('change', function () {
         sendLater();
     });
-    _emailBuilder.makeSortable();
 });//ready end
 </script>
 @endsection

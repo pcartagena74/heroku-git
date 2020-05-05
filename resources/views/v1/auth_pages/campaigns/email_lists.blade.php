@@ -15,8 +15,12 @@ if(!isset($emailList)){
 $topBits = '';  // remove this if this was set in the controller
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
-
 @section('content')
+<style type="text/css">
+    .daterangepicker.opensright .ranges, .daterangepicker.opensright .calendar, .daterangepicker.openscenter .ranges, .daterangepicker.openscenter .calendar {
+     float: left; //fix for datepicker
+}
+</style>
 <div class="col-md-12 col-sm-12 col-xs-12">
     <ul class="nav nav-tabs bar_tabs nav-justified" id="myTab" role="tablist">
         <li class="active">
@@ -125,7 +129,7 @@ $topBits = '';  // remove this if this was set in the controller
             <!-----------dragable list start ---------->
             <div class="col-md-6 col-xs-6 ">
                 <div class="x_panel" ondragover="allowDrop(event)" ondrop="drop(event,this,'include[]')">
-                    <div class="x_title">
+                    <div class="x_title" draggable="false">
                         <h2>
                             Inclusions: Include attendees of...
                             <small>
@@ -143,7 +147,7 @@ $topBits = '';  // remove this if this was set in the controller
                         </div>
                     </div>
                     <div class="x_content">
-                        <div style="width: 100%">
+                        <div class="clearfix" draggable="false">
                             Drop Here
                         </div>
                         <div class="clearfix" draggable="true" id="this-year-event" ondragstart="drag(event)">
@@ -182,7 +186,7 @@ $topBits = '';  // remove this if this was set in the controller
             </div>
             <div class="col-md-6 col-xs-6 ">
                 <div class="x_panel" ondragover="allowDrop(event)" ondrop="drop(event,this,'exclude[]')">
-                    <div class="x_title">
+                    <div class="x_title" draggable="false">
                         <h2>
                             Exclusions: Exclude attendees of...
                             <small>
@@ -200,7 +204,7 @@ $topBits = '';  // remove this if this was set in the controller
                         </div>
                     </div>
                     <div class="x_content">
-                        <div style="width: 100%">
+                        <div class="clearfix" draggable="false">
                             Drop Here
                         </div>
                     </div>
@@ -268,7 +272,6 @@ $topBits = '';  // remove this if this was set in the controller
             // console.log(ths.data('type'),event.currentTarget);
         });
     function allPDEvent(ths){
-        console.log('here')
         if($(ths).is(':checked')){
             $('#create_email_list_form :input[type=checkbox]').each(function(){
                 $(this).attr('checked','checked');
@@ -353,7 +356,8 @@ $topBits = '';  // remove this if this was set in the controller
                         format: 'M/D/Y'
                     },
                     minDate: moment().startOf('year'),
-                    maxDate: moment().endOf('year')
+                    maxDate: moment().endOf('year'),
+                    open:'right'
                 });
             var setContentHeight = function () {
                 // reset height
