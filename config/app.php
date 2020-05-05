@@ -65,7 +65,7 @@ return [
      */
     'timezone'        => 'America/New_York',
 
-    /*'timezone'        => 'Asia/Kolkata', for localtesting only*/
+    /*'timezone'        => 'Asia/Kolkata', //for localtesting only*/
 
     /*
     |--------------------------------------------------------------------------

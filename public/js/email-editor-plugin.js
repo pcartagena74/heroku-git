@@ -484,8 +484,9 @@ var returnVal;
                 forcePlaceholderSize: true,
                 //group: 'no-drop',
                 handle: '.row-move',
-                revert: true
+                revert: true,
             });
+            _this.remove_row_elements();
         },
         /**
          *  All events
@@ -498,7 +499,7 @@ var returnVal;
                 // _this.makeSortable();
                 setTimeout(function() {
                     _this.makeSortable();
-                }, 200);
+                }, 2000);
                 jQuery('.content-main').attr('data-width', '600px');
                 jQuery('.main').css('width', '600px');
             });
@@ -560,7 +561,7 @@ var returnVal;
                     cancelButtonClass: 'btn btn-danger',
                     buttonsStyling: false
                 }).then(function(result) {
-                    if(result.value){
+                    if (result.value) {
                         _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _blankPageHtml + '</div>' + '</div>' + '</div>' + '</div>');
                         _this.makeSortable();
                         _this.remove_row_elements();
@@ -783,7 +784,7 @@ var returnVal;
                 _val = _element.val();
                 _activeElement = _this.getActiveElementContent();
                 _activeElement.find('a').attr('href', _val);
-                console.log(_this.getYoutubeVideoId(_val));
+                // console.log(_this.getYoutubeVideoId(_val));
                 _activeElement.find('table').css('background-image', "url('https://img.youtube.com/vi/" + _this.getYoutubeVideoId(_val) + "/sddefault.jpg')");
             });
             //text style
@@ -1222,11 +1223,18 @@ var returnVal;
          * Open/close left menu tab and it's child
          */
         tabMenu: function(tab) {
-            _menuItem = _tabMenuItems[tab];
-            _tabMenuItem = _this.$elem.find('.left-menu-container .menu-item[data-tab-selector="' + _menuItem.parentSelector + '"]');
-            _accordionMenuItem = _this.$elem.find('.elements-accordion .elements-accordion-item[data-type="' + _menuItem.itemSelector + '"] .elements-accordion-item-title');
-            _this.tabMenuItemClick(_tabMenuItem, true);
-            _this.menuAccordionClick(_accordionMenuItem, false);
+            //added so default
+            if(!_tabMenuItems[tab]){
+                tab = 'background';
+            }
+            //added so default section error is resolved mufaddal
+            if(_tabMenuItems[tab]){
+                _menuItem = _tabMenuItems[tab];
+                _tabMenuItem = _this.$elem.find('.left-menu-container .menu-item[data-tab-selector="' + _menuItem.parentSelector + '"]');
+                _accordionMenuItem = _this.$elem.find('.elements-accordion .elements-accordion-item[data-type="' + _menuItem.itemSelector + '"] .elements-accordion-item-title');
+                _this.tabMenuItemClick(_tabMenuItem, true);
+                _this.menuAccordionClick(_accordionMenuItem, false);
+            }
         },
         /**
          * Get created email template
@@ -1382,10 +1390,9 @@ var returnVal;
                 }
             }
             var lastType = _element.find('.sortable-row-content').attr('data-last-type');
-            // console.log(lastType);
-            // if (lastType===undefined) {
-            //   lastType=_element.find('.sortable-row-content').attr('data-types').split(',')[0];
-            // }
+            if (lastType===undefined) {
+              lastType=_element.find('.sortable-row-content').attr('data-types').split(',')[0];
+            }
             _this.tabMenu(lastType);
             _this.getSettings();
         },

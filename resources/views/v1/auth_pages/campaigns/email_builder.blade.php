@@ -213,9 +213,12 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <!--for tinymce  -->
 <script src="https://cdn.tinymce.com/4/tinymce.min.js">
 </script>
-{{-- <script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
-</script> --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.29.2/sweetalert2.all.js"></script>
+{{--
+<script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
+</script>
+--}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.29.2/sweetalert2.all.js">
+</script>
 <script src="{{url('js/colorpicker.js')}}">
 </script>
 <!--for bootstrap-tour  -->

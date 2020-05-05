@@ -365,6 +365,15 @@ return [
         'camp_create_email_template' => 'Create Email Template',
         'camp_edit_email_template'   => 'Edit Email Template',
         'camp_message_header'        => 'Message Header',
+        'camp_five_email'            => 'Enter up to 5 email addresses:',
+        'camp_add_another'           => 'Add Another',
+        'camp_lbl_personal_note'     => 'Personal Note',
+        'camp_btn_send_test_message' => 'Send Test Message',
+        'camp_lbl_send_now'          => 'Send Now',
+        'camp_lbl_send_later'        => 'Send Later',
+        'camp_lbl_release_date'      => 'Release Date',
+        'camp_btn_schedule'          => 'Schedule',
+        'camp_btn_send_now'          => 'Send Now',
     ],
 
     'headers'                       => [
@@ -594,6 +603,9 @@ return [
         'select_user'         => 'Select User',
         'select_user_hint'    => 'Type a few characters of a first or last name, email address or PMI ID.',
         'create_user'         => 'Create User',
+        'campaign_heading'    => 'Campaign Managment',
+        'campaign_test_email' => 'Test Emails',
+        'campaign_scheduling' => 'Campaign Scheduling',
     ],
 
     'subheaders'                    => [
@@ -769,6 +781,8 @@ return [
         'test_email_sent'                => 'Email sent successfully!',
         'campaign_deleted'               => 'Campaign deleted successfully!',
         'campaign_send'                  => 'Campaign Sent successfully!',
+        'camp_sent_on'                   => 'Campaign was sent on :date',
+        'camp_scheduled_sent_on'         => 'Campaign is scheduled for :date, thou. you can change it.',
     ],
 
     'modals'                        => [

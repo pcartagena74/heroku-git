@@ -41,7 +41,7 @@ var _emailBuilder = $('.editor').emailBuilder({
         });
     },
     //new features end
-    lang: 'en',
+    lang: '{{session('locale')}}',
     elementsHTML: $('.elements-db').html(),
     langJsonUrl: 'lang-1.json',
     loading_color1: 'red',
@@ -459,8 +459,7 @@ var _loaded = false;
 _emailBuilder.setAfterLoad(function(e) {
     setTimeout(function() {
             _emailBuilder.makeSortable();
-        }, 0);
-    // _emailBuilder.makeSortable();
+        }, 2000);
     $('.elements-db').remove();
     _loaded = true;
 });
@@ -514,12 +513,11 @@ $("body").on('DOMSubtreeModified', ".content-wrapper .email-editor-elements-sort
 
 @if(isset($campaign->template_blocks))
 var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
-    setTimeout(function() {
-        $('.content-wrapper .email-editor-elements-sortable').html('');
-        _emailBuilder.makeSortable();
-    },2000);
     if(data.length > 0) {
         _content = '';
+        setTimeout(function() {
+            $('.editor .content-wrapper .email-editor-elements-sortable').html('');
+        }, 2000);
         for (var i = 0; i < data.length; i++) {
             _content += '<div class="sortable-row">' + '<div class="sortable-row-container">' + ' <div class="sortable-row-actions">';
             _content += '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>';
@@ -531,11 +529,10 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
                 property = data[i].property.split(',')[0];
             }
             _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + property + '  >' + data[i].content + '</div></div></div>';
-            _emailBuilder.makeSortable();
         }
         setTimeout(function() {
-            $('.content-wrapper .email-editor-elements-sortable').append(_content);
-                    _emailBuilder.makeSortable();
+            $('.editor  .content-wrapper .email-editor-elements-sortable').append(_content);
+            _emailBuilder.makeSortable();
         }, 2000);
     }
 @endif
@@ -588,8 +585,4 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         _emailBuilder.setImageFileManager($url);
       // document.getElementById('image_label').value = $url;
     }
-
-    $(window).on('load',function(){
-    _emailBuilder.makeSortable();
-});
 </script>

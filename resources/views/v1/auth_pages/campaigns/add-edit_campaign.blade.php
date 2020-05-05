@@ -28,7 +28,7 @@ if(!empty($campaign)){
 
 @section('content')
 
-    @include('v1.parts.start_content', ['header' => ' Campaign Message',
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_heading'),
              'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 <div aria-multiselectable="true" class="accordion" id="accordion" role="tablist">
     @if($campaign == null)
@@ -137,11 +137,11 @@ if(!empty($campaign)){
 @include('v1.parts.end_content')
     {{-- Test Email Div --}}
 <div>
-    @include('v1.parts.start_content', ['header' => 'Test Emails',
+    @include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_test_email'),
                  'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div id="test-email">
         <div class="form-group">
-            {!! Form::label('email1', 'Enter up to 5 email addresses:') !!}
+            {!! Form::label('email1', trans('messages.fields.camp_five_email') ) !!}
             {!! Form::email('email1', $org->adminEmail, array('class' => 'form-control input-sm')) !!}
             @if($campaign == null)
             @else
@@ -164,28 +164,28 @@ if(!empty($campaign)){
             'id' => 'email5')) !!}
         </div>
         <a id="add_email" onclick="add_email();">
-            Add Another
+            {{trans('messages.fields.camp_add_another')}}
         </a>
         <p>
         </p>
         <div class="form-group">
-            {!! Form::label('note', 'Personal Note') !!}
+            {!! Form::label('note', trans('messages.fields.camp_lbl_personal_note')) !!}
             {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4','id'=>'text_note',
                 'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
         </div>
         <div class="form-group">
-            {!! Form::button('Send Test Message', array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)')) !!}
+            {!! Form::button(trans('messages.fields.camp_btn_send_test_message'), array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)')) !!}
         </div>
         <div class="form-group" id="response">
         </div>
         @include('v1.parts.end_content')
     </div>
 </div>
-@include('v1.parts.start_content', ['header' => 'Campaign Scheduling',
+@include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_scheduling'),
              'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 <div class="form-group">
     <div class="col-sm-3">
-        {!! Form::label('send', 'Send Now', array('class' => 'control-label')) !!}
+        {!! Form::label('send', trans('messages.fields.camp_lbl_send_now'), array('class' => 'control-label')) !!}
     </div>
     @if(!empty($campaign->scheduleDate))
     <div class="col-sm-5" style="text-align: center;">
@@ -197,27 +197,27 @@ if(!empty($campaign)){
     </div>
     @endif
     <div class="col-sm-3">
-        {!! Form::label('send', 'Send Later', array('class' => 'control-label')) !!}
+        {!! Form::label('send',trans('messages.fields.camp_lbl_send_later'), array('class' => 'control-label')) !!}
     </div>
     @if(!empty($campaign))
     @if(!empty($campaign->sendDate) && empty($campaign->scheduleDate))
     <div class="row">
         <div class="col-sm-12">
-            Campaign was sent on {{$campaign->sendDate}}
+            {{trans('messages.messages.camp_sent_on',['date'=>$campaign->sendDate])}}
         </div>
     </div>
     @endif
     @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate <= $current_datetime)
     <div class="row">
         <div class="col-sm-12">
-            Campaign was sent on {{$campaign->scheduleDate}}
+            {{trans('messages.messages.camp_sent_on',['date'=>$campaign->scheduleDate])}}
         </div>
     </div>
     @endif
     @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate > $current_datetime)
     <div class="row">
         <div class="col-sm-12">
-            Campaign is scheduled for {{$campaign->scheduleDate}}, thou you can change it.
+            {{trans('messages.messages.camp_scheduled_sent_on',['date'=>$campaign->scheduleDate])}}
         </div>
     </div>
     @endif
@@ -226,7 +226,7 @@ if(!empty($campaign)){
 <p>
 </p>
 <div id="schedule" style="display: none;">
-    {!! Form::label('schedule', 'Release Date') !!}
+    {!! Form::label('schedule', trans('messages.fields.camp_lbl_release_date')) !!}
     @if($campaign == null)
     <div class="form-group col-sm-12">
         {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left','id'=>'schedule_date')) !!}
@@ -242,7 +242,7 @@ if(!empty($campaign)){
     @endif
 </div>
 <div class="form-group">
-    {!! Form::button('Send Now', array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id'=>'send_now', 'onclick' => 'sendCampaign()',$disable)) !!}
+    {!! Form::button(trans('messages.fields.camp_btn_send_now'), array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id'=>'send_now', 'onclick' => 'sendCampaign()',$disable)) !!}
 </div>
 @include('v1.parts.end_content')
 
@@ -279,10 +279,10 @@ if(!empty($campaign)){
     function sendLater(){
         if($('#send_later').is(':checked')){
             $("#schedule").show();
-            $("#send_now").text('Schedule');
+            $("#send_now").text("{{trans('messages.fields.camp_btn_schedule')}}");
         } else {
             $("#schedule").hide();
-            $("#send_now").text('Send Now');
+            $("#send_now").text("{{trans('messages.fields.camp_btn_send_now')}}");
         }
     }
 
@@ -362,37 +362,38 @@ if(!empty($campaign)){
         // $('#schedule').val(moment(new Date($('#schedule').val())).format("MM/DD/YYYY HH:mm A"));
     });
     $(document).ready(function () {
-            var setContentHeight = function () {
-                // reset height
-                $RIGHT_COL.css('min-height', $(window).height());
+        var setContentHeight = function () {
+            // reset height
+            $RIGHT_COL.css('min-height', $(window).height());
 
-                var bodyHeight = $BODY.outerHeight(),
-                    footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
-                    leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
-                    contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+            var bodyHeight = $BODY.outerHeight(),
+                footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+                leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+                contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
 
-                // normalize content
-                contentHeight -= $NAV_MENU.height() + footerHeight;
+            // normalize content
+            contentHeight -= $NAV_MENU.height() + footerHeight;
 
-                $RIGHT_COL.css('min-height', contentHeight);
-            };
+            $RIGHT_COL.css('min-height', contentHeight);
+        };
 
-            $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/campaigns"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
-                setContentHeight();
-            }).parent().addClass('active');
+        $SIDEBAR_MENU.find('a[href="{{ env('APP_URL') }}/campaigns"]').parent('li').addClass('current-page').parents('ul').slideDown(function () {
+            setContentHeight();
+        }).parent().addClass('active');
 
-            @if($campaign !== null)
-            $("#add").text('Edit Event');
-            @endif
+        @if($campaign !== null)
+        $("#add").text('Edit Event');
+        @endif
 
-            $('#show-etb').on('click', function() {
-              $('.etb-wrapper').addClass('is-active')
-              $('body').addClass('no-scroll');
-            });
+        $('#show-etb').on('click', function() {
+          $('.etb-wrapper').addClass('is-active')
+          $('body').addClass('no-scroll');
+        });
             
-    $('#send_later').on('change', function () {
-        sendLater();
-    });
+        $('#send_later').on('change', function () {
+            sendLater();
+        });
+    
 });//ready end
 </script>
 @endsection
