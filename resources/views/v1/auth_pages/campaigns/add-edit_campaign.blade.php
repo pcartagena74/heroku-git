@@ -258,10 +258,11 @@ if(!empty($campaign)){
             singleDatePicker: true,
             showDropdowns: true,
             timePickerIncrement: 15,
+            startDate: moment(new Date()),
+            minDate: moment(new Date()),
             locale: {
                 format: 'M/D/Y h:mm A'
             },
-            minDate: moment(),
         });
 
     @if(!empty($campaign->scheduleDate))
