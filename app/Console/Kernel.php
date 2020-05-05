@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new SendCampaignEmail)->everyFifteenMinutes();
-        $schedule->job(new SendCampaignEmail)->everyMinute();
+        // $schedule->job(new SendCampaignEmail)->everyFifteenMinutes();
+        $schedule->job(new SendCampaignEmail)->everyMinute();//as heroku support only 10 mins we will take care of reset from job itself
         // $schedule->command('inspire')
         //          ->hourly();
     }

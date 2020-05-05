@@ -150,6 +150,7 @@ $topBits = '';  // remove this if this was set in the controller
                             <div class="col-md-6">
                                 {!! Form::checkbox('include[]', 'current-year#'.$ytd_events, false, array('class' => 'flat')) !!}
                             {!! Form::label('include', "This Year's Events") !!}
+
                              {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control', 'required', 'id' => 'eventStartDate') ) !!}
                             </div>
                         </div>
@@ -350,7 +351,9 @@ $topBits = '';  // remove this if this was set in the controller
                     timePicker: false,
                     locale: {
                         format: 'M/D/Y'
-                    }
+                    },
+                    minDate: moment().startOf('year'),
+                    maxDate: moment().endOf('year')
                 });
             var setContentHeight = function () {
                 // reset height
