@@ -3,6 +3,8 @@
  * Comment: Event Display with Tabs to see Session Information
  * Created: 5/5/2017
  * Modified: 6/10/2019 to be more mobile-friendly
+ *
+ * @var Event $event
  */
 
 use App\EventSession;
@@ -635,27 +637,7 @@ $mbr_price = trans('messages.instructions.mbr_price');
 
             @include('v1.parts.start_content', ['header' => trans('messages.fields.loc'), 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="col-md-12 col-sm-12 col-xs-12">
-        @if($event_loc->isVirtual)
-                    {{ $event_loc->locName }}
-        <br/>
-        @else
-        <div class="col-md-12 col-sm-12 col-xs-12" id="map_canvas" style="padding:15px;">
-            <iframe class="col-md-12 col-sm-12 col-xs-12" frameborder="ssss" marginheight="0" marginwidth="0" scrolling="no" src="https://maps.google.it/maps?q={{ $event_loc->addr1 }} {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}&hl={{ $locale }}&output=embed">
-            </iframe>
-        </div>
-        <b>
-            {{ $event_loc->locName }}
-        </b>
-        <br/>
-        {{ $event_loc->addr1 }}
-        <br/>
-        {!! $event_loc->addr2 !!}
-                    @if($event_loc->addr2)
-        <br/>
-        @endif
-                    {{ $event_loc->city }}, {{ $event_loc->state }} {{ $event_loc->zip }}
-        <br/>
-        @endif
+        @include('v1.parts.location_display', ['loc' => $event_loc, 'map' => 1])
     </div>
     @include('v1.parts.end_content')
 

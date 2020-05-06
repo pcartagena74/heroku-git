@@ -45,6 +45,7 @@ class CreateOrgPersonTable extends Migration {
 			$table->integer('updaterID')->default(1);
 			$table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
 			$table->softDeletes();
+			$table->unique('orgID, personID', 'op_fk_un_idx');
 		});
 	}
 

@@ -5,6 +5,14 @@
  */
 
 return [
+    'app_defaults'                  => [
+        'orgID1' => "<b>Please do NOT perform any functions, testing, etc. using orgID=1.  Create another org.</b>",
+    ],
+
+    'app_params'                    => [
+        'date_format' => "m/d/Y h:i A",
+    ],
+
     'auth'                          => [
         'account'  => 'Have an account?  Login',
         'forgot'   => 'Forgot Password?',
@@ -141,7 +149,8 @@ return [
         'campaign_not_exist'        => 'Campaign does not exist',
     ],
 
-    'flashes'                       => [
+    'flashes'                => [
+        'custom_slug'      => "Please set a custom URL and validate it before proceeding.",
         'merge_failure'    => "The attempt to merge the records has failed.<br />:e",
         'password_success' => "The password for the account with the login: :login was set successfully.",
     ],
@@ -264,16 +273,17 @@ return [
             'Transportation'     => 'Transportation',
         ],
 
-        'isAuthPDU'                  => 'Do you authorize :org to submit PDUs on your behalf?',
-        'isFirstEvent'               => 'Is this your first :org Event?',
-        'isFirstRegional'            => 'Is this your first Regional Event?',
-        'last'                       => 'Last',
-        'lastName'                   => 'Last Name',
-        'limit'                      => 'Limit',
-        'loc'                        => 'Location',
-        'loc_id'                     => 'Location ID',
-        'loc_name'                   => 'Location Name',
-        'login'                      => 'Email Address',
+        'isAuthPDU'               => 'Do you authorize :org to submit PDUs on your behalf?',
+        'isFirstEvent'            => 'Is this your first :org Event?',
+        'isFirstRegional'         => 'Is this your first Regional Event?',
+        'last'                    => 'Last',
+        'lastName'                => 'Last Name',
+        'limit'                   => 'Limit',
+        'loc'                     => 'Location',
+        'loc_exist'               => 'Existing Location',
+        'loc_id'                  => 'Location ID',
+        'loc_name'                => 'Location Name',
+        'login'                   => 'Email Address',
         //'login' => 'Login',
         'member'                     => 'Member',
         'memcost'                    => 'PMI Member Cost',
@@ -922,8 +932,13 @@ return [
 
         //Member import complete
         'member_import' => [
-            'subject' => 'Import completed.',
-            'line1'   => ':user your member import is completed.',
+            'subject' => 'Import Complete',
+            'line1'   => ':user, the member import has completed.',
+        ],
+
+        // TicketIt Notification
+        'ticketit'      => [
+            'action' => 'View Ticket',
         ],
 
     ],
@@ -1224,13 +1239,13 @@ return [
     ],
 
     'exceptions'                    => [
-        'query_exception'           => 'Resource you are looking for has been either moved/deleted/does not exist',
-        'bad_url_link'              => 'The link you are trying to access has been expired.',
+        'query_exception'           => 'The resource you are looking for has been moved or no longer exists.',
+        'bad_url_link'              => 'The link you are trying to access has expired.',
         'forbidden'                 => 'You are not authorized to access this page.',
         'page_expired'              => 'Page Expired.',
-        'too_many_request'          => 'Too Many Requests, Rate limit exceeded.',
-        'service_unavailable'       => 'Service Unavailable, Please try again after sometime.',
-        'error_500'                 => 'Internal Server Error Occured. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
+        'too_many_request'          => 'Too Many Requests - Rate limit exceeded.',
+        'service_unavailable'       => 'Service Unavailable. Please try again later.',
+        'error_500'                 => '<p>Internal Server Error Occurred.</p> We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'no_msg_available'          => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
         'page_no_found'             => 'Sorry but we couldn\'t find this page. This page you are looking for does not exist.',
         'bad_url_link_mail_tracker' => 'Oops, the link you are using has expired.',
@@ -1279,5 +1294,12 @@ return [
         'body'        => 'Do you want to delete campaign ',
         'btn_ok'      => 'Ok',
         'btn_cancel'  => 'Cancel',
+    ],
+    'functions'                     => [
+        'merge' => [
+            'assoc_emails' => "The following email address are associated with either account.
+                               They will all be associated with <b>\"The Keeper\"</b> post-merge.",
+        ],
+
     ],
 ];

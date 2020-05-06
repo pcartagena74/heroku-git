@@ -15,7 +15,7 @@ class AddForeignKeysToOrgPersonTable extends Migration {
 		Schema::table('org-person', function(Blueprint $table)
 		{
 			$table->foreign('orgID', 'op-orgID')->references('orgID')->on('organization')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-			$table->foreign('personID', 'op-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('personID', 'op-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('CASCADE');
 		});
 	}
 

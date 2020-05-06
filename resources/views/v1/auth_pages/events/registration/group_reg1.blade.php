@@ -1,7 +1,9 @@
-<?php
+@php
 /**
  * Comment: Confirmation screen post and Stripe Payment Processing for Group Registration
  * Created: 8/21/2017
+ *
+ * @var $event, $quantity, $org, $loc, $rf
  */
 
 use App\EventSession;
@@ -39,8 +41,8 @@ if($event->isSymmetric && $event->hasTracks) {
     $width   = number_format(80 / $event->hasTracks, 0, '', '');
     $mw      = number_format(85 / $event->hasTracks, 0, '', '');
 }
+@endphp
 
-?>
 @extends('v1.layouts.auth')
 
 
@@ -59,12 +61,7 @@ if($event->isSymmetric && $event->hasTracks) {
             <div class="col-md-6 col-sm-6">
                 <h2><b>{{ $event->eventName }}</b></h2>
                 <div style="margin-left: 10px;">
-                    {{ $event->eventStartDate->format('n/j/Y g:i A') }}
-                    - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
-                    <br>
-                    {{ $loc->locName }}<br>
-                    {{ $loc->addr1 }} <i class="far fa-circle fa-tiny-circle"></i> {{ $loc->city }}
-                    , {{ $loc->state }} {{ $loc->zip }}
+                    @include('v1.parts.location_display', ['loc' => $loc, 'event' => $event, 'time' => 1])
                 </div>
                 <br/>
             </div>

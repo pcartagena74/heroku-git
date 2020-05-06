@@ -34,7 +34,7 @@ class CreateOrganizationTable extends Migration {
 			$table->string('googleURL')->nullable();
 			$table->string('defaultTicketLabel', 100)->nullable()->default('Event Ticket');
 			$table->string('creditLabel', 25)->default('Credit');
-			$table->string('orgZone', 5)->default('0');
+			$table->string('orgZone', 5)->default('-0');
 			$table->integer('earlyBirdPercent')->default(0);
 			$table->integer('orgCategory')->nullable()->default(50);
 			$table->string('anonCats')->nullable();

@@ -24,7 +24,7 @@ class OPHistory extends Model
         'RelDate8',
         'RelDate9',
         'RelDate10',
-        'changeDate'
+        'changeDate',
     ];
 
     // The table

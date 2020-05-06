@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Spatie\Referer\Referer;
+use Auth;
 
 class EventController extends Controller
 {
@@ -34,12 +35,12 @@ class EventController extends Controller
     // Helper function containing code to put the event counting bits into a blade template
     protected function event_bits()
     {
-        $topBits             = [];
-        $today               = Carbon::now();
+        $topBits = [];
+        $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
 
         $upcoming = trans('messages.fields.up') . " ";
-        $rtw      = trans('messages.headers.regs_this_week');
+        $rtw = trans('messages.headers.regs_this_week');
 
         $ch_mtg = Cache::get('future_cm', function () use ($today) {
             return Event::where([
@@ -129,7 +130,7 @@ class EventController extends Controller
         }
 
         // sets $which to "Upcoming"
-        $which    = trans_choice('messages.var_words.time_period', 0);
+        $which = trans_choice('messages.var_words.time_period', 0);
         $ae_label = trans('messages.codes.etID99', ['which' => $which]);
 
         array_push($topBits, [3, $upcoming . $cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count > 0 ? 1 : -1, 2]);
@@ -146,7 +147,7 @@ class EventController extends Controller
         // responds to GET /manage_events
         $topBits = $this->event_bits();
 
-        $today          = Carbon::now();
+        $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
         if (null === $past) {
@@ -202,7 +203,7 @@ class EventController extends Controller
 
         } else {
             $current_events = null;
-            $past_events    = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+            $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
                 'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
                 ->where([
                     ['org-event.orgID', $this->currentPerson->defaultOrgID],
@@ -237,11 +238,11 @@ class EventController extends Controller
             return view('v1.public_pages.error_display', compact('message'));
         }
 
-        $e                 = $event->replicate();
-        $e->slug           = 'temp_' . rand();
-        $e->isActive       = 0;
+        $e = $event->replicate();
+        $e->slug = 'temp_' . rand();
+        $e->isActive = 0;
         $e->eventStartDate = $today;
-        $e->eventEndDate   = $today;
+        $e->eventEndDate = $today;
         // this is here until we decide to copy EVERYTHING associated with a PD Day event
         $e->hasTracks = 0;
         $e->save();
@@ -251,36 +252,36 @@ class EventController extends Controller
         $event = $e;
 
         $this->currentPerson = Person::find(auth()->user()->id);
-        $current_person      = $this->currentPerson      = Person::find(auth()->user()->id);
-        $exLoc               = Location::find($event->locationID);
-        $page_title          = trans('messages.fields.edit_copy');
+        $current_person = $this->currentPerson = Person::find(auth()->user()->id);
+        $exLoc = Location::find($event->locationID);
+        $page_title = trans('messages.fields.edit_copy');
 
         // CHANGE: get the ticket(s) associated with original event, replicate, and change eventStartDate & earlyBirdEndDate
-        $label                    = Org::find($this->currentPerson->defaultOrgID);
-        $tkt                      = new Ticket;
-        $tkt->ticketLabel         = $label->defaultTicketLabel;
+        $label = Org::find($this->currentPerson->defaultOrgID);
+        $tkt = new Ticket;
+        $tkt->ticketLabel = $label->defaultTicketLabel;
         $tkt->availabilityEndDate = $event->eventStartDate;
-        $tkt->eventID             = $event->eventID;
-        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
-        $tkt->earlyBirdEndDate    = Carbon::now();
+        $tkt->eventID = $event->eventID;
+        $tkt->earlyBirdPercent = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate = Carbon::now();
         $tkt->save();
 
         // CHANGE: get the session(s) associated with original event, replicate, and change the ticketID, start, end, creator/updater
-        $mainSession              = new EventSession;
-        $mainSession->trackID     = 0;
-        $mainSession->eventID     = $event->eventID;
-        $mainSession->ticketID    = $tkt->ticketID;
+        $mainSession = new EventSession;
+        $mainSession->trackID = 0;
+        $mainSession->eventID = $event->eventID;
+        $mainSession->ticketID = $tkt->ticketID;
         $mainSession->sessionName = 'def_sess';
-        $mainSession->confDay     = 0;
-        $mainSession->start       = $event->eventStartDate;
-        $mainSession->end         = $event->eventEndDate;
-        $mainSession->order       = 0;
-        $mainSession->creatorID   = $this->currentPerson->personID;
-        $mainSession->updaterID   = $this->currentPerson->personID;
+        $mainSession->confDay = 0;
+        $mainSession->start = $event->eventStartDate;
+        $mainSession->end = $event->eventEndDate;
+        $mainSession->order = 0;
+        $mainSession->creatorID = $this->currentPerson->personID;
+        $mainSession->updaterID = $this->currentPerson->personID;
         $mainSession->save();
 
         $event->mainSession = $mainSession->sessionID;
-        $event->updaterID   = $this->currentPerson->personID;
+        $event->updaterID = $this->currentPerson->personID;
         try {
             $event->save();
         } catch (\Exception $exception) {
@@ -292,13 +293,13 @@ class EventController extends Controller
 
         // CHANGE: decide if original event's EventDiscounts should be copied instead.
         foreach ($orgDiscounts as $od) {
-            $ed               = new EventDiscount;
-            $ed->orgID        = $od->orgID;
-            $ed->eventID      = $event->eventID;
+            $ed = new EventDiscount;
+            $ed->orgID = $od->orgID;
+            $ed->eventID = $event->eventID;
             $ed->discountCODE = $od->discountCODE;
-            $ed->percent      = $od->percent;
-            $ed->creatorID    = $this->currentPerson->personID;
-            $ed->updaterID    = $this->currentPerson->personID;
+            $ed->percent = $od->percent;
+            $ed->creatorID = $this->currentPerson->personID;
+            $ed->updaterID = $this->currentPerson->personID;
             $ed->save();
         }
 
@@ -337,9 +338,9 @@ class EventController extends Controller
         $referrer = app(Referer::class)->get();
 
         if ($referrer) {
-            $r               = new ReferLink;
-            $r->objectType   = 'eventID_reg';
-            $r->objectID     = $event->eventID;
+            $r = new ReferLink;
+            $r->objectType = 'eventID_reg';
+            $r->objectID = $event->eventID;
             $r->referrerText = $referrer;
             $r->save();
         }
@@ -350,33 +351,33 @@ class EventController extends Controller
             $current_person = 0;
         } else {
             $this->currentPerson = Person::find(auth()->user()->id);
-            $current_person      = $this->currentPerson;
+            $current_person = $this->currentPerson;
         }
         $currentOrg = Org::find($event->orgID);
 
-        $event_loc   = Location::where('locID', $event->locationID)->first();
+        $event_loc = Location::where('locID', $event->locationID)->first();
         $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
-        $bundles     =
-        Ticket::where([
-            ['isaBundle', 1],
-            ['isSuppressed', 0],
-            ['eventID', $event->eventID],
-            ['availabilityEndDate', '>=', $today],
-        ])->get()->sortByDesc('availabilityEndDate');
+        $bundles =
+            Ticket::where([
+                ['isaBundle', 1],
+                ['isSuppressed', 0],
+                ['eventID', $event->eventID],
+                ['availabilityEndDate', '>=', $today],
+            ])->get()->sortByDesc('availabilityEndDate');
 
         $tickets =
-        Ticket::where([
-            ['isaBundle', 0],
-            ['isSuppressed', 0],
-            ['eventID', $event->eventID],
-            ['availabilityEndDate', '>=', $today],
-        ])->get()->sortByDesc('availabilityEndDate');
+            Ticket::where([
+                ['isaBundle', 0],
+                ['isSuppressed', 0],
+                ['eventID', $event->eventID],
+                ['availabilityEndDate', '>=', $today],
+            ])->get()->sortByDesc('availabilityEndDate');
 
         $tracks = Track::where('eventID', $event->eventID)->get();
         // $member = '';added for working_regform_show
         // $nonmbr = '';
         return view(
-            // 'v1.public_pages.display_event_w_sessions2',
+        // 'v1.public_pages.display_event_w_sessions2',
             'v1.public_pages.event_show',
             compact(
                 'event',
@@ -396,9 +397,9 @@ class EventController extends Controller
     {
         // responds to /events/create and shows add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
-        $current_person      = $this->currentPerson;
-        $org                 = Org::find($current_person->defaultOrgID);
-        $page_title          = trans('messages.headers.event_new');
+        $current_person = $this->currentPerson;
+        $org = Org::find($current_person->defaultOrgID);
+        $page_title = trans('messages.headers.event_new');
 
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
     }
@@ -406,58 +407,26 @@ class EventController extends Controller
     public function store(Request $request)
     {
         // responds to POST to /events and creates, adds, stores the event
-        $today               = Carbon::now();
+        $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
-        $event               = new Event;
-        $label               = Org::find($this->currentPerson->defaultOrgID);
-        $slug                = request()->input('slug');
-        $slug_not_unique     = Event::where('slug', $slug)->withTrashed()->first();
+        $event = new Event;
+        $label = Org::find($this->currentPerson->defaultOrgID);
+        $slug = request()->input('slug');
+        $slug_not_unique = Event::where('slug', $slug)->withTrashed()->first();
         if ($slug_not_unique !== null) {
-            request()->session()->flash('alert-danger', "Please set a custom URL and validate it before proceeding.");
+            request()->session()->flash('alert-danger', trans('messages.flashes.custom_slug'));
             return back()->withInput();
         }
         $loc_virtual = request()->input('virtual');
         if (empty($loc_virtual)) {
             $loc_virtual = 0;
         }
-        if (request()->input('locationID') != '') {
-            $location = Location::find(request()->input('locationID'));
-            $locName  = request()->input('locName');
-            $addr1    = request()->input('addr1');
-            if ($location->locName == $locName && $location->addr1 == $addr1) {
-                $event->locationID = $location->locID;
-            } else {
-                $loc            = new Location;
-                $loc->orgID     = $this->currentPerson->defaultOrgID;
-                $loc->locName   = request()->input('locName');
-                $loc->addr1     = request()->input('addr1');
-                $loc->addr2     = request()->input('addr2');
-                $loc->city      = request()->input('city');
-                $loc->state     = request()->input('state');
-                $loc->zip       = request()->input('zip');
-                $loc->creatorID = $this->currentPerson->personID;
-                $loc->updaterID = $this->currentPerson->personID;
-                $loc->isVirtual = $loc_virtual;
-                $loc->save();
-                $event->locationID = $loc->locID;
-            }
-        } else {
-            $loc            = new Location;
-            $loc->orgID     = $this->currentPerson->defaultOrgID;
-            $loc->locName   = request()->input('locName');
-            $loc->addr1     = request()->input('addr1');
-            $loc->addr2     = request()->input('addr2');
-            $loc->city      = request()->input('city');
-            $loc->state     = request()->input('state');
-            $loc->zip       = request()->input('zip');
-            $loc->creatorID = $this->currentPerson->personID;
-            $loc->updaterID = $this->currentPerson->personID;
-            $loc->isVirtual = $loc_virtual;
-            $loc->save();
-            $event->locationID = $loc->locID;
-        }
 
-        $event->orgID     = $this->currentPerson->defaultOrgID;
+        $loc = location_triage($request, $event, $this->currentPerson);
+
+        $event->locationID = $loc->locID;
+
+        $event->orgID = $this->currentPerson->defaultOrgID;
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if ($eventDescription !== null) {
@@ -466,25 +435,25 @@ class EventController extends Controller
             }
         }
         $event->eventDescription = $eventDescription;
-        $eventInfo               = request()->input('eventInfo');
+        $eventInfo = request()->input('eventInfo');
         if ($eventInfo !== null) {
             if (preg_match("/data:image/", $eventInfo)) {
                 $eventInfo = extract_images($eventInfo, $event->orgID);
             }
         }
-        $event->eventInfo      = $eventInfo;
-        $event->catID          = request()->input('catID');
-        $event->eventTypeID    = request()->input('eventTypeID');
+        $event->eventInfo = $eventInfo;
+        $event->catID = request()->input('catID');
+        $event->eventTypeID = request()->input('eventTypeID');
         $event->eventStartDate = request()->input('eventStartDate');
-        $event->eventEndDate   = request()->input('eventEndDate');
-        $event->eventTimeZone  = request()->input('eventTimeZone');
-        $event->contactOrg     = request()->input('contactOrg');
-        $event->contactEmail   = request()->input('contactEmail');
+        $event->eventEndDate = request()->input('eventEndDate');
+        $event->eventTimeZone = request()->input('eventTimeZone');
+        $event->contactOrg = request()->input('contactOrg');
+        $event->contactEmail = request()->input('contactEmail');
         $event->contactDetails = request()->input('contactDetails');
-        $event->showLogo       = request()->input('showLogo');
-        $event->hasFood        = request()->input('hasFood');
-        $event->slug           = request()->input('slug');
-        $postRegInfo           = request()->input('postRegInfo');
+        $event->showLogo = request()->input('showLogo');
+        $event->hasFood = request()->input('hasFood');
+        $event->slug = request()->input('slug');
+        $postRegInfo = request()->input('postRegInfo');
         if ($postRegInfo !== null) {
             if (preg_match("/data:image/", $postRegInfo)) {
                 $postRegInfo = extract_images($postRegInfo, $event->orgID);
@@ -508,15 +477,15 @@ class EventController extends Controller
          */
 
         if (request()->input('hasTracksCheck') == 1) {
-            $numTracks        = request()->input('hasTracks');
+            $numTracks = request()->input('hasTracks');
             $event->hasTracks = $numTracks;
         } else {
             $event->hasTracks = 0;
         }
         $event->earlyDiscount = $label->earlyBirdPercent;
         $event->earlyBirdDate = Carbon::now();
-        $event->creatorID     = $this->currentPerson->personID;
-        $event->updaterID     = $this->currentPerson->personID;
+        $event->creatorID = $this->currentPerson->personID;
+        $event->updaterID = $this->currentPerson->personID;
 
         try {
             $event->save();
@@ -526,37 +495,37 @@ class EventController extends Controller
         if (request()->input('hasTracksCheck') == 1) {
             $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for ($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
-                $track            = new Track;
+                $track = new Track;
                 $track->trackName = "Track" . $i;
-                $track->eventID   = $event->eventID;
+                $track->eventID = $event->eventID;
                 $track->save();
             }
         }
         // Create a stub for the default ticket for the event
-        $tkt                      = new Ticket;
-        $tkt->ticketLabel         = $label->defaultTicketLabel;
+        $tkt = new Ticket;
+        $tkt->ticketLabel = $label->defaultTicketLabel;
         $tkt->availabilityEndDate = $event->eventStartDate;
-        $tkt->eventID             = $event->eventID;
-        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
-        $tkt->earlyBirdEndDate    = Carbon::now();
+        $tkt->eventID = $event->eventID;
+        $tkt->earlyBirdPercent = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate = Carbon::now();
         $tkt->save();
 
         // Create a mainSession for the default ticket for the event
-        $mainSession              = new EventSession;
-        $mainSession->trackID     = 0;
-        $mainSession->eventID     = $event->eventID;
-        $mainSession->ticketID    = $tkt->ticketID;
+        $mainSession = new EventSession;
+        $mainSession->trackID = 0;
+        $mainSession->eventID = $event->eventID;
+        $mainSession->ticketID = $tkt->ticketID;
         $mainSession->sessionName = 'def_sess';
-        $mainSession->confDay     = 0;
-        $mainSession->start       = $event->eventStartDate;
-        $mainSession->end         = $event->eventEndDate;
-        $mainSession->order       = 0;
-        $mainSession->creatorID   = $this->currentPerson->personID;
-        $mainSession->updaterID   = $this->currentPerson->personID;
+        $mainSession->confDay = 0;
+        $mainSession->start = $event->eventStartDate;
+        $mainSession->end = $event->eventEndDate;
+        $mainSession->order = 0;
+        $mainSession->creatorID = $this->currentPerson->personID;
+        $mainSession->updaterID = $this->currentPerson->personID;
         $mainSession->save();
 
         $event->mainSession = $mainSession->sessionID;
-        $event->updaterID   = $this->currentPerson->personID;
+        $event->updaterID = $this->currentPerson->personID;
         try {
             $event->save();
         } catch (\Exception $exception) {
@@ -567,13 +536,13 @@ class EventController extends Controller
                 ['discountCODE', "<>", '']])->get();
 
             foreach ($orgDiscounts as $od) {
-                $ed               = new EventDiscount;
-                $ed->orgID        = $od->orgID;
-                $ed->eventID      = $event->eventID;
+                $ed = new EventDiscount;
+                $ed->orgID = $od->orgID;
+                $ed->eventID = $event->eventID;
                 $ed->discountCODE = $od->discountCODE;
-                $ed->percent      = $od->percent;
-                $ed->creatorID    = $this->currentPerson->personID;
-                $ed->updaterID    = $this->currentPerson->personID;
+                $ed->percent = $od->percent;
+                $ed->creatorID = $this->currentPerson->personID;
+                $ed->updaterID = $this->currentPerson->personID;
                 $ed->save();
             }
         }
@@ -583,6 +552,7 @@ class EventController extends Controller
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        $event->create_or_update_event_ics();
 
         return redirect('/event-tickets/' . $event->eventID);
     }
@@ -592,10 +562,10 @@ class EventController extends Controller
         // responds to GET /events/id/edit and shows the add/edit form
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
-        $current_person      = $this->currentPerson      = Person::find(auth()->user()->id);
-        $org                 = Org::find($current_person->defaultOrgID);
-        $exLoc               = Location::find($event->locationID);
-        $page_title          = trans('messages.headers.event_edit');
+        $current_person = $this->currentPerson = Person::find(auth()->user()->id);
+        $org = Org::find($current_person->defaultOrgID);
+        $exLoc = Location::find($event->locationID);
+        $page_title = trans('messages.headers.event_edit');
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }
 
@@ -625,8 +595,8 @@ class EventController extends Controller
     public function update(Request $request, Event $event)
     {
         // responds to PATCH /event/id
-        $slug            = request()->input('slug');
-        $skip            = request()->input('sub_changes');
+        $slug = request()->input('slug');
+        $skip = request()->input('sub_changes');
         $slug_not_unique = Event::where([
             ['slug', '=', $slug],
             ['eventID', '!=', $event->eventID],
@@ -639,58 +609,10 @@ class EventController extends Controller
         $original = $event->getOriginal();
 
         $this->currentPerson = Person::find(auth()->user()->id);
-        $input_loc           = request()->input('locationID');
-        // check to see if form loc == saved loc
-        // if so, grab location item and save data.
-        $loc_virtual = request()->input('virtual');
-        if (empty($loc_virtual)) {
-            $loc_virtual = 0;
-        }
-        if ($input_loc == $event->locationID) {
-            $loc            = Location::find($event->locationID);
-            $loc->orgID     = $event->orgID;
-            $loc->locName   = request()->input('locName');
-            $loc->addr1     = request()->input('addr1');
-            $loc->addr2     = request()->input('addr2');
-            $loc->city      = request()->input('city');
-            $loc->state     = request()->input('state');
-            $loc->zip       = request()->input('zip');
-            $loc->isVirtual = $loc_virtual;
-            $loc->updaterID = $this->currentPerson->personID;
-            $loc->save();
-            // if not and also not empty, grab location and save data
-        } elseif ($input_loc != $event->locationID && !empty($input_loc)) {
-            $loc            = Location::find(request()->input('locationID'));
-            $loc->orgID     = $event->orgID;
-            $loc->locName   = request()->input('locName');
-            $loc->addr1     = request()->input('addr1');
-            $loc->addr2     = request()->input('addr2');
-            $loc->city      = request()->input('city');
-            $loc->state     = request()->input('state');
-            $loc->zip       = request()->input('zip');
-            $loc->isVirtual = $loc_virtual;
-            $loc->updaterID = $this->currentPerson->personID;
-            $loc->save();
-            $event->locationID = $loc->locID;
 
-            // otherwise, the ID is empty but there might be data or not
-        } elseif (empty($input_loc)) {
-            if (strlen(request()->input('locName') . request()->input('addr1')) > 3) {
-                $loc            = new Location;
-                $loc->orgID     = $event->orgID;
-                $loc->locName   = request()->input('locName');
-                $loc->addr1     = request()->input('addr1');
-                $loc->addr2     = request()->input('addr2');
-                $loc->city      = request()->input('city');
-                $loc->state     = request()->input('state');
-                $loc->zip       = request()->input('zip');
-                $loc->isVirtual = $loc_virtual;
-                $loc->creatorID = $this->currentPerson->personID;
-                $loc->updaterID = $this->currentPerson->personID;
-                $loc->save();
-                $event->locationID = $loc->locID;
-            }
-        }
+        $loc = location_triage($request, $event, $this->currentPerson);
+
+        $event->locationID = $loc->locID;
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if ($eventDescription !== null) {
@@ -699,7 +621,7 @@ class EventController extends Controller
             }
         }
         $event->eventDescription = $eventDescription;
-        $eventInfo               = request()->input('eventInfo');
+        $eventInfo = request()->input('eventInfo');
         if ($eventInfo !== null) {
             if (preg_match("/data:image/", $eventInfo)) {
                 $eventInfo = extract_images($eventInfo, $event->orgID);
@@ -708,15 +630,15 @@ class EventController extends Controller
         $event->eventInfo = $eventInfo;
         //$event->eventDescription = request()->input('eventDescription');
         //$event->eventInfo = request()->input('eventInfo');
-        $event->catID          = request()->input('catID');
-        $event->eventTypeID    = request()->input('eventTypeID');
+        $event->catID = request()->input('catID');
+        $event->eventTypeID = request()->input('eventTypeID');
         $event->eventStartDate = request()->input('eventStartDate');
-        $event->eventEndDate   = request()->input('eventEndDate');
-        $event->eventTimeZone  = request()->input('eventTimeZone');
-        $event->contactOrg     = request()->input('contactOrg');
-        $event->contactEmail   = request()->input('contactEmail');
+        $event->eventEndDate = request()->input('eventEndDate');
+        $event->eventTimeZone = request()->input('eventTimeZone');
+        $event->contactOrg = request()->input('contactOrg');
+        $event->contactEmail = request()->input('contactEmail');
         $event->contactDetails = request()->input('contactDetails');
-        $event->showLogo       = request()->input('showLogo');
+        $event->showLogo = request()->input('showLogo');
         if (request()->input('hasFood')) {
             $event->hasFood = 1;
         } else {
@@ -738,26 +660,26 @@ class EventController extends Controller
          *  event tags
          */
         if (request()->input('hasTracksCheck') == 1) {
-            $numTracks        = request()->input('hasTracks');
+            $numTracks = request()->input('hasTracks');
             $event->hasTracks = $numTracks;
-            $count            = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
+            $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for ($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
-                $track            = new Track;
+                $track = new Track;
                 $track->trackName = 'Track' . $i;
-                $track->eventID   = $event->eventID;
+                $track->eventID = $event->eventID;
                 $track->save();
             }
         } else {
             $event->hasTracks = 0;
         }
         $event->updaterID = $this->currentPerson->personID;
-        $today            = Carbon::now();
+        $today = Carbon::now();
 
         // Edit the default ticket for the event IF the end date changed.
         if ($original['eventEndDate'] == $event->eventEndDate) {
-            $tkt                      = Ticket::where('eventID', $event->eventID)->first();
+            $tkt = Ticket::where('eventID', $event->eventID)->first();
             $tkt->availabilityEndDate = $event->eventStartDate;
-            $tkt->earlyBirdEndDate    = $today;
+            $tkt->earlyBirdEndDate = $today;
             $tkt->save();
         }
 
@@ -770,32 +692,32 @@ class EventController extends Controller
                 ->whereNotNull('discountCODE')->get();
 
             foreach ($orgDiscounts as $od) {
-                $ed               = new EventDiscount;
-                $ed->orgID        = $od->orgID;
-                $ed->eventID      = $event->eventID;
+                $ed = new EventDiscount;
+                $ed->orgID = $od->orgID;
+                $ed->eventID = $event->eventID;
                 $ed->discountCODE = $od->discountCODE;
-                $ed->percent      = $od->percent;
-                $ed->creatorID    = $this->currentPerson->personID;
-                $ed->updaterID    = $this->currentPerson->personID;
+                $ed->percent = $od->percent;
+                $ed->creatorID = $this->currentPerson->personID;
+                $ed->updaterID = $this->currentPerson->personID;
                 $ed->save();
             }
         }
 
         if ($event->mainSession === null) {
-            $mainSession              = new EventSession;
-            $mainSession->trackID     = 0;
-            $mainSession->eventID     = $event->eventID;
+            $mainSession = new EventSession;
+            $mainSession->trackID = 0;
+            $mainSession->eventID = $event->eventID;
             $mainSession->sessionName = 'Default Session';
-            $mainSession->confDay     = 0;
-            $mainSession->start       = $event->eventStartDate;
-            $mainSession->end         = $event->eventEndDate;
-            $mainSession->order       = 0;
-            $mainSession->creatorID   = $this->currentPerson->personID;
-            $mainSession->updaterID   = $this->currentPerson->personID;
+            $mainSession->confDay = 0;
+            $mainSession->start = $event->eventStartDate;
+            $mainSession->end = $event->eventEndDate;
+            $mainSession->order = 0;
+            $mainSession->creatorID = $this->currentPerson->personID;
+            $mainSession->updaterID = $this->currentPerson->personID;
             $mainSession->save();
 
             $event->mainSession = $mainSession->sessionID;
-            $event->updaterID   = $this->currentPerson->personID;
+            $event->updaterID = $this->currentPerson->personID;
         }
         try {
             $event->save();
@@ -807,6 +729,7 @@ class EventController extends Controller
         $ical           = new ics_calendar($event);
         $contents       = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents);
+        $event->create_or_update_event_ics();
 
         // Think about whether ticket modification should be done here.
         // Maybe catch the auto-created tickets when events are copied
@@ -859,15 +782,15 @@ class EventController extends Controller
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        $name  = request()->input('name');
+        $name = request()->input('name');
         $value = request()->input('value');
 
         if ($name == 'earlyBirdDate' and $value !== null) {
-            $date  = date("Y-m-d H:i:s", strtotime(trim($value)));
+            $date = date("Y-m-d H:i:s", strtotime(trim($value)));
             $value = $date;
         }
 
-        $event->{$name}   = $value;
+        $event->{$name} = $value;
         $event->updaterID = $this->currentPerson->personID;
         try {
             $event->save();
@@ -895,33 +818,46 @@ class EventController extends Controller
 
     public function showGroup($event = null, $override = null)
     {
-        $title               = trans('messages.headers.group_reg');
-        $today               = Carbon::now();
+        $title = trans('messages.headers.group_reg');
+        $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
 
         if (!isset($event)) {
-            $e = Event::where([
-                ['orgID', '=', $this->currentPerson->defaultOrgID],
-                ['eventStartDate', '>=', $today->subDays(10)],
-            ])
-                ->select('eventID', 'eventName')
-                ->get();
+            if (Auth::user()->hasRole('Developer')) {
+                $e = Event::where([
+                    ['orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['eventStartDate', '>=', $today->subDays(10)],
+                ])
+                    ->select(DB::raw("eventID,
+                                      concat(date_format(eventStartDate, '%l/%d/%Y'),
+                                        ': ',
+                                        eventName,
+                                        ' (id:', eventID, ')') as eventName"))
+                    ->get();
+            } else {
+                $e = Event::where([
+                    ['orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['eventStartDate', '>=', $today->subDays(10)],
+                ])
+                    ->select(DB::raw("eventID, concat(date_format(eventStartDate, '%l/%d/%Y'), ': ', eventName) as eventName"))
+                    ->get();
+            }
 
-            $a      = $e->pluck('eventName', 'eventID');
-            $b      = array(0 => 'Select Event');
-            $c      = $a->toArray();
+            $a = $e->pluck('eventName', 'eventID');
+            $b = array(null => trans('messages.admin.upload.select'));
+            $c = $a->toArray();
             $events = $b + $c;
             return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'events'));
         } else {
             // Cannot pass object as reference so need to set here
-            $event             = Event::find($event);
+            $event = Event::find($event);
             $override ? $check = 1 : $check = 0;
-            $title             = $title . ": $event->eventName";
-            $t                 = Ticket::where('eventID', '=', $event->eventID)->get();
+            $title = $title . ": $event->eventName";
+            $t = Ticket::where('eventID', '=', $event->eventID)->get();
             if (count($t) > 1) {
-                $a       = $t->pluck('ticketLabel', 'ticketID');
-                $b       = array(null => trans('messages.headers.sel_tkt'));
-                $c       = $a->toArray();
+                $a = $t->pluck('ticketLabel', 'ticketID');
+                $b = array(null => trans('messages.headers.sel_tkt'));
+                $c = $a->toArray();
                 $tickets = $b + $c;
             } else {
                 $tickets = $t->first()->ticketID;
@@ -934,7 +870,8 @@ class EventController extends Controller
 
             $discounts = $b + $d;
 
-            return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'tickets', 'discounts', 'check'));
+            return view('v1.auth_pages.events.registration.group-registration',
+                compact('title', 'event', 'tickets', 'discounts', 'check'));
         }
 
         //return view('v1.auth_pages.events.group-registration', compact('event'));
@@ -953,9 +890,9 @@ class EventController extends Controller
         if (preg_match('/,/', $etID)) {
             // change value of $etID to be the list of things if it's a list
             $etID_array = explode(",", $etID);
-            $tag        = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
-            $tag        = array_map("et_translate", $tag);
-            $tag        = implode(" or ", (array) $tag);
+            $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
+            $tag = array_map("et_translate", $tag);
+            $tag = implode(" or ", (array)$tag);
 
             $events = Event::where([
                 ['orgID', $orgID],
@@ -1043,7 +980,7 @@ class EventController extends Controller
             $current_person = 0;
         } else {
             $this->currentPerson = Person::find(auth()->user()->id);
-            $current_person      = $this->currentPerson;
+            $current_person = $this->currentPerson;
         }
         $currentOrg = Org::find($event->orgID);
 
@@ -1051,26 +988,26 @@ class EventController extends Controller
         $referrer = app(Referer::class)->get();
 
         if ($referrer) {
-            $r               = new ReferLink;
-            $r->objectType   = 'eventID';
-            $r->objectID     = $event->eventID;
+            $r = new ReferLink;
+            $r->objectType = 'eventID';
+            $r->objectID = $event->eventID;
             $r->referrerText = $referrer;
             $r->save();
         }
 
-        $event_loc   = Location::where('locID', $event->locationID)->first();
+        $event_loc = Location::where('locID', $event->locationID)->first();
         $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
-        $bundles     =
-        Ticket::where([
-            ['isaBundle', 1],
-            ['eventID', $event->eventID],
-        ])->get()->sortByDesc('availableEndDate');
+        $bundles =
+            Ticket::where([
+                ['isaBundle', 1],
+                ['eventID', $event->eventID],
+            ])->get()->sortByDesc('availableEndDate');
 
         $tickets =
-        Ticket::where([
-            ['isaBundle', 0],
-            ['eventID', $event->eventID],
-        ])->get()->sortByDesc('availableEndDate');
+            Ticket::where([
+                ['isaBundle', 0],
+                ['eventID', $event->eventID],
+            ])->get()->sortByDesc('availableEndDate');
 
         return view(
             'v1.public_pages.display_tickets_only',
@@ -1085,7 +1022,7 @@ class EventController extends Controller
             ['eventStartDate', '>=', Carbon::now()],
             ['isActive', '=', 1],
         ])->get();
-        $ical   = new ics_cal_full($events);
+        $ical = new ics_cal_full($events);
         $output = $ical->open();
         $output .= $ical->get();
         $output .= $ical->close();

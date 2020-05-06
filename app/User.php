@@ -55,9 +55,12 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
 
     public function person()
     {
-        return $this->hasOne(Person::class, 'personID');
+        return $this->hasOne(Person::class, 'personID', 'id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany relationship with Roles
+     */
     public function roles()
     {
         // we need to get default person org id so running another query to fetch same

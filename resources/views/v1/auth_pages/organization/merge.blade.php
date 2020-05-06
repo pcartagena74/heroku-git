@@ -2,30 +2,35 @@
 /**
  * Comment:
  * Created: 2/9/2017
+ *
+ * @var $letter
+ * @var $model1
+ * @var $model2
+ *
  */
 
 $topBits = '';  // remove this if this was set in the controller
-$string = 'l='.$letter.'&';
-if($model1) {
+$string = 'l=' . $letter . '&';
+if ($model1) {
     $columns = Schema::getColumnListing($model1->getTable());
 }
 
-switch($letter){
+switch ($letter) {
     case 'p':
-        if($model1){
-            $string .= 'm='.$model1->personID.'&';
+        if ($model1) {
+            $string .= 'm=' . $model1->personID . '&';
             $id1 = $model1->personID;
         }
-        if($model2){
+        if ($model2) {
             $id2 = $model2->personID;
         }
         break;
     case 'l':
-        if($model1){
-            $string .= 'm='.$model1->locID.'&';
+        if ($model1) {
+            $string .= 'm=' . $model1->locID . '&';
             $id1 = $model1->locID;
         }
-        if($model2){
+        if ($model2) {
             $id2 = $model2->locID;
         }
         break;
@@ -36,7 +41,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
-@include('v1.parts.typeahead')
+    @include('v1.parts.typeahead')
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.rec_merge'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -52,18 +57,18 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
     @else
         @if($model2 !== null)
             <div class="col-sm-9">
-        @else
-            <div class="col-sm-6">
-        @endif
-                @if($model2 !== null)
-                    {!! Form::open(array('url' => env('APP_URL').'/execute_merge', 'method' => 'post')) !!}
-                    {!! Form::hidden('model1', $id1, array('id' => 'model1')) !!}
-                    {!! Form::hidden('model2', $id2, array('id' => 'model2')) !!}
-                    {!! Form::hidden('letter', $letter, array('id' => 'letter')) !!}
-                    {!! Form::hidden('ignore_array', implode(",", $ignore_array), array('id' => 'ignore_array')) !!}
-                    {!! Form::hidden('columns', implode(",", $columns), array('id' => 'columns')) !!}
-                    @lang('messages.instructions.merge_overwrite')
-                @endif
+                @else
+                    <div class="col-sm-6">
+                        @endif
+                        @if($model2 !== null)
+                            {!! Form::open(array('url' => env('APP_URL').'/execute_merge', 'method' => 'post')) !!}
+                            {!! Form::hidden('model1', $id1, array('id' => 'model1')) !!}
+                            {!! Form::hidden('model2', $id2, array('id' => 'model2')) !!}
+                            {!! Form::hidden('letter', $letter, array('id' => 'letter')) !!}
+                            {!! Form::hidden('ignore_array', implode(",", $ignore_array), array('id' => 'ignore_array')) !!}
+                            {!! Form::hidden('columns', implode(",", $columns), array('id' => 'columns')) !!}
+                            @lang('messages.instructions.merge_overwrite')
+                        @endif
                         <table class="table table-condensed table-striped table-responsive jambo_table">
                             <thead>
                             <tr valign="top">
@@ -71,10 +76,11 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                 <th style="text-align: left;">
                                     @lang('messages.headers.keep')
                                     @if($model1 !== null && $model2 !== null)
-                                    <a href="{{ env('APP_URL') }}/merge/{{ $letter }}/{{ $id2 }}/{{ $id1 }}"
-                                       class="btn btn-xs btn-success pull-right">
-                                        <i data-toggle="tooltip" title="{{ trans('messages.headers.swap') }}" class="fas fa-sync-alt"></i>
-                                    </a>
+                                        <a href="{{ env('APP_URL') }}/merge/{{ $letter }}/{{ $id2 }}/{{ $id1 }}"
+                                           class="btn btn-xs btn-success pull-right">
+                                            <i data-toggle="tooltip" title="{{ trans('messages.headers.swap') }}"
+                                               class="fas fa-sync-alt"></i>
+                                        </a>
                                     @endif
                                 </th>
                                 @if($model2 !== null)
@@ -87,16 +93,16 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                 @case('p')
                                 <tr>
                                     <td style="text-align: right;">
-                                        @lang('messages.fields.pmi_id'):<br />
+                                        @lang('messages.fields.pmi_id'):<br/>
                                         @lang('messages.fields.pmi_type'):
                                     </td>
                                     <td style="text-align: left;">
-                                        {{ $model1->orgperson->OrgStat1 }}<br />
+                                        {{ $model1->orgperson->OrgStat1 }}<br/>
                                         {{ $model1->orgperson->OrgStat2 }}
                                     </td>
                                     @if($model2 !== null)
                                         <td style="text-align: left;">
-                                            {{ $model2->orgperson->OrgStat1 }}<br />
+                                            {{ $model2->orgperson->OrgStat1 }}<br/>
                                             {{ $model2->orgperson->OrgStat2 }}
                                         </td>
                                     @endif
@@ -123,37 +129,38 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
 
                             @foreach($columns as $c)
                                 @if(!in_array($c, $suppress_array))
-                                <tr>
-                                    <td style="text-align: right;">
-                                        {{ $c }}:
-                                    </td>
-                                    <td style="text-align: left;">
-                                        {!! $model1->$c ?? '<i>null</i>' !!}
-                                        <br />
-                                        @if(!in_array($c, $ignore_array) && isset($model2))
-                                            {!! Form::radio($c, 1, true, $attributes=array('required', 'id' => $c.'1')) !!}
-                                        @endif
-                                    </td>
-                                    @if(isset($model2))
+                                    <tr>
+                                        <td style="text-align: right;">
+                                            {{ $c }}:
+                                        </td>
                                         <td style="text-align: left;">
-                                            {!! $model2->$c ?? '<i>null</i>' !!}
-                                            <br />
-                                            @if(!in_array($c, $ignore_array))
-                                                {!! Form::radio($c, 2, false, $attributes=array('required', 'id' => $c.'2')) !!}
+                                            {!! $model1->$c ?? '<i>null</i>' !!}
+                                            <br/>
+                                            @if(!in_array($c, $ignore_array) && isset($model2))
+                                                {!! Form::radio($c, 1, true, $attributes=array('required', 'id' => $c.'1')) !!}
                                             @endif
                                         </td>
-                                    @endif
-                                </tr>
+                                        @if(isset($model2))
+                                            <td style="text-align: left;">
+                                                {!! $model2->$c ?? '<i>null</i>' !!}
+                                                <br/>
+                                                @if(!in_array($c, $ignore_array))
+                                                    {!! Form::radio($c, 2, false, $attributes=array('required', 'id' => $c.'2')) !!}
+                                                @endif
+                                            </td>
+                                        @endif
+                                    </tr>
                                 @endif
                             @endforeach
                             </tbody>
                         </table>
-                @if($model2)
-                {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
 
-                {!! Form::close() !!}
-                @endif
-            </div>
+                        @if($model2)
+                            {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
+                            {!! Form::close() !!}
+                        @endif
+                    </div>
+
                     @if(isset($model2))
                         <div class="col-sm-3">
                             @include('v1.parts.start_content',
@@ -171,12 +178,11 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                 ['header' => 'Email Addresses', 'subheader' => '',
                                 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                                The following email address are associated with either account.
-                                They will all be associated with <b>"The Keeper"</b> post-merge.
+                                @lang('messages.functions.merge.assoc_emails')
                                 <p></p>
 
                                 @if($model1 !== null)
-                                    PersonID {{ $model1->personID }}'s Emails:<br />
+                                    PersonID {{ $model1->personID }}'s Emails:<br/>
                                     @foreach($model1->emails as $e)
                                         {{ $e->emailADDR }},
                                     @endforeach
@@ -184,7 +190,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                 @endif
 
                                 @if($model2 !== null)
-                                    PersonID {{ $model2->personID }}'s Emails:<br />
+                                    PersonID {{ $model2->personID }}'s Emails:<br/>
                                     @foreach($model2->emails as $e)
                                         {{ $e->emailADDR }},
                                     @endforeach
@@ -216,13 +222,13 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
 
                 @include('v1.parts.end_content')
 
-@endsection
+                @endsection
 
-@section('scripts')
-{{--
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
---}}
+                @section('scripts')
+                    {{--
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+                    --}}
                     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
 
                     <script>
@@ -244,13 +250,13 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                         });
                     </script>
 
-    @switch($letter)
-        @case('p')
-            @include('v1.parts.menu-fix', array('path' => '/merge/p'))
-            @break
-        @case('l')
-            @include('v1.parts.menu-fix', array('path' => '/locations'))
-            @break
-    @endswitch
+            @switch($letter)
+                @case('p')
+                @include('v1.parts.menu-fix', array('path' => '/merge/p'))
+                @break
+                @case('l')
+                @include('v1.parts.menu-fix', array('path' => '/locations'))
+                @break
+            @endswitch
 
 @endsection

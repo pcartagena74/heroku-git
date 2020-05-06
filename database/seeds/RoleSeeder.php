@@ -4,7 +4,7 @@ use App\Role;
 use App\User;
 use Illuminate\Database\Seeder;
 
-class RoleTableSeeder extends Seeder
+class RoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,7 +17,7 @@ class RoleTableSeeder extends Seeder
             [
                 'name'         => 'Board',
                 'display_name' => 'Board Member',
-                'description'  => 'Volumneer who may need administrative access to any area of this site.',
+                'description'  => 'Volunteer who may need administrative access to any area of this site.',
             ],
             [
                 'name'         => 'Speaker',

@@ -81,6 +81,15 @@ class Person extends Model
         return $this->belongsTo(Org::class, 'defaultOrgID', 'orgID');
     }
 
+    public function orgStat1()
+    {
+        if(null !== $this->orgperson){
+            return $this->orgperson->OrgStat1;
+        } else {
+            return null;
+        }
+    }
+
     public function showDisplayName()
     {
         if ($this->prefName) {
