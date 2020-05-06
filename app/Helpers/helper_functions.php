@@ -1149,7 +1149,8 @@ if (!function_exists('generateEmailTemplateThumbnailName')) {
     function generateEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
-        return $campaign->orgID . '-' . $campaign->campaignID . '-' . strtotime($campaign->createDate) . '.png';
+        $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
     }
 }
 
@@ -1162,7 +1163,8 @@ if (!function_exists('getEmailTemplateThumbnailName')) {
     function getEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
-        return $campaign->orgID . '-' . $campaign->campaignID . '-' . strtotime($campaign->createDate) . '.png';
+        $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
     }
 }
 
@@ -1516,5 +1518,15 @@ if (!function_exists('convertToDatePickerFormat')) {
     {
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
         return $date->format('m/d/Y h:i A');
+    }
+}
+if (!function_exists('deleteCampaignThumb')) {
+    function deleteCampaignThumb($campaign)
+    {
+        $path      = getAllDirectoryPathFM();
+        $file_name = getEmailTemplateThumbnailName($campaign);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'] . '/thumb/' . $file_name);
+        }
     }
 }

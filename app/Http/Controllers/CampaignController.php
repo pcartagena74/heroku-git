@@ -577,11 +577,13 @@ class CampaignController extends Controller
         }
         if (empty($campaign->sendDate)) {
             EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->delete();
+            deleteCampaignThumb($campaign);
             $campaign->delete();
             return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
         } else if (!empty($campaign->sendDate) && (empty($campaign->scheduleDate) || !empty($campaign->scheduleDate))) {
             EmailCampaignTemplateBlock::where('campaign_id', $campaign->campaignID)->delete();
             EmailQueue::where('campaign_id', $campaign->campaignID)->delete();
+            deleteCampaignThumb($campaign);
             $campaign->delete();
             return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
         }
