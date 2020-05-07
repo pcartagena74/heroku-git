@@ -10,7 +10,8 @@ return [
     ],
 
     'app_params' => [
-        'date_format' => "m/d/Y h:i A",
+        'date_format' => "d/m/Y",
+        'datetime_format' => "d/m/Y h:i A",
     ],
 
     'auth' => [
@@ -809,6 +810,7 @@ return [
         'ev_manage' => 'es-Manage Events',
         'ev_old' => 'es-All Past Events',
         'ev_add' => 'es-Add Event',
+        'ev_stats' => 'es-Event Stats',
         'ev_loc' => 'es-Location Management',
         'ev_mt' => 'es-Manage Event Tickets',
         'ev_rpt' => 'es-Event Reporting',

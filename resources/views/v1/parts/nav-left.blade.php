@@ -222,6 +222,11 @@ try{
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="{{ url('eventstats')}}">
+                                        @lang('messages.nav.ev_stats')
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="{{ url('locations')}}">
                                         @lang('messages.nav.ev_loc')
                                     </a>
