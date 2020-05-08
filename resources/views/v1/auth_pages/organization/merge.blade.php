@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 2/9/2017
@@ -35,9 +35,10 @@ switch ($letter) {
         }
         break;
 }
-$ignore_array = array('firstName', 'lastName', 'login', 'defaultOrgID', 'personID', 'locID', 'orgID');
+$ignore_array = array('firstName', 'lastName', 'login', 'defaultOrgID', 'defaultOrgPersonID', 'personID', 'locID', 'orgID');
 $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'defaultOrgID', 'lastLoginDate', 'deleted_at', 'locNote', 'isVirtual', 'isDeleted');
-?>
+@endphp
+
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
@@ -97,13 +98,13 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                         @lang('messages.fields.pmi_type'):
                                     </td>
                                     <td style="text-align: left;">
-                                        {{ $model1->orgperson->OrgStat1 }}<br/>
-                                        {{ $model1->orgperson->OrgStat2 }}
+                                        {{ $model1->orgStat1() }}<br/>
+                                        {{ $model1->orgperson ? $model1->orgperson->OrgStat2 : null }}
                                     </td>
-                                    @if($model2 !== null)
+                                    @if($model2 !== null && $model2->orgperson !== null)
                                         <td style="text-align: left;">
-                                            {{ $model2->orgperson->OrgStat1 }}<br/>
-                                            {{ $model2->orgperson->OrgStat2 }}
+                                            {{ $model2->orgStat1() }}<br/>
+                                            {{ $model2->orgperson->OrgStat2 }}<br/>
                                         </td>
                                     @endif
                                 </tr>
