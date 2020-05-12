@@ -47,21 +47,12 @@
             <b>
                 @lang('messages.reports.graph_years'):
             </b>
+            {{--
             <a data-pk="{{ 1 }}" data-title="{{ trans('messages.reports.select_years') }}" data-type="select2" id="tags">
                 {!! $year_string !!}
             </a>
-            <select class="select2" multiple="multiple">
-                @php 
-                foreach(explode(',',$year_string) as $key=>$value){
-                    echo '
-                <option value="'.$value.'">
-                    '.$value.'
-                </option>
-                ';
-
-                }
-                @endphp
-            </select>
+            --}}
+            <input class="form-group select2" name="" type="text" value="{{$year_string}}"/>
             <br/>
             <div id="canvas">
             </div>
@@ -101,6 +92,11 @@
 
 @section('scripts')
     @include('v1.parts.menu-fix', array('path' => '/mbrreport'))
+    @include('v1.parts.footer-chart')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js">
+</script>
 <script>
     // $.fn.editable.defaults.ajaxOptions = {type: "POST"};
         var result;
@@ -123,12 +119,24 @@
                 // window.location = "{{ env('APP_URL') . "/mbrreport/$orgID" }}";
             },
         });
-        $('.select2').select2();
-</script>
-@include('v1.parts.footer-chart')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js">
-</script>
-<script>
+        var yearSelect = $('.select2').select2({
+            tags: [{!! $quote_string !!}],
+            tokenSeparators: [",", " "],
+            allowClear: false,
+            sorter: data => data.sort((a, b) => a.text.localeCompare(b.text)),
+        });
+        yearSelect.on("change", function (e) { 
+            var data = e.params;
+            console.log("change",e.val); 
+            updateMorrisChart(e.val);
+        });
+        yearSelect.on('select', function(e){
+          var id = e.params.data.id;
+          var option = $(e.target).children('[value='+id+']');
+          option.detach();
+          $(e.target).append(option).change();
+        });
+
     var morris = '';
     $(document).ready(function () {
         morris = Morris.Bar({
@@ -143,28 +151,9 @@
             resize: true,
         });
     });
-    $('#tags').on('shown', function(e, editable) {
-
-        var popover = editable.input.$input[0].closest('.popover');
-        var popover_id = popover.id;
-        
-        $(document).on('change', editable, function() {
-            var new_value = editable.input.$input[0].value;
-            // console.log(new_value);
-            updateMorrisChart(new_value);
-        });
-    });
-
-    function morrisData(data) {
-        if(data){
-            return data;
-        } else {
-            return [{!! $datastring !!}];
-        }
-    }
-    function updateMorrisChart(data){
+    function updateMorrisChart(list){
+        list.sort();
         var morris_data_real = [{!! $datastring !!}];
-        var list = data.split(',');
         $.each(morris_data_real,function(key,value){
             $.each(value,function(key_in,value_in){
                 if(list.indexOf(key_in) === -1 && key_in != 'Events'){
@@ -260,8 +249,6 @@
 <script src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_API_KEY')}}&libraries=visualization">
 </script>
 --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js">
-</script>
 <script>
     var ctx = document.getElementById("indPie").getContext('2d');
         var options = {
