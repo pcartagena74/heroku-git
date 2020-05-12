@@ -6,6 +6,7 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Laravel\Dusk\TestCase as BaseTestCase;
+use NoelDeMartin\LaravelDusk\Browser;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -40,5 +41,11 @@ abstract class DuskTestCase extends BaseTestCase
                 ChromeOptions::CAPABILITY, $options
             )
         );
+    }
+
+    protected function newBrowser($driver)
+    {
+        Browser::$javascriptRequestsTimeout = 10;
+        return new Browser($driver);
     }
 }

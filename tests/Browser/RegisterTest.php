@@ -38,7 +38,7 @@ class RegisterTest extends DuskTestCase
         $event = Event::all()->random(1)->first();
 
         $this->browse(function (Browser $browser) use ($event) {
-            $browser->visit(env('APP_URL')."/events/$event->slug")
+            $browser->visit("/events/$event->slug")
                 ->assertSee($event->eventName);
         });
 
