@@ -60,6 +60,11 @@
 
             @include('v1.parts.start_content', ['header' => trans('messages.reports.ind_brk'), 'subheader' => '',
                      'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+            <div class="col-md-3 pull-right">
+                <button class="btn" id="pie_chart_reset" onclick="resetChart()" style="display: none">
+                    Reset
+                </button>
+            </div>
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <canvas id="indPie">
                 </canvas>
@@ -127,7 +132,6 @@
         });
         yearSelect.on("change", function (e) { 
             var data = e.params;
-            console.log("change",e.val); 
             updateMorrisChart(e.val);
         });
         yearSelect.on('select', function(e){
@@ -150,6 +154,8 @@
             hideHover: 'auto',
             resize: true,
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
     });
     function updateMorrisChart(list){
         list.sort();
@@ -165,6 +171,144 @@
         morris.options.labels = list;
         morris.setData(morris_data_real);
     }
+    
+    var ctx = document.getElementById("indPie").getContext('2d');
+        var options = {
+            responsive: true,
+            legend: {
+                display: false,
+                position: "bottom"
+            },
+            legendCallback: function (chart) {
+                //console.log(chart.data);
+                generateIndPieChartLegend(chart);
+            }
+        };
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    @foreach($indPie as $i)
+                        '% {{ trans('messages.fields.industries.' . $i->indName) }}',
+                    @endforeach
+                ],
+                datasets: [{
+                    backgroundColor: [
+                        "#2ecc71",
+                        "#3498db",
+                        "#95a5a6",
+                        "#9b59b6",
+                        "#f1c40f",
+                        "#e74c3c",
+                        "#34495e",
+                        "#b7ad6c",
+                        "#CCFDFF",
+                        "#d7ccff",
+                        "#ffccf3",
+                        "#ff9651",
+                        "#ff0000",
+                        "#00ff00",
+                        "#ccffde",
+                        "#ffcccc",
+                        "#0000ff",
+                        "#2ecc71",
+                        "#3498db",
+                        "#95a5a6",
+                        "#9b59b6",
+                        "#f1c40f",
+                        "#e74c3c",
+                        "#34495e",
+                        "#b7ad6c",
+                        "#CCFDFF",
+                        "#d7ccff",
+                        "#ffccf3",
+                        "#ff9651",
+                        "#ff0000",
+                        "#00ff00",
+                        "#ccffde",
+                        "#ffcccc",
+                        "#0000ff",
+                    ],
+
+                    data: [
+                        @foreach($indPie as $i)
+                        @if($i->indName == 'Total')
+                        @else
+                        {{ $i->cnt }},
+                        @endif
+                        @endforeach
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    display: false,
+                    position: "bottom",
+                },
+                legendCallback: function (chart) {
+                    //console.log(chart.data);
+                    return generateIndPieChartLegent(chart);
+                },
+
+            }
+        });
+        document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
+
+        $('body').on('click','#pieLegend ul li',function(){
+            var index_remove = $(this).data('dataset');
+            let to_add = myChart.data.datasets[0].data[index_remove];
+            let other_key = Object.values(myChart.data.labels).indexOf('% Other');
+            if(index_remove == other_key) {
+                return;
+            }
+            $('#pie_chart_reset').show();
+            myChart.data.datasets[0].data[other_key] = Math.round(myChart.data.datasets[0].data[other_key] + to_add,1);
+            myChart.data.labels.splice(index_remove, 1);
+            myChart.data.datasets[0].data.splice(index_remove, 1);
+            let legend = generateIndPieChartLegent(myChart);
+            document.getElementById('pieLegend').innerHTML = legend;
+            $(this).tooltip('hide');
+            $('[data-toggle="tooltip"]').tooltip();
+            myChart.update();
+        });
+        function resetChart(){
+            $('#pie_chart_reset').hide();
+            let labels = [@foreach($indPie as $i)
+                        '% {{ trans('messages.fields.industries.' . $i->indName) }}',
+                    @endforeach];
+            let data = [
+                @foreach($indPie as $i)
+                @if($i->indName == 'Total')
+                @else
+                {{ $i->cnt }},
+                @endif
+                @endforeach
+            ];
+            myChart.data.datasets[0].data = data;
+            myChart.data.labels = labels;
+            let legend = generateIndPieChartLegent(myChart);
+            document.getElementById('pieLegend').innerHTML = legend;
+            $('[data-toggle="tooltip"]').tooltip();
+            myChart.update();
+        }
+
+        function generateIndPieChartLegent(chart){
+            var text = [];
+            text.push('<ul>');
+            for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                text.push('<li data-dataset="'+i+'" data-toggle="tooltip" title="Click to merge" data-placement="left">');
+                text.push('<span style="color:white; background-color:'
+                    + chart.data.datasets[0].backgroundColor[i] + '">&nbsp;'
+                    + chart.data.datasets[0].data[i] + ' </span> &nbsp;');
+                if (chart.data.labels[i]) {
+                    text.push(chart.data.labels[i]);
+                }
+                text.push('</li>');
+            }
+            text.push('</ul>');
+            return text.join("");
+        }
     var map, hesatmap;
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -243,128 +387,6 @@
         ];
       }
 </script>
-{{--
-<script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_API_KEY')}}&callback=initMap" type="text/javascript">
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_API_KEY')}}&libraries=visualization">
-</script>
---}}
-<script>
-    var ctx = document.getElementById("indPie").getContext('2d');
-        var options = {
-            responsive: true,
-            legend: {
-                display: false,
-                position: "bottom"
-            },
-            legendCallback: function (chart) {
-                //console.log(chart.data);
-                var text = [];
-                text.push('<ul>');
-                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
-                    text.push('<li>');
-                    text.push('<span style="background-color:' + chart.data.datasets[0].backgroundColor[i]
-                        + '">' + chart.data.datasets[0].data[i] + '</span>');
-                    if (chart.data.labels[i]) {
-                        text.push(chart.data.labels[i]);
-                    }
-                    text.push('</li>');
-                }
-                text.push('</ul>');
-                return text.join("");
-            }
-        };
-        var myChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: [
-                    @foreach($indPie as $i)
-                        '% {{ trans('messages.fields.industries.' . $i->indName) }}',
-                    @endforeach
-                ],
-                datasets: [{
-                    backgroundColor: [
-                        "#2ecc71",
-                        "#3498db",
-                        "#95a5a6",
-                        "#9b59b6",
-                        "#f1c40f",
-                        "#e74c3c",
-                        "#34495e",
-                        "#b7ad6c",
-                        "#CCFDFF",
-                        "#d7ccff",
-                        "#ffccf3",
-                        "#ff9651",
-                        "#ff0000",
-                        "#00ff00",
-                        "#ccffde",
-                        "#ffcccc",
-                        "#0000ff",
-                        "#2ecc71",
-                        "#3498db",
-                        "#95a5a6",
-                        "#9b59b6",
-                        "#f1c40f",
-                        "#e74c3c",
-                        "#34495e",
-                        "#b7ad6c",
-                        "#CCFDFF",
-                        "#d7ccff",
-                        "#ffccf3",
-                        "#ff9651",
-                        "#ff0000",
-                        "#00ff00",
-                        "#ccffde",
-                        "#ffcccc",
-                        "#0000ff",
-                    ],
-
-                    data: [
-                        @foreach($indPie as $i)
-                        @if($i->indName == 'Total')
-                        @else
-                        {{ $i->cnt }},
-                        @endif
-                        @endforeach
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                legend: {
-                    display: false,
-                    position: "bottom"
-                },
-                legendCallback: function (chart) {
-                    //console.log(chart.data);
-                    var text = [];
-                    text.push('<ul>');
-                    for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
-                        text.push('<li data-dataset="'+i+'">');
-                        text.push('<span style="color:white; background-color:'
-                            + chart.data.datasets[0].backgroundColor[i] + '">&nbsp;'
-                            + chart.data.datasets[0].data[i] + ' </span> &nbsp;');
-                        if (chart.data.labels[i]) {
-                            text.push(chart.data.labels[i]);
-                        }
-                        text.push('</li>');
-                    }
-                    text.push('</ul>');
-                    return text.join("");
-                }
-            }
-        });
-        document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
-        $('#pieLegend ul li').on('click',function(){
-            if(myChart.getDatasetMeta(0).data[$(this).data('dataset')].hidden == true){
-                myChart.getDatasetMeta(0).data[$(this).data('dataset')].hidden = false;
-                $(this).unwrap();
-            } else {
-                myChart.getDatasetMeta(0).data[$(this).data('dataset')].hidden = true;
-                $(this).wrap("<strike>");
-            }
-            myChart.update();
-        });
+<script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_API_KEY')}}&callback=initMap&libraries=visualization" type="text/javascript">
 </script>
 @endsection
