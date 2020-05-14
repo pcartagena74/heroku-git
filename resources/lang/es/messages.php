@@ -90,6 +90,7 @@ return [
         'unbecome' => 'es-End This / Resume Your Identity',
         'use_addr' => 'es-Use Address',
         'wait' => 'es-Join the Wait List',
+        'reset'=>'es-Reset',
     ],
 
     'codes' => [
@@ -363,6 +364,7 @@ return [
         'tech_contact_statement' => 'es-Tech Contact Statement',
         'org_path' => 'es-Organization Path',
         'filter_tickets' => 'es-Filter Tickets',
+        'mbr_report_chart_tooltip'=>'es-Click to remove and merge into category: Other'
     ],
 
     'headers' => [
@@ -1097,7 +1099,7 @@ return [
     ],
 
     'tabs' => [
-        'heat_map' => 'es-Heat Map [Coming Soon]',
+        'heat_map' => 'es-Heat Map',
         'mem_demo' => 'es-Member Demographics',
         'ticketing' => 'es-Event Ticketing',
         'sessions' => 'es-Event Sessions',

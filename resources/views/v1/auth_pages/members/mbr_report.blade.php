@@ -62,7 +62,7 @@
                      'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
             <div class="col-md-3 pull-right">
                 <button class="btn" id="pie_chart_reset" onclick="resetChart()" style="display: none">
-                    Reset
+                    {{ trans('messages.buttons.reset') }}
                 </button>
             </div>
             <div class="col-md-12 col-sm-12 col-xs-12">
@@ -74,21 +74,25 @@
             @include('v1.parts.end_content')
         </div>
         <div aria-labelledby="everyone_tab" class="tab-pane fade" id="tab_content2">
-            <div id="floating-panel">
-                <button onclick="toggleHeatmap()">
-                    Toggle Heatmap
-                </button>
-                <button onclick="changeGradient()">
-                    Change gradient
-                </button>
-                <button onclick="changeRadius()">
-                    Change radius
-                </button>
-                <button onclick="changeOpacity()">
-                    Change opacity
-                </button>
-            </div>
-            <div id="map">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div id="floating-panel">
+                        <button onclick="toggleHeatmap()">
+                            Toggle Heatmap
+                        </button>
+                        <button onclick="changeGradient()">
+                            Change gradient
+                        </button>
+                        <button onclick="changeRadius()">
+                            Change radius
+                        </button>
+                        <button onclick="changeOpacity()">
+                            Change opacity
+                        </button>
+                    </div>
+                    <div id="map" style="height: 600px">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -258,7 +262,9 @@
         $('body').on('click','#pieLegend ul li',function(){
             var index_remove = $(this).data('dataset');
             let to_add = myChart.data.datasets[0].data[index_remove];
-            let other_key = Object.values(myChart.data.labels).indexOf('% Other');
+            let other = '% {{ trans('messages.fields.industries.Other') }}';
+            console.log(other);
+            let other_key = Object.values(myChart.data.labels).indexOf(other);
             if(index_remove == other_key) {
                 return;
             }
@@ -295,9 +301,10 @@
 
         function generateIndPieChartLegent(chart){
             var text = [];
+            var tooltip = '{{trans("messages.fields.mbr_report_chart_tooltip")}}';
             text.push('<ul>');
             for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
-                text.push('<li data-dataset="'+i+'" data-toggle="tooltip" title="Click to merge" data-placement="left">');
+                text.push('<li data-dataset="'+i+'" data-toggle="tooltip" title="'+tooltip+'" data-placement="left">');
                 text.push('<span style="color:white; background-color:'
                     + chart.data.datasets[0].backgroundColor[i] + '">&nbsp;'
                     + chart.data.datasets[0].data[i] + ' </span> &nbsp;');
