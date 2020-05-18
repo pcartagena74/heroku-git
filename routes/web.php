@@ -47,6 +47,9 @@ Route::get('setlocale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
+Route::get('/generateAddress', function () {
+    generateLatLngForAddress('all');
+});
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 
