@@ -47,8 +47,25 @@ Route::get('setlocale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
+
 Route::get('/generateAddress', function () {
     generateLatLngForAddress('all');
+});
+Route::get('icsfile', function () {
+    $event = App\Event::find(476);
+    $ical           = new App\Other\ics_calendar($event);
+    $contents       = $ical->get();
+    echo '<pre>';
+    print_R($contents);
+    /*$event  = App\Event::where('eventID', 476);
+    $ical   = new App\Other\ics_cal_full($event);
+    $output = $ical->open();
+    $output .= $ical->get();
+    $output .= $ical->close();
+    echo '<pre>';
+    print_R($output);
+*/
+
 });
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');

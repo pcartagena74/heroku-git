@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Address;
 use App\Person;
+use Illuminate\Http\Request;
 
 class AddressController extends Controller
 {
@@ -63,6 +63,7 @@ class AddressController extends Controller
                 $newAddr->creatorID = $this->currentPerson->personID;
                 $newAddr->updaterID = $this->currentPerson->personID;
                 $newAddr->save();
+                generateLatLngForAddress('single', $newAddr);
             }
         }
         if ($this->currentPerson->personID == request()->input('personID')) {
@@ -81,22 +82,23 @@ class AddressController extends Controller
     {
         // responds to PATCH /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
-        $address = Address::find($id);
-        $name    = request()->input('name');
-        $name    = substr($name, 0, -1);
-        $value   = request()->input('value');
+        $address             = Address::find($id);
+        $name                = request()->input('name');
+        $name                = substr($name, 0, -1);
+        $value               = request()->input('value');
 
-        $address->{$name} = $value;
+        $address->{$name}   = $value;
         $address->updaterID = $this->currentPerson->personID;
         $address->save();
+        generateLatLngForAddress('single', $address);
     }
 
     public function destroy($id)
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
-        $address = Address::find($id);
-        $address->updaterID = $this->currentPerson->personID;
+        $address             = Address::find($id);
+        $address->updaterID  = $this->currentPerson->personID;
         $address->save();
         $address->delete();
 

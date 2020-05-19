@@ -1086,24 +1086,23 @@ if (!function_exists('generateLatLngForAddress')) {
      * @param  string  $type single / all address
      * @return boolean true/false
      */
-    function generateLatLngForAddress($type = 'single', $person_address = null)
+    function generateLatLngForAddress($type = 'single', $address = null)
     {
         if ($type == 'single') {
-            if (!empty($person)) {
-
-            }
-            return false;
-        } else {
-            $person_address = Address::where('lati','0')->where('longi','0')->limit(1)->get();
-            dd($person_address);
-            foreach ($person_address as $key => $address) {
-                // G/F Makati Cinema Square, Pasong Tamo, Makati City
-                $add_str = $address->addr1 . ' ';
-                $add_str .= $address->addr2;
+            if (!empty($address)) {
+                $add_str = $address->addr1 . ', ';
+                if (!empty($address->addr2)) {
+                    $add_str .= $address->addr2 . ', ';
+                }
                 $add_str .= $address->city . ', ';
-                $add_str .= $address->state . ', ';
+                if (!empty($address->zip)) {
+                    $add_str .= $address->state;
+                    $add_str .= $address->zip . ', ';
+                } else {
+                    $add_str .= $address->state . ', ';
+                }
                 if ($address->cntryID == 228) {
-                    //as majority of request will be from this it will help us reduce query
+                    //as majority of request will be from this country it will help us reduce query
                     $add_str .= 'United States';
                 } else {
                     $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
@@ -1111,39 +1110,49 @@ if (!function_exists('generateLatLngForAddress')) {
                         $add_str .= $country->cntryName;
                     }
                 }
-                $add_str_encode .= urlencode($add_str);
-                $url       = "https://maps.googleapis.com/maps/api/geocode/json?address={$add_str_encode}&key=env('GOOGLE_API_KEY')";
-                dd($add_str);
-                $resp_json = file_get_contents($url);
-                $resp      = json_decode($resp_json, true);
+                $add_str_encode = urlencode($add_str);
+                $key            = env('GOOGLE_GEOAPI_KEY');
+                $url            = "https://maps.googleapis.com/maps/api/geocode/json?address={$add_str_encode}&key=$key";
+                try {
+                    $resp_json = file_get_contents($url);
+                } catch (Exception $ex) {
+                    return false;
+                }
+                $resp = json_decode($resp_json, true);
                 if ($resp['status'] == 'OK') {
                     // get the important data
                     $lati              = isset($resp['results'][0]['geometry']['location']['lat']) ? $resp['results'][0]['geometry']['location']['lat'] : "";
                     $longi             = isset($resp['results'][0]['geometry']['location']['lng']) ? $resp['results'][0]['geometry']['location']['lng'] : "";
                     $formatted_address = isset($resp['results'][0]['formatted_address']) ? $resp['results'][0]['formatted_address'] : "";
-
                     // verify if data is complete
                     if ($lati && $longi && $formatted_address) {
-
-                        // put the data in the array
-                        $data_arr = array();
-                        dd($lati,
-                            $longi,
-                            $formatted_address);
-                        array_push(
-                            $data_arr,
-                            $lati,
-                            $longi,
-                            $formatted_address
-                        );
-
-                        return $data_arr;
-
+                        $address->lati  = $lati;
+                        $address->longi = $longi;
+                        $address->save();
+                        return true;
                     } else {
                         return false;
+                        // data not found
                     }
+                } else {
+                    return false;
+                    // api issue;
                 }
             }
+            return false;
+        } else {
+            $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
+            foreach ($person_address as $key => $address) {
+                $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)->get()->first();
+                if (empty($zip_lat_lng)) {
+                    continue;
+                } else {
+                    $address->lati  = $zip_lat_lng->lat;
+                    $address->longi = $zip_lat_lng->lng;
+                    $address->save();
+                    continue;
+                }
+            } //loop ends
         }
     }
 }

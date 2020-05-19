@@ -1053,6 +1053,7 @@ return [
         'graph_years' => "Year Display",
         'ind_brk' => "Identified Industry Breakdown",
         'select_years' => "Select Years to Display",
+        'person_address'=>"Person Address Heat Map"
     ],
 
     'surveys' => [

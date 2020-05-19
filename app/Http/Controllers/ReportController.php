@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Address;
 use App\Event;
+use App\Org;
 use App\Person;
-use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Session;
 
 class ReportController extends Controller
 {
@@ -17,25 +19,25 @@ class ReportController extends Controller
 
     public function show($year_string = null)
     {
-        $topBits = '';
+        $topBits             = '';
         $this->currentPerson = Person::find(auth()->user()->id);
-        $orgID = $this->currentPerson->defaultOrgID;
-        $quote_string = Session::get('quote_string');
+        $orgID               = $this->currentPerson->defaultOrgID;
+        $quote_string        = Session::get('quote_string');
 
-        if($quote_string == "''" && null !== $year_string){
+        if ($quote_string == "''" && null !== $year_string) {
             $year_string = null;
         }
 
-        if(null === $year_string){
+        if (null === $year_string) {
             $year_array = Event::where('orgID', $this->currentPerson->defaultOrgID)
                 ->join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
                 ->select(DB::raw("year(eventStartDate) as 'year'"))
                 ->distinct()->orderBy('year', 'asc')->pluck('year');
 
-            $year_string = implode(",", $year_array->toArray());
-            $quote_string = "'" . implode("','", $year_array->toArray()). "'";
+            $year_string  = implode(",", $year_array->toArray());
+            $quote_string = "'" . implode("','", $year_array->toArray()) . "'";
         } else {
-            $year_string = Session::get('year_string');
+            $year_string  = Session::get('year_string');
             $quote_string = Session::get('quote_string');
         }
 
@@ -46,8 +48,8 @@ class ReportController extends Controller
             ->distinct()->orderBy('year', 'asc')->get();
 
         $datastring = "";
-        $pluses = array();
-        $labels = "";
+        $pluses     = array();
+        $labels     = "";
 
         foreach ($years as $y) {
             $pluses{$y->year} = 0;
@@ -122,30 +124,56 @@ class ReportController extends Controller
             ->selectRaw("count('indName') as cnt")->first();
         // DB::select('select count(indName) as total from person p where p.defaultOrgID = ? and indName is not null and indName <> "" ', [$this->currentPerson->defaultOrgID]);
 
-
         $indPie = DB::select('select indName, round(count(indName)/?*100, 1) as cnt
-                                 from person p 
+                                 from person p
                                  join `org-person` op on op.personID = p.personID
-                                 join `organization` o on op.orgID = o.orgID 
+                                 join `organization` o on op.orgID = o.orgID
                                  where o.orgID = ?
                                        and indName is not null and indName <> ""
                                  group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
+        $heat_map_work = Address::select(['lati', 'longi'])
+            ->where('addrType', 'Work')
+            ->where('lati', '!=', '0')
+            ->where('longi', '!=', '0')
+            ->get()->toArray();
+        $heat_map_home = Address::select(['lati', 'longi'])
+            ->where('addrType', 'Home')
+            ->where('lati', '!=', '0')
+            ->where('longi', '!=', '0')
+            ->get()->toArray();
+        $heat_map_other = Address::select(['lati', 'longi'])
+            ->where('addrType', '!=', 'Work')
+            ->where('addrType', '!=', 'Home')
+            ->where('lati', '!=', '0')
+            ->where('longi', '!=', '0')
+            ->get()->toArray();
+        $org_lat_lng  = ['lati' => 0, 'longi' => 0];
+        $organization = Org::where('orgID', $orgID)->get()->first();
+        $zip_lat_lng  = DB::table('ziplatlng')->where('zip', $organization->orgZip)->get()->first();
+        if (empty($zip_lat_lng)) {
+            //Massachusetts lat lng
+            $org_lat_lng['lati']  = 42.3601;
+            $org_lat_lng['longi'] = -71.0589;
+        } else {
+            $org_lat_lng['lati']  = $zip_lat_lng->lat;
+            $org_lat_lng['longi'] = $zip_lat_lng->lng;
+        }
 
         return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years',
-            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID'));
+            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home', 'heat_map_other', 'heat_map_work', 'org_lat_lng'));
     }
 
     public function update(Request $request, $id)
     {
         // POST /mbrreport/{id} -- $id is meaningless
 
-        $pk = request()->input('pk');
-        $name = request()->input('name');
+        $pk    = request()->input('pk');
+        $name  = request()->input('name');
         $value = request()->input('value');
 
-        if($name == 'tags'){
-            $quote = "'" . implode("','", (array)$value) . "'";
-            $value = implode(",", (array)$value);
+        if ($name == 'tags') {
+            $quote = "'" . implode("','", (array) $value) . "'";
+            $value = implode(",", (array) $value);
 
             Session::put('year_string', $value);
             Session::put('quote_string', $quote);

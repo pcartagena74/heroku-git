@@ -74,26 +74,29 @@
             @include('v1.parts.end_content')
         </div>
         <div aria-labelledby="everyone_tab" class="tab-pane fade" id="tab_content2">
+            @include('v1.parts.start_content', ['header' => trans('messages.reports.person_address'), 'subheader' => '',
+                     'w1' => '12', 'w2' => '0', 'r1' => 0, 'r2' => 0, 'r3' => 0])
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="floating-panel">
-                        <button onclick="toggleHeatmap()">
-                            Toggle Heatmap
+                        <button class="btn btn-primary btn-sm active" onclick="initMap('all',this)">
+                            All Data (default)
                         </button>
-                        <button onclick="changeGradient()">
-                            Change gradient
+                        <button class="btn btn-primary btn-sm" onclick="initMap('home',this)">
+                            Home
                         </button>
-                        <button onclick="changeRadius()">
-                            Change radius
+                        <button class="btn btn-primary btn-sm" onclick="initMap('work',this)">
+                            Work
                         </button>
-                        <button onclick="changeOpacity()">
-                            Change opacity
+                        <button class="btn btn-primary btn-sm" onclick="initMap('other',this)">
+                            Other
                         </button>
                     </div>
                     <div id="map" style="height: 600px">
                     </div>
                 </div>
             </div>
+            @include('v1.parts.end_content')
         </div>
     </div>
 </div>
@@ -316,19 +319,28 @@
             text.push('</ul>');
             return text.join("");
         }
-    var map, hesatmap;
-    function initMap() {
+    var map, heatmap,pointArray;
+    function initMap(type = 'all',ths) {
+
         map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
-          center: {lat: 37.775, lng: -122.434},
-          mapTypeId: 'satellite'
+          center: {lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}}},
+          mapTypeId: 'roadmap',
         });
 
+        // pointArray = new google.maps.MVCArray(getPoints(type)); //not working as excepted
+        // getPoints(type),
         heatmap = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(),
-          map: map
+          data: getPoints(type),
+          map: map,
+          opacity:1
         });
-      }
+        heatmap.setMap(map);
+        if(ths) {
+            $('#floating-panel').find('.btn').removeClass('active');
+            $(ths).addClass('active');
+        }
+    }
 
       function toggleHeatmap() {
         heatmap.setMap(heatmap.getMap() ? null : map);
@@ -362,36 +374,50 @@
         heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
       }
 
-      // Heatmap data: 500 Points
-      function getPoints() {
-        return [
-          new google.maps.LatLng(37.776772, -122.438498),
-          new google.maps.LatLng(37.776787, -122.438389),
-          new google.maps.LatLng(37.776848, -122.438283),
-          new google.maps.LatLng(37.776870, -122.438239),
-          new google.maps.LatLng(37.777015, -122.438198),
-          new google.maps.LatLng(37.777333, -122.438256),
-          new google.maps.LatLng(37.777595, -122.438308),
-          new google.maps.LatLng(37.777797, -122.438344),
-          new google.maps.LatLng(37.778160, -122.438442),
-          new google.maps.LatLng(37.778414, -122.438508),
-          new google.maps.LatLng(37.778445, -122.438516),
-          new google.maps.LatLng(37.778503, -122.438529),
-          new google.maps.LatLng(37.778607, -122.438549),
-          new google.maps.LatLng(37.778670, -122.438644),
-          new google.maps.LatLng(37.778847, -122.438706),
-          new google.maps.LatLng(37.779240, -122.438744),
-          new google.maps.LatLng(37.779738, -122.438822),
-          new google.maps.LatLng(37.758182, -122.405695),
-          new google.maps.LatLng(37.757676, -122.405118),
-          new google.maps.LatLng(37.757039, -122.404346),
-          new google.maps.LatLng(37.756335, -122.403719),
-          new google.maps.LatLng(37.755503, -122.403406),
-          new google.maps.LatLng(37.754665, -122.403242),
-          new google.maps.LatLng(37.753837, -122.403172),
-          new google.maps.LatLng(37.752986, -122.403112),
-          new google.maps.LatLng(37.751266, -122.403355)
-        ];
+      function getPoints(type) {
+        var points = [];
+        var home = @json($heat_map_home);
+        var work = @json($heat_map_work);
+        var other = @json($heat_map_other);
+        switch(type){
+            case 'all':
+                $.each(home,function(index,value){
+                    points.push(new google.maps.LatLng(value['lati'],value['longi']));
+                });
+                $.each(work,function(index,value){
+                    points.push(new google.maps.LatLng(value['lati'],value['longi']));
+                });
+                $.each(other,function(index,value){
+                    points.push(new google.maps.LatLng(value['lati'],value['longi']));
+                });
+                console.log(points.length);
+                return points;
+            break;
+            case 'home':
+                $.each(home,function(index,value){
+                    points.push(new google.maps.LatLng(value['lati'],value['longi']));
+                });
+                console.log(points.length);
+                return points;
+            break;
+            case 'work':
+                $.each(work,function(index,value){
+                    points.push(new google.maps.LatLng(value['lati'],value['longi']));
+                });
+                console.log(points.length);
+                return points;
+            break;
+            case 'other':
+                $.each(other,function(index,value){
+                    points.push(new google.maps.LatLng(value['lati'],value['longi']));
+                });
+                console.log(points.length);
+                return points;
+            break;
+        }
+        // return [ sample
+        //   new google.maps.LatLng(37.776772, -122.438498),
+        // ];
       }
 </script>
 <script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_API_KEY')}}&callback=initMap&libraries=visualization" type="text/javascript">
