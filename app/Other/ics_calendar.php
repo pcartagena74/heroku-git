@@ -84,12 +84,12 @@ class ics_calendar
 
     private function _generate()
     {
-        $this->o_string = $this->_appendTimezoneSettings . "\r\n";
         $this->o_string .= "BEGIN:VCALENDAR\r\n" .
         "PRODID:-//" . $this->title . "\r\n" .
         "VERSION:2.0\r\n" .
-        "METHOD:REQUEST\r\n" .
-        "BEGIN:VEVENT\r\n" .
+        "METHOD:REQUEST\r\n" ;
+        $this->o_string .= $this->_appendTimezoneSettings() . "\r\n";
+        $this->o_string .="BEGIN:VEVENT\r\n" .
         "SUBJECT:" . $this->_escapeString($this->description) . "\r\n" .
         "CLASS:PUBLIC" . "\r\n" .
         "CREATED:" . $this->created->format('Ymd\THis') . "\r\n" .
