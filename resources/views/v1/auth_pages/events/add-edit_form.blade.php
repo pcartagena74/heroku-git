@@ -262,7 +262,7 @@
 
     <div class="form-group col-md-12">
         {!! Form::label('eventTimeZone', trans('messages.headers.tz').'*', array('class' => 'control-label')) !!}
-        @if(isset($event)) 
+        @if(isset($event->eventTimeZone)) 
         {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $event->eventTimeZone, array('class' =>'form-control')) !!}
         @else
         {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $defaults->orgZone, array('class' =>'form-control')) !!}
