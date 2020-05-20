@@ -139,7 +139,7 @@ class ReportController extends Controller
                 $n_other = false;
             }
         }
-        if ($n_other || true) {
+        if ($no_other) {
             $indPie[] = (object) ['indName' => 'Other', 'cnt' => 0];
         }
         
