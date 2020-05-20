@@ -319,23 +319,25 @@
             text.push('</ul>');
             return text.join("");
         }
-    var map, heatmap,pointArray;
-    function initMap(type = 'all',ths) {
+    var map, heatmap;
 
+    function initMap(type = 'all',ths) {
+        var bounds = new google.maps.LatLngBounds();
         map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
           center: {lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}}},
           mapTypeId: 'roadmap',
         });
-
-        // pointArray = new google.maps.MVCArray(getPoints(type)); //not working as excepted
-        // getPoints(type),
+        var all_points = getPoints(type);
+        for (var i = 0; i < all_points.length; i++) {
+            bounds.extend(all_points[i]);
+        }
+        map.fitBounds(bounds);
         heatmap = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(type),
+          data: all_points,
           map: map,
           opacity:1
         });
-        heatmap.setMap(map);
         if(ths) {
             $('#floating-panel').find('.btn').removeClass('active');
             $(ths).addClass('active');

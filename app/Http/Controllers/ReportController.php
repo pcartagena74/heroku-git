@@ -152,8 +152,10 @@ class ReportController extends Controller
         $zip_lat_lng  = DB::table('ziplatlng')->where('zip', $organization->orgZip)->get()->first();
         if (empty($zip_lat_lng)) {
             //Massachusetts lat lng
-            $org_lat_lng['lati']  = 42.3601;
-            $org_lat_lng['longi'] = -71.0589;
+            $org_lat_lng['lati']  = 42.4072;
+            $org_lat_lng['longi'] = -71.3824;
+            // $org_lat_lng['lati']  = 42.3601;//boston
+            // $org_lat_lng['longi'] = -71.0589;
         } else {
             $org_lat_lng['lati']  = $zip_lat_lng->lat;
             $org_lat_lng['longi'] = $zip_lat_lng->lng;

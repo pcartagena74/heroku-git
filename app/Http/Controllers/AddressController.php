@@ -63,7 +63,7 @@ class AddressController extends Controller
                 $newAddr->creatorID = $this->currentPerson->personID;
                 $newAddr->updaterID = $this->currentPerson->personID;
                 $newAddr->save();
-                generateLatLngForAddress('single', $newAddr);
+                generateLatLngForAddress($newAddr);
             }
         }
         if ($this->currentPerson->personID == request()->input('personID')) {
@@ -90,7 +90,7 @@ class AddressController extends Controller
         $address->{$name}   = $value;
         $address->updaterID = $this->currentPerson->personID;
         $address->save();
-        generateLatLngForAddress('single', $address);
+        generateLatLngForAddress($address);
     }
 
     public function destroy($id)
