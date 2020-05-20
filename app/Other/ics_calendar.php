@@ -44,24 +44,31 @@ class ics_calendar
         $this->contact     = $event->contactEmail;
         $this->venue_uid   = $loc->locID . '@mcentric.org';
         $this->title       = trans('messages.mCentric_text.hosted_event', ['org' => $org->orgName]);
-        $this->start       = $event->eventStartDate;
-        $this->end         = $event->eventEndDate;
-        $this->created     = $event->createDate;
-        $this->updated     = $event->updateDate;
+        $timezone          = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
+        $this->tzid        = $timezone;
+        $this->start       = $this->_getUTCDateTime($event->eventStartDate, $timezone->tzid);
+        $this->end         = $this->_getUTCDateTime($event->eventEndDate, $timezone->tzid);
+        $this->created     = $this->_getUTCDateTime($event->createDate, $timezone->tzid);
+        $this->updated     = $this->_getUTCDateTime($event->updateDate, $timezone->tzid);
         $this->html        = str_replace(PHP_EOL, '', $event->eventDescription);
         $this->org         = $org->orgName;
         $this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
         $this->description = $org->orgName . " - " . $event->eventName;
-        $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
         $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
         $this->location    = null; // $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2  or '' . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
         $this->uri         = env('APP_URL') . "/events/" . $event->slug;
         $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
-        $this->stamp       = Carbon::now()->format('Ymd\THis');
+        $this->stamp       = Carbon::now()->setTimezone('UTC')->format('Ymd\THis');
         $this->event       = $event;
         $this->_gen_loc_string($loc);
     }
 
+    private function _getUTCDateTime($date, $timezone)
+    {
+        $date->setTimezone("UTC");
+        return $date;
+        // $date = Carbon::createFromFormat('Y-m-d H:i:s', $date, 'America/New_York');
+    }
     private function _escapeString($string)
     {
         return wordwrap(preg_replace('/([\,;])/', '\\\$1', ($string) ? $string : ''), 75, "\r\n ", true);
