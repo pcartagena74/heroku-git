@@ -131,6 +131,18 @@ class ReportController extends Controller
                                  where o.orgID = ?
                                        and indName is not null and indName <> ""
                                  group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
+        //in case their is no other for we will add a other with 
+        //0 percent to make sure chart work as excepted 
+        $no_other = true;
+        foreach ($indPie as $key => $value) {
+            if ($value->indName == 'Other') {
+                $n_other = false;
+            }
+        }
+        if ($n_other || true) {
+            $indPie[] = (object) ['indName' => 'Other', 'cnt' => 0];
+        }
+        
         $heat_map_work = Address::select(['lati', 'longi'])
             ->where('addrType', 'Work')
             ->where('lati', '!=', '0')
