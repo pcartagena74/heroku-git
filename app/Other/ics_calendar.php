@@ -6,11 +6,11 @@
 
 namespace App\Other;
 
+use App\Event;
+use App\Location;
+use App\Org;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Event;
-use App\Org;
-use App\Location;
 
 class ics_calendar
 {
@@ -34,12 +34,12 @@ class ics_calendar
 
     public function __construct(Event $event)
     {
-        $etype             = DB::table('org-event_types')
-                               ->where('etID', $event->eventTypeID)
-                               ->select('etName')
-                               ->first();
-        $org               = Org::find($event->orgID);
-        $loc               = Location::find($event->locationID);
+        $etype = DB::table('org-event_types')
+            ->where('etID', $event->eventTypeID)
+            ->select('etName')
+            ->first();
+        $org = Org::find($event->orgID);
+        $loc = Location::find($event->locationID);
 
         $this->contact     = $event->contactEmail;
         $this->venue_uid   = $loc->locID . '@mcentric.org';
@@ -84,35 +84,105 @@ class ics_calendar
 
     private function _generate()
     {
-
-        $this->o_string = "BEGIN:VCALENDAR\r\n".
-            "PRODID:-//" . $this->title . "\r\n".
-            "VERSION:2.0\r\n".
-            "METHOD:REQUEST\r\n".
-            "BEGIN:VEVENT\r\n".
-            "SUBJECT:".$this->_escapeString($this->description)."\r\n".
-            "CLASS:PUBLIC"."\r\n".
-            "CREATED:".$this->created->format('Ymd\THis')."\r\n".
-            "DTSTART;TZID=" . $this->tzid . ":".$this->start->format('Ymd\THis')."\r\n".
-            "DTEND;TZID=" . $this->tzid . ":".$this->end->format('Ymd\THis')."\r\n".
-            "LOCATION:".$this->_escapeString($this->location)."\r\n".
-            "SUMMARY:".$this->_escapeString($this->description)."\r\n".
-            "DESCRIPTION:".$this->_escapeString($this->summary . "\r\n <br> \r\n Information for Registerred Attendees: \r\n " . $this->event->postRegInfo)."\r\n".
-            "URL;VALUE=URI:".$this->_escapeString($this->uri)."\r\n".
-            "UID:". $this->uid ."\r\n".
-            "SEQUENCE:0\r\n".
-            "TRANSP:OPAQUE"."\r\n".
-            "DTSTAMP:". $this->stamp ."\r\n".
-            "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\r\n".
-            "ORGANIZER;CN=".$this->_escapeString($this->org).":MAILTO:" . $this->contact . "\r\n".
-            "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed"."\r\n".
-            "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed"."\r\n".
-            "END:VEVENT\r\n".
+        $this->o_string .= "BEGIN:VCALENDAR\r\n" .
+        "PRODID:-//" . $this->title . "\r\n" .
+        "VERSION:2.0\r\n" .
+        "METHOD:REQUEST\r\n" ;
+        $this->o_string .= $this->_appendTimezoneSettings() . "\r\n";
+        $this->o_string .="BEGIN:VEVENT\r\n" .
+        "SUBJECT:" . $this->_escapeString($this->description) . "\r\n" .
+        "CLASS:PUBLIC" . "\r\n" .
+        "CREATED:" . $this->created->format('Ymd\THis') . "\r\n" .
+        "DTSTART;TZID=" . $this->tzid . ":" . $this->start->format('Ymd\THis') . "\r\n" .
+        "DTEND;TZID=" . $this->tzid . ":" . $this->end->format('Ymd\THis') . "\r\n" .
+        "LOCATION:" . $this->_escapeString($this->location) . "\r\n" .
+        "SUMMARY:" . $this->_escapeString($this->description) . "\r\n" .
+        "DESCRIPTION:" . $this->_escapeString($this->summary . "\r\n <br> \r\n Information for Registerred Attendees: \r\n " . $this->event->postRegInfo) . "\r\n" .
+        "URL;VALUE=URI:" . $this->_escapeString($this->uri) . "\r\n" .
+        "UID:" . $this->uid . "\r\n" .
+        "SEQUENCE:0\r\n" .
+        "TRANSP:OPAQUE" . "\r\n" .
+        "DTSTAMP:" . $this->stamp . "\r\n" .
+        "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\r\n" .
+        "ORGANIZER;CN=" . $this->_escapeString($this->org) . ":MAILTO:" . $this->contact . "\r\n" .
+            "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed" . "\r\n" .
+            "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed" . "\r\n" .
+            "END:VEVENT\r\n" .
             "END:VCALENDAR\r\n";
     }
+
+    private function _appendTimezoneSettings()
+    {
+        $vtimezone = 'BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+X-LIC-LOCATION:America/Los_Angeles
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+TZNAME:PDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+TZNAME:PST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VTIMEZONE
+TZID:America/Phoenix
+X-LIC-LOCATION:America/Phoenix
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0700
+TZNAME:MST
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VTIMEZONE
+TZID:America/Chicago
+X-LIC-LOCATION:America/Chicago
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0500
+TZNAME:CDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0600
+TZNAME:CST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VTIMEZONE
+TZID:America/New_York
+X-LIC-LOCATION:America/New_York
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+TZNAME:EDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+TZNAME:EST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE';
+        return $vtimezone;
+    }
+
     /*
 
-            "X-ALT-DESC;FMTTYPE=text/html:".$this->_escapeString($this->html)."\r\n" . $this->uri . "\n".
+"X-ALT-DESC;FMTTYPE=text/html:".$this->_escapeString($this->html)."\r\n" . $this->uri . "\n".
 
 BEGIN:VCALENDAR
 PRODID:-//mCentric-Hosted Events
@@ -140,5 +210,5 @@ X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed
 END:VEVENT
 END:VCALENDAR
 
-     */
+ */
 }
