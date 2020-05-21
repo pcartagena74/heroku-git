@@ -1128,30 +1128,56 @@ if (!function_exists('generateLatLngForAddress')) {
     /**
      * generate lat lng for existing address for testing only bunch on 20
      * @param  string  $type single / all address
+     * @param bool $for_org true if lat lng is needed for organization
      * @return boolean true/false
      */
-    function generateLatLngForAddress($address)
+    function generateLatLngForAddress($address, $for_org = false)
     {
         if (!empty($address)) {
-            $add_str = $address->addr1 . ', ';
-            if (!empty($address->addr2)) {
-                $add_str .= $address->addr2 . ', ';
-            }
-            $add_str .= $address->city . ', ';
-            if (!empty($address->zip)) {
-                $add_str .= $address->state;
-                $add_str .= $address->zip . ', ';
-            } else {
-                $add_str .= $address->state . ', ';
-            }
-            if ($address->cntryID == 228) {
-                //as majority of request will be from this country it will help us reduce query
-                $add_str .= 'United States';
-            } else {
-                $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
-                if (!empty($country)) {
-                    $add_str .= $country->cntryName;
+            $add_str = '';
+            if ($for_org == false) {
+                $add_str = $address->addr1 . ', ';
+                if (!empty($address->addr2)) {
+                    $add_str .= $address->addr2 . ', ';
                 }
+                $add_str .= $address->city . ', ';
+                if (!empty($address->zip)) {
+                    $add_str .= $address->state;
+                    $add_str .= $address->zip . ', ';
+                } else {
+                    $add_str .= $address->state . ', ';
+                }
+                if ($address->cntryID == 228) {
+                    //as majority of request will be from this country it will help us reduce query
+                    $add_str .= 'United States';
+                } else {
+                    $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
+                    if (!empty($country)) {
+                        $add_str .= $country->cntryName;
+                    }
+                }
+            } else {
+                $add_str = $address->orgAddr1 . ', ';
+                if (!empty($address->orgAddr2)) {
+                    $add_str .= $address->orgAddr2 . ', ';
+                }
+                $add_str .= $address->orgCity . ', ';
+                if (!empty($address->orgZip)) {
+                    $add_str .= $address->orgState;
+                    $add_str .= $address->orgZip . ', ';
+                } else {
+                    $add_str .= $address->State . ', ';
+                }
+                $add_str .= 'United States'; // as currently org does not have any country field
+                // if ($address->cntryID == 228) {
+                //     //as majority of request will be from this country it will help us reduce query
+                //     $add_str .= 'United States';
+                // } else {
+                //     $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
+                //     if (!empty($country)) {
+                //         $add_str .= $country->cntryName;
+                //     }
+                // }
             }
             $add_str_encode = urlencode($add_str);
             $key            = env('GOOGLE_GEOAPI_KEY');
@@ -1186,19 +1212,25 @@ if (!function_exists('generateLatLngForAddress')) {
     }
 }
 if (!function_exists('storeLatiLongiFormZip')) {
-
+    /**
+     * store lat long for existing address by zip code
+     * @return void
+     */
     function storeLatiLongiFormZip()
     {
         $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
         foreach ($person_address as $key => $address) {
-            $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)->get()->first();
-            if (empty($zip_lat_lng)) {
-                continue;
-            } else {
-                $address->lati  = $zip_lat_lng->lat;
-                $address->longi = $zip_lat_lng->lng;
-                $address->save();
-                continue;
+            if (!empty($address->zip)) {
+                $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
+                    ->orWhere('zip', ltrim($address->zip, "0"))->get()->first();
+                if (empty($zip_lat_lng)) {
+                    continue;
+                } else {
+                    $address->lati  = $zip_lat_lng->lat;
+                    $address->longi = $zip_lat_lng->lng;
+                    $address->save();
+                    continue;
+                }
             }
         } //loop ends
     }
