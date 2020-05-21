@@ -5,9 +5,9 @@ use App\Address;
 use App\Email;
 use App\OrgPerson;
 use App\Person;
+use App\PersonStaging;
 use App\Phone;
 use App\User;
-use App\PersonStaging;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ trait ExcelMemberImportTrait
     public $email_master;
     public $address_master;
     public $person_staging_master;
-    public $currentPerson; 
+    public $currentPerson;
 
     public function timeMem($msg = null)
     {
@@ -37,11 +37,12 @@ trait ExcelMemberImportTrait
         // $str .=  round((memory_get_peak_usage() / $m), 2) . "<br>\n";
     }
 
-    public function storeImportDataDB($row, $currentPerson)
+    public function storeImportDataDB($row, $currentPerson, $import_detail)
     {
         $this->currentPerson = $currentPerson;
         DB::connection()->disableQueryLog();
-
+        $import_detail->refresh();
+        $import_detail->increment('total');
         // $this->timeMem('starttime ' . $count_g);
         $count = 0;
         $count++;
@@ -139,7 +140,7 @@ trait ExcelMemberImportTrait
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-        
+
         // $this->timeMem('5 $pchk ');
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
@@ -167,6 +168,7 @@ trait ExcelMemberImportTrait
             if ($em1 !== null && $em1 != "" && $em1 != " ") {
                 $p_array['login'] = $em1;
                 $p                = Person::create($p_array);
+                $import_detail->increment('inserted');
                 // $this->timeMem('6 p insert');
                 // $p->login = $em1;
                 // $p->save();
@@ -184,7 +186,8 @@ trait ExcelMemberImportTrait
             } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && empty($p_array['login'])) {
                 $p_array['login'] = $em2;
                 $p                = Person::create($p_array);
-                $u_array          = [
+                $import_detail->increment('inserted');
+                $u_array = [
                     'id'    => $p->personID,
                     'login' => $em2,
                     'name'  => $em2,
@@ -371,6 +374,7 @@ trait ExcelMemberImportTrait
                 $ary['updaterID']    = $currentPerson->personID;
                 $ary['defaultOrgID'] = $currentPerson->defaultOrgID;
                 DB::table('person')->where('personID', $p->personID)->update($ary);
+                $import_detail->increment('updated');
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
@@ -426,9 +430,11 @@ trait ExcelMemberImportTrait
             }
             $newOP->creatorID = $currentPerson->personID;
             $newOP->save();
+
             // $this->timeMem('19 new po update 2312');
             if ($p->defaultOrgPersonID === null) {
                 DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
+                $import_detail->increment('updated'); //op record update
                 // $this->timeMem('20 person update 2315');
                 // $p->defaultOrgPersonID = $newOP->id;
                 // $p->save();
@@ -472,6 +478,7 @@ trait ExcelMemberImportTrait
                 }
                 $ary['updaterID'] = $currentPerson->personID;
                 DB::table('org-person')->where('id', $newOP->id)->update($ary);
+                $import_detail->increment('updated'); //op record update
                 $this->timeMem('21 update org person 2358');
                 // $newOP->save();
             }
@@ -562,6 +569,7 @@ trait ExcelMemberImportTrait
             $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
         }
 
+        $import_detail->save(); //op record update
         $this->bulkInsertAll();
         unset($chk1);
         unset($chk2);
@@ -722,9 +730,9 @@ trait ExcelMemberImportTrait
             // $this->timeMem('27 inset bulk personstaggin ' . count($this->person_staging_master));
         }
 
-        $this->email_master   = array();
-        $this->phone_master   = array();
-        $this->address_master = array();
+        $this->email_master          = array();
+        $this->phone_master          = array();
+        $this->address_master        = array();
         $this->person_staging_master = array();
         // $this->person_staging_master = array();
 

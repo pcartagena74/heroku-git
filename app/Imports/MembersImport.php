@@ -16,7 +16,6 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -37,9 +36,10 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public $tries   = 3;
     public $timeout = 160;
 
-    public function __construct($currentPerson)
+    public function __construct($currentPerson, $import_detail)
     {
-        $this->currentPerson = $currentPerson;
+        $this->currentPerson  = $currentPerson;
+        $this->import_detail = $import_detail;
         // requestBin(['in'=>'constructor member import']);
     }
 
@@ -55,7 +55,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 // requestBin($row->toArray());
                 ++$count;
-                $this->storeImportDataDB($row->toArray(), $this->currentPerson,'asdfsdaf');
+                $this->storeImportDataDB($row->toArray(), $this->currentPerson, $this->import_detail);
             }
         }
         $this->row_count += $count;

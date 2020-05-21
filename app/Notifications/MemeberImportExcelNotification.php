@@ -12,18 +12,18 @@ class MemeberImportExcelNotification extends Notification
     use Queueable;
 
     protected $person;
-    protected $records;
+    protected $import_detail;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    // public function __construct(Person $person, $records)
-    public function __construct(Person $person, $records)
+    // public function __construct(Person $person, $import_detail)
+    public function __construct(Person $person, $import_detail)
     {
-        $this->person  = $person;
-        $this->records = $records;
+        $this->person        = $person;
+        $this->import_detail = $import_detail->refresh();
     }
 
     /**
@@ -48,13 +48,38 @@ class MemeberImportExcelNotification extends Notification
         // $o     = Org::find($this->person->defaultOrgID);
         // $name  = $o->orgName;
         // $ename = $this->event->eventName;
+        $i_d  = $this->import_detail;
         $name = trim($this->person->firstName . ' ' . $this->person->lastName);
         if (empty($name)) {
             $name = $this->person->login;
         }
+        if ($i_d->total == 0) {
+            return (new MailMessage)
+                ->subject(trans('messages.notifications.member_import.subject_failed'))
+                ->line(trans('messages.notifications.member_import.imp_failed',
+                    ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]));
+        }
+        $import_message = trans('messages.notifications.member_import.imp_success',
+            ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
+        $subject = trans('messages.notifications.member_import.subject')
+        if ($i_d->total > ($i_d->inserted + $i_d->updated)) {
+            $import_message = trans('messages.notifications.member_import.imp_warning',
+                ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
+            $subject = trans('messages.notifications.member_import.subject_warning')
+        }
         return (new MailMessage)
-            ->subject(trans('messages.notifications.member_import.subject'))
-            ->line(trans('messages.notifications.member_import.line1', ['user' => $name, 'count' => $this->records]));
+            ->subject($subject)
+            ->line($import_message)
+            ->line(trans('messages.notifications.member_import.total',
+                ['total' => $i_d->total]))
+            ->line(trans('messages.notifications.member_import.inserted',
+                ['inserted' => $i_d->inserted]))
+            ->line(trans('messages.notifications.member_import.updated',
+                ['updated' => $i_d->updated]))
+            ->line(trans('messages.notifications.member_import.failed',
+                ['failed' => $i_d->failed]))
+            ->line(trans('messages.notifications.member_import.failed_record',
+                ['total' => $i_d->failed_record]));
     }
 
     /**
