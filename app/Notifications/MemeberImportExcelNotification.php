@@ -61,11 +61,11 @@ class MemeberImportExcelNotification extends Notification
         }
         $import_message = trans('messages.notifications.member_import.imp_success',
             ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
-        $subject = trans('messages.notifications.member_import.subject')
+        $subject = trans('messages.notifications.member_import.subject');
         if ($i_d->total > ($i_d->inserted + $i_d->updated)) {
             $import_message = trans('messages.notifications.member_import.imp_warning',
                 ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
-            $subject = trans('messages.notifications.member_import.subject_warning')
+            $subject = trans('messages.notifications.member_import.subject_warning');
         }
         return (new MailMessage)
             ->subject($subject)
@@ -79,7 +79,7 @@ class MemeberImportExcelNotification extends Notification
             ->line(trans('messages.notifications.member_import.failed',
                 ['failed' => $i_d->failed]))
             ->line(trans('messages.notifications.member_import.failed_record',
-                ['total' => $i_d->failed_record]));
+                ['records' => $i_d->failed_records]));
     }
 
     /**

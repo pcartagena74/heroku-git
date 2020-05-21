@@ -42,7 +42,6 @@ trait ExcelMemberImportTrait
         $this->currentPerson = $currentPerson;
         DB::connection()->disableQueryLog();
         $import_detail->refresh();
-        $import_detail->increment('total');
         // $this->timeMem('starttime ' . $count_g);
         $count = 0;
         $count++;
@@ -59,6 +58,8 @@ trait ExcelMemberImportTrait
         $u                      = null;
         $f                      = null;
         $l                      = null;
+        $has_update             = false;
+        $has_insert             = true;
         // columns in the MemberDetail sheet are fixed; check directly and then add if not found...
         // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
         // if found, get $person, $org-person, $email, $address, $phone records and update, else create
@@ -168,7 +169,7 @@ trait ExcelMemberImportTrait
             if ($em1 !== null && $em1 != "" && $em1 != " ") {
                 $p_array['login'] = $em1;
                 $p                = Person::create($p_array);
-                $import_detail->increment('inserted');
+                $has_insert       = true;
                 // $this->timeMem('6 p insert');
                 // $p->login = $em1;
                 // $p->save();
@@ -186,7 +187,8 @@ trait ExcelMemberImportTrait
             } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && empty($p_array['login'])) {
                 $p_array['login'] = $em2;
                 $p                = Person::create($p_array);
-                $import_detail->increment('inserted');
+                $has_insert       = true;
+
                 $u_array = [
                     'id'    => $p->personID,
                     'login' => $em2,
@@ -374,7 +376,7 @@ trait ExcelMemberImportTrait
                 $ary['updaterID']    = $currentPerson->personID;
                 $ary['defaultOrgID'] = $currentPerson->defaultOrgID;
                 DB::table('person')->where('personID', $p->personID)->update($ary);
-                $import_detail->increment('updated');
+                $has_update = true;
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
@@ -434,7 +436,7 @@ trait ExcelMemberImportTrait
             // $this->timeMem('19 new po update 2312');
             if ($p->defaultOrgPersonID === null) {
                 DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
-                $import_detail->increment('updated'); //op record update
+                $has_update = true;
                 // $this->timeMem('20 person update 2315');
                 // $p->defaultOrgPersonID = $newOP->id;
                 // $p->save();
@@ -478,7 +480,7 @@ trait ExcelMemberImportTrait
                 }
                 $ary['updaterID'] = $currentPerson->personID;
                 DB::table('org-person')->where('id', $newOP->id)->update($ary);
-                $import_detail->increment('updated'); //op record update
+                $has_update = true;
                 $this->timeMem('21 update org person 2358');
                 // $newOP->save();
             }
@@ -568,8 +570,35 @@ trait ExcelMemberImportTrait
 
             $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
         }
+        if ($has_update) {
+            $import_detail->increment('updated');
+            echo 'update rec'.$import_detail->total.'\r\n<br>';
+        }
 
-        $import_detail->save(); //op record update
+        if ($has_insert) {
+            $import_detail->increment('inserted');
+            echo 'insert rec'.$import_detail->total.'\r\n<br>';
+        }
+        echo 'dirty insert '.var_dump($has_insert).' update '.var_dump($has_update).' \r\n<br>';
+        if ($has_update || $has_insert) {
+            $import_detail->save(); //op record update
+            echo 'save 1 rec'.$import_detail->total.'\n';
+        } else {
+            $import_detail->increment('failed');
+            if (!empty($import_detail->failed_records)) {
+                $json = json_decode($import_detail->failed_records);
+                $data = ['pmi_id' => $row['pmi_id'],
+                    'first_name'      => $first,
+                    'last_name'       => $last,
+                    'email'           => $em1];
+                $json[]                        = $data;
+                $import_detail->failed_records = json_encode($json);
+            } else {
+                $import_detail->failed_records = json_encode([$row]);
+            }
+            echo 'failed rec'.$import_detail->total.'\n';
+            $import_detail->save();
+        }
         $this->bulkInsertAll();
         unset($chk1);
         unset($chk2);
