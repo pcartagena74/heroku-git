@@ -131,8 +131,8 @@ class ReportController extends Controller
                                  where o.orgID = ?
                                        and indName is not null and indName <> ""
                                  group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
-        //in case their is no other for we will add a other with 
-        //0 percent to make sure chart work as excepted 
+        //in case their is no other for we will add a other with
+        //0 percent to make sure chart work as excepted
         $no_other = true;
         foreach ($indPie as $key => $value) {
             if ($value->indName == 'Other') {
@@ -142,35 +142,49 @@ class ReportController extends Controller
         if ($no_other) {
             $indPie[] = (object) ['indName' => 'Other', 'cnt' => 0];
         }
-        
+        $cp            = $this->currentPerson;
         $heat_map_work = Address::select(['lati', 'longi'])
             ->where('addrType', 'Work')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
-            ->get()->toArray();
+            ->whereHas('person', function ($query) use ($cp) {
+                $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
+            })->get()->toArray();
         $heat_map_home = Address::select(['lati', 'longi'])
             ->where('addrType', 'Home')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
-            ->get()->toArray();
+            ->whereHas('person', function ($query) use ($cp) {
+                $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
+            })->get()->toArray();
         $heat_map_other = Address::select(['lati', 'longi'])
             ->where('addrType', '!=', 'Work')
             ->where('addrType', '!=', 'Home')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
-            ->get()->toArray();
-        $org_lat_lng  = ['lati' => 0, 'longi' => 0];
+            ->whereHas('person', function ($query) use ($cp) {
+                $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
+            })->get()->toArray();
+        $org_lat_lng  = ['lati' => 42.4072, 'longi' => -71.3824]; //Massachusetts lat lng default
         $organization = Org::where('orgID', $orgID)->get()->first();
-        $zip_lat_lng  = DB::table('ziplatlng')->where('zip', $organization->orgZip)->get()->first();
-        if (empty($zip_lat_lng)) {
-            //Massachusetts lat lng
-            $org_lat_lng['lati']  = 42.4072;
-            $org_lat_lng['longi'] = -71.3824;
-            // $org_lat_lng['lati']  = 42.3601;//boston
-            // $org_lat_lng['longi'] = -71.0589;
+        if (!empty($organization->lati) && !empty($organization->longi)) {
+            $org_lat_lng['lati']  = $organization->lati;
+            $org_lat_lng['longi'] = $organization->longi;
         } else {
-            $org_lat_lng['lati']  = $zip_lat_lng->lat;
-            $org_lat_lng['longi'] = $zip_lat_lng->lng;
+            if (!empty($organization->orgAddr1) && !empty($organization->orgCity) && !empty($organization->orgState) && !empty($organization->orgZip)) {
+                generateLatLngForAddress($organization, true);
+                $org_lat_lng['lati']  = $organization->lati;
+                $org_lat_lng['longi'] = $organization->longi;
+            } else if (!empty($organization->orgZip)) {
+                $zip_lat_lng = DB::table('ziplatlng')->where('zip', $organization->orgZip)->get()->first();
+                if (empty($zip_lat_lng)) {
+                    // $org_lat_lng['lati']  = 42.3601;//boston
+                    // $org_lat_lng['longi'] = -71.0589;
+                } else {
+                    $org_lat_lng['lati']  = $zip_lat_lng->lat;
+                    $org_lat_lng['longi'] = $zip_lat_lng->lng;
+                }
+            }
         }
 
         return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years',

@@ -6,6 +6,7 @@
  * Updated: 10/4/2019 for configurable graph (display years)
  *
  */
+ $heat_map_other = [];
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -79,17 +80,23 @@
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="floating-panel">
+                        @php
+                        $home = count($heat_map_home);
+                        $work = count($heat_map_work);
+                        $other = count($heat_map_other);
+                        $total = $home + $work + $other;
+                        @endphp
                         <button class="btn btn-primary btn-sm active" onclick="initMap('all',this)">
-                            All Data (default)
+                            {{trans('messages.buttons.mbr_total',['count'=>$total])}}
                         </button>
                         <button class="btn btn-primary btn-sm" onclick="initMap('home',this)">
-                            Home
+                            {{trans('messages.buttons.mbr_home',['count'=>$home])}}
                         </button>
                         <button class="btn btn-primary btn-sm" onclick="initMap('work',this)">
-                            Work
+                            {{trans('messages.buttons.mbr_work',['count'=>$work])}}
                         </button>
                         <button class="btn btn-primary btn-sm" onclick="initMap('other',this)">
-                            Other
+                            {{trans('messages.buttons.mbr_other',['count'=>$other])}}
                         </button>
                     </div>
                     <div id="map" style="height: 600px">
@@ -266,7 +273,6 @@
             var index_remove = $(this).data('dataset');
             let to_add = myChart.data.datasets[0].data[index_remove];
             let other = '% {{ trans('messages.fields.industries.Other') }}';
-            console.log(other);
             let other_key = Object.values(myChart.data.labels).indexOf(other);
             if(index_remove == other_key) {
                 return;
@@ -321,6 +327,13 @@
         }
     var map, heatmap;
 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      var target = $(e.target).attr("href") // activated tab
+      if(target == '#tab_content2'){
+        setTimeout(initMap('all'),1);
+      }
+    });
+
     function initMap(type = 'all',ths) {
         var bounds = new google.maps.LatLngBounds();
         map = new google.maps.Map(document.getElementById('map'), {
@@ -332,21 +345,35 @@
         for (var i = 0; i < all_points.length; i++) {
             bounds.extend(all_points[i]);
         }
-        map.fitBounds(bounds);
+        if(bounds.isEmpty()) {
+            map.setCenter({lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}} });
+        } else {
+            map.fitBounds(bounds);
+            // var listener = google.maps.event.addListener(map, "bounds_changed", function() { 
+            //     console.log('here1',map.getZoom());
+            //   if (map.getZoom()){
+            //     map.setZoom(13); 
+            //     console.log('here2');
+            //   } 
+            //   // google.maps.event.removeListener(listener); 
+            // });
+            // setTimeout(function(){google.maps.event.removeListener(listener)}, 2000);
+        }
         heatmap = new google.maps.visualization.HeatmapLayer({
           data: all_points,
           map: map,
           opacity:1
         });
+        heatmap.setMap(map);
         if(ths) {
             $('#floating-panel').find('.btn').removeClass('active');
             $(ths).addClass('active');
         }
     }
-
-      function toggleHeatmap() {
+    
+    function toggleHeatmap() {
         heatmap.setMap(heatmap.getMap() ? null : map);
-      }
+    }
 
       function changeGradient() {
         var gradient = [
@@ -392,28 +419,24 @@
                 $.each(other,function(index,value){
                     points.push(new google.maps.LatLng(value['lati'],value['longi']));
                 });
-                console.log(points.length);
                 return points;
             break;
             case 'home':
                 $.each(home,function(index,value){
                     points.push(new google.maps.LatLng(value['lati'],value['longi']));
                 });
-                console.log(points.length);
                 return points;
             break;
             case 'work':
                 $.each(work,function(index,value){
                     points.push(new google.maps.LatLng(value['lati'],value['longi']));
                 });
-                console.log(points.length);
                 return points;
             break;
             case 'other':
                 $.each(other,function(index,value){
                     points.push(new google.maps.LatLng(value['lati'],value['longi']));
                 });
-                console.log(points.length);
                 return points;
             break;
         }

@@ -91,6 +91,10 @@ return [
         'use_addr' => 'es-Use Address',
         'wait' => 'es-Join the Wait List',
         'reset'=>'es-Reset',
+        'mbr_total'=>'es-All Data (:count)',
+        'mbr_home'=>'es-Home (:count)',
+        'mbr_work'=>'es-Work (:count)',
+        'mbr_other'=>'es-Other (:count)',
     ],
 
     'codes' => [
