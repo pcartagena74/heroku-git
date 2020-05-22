@@ -278,7 +278,9 @@
                 return;
             }
             $('#pie_chart_reset').show();
-            myChart.data.datasets[0].data[other_key] = Math.round(myChart.data.datasets[0].data[other_key] + to_add,1);
+            myChart.data.datasets[0].data[other_key] = myChart.data.datasets[0].data[other_key] + to_add;
+            let total = Number(Math.round(myChart.data.datasets[0].data[other_key]+'e'+2)+'e-'+2)
+            myChart.data.datasets[0].data[other_key] = total;
             myChart.data.labels.splice(index_remove, 1);
             myChart.data.datasets[0].data.splice(index_remove, 1);
             let legend = generateIndPieChartLegent(myChart);
