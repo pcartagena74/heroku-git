@@ -42,8 +42,8 @@
        title='{{ trans('messages.buttons.return') }}'><i class='fas fa-fw fa-home'></i></a>
     <!-- /div -->
 
-    <a href='{{ url()->curent() }}' class="btn btn-green btn-{{ $size }}" data-toggle="tooltip" data-placement="bottom"
-       title="{{ strip_tags($loc_tooltip) }}"><i class="fal fa-map-marked-alt"></i></a>
+    <button class="btn btn-green btn-{{ $size }}" data-toggle="tooltip" data-placement="bottom"
+       title="{{ strip_tags($loc_tooltip) }}"><i class="fal fa-map-marked-alt"></i></button>
 
 @endif
 
