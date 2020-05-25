@@ -15,7 +15,7 @@ class CreateEventSessionsTable extends Migration {
 		Schema::create('event-sessions', function(Blueprint $table)
 		{
 			$table->engine = 'InnoDB';
-			$table->integer('sessionID');
+			$table->integer('sessionID', true);
 			$table->integer('trackID')->default(0);
 			$table->integer('eventID')->index('es-eventID');
 			$table->integer('ticketID')->default(0);
