@@ -41,7 +41,7 @@ class CreateEventSessionsTable extends Migration {
 			$table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
 			$table->softDeletes();
 			$table->increments('sessionID')->change();//make it auto increment
-            $table->primary(['sessionID','trackID','eventID']);
+            //$table->primary(['sessionID','trackID','eventID']);
 		});
 	}
 
