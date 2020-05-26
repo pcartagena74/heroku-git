@@ -141,6 +141,7 @@ return [
         'google_recaptcha' => 'Complete the reCAPTCHA to submit the request.',
         'google_recaptcha_required' => 'Please Complete the reCAPTCHA to submit the request.',
         'user_not_found' => 'Unable to find user. Please select from search or create new.',
+        'import_validation'=>'Validation falied, PMI or email address not found.'
     ],
 
     'flashes' => [
@@ -913,6 +914,7 @@ return [
             'updated'=>'Updated Records : :updated',
             'failed'=>'Failed Records : :failed',
             'failed_record'=>'Failed Records : :records',
+            'no_identifier'=>'No unique identifier found for this row.'
         ],
 
         // TicketIt Notification

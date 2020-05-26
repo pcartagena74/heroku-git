@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Person;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -45,6 +46,8 @@ class MemeberImportExcelNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        $user = User::where('id', $this->person->personID)->get()->first();
+        \App::setLocale($user->locale);
         // $o     = Org::find($this->person->defaultOrgID);
         // $name  = $o->orgName;
         // $ename = $this->event->eventName;
@@ -62,11 +65,59 @@ class MemeberImportExcelNotification extends Notification
         $import_message = trans('messages.notifications.member_import.imp_success',
             ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
         $subject = trans('messages.notifications.member_import.subject');
-        if ($i_d->total > ($i_d->inserted + $i_d->updated)) {
+        if ($i_d->failed > 0) {
             $import_message = trans('messages.notifications.member_import.imp_warning',
                 ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
             $subject = trans('messages.notifications.member_import.subject_warning');
         }
+        $new_mail = new MailMessage;
+        $new_mail->subject($subject);
+        $new_mail->line($import_message);
+        $new_mail->line(trans('messages.notifications.member_import.total',
+            ['total' => $i_d->total]));
+        $new_mail->line(trans('messages.notifications.member_import.inserted',
+            ['inserted' => $i_d->inserted]));
+        $new_mail->line(trans('messages.notifications.member_import.updated',
+            ['updated' => $i_d->updated]));
+        if ($i_d->failed > 0) {
+            $new_mail->line(trans('messages.notifications.member_import.failed',
+            ['failed' => $i_d->failed]));
+        }
+        if (!empty($i_d->failed_records)) {
+            $records = json_decode($i_d->failed_records);
+            // var_dump($records);
+            foreach ($records as $key => $value) {
+                // var_dump($value);
+                $str = '';
+                if (!empty($value->reason)) {
+                    $str .= 'Reason: ' . $value->reason . ', ';
+                }
+                if (!empty($value->pmi_id)) {
+                    $str .= ', PMI ID: ' . $value->pmi_id;
+                } else {
+                    if (!empty($value->first_name)) {
+                        $str .= ' First Name: ' . $value->first_name;
+                    }
+                    if (!empty($value->last_name)) {
+                        $str .= ' Last Name: ' . $value->last_name;
+                    }
+                    if (empty($value->first_name) && empty($value->last_name) && !empty($value->primary_email)) {
+                        $str .= ' Primary Email: ' . $value->primary_email;
+                    }
+                    if (empty($value->first_name) && empty($value->last_name) && empty($value->primary_email) && !empty($value->alternate_email)) {
+                        $str .= ' Alternate Email: ' . $value->alternate_email;
+                    }
+                    if (empty($value->first_name) && empty($value->last_name) && empty($value->primary_email) && empty($value->primary_email) && empty($value->alternate_email)) {
+                        $str .= ' ' . trans('messages.notifications.member_import.no_identifier');
+                    }
+                }
+                $new_mail->line($str);
+                // if (!empty($value['reason']) {
+                // }
+            }
+
+        }
+        return $new_mail;
         return (new MailMessage)
             ->subject($subject)
             ->line($import_message)

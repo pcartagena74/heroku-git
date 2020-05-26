@@ -572,31 +572,26 @@ trait ExcelMemberImportTrait
         }
         if ($has_update) {
             $import_detail->increment('updated');
-            echo 'update rec'.$import_detail->total.'\r\n<br>';
         }
 
         if ($has_insert) {
             $import_detail->increment('inserted');
-            echo 'insert rec'.$import_detail->total.'\r\n<br>';
         }
-        echo 'dirty insert '.var_dump($has_insert).' update '.var_dump($has_update).' \r\n<br>';
-        if ($has_update || $has_insert) {
-            $import_detail->save(); //op record update
-            echo 'save 1 rec'.$import_detail->total.'\n';
-        } else {
+        if ($has_update == false || $has_insert == false) {
             $import_detail->increment('failed');
             if (!empty($import_detail->failed_records)) {
                 $json = json_decode($import_detail->failed_records);
-                $data = ['pmi_id' => $row['pmi_id'],
-                    'first_name'      => $first,
-                    'last_name'       => $last,
-                    'email'           => $em1];
+                $data = [
+                    'pmi_id'                => $pmi_id,
+                    'first_name'            => $first,
+                    'last_name'             => $last,
+                    'primary_email'         => $em1,
+                    'alternate_email_email' => $em2];
                 $json[]                        = $data;
                 $import_detail->failed_records = json_encode($json);
             } else {
                 $import_detail->failed_records = json_encode([$row]);
             }
-            echo 'failed rec'.$import_detail->total.'\n';
             $import_detail->save();
         }
         $this->bulkInsertAll();

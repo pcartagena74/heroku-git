@@ -33,8 +33,8 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public $row_count = 0;
     public $currentPerson;
 
-    public $tries   = 3;
-    public $timeout = 160;
+    protected $tries   = 3;
+    protected $timeout = 160;
 
     public function __construct($currentPerson, $import_detail)
     {
@@ -50,15 +50,33 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
      */
     public function collection(Collection $rows)
     {
+        $user = User::where('id', $this->currentPerson->personID)->get()->first();
+        \App::setLocale($user->locale);
         $count = 0;
         foreach ($rows as $row) {
             $this->import_detail->refresh();
             $this->import_detail->increment('total');
-            $this->import_detail->save();
             if (!empty($row['pmi_id']) && (!empty($row['primary_email']) || !empty($row['alternate_email']))) {
                 // requestBin($row->toArray());
                 ++$count;
                 $this->storeImportDataDB($row->toArray(), $this->currentPerson, $this->import_detail);
+            } else {
+                $this->import_detail->increment('failed');
+                $reason = ['reason' => trans('messages.errors.import_validation'),
+                    'pmi_id'            => $row['pmi_id'],
+                    'first_name'        => $row['first_name'],
+                    'last_name'         => $row['last_name'],
+                    'primary_email'     => $row['primary_email'],
+                    'alternate_email'   => $row['alternate_email'],
+                ];
+                if (!empty($this->import_detail->failed_records)) {
+                    $json                                = json_decode($this->import_detail->failed_records);
+                    $json[]                              = $reason;
+                    $this->import_detail->failed_records = json_encode($json);
+                } else {
+                    $this->import_detail->failed_records = json_encode([$reason]);
+                }
+                $this->import_detail->save();
             }
         }
         $this->row_count += $count;
