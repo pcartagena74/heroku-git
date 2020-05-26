@@ -40,6 +40,8 @@ trait ExcelMemberImportTrait
     public function storeImportDataDB($row, $currentPerson, $import_detail)
     {
         $this->currentPerson = $currentPerson;
+        $user = User::where('id', $currentPerson->personID)->get()->first();
+        \App::setLocale($user->locale);
         DB::connection()->disableQueryLog();
         $import_detail->refresh();
         // $this->timeMem('starttime ' . $count_g);
@@ -59,7 +61,7 @@ trait ExcelMemberImportTrait
         $f                      = null;
         $l                      = null;
         $has_update             = false;
-        $has_insert             = true;
+        $has_insert             = false;
         // columns in the MemberDetail sheet are fixed; check directly and then add if not found...
         // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
         // if found, get $person, $org-person, $email, $address, $phone records and update, else create
@@ -577,11 +579,13 @@ trait ExcelMemberImportTrait
         if ($has_insert) {
             $import_detail->increment('inserted');
         }
-        if ($has_update == false || $has_insert == false) {
+
+        if ($has_update == false && $has_insert == false) {
             $import_detail->increment('failed');
             if (!empty($import_detail->failed_records)) {
                 $json = json_decode($import_detail->failed_records);
                 $data = [
+                    'reason'                => trans('messages.notifications.member_import.nothing_to_update'),
                     'pmi_id'                => $pmi_id,
                     'first_name'            => $first,
                     'last_name'             => $last,

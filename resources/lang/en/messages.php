@@ -914,7 +914,8 @@ return [
             'updated'=>'Updated Records : :updated',
             'failed'=>'Failed Records : :failed',
             'failed_record'=>'Failed Records : :records',
-            'no_identifier'=>'No unique identifier found for this row.'
+            'no_identifier'=>'No unique identifier found for this row.',
+            'nothing_to_update'=>'No update or insert operation was performed.'
         ],
 
         // TicketIt Notification
