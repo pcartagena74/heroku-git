@@ -44,7 +44,8 @@ class MCACLRepository implements ACLRepository
             return [
                 ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1], // only read
                 ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1], // only read
-                ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // read and write
+                ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'] . '/filemanager', 'access' => 1], // only read
+                ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // only read
                 ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2], // read and write
                 ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1], // read and write
                 ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2], // read and write
@@ -52,7 +53,7 @@ class MCACLRepository implements ACLRepository
         }
         $rule_array = [
             ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1], // only read
-            ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1], // only read
+            ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'] . '/filemanager', 'access' => 1], // only read
             ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // read
             ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2], // read and write
         ];

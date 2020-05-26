@@ -177,14 +177,14 @@ class CampaignController extends Controller
                 $campaign->scheduleDate = null;
                 $campaign->sendDate     = null;
                 $campaign->save();
-                updateCampaignEmailTemplate($campaign, $request);
+                $this->updateCampaignEmailTemplate($campaign, $request);
             } else {
                 $campaign = $this->storeCampaignEmailTemplate($request, true);
                 request()->session()->flash('alert-success', trans('messages.messages.campaign_created_from_existing'));
                 return response()->json(['success' => true, 'message' => 'Template Updated', 'redirect' => url('campaign', $campaign->campaignID, 'edit')]);
             }
         } else {
-            updateCampaignEmailTemplate($campaign, $request);
+            $this->updateCampaignEmailTemplate($campaign, $request);
             return response()->json(['success' => true, 'message' => 'Template Updated']);
         }
     }
