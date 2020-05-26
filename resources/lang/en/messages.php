@@ -152,6 +152,7 @@ return [
         'no_valid_email'            => 'Please enter atlest one valid email address',
         'empty_template'            => 'Please select some element in email template',
         'campaign_not_exist'        => 'Campaign does not exist',
+        'import_validation'=>'Validation falied, PMI or email address not found.'
     ],
 
     'flashes'                => [
@@ -940,6 +941,18 @@ return [
         'member_import' => [
             'subject' => 'Import Complete',
             'line1'   => ':user, the member import has completed.',
+            'subject_failed' => 'Import Failed',
+            'subject_warning' => 'Import Completed with errors',
+            'imp_success' => ':user, the member import for file :file_name was successful. Completed on :completed_date',
+            'imp_failed' => ':user, the member import for file :file_name has failed. No records were imported. Please check the file.',
+            'imp_warning' => ':user, the member import for file :file_name had some errors. All records were not processed. Completed on :completed_date',
+            'total'=>'Total Records : :total',
+            'inserted'=>'Inserted Records : :inserted',
+            'updated'=>'Updated Records : :updated',
+            'failed'=>'Failed Records : :failed',
+            'failed_record'=>'Failed Records : :records',
+            'no_identifier'=>'No unique identifier found for this row.',
+            'nothing_to_update'=>'No update or insert operation was performed.'
         ],
 
         // TicketIt Notification
