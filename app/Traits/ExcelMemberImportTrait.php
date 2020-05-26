@@ -572,13 +572,13 @@ trait ExcelMemberImportTrait
 
             $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
         }
-        if ($has_update) {
-            $import_detail->increment('updated');
-        }
-
         if ($has_insert) {
             $import_detail->increment('inserted');
         }
+        if ($has_update && !$has_insert) {
+            $import_detail->increment('updated');
+        }
+
 
         if ($has_update == false && $has_insert == false) {
             $import_detail->increment('failed');
