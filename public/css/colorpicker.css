@@ -6,7 +6,7 @@
     background: url(../images/colorpicker_background.png);
     font-family: Arial, Helvetica, sans-serif;
     display: none;
-    z-index: 100000;//to componsate for popup
+    z-index: 100000;/*to componsate for popup*/
 }
 .colorpicker_color {
     width: 150px;

@@ -155,6 +155,12 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <link href="{{url('css/colorpicker.css')}}" rel="stylesheet"/>
 <link href="{{url('css/editor-color.css')}}" rel="stylesheet"/>
 <link href="{{url('vendor/sweetalert2/dist/sweetalert2.min.css')}}" rel="stylesheet"/>
+<style type="text/css">
+    .ui-tooltip.ui-corner-all.ui-widget-shadow.ui-widget.ui-widget-content {
+    position: absolute!important;
+    z-index: 999999!important; /* (can not get above the positioned parent level regarding parent siblings) */
+}
+</style>
 <div id="email_builder_master">
     <div class="elements-db clear-fix" style="display:none">
         <div class="tab-elements element-tab active">

@@ -585,4 +585,5 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         _emailBuilder.setImageFileManager($url);
       // document.getElementById('image_label').value = $url;
     }
+
 </script>

@@ -21,8 +21,19 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
 @endsection
 <link href="{{ asset('vendor/file-manager/css/file-manager.css') }}" rel="stylesheet"/>
 @section('content')
+<style type="text/css">
+    #file_manager .fm-content.d-flex.flex-column.col {
+		width: 100%;
+	}
+	#file_manager .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(n+3) {
+		display:none;
+	}
+	#file_manager .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(1) {
+		display:none;
+	}
+</style>
 <div class="form-group col-xs-12">
-    <div style="height: 700px;">
+    <div style="height: 700px;" id="file_manager">
         <div id="fm">
         </div>
     </div>
