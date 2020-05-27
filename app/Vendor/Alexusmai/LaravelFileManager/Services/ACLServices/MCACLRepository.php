@@ -40,26 +40,30 @@ class MCACLRepository implements ACLRepository
         if (\Auth::id() === 1) {
             return config('file-manager.aclRules')[$this->getUserID()] ?? [];
         }
+        // 0 deny 1 read only 2 read and write
         if (Entrust::hasRole('Developer')) {
             return [
-                ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1], // only read
-                ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1], // only read
-                ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'] . '/filemanager', 'access' => 1], // only read
-                ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // only read
-                ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2], // read and write
-                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1], // read and write
-                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2], // read and write
+                ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['orgPathFM'], 'access' => 1],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign_thumb'], 'access' => 0],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2],
             ];
         }
         $rule_array = [
-            ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1], // only read
-            ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'] . '/filemanager', 'access' => 1], // only read
-            ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1], // read
-            ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2], // read and write
+            ['disk' => getDefaultDiskFM(), 'path' => '/', 'access' => 1],
+            ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1],
+            ['disk' => getDefaultDiskFM(), 'path' => $path['orgPathFM'], 'access' => 1],
+            ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1],
+            ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2],
         ];
         if (Entrust::hasRole('Marketing') || Entrust::hasRole('Admin')) {
-            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1]; // read
-            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2]; // read and write
+            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1];
+            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign_thumb'], 'access' => 0];
+            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2];
         }
         return $rule_array;
     }

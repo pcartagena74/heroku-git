@@ -168,13 +168,13 @@ class FileManager
 
             // check file size if need
             if ($this->configRepository->getMaxUploadFileSize()
-                && $file->getClientSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
+                && $file->getClientSize() / 1000 > $this->configRepository->getMaxUploadFileSize()
             ) {
                 $fileNotUploaded = true;
                 continue;
             }
             if ($allow_for_dev == false) {
-                if (($consumed_storage + ($file->getClientSize() / 1024)) > $total_storage) {
+                if (($consumed_storage + ($file->getClientSize() / 1000)) > $total_storage) {
                     $fileNotUploaded = true;
                     continue;
                 }
@@ -196,7 +196,7 @@ class FileManager
                 $file,
                 $file->getClientOriginalName()
             );
-            $org->increment('consumed_storage', ($file->getClientSize() / 1024));
+            $org->increment('consumed_storage', ($file->getClientSize() / 1000));
         }
 
         // If the some file was not uploaded
@@ -239,6 +239,11 @@ class FileManager
                     Storage::disk($disk)->deleteDirectory($item['path']);
                 } else {
                     // delete file
+                    $currentPerson = Person::find(auth()->user()->id);
+                    $org           = $currentPerson->defaultOrg;
+                    $total_storage = $org->total_storage;
+                    $size          = Storage::disk($disk)->size($item['path']);
+                    $org->decrement('consumed_storage', ($size / 1024));
                     Storage::disk($disk)->delete($item['path']);
                 }
             }

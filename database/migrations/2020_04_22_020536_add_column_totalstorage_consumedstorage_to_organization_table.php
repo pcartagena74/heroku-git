@@ -14,7 +14,8 @@ class AddColumnTotalstorageConsumedstorageToOrganizationTable extends Migration
     public function up()
     {
         Schema::table('organization', function (Blueprint $table) {
-            $table->integer('total_storage')->unsigned()->default(512);
+            // size in kb so default is 1024mb 1048576
+            $table->integer('total_storage')->unsigned()->default(1048576);
             $table->integer('consumed_storage')->unsigned()->default(0);
         });
     }

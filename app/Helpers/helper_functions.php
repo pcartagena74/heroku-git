@@ -743,12 +743,13 @@ if (!function_exists('getAllDirectoryPathFM')) {
             $org           = $currentPerson->defaultOrg;
         }
         // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
-        $base_path              = $org->orgPath . '/filemanager/';
+        $base_path = $org->orgPath . '/filemanager/';
         // $base_path              = $org->orgPath . '/';
         $path['event']          = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
         $path['campaign']       = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
         $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files/thumb');
-        $path['orgPath']        = Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+        $path['orgPath']        = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
+        $path['orgPathFM']      = Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
         return $path;
     }
 
@@ -783,7 +784,7 @@ if (!function_exists('getDefaultPathFM')) {
     {
         $currentPerson = Person::find(auth()->user()->id);
         $org           = $currentPerson->defaultOrg;
-        return Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+        return Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
     }
 }
 
