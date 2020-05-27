@@ -347,9 +347,11 @@
         for (var i = 0; i < all_points.length; i++) {
             bounds.extend(all_points[i]);
         }
+        console.log(bounds);
         if(bounds.isEmpty()) {
             map.setCenter({lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}} });
         } else {
+            
             map.fitBounds(bounds);
             // var listener = google.maps.event.addListener(map, "bounds_changed", function() { 
             //     console.log('here1',map.getZoom());
@@ -366,6 +368,20 @@
           map: map,
           opacity:1
         });
+        // var ne = bounds.getNorthEast(); // LatLng of the north-east corner
+        // var sw = bounds.getSouthWest(); // LatLng of the south-west corder
+        // var nw = new google.maps.LatLng(ne.lat(), sw.lng());
+        // var se = new google.maps.LatLng(sw.lat(), ne.lng());
+        var rectangle = new google.maps.Rectangle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 1,
+            fillColor: '#FFF',
+            fillOpacity: 0.25,
+            map: map,
+            bounds: bounds
+        });
+        rectangle.setMap(map);
         heatmap.setMap(map);
         if(ths) {
             $('#floating-panel').find('.btn').removeClass('active');
