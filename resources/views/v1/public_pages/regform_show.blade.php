@@ -1,8 +1,11 @@
-<?php
+@php
 /**
  * Comment: Registration form (multiple ticket quantities)
  * Created: 8/24/2017
  * Updated: October 2018 - This is the one in use (not register_new)
+ * @var $event
+ * @var $tkts
+ * @var $certs
  */
 
 use Illuminate\Support\Facades\DB;
@@ -93,7 +96,8 @@ $experience_choices = [
 
 //var_dump(Session::all());
 $i = 0;
-?>
+@endphp
+
 @extends('v1.layouts.no-auth')
 
 @section('content')
@@ -107,7 +111,7 @@ $i = 0;
 
     <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-12">
-            @include('v1.parts.event_address')
+            @include('v1.parts.location_display', ['loc' => $loc, 'event' => $event, 'time' => 1])
         </div>
         <div class="col-md-3 col-sm-3 col-xs-12">
         </div>

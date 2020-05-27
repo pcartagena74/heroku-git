@@ -13,6 +13,7 @@ class MemeberImportExcelNotification extends Notification
 
     protected $person;
     protected $records;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -24,6 +25,7 @@ class MemeberImportExcelNotification extends Notification
     {
         $this->person  = $person;
         $this->records = $records;
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -48,13 +50,15 @@ class MemeberImportExcelNotification extends Notification
         // $o     = Org::find($this->person->defaultOrgID);
         // $name  = $o->orgName;
         // $ename = $this->event->eventName;
+        /*
         $name = trim($this->person->firstName . ' ' . $this->person->lastName);
         if (empty($name)) {
             $name = $this->person->login;
         }
+        */
         return (new MailMessage)
             ->subject(trans('messages.notifications.member_import.subject'))
-            ->line(trans('messages.notifications.member_import.line1', ['user' => $name, 'count' => $this->records]));
+            ->line(trans('messages.notifications.member_import.line1', ['user' => $this->name, 'count' => $this->records]));
     }
 
     /**

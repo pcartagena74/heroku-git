@@ -843,72 +843,97 @@ return [
     ],
 
     'notifications' => [
-        'hello' => 'es-Hello :firstName,',
-        'thanks' => 'es-Thank you for using mCentric with :org.',
-        'login' => 'es-Login to mCentric',
+        'hello' => 'Hola :firstName,',
+        'thanks' => 'Gracias por usar mCentric con :org.',
+        'login' => 'Inicie sesión en mCentric',
+        'disclaimer' => "Si tiene problemas para hacer clic en el botón ':a', copie y pegue la URL en su navegador: :u",
 
-        // Wait List No More
-        'WLNM' => [
-            'subject' => 'es-:org Event: You are off the wait list!',
-            'line1' => 'es-A spot has opened up for :event.',
-            'line2' => 'es-If you didn\'t already register, you may continue your registration.',
-            'action' => 'es-Continue Registration',
+        // Login Change
+        'login_change' => [
+            'subject' => "Su login de mCentric",
+            'line1' => "Su inicio de sesión de mCentric se cambió recientemente de :old a :new.",
+            'line2' => "Si inició este cambio, puede eliminar este correo electrónico.",
+            'line3' => "Si no lo hizo, puede volver a cambiarlo usando el botón a continuación.",
+            'action' => "Deshacer Cambio de Login",
         ],
 
-        // Set Your Password
-        'SYP' => [
-            'subject' => 'es-Your mCentric Account: How to set/reset your password',
-            'line1' => 'es-An mCentric account was setup for you by :name.',
-            'line2' => 'es-If you have not yet set its password or do not remember it, you can reset it now using the button below.',
-            'line3' => 'es-If you do not need to reset your password, you can this delete this email.',
-            'action' => 'es-Reset Password',
+        // Member Import Complete
+        'member_import' => [
+            'subject' => 'Importación Completada',
+            'line1' => ':user, la importación de miembros se ha completado.',
+        ],
+
+        // New Registration Account Creation
+        'new_reg_acct' => [
+            'subject' => "Su cuenta de mCentric con :org",
+            'line1' => "Se creó una cuenta mCentric para usted durante el registro de :ename.",
+            'line2' => "Si inició este cambio, puede eliminar este email.",
+        ],
+
+        // New User Account Creation
+        'new_user_acct' => [
+            'subject' => "Su cuenta de mCentric con :org",
+            'line1' => ":name creó una cuenta de mCentric para usted para :org.",
+            'line2' => "Su login es la email donde recibe esta notificación.",
+            'line3' => "La contraseña que se estableció para usted es: ':pass'",
+        ],
+
+        // Password Change
+        'PASS' => [
+            'subject' => "Su contraseña de mCentric",
+            'line1' => "Su contraseña de mCentric se modificó recientemente.",
+            'line2' => "Si inició este cambio, puede eliminar este email.",
+            'line3' => "Si no lo hizo, debe restablecerlo ahora usando el botón a continuación.",
+            'action' => "Restablecer Su Contraseña",
         ],
 
         // Notify Registrant with Receipt
         'RegNote' => [
-            'subject' => 'es-Your :org Event Receipt: :event',
-            'line1' => 'es-You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.',
-            'action1' => 'es-View/Download Your Receipt',
-            'action2' => 'es-More Event Details...',
-            'line2' => 'es-See you at the event!',
-            'postRegHeader' => 'es-Information for Confirmed Attendees',
+            'subject' => "Your :org Event Receipt: :event",
+            'line1' => "Te has registrado para <b>:event</b> en <b>:datetime</b> que se llevará a cabo en <b>:loc</b>.",
+            'action1' => 'Ver/Descargar Su Recibo',
+            'action2' => 'Más Detalles del Evento...',
+            'line2' => 'Nos vemos en el evento!',
+            'postRegHeader' => "Información para Asistentes Confirmados",
         ],
 
         // Send Survey
         'SS' => [
-            'subject' => 'es-Survey for :org :event_type',
-            'line1' => 'es-Thank you for attending our :etype, \':ename, \' on :date.',
-            'line2' => 'es-Please spend 5 minutes to give us your feedback on the event and its speaker(s).',
-            'line3' => 'es-This survey is for the PDC session named:  :name',
-            'action' => 'es-Take Survey',
-            'post_mail_msg' => 'es-:count survey email sent to the attendee.  :c2 survey was already completed.|' .
-                ':count survey emails sent to the attendees. :c2 surveys were already completed',
+            'subject' => "Survey for :org :event_type",
+            'line1' => 'Thank you for attending our :etype, ":ename," on :date.',
+            'line2' => "Please spend 5 minutes to give us your feedback on the event and its speaker(s).",
+            'line3' => "This survey is for the PDC session named:  :name",
+            'action' => "Take Survey",
+            'post_mail_msg' => ":count survey email sent to the attendee.  :c2 survey was already completed.|" .
+                ":count survey emails sent to the attendees. :c2 surveys were already completed",
         ],
 
-        // AccountCreation
-        'new_reg_acct' => [
-            'subject' => 'es-Your mCentric account with :org',
-            'line1' => 'es-An mCentric account was created for you during the registration of :ename.',
-            'line2' => 'es-If you initiated this change, you can delete this email.',
-        ],
-
-        // NewUserAcct
-        'new_user_acct' => [
-            'subject' => 'Su cuenta mCentric con :org',
-            'line1' => 'Una cuenta de mCentric fue configurada para usted por :name con :org.',
-            'line2' => 'Su inicio de sesión es la dirección de correo electrónico donde recibe esta notificación.',
-            'line3' => 'La contraseña que se estableció para usted es: \':pass\'',
-        ],
-
-        //Member import complete
-        'member_import' => [
-            'subject' => 'Importación Completada',
-            'line1' => 'es- :name, la importación de miembros ha finalizado.',
+        // Set Your Password
+        'SYP' => [
+            'subject' => "Your mCentric Account: How to set/reset your password",
+            'line1' => "An mCentric account was setup for you by :name.",
+            'line2' => "If you have not yet set its password or do not remember it, you can reset it now using the button below.",
+            'line3' => "If you do not need to reset your password, you can this delete this email.",
+            'action' => "Reset Password",
         ],
 
         // TicketIt Notification
         'ticketit' => [
-            'action' => 'Ver Boleto'
+            'action' => 'View Ticket'
+        ],
+
+        // Undo Login Change
+        'UNDO' => [
+            'subject' => "Su login de mCentric",
+            'line1' => "Su inicio de sesión de mCentric se cambió a :email.",
+        ],
+
+        // Wait List No More
+        'WLNM' => [
+            'subject' => ":org Event: You are off the wait list!",
+            'line1' => "A spot has opened up for :event.",
+            'line2' => "If you didn't already register, you may continue your registration.",
+            'action' => "Continue Registration",
         ],
 
     ],
@@ -1136,6 +1161,7 @@ return [
         'hasFood' => 'es-Events with food have additional questions asked of attendees.',
         'hasTracks' => 'es-Events with tracks require session setup.',
         'linkedIn' => 'es-This will connect to your account and save the URL to your LinkedIn photo for display in the mCentric navigation. No other information is shared at this time.',
+        'loc' => "Haga clic para ubicación",
         'login' => 'es-If you want your login to be a new email address, first add it to your account by clicking \'Add Email\' below.',
         'max_set' => 'es-Set to 0 if there is no maximum.',
         'mr' => 'es-Merge Record',

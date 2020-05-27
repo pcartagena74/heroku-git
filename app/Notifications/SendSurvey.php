@@ -21,6 +21,7 @@ class SendSurvey extends Notification implements ShouldQueue
     protected $event;
     protected $rs;
     protected $es;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -33,6 +34,7 @@ class SendSurvey extends Notification implements ShouldQueue
         $this->event  = $event;
         $this->rs     = $rs;
         $this->es     = EventSession::find($rs->sessionID);
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -57,7 +59,7 @@ class SendSurvey extends Notification implements ShouldQueue
         try {
 
             $o     = Org::find($this->person->defaultOrgID);
-            $name  = $o->orgName;
+            $oname  = $o->orgName;
             $etype = $this->event->event_type->etName;
             $ename = $this->event->eventName;
             if (Lang::has('messages.event_types.' . $etype)) {
@@ -68,23 +70,23 @@ class SendSurvey extends Notification implements ShouldQueue
             if ($this->event->hasTracks > 0) {
                 return (new MailMessage)
                     ->greeting(trans('messages.notifications.hello', ['firstName' => $this->person->showDisplayName()]))
-                    ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $etype]))
+                    ->subject(trans('messages.notifications.SS.subject', ['org' => $oname, 'event_type' => $etype]))
                     ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
                     ->line(trans('messages.notifications.SS.line2'))
                     ->line(trans('messages.notifications.SS.line3', ['name' => $this->es->sessionName]))
                     ->action(trans('messages.notifications.SS.action'), env('APP_URL') . "/rs_survey/" . $this->rs->id)
-                    ->line(trans('messages.notifications.thanks', ['org' => $name]));
+                    ->line(trans('messages.notifications.thanks', ['org' => $oname]));
             } else {
                 return (new MailMessage)
                     ->greeting(trans('messages.notifications.hello', ['firstName' => $this->person->showDisplayName()]))
-                    ->subject(trans('messages.notifications.SS.subject', ['org' => $name, 'event_type' => $etype]))
+                    ->subject(trans('messages.notifications.SS.subject', ['org' => $oname, 'event_type' => $etype]))
                     ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
                     ->line(trans('messages.notifications.SS.line2'))
                     ->action(trans('messages.notifications.SS.action'), env('APP_URL') . "/rs_survey/" . $this->rs->id)
-                    ->line(trans('messages.notifications.thanks', ['org' => $name]));
+                    ->line(trans('messages.notifications.thanks', ['org' => $oname]));
             }
         } catch (Exception $ex) {
-            dd($ex->getMessage());
+            //dd($ex->getMessage());
         }
     }
 

@@ -68,5 +68,7 @@ $e = request()->e;
 @endsection
 
 @section('scripts')
-    @include('v1.parts.email_pop', ['field' => 'email', 'parameter' => 'e'])
+    {{--
+    include('v1.parts.email_pop', ['field' => 'email', 'parameter' => 'e'])
+    --}}
 @endsection
