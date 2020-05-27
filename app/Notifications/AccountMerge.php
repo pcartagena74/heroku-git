@@ -16,6 +16,7 @@ class AccountMerge extends Notification
 
     protected $person1;
     protected $person2;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -26,6 +27,7 @@ class AccountMerge extends Notification
     {
         $this->person1 = $person1;
         $this->person2 = $person2;
+        $this->name = $person1->showDisplayName();
     }
 
     /**
@@ -48,14 +50,14 @@ class AccountMerge extends Notification
     public function toMail($notifiable)
     {
         $o = Org::find($this->person2->defaultOrgID);
-        $name = $o->orgName;
+        $oname = $o->orgName;
 
         return (new MailMessage)
-            ->subject(trans('messages.messages.merge_sub', ['name' => $name]))
-            ->line(trans('messages.messages.merge_msg1', ['orgname' => $name]))
+            ->subject(trans('messages.messages.merge_sub', ['name' => $oname]))
+            ->line(trans('messages.messages.merge_msg1', ['orgname' => $oname]))
             ->line(trans('messages.messages.merge_msg2', ['email1' => $this->person1->login, 'email2' => $this->person2->login]))
             ->action(trans('messages.messages.visit_mCentric'), env('APP_URL'))
-            ->line(trans('messages.messages.thanks', ['orgname' => $name]));
+            ->line(trans('messages.messages.thanks', ['orgname' => $oname]));
     }
 
     /**

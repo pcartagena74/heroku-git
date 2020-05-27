@@ -14,6 +14,7 @@ class PasswordChange extends Notification
     use Queueable;
 
     protected $person;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -23,6 +24,7 @@ class PasswordChange extends Notification
     public function __construct(Person $person)
     {
         $this->person = $person;
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -45,14 +47,14 @@ class PasswordChange extends Notification
     public function toMail($notifiable)
     {
         $o = Org::find($this->person->defaultOrgID);
-        $name = $o->orgName;
+        $oname = $o->orgName;
         return (new MailMessage)
-            ->subject('Your mCentric Password')
-            ->line('Your mCentric password was recently changed.')
-            ->line('If you initiated this change, you can delete this email.')
-            ->line('If you did not, you should reset it now using the button below.')
-            ->action('Password Reset', url('/password/reset?e='.$this->person->login))
-            ->line("Thank you for using mCentric with $name");
+            ->subject(trans('messages.notifications.PASS.subject'))
+            ->line(trans('messages.notifications.PASS.line1'))
+            ->line(trans('messages.notifications.PASS.line2'))
+            ->line(trans('messages.notifications.PASS.line3'))
+            ->action(trans('messages.notifications.PASS.action'), url('/password/reset?e='.$this->person->login))
+            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
     /**

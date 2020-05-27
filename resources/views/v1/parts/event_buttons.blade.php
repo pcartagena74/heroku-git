@@ -29,23 +29,20 @@
     $checkinURL = env('APP_URL') . '/checkin/' . $event->slug;
     $recordURL = env('APP_URL') . '/record_attendance/' . $event->slug;
 
-    if(!isset($suppress)){
-        $loc = $event->location;
-        $loc_tooltip = trans('messages.fields.loc') . ": " . view('v1.parts.location_display', compact('event', 'loc'))->render();
-    }
+    $loc = $event->location; $time = 1;
 
+    $loc_tooltip = view('v1.parts.location_display', compact('event', 'loc', 'time'))->render();
 @endphp
 
 @if(!isset($suppress))
-    <!-- div class="col-xs-1" -->
     <a href='{{ $homeURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='right'
        title='{{ trans('messages.buttons.return') }}'><i class='fas fa-fw fa-home'></i></a>
-    <!-- /div -->
-
-    <button class="btn btn-green btn-{{ $size }}" data-toggle="tooltip" data-placement="bottom"
-       title="{{ strip_tags($loc_tooltip) }}"><i class="fal fa-map-marked-alt"></i></button>
-
 @endif
+
+<button class="btn btn-green btn-{{ $size }}" data-content="{!! $loc_tooltip !!}" data-html="true"
+        data-placement="right" data-toggle="popover" data-trigger="focus" tabindex="0">
+    <i data-toggle='tooltip' title="{{ trans('messages.tooltips.loc') }}" class="fal fa-map-marked-alt"></i>
+</button>
 
 @if($event->ok_to_display() && !$past)
     <!-- div class="col-xs-1" -->

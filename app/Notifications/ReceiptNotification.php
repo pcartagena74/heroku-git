@@ -22,6 +22,7 @@ class ReceiptNotification extends Notification
     protected $person;
     protected $loc;
     protected $receipt;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -36,6 +37,7 @@ class ReceiptNotification extends Notification
         $this->person = Person::find($this->rf->personID);
         $this->loc    = Location::find($this->event->locationID);
         $this->receipt = $receiptURL;
+        $this->name = $this->person->showDisplayName();
     }
 
     /**

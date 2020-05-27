@@ -14,6 +14,7 @@ class UndoLoginChange extends Notification
     use Queueable;
 
     protected $person;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -23,6 +24,7 @@ class UndoLoginChange extends Notification
     public function __construct(Person $person)
     {
         $this->person     = $person;
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -45,12 +47,12 @@ class UndoLoginChange extends Notification
     public function toMail($notifiable)
     {
         $o = Org::find($this->person->defaultOrgID);
-        $name = $o->orgName;
+        $oname = $o->orgName;
         $new_email = $this->person->login;
         return (new MailMessage)
-            ->subject('Your mCentric Login')
-            ->line("Your mCentric login was successfully changed back to $new_email.")
-            ->line("Thank you for using mCentric with $name");
+            ->line(trans('messages.notifications.UNDO.subject'))
+            ->line(trans('messages.notifications.UNDO.line1', ['email' => $new_email]))
+            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
     /**

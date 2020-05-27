@@ -15,6 +15,7 @@ class SetYourPassword extends Notification
 
     protected $person;
     protected $o;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -25,6 +26,7 @@ class SetYourPassword extends Notification
     {
         $this->person = $person;
         $this->o = Org::find($this->person->defaultOrgID);
+        $this->name = $person->showDisplayName();
     }
 
 
@@ -47,14 +49,14 @@ class SetYourPassword extends Notification
      */
     public function toMail($notifiable)
     {
-        $name = $this->o->orgName;
+        $oname = $this->o->orgName;
         return (new MailMessage)
             ->subject(trans('messages.notifications.SYP.subject'))
-            ->line(trans('messages.notifications.SYP.line1', ['name' => $name]))
+            ->line(trans('messages.notifications.SYP.line1', ['name' => $oname]))
             ->line(trans('messages.notifications.SYP.line1'))
             ->line(trans('messages.notifications.SYP.line2'))
             ->action(trans('messages.notifications.SYP.action'), url('/password/reset?e='.$this->person->login))
-            ->line(trans('messages.notifications.thanks', ['org' => $name]));
+            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
     /**
