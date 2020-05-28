@@ -15,6 +15,7 @@ class WaitListNoMore extends Notification implements ShouldQueue
     use Queueable;
 
     protected $reg;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -53,7 +54,7 @@ class WaitListNoMore extends Notification implements ShouldQueue
             ->line(trans('messages.notifications.WLNM.line1', ['event' => $event->eventName]))
             ->line(trans('messages.notifications.WLNM.line2'))
             ->action(trans('messages.notifications.WLNM.action'), url(env('APP_URL').'/confirm_registration/'.$this->reg->rfID))
-            ->line(trans('messages.notifications.thanks'));
+            ->line(trans('messages.notifications.thanks', ['org' => $org->orgName]));
     }
 
     /**

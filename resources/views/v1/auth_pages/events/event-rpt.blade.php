@@ -578,7 +578,7 @@ $count = 0;
                             @endif
                         </div>
                     @endif
-                    @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es && $event->checkin_time())
+                    @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es && $event->checkin_period())
                         {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                         {!! Form::hidden('sessionID', $es->sessionID) !!}
                         {!! Form::hidden('eventID', $event->eventID) !!}

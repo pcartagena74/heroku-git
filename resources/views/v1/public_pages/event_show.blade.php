@@ -16,7 +16,8 @@ use League\Flysystem\Filesystem;
 
 $category = DB::table('event-category')->
 where([
-    ['orgID', $event->orgID],
+    //['orgID', $event->orgID],     // orgID does not have to be specified because the catID selection in add_event
+                                    // allows for selection from this orgID or the default orgID of 1
     ['catID', $event->catID]
 ])->select('catTXT')->first();
 

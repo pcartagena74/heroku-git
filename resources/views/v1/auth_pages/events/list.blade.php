@@ -1,9 +1,12 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 2/2/2017
  *
  * $header, $subheader, $w1, $w2, $r1, $r2, $r3
+ * @var $past
+ * @var $current_events
+ * @var $past_events
  *
  */
 
@@ -64,7 +67,8 @@ if ($past) {
 } else {
     $header = '';
 }
-?>
+@endphp
+
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')

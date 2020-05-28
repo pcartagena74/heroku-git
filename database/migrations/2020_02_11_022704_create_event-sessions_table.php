@@ -15,7 +15,7 @@ class CreateEventSessionsTable extends Migration {
 		Schema::create('event-sessions', function(Blueprint $table)
 		{
 			$table->engine = 'InnoDB';
-			$table->integer('sessionID');
+			$table->integer('sessionID', true);
 			$table->integer('trackID')->default(0);
 			$table->integer('eventID')->index('es-eventID');
 			$table->integer('ticketID')->default(0);
@@ -41,7 +41,7 @@ class CreateEventSessionsTable extends Migration {
 			$table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
 			$table->softDeletes();
 			$table->increments('sessionID')->change();//make it auto increment
-            $table->primary(['sessionID','trackID','eventID']);
+            //$table->primary(['sessionID','trackID','eventID']);
 		});
 	}
 
