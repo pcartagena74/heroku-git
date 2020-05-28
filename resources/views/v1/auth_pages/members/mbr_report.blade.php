@@ -349,17 +349,19 @@
           zoom: 13,
           center: {lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}}},
           mapTypeId: 'roadmap',
+          styles: [{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]}]
         });
+
         var all_points = getPoints(type);
         for (var i = 0; i < all_points.length; i++) {
             bounds.extend(all_points[i]);
         }
-        console.log(bounds);
         if(bounds.isEmpty()) {
             map.setCenter({lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}} });
         } else {
-            
             map.fitBounds(bounds);
+            // map.panToBounds(bounds);
+            // map.fitBounds(bounds);
             // var listener = google.maps.event.addListener(map, "bounds_changed", function() { 
             //     console.log('here1',map.getZoom());
             //   if (map.getZoom()){
@@ -370,11 +372,7 @@
             // });
             // setTimeout(function(){google.maps.event.removeListener(listener)}, 2000);
         }
-        heatmap = new google.maps.visualization.HeatmapLayer({
-          data: all_points,
-          map: map,
-          opacity:1
-        });
+
         // code to draw  boundary rectangle
         // var ne = bounds.getNorthEast(); // LatLng of the north-east corner
         // var sw = bounds.getSouthWest(); // LatLng of the south-west corder
@@ -390,6 +388,11 @@
         //     bounds: bounds
         // });
         // rectangle.setMap(map);
+        heatmap = new google.maps.visualization.HeatmapLayer({
+              data: all_points,
+              map: map,
+              opacity:1
+            });
         heatmap.setMap(map);
         if(ths) {
             $('#floating-panel').find('.btn').removeClass('active');
