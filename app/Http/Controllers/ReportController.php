@@ -136,7 +136,7 @@ class ReportController extends Controller
         $no_other = true;
         foreach ($indPie as $key => $value) {
             if ($value->indName == 'Other') {
-                $n_other = false;
+                $no_other = false;
             }
         }
         if ($no_other) {

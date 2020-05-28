@@ -201,9 +201,17 @@
             type: 'pie',
             data: {
                 labels: [
-                    @foreach($indPie as $i)
-                        '% {{ trans('messages.fields.industries.' . $i->indName) }}',
-                    @endforeach
+                    @php
+                    // if industry not found in transalation show realname
+                    foreach($indPie as $i){
+                        $ind_name = trim($i->indName);
+                        if(trans('messages.fields.industries.' . $ind_name) == 'messages.fields.industries.' . $ind_name){
+                            echo '"% '.$ind_name.'",';
+                        } else {
+                            echo '"% '.trans('messages.fields.industries.' . $ind_name).'",';
+                        }
+                    }
+                    @endphp
                 ],
                 datasets: [{
                     backgroundColor: [
