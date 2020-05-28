@@ -47,6 +47,11 @@ Route::get('setlocale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
+
+Route::get('/store-address-from-zip', function () {
+    storeLatiLongiFormZip();
+})->middleware('auth');
+
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
 
