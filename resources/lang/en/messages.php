@@ -234,6 +234,7 @@ return [
         'from' => 'From',
         'future_topics' => 'Future Topics',
         'hasFood' => "Will food be served?",
+        'heatmap' => "Default Heat Map Zoom Level",
         'indName' => 'Industry',
 
         'industries' => [
@@ -1082,7 +1083,7 @@ return [
         'graph_years' => "Year Display",
         'ind_brk' => "Identified Industry Breakdown",
         'select_years' => "Select Years to Display",
-        'person_address'=>"Person Address Heat Map"
+        'person_address'=>"Heat Map"
     ],
 
     'surveys' => [

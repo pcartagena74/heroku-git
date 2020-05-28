@@ -21,7 +21,7 @@
             </a>
         </li>
         <li class="">
-            <a aria-expanded="false" data-toggle="tab" href="#tab_content2" id="everyone_tab">
+            <a aria-expanded="false" data-toggle="tab" href="#tab_content2" id="heatmap_tab">
                 <b>
                     @lang('messages.tabs.heat_map')
                 </b>
@@ -73,7 +73,7 @@
             </div>
             @include('v1.parts.end_content')
         </div>
-        <div aria-labelledby="everyone_tab" class="tab-pane fade" id="tab_content2">
+        <div aria-labelledby="heatmap_tab" class="tab-pane fade" id="tab_content2">
             @include('v1.parts.start_content', ['header' => trans('messages.reports.person_address'), 'subheader' => '',
                      'w1' => '12', 'w2' => '0', 'r1' => 0, 'r2' => 0, 'r3' => 0])
             <div class="row">
@@ -346,7 +346,7 @@
     function initMap(type = 'all',ths) {
         var bounds = new google.maps.LatLngBounds();
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 13,
+          zoom: {{ $org->heatMapZoomLevel }},
           center: {lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}}},
           mapTypeId: 'roadmap',
           styles: [{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]}]
