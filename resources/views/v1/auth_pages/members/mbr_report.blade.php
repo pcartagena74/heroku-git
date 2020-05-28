@@ -6,7 +6,6 @@
  * Updated: 10/4/2019 for configurable graph (display years)
  *
  */
- $heat_map_other = [];
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
