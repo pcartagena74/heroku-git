@@ -64,19 +64,15 @@ class ReceiptNotification extends Notification
         $person = $this->person;
         $loc    = $this->loc;
 
-        $line1 = trans(
-            'messages.notifications.RegNote.line1',
-            ['event' => $event->eventName,
-             'datetime' => $event->eventStartDate->format('n/j/Y g:i A'),
-            'loc' => $loc->locName ]
-        );
+        $line1 = trans('messages.notifications.RegNote.line1',
+            ['event' => $event->eventName, 'datetime' => $event->eventStartDate->format('n/j/Y g:i A'), 'loc' => $loc->locName]);
 
         $action1 = trans('messages.notifications.RegNote.action1');
         $url1 = $this->receipt;
         $line2 = trans('messages.notifications.thanks', ['org' => $org->orgName]);
         $action2 = trans('messages.notifications.RegNote.action2');
         $url2 = env('APP_URL')."/events/".$event->eventID;
-        $line3 = trans('messages.notifications.RegNote.line2');
+        $line3 = trans('messages.notifications.RegNote.line2'); // See you...
 
         return (new MailMessage)
             ->subject(trans(

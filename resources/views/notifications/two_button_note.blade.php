@@ -10,7 +10,7 @@
     set_error_handler("var_dump");
 
     if(isset($name)){
-        $greeting = "Hello $name!";
+        $greeting = trans('messages.notifications.hello', ['firstName' => $name]);
     }
 @endphp
 
@@ -54,6 +54,9 @@
 
 {!! $postRegInfo !!}
 @endcomponent
+
+{!! $line2 or null !!}<br/>
+
 @endif
 {{-- Action Button 2 --}}
 @if (isset($action2))
@@ -75,7 +78,6 @@
 @endcomponent
 @endif
 
-{!! $line2 or null !!}<br/>
 {!! $line3 or null !!}
 
 <!-- Salutation -->

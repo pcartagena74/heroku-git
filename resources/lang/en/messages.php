@@ -853,7 +853,7 @@ return [
         'hello' => "Hello :firstName,",
         'thanks' => "Thank you for using mCentric with :org.",
         'login' => "Login to mCentric",
-        'disclaimer' => "If you’re having trouble clicking the ':a' button, copy and paste the URL below into your web browser: :u",
+        'disclaimer' => "If you are having trouble clicking the ':a' button, copy and paste the URL below into your web browser: [:a] (:u)",
         'regards' => "Regards",
 
         // Login Change
@@ -899,9 +899,9 @@ return [
         'RegNote' => [
             'subject' => "Your :org Event Receipt: :event",
             'line1' => "You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.",
-            'action1' => 'View/Download Your Receipt',
-            'action2' => 'More Event Details...',
-            'line2' => 'See you at the event!',
+            'action1' => "Your Receipt",
+            'action2' => "More Event Details...",
+            'line2' => "See you at the event!",
             'postRegHeader' => "Information for Confirmed Attendees",
         ],
 
