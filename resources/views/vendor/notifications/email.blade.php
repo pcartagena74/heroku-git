@@ -14,24 +14,24 @@
 
 @component('mail::message')
     {{-- Greeting --}}
-    @if (! empty($greeting))
-        # {{ $greeting }}!
-    @else
-        @if ($level == 'error')
-            # Whoops!
-        @else
-            # Hello!
-        @endif
-    @endif
+@if (! empty($greeting))
+# {{ $greeting }}!
+@else
+@if ($level == 'error')
+# Whoops!
+@else
+# Hello!
+@endif
+@endif
 
     {{-- Intro Lines --}}
-    @foreach ($introLines as $line)
-        {!! $line !!}
+@foreach ($introLines as $line)
+{!! $line !!}
 
-    @endforeach
+@endforeach
 
     {{-- Action Button --}}
-    @if (isset($actionText))
+@if (isset($actionText))
 
         @php
             switch ($level) {
@@ -46,28 +46,27 @@
             }
         @endphp
 
-        @component('mail::button', ['url' => $actionUrl, 'color' => $color])
-            {{ $actionText }}
-        @endcomponent
-    @endif
+@component('mail::button', ['url' => $actionUrl, 'color' => $color])
+{{ $actionText }}
+@endcomponent
+@endif
 
-    {{-- Outro Lines --}}
-    @foreach ($outroLines as $line)
-        {!! $line !!}
+{{-- Outro Lines --}}
+@foreach ($outroLines as $line)
+{!! $line !!}
+@endforeach
 
-    @endforeach
+<!-- Salutation -->
+@if (! empty($salutation))
+{{ $salutation }}
+@else
+Regards,<br>{{ config('app.name') }}
+@endif
 
-    <!-- Salutation -->
-    @if (! empty($salutation))
-        {{ $salutation }}
-    @else
-        Regards,<br>{{ config('app.name') }}
-    @endif
-
-    <!-- Subcopy -->
-    @if (isset($actionText))
-        @component('mail::subcopy')
-            @lang('messages.notifications.disclaimer', ['a' => $actionText, 'u' => $actionUrl])
-        @endcomponent
-    @endif
+<!-- Subcopy -->
+@if (isset($actionText))
+@component('mail::subcopy')
+@lang('messages.notifications.disclaimer', ['a' => $actionText, 'u' => $actionUrl])
+@endcomponent
+@endif
 @endcomponent

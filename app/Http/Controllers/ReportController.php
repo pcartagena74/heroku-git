@@ -22,6 +22,7 @@ class ReportController extends Controller
         $topBits             = '';
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgID               = $this->currentPerson->defaultOrgID;
+        $org                 = Org::find($orgID);
         $quote_string        = Session::get('quote_string');
 
         if ($quote_string == "''" && null !== $year_string) {
@@ -187,7 +188,7 @@ class ReportController extends Controller
             }
         }
 
-        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years',
+        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'org',
             'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home', 'heat_map_other', 'heat_map_work', 'org_lat_lng'));
     }
 

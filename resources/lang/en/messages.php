@@ -234,6 +234,7 @@ return [
         'from' => 'From',
         'future_topics' => 'Future Topics',
         'hasFood' => "Will food be served?",
+        'heatmap' => "Default Heat Map Zoom Level",
         'indName' => 'Industry',
 
         'industries' => [
@@ -853,6 +854,7 @@ return [
         'thanks' => "Thank you for using mCentric with :org.",
         'login' => "Login to mCentric",
         'disclaimer' => "If you’re having trouble clicking the ':a' button, copy and paste the URL below into your web browser: :u",
+        'regards' => "Regards",
 
         // Login Change
         'login_change' => [
@@ -1082,7 +1084,7 @@ return [
         'graph_years' => "Year Display",
         'ind_brk' => "Identified Industry Breakdown",
         'select_years' => "Select Years to Display",
-        'person_address'=>"Person Address Heat Map"
+        'person_address'=>"Heat Map"
     ],
 
     'surveys' => [
