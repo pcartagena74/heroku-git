@@ -16,21 +16,21 @@
 
 @component('mail::message')
     {{-- Greeting --}}
-    @if (! empty($greeting))
-        # {{ $greeting }}
-    @else
-        @if ($level == 'error')
-            # Whoops!
-        @else
-            # Hello!
-        @endif
-    @endif
+@if (! empty($greeting))
+# {{ $greeting }}
+@else
+@if ($level == 'error')
+# Whoops!
+@else
+# Hello!
+@endif
+@endif
 
-    {{-- Intro Lines --}}
-    {!! $line1 or null !!}
+{{-- Intro Lines --}}
+{!! $line1 or null !!}
 
-    {{-- Action Button 1 --}}
-    @if (isset($action1))
+{{-- Action Button 1 --}}
+@if (isset($action1))
         @php
             switch ($c1) {
                 case 'success':
@@ -42,21 +42,21 @@
                 default:
                     $color = 'blue';
             }
-        @endphp
-        @component('mail::button', ['url' => $url1, 'color' => $color])
-            {{ $action1 or null }}
-        @endcomponent
-    @endif
+@endphp
+@component('mail::button', ['url' => $url1, 'color' => $color])
+{{ $action1 or null }}
+@endcomponent
+@endif
 
-    @if(isset($postRegInfo))
-        @component('mail::promotion')
-            # {!! trans('messages.notifications.RegNote.postRegHeader') !!}
+@if(isset($postRegInfo))
+@component('mail::promotion')
+# {!! trans('messages.notifications.RegNote.postRegHeader') !!}
 
-            {!! $postRegInfo !!}
-        @endcomponent
-    @endif
-    {{-- Action Button 2 --}}
-    @if (isset($action2))
+{!! $postRegInfo !!}
+@endcomponent
+@endif
+{{-- Action Button 2 --}}
+@if (isset($action2))
         @php
             switch ($c2) {
                 case 'success':
@@ -68,34 +68,32 @@
                 default:
                     $color = 'blue';
             }
-        @endphp
+@endphp
 
-        @component('mail::button', ['url' => $url2, 'color' => $color])
-            {{ $action2 or null }}
-        @endcomponent
-    @endif
+@component('mail::button', ['url' => $url2, 'color' => $color])
+{{ $action2 or null }}
+@endcomponent
+@endif
 
+{!! $line2 or null !!}<br/>
+{!! $line3 or null !!}
 
+<!-- Salutation -->
+@if (! empty($salutation))
+{{ $salutation }}
+@else
+@lang('messages.notifications.regards'),<br>{{ config('app.name') }}
+@endif
 
-    {!! $line2 or null !!}<br/>
-    {!! $line3 or null !!}
-
-    <!-- Salutation -->
-    @if (! empty($salutation))
-        {{ $salutation }}
-    @else
-        Regards,<br>{{ config('app.name') }}
-    @endif
-
-    <!-- Subcopy -->
-    @if (isset($action1) || isset($action2))
-        @component('mail::subcopy')
-            @if(isset($action1))
-                @lang('messages.notifications.disclaimer', ['a' => $action1, 'u' => $url1])
-            @endif
-            @if(isset($action2))
-                @lang('messages.notifications.disclaimer', ['a' => $action2, 'u' => $url2])
-            @endif
-        @endcomponent
-    @endif
+<!-- Subcopy -->
+@if (isset($action1) || isset($action2))
+@component('mail::subcopy')
+@if(isset($action1))
+@lang('messages.notifications.disclaimer', ['a' => $action1, 'u' => $url1])
+@endif
+@if(isset($action2))
+@lang('messages.notifications.disclaimer', ['a' => $action2, 'u' => $url2])
+@endif
+@endcomponent
+@endif
 @endcomponent

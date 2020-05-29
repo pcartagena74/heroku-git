@@ -854,6 +854,7 @@ return [
         'thanks' => "Thank you for using mCentric with :org.",
         'login' => "Login to mCentric",
         'disclaimer' => "If you’re having trouble clicking the ':a' button, copy and paste the URL below into your web browser: :u",
+        'regards' => "Regards",
 
         // Login Change
         'login_change' => [
