@@ -15,7 +15,7 @@
 @endphp
 
 @component('mail::message')
-    {{-- Greeting --}}
+{{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}
 @else
@@ -31,7 +31,7 @@
 
 {{-- Action Button 1 --}}
 @if (isset($action1))
-        @php
+@php
             switch ($c1) {
                 case 'success':
                     $color = 'green';
@@ -60,7 +60,7 @@
 @endif
 {{-- Action Button 2 --}}
 @if (isset($action2))
-        @php
+@php
             switch ($c2) {
                 case 'success':
                     $color = 'green';
