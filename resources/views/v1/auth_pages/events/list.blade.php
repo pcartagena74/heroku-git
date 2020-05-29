@@ -124,6 +124,11 @@ if ($past) {
         });
     </script>
     <script>
+        $('[data-toggle="popover"]').popover({
+            container: 'body',
+        });
+    </script>
+    <script>
         $('[data-toggle=confirmation]').confirmation();
     </script>
     <script>

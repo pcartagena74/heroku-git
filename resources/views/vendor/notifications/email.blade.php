@@ -11,9 +11,8 @@
 // into your web browser: [{{ $actionUrl }}]({{ $actionUrl }})
 @endphp
 
-
 @component('mail::message')
-    {{-- Greeting --}}
+{{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}!
 @else
@@ -24,13 +23,13 @@
 @endif
 @endif
 
-    {{-- Intro Lines --}}
+{{-- Intro Lines --}}
 @foreach ($introLines as $line)
 {!! $line !!}
 
 @endforeach
 
-    {{-- Action Button --}}
+{{-- Action Button --}}
 @if (isset($actionText))
 
         @php
