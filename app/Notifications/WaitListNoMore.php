@@ -50,6 +50,7 @@ class WaitListNoMore extends Notification implements ShouldQueue
         $org    = Org::find($event->orgID);
 
         return (new MailMessage)
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.WLNM.subject', ['org' => $org->orgName]))
             ->line(trans('messages.notifications.WLNM.line1', ['event' => $event->eventName]))
             ->line(trans('messages.notifications.WLNM.line2'))

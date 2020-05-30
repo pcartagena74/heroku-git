@@ -50,6 +50,7 @@ class PasswordChange extends Notification
         $oname = $o->orgName;
         return (new MailMessage)
             ->subject(trans('messages.notifications.PASS.subject'))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->line(trans('messages.notifications.PASS.line1'))
             ->line(trans('messages.notifications.PASS.line2'))
             ->line(trans('messages.notifications.PASS.line3'))

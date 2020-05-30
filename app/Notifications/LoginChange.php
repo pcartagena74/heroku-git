@@ -51,7 +51,8 @@ class LoginChange extends Notification
         $oname = $o->orgName;
         $new_email = $this->person->login;
         return (new MailMessage)
-            ->line(trans('messages.notifications.login_change.subject'))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
+            ->subject(trans('messages.notifications.login_change.subject'))
             ->line(trans('messages.notifications.login_change.line1', ['old' => $this->orig_email, 'new' => $new_email]))
             ->line(trans('messages.notifications.login_change.line2'))
             ->line(trans('messages.notifications.login_change.line3'))

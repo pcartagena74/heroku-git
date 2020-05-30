@@ -53,6 +53,7 @@ class AccountCreation extends Notification
         $oname = $o->orgName;
         $ename = $this->event->eventName;
         return (new MailMessage)
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.new_reg_acct.subject', ['org' => $oname]))
             ->line(trans('messages.notifications.new_reg_acct.line1', ['ename' => $ename]))
             ->line(trans('messages.notifications.new_reg_acct.line2'))

@@ -23,6 +23,15 @@ class ReceiptNotification extends Notification
     protected $loc;
     protected $receipt;
     public $name;
+    public $line1;
+    public $line2;
+    public $line3;
+    public $c1;
+    public $c2;
+    public $action1;
+    public $action2;
+    public $url1;
+    public $url2;
 
     /**
      * Create a new notification instance.
@@ -71,8 +80,12 @@ class ReceiptNotification extends Notification
         $url1 = $this->receipt;
         $line2 = trans('messages.notifications.thanks', ['org' => $org->orgName]);
         $action2 = trans('messages.notifications.RegNote.action2');
-        $url2 = env('APP_URL')."/events/".$event->eventID;
+        $url2 = env('APP_URL')."/events/".$event->slug;
         $line3 = trans('messages.notifications.RegNote.line2'); // See you...
+        $c1 = 'success';
+        $c2 = 'default';
+        $postRegInfo = $event->postRegInfo;
+        $name = $person->showDisplayName();
 
         return (new MailMessage)
             ->subject(trans(
@@ -90,8 +103,12 @@ class ReceiptNotification extends Notification
                 'c2' => 'default',
                 'line3' => $line3,
                 'postRegInfo' => $event->postRegInfo,
-                'name' => $person->showDisplayName()
+                'name' => $person->showDisplayName(),
+                'logoPath' => $this->org->logo_path(),
+                'orgURL' => $this->org->org_url()
             ]);
+            // ->with($line1, $action1, $url1, $line2, $c1, $action2, $url2, $c2, $line3, $postRegInfo, $name);
+            //->with(compact('line1','action1', 'url1', 'line2', 'c1', 'action2', 'url2', 'c2', 'line3', 'postRegInfo', 'name'));
     }
 
     /**

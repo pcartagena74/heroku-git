@@ -7,7 +7,7 @@
                         <table border="0" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td>
-                                    <a class="button button-{{ $color or 'blue' }}" href="{{ $url }}" target="_blank">
+                                    <a class="button button-{{ $color ?? 'blue' }}" href="{{ $url }}" target="_blank">
                                         {{ $slot }}
                                     </a>
                                 </td>

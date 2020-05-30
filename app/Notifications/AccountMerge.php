@@ -53,6 +53,7 @@ class AccountMerge extends Notification
         $oname = $o->orgName;
 
         return (new MailMessage)
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.messages.merge_sub', ['name' => $oname]))
             ->line(trans('messages.messages.merge_msg1', ['orgname' => $oname]))
             ->line(trans('messages.messages.merge_msg2', ['email1' => $this->person1->login, 'email2' => $this->person2->login]))
