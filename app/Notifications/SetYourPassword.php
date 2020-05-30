@@ -51,6 +51,7 @@ class SetYourPassword extends Notification
     {
         $oname = $this->o->orgName;
         return (new MailMessage)
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.SYP.subject'))
             ->line(trans('messages.notifications.SYP.line1', ['name' => $oname]))
             ->line(trans('messages.notifications.SYP.line1'))

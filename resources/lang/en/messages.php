@@ -853,7 +853,7 @@ return [
         'hello' => "Hello :firstName,",
         'thanks' => "Thank you for using mCentric with :org.",
         'login' => "Login to mCentric",
-        'disclaimer' => "If you are having trouble clicking the ':a' button, copy and paste the URL below into your web browser: [:a] (:u)",
+        'disclaimer' => "If you are having trouble clicking the [:a] button, copy and paste the URL below into your web browser: (:u)<br />",
         'regards' => "Regards",
 
         // Login Change

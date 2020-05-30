@@ -50,7 +50,8 @@ class UndoLoginChange extends Notification
         $oname = $o->orgName;
         $new_email = $this->person->login;
         return (new MailMessage)
-            ->line(trans('messages.notifications.UNDO.subject'))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
+            ->subject(trans('messages.notifications.UNDO.subject'))
             ->line(trans('messages.notifications.UNDO.line1', ['email' => $new_email]))
             ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }

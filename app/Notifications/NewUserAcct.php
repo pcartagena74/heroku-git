@@ -55,6 +55,7 @@ class NewUserAcct extends Notification
         $oname = $o->orgName;
         return (new MailMessage)
             ->subject(trans('messages.notifications.new_user_acct.subject', ['org' => $oname]))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->line(trans('messages.notifications.new_user_acct.line1', ['name' => $this->creator->showFullName(), 'org' => $oname]))
             ->line(trans('messages.notifications.new_user_acct.line2'))
             ->line(trans('messages.notifications.new_user_acct.line3', ['pass' => $this->pass]))
