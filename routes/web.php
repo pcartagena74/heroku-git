@@ -30,8 +30,9 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
 /**
- * below code is for launguage route do not update
+ * below code is for language route do not update
  */
+
 Route::get('setlocale/{locale}', function ($locale) {
     if (in_array($locale, \Config::get('app.locales'))) {
         if (Auth::check()) {
@@ -46,7 +47,6 @@ Route::get('setlocale/{locale}', function ($locale) {
     Cookie::queue('locale', $locale, 60);
     return redirect()->back();
 });
-
 
 Route::get('/store-address-from-zip', function () {
     storeLatiLongiFormZip();
