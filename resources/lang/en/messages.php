@@ -91,6 +91,11 @@ return [
         'unbecome' => 'End This / Resume Your Identity',
         'use_addr' => "Use Address",
         'wait' => 'Join the Wait List',
+        'reset'=>'Reset',
+        'mbr_total'=>'All Data (:count)',
+        'mbr_home'=>'Home (:count)',
+        'mbr_work'=>'Work (:count)',
+        'mbr_other'=>'Other (:count)',
     ],
 
     'codes' => [
@@ -230,6 +235,7 @@ return [
         'from' => 'From',
         'future_topics' => 'Future Topics',
         'hasFood' => "Will food be served?",
+        'heatmap' => "Default Heat Map Zoom Level",
         'indName' => 'Industry',
 
         'industries' => [
@@ -365,6 +371,7 @@ return [
         'tech_contact_statement' => 'Tech Contact Statement',
         'org_path' => 'Organization Path',
         'filter_tickets' => 'Filter Tickets',
+        'mbr_report_chart_tooltip'=>'Click to remove and merge into category: Other'
     ],
 
     'headers' => [
@@ -848,21 +855,45 @@ return [
         'hello' => "Hello :firstName,",
         'thanks' => "Thank you for using mCentric with :org.",
         'login' => "Login to mCentric",
+        'disclaimer' => "If you are having trouble clicking the [:a] button, copy and paste the URL below into your web browser: (:u)<br />",
+        'regards' => "Regards",
 
-        // Wait List No More
-        'WLNM' => [
-            'subject' => ":org Event: You are off the wait list!",
-            'line1' => "A spot has opened up for :event.",
-            'line2' => "If you didn't already register, you may continue your registration.",
-            'action' => "Continue Registration",
+        // Login Change
+        'login_change' => [
+            'subject' => "Your mCentric Login",
+            'line1' => "Your mCentric login was recently changed from :old to :new.",
+            'line2' => "If you initiated this change, you can delete this email.",
+            'line3' => "If you did not, you can change it back using the button below.",
+            'action' => "Undo Login Change",
         ],
 
-        // Set Your Password
-        'SYP' => [
-            'subject' => "Your mCentric Account: How to set/reset your password",
-            'line1' => "An mCentric account was setup for you by :name.",
-            'line2' => "If you have not yet set its password or do not remember it, you can reset it now using the button below.",
-            'line3' => "If you do not need to reset your password, you can this delete this email.",
+        // Member Import Complete
+        'member_import' => [
+            'subject' => 'Import Complete',
+            'line1' => ':user, the member import has completed.',
+        ],
+
+        // New Registration Account Creation
+        'new_reg_acct' => [
+            'subject' => "Your mCentric account with :org",
+            'line1' => "An mCentric account was created for you during the registration of :ename.",
+            'line2' => "If you initiated this change, you can delete this email.",
+        ],
+
+        // New User Account Creation
+        'new_user_acct' => [
+            'subject' => "Your mCentric account with :org",
+            'line1' => "An mCentric account was setup for you by :name with :org.",
+            'line2' => "Your login is the email address where you are receiving this notification.",
+            'line3' => "The password that was set for you is: ':pass'",
+        ],
+
+        // Password Change
+        'PASS' => [
+            'subject' => "Your mCentric Password",
+            'line1' => "Your mCentric password was recently changed.",
+            'line2' => "If you initiated this change, you can delete this email.",
+            'line3' => "If you did not, you should reset it now using the button below.",
             'action' => "Reset Password",
         ],
 
@@ -870,9 +901,9 @@ return [
         'RegNote' => [
             'subject' => "Your :org Event Receipt: :event",
             'line1' => "You have registered for <b>:event</b> on <b>:datetime</b> which will be held at <b>:loc</b>.",
-            'action1' => 'View/Download Your Receipt',
-            'action2' => 'More Event Details...',
-            'line2' => 'See you at the event!',
+            'action1' => "Your Receipt",
+            'action2' => "More Event Details...",
+            'line2' => "See you at the event!",
             'postRegHeader' => "Information for Confirmed Attendees",
         ],
 
@@ -887,30 +918,32 @@ return [
                 ":count survey emails sent to the attendees. :c2 surveys were already completed",
         ],
 
-        // AccountCreation
-        'new_reg_acct' => [
-            'subject' => "Your mCentric account with :org",
-            'line1' => "An mCentric account was created for you during the registration of :ename.",
-            'line2' => "If you initiated this change, you can delete this email.",
-        ],
-
-        // NewUserAcct
-        'new_user_acct' => [
-            'subject' => "Your mCentric account with :org",
-            'line1' => "An mCentric account was setup for you by :name with :org.",
-            'line2' => "Your login is the email address where you are receiving this notification.",
-            'line3' => "The password that was set for you is: ':pass'",
-        ],
-
-        //Member import complete
-        'member_import' => [
-            'subject' => 'Import Complete',
-            'line1' => ':user, the member import has completed.',
+        // Set Your Password
+        'SYP' => [
+            'subject' => "Your mCentric Account: How to set/reset your password",
+            'line1' => "An mCentric account was setup for you by :name.",
+            'line2' => "If you have not yet set its password or do not remember it, you can reset it now using the button below.",
+            'line3' => "If you do not need to reset your password, you can this delete this email.",
+            'action' => "Reset Password",
         ],
 
         // TicketIt Notification
         'ticketit' => [
             'action' => 'View Ticket'
+        ],
+
+        // Undo Login Change
+        'UNDO' => [
+            'subject' => "Your mCentric Login",
+            'line1' => "Your mCentric login was changed back to :email.",
+        ],
+
+        // Wait List No More
+        'WLNM' => [
+            'subject' => ":org Event: You are off the wait list!",
+            'line1' => "A spot has opened up for :event.",
+            'line2' => "If you didn't already register, you may continue your registration.",
+            'action' => "Continue Registration",
         ],
 
     ],
@@ -1053,6 +1086,7 @@ return [
         'graph_years' => "Year Display",
         'ind_brk' => "Identified Industry Breakdown",
         'select_years' => "Select Years to Display",
+        'person_address'=>"Heat Map"
     ],
 
     'surveys' => [
@@ -1099,7 +1133,7 @@ return [
     ],
 
     'tabs' => [
-        'heat_map' => "Heat Map [Coming Soon]",
+        'heat_map' => "Heat Map",
         'mem_demo' => "Member Demographics",
         'ticketing' => 'Event Ticketing',
         'sessions' => 'Event Sessions',
@@ -1138,6 +1172,7 @@ return [
         'hasFood' => "Events with food have additional questions asked of attendees.",
         'hasTracks' => "Events with tracks require session setup.",
         'linkedIn' => "This will connect to your account and save the URL to your LinkedIn photo for display in the mCentric navigation. No other information is shared at this time.",
+        'loc' => "Click for Location",
         'login' => "If you want your login to be a new email address, first add it to your account by clicking 'Add Email' below.",
         'max_set' => "Set to 0 if there is no maximum.",
         'mr' => 'Merge Record',

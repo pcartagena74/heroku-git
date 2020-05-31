@@ -17,6 +17,7 @@ class NewUserAcct extends Notification
     protected $person;
     protected $pass;
     protected $creator;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -28,6 +29,7 @@ class NewUserAcct extends Notification
         $this->person = $person;
         $this->pass = $pass;
         $this->creator = Person::find($creator);
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -50,14 +52,15 @@ class NewUserAcct extends Notification
     public function toMail($notifiable)
     {
         $o = Org::find($this->person->defaultOrgID);
-        $name = $o->orgName;
+        $oname = $o->orgName;
         return (new MailMessage)
-            ->subject(trans('messages.notifications.new_user_acct.subject', ['org' => $name]))
-            ->line(trans('messages.notifications.new_user_acct.line1', ['name' => $this->creator->showFullName(), 'org' => $name]))
+            ->subject(trans('messages.notifications.new_user_acct.subject', ['org' => $oname]))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
+            ->line(trans('messages.notifications.new_user_acct.line1', ['name' => $this->creator->showFullName(), 'org' => $oname]))
             ->line(trans('messages.notifications.new_user_acct.line2'))
             ->line(trans('messages.notifications.new_user_acct.line3', ['pass' => $this->pass]))
             ->action(trans('messages.notifications.login'), env('APP_URL'))
-            ->line(trans('messages.notifications.thanks', ['org' => $name]));
+            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
     /**

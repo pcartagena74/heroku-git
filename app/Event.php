@@ -239,4 +239,11 @@ class Event extends Model
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
     }
+
+    public function event_ics_url()
+    {
+        $s3m = Flysystem::connection('s3_events');
+        $ics_file = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET1'), "event_$this->eventID.ics");
+        return $ics_file;
+    }
 }

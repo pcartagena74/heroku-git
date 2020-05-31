@@ -67,4 +67,9 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
         $person = Person::find(auth()->user()->id);
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgId', $person->defaultOrgID);
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(\Kordy\Ticketit\Models\Ticket::class, 'user_id', 'id');
+    }
 }

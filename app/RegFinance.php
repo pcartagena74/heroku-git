@@ -3,6 +3,7 @@
 namespace App;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RegFinance extends Model
@@ -32,6 +33,16 @@ class RegFinance extends Model
     public function registrations()
     {
         return $this->hasMany(Registration::class, 'rfID', 'regID');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function receipt_url()
+    {
+        $s3m = Flysystem::connection('s3_media');
+        $receipt = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET2'), "$this->eventID/$this->confirmation.pdf");
+        return $receipt;
     }
 
 }

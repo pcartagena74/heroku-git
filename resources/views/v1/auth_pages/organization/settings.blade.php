@@ -85,17 +85,11 @@ $currentOrg    = $currentPerson->defaultOrg;
         </tr>
         <tr>
             <th colspan="3" style="text-align: left;">@lang('messages.headers.linkedin')</th>
-            <th colspan="2" style="text-align: left;">
-                {{-- lang('messages.headers.google') --}}
-            </th>
+            <th colspan="2" style="text-align: left;">@lang('messages.fields.heatmap')</th>
         </tr>
         <tr>
             <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL" data-value="{{ $org->linkedinURL }}"></a></td>
-            <td colspan="2" style="text-align: left;">
-                <?php
-               // <a href="#" id="googleURL" data-value="{{ $org->googleURL }}"></a>
-               ?>
-            </td>
+            <td colspan="2" style="text-align: left;"><a href="#" id="heatMapZoomLevel" data-value="{{ $org->heatMapZoomLevel }}"></a></td>
         </tr>
         <tr>
             <th colspan="5" style="text-align: left;">@lang('messages.headers.admin_stmt')</th>
@@ -251,10 +245,10 @@ $currentOrg    = $currentPerson->defaultOrg;
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 pk:  '{{ $org->orgID }}'
             });
-            $('#googleURL').editable({
-                type: 'text',
+            $('#heatMapZoomLevel').editable({
+                type: 'number',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
-                pk:  '{{ $org->orgID }}'
+                pk:  '{{ $org->heatMapZoomLevel }}'
             });
 
 

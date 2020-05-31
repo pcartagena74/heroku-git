@@ -168,7 +168,8 @@ try{
                         </li>
                         @endif
                     
-                    @if(((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
+                    @if( ((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') ||
+                          Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>
@@ -298,7 +299,8 @@ try{
                         </li>
                         @endif
 
-                    @if(((Entrust::hasRole('Board') || Entrust::can('event-management') || Entrust::can('speaker-management')))
+                    @if(((Entrust::hasRole('Board') ||
+                            Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>
