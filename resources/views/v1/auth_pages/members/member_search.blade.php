@@ -1,7 +1,10 @@
-<?php
+@php
 /**
  * Comment: Member Search Functionality
  * Created: 11/8/2018
+ *
+ * @var $mbr_list
+ *
  */
 
 if($topBits === null){
@@ -9,7 +12,7 @@ if($topBits === null){
 }
 if ($mbr_list){
 
-    $headers = ['#', 'Name', trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
+    $headers = ['#', trans('messages.fields.name'), trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
         trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.indName'),
         trans('messages.fields.expr'), trans('messages.fields.buttons')];
 
@@ -47,7 +50,8 @@ if ($mbr_list){
 } else {
     $scroll = 0;
 }
-?>
+@endphp
+
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')

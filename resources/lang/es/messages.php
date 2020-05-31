@@ -10,7 +10,8 @@ return [
     ],
 
     'app_params' => [
-        'date_format' => "m/d/Y h:i A",
+        'date_format' => "d/m/Y",
+        'datetime_format' => "d/m/Y h:i A",
     ],
 
     'auth' => [
