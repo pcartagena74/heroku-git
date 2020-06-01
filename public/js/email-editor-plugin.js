@@ -469,10 +469,14 @@ var returnVal;
             //element-contenteditable active
             if (_element.find('[contenteditable="true"]').hasClass('element-contenteditable')) {
                 _element = _element.find('.element-contenteditable.active');
+                if(_element.find('.button-1.hyperlink')){
+                    return _element.find('.button-1.hyperlink');
+                }
             }
             if (_this.$elem.find('.content-wrapper').hasClass('active')) {
                 _element = _this.$elem.find('.content-wrapper');
             }
+            console.log('here1',_element);                    
             return _element;
         },
         /**
@@ -480,11 +484,66 @@ var returnVal;
          */
         makeSortable: function() {
             _this.$elem.find(".email-editor-elements-sortable").sortable({
+                connectWith: ".droppable,#draggables",
                 placeholder: "editor-elements-placeholder",
                 forcePlaceholderSize: true,
                 //group: 'no-drop',
                 handle: '.row-move',
                 revert: true,
+                update: function(event, ui) {
+                    // console.log('update here',event, ui);
+                    // var fieldname = ui.item.text();
+                    // ui.item.html('your new html here');  
+                },
+                receive: function(event, ui) {
+                    // console.log('reeive here',event, ui);
+                    // var fieldname = ui.item.text();
+                    // ui.item.html('your new html here');        
+                }
+            });
+            _this.$elem.find(".email-editor-elements-sortable").droppable({
+                tolerance: 'pointer',
+                over: function(event, ui) {
+                    console.log('here over');
+                },
+                activate: function(event, ui) {
+                    // console.log('here activate',ui.draggable);
+                },
+                create: function(event, ui) {
+                    console.log('here create');
+                },
+                drop: function(event, ui) {
+                    console.log('here drop');
+                    // Get mouse position relative to drop target: 
+                    var dropPositionX = event.pageX - $(this).offset().left;
+                    var dropPositionY = event.pageY - $(this).offset().top;
+                    // Get mouse offset relative to dragged item:
+                    var dragItemOffsetX = event.offsetX;
+                    var dragItemOffsetY = event.offsetY;
+                    // Get position of dragged item relative to drop target:
+                    var dragItemPositionX = dropPositionX - dragItemOffsetX;
+                    var dragItemPositionY = dropPositionY - dragItemOffsetY;
+                    var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
+                    let ele = $(element).find('.sortable-row-content').find('.text-content');
+                    if (ele.length > 0) {
+                        // console.log('here', $(ui), ui.draggable.find('.sortable-row-content a'));
+                        let content = ui.draggable.find('.sortable-row-content');
+                        let lst_type = content.data('last-type');
+                        let types = content.data('types');
+                        if (content.data('id') == 20) {
+                            let link = content.find('a');
+                            // console.log('here',link[0]);
+                            if (link[0]) {
+                                // console.log('here',$(link));
+                                $(link[0]).attr('data-last-type', lst_type);
+                                $(link[0]).attr('data-types', types);
+                                return ele[0].append(link[0]);
+                                // $(link[0]).data('last-type', lst_type);
+                                // $(link[0]).data('types', types);
+                            }
+                        }
+                    }
+                }
             });
             _this.remove_row_elements();
         },
@@ -586,7 +645,10 @@ var returnVal;
                     //console.log(event.target);
                 },
                 drag: function(event, ui) {
-                    //console.log(ui.helper);
+                    // console.log(ui.helper);
+                },
+                drop: function() {
+                    console.log('dopr');
                 },
                 start: function(event, ui) {
                     _this.$elem.find(".elements-container").css({
@@ -594,7 +656,7 @@ var returnVal;
                     });
                     ui.helper.find('.preview').hide();
                     ui.helper.find('.view').show()
-                    //$(this).find('.demo').show();
+                    // $(this).find('.demo').show();
                     if (_this.config.onElementDragStart !== undefined) {
                         _this.config.onElementDragStart(event);
                     }
@@ -604,20 +666,20 @@ var returnVal;
                     _this.$elem.find(".elements-container").css({
                         'overflow': 'hidden'
                     });
-                    ui.helper.html(ui.helper.find('.view').html());
-                    //ui.helper.remove();
-                    //_this.$elem.find('.email-editor-elements-sortable').append(ui.helper.find('.view').html());
+                    // ui.helper.html(ui.helper.find('.view').html());
+                    // ui.helper.remove();
+                    // _this.$elem.find('.email-editor-elements-sortable').append(ui.helper.find('.view').html());
                     _this.$elem.find('.email-editor-elements-sortable .elements-list-item').css({
                         'width': 'auto',
                         'height': 'auto'
                     });
                     //
-                    //$(ui.helper).remove();
+                    // $(ui.helper).remove();
                     var contentHtml = _this.getContentHtml();
                     if (_this.config.onElementDragFinished !== undefined) {
                         _this.config.onElementDragFinished(event, contentHtml, _dataId);
                     }
-                }
+                },
             });
             _this.$elem.on('click', '.content-wrapper', function(event) {
                 _this.$elem.find('.sortable-row.active').removeClass('active');
@@ -1224,11 +1286,11 @@ var returnVal;
          */
         tabMenu: function(tab) {
             //added so default
-            if(!_tabMenuItems[tab]){
+            if (!_tabMenuItems[tab]) {
                 tab = 'background';
             }
             //added so default section error is resolved mufaddal
-            if(_tabMenuItems[tab]){
+            if (_tabMenuItems[tab]) {
                 _menuItem = _tabMenuItems[tab];
                 _tabMenuItem = _this.$elem.find('.left-menu-container .menu-item[data-tab-selector="' + _menuItem.parentSelector + '"]');
                 _accordionMenuItem = _this.$elem.find('.elements-accordion .elements-accordion-item[data-type="' + _menuItem.itemSelector + '"] .elements-accordion-item-title');
@@ -1390,8 +1452,8 @@ var returnVal;
                 }
             }
             var lastType = _element.find('.sortable-row-content').attr('data-last-type');
-            if (lastType===undefined) {
-              lastType=_element.find('.sortable-row-content').attr('data-types').split(',')[0];
+            if (lastType === undefined) {
+                lastType = _element.find('.sortable-row-content').attr('data-types').split(',')[0];
             }
             _this.tabMenu(lastType);
             _this.getSettings();

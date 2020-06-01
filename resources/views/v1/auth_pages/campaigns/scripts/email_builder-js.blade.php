@@ -112,8 +112,11 @@ var _emailBuilder = $('.editor').emailBuilder({
             }
         });
     },
-    onElementDragStart: function(e) {},
+    onElementDragStart: function(e) {
+        // console.log('here',e);
+    },
     onElementDragFinished: function(e, contentHtml, dataId) {
+        // console.log('here',contentHtml,dataId);
         //not required
         // $.ajax({
         //         url: 'update_block_info.php',
@@ -252,7 +255,7 @@ var _emailBuilder = $('.editor').emailBuilder({
                 // if (data.success == true) {
                 //     $('#popup_demo').modal('show');
                 //     return;
-                // } 
+                // }
                 if (data.success == true) {
                     $('#previewModalFrame').attr('src', data.preview_url);
                     $('.preview_url').html('<a href="' + data.preview_url + '" target="_blank">' + data.preview_url + '</a>');
@@ -336,7 +339,7 @@ var _emailBuilder = $('.editor').emailBuilder({
     onBeforeChangeImageClick: function(e) {
         console.log('onBeforeChangeImageClick html');
         e.preventDefault();
-        //added code to open filemanager 
+        //added code to open filemanager
         window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
         // loadImages();
     },
@@ -465,7 +468,7 @@ _emailBuilder.setAfterLoad(function(e) {
 });
 
 $(document).on('click', '.template-list-pagination .pagination a', function(event){
-  event.preventDefault(); 
+  event.preventDefault();
   var page = $(this).attr('href').split('page=')[1];
   load_template_data(page);
  });
@@ -564,8 +567,9 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
             break;
           case 'no':
             $('#popup_save_before_exit').modal('hide');
-            closeEmailBuilderPopup();     
+            closeEmailBuilderPopup();
             _popup_exit_btn_no = false;
+            window.location.reload();
             break;
         }
     }

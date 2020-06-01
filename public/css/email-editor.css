@@ -897,6 +897,7 @@ li {
     position: absolute;
     right: 0;
     top: 0;
+    z-index: 1;
 }
 #email_builder_master .sortable-row-actions .row-action {
     padding: 6px;

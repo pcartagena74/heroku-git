@@ -515,7 +515,7 @@ if (!function_exists('get_template_builder_blocks_category')) {
      */
     function get_template_builder_block_category($email_cat_id)
     {
-        return App\Models\EmailBlock::where('cat_id', $email_cat_id)->get()->toArray();
+        return App\Models\EmailBlock::where(['cat_id' => $email_cat_id, 'is_active' => 1])->get()->toArray();
     }
 }
 
@@ -627,26 +627,26 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             '[AFFILIATION]'      => $person->affiliation,
             '[TWITTERHANDLE]'    => $person->twitterHandle,
             '[CERTIFICATIONS]'   => $person->certifications,
-            '[ORGSTAT1]'         => $person->orgperson->OrgStat1,
-            '[ORGSTAT2]'         => $person->orgperson->OrgStat2,
-            '[ORGSTAT3]'         => $person->orgperson->OrgStat3,
-            '[ORGSTAT4]'         => $person->orgperson->OrgStat4,
-            '[ORGSTAT5]'         => $person->orgperson->OrgStat5,
-            '[ORGSTAT6]'         => $person->orgperson->OrgStat6,
-            '[ORGSTAT7]'         => $person->orgperson->OrgStat7,
-            '[ORGSTAT8]'         => $person->orgperson->OrgStat8,
-            '[ORGSTAT9]'         => $person->orgperson->OrgStat9,
-            '[ORGSTAT10]'        => $person->orgperson->OrgStat10,
-            '[RELDATE1]'         => $person->orgperson->RelDate1,
-            '[RELDATE2]'         => $person->orgperson->RelDate2,
-            '[RELDATE3]'         => $person->orgperson->RelDate3,
-            '[RELDATE4]'         => $person->orgperson->RelDate4,
-            '[RELDATE5]'         => $person->orgperson->RelDate5,
-            '[RELDATE6]'         => $person->orgperson->RelDate6,
-            '[RELDATE7]'         => $person->orgperson->RelDate7,
-            '[RELDATE8]'         => $person->orgperson->RelDate8,
-            '[RELDATE9]'         => $person->orgperson->RelDate9,
-            '[RELDATE10]'        => $person->orgperson->RelDate10,
+            '[OSN1]'             => $person->orgperson->OrgStat1,
+            '[OSN2]'             => $person->orgperson->OrgStat2,
+            '[OSN3]'             => $person->orgperson->OrgStat3,
+            '[OSN4]'             => $person->orgperson->OrgStat4,
+            '[OSN5]'             => $person->orgperson->OrgStat5,
+            '[OSN6]'             => $person->orgperson->OrgStat6,
+            '[OSN7]'             => $person->orgperson->OrgStat7,
+            '[OSN8]'             => $person->orgperson->OrgStat8,
+            '[OSN9]'             => $person->orgperson->OrgStat9,
+            '[OSN10]'            => $person->orgperson->OrgStat10,
+            '[ODN1]'             => $person->orgperson->RelDate1,
+            '[ODN2]'             => $person->orgperson->RelDate2,
+            '[ODN3]'             => $person->orgperson->RelDate3,
+            '[ODN4]'             => $person->orgperson->RelDate4,
+            '[ODN5]'             => $person->orgperson->RelDate5,
+            '[ODN6]'             => $person->orgperson->RelDate6,
+            '[ODN7]'             => $person->orgperson->RelDate7,
+            '[ODN8]'             => $person->orgperson->RelDate8,
+            '[ODN9]'             => $person->orgperson->RelDate9,
+            '[ODN10]'            => $person->orgperson->RelDate10,
         ];
         // $rep = str_replace(array_keys($mapping), $mapping, $raw_html);
         // $test = (microtime(true) - $start) . "Seconds";
@@ -1235,5 +1235,164 @@ if (!function_exists('storeLatiLongiFormZip')) {
                 }
             }
         } //loop ends
+    }
+}
+
+if (!function_exists('has_org_property')) {
+    /**
+     * check if org property exist and return its value if found
+     * @param  object  $org      org object
+     * @param  array  $property template category array
+     * @return boolean/string   bool if not found otherwise string.
+     */
+    function has_org_property($org, $property)
+    {
+        switch ($property['name']) {
+            case 'OSN1':
+                if (empty($org->OSN1)) {
+                    return false;
+                } else {
+                    return $org->OSN1;
+                }
+                break;
+            case 'OSN2':
+                if (empty($org->OSN2)) {
+                    return false;
+                } else {
+                    return $org->OSN2;
+                }
+                break;
+            case 'OSN3':
+                if (empty($org->OSN3)) {
+                    return false;
+                } else {
+                    return $org->OSN3;
+                }
+                break;
+            case 'OSN4':
+                if (empty($org->OSN4)) {
+                    return false;
+                } else {
+                    return $org->OSN4;
+                }
+                break;
+            case 'OSN5':
+                if (empty($org->OSN5)) {
+                    return false;
+                } else {
+                    return $org->OSN5;
+                }
+                break;
+            case 'OSN6':
+                if (empty($org->OSN6)) {
+                    return false;
+                } else {
+                    return $org->OSN6;
+                }
+                break;
+            case 'OSN7':
+                if (empty($org->OSN7)) {
+                    return false;
+                } else {
+                    return $org->OSN7;
+                }
+                break;
+            case 'OSN8':
+                if (empty($org->OSN8)) {
+                    return false;
+                } else {
+                    return $org->OSN8;
+                }
+                break;
+            case 'OSN9':
+                if (empty($org->OSN9)) {
+                    return false;
+                } else {
+                    return $org->OSN9;
+                }
+                break;
+            case 'OSN10':
+                if (empty($org->OSN10)) {
+                    return false;
+                } else {
+                    return $org->OSN10;
+                }
+                break;
+            case 'ODN1':
+                if (empty($org->ODN1)) {
+                    return false;
+                } else {
+                    return $org->ODN1;
+                }
+                break;
+            case 'ODN2':
+                if (empty($org->ODN2)) {
+                    return false;
+                } else {
+                    return $org->ODN2;
+                }
+                break;
+            case 'ODN3':
+                if (empty($org->ODN3)) {
+                    return false;
+                } else {
+                    return $org->ODN3;
+                }
+                break;
+            case 'ODN4':
+                if (empty($org->ODN4)) {
+                    return false;
+                } else {
+                    return $org->ODN4;
+                }
+                break;
+            case 'ODN5':
+                if (empty($org->ODN5)) {
+                    return false;
+                } else {
+                    return $org->ODN5;
+                }
+                break;
+            case 'ODN6':
+                if (empty($org->ODN6)) {
+                    return false;
+                } else {
+                    return $org->ODN6;
+                }
+                break;
+            case 'ODN7':
+                if (empty($org->ODN7)) {
+                    return false;
+                } else {
+                    return $org->ODN7;
+                }
+                break;
+            case 'ODN8':
+                if (empty($org->ODN8)) {
+                    return false;
+                } else {
+                    return $org->ODN8;
+                }
+                break;
+            case 'ODN9':
+                if (empty($org->ODN9)) {
+                    return false;
+                } else {
+                    return $org->ODN9;
+                }
+                break;
+            case 'ODN10':
+                if (empty($org->ODN10)) {
+                    return false;
+                } else {
+                    return $org->ODN10;
+                }
+                break;
+            default:
+                return false;
+                break;
+        }
+        return true;
+
     }
 }

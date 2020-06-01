@@ -2,7 +2,6 @@
 
 $blocks_category=get_template_builder_category();
 
-
 $actual_link = url('/').'/';
 $_outputHtml='';
 for ($i = 0; $i < sizeof($blocks_category); $i++) {
@@ -20,7 +19,16 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 
             $_items = $blocks= get_template_builder_block_category($blocks_category[$i]['id']);
 
-             for ($j = 0; $j< sizeof($_items); $j++) {
+            for ($j = 0; $j< sizeof($_items); $j++) {
+                $item_name = $_items[$j]['name'];
+                if($_items[$j]['cat_id'] == 8){
+                    $has_prop = has_org_property($org,$_items[$j]);
+                    if($has_prop === false){
+                        continue;
+                    } else {
+                        $item_name = $has_prop;
+                    }
+                }
                 $_outputHtml .= '
             <li>
                 '.
@@ -42,8 +50,7 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
                         '.
                     '
                         <div class="elements-item-name">
-                            '.
-                    $_items[$j]['name'].
+                            '.$item_name.
                     '
                         </div>
                         '.
