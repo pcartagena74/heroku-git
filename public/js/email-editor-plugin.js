@@ -469,14 +469,13 @@ var returnVal;
             //element-contenteditable active
             if (_element.find('[contenteditable="true"]').hasClass('element-contenteditable')) {
                 _element = _element.find('.element-contenteditable.active');
-                if(_element.find('.button-1.hyperlink')){
-                    return _element.find('.button-1.hyperlink');
-                }
+                // if(_element.find('.button-1.hyperlink')){
+                //     return _element.find('.button-1.hyperlink')
+                // }
             }
             if (_this.$elem.find('.content-wrapper').hasClass('active')) {
                 _element = _this.$elem.find('.content-wrapper');
             }
-            console.log('here1',_element);                    
             return _element;
         },
         /**
@@ -525,24 +524,24 @@ var returnVal;
                     var dragItemPositionY = dropPositionY - dragItemOffsetY;
                     var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
                     let ele = $(element).find('.sortable-row-content').find('.text-content');
-                    if (ele.length > 0) {
-                        // console.log('here', $(ui), ui.draggable.find('.sortable-row-content a'));
-                        let content = ui.draggable.find('.sortable-row-content');
-                        let lst_type = content.data('last-type');
-                        let types = content.data('types');
-                        if (content.data('id') == 20) {
-                            let link = content.find('a');
-                            // console.log('here',link[0]);
-                            if (link[0]) {
-                                // console.log('here',$(link));
-                                $(link[0]).attr('data-last-type', lst_type);
-                                $(link[0]).attr('data-types', types);
-                                return ele[0].append(link[0]);
-                                // $(link[0]).data('last-type', lst_type);
-                                // $(link[0]).data('types', types);
-                            }
-                        }
-                    }
+                    // if (ele.length > 0) {
+                    //     // console.log('here', $(ui), ui.draggable.find('.sortable-row-content a'));
+                    //     let content = ui.draggable.find('.sortable-row-content');
+                    //     let lst_type = content.data('last-type');
+                    //     let types = content.data('types');
+                    //     if (content.data('id') == 20) {
+                    //         let link = content.find('a');
+                    //         // console.log('here',link[0]);
+                    //         if (link[0]) {
+                    //             // console.log('here',$(link));
+                    //             $(link[0]).attr('data-last-type', lst_type);
+                    //             $(link[0]).attr('data-types', types);
+                    //             return ele[0].append(link[0]);
+                    //             // $(link[0]).data('last-type', lst_type);
+                    //             // $(link[0]).data('types', types);
+                    //         }
+                    //     }
+                    // }
                 }
             });
             _this.remove_row_elements();
