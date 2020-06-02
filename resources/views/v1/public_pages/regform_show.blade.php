@@ -132,7 +132,7 @@ $i = 0;
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
     @foreach($tq as $x)
-        <?php
+        @php
 
         $ticket = Ticket::find($x['t']);
         $q = $x['q'];
@@ -145,7 +145,7 @@ $i = 0;
             $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
             $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
         }
-        ?>
+        @endphp
         @if($ticket->waitlisting())
             <div class="clearfix"><p></div>
             <b class="red">
@@ -155,10 +155,10 @@ $i = 0;
         @endif
 
         @for($j=1; $j<=$q; $j++)
-            <?php
+            @php
             $i++;
             $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-            ?>
+            @endphp
             {!! Form::hidden("percent".$i_cnt, 0, array('id' => "i_percent".$i_cnt)) !!}
             {!! Form::hidden("flatamt".$i_cnt, 0, array('id' => "i_flatamt".$i_cnt)) !!}
             {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
@@ -329,7 +329,7 @@ $i = 0;
                     {{--
                     Laravel help re: multiple repeating form elements with variable model
                     --}}
-                    <?php
+                    @php
                         if(old("certifications".$i_cnt)){
                             $selected = old("certifications".$i_cnt);
                         } elseif($person->certifications) {
@@ -337,7 +337,7 @@ $i = 0;
                         } else {
                             $selected = reset($cert_array);
                         }
-                    ?>
+                    @endphp
                     {!! Form::select("certifications" . $i_cnt . "[]", $cert_array, $selected,
                         array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
                 </div>
@@ -445,7 +445,7 @@ $i = 0;
                 @endif
                 {!! Form::textarea("eventQuestion$i_cnt", old("eventQuestion$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventQuestion$i_cnt")) !!}
                 <br/>
-                <?php
+                @php
                 if(old("affiliation".$i_cnt)){
                     $selected = old("affiliation".$i_cnt);
                 } elseif($person->affiliation) {
@@ -453,7 +453,7 @@ $i = 0;
                 } else {
                     $selected = reset($affiliation_array);
                 }
-                ?>
+                @endphp
 
                 <label class="control-label" for="affiliation{{ $i_cnt }}">
                     @lang('messages.fields.affiliation')<sup class='red'>*</sup></label>
@@ -470,7 +470,7 @@ $i = 0;
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.allergenInfo_tip')])
                     <br/>
                     <small>@lang('messages.tooltips.accommodate')</small>
-                    <?php
+                    @php
                     if(old("allergenInfo".$i_cnt)){
                         $selected = old("allergenInfo".$i_cnt);
                     } elseif($person->allergenInfo) {
@@ -478,7 +478,7 @@ $i = 0;
                     } else {
                         $selected = reset($allergen_array);
                     }
-                    ?>
+                    @endphp
                     {!! Form::select("allergenInfo" . $i_cnt .'[]', $allergen_array, $selected,
                         array('required', 'class' => 'form-control input-sm', 'multiple' => 'multiple', 'size' => '3', 'id' => "allergenInfo$i_cnt")) !!}
                     <br/>

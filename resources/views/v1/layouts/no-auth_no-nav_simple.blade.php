@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment: Template for display API
  * Created: 11/28/2017
  */
-?>
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 @include('v1.parts.header_simple_no-auth')
@@ -22,7 +22,6 @@
                   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 @include('v1.parts.error')
-<div >hererer</div>
 @yield('content')
 
 {{--
