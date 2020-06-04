@@ -922,8 +922,8 @@ if (!function_exists('getEmailList')) {
                         break;
                 }
             }
-
-            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y')]);
+            $link = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit"></i>Edit</a>';
+            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $link]);
             array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
         }
         if ($for_select) {

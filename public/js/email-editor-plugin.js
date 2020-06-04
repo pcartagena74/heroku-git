@@ -241,7 +241,7 @@ var returnVal;
                     _settings += '<li class="setting-item send-email" data-toggle="tooltip" title="' + _this.langArr.settingsSendMail + '">' + '<i class="fa fa-envelope"></i>' + '</li>';
                 }
                 if (_this.config.showMobileView == true) {
-                    _settings += '<li class="setting-item other-devices" data-toggle="tooltip" title="" data-original-title="' + _this.langArr.setttingsMobileViewTitle + '">' + '<i class="fa fa-mobile"></i>' + '</li>' + '<div class="setting-content">' + '  <div class="setting-content-item other-devices">' + '    <ul>' + '    <li class="setting-device-tab mobile " data-tab="mobile-content">' + '    <i class="fa fa-mobile"></i>' + '    </li>' + '    <li class="setting-device-tab desktop active" data-tab="desktop-content">' + '    <i class="fa fa-desktop"></i>' + '    </li>' + '    </ul>' + '    <div>' + '      <div class="mobile-content setting-device-content ">' + _this.langArr.setttingsMobileViewMobileDesc + '</div>' + '      <div class="desktop-content setting-device-content active">' + _this.langArr.setttingsMobileViewDesktopDesc + '</div>' + '    </div>' + '  </div>  ' + '</div>';
+                    _settings += '<li class="setting-item other-devices" data-toggle="tooltip" title="' + _this.langArr.setttingsMobileViewTitle + '">' + '<i class="fa fa-mobile"></i>' + '</li>' + '<div class="setting-content">' + '  <div class="setting-content-item other-devices">' + '    <ul>' + '    <li class="setting-device-tab mobile " data-tab="mobile-content">' + '    <i class="fa fa-mobile"></i>' + '    </li>' + '    <li class="setting-device-tab desktop active" data-tab="desktop-content">' + '    <i class="fa fa-desktop"></i>' + '    </li>' + '    </ul>' + '    <div>' + '      <div class="mobile-content setting-device-content ">' + _this.langArr.setttingsMobileViewMobileDesc + '</div>' + '      <div class="desktop-content setting-device-content active">' + _this.langArr.setttingsMobileViewDesktopDesc + '</div>' + '    </div>' + '  </div>  ' + '</div>';
                 }
                 /*
                  */
@@ -381,10 +381,17 @@ var returnVal;
          */
         default_func: function() {
             //Nicescroll
-            _this.$elem.find(".elements-container").niceScroll({
-                cursorcolor: "#5D8397",
-                cursorwidth: "10px",
-                background: "#253843"
+            // _this.$elem.find(".elements-container").niceScroll({
+            //     cursorcolor: "#5D8397",
+            //     cursorwidth: "10px",
+            //     background: "#253843"
+            // });
+            _this.$elem.find(".elements-container").slimScroll({
+                height: '94%',
+                width: '100%',
+                color: "#5D8397",
+                size: "10px",
+                railColor: "#253843"
             });
             //make bootstrap tooltip
             jQuery('[data-toggle="tooltip"]').tooltip();
@@ -495,25 +502,51 @@ var returnVal;
                     // ui.item.html('your new html here');  
                 },
                 receive: function(event, ui) {
-                    // console.log('reeive here',event, ui);
-                    // var fieldname = ui.item.text();
-                    // ui.item.html('your new html here');        
+                    let dropPositionX = event.pageX - $(this).offset().left;
+                    let dropPositionY = event.pageY - $(this).offset().top;
+                    // Get mouse offset relative to dragged item:
+                    let dragItemOffsetX = event.offsetX;
+                    let dragItemOffsetY = event.offsetY;
+                    // Get position of dragged item relative to drop target:
+                    let dragItemPositionX = dropPositionX - dragItemOffsetX;
+                    let dragItemPositionY = dropPositionY - dragItemOffsetY;
+                    var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
+                    let ele = $(element).find('.sortable-row-content').find('.text-content');
+                    if (ele.length > 0) {
+                        let content = ui.item.find('.sortable-row-content');
+                        let lst_type = content.data('last-type');
+                        let types = content.data('types');
+                        if (content.data('id') == 20) {
+                            let link = content.find('a');
+                            if (link[0]) {
+                                $(link[0]).attr('contenteditable', 'true');
+                                $(link[0]).attr('data-last-type', lst_type);
+                                $(link[0]).attr('data-types', types);
+                                // ui.item.remove();
+                                return ele[0].append(link[0]);
+                            }
+                        }
+                        if (content.data('id') >= 28 && content.data('id') <= 45) {
+                            let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
+                            let tag = content.html();
+                            // ui.helper.remove();
+                            return ele[0].append(tag);
+                        }
+                    }    
                 }
-            });
-            _this.$elem.find(".email-editor-elements-sortable").droppable({
+            }).droppable({
                 tolerance: 'pointer',
                 over: function(event, ui) {
-                    console.log('here over');
+                    // console.log('here over');
                 },
                 activate: function(event, ui) {
                     // console.log('here activate',ui.draggable);
                 },
                 create: function(event, ui) {
-                    console.log('here create');
+                    // console.log('here create');
                 },
                 drop: function(event, ui) {
                     console.log('here drop');
-                    // Get mouse position relative to drop target: 
                     var dropPositionX = event.pageX - $(this).offset().left;
                     var dropPositionY = event.pageY - $(this).offset().top;
                     // Get mouse offset relative to dragged item:
@@ -524,24 +557,23 @@ var returnVal;
                     var dragItemPositionY = dropPositionY - dragItemOffsetY;
                     var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
                     let ele = $(element).find('.sortable-row-content').find('.text-content');
-                    // if (ele.length > 0) {
-                    //     // console.log('here', $(ui), ui.draggable.find('.sortable-row-content a'));
-                    //     let content = ui.draggable.find('.sortable-row-content');
-                    //     let lst_type = content.data('last-type');
-                    //     let types = content.data('types');
-                    //     if (content.data('id') == 20) {
-                    //         let link = content.find('a');
-                    //         // console.log('here',link[0]);
-                    //         if (link[0]) {
-                    //             // console.log('here',$(link));
-                    //             $(link[0]).attr('data-last-type', lst_type);
-                    //             $(link[0]).attr('data-types', types);
-                    //             return ele[0].append(link[0]);
-                    //             // $(link[0]).data('last-type', lst_type);
-                    //             // $(link[0]).data('types', types);
-                    //         }
-                    //     }
-                    // }
+                    if (ele.length > 0) {
+                        console.log('here2');
+                        let content = ui.helper.find('.sortable-row-content');
+                        let lst_type = content.data('last-type');
+                        let types = content.data('types');
+                        if (content.data('id') == 20) {
+                            let link = content.find('a');
+                            if (link[0]) {
+                                ui.helper.remove();
+                            }
+                        }
+                        if (content.data('id') >= 28 && content.data('id') <= 45) {
+                            ui.helper.remove();
+                        }
+                    } 
+                    // Get mouse position relative to drop target: 
+                    
                 }
             });
             _this.remove_row_elements();

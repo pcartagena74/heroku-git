@@ -244,6 +244,8 @@ var _emailBuilder = $('.editor').emailBuilder({
     },
     onSettingsPreviewButtonClick: function(e, getHtml) {
         console.log('onPreviewButtonClick html');
+        // _element.addClass('has-loading');
+        // _element.text(_this.langArr.loading);
         $.ajax({
             url: base_url + 'storeEmailTemplateForPreview',
             type: 'POST',
@@ -589,5 +591,9 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         _emailBuilder.setImageFileManager($url);
       // document.getElementById('image_label').value = $url;
     }
-
+    $(document).on('load',function(){
+        var bsTooltip = $.fn.tooltip.noConflict();
+        // $.widget.bridge('uibutton', $.ui.button);
+        // $.widget.bridge('uitooltip', $.ui.tooltip);
+    })
 </script>

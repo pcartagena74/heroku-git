@@ -7,7 +7,7 @@
 $c = count($lists);
 $d = count($defaults);
 $default_header = ['List Name', 'Contacts', 'Create Date'];
-$list_header = ['List Name', 'Description', 'Contacts', 'Create Date'];
+$list_header = ['List Name', 'Description', 'Contacts', 'Create Date','Action'];
 $today = \Carbon\Carbon::now();
 if(!isset($emailList)){
     $emailList = null;
@@ -20,32 +20,82 @@ $topBits = '';  // remove this if this was set in the controller
     .daterangepicker.opensright .ranges, .daterangepicker.opensright .calendar, .daterangepicker.openscenter .ranges, .daterangepicker.openscenter .calendar {
      float: left; //fix for datepicker
 }
+.list-group-mine{
+    overflow: auto;
+    max-height: 300px;
+    min-height: 300px;
+}
+.list-group-mine .list-group-item {
+  background-color: #eeeeee;
+  /*border-top: 1px solid #0091b5;*/
+  /*border-left-color: #fff;
+  border-right-color: #fff;*/
+}
+
+.list-group-mine .list-group-item:hover {
+  background-color: #ffffff;
+}
+
+.list-group-mine .list-group-item:nth-child(1) {
+  background-color: #d3d2d2;
+}
+
+.list-group-mine .list-group-item:nth-child(1):first hover {
+  background-color: #d3d2d2;
+}
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+.list-group-mine .placeholder{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.list-group-mine .placeholder::before{
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 0;
+    margin-top: -5px;
+    left: -5px;
+    top: -4px;
+    border: 5px solid transparent;
+    border-left-color: $error;
+    border-right: none;
+
+}
+.font-weight-normal {
+    font-weight: normal;
+}
 </style>
 <div class="col-md-12 col-sm-12 col-xs-12">
     <ul class="nav nav-tabs bar_tabs nav-justified" id="myTab" role="tablist">
-        <li class="active">
+        <li class="{{ $emailList === null ? 'active':''}}">
             <a aria-expanded="true" data-toggle="tab" href="#tab_content1" id="lists-tab">
                 <b>
-                    Email Lists
+                    {{trans('messages.headers.email_list')}}
                 </b>
             </a>
         </li>
-        <li class="">
+        <li class="{{ $emailList != null ? 'active':''}}">
             <a aria-expanded="false" data-toggle="tab" href="#tab_content2" id="create-tab">
                 @if($emailList === null)
                 <b>
-                    Create New List
+                    {{trans('messages.headers.email_list_create')}}
                 </b>
                 @else
                 <b>
-                    Edit List
+                    {{trans('messages.headers.email_list_edit')}}
                 </b>
                 @endif
             </a>
         </li>
     </ul>
     <div class="tab-content" id="tab-content">
-        <div aria-labelledby="lists-tab" class="tab-pane active" id="tab_content1">
+        <div aria-labelledby="lists-tab" class="tab-pane {{ $emailList === null ? 'active':'fade'}}" id="tab_content1">
             <br/>
             @include('v1.parts.start_content', ['header' => "Campaign Lists", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
@@ -61,25 +111,21 @@ $topBits = '';  // remove this if this was set in the controller
 
                 @include('v1.parts.end_content')
         </div>
-        <div aria-labelledby="create-tab" class="tab-pane fade" id="tab_content2">
-            <br/>
-            @include('v1.parts.start_content', ['header' => "Create New List", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+        <div aria-labelledby="create-tab" class="tab-pane {{ $emailList != null ? 'active':'fade'}}" id="tab_content2">
+            @include('v1.parts.start_content', ['header' => trans('messages.headers.email_list_new'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
                 @if($emailList === null)
                     {!! Form::open(array('url' => env('APP_URL')."/list", 'method' => 'post','id'=>'create_email_list_form')) !!}
                 @else
-                    {!! Form::model($emailList, array('url' => env('APP_URL')."/list/".$emailList->id, 'method' => 'patch')) !!}
+                    {!! Form::model($emailList, array('url' => env('APP_URL')."/list/".$emailList->id, 'method' => 'patch','id'=>'update_email_list_form')) !!}
                 @endif
 
                 @if($emailList === null)
-                    {!! Form::submit('Create List', array('style' => 'float:right;', 'class' => 'btn btn-primary btn-sm')) !!}
+                    {!! Form::button(trans('messages.buttons.create_list'), array('style' => 'float:right;', 'class' => 'btn btn-primary btn-sm','onclick'=>'createList(this)')) !!}
                 @else
-                    {!! Form::submit('Edit List', array('style' => 'float:right;', 'class' => 'btn btn-primary btn-sm')) !!}
+                    {!! Form::button(trans('messages.buttons.edit_list'), array('style' => 'float:right;', 'class' => 'btn btn-primary btn-sm','onclick'=>'updateList(this)')) !!}
                 @endif
 
-                To create an email list, you can select a foundation from which to start your list or filter it.
-            <br/>
-            You can then choose events from which to include or exclude people.
-            <br/>
+                {!! trans('messages.instructions.email_list_foundation') !!}
             <div class="form-group">
                 <div class="col-sm-6">
                     {!! Form::label('name', "Name*") !!}
@@ -98,42 +144,63 @@ $topBits = '';  // remove this if this was set in the controller
                         @endif
                 </div>
             </div>
-            @include('v1.parts.start_content', ['header' => "Foundation: Start with or filter by...", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+            @include('v1.parts.start_content', ['header' => trans('messages.headers.email_list_foundation'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+            @php
+            $fou_none = true;
+            $fou_everyone = false;
+            $fou_pmiid = false;
+            $fou_nonexpired = false;
+            if(!empty($emailList->foundation)){
+                $fou_none = false;
+                switch ($emailList->foundation) {
+                    case 'none':
+                        $fou_none = true;
+                        break;
+                    case 'everyone':
+                        $fou_everyone = true;
+                        break;
+                    case 'pmiid':
+                        $fou_pmiid = true;
+                        break;
+                    case 'nonexpired':
+                        $fou_nonexpired = true;
+                        break;
+                }
+                if($emailList->foundation == 'none'){
+
+                }
+            }
+            @endphp
             <div class="col-sm-12">
-                Selecting a foundation either gives you a starting point for your list or will filter from the event
-                    lists you include (below).
-                <p>
-                </p>
+                {!! trans('messages.instructions.email_list_foundation_select') !!}
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'none', true, array('class' => 'flat')) !!}
-                    {!! Form::label('foundation', 'None - Skip') !!}
+                {!! Form::radio('foundation', 'none', $fou_none, array('class' => 'flat')) !!}
+                    {!! Form::label('none', 'None - Skip') !!}
                 <br/>
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'everyone', false, array('class' => 'flat')) !!}
-                    {!! Form::label('foundation', 'Everyone') !!}
+                {!! Form::radio('foundation', 'everyone', $fou_everyone, array('class' => 'flat')) !!}
+                    {!! Form::label('everyone', 'Everyone') !!}
                 <br/>
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'pmiid', false, array('class' => 'flat')) !!}
-                    {!! Form::label('foundation', 'Current and Past Members') !!}
+                {!! Form::radio('foundation', 'pmiid', $fou_pmiid, array('class' => 'flat')) !!}
+                    {!! Form::label('current_past', 'Current and Past Members') !!}
                 <br/>
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'nonexpired', false, array('class' => 'flat')) !!}
-                    {!! Form::label('foundation', 'Current Members') !!}
+                {!! Form::radio('foundation', 'nonexpired', $fou_nonexpired, array('class' => 'flat')) !!}
+                    {!! Form::label('current_member', 'Current Members') !!}
                 <br/>
             </div>
             @include('v1.parts.end_content')
             <!-----------dragable list start ---------->
-            <div class="col-md-6 col-xs-6 ">
+            <div class="col-md-12 col-xs-12 ">
                 <div class="x_panel" ondragover="allowDrop(event)" ondrop="drop(event,this,'include[]')">
                     <div class="x_title" draggable="false">
                         <h2>
-                            Inclusions: Include attendees of...
-                            <small>
-                            </small>
+                            Event lists
                         </h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li>
@@ -147,50 +214,103 @@ $topBits = '';  // remove this if this was set in the controller
                         </div>
                     </div>
                     <div class="x_content">
-                        <div class="clearfix" draggable="false">
-                            Drop Here
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    {!! Form::label('include', 'Filter '.trans('messages.fields.this_year_event')) !!}
+                                        {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control', 'required', 'id' => 'eventStartDate') ) !!}
+                                    <input name="include[]" type="hidden" value="current-year#.{{$ytd_events}}">
+                                    </input>
+                                </div>
+                            </div>
+                            {!! trans('messages.instructions.email_list_this_year')!!}
                         </div>
-                        <div class="clearfix" draggable="true" id="this-year-event" ondragstart="drag(event)">
-                            <div class="col-md-6">
-                                {!! Form::checkbox('include[]', 'current-year#'.$ytd_events, false, array('class' => 'flat')) !!}
-                            {!! Form::label('include', "This Year's Events") !!}
-
-                             {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control', 'required', 'id' => 'eventStartDate') ) !!}
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-mine draggable-list" id="include-list">
+                                <li class="list-group-item" draggable="true" id="this-year-event">
+                                    {{trans('messages.headers.email_list_inclusion')}}
+                                    {{-- {!! trans('messages.fields.inclusion_list')!!} --}}
+                                </li>
+                                <li class="list-group-item" draggable="true" id="last-year-event">
+                                    <i aria-hidden="true" class="fa fa-arrows">
+                                    </i>
+                                    {{-- {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat')) !!} --}}
+                            {!! Form::label('include', trans('messages.fields.last_year_event')) !!}
+                                    <input name="include[]" type="hidden" value="last-year#.{{$last_year}}">
+                                    </input>
+                                </li>
+                                <li class="list-group-item" draggable="true" id="all-event">
+                                    <i aria-hidden="true" class="fa fa-arrows">
+                                    </i>
+                                    {{-- {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','onchange'=>'allPDEvent(this)','data-type'=>'all-events')) !!} --}}
+                                    <input name="include[]" type="hidden" value="{{$pddays}}">
+                                    </input>
+                                    {!! Form::label('include', trans('messages.fields.all_pd_day_event')) !!}
+                                </li>
+                                @foreach($excludes as $e)
+                                @php
+                                    $name = substr($e->eventName, 0, 60);
+                                    if(strlen($name) == 60) {
+                                        $name .= "...";
+                                    }
+                                @endphp
+                                <li class="list-group-item" draggable="true" id="event_{{$e->eventID}}">
+                                    <i aria-hidden="true" class="fa fa-arrows">
+                                    </i>
+                                    {{-- {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!} --}}
+                                {!! Form::label('include', $name, array('textWrap' => 'true','class'=>'font-weight-normal')) !!}
+                                    <input name="include[]" type="hidden" value="{{$e->eventID}}">
+                                    </input>
+                                </li>
+                                @endforeach
+                            </ul>
+                            <div class="clearfix" draggable="false">
+                                <div class="col-sm-12">
+                                    {!! trans('messages.instructions.email_list_inclusion')!!}
+                                </div>
                             </div>
                         </div>
-                        <div class="clearfix" draggable="true" id="last-year-event" ondragstart="drag(event)">
-                            {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat')) !!}
-                            {!! Form::label('include', "Last Year's Events") !!}
-                        </div>
-                        <div class="clearfix" draggable="true" id="all-event" ondragstart="drag(event)">
-                            {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','onchange'=>'allPDEvent(this)','data-type'=>'all-events')) !!}
-                            {!! Form::label('include', 'All PD Day Events') !!}
-                        </div>
-                        @foreach($excludes as $e)
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-mine draggable-list" id="exclude-list">
+                                <li class="list-group-item">
+                                    {{ trans('messages.headers.email_list_exclusion')}}
+                                    {{-- {!! trans('messages.fields.exclusion_list')!!} --}}
+                                </li>
+                                @if(!empty($emailList->excluded))
+                            @foreach($excluded_list as $e)
                             @php
                                 $name = substr($e->eventName, 0, 60);
                                 if(strlen($name) == 60) {
                                     $name .= "...";
                                 }
                             @endphp
-                        <div class="clearfix" draggable="true" id="event_{{$e->eventID}}" ondragstart="drag(event)">
-                            {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!}
-                            {!! Form::label('include', $name, array('textWrap' => 'true')) !!}
-                            <br/>
+                                <li class="list-group-item" draggable="true" id="event_{{$e->eventID}}">
+                                    <i aria-hidden="true" class="fa fa-arrows">
+                                    </i>
+                                    {{-- {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!} --}}
+                                {!! Form::label('include', $name, array('textWrap' => 'true','class'=>'font-weight-normal')) !!}
+                                    <input name="include[]" type="hidden" value="{{$e->eventID}}">
+                                    </input>
+                                </li>
+                                @endforeach
+                            @endif
+                            </ul>
+                            <div class="clearfix">
+                                <div class="col-sm-12">
+                                    {!! trans('messages.instructions.email_list_exclusion')!!}
+                                </div>
+                            </div>
                         </div>
-                        @endforeach
                     </div>
                     <!-- x_content -->
                 </div>
                 <!-- x_panel -->
             </div>
-            <div class="col-md-6 col-xs-6 ">
-                <div class="x_panel" ondragover="allowDrop(event)" ondrop="drop(event,this,'exclude[]')">
+            <div class="col-md-6 col-xs-6 hide">
+                <div class="x_panel">
                     <div class="x_title" draggable="false">
                         <h2>
-                            Exclusions: Exclude attendees of...
-                            <small>
-                            </small>
+                            {{trans('messages.headers.email_list_exclusion')}}
                         </h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li>
@@ -201,11 +321,6 @@ $topBits = '';  // remove this if this was set in the controller
                             </li>
                         </ul>
                         <div class="clearfix">
-                        </div>
-                    </div>
-                    <div class="x_content">
-                        <div class="clearfix" draggable="false">
-                            Drop Here
                         </div>
                     </div>
                     <!-- x_content -->
@@ -245,7 +360,12 @@ $topBits = '';  // remove this if this was set in the controller
                 @include('v1.parts.end_content') --}}
 
                 {{-- {!! Form::submit('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm')) !!} --}}
-                {!! Form::button('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'create_list(this)')) !!}
+                @if($emailList === null)
+                    {!! Form::button(trans('messages.buttons.create_list'), array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'createList(this)')) !!}
+                @else
+                    {!! Form::button(trans('messages.buttons.edit_list'), array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'updateList(this)')) !!}
+                @endif
+                
                 {!! Form::close() !!}
                 {{-- @include('v1.parts.end_content') --}}
             <div class="errors" id="errors">
@@ -256,6 +376,8 @@ $topBits = '';  // remove this if this was set in the controller
 @endsection
 
 @section('scripts')
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js">
+</script>
 <script>
     //redirection to a specific tab
         $(document).ready(function () {
@@ -278,15 +400,21 @@ $topBits = '';  // remove this if this was set in the controller
             });
         }
     }
-    function create_list(ths){
+    function createList(ths){
         var formElements = {'include[]':[],'exclude[]':[]};
-        $('#create_email_list_form :input[type=checkbox],#create_email_list_form :input[type=text],#create_email_list_form :input[type=radio]').each(function(){
+        $('#create_email_list_form :input[name="include[]"]').each(function(){
+            var val  = $(this).val(); 
+            formElements['include[]'].push(val);
+        });
+        $('#create_email_list_form :input[name="exclude[]"]').each(function(){
+            var val  = $(this).val(); 
+            formElements['exclude[]'].push(val);
+        });
+        $('#create_email_list_form :input[type=radio],#create_email_list_form :input[type=text]').each(function(){
             var current = $(this);
             var input_name = $(this).attr('name');
             var val  = $(this).val(); 
-            if($(this).attr('type') == 'checkbox' && $(this).prop("checked") == true){
-                formElements[input_name].push(val);
-            } else if($(this).attr('type') == 'text') {
+            if($(this).attr('type') == 'text') {
                 formElements[input_name] = val;
             } else if($(this).attr('type') == 'radio' && $(this).prop("checked") == true) {
                 formElements[input_name] = val;
@@ -325,40 +453,145 @@ $topBits = '';  // remove this if this was set in the controller
             }
         });
     }
-    function allowDrop(ev) {
-      ev.preventDefault();
-      if (ev.target.getAttribute("draggable") == "true"){
-        ev.dataTransfer.dropEffect = "none"; // dropping is not allowed[]
-      } else {
-        ev.dataTransfer.dropEffect = "all"; // drop it like it's hot
+
+    function updateList(ths){
+        let formElements = {'include[]':[],'exclude[]':[]};
+        @if(!empty($emailList->id))
+        formElements['id'] = '{{$emailList->id}}';
+        @endif
+        $('#update_email_list_form :input[name="include[]"]').each(function(){
+            let val  = $(this).val(); 
+            formElements['include[]'].push(val);
+        });
+        $('#update_email_list_form :input[name="exclude[]"]').each(function(){
+            let val  = $(this).val(); 
+            formElements['exclude[]'].push(val);
+        });
+        $('#update_email_list_form :input[type=radio],#update_email_list_form :input[type=text]').each(function(){
+            let current = $(this);
+            let input_name = $(this).attr('name');
+            let val  = $(this).val(); 
+            if($(this).attr('type') == 'text') {
+                formElements[input_name] = val;
+            } else if($(this).attr('type') == 'radio' && $(this).prop("checked") == true) {
+                formElements[input_name] = val;
+            }
+        });
+        $(ths).attr("disabled", true);
+        $('#errors').html('');
+        // console.log('here',formElements);
+        $.ajax({
+            url: '{{route("EmailList.Update")}}', 
+            method:'POST',
+            dataType:'json',
+            data: formElements,
+            success: function(result){
+                $(ths).removeAttr("disabled");
+                if(result.success == true){
+                    window.location = result.redirect_url;
+                } else {
+                    if(result.errors_validation){
+                        $.each(result.errors_validation,function(key,value){
+                            var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value[0]+'</div>';
+                        $('#errors').append(str);
+                        });
+                    }
+                    if(result.errors){
+                         $.each(result.errors,function(key,value){
+                            var str = '<div class="alert alert-danger"><a aria-label="close" class="close" data-dismiss="alert" href="#">×</a>'+value+'</div>';
+                            $('#errors').append(str);
+                        });
+                    }
+                }
+            },
+            error(xhr,status,error){
+                $(ths).removeAttr("disabled");
+                console.log(status);
+            }
+        });
+    }
+
+   $("#include-list").sortable({
+      connectWith:'#exclude-list',
+      containment: 'document',
+      placeholder: 'placeholder',
+      items: 'li:not(:first)',
+      cursor: 'pointer',
+      revert: true,
+      opacity: 0.4,
+      receive:function(event,ui){
+        let item = ui.item;
+        let c = item.find('input[name="exclude[]"]').attr('name','include[]');
       }
+    }).disableSelection();
+
+    $("#exclude-list").sortable({
+      connectWith:'#include-list',
+      containment: 'document',
+      placeholder: 'placeholder',
+      items: 'li:not(:first)',
+      cursor: 'pointer',
+      revert: true,
+      opacity: 0.4,
+      receive:function(event,ui){
+        let item = ui.item;
+        let c = item.find('input[name="include[]"]').attr('name','exclude[]');
+      }
+    }).disableSelection();
+
+    function allowDrop(ev) {
+      // ev.preventDefault();
+      // if (ev.target.getAttribute("draggable") == "true"){
+      //   ev.dataTransfer.dropEffect = "none"; // dropping is not allowed[]
+      // } else {
+      //   ev.dataTransfer.dropEffect = "all"; // drop it like it's hot
+      // }
     }
 
     function drag(ev) {
-      ev.dataTransfer.setData("text/plain", ev.target.id);
+      // ev.dataTransfer.setData("text/plain", ev.target.id);
     }
 
     function drop(ev,el,type) {
-      ev.preventDefault();
-      var data = ev.dataTransfer.getData("text");
-      el.appendChild(document.getElementById(data));
-      $('#'+data).find('input[type=checkbox]').attr('name',type);
+      // ev.preventDefault();
+      // var data = ev.dataTransfer.getData("text");
+      // el.appendChild(document.getElementById(data));
+      // $('#'+data).find('input[type=checkbox]').attr('name',type);
     }
 
     $(document).ready(function () {
-          $('#eventStartDate').daterangepicker({
-                    autoUpdateInput: true,
-                    showDropdowns: true,
-                    startDate: moment().startOf('year'),
-                    endDate: moment().endOf('year'),
-                    timePicker: false,
-                    locale: {
-                        format: 'M/D/Y'
-                    },
-                    minDate: moment().startOf('year'),
-                    maxDate: moment().endOf('year'),
-                    open:'right'
-                });
+        $('#eventStartDate').daterangepicker({
+            autoUpdateInput: true,
+            showDropdowns: true,
+            startDate: moment().startOf('year'),
+            endDate: moment().endOf('year'),
+            timePicker: false,
+            locale: {
+                format: 'M/D/Y'
+            },
+            minDate: moment().startOf('year'),
+            maxDate: moment().endOf('year'),
+            open:'right'
+        });
+        $('#eventStartDate').on('apply.daterangepicker', function(ev, picker) {
+            let start = new Date(picker.startDate.format('YYYY-MM-DD'));
+            let end = new Date(picker.endDate.format('YYYY-MM-DD'));
+            let year_date = @json($ytd_events_date);
+            $.each(year_date, function(index,value){
+                let event_date = new Date(value['date']);
+                if(event_date.getTime() >= start.getTime() && event_date.getTime() <= end.getTime()){
+                    //between
+                    if($('#event_'+index).length == 0)
+                    {
+                        let str = '<li class="list-group-item ui-sortable-handle" draggable="true" id="event_'+index+'"><i aria-hidden="true" class="fa fa-arrows">&nbsp</i><label for="include" textwrap="true" class="font-weight-normal"> '+value['name']+'</label><input name="include[]" type="hidden" value="'+index+'"></li>';
+                        $('#include-list').append(str);
+                    }
+                } else {
+                    //not between
+                    $('#event_'+index).remove();
+                }
+            });
+        });
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());

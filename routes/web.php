@@ -47,7 +47,6 @@ Route::get('setlocale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
-
 Route::get('/store-address-from-zip', function () {
     storeLatiLongiFormZip();
 })->middleware('auth');
@@ -296,6 +295,7 @@ Route::get('/tb', 'MailGunController@bugsnag');
 // Email List Routes
 Route::get('/lists', 'EmailListController@index');
 Route::post('/list', 'EmailListController@store')->name('EmailList.Save');
+Route::post('/list/update', 'EmailListController@update')->name('EmailList.Update');
 Route::get('/list/{emailList}', 'EmailListController@show');
 Route::patch('/list/{list}', 'EmailListController@update')->name('list_update');
 

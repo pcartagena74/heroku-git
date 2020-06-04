@@ -162,6 +162,7 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <link href="{{url('css/colorpicker.css')}}" rel="stylesheet"/>
 <link href="{{url('css/editor-color.css')}}" rel="stylesheet"/>
 <link href="{{url('vendor/sweetalert2/dist/sweetalert2.min.css')}}" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
 <style type="text/css">
     .ui-tooltip.ui-corner-all.ui-widget-shadow.ui-widget.ui-widget-content {
     position: absolute!important;
@@ -216,6 +217,7 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 </script>
 <script src="{{url('vendor/jquery-nicescroll/dist/jquery.nicescroll.min.js')}}">
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js" integrity="sha256-qE/6vdSYzQu9lgosKxhFplETvWvqAAlmAuR+yPh/0SI=" crossorigin="anonymous"></script>
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
 </script> -->
 <!--for ace editor  -->
