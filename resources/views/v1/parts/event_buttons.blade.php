@@ -31,7 +31,11 @@
 
     $loc = $event->location; $time = 1;
 
-    $loc_tooltip = view('v1.parts.location_display', compact('event', 'loc', 'time'))->render();
+    if($loc !== null) {
+        $loc_tooltip = view('v1.parts.location_display', compact('event', 'loc', 'time'))->render();
+    } else {
+        $loc_tooltip = "";
+    }
 @endphp
 
 @if(!isset($suppress))
