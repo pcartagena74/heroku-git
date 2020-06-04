@@ -69,7 +69,8 @@ if ($org->canSubmitPDU !== null) {
     $PDU_org_types = [];
 }
 
-$i = 0;
+$i = 0; $i_cnt = "";
+
 foreach ($array as $chap) {
     $i++;
     $chap = trim($chap);
@@ -641,9 +642,9 @@ $i = 0;
             $('#i_total').val(subtotal.toFixed(2));
 
                     @for($i=1; $i<=$quantity; $i++)
-                <?php
+                @php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                ?>
+                @endphp
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
@@ -1056,10 +1057,10 @@ $i = 0;
             function recalc() {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
-                <?php
+                @php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                    ?>
-                    percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
+                @endphp
+                percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();
 
