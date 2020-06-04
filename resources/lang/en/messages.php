@@ -1354,4 +1354,12 @@ return [
         ],
 
     ],
+    'email_list_popup'              => [
+        'delete' => [
+            'title'   => 'Delete Email List',
+            'body'    => 'Are you sure you want to delete this list?',
+            'btn_yes' => 'Yes',
+            'btn_no'  => 'Cancel',
+        ],
+    ],
 ];

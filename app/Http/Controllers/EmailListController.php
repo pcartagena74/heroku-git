@@ -421,7 +421,7 @@ class EmailListController extends Controller
         $excluded_list = $exclude_detail;
         $defaults      = getDefaultEmailList($this->currentPerson);
 
-        // $lists = getEmailList($this->currentPerson);
+        $lists = getEmailList($this->currentPerson);
         return view(
             'v1.auth_pages.campaigns.email_lists',
             compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'emailList', 'excluded_list', 'ytd_events_date')
@@ -566,8 +566,24 @@ class EmailListController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:email-list,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors_validation' => $validator->errors()]);
+        }
+        $id   = $request->input('id');
+        $var  = EmailList::where('id', $id)->get()->first();
+        $name = $var->name;
+        $var  = $var->delete();
+        if ($var == true) {
+            request()->session()->flash('alert-success', trans('messages.messages.email_list_deleted', ['name' => $name]));
+        } else {
+            request()->session()->flash('alert-success', trans('messages.messages.email_list_deleted', ['name' => $name]));
+        }
+        return response()->json(['success' => true, 'redirect_url' => url('lists')]);
+
     }
 }

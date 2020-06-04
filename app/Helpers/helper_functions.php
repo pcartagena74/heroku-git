@@ -922,8 +922,10 @@ if (!function_exists('getEmailList')) {
                         break;
                 }
             }
-            $link = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit"></i>Edit</a>';
-            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $link]);
+            $edit_link   = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
+            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete(' . $l->id . ')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
+            $links       = $edit_link . ' | ' . $delete_link;
+            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $links]);
             array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
         }
         if ($for_select) {

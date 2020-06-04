@@ -296,6 +296,7 @@ Route::get('/tb', 'MailGunController@bugsnag');
 Route::get('/lists', 'EmailListController@index');
 Route::post('/list', 'EmailListController@store')->name('EmailList.Save');
 Route::post('/list/update', 'EmailListController@update')->name('EmailList.Update');
+Route::post('/list/delete', 'EmailListController@destroy')->name('EmailList.Delete');
 Route::get('/list/{emailList}', 'EmailListController@show');
 Route::patch('/list/{list}', 'EmailListController@update')->name('list_update');
 

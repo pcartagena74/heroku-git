@@ -7,7 +7,7 @@
 $c = count($lists);
 $d = count($defaults);
 $default_header = ['List Name', 'Contacts', 'Create Date'];
-$list_header = ['List Name', 'Description', 'Contacts', 'Create Date','Action'];
+$list_header = ['List Name', 'Description', 'Contacts', 'Create Date','Actions'];
 $today = \Carbon\Carbon::now();
 if(!isset($emailList)){
     $emailList = null;
@@ -374,7 +374,38 @@ $topBits = '';  // remove this if this was set in the controller
     </div>
 </div>
 @endsection
-
+@section('modals')
+<!--- Modals -->
+<div aria-hidden="true" aria-labelledby="delete_email_list" class="modal fade" id="delete_email_list" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">
+                        ×
+                    </span>
+                </button>
+                <h4 class="modal-title">
+                    {{ trans('messages.email_list_popup.delete.title') }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ trans('messages.email_list_popup.delete.body') }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" onclick="setExitPopButtonValue('yes')" type="button">
+                    {{ trans('messages.email_list_popup.delete.btn_yes') }}
+                </button>
+                <button class="btn btn-success" onclick="setExitPopButtonValue('no')" type="button">
+                    {{ trans('messages.email_list_popup.delete.btn_no') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
 @section('scripts')
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js">
 </script>
@@ -399,6 +430,35 @@ $topBits = '';  // remove this if this was set in the controller
                 $(this).attr('checked','checked');
             });
         }
+    }
+    function setExitPopButtonValue(btn_press){
+        switch(btn_press) {
+          case 'yes':
+            $('#popup_save_before_exit').modal('hide');
+                $.ajax({
+                url: '{{route("EmailList.Delete")}}', 
+                method:'POST',
+                dataType:'json',
+                data: {'id':delete_list_id},
+                success: function(result){
+                    delete_list_id ='';
+                    window.location = result.redirect_url;
+                },
+                error(xhr,status,error){
+                    delete_list_id='';
+                    console.log(status);
+                }
+            });
+            break;
+          case 'no':
+            $('#delete_email_list').modal('hide');
+            break;
+        }
+    }
+    var delete_list_id = '';
+    function confim_delete(id){
+        delete_list_id = id;
+        $('#delete_email_list').modal('show');
     }
     function createList(ths){
         var formElements = {'include[]':[],'exclude[]':[]};
