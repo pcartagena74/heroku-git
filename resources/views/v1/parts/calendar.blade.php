@@ -6,18 +6,31 @@
  */
 @endphp
 
-
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <b>{{ $org->orgName }}: {{ $event_tag }}</b>
+            <b>{!! $header !!} </b>
         </div>
         <div class="panel-body" >
             {!! $calendar->calendar() !!}
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    function strip(html){
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        return truncateString(doc.body.textContent, 300) || "";
+    }
+
+    function truncateString(str, num) {
+        if (str.length <= num) {
+            return str
+        }
+        return str.slice(0, num) + '...'
+    }
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
 <script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>
