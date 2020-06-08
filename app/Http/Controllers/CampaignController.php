@@ -55,7 +55,6 @@ class CampaignController extends Controller
         $campaign_name       = 'Untitled Campaign ' . date('Y-m-d H:i:s', time());
         $list_dp             = $this->generateEmailList();
 
-        // return view('v1.auth_pages.campaigns.email_builder', compact('org'));
         return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign_name', 'list_dp'));
     }
     private function storeCampaignEmailTemplate($request, $new_campaign = false)

@@ -596,4 +596,5 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         // $.widget.bridge('uibutton', $.ui.button);
         // $.widget.bridge('uitooltip', $.ui.tooltip);
     })
+    
 </script>

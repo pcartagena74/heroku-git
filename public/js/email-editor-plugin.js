@@ -84,6 +84,7 @@ var returnVal;
     var _language = [];
     var _aceEditor, _popup_save_template, _popup_editor, _blankPageHtml, _popup_send_email, _popup_demo, _popup_load_template;
     var _this, _nav, _result, _ytbUrl, _popupImportContent, _balContentWrapper, _removeClass, videoid, _getHtml, _addClass, _popupImagesContent, _loadPageHtml, _padding, _selection, _span, _menuType, _top, _left, _contentText, _spanId, _dataId, _outputSideBar, _url, _width, _outputContent, _class, _socialRow, _socialType, _val, _menu, _value, _activeElement, _href, _html, _dataTypes, _typeArr, _arrSize, _style, _aceEditor, _parentSelector, _parent, _arrElement, _outputHtml, _settings, _tabElements, _tabProperty, _items, _contentMenu, _generatedElements, _elementsContainer, _elements, _element, _tabSelector, _menuItem, _tabMenuItem, _accordionMenuItem, _dataValue;
+    var _element_drop;
     //added for listing;
     var _templateListItems;
     var EmailBuilder = function(elem, options) {
@@ -485,6 +486,9 @@ var returnVal;
             }
             return _element;
         },
+        drop: function(event) {
+            console.log('herer', event);
+        },
         /**
          *  Make content elements sortable
          */
@@ -516,6 +520,9 @@ var returnVal;
                         let content = ui.item.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
+                        if (content.data('id') == 4) {
+                            // return ele[0].append(tag);
+                        }
                         if (content.data('id') == 20) {
                             let link = content.find('a');
                             if (link[0]) {
@@ -529,10 +536,20 @@ var returnVal;
                         if (content.data('id') >= 28 && content.data('id') <= 45) {
                             let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
+                            if (tag !== 'undefined') {
+                                return ele[0].append(tag);
+                            }
                             // ui.helper.remove();
-                            return ele[0].append(tag);
                         }
-                    }    
+                        if (content.data('id') >= 46 && content.data('id') <= 65) {
+                            let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
+                            let tag = content.html();
+                            // ui.helper.remove();
+                            if (tag !== 'undefined') {
+                                return ele[0].append(tag);
+                            }
+                        }
+                    }
                 }
             }).droppable({
                 tolerance: 'pointer',
@@ -546,7 +563,7 @@ var returnVal;
                     // console.log('here create');
                 },
                 drop: function(event, ui) {
-                    console.log('here drop');
+                    // console.log('here drop');
                     var dropPositionX = event.pageX - $(this).offset().left;
                     var dropPositionY = event.pageY - $(this).offset().top;
                     // Get mouse offset relative to dragged item:
@@ -558,22 +575,26 @@ var returnVal;
                     var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
                     let ele = $(element).find('.sortable-row-content').find('.text-content');
                     if (ele.length > 0) {
-                        console.log('here2');
+                        // console.log('here2');
                         let content = ui.helper.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
-                        if (content.data('id') == 20) {
-                            let link = content.find('a');
-                            if (link[0]) {
+                        if (content.data('id') >= 28 && content.data('id') <= 45) {
+                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
+                            let tag = content.html();
+                            if (tag !== 'undefined') {
                                 ui.helper.remove();
                             }
                         }
-                        if (content.data('id') >= 28 && content.data('id') <= 45) {
-                            ui.helper.remove();
+                        if (content.data('id') >= 46 && content.data('id') <= 65) {
+                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
+                            let tag = content.html();
+                            if (tag !== 'undefined') {
+                                ui.helper.remove();
+                            }
                         }
-                    } 
+                    }
                     // Get mouse position relative to drop target: 
-                    
                 }
             });
             _this.remove_row_elements();
@@ -679,7 +700,7 @@ var returnVal;
                     // console.log(ui.helper);
                 },
                 drop: function() {
-                    console.log('dopr');
+                    // console.log('dopr');
                 },
                 start: function(event, ui) {
                     _this.$elem.find(".elements-container").css({
@@ -744,6 +765,10 @@ var returnVal;
             _this.events_of_popup();
             _this.events_of_setting();
             _this.remove_row_elements();
+            $(document).on('drop', '.text-content', function() {
+                _element_drop = this;
+                console.log('here text ', _element_drop);
+            });
         },
         /**
          *  Events of row
