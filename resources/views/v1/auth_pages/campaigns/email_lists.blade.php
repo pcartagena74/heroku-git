@@ -20,7 +20,7 @@ $topBits = '';  // remove this if this was set in the controller
     .daterangepicker.opensright .ranges, .daterangepicker.opensright .calendar, .daterangepicker.openscenter .ranges, .daterangepicker.openscenter .calendar {
      float: left; //fix for datepicker
 }
-.list-group-mine{
+.list-group-scroll{
     overflow: auto;
     max-height: 300px;
     min-height: 300px;
@@ -36,12 +36,15 @@ $topBits = '';  // remove this if this was set in the controller
   background-color: #ffffff;
 }
 
-.list-group-mine .list-group-item:nth-child(1) {
+.list-group-mine .list-group-item .highlight {
   background-color: #d3d2d2;
 }
 
 .list-group-mine .list-group-item:nth-child(1):first hover {
   background-color: #d3d2d2;
+}
+.list-group-mine .list-group-item.inner:nth-child(1):first hover {
+  background-color: #eeeeee;
 }
 .dragged {
   position: absolute;
@@ -69,6 +72,13 @@ $topBits = '';  // remove this if this was set in the controller
 }
 .font-weight-normal {
     font-weight: normal;
+}
+ .list-group-mine > .list-group-item {
+    padding-left: 30px;
+}
+.inline{
+    width: auto;
+    display: inline-block;    
 }
 </style>
 <div class="col-md-12 col-sm-12 col-xs-12">
@@ -218,7 +228,6 @@ $topBits = '';  // remove this if this was set in the controller
                             <div class="form-group">
                                 <div class="col-md-6">
                                     {!! Form::label('include', 'Filter '.trans('messages.fields.this_year_event')) !!}
-                                        {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control', 'required', 'id' => 'eventStartDate') ) !!}
                                     <input name="include[]" type="hidden" value="current-year#.{{$ytd_events}}">
                                     </input>
                                 </div>
@@ -226,26 +235,55 @@ $topBits = '';  // remove this if this was set in the controller
                             {!! trans('messages.instructions.email_list_this_year')!!}
                         </div>
                         <div class="col-md-6">
-                            <ul class="list-group list-group-mine draggable-list" id="include-list">
-                                <li class="list-group-item" draggable="true" id="this-year-event">
+                            <ul class="list-group list-group-mine draggable-list list-group-scroll" id="include-list">
+                                <li class="list-group-item highlight">
                                     {{trans('messages.headers.email_list_inclusion')}}
                                     {{-- {!! trans('messages.fields.inclusion_list')!!} --}}
                                 </li>
-                                <li class="list-group-item" draggable="true" id="last-year-event">
+                                <li class="list-group-item" dragable="true" id="this-year-event">
+                                    {{--
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
-                                    {{-- {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat')) !!} --}}
+                                    --}}
+                                    {!! Form::checkbox('include[]', 'this-year#'.$ytd_events, false, array('class' => 'flat','id'=>'this-year-event-list')) !!}
+                            {!! Form::label('include', trans('messages.fields.this_year_event')) !!}
+                                    <input name="include[]" type="hidden" value="this-year#.{{$ytd_events}}">
+                                    </input>
+                                </li>
+                                <li class="list-group-item" dragable="true" id="last-year-event">
+                                    {{--
+                                    <i aria-hidden="true" class="fa fa-arrows">
+                                    </i>
+                                    --}}
+                                    {!! Form::checkbox('include[]', 'last-year#'.$last_year, false, array('class' => 'flat','id'=>'last-year-event-list')) !!}
                             {!! Form::label('include', trans('messages.fields.last_year_event')) !!}
                                     <input name="include[]" type="hidden" value="last-year#.{{$last_year}}">
                                     </input>
                                 </li>
-                                <li class="list-group-item" draggable="true" id="all-event">
+                                <li class="list-group-item" dragable="true" id="pd-event">
+                                    {{--
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
-                                    {{-- {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','onchange'=>'allPDEvent(this)','data-type'=>'all-events')) !!} --}}
+                                    --}}
+                                    {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat','onchange'=>'allPDEvent(this)','data-type'=>'pd-events','id'=>'pd-event-list')) !!}
                                     <input name="include[]" type="hidden" value="{{$pddays}}">
                                     </input>
                                     {!! Form::label('include', trans('messages.fields.all_pd_day_event')) !!}
+                                </li>
+                                <li class="list-group-item" dragable="true" id="this-year-event">
+                                    {{--
+                                    <i aria-hidden="true" class="fa fa-arrows">
+                                    </i>
+                                    --}}
+                                    <div class="form-group">
+                                        {!! Form::checkbox('include[]', null, false, array('class' => 'flat form-control','id'=>'specific-events')) !!}
+                            {!! Form::label('include', trans('messages.fields.specific_event')) !!}
+                             {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control inline hidden', 'required', 'id' => 'eventStartDate') ) !!}
+                                    </div>
+                                    <input name="include[]" type="hidden" value="specific#.{{$ytd_events}}">
+                                    </input>
+                                    <ul class="list-group list-group-mine" id="specific-events-list">
+                                    </ul>
                                 </li>
                                 @foreach($excludes as $e)
                                 @php
@@ -254,24 +292,26 @@ $topBits = '';  // remove this if this was set in the controller
                                         $name .= "...";
                                     }
                                 @endphp
-                                <li class="list-group-item" draggable="true" id="event_{{$e->eventID}}">
+                               {{--
+                                <li class="list-group-item" id="event_{{$e->eventID}}">
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
-                                    {{-- {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!} --}}
+                                    {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!}
                                 {!! Form::label('include', $name, array('textWrap' => 'true','class'=>'font-weight-normal')) !!}
                                     <input name="include[]" type="hidden" value="{{$e->eventID}}">
                                     </input>
                                 </li>
+                                --}}
                                 @endforeach
                             </ul>
-                            <div class="clearfix" draggable="false">
+                            <div class="clearfix">
                                 <div class="col-sm-12">
                                     {!! trans('messages.instructions.email_list_inclusion')!!}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <ul class="list-group list-group-mine draggable-list" id="exclude-list">
+                            <ul class="list-group list-group-mine draggable-list list-group-scroll" id="exclude-list">
                                 <li class="list-group-item">
                                     {{ trans('messages.headers.email_list_exclusion')}}
                                     {{-- {!! trans('messages.fields.exclusion_list')!!} --}}
@@ -284,7 +324,7 @@ $topBits = '';  // remove this if this was set in the controller
                                     $name .= "...";
                                 }
                             @endphp
-                                <li class="list-group-item" draggable="true" id="event_{{$e->eventID}}">
+                                <li class="list-group-item" id="event_{{$e->eventID}}">
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
                                     {{-- {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!} --}}
@@ -414,16 +454,92 @@ $topBits = '';  // remove this if this was set in the controller
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
         });
+        function initializeIcheck(){
+            $("input.flat").iCheck({checkboxClass:"icheckbox_flat-green",radioClass:"iradio_flat-green"});
+        }
+        $(document).on('ifChanged','#create_email_list_form :input[type=checkbox]', function(event){
+            let ths = $(event.currentTarget);
+            let state = ths.is(':checked');
+            if(ths.attr('id') === 'specific-events' && state == true){
+                $('#eventStartDate').removeClass('hidden').show();
+                $('#specific-events-list').removeClass('hidden').show();
+                // let picker = eventStartDate();
+                var drp = $('#eventStartDate').data('daterangepicker');
+                specificEventsFilter(null,drp);
+                initializeIcheck();
+            } else if(ths.attr('id') === 'specific-events' && state == false){
+                $('#eventStartDate').addClass('hidden').hide();
+                $('#specific-events-list').addClass('hidden').hide();
+            }
 
-        $('#create_email_list_form :input[type=checkbox]').on('ifChecked', function(event){
-            // var ths = $(event.currentTarget);
-            // if(ths.data('type') === 'all-events'){
-            //     console.log('here');
-            //     $('#create_email_list_form :input[type=checkbox]').iCheck('check');
-            //     // $('#create_email_list_form').find(':input[type=checkbox]').attr('checked','checked');
-            // }
-            // console.log(ths.data('type'),event.currentTarget);
+            if(ths.attr('id') === 'this-year-event-list' && state == true){
+                let html = '<li class="list-group-item"><ul class="list-group list-group-mine" data-list_name="this-year-event">';
+                html += '<label>{{trans('messages.fields.this_year_event')}}</label>';
+                let year_date = @json($ytd_events_list);
+                $.each(year_date, function(index,value){
+                    let checkbox = '<input class="flat" name="exclude[]" type="checkbox" value="'+index+'">&nbsp;';
+                    html += '<li class="list-group-item ui-sortable-handle" id="event_'+index+'">'+checkbox+'<label for="exclude" textwrap="true" class="font-weight-normal"> '+value['name']+'</label><input name="exclude[]" type="hidden" value="'+index+'"></li>';
+                    // $('#specific-events-list').append(str);
+                });
+                html += '</ul></li>';
+                $('#exclude-list').append(html);
+                initializeIcheck();
+            } else if(ths.attr('id') === 'this-year-event-list' && state == false){
+                $.each($('#exclude-list').find('ul'),function(index,value){
+                    if($(value).data('list_name') === 'this-year-event'){
+                        $(value).parent('li').remove();
+                    }
+                });
+            }
+            if(ths.attr('id') === 'last-year-event-list' && state == true){
+                let html = '<li class="list-group-item"><ul class="list-group list-group-mine" data-list_name="last-year-event">';
+                html += '<label>{{trans('messages.fields.last_year_event')}}</label>';
+                let year_date = @json($last_year_events_list);
+                $.each(year_date, function(index,value){
+                    let checkbox = '<input class="flat" name="exclude[]" type="checkbox" value="'+index+'">&nbsp;';
+                    html += '<li class="list-group-item ui-sortable-handle" id="event_'+index+'">'+checkbox+'<label for="exclude" textwrap="true" class="font-weight-normal"> '+value['name']+'</label><input name="exclude[]" type="hidden" value="'+index+'"></li>';
+                });
+                html += '</ul></li>';
+                $('#exclude-list').append(html);
+                initializeIcheck();
+            } else if(ths.attr('id') === 'last-year-event-list' && state == false){
+                $.each($('#exclude-list').find('ul'),function(index,value){
+                    if($(value).data('list_name') === 'last-year-event'){
+                        $(value).parent('li').remove();
+                    }
+                });
+            }
+
+            if(ths.attr('id') === 'pd-event-list' && state == true){
+                let html = '<li class="list-group-item"><ul class="list-group list-group-mine" data-list_name="pd-event">';
+                html += '<label>{{trans('messages.fields.all_pd_day_event')}}</label>';
+                let year_date = @json($pd_day_events_list);
+                $.each(year_date, function(index,value){
+                    let checkbox = '<input class="flat" name="exclude[]" type="checkbox" value="'+index+'">&nbsp;';
+                    html += '<li class="list-group-item ui-sortable-handle" id="event_'+index+'">'+checkbox+'<label for="exclude" textwrap="true" class="font-weight-normal"> '+value['name']+'</label><input name="exclude[]" type="hidden" value="'+index+'"></li>';
+                });
+                html += '</ul></li>';
+                $('#exclude-list').append(html);
+                initializeIcheck();
+            } else if(ths.attr('id') === 'pd-event-list' && state == false){
+                $.each($('#exclude-list').find('ul'),function(index,value){
+                    if($(value).data('list_name') === 'pd-event'){
+                        $(value).parent('li').remove();
+                    }
+                });
+            }
+            if(ths.closest('ul').attr('id') === 'specific-events-list' && state == false) {
+                // ths.remove();
+                let t = $(ths).closest('li').attr('id');
+                $(ths).closest('li').remove()
+                // console.log('ere',t,$(ths).closest('li').remove());
+            } else {
+                // console.log('not false');
+            }
+
+
         });
+        
     function allPDEvent(ths){
         if($(ths).is(':checked')){
             $('#create_email_list_form :input[type=checkbox]').each(function(){
@@ -571,7 +687,7 @@ $topBits = '';  // remove this if this was set in the controller
         });
     }
 
-   $("#include-list").sortable({
+   $("#include-lists").sortable({
       connectWith:'#exclude-list',
       containment: 'document',
       placeholder: 'placeholder',
@@ -585,7 +701,7 @@ $topBits = '';  // remove this if this was set in the controller
       }
     }).disableSelection();
 
-    $("#exclude-list").sortable({
+    $("#exclude-lists").sortable({
       connectWith:'#include-list',
       containment: 'document',
       placeholder: 'placeholder',
@@ -618,9 +734,8 @@ $topBits = '';  // remove this if this was set in the controller
       // el.appendChild(document.getElementById(data));
       // $('#'+data).find('input[type=checkbox]').attr('name',type);
     }
-
-    $(document).ready(function () {
-        $('#eventStartDate').daterangepicker({
+    function eventStartDate(){
+        let picker = $('#eventStartDate').daterangepicker({
             autoUpdateInput: true,
             showDropdowns: true,
             startDate: moment().startOf('year'),
@@ -633,25 +748,37 @@ $topBits = '';  // remove this if this was set in the controller
             maxDate: moment().endOf('year'),
             open:'right'
         });
-        $('#eventStartDate').on('apply.daterangepicker', function(ev, picker) {
-            let start = new Date(picker.startDate.format('YYYY-MM-DD'));
-            let end = new Date(picker.endDate.format('YYYY-MM-DD'));
-            let year_date = @json($ytd_events_date);
-            $.each(year_date, function(index,value){
-                let event_date = new Date(value['date']);
-                if(event_date.getTime() >= start.getTime() && event_date.getTime() <= end.getTime()){
-                    //between
-                    if($('#event_'+index).length == 0)
-                    {
-                        let str = '<li class="list-group-item ui-sortable-handle" draggable="true" id="event_'+index+'"><i aria-hidden="true" class="fa fa-arrows">&nbsp</i><label for="include" textwrap="true" class="font-weight-normal"> '+value['name']+'</label><input name="include[]" type="hidden" value="'+index+'"></li>';
-                        $('#include-list').append(str);
-                    }
-                } else {
-                    //not between
-                    $('#event_'+index).remove();
+    }
+
+    function specificEventsFilter(ev, picker){
+        let start = new Date(picker.startDate.format('YYYY-MM-DD'));
+        let end = new Date(picker.endDate.format('YYYY-MM-DD'));
+        let year_date = @json($ytd_events_list);
+        console.log('hjere',start,end,year_date);
+        let html = '';
+        $.each(year_date, function(index,value){
+            let event_date = new Date(value['date']);
+            if(event_date.getTime() >= start.getTime() && event_date.getTime() <= end.getTime()){
+                //between
+                if($('#event_'+index).length == 0)
+                {
+                    let checkbox = '<input class="flat" name="include[]" type="checkbox" value="'+index+'" checked>&nbsp;'
+                    html += '<li class="list-group-item ui-sortable-handle" dragable="true" id="event_'+index+'">'+checkbox+'<label for="include" textwrap="true" class="font-weight-normal"> '+value['name']+'</label><input name="include[]" type="hidden" value="'+index+'"></li>';
+                    // $('#specific-events-list').append(str);
                 }
-            });
+            } else {
+                //not between
+                $('#event_'+index).remove();
+            }
         });
+        $('#specific-events-list').html(html);
+        initializeIcheck();
+    }
+    $('#eventStartDate').on('apply.daterangepicker', function(ev, picker) {
+        specificEventsFilter(ev, picker);
+    });
+    $(document).ready(function () {
+        eventStartDate();
             var setContentHeight = function () {
                 // reset height
                 $RIGHT_COL.css('min-height', $(window).height());

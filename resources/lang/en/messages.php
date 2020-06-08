@@ -398,6 +398,7 @@ return [
         'this_year_event'            => 'This Year\'s Events',
         'last_year_event'            => 'Last Year\'s Events',
         'all_pd_day_event'           => 'All PD Day Events',
+        'specific_event'             => 'Specific Event\'s (by date range)',
     ],
 
     'headers'                       => [

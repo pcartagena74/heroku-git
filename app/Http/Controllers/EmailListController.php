@@ -32,44 +32,37 @@ class EmailListController extends Controller
 
         $today = Carbon::now();
         // list of eventIDs from this year's events
-        $e = Event::whereYear('eventStartDate', '=', date('Y'))
+        $e = Event::with('event_type')->whereYear('eventStartDate', '=', date('Y'))
             ->whereDate('eventStartDate', '<', $today)
             ->where('orgID', $this->currentPerson->defaultOrgID)
-            ->select('eventID', 'eventStartDate', 'eventName')
+            ->select('eventID', 'eventStartDate', 'eventName','eventTypeID')
             ->get();
-        $ytd_events_date = [];
-        foreach ($e as $id) {
-            array_push($ids, $id->eventID);
-            $date = Carbon::createFromFormat('Y-m-d H:i:s', $id->eventStartDate);
-            $name = substr($id->eventName, 0, 60);
-            if (strlen($name) > 60) {
-                $name .= "...";
-            }
-            $ytd_events_date[$id->eventID] = ['date' => $date->format('Y-m-d'), 'name' => $name];
-        }
-        $ytd_events = implode(',', $ids);
-        $ids        = [];
+        $result          = generateEmailListEventArray($e);
+        $ytd_events_list = $result['events_with_date'];
+        $ytd_events      = implode(',', $result['ids']);
+        $ids             = [];
 
         // list of eventIDs from last year's events
         $e = Event::whereYear('eventStartDate', '=', date('Y') - 1)
-            ->select('eventID')
             ->where('orgID', $this->currentPerson->defaultOrgID)
+            ->select('eventID', 'eventStartDate', 'eventName')
             ->get();
-        foreach ($e as $id) {
-            array_push($ids, $id->eventID);
-        }
-        $last_year = implode(',', $ids);
-        $ids       = [];
+        $result                = generateEmailListEventArray($e);
+        $last_year_events_list = $result['events_with_date'];
+        $last_year             = implode(',', $result['ids']);
+        $ids                   = [];
 
-        $e = Event::where('eventTypeID', '=', 3)->where('orgID', $this->currentPerson->defaultOrgID)->select('eventID')->get();
-        foreach ($e as $id) {
-            array_push($ids, $id->eventID);
-        }
-        $pddays = implode(',', $ids);
+        $e = Event::where('eventTypeID', '=', 3)
+            ->where('orgID', $this->currentPerson->defaultOrgID)
+            ->select('eventID', 'eventStartDate', 'eventName')
+            ->get();
+        $result             = generateEmailListEventArray($e);
+        $pd_day_events_list = $result['events_with_date'];
+        $pddays             = implode(',', $result['ids']);
 
         $excludes = Event::whereYear('eventStartDate', '=', date('Y'))->get();
 
-        return view('v1.auth_pages.campaigns.email_lists', compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'ytd_events_date'));
+        return view('v1.auth_pages.campaigns.email_lists', compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'ytd_events_list', 'last_year_events_list', 'pd_day_events_list'));
     }
 
     /**

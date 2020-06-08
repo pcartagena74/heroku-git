@@ -1398,3 +1398,24 @@ if (!function_exists('has_org_property')) {
 
     }
 }
+function generateEmailListEventArray($event)
+{
+    $ytd_events_date = [];
+    $ids             = [];
+    foreach ($event as $id) {
+        array_push($ids, $id->eventID);
+        $event_type_name = 'NA';
+        if (!empty($id->event_type->etName)) {
+            $event_type_name = $id->event_type->etName;
+        }
+        $date = $id->eventStartDate->format('Y-m-d');
+        $name = substr($id->eventName, 0, 60);
+        if (strlen($name) > 60) {
+            $name .= "...";
+        }
+        $display_date                  = $id->eventStartDate->format(trans('messages.app_params.date_format'));
+        $list_name                     = $event_type_name . ': ' . $name . ' - ' . $display_date;
+        $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => $list_name];
+    }
+    return ['events_with_date' => $ytd_events_date, 'ids' => $ids];
+}
