@@ -5,6 +5,9 @@
      * Modified: 6/10/2019 to be more mobile-friendly
      *
      * @var Event $event
+     * @var Ticket $bundles
+     * @var Ticket $tickets
+     * @var Track $tracks
      */
 
     use App\EventSession;
@@ -14,10 +17,10 @@
     use Aws\S3\S3Client;
     use League\Flysystem\Filesystem;
 
-    $category = DB::table('event-category')->
-    where([
-        //['orgID', $event->orgID],     // orgID does not have to be specified because the catID selection in add_event
-        // allows for selection from this orgID or the default orgID of 1
+    // ['orgID', $event->orgID],     // orgID does not have to be specified because the catID selection in add_event
+    // allows for selection from this orgID or the default orgID of 1
+    $category = DB::table('event-category')
+    ->where([
         ['catID', $event->catID]
     ])->select('catTXT')->first();
 
@@ -123,8 +126,7 @@
         @if($event->valid_earlyBird())
             <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
                 <div class="col-md-2 col-sm-2 col-xs-2">
-                    <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
-                    </img>
+                    <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;" />
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: auto; word-break: break-all;">
                     <h2>
@@ -139,16 +141,12 @@
                 <ul class="nav nav-tabs bar_tabs nav-justified hidden-xs" id="myTab" role="tablist">
                     <li class="active hidden-xs">
                         <a aria-expanded="true" data-toggle="tab" href="#tab_content1" id="ticketing-tab">
-                            <b>
-                                @lang('messages.tabs.ticketing')
-                            </b>
+                            <b> @lang('messages.tabs.ticketing') </b>
                         </a>
                     </li>
                     <li class="hidden-xs">
                         <a aria-expanded="false" data-toggle="tab" href="#tab_content2" id="sessions-tab">
-                            <b>
-                                @lang('messages.tabs.sessions')
-                            </b>
+                            <b> @lang('messages.tabs.sessions') </b>
                         </a>
                     </li>
                 </ul>
@@ -200,29 +198,29 @@
                                                         @include('v1.parts.tooltip',
                                                         ['title' => trans('messages.tooltips.bundles'),
                                                          'c' => 'text-danger'])
-                                                        <?php
-                                                        $b_tkts = DB::table('event-tickets')
-                                                            ->
-                                                            join('bundle-ticket', function ($join) use ($bundle) {
-                                                                $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
-                                                                    ->where('bundle-ticket.bundleID', '=', $bundle->ticketID);
-                                                            })->where([
-                                                                ['event-tickets.eventID', $event->eventID],
-                                                                ['event-tickets.isaBundle', 0],
-                                                            ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID',
-                                                                'event-tickets.maxAttendees', 'event-tickets.regCount')->get();
-                                                        // $b_tkts = DB::select($sql);
-                                                        ?>
+                                                        @php
+                                                            $b_tkts = DB::table('event-tickets')
+                                                                ->
+                                                                join('bundle-ticket', function ($join) use ($bundle) {
+                                                                    $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
+                                                                        ->where('bundle-ticket.bundleID', '=', $bundle->ticketID);
+                                                                })->where([
+                                                                    ['event-tickets.eventID', $event->eventID],
+                                                                    ['event-tickets.isaBundle', 0],
+                                                                ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID',
+                                                                    'event-tickets.maxAttendees', 'event-tickets.regCount')->get();
+                                                            // $b_tkts = DB::select($sql);
+                                                        @endphp
                                                         <ul>
                                                             @foreach($b_tkts as $tkt)
-                                                                <?php
-                                                                if ($tkt->
-                                                                    maxAttendees > 0 && $tkt->regCount >= $tkt->maxAttendees) {
-                                                                    $soldout = 1;
-                                                                } else {
-                                                                    $soldout = 0;
-                                                                }
-                                                                ?>
+                                                                @php
+                                                                    if ($tkt->
+                                                                        maxAttendees > 0 && $tkt->regCount >= $tkt->maxAttendees) {
+                                                                        $soldout = 1;
+                                                                    } else {
+                                                                        $soldout = 0;
+                                                                    }
+                                                                @endphp
                                                                 <li>
                                                                     {{ $tkt->ticketLabel }}
                                                                 </li>
@@ -338,31 +336,21 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12"
                                          style="text-align: left; vertical-align: top;">
-                                        <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png">
-                                        <img alt="MasterCard Logo" src="{{ env('APP_URL') }}/images/mastercard.png">
-                                        <button class="btn btn-success btn-sm" id="purchase" style="height: 32px;"
-                                                type="submit">
-                                            <b>
-                                                @lang('messages.buttons.buy')
-                                            </b>
+                                        <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png" />
+                                        <img alt="MasterCard Logo" src="{{ env('APP_URL') }}/images/mastercard.png" />
+                                        <button class="btn btn-success btn-sm" id="purchase" style="height: 32px;" type="submit">
+                                            <b> @lang('messages.buttons.buy') </b>
                                         </button>
-                                        </img>
-                                        </img>
                                     </div>
                                     <br/>
                                     @if(count($bundles)>0)
                                         <div class="col-xs-12">
-                                            <sup style="color: red">
-                                                **
-                                            </sup>
-                                            @lang('messages.tooltips.bundles')
+                                            <sup style="color: red"> ** </sup> @lang('messages.tooltips.bundles')
                                         </div>
                                     @endif
 
                                 @else
-                                    <b class="red">
-                                        {{ trans('messages.headers.no_tickets') }}
-                                    </b>
+                                    <b class="red"> {{ trans('messages.headers.no_tickets') }} </b>
                                 @endif
                             </div>
                             @if($event->hasTracks)
@@ -392,14 +380,14 @@
                                                 <tbody>
                                                 @for($i=1;$i<=$event->confDays;$i++)
                                                     <tr>
-                                                        <?php
-                                                        $z = EventSession::where([
-                                                            ['confDay', '=', $i],
-                                                            ['eventID', '=', $event->
-                                                            eventID]
-                                                        ])->first();
-                                                        $y = Ticket::find($z->ticketID);
-                                                        ?>
+                                                        @php
+                                                            $z = EventSession::where([
+                                                                ['confDay', '=', $i],
+                                                                ['eventID', '=', $event->
+                                                                eventID]
+                                                            ])->first();
+                                                            $y = Ticket::find($z->ticketID);
+                                                        @endphp
                                                         <th colspan="{{ $columns }}"
                                                             style="text-align:center; color: yellow; background-color: #2a3f54;">
                                                             {{ trans('messages.headers.day') }} {{ $i }}
@@ -408,40 +396,39 @@
                                                         </th>
                                                     </tr>
                                                     @for($x=1;$x<=5;$x++)
-                                                        <?php
-                                                        // Check to see if there are any events for $x (this row)
-                                                        $check = EventSession::where([
-                                                            ['eventID', $event->
-                                                            eventID],
-                                                            ['confDay', $i],
-                                                            ['order', $x]
-                                                        ])->first();
+                                                        @php
+                                                            // Check to see if there are any events for $x (this row)
+                                                            $check = EventSession::where([
+                                                                ['eventID', $event->
+                                                                eventID],
+                                                                ['confDay', $i],
+                                                                ['order', $x]
+                                                            ])->first();
 
-                                                        // As long as there are any sessions, the row will be displayed
-                                                        ?>
+                                                            // As long as there are any sessions, the row will be displayed
+                                                        @endphp
                                                         @if($check !== null)
                                                             <tr>
                                                                 @foreach($tracks as $track)
-                                                                    <?php
-                                                                    $s = EventSession::where([
-                                                                        ['trackID', $track->
-                                                                        trackID],
-                                                                        ['eventID', $event->eventID],
-                                                                        ['confDay', $i],
-                                                                        ['order', $x]
-                                                                    ])->first();
-
-                                                                    if ($s !== null && $s->isLinked) {
-                                                                        $count = EventSession::where([
+                                                                    @php
+                                                                        $s = EventSession::where([
                                                                             ['trackID', $track->trackID],
                                                                             ['eventID', $event->eventID],
                                                                             ['confDay', $i],
-                                                                            ['isLinked', $s->isLinked]
-                                                                        ])->withTrashed()->count();
-                                                                    } else {
-                                                                        $count = 0;
-                                                                    }
-                                                                    ?>
+                                                                            ['order', $x]
+                                                                        ])->first();
+
+                                                                        if ($s !== null && $s->isLinked) {
+                                                                            $count = EventSession::where([
+                                                                                ['trackID', $track->trackID],
+                                                                                ['eventID', $event->eventID],
+                                                                                ['confDay', $i],
+                                                                                ['isLinked', $s->isLinked]
+                                                                            ])->withTrashed()->count();
+                                                                        } else {
+                                                                            $count = 0;
+                                                                        }
+                                                                    @endphp
                                                                     @if($s !== null)
                                                                         @if($tracks->first() == $track || !$event->isSymmetric)
                                                                             <td data-title="{{ trans('messages.fields.times') }}"
@@ -459,9 +446,7 @@
                                                                         <td colspan="2"
                                                                             data-title="{{ trans('messages.fields.session') }}"
                                                                             style="text-align:left; min-width:150px; width: {{ $width }}%; max-width: {{ $mw }}%;{{ $x%2?:'background-color:lightgray;' }}">
-                                                                            <b>
-                                                                                {{ $s->sessionName }}
-                                                                            </b>
+                                                                            <b> {{ $s->sessionName }} </b>
                                                                             @if($s->sessionAbstract !== null)
                                                                                 <a class="btn btn-xs btn-primary pull-right"
                                                                                    data-content="{!! $s->sessionAbstract !!}"
@@ -481,47 +466,44 @@
                                                                 @endforeach
                                                             </tr>
                                                         @endif
-                                                        <?php
-                                                        // Check to see if there are any events for $x (this row)
-                                                        $check = EventSession::where([
-                                                            ['eventID', $event->
-                                                            eventID],
-                                                            ['confDay', $i],
-                                                            ['order', $x]
-                                                        ])->first();
+                                                        @php
+                                                            // Check to see if there are any events for $x (this row)
+                                                            $check = EventSession::where([
+                                                                ['eventID', $event->
+                                                                eventID],
+                                                                ['confDay', $i],
+                                                                ['order', $x]
+                                                            ])->first();
 
-                                                        // As long as there are any sessions, the row will be displayed
-                                                        ?>
+                                                            // As long as there are any sessions, the row will be displayed
+                                                        @endphp
                                                         @if($check !== null)
                                                             <tr>
                                                                 @foreach($tracks as $track)
-                                                                    <?php
-                                                                    $s = EventSession::where([
-                                                                        ['trackID', $track->
-                                                                        trackID],
-                                                                        ['eventID', $event->eventID],
-                                                                        ['confDay', $i],
-                                                                        ['order', $x]
-                                                                    ])->first();
-
-                                                                    if ($s !== null && $s->isLinked) {
-                                                                        $count = EventSession::where([
+                                                                    @php
+                                                                        $s = EventSession::where([
                                                                             ['trackID', $track->trackID],
                                                                             ['eventID', $event->eventID],
                                                                             ['confDay', $i],
-                                                                            ['isLinked', $s->isLinked]
-                                                                        ])->withTrashed()->count();
-                                                                    } else {
-                                                                        $count = 0;
-                                                                    }
-                                                                    ?>
+                                                                            ['order', $x]
+                                                                        ])->first();
+
+                                                                        if ($s !== null && $s->isLinked) {
+                                                                            $count = EventSession::where([
+                                                                                ['trackID', $track->trackID],
+                                                                                ['eventID', $event->eventID],
+                                                                                ['confDay', $i],
+                                                                                ['isLinked', $s->isLinked]
+                                                                            ])->withTrashed()->count();
+                                                                        } else {
+                                                                            $count = 0;
+                                                                        }
+                                                                    @endphp
                                                                     @if($s !== null)
                                                                         <td colspan="2"
                                                                             data-title="{{ trans('messages.fields.speakers') }}"
                                                                             style="text-align:left;{{ $x%2?'':'background-color:lightgray;' }}">
-                                                                            <b>
-                                                                                {{ trans('messages.fields.speakers') }}
-                                                                            </b>
+                                                                            <b> {{ trans('messages.fields.speakers') }} </b>
                                                                             <br/>
                                                                             {{ $s->show_speakers() }}
                                                                         </td>
@@ -529,40 +511,40 @@
                                                                 @endforeach
                                                             </tr>
                                                         @endif
-                                                        <?php
-                                                        // Check to see if there are any events for $x (this row)
-                                                        $check = EventSession::where([
-                                                            ['eventID', $event->
-                                                            eventID],
-                                                            ['confDay', $i],
-                                                            ['order', $x]
-                                                        ])->first();
+                                                        @php
+                                                            // Check to see if there are any events for $x (this row)
+                                                            $check = EventSession::where([
+                                                                ['eventID', $event->
+                                                                eventID],
+                                                                ['confDay', $i],
+                                                                ['order', $x]
+                                                            ])->first();
 
-                                                        // As long as there are any sessions, the row will be displayed
-                                                        ?>
+                                                            // As long as there are any sessions, the row will be displayed
+                                                        @endphp
                                                         @if($check !== null)
                                                             <tr>
                                                                 @foreach($tracks as $track)
-                                                                    <?php
-                                                                    $s = EventSession::where([
-                                                                        ['trackID', $track->
-                                                                        trackID],
-                                                                        ['eventID', $event->eventID],
-                                                                        ['confDay', $i],
-                                                                        ['order', $x]
-                                                                    ])->first();
-
-                                                                    if ($s !== null && $s->isLinked) {
-                                                                        $count = EventSession::where([
-                                                                            ['trackID', $track->trackID],
+                                                                    @php
+                                                                        $s = EventSession::where([
+                                                                            ['trackID', $track->
+                                                                            trackID],
                                                                             ['eventID', $event->eventID],
                                                                             ['confDay', $i],
-                                                                            ['isLinked', $s->isLinked]
-                                                                        ])->withTrashed()->count();
-                                                                    } else {
-                                                                        $count = 0;
-                                                                    }
-                                                                    ?>
+                                                                            ['order', $x]
+                                                                        ])->first();
+
+                                                                        if ($s !== null && $s->isLinked) {
+                                                                            $count = EventSession::where([
+                                                                                ['trackID', $track->trackID],
+                                                                                ['eventID', $event->eventID],
+                                                                                ['confDay', $i],
+                                                                                ['isLinked', $s->isLinked]
+                                                                            ])->withTrashed()->count();
+                                                                        } else {
+                                                                            $count = 0;
+                                                                        }
+                                                                    @endphp
                                                                     @if($s !== null && $s->leadAmt+$s->stratAmt+$s->techAmt > 0 && $s->maxAttendees > 0)
                                                                         <td data-title="{{ trans('messages.fields.credit') }}"
                                                                             rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
@@ -595,10 +577,7 @@
                                                                         <td data-title="{{ trans('messages.fields.limit') }}"
                                                                             rowspan="{{ $count>0 ? ($count-1)*3+1 : 1 }}"
                                                                             style="text-align:left;{{ $x%2?:'background-color:lightgray;' }}">
-                                                                            <b>
-                                                                                @lang('messages.headers.att_limit')
-                                                                                :
-                                                                            </b>
+                                                                            <b> @lang('messages.headers.att_limit') : </b>
                                                                             {{ $s->maxAttendees == 0 ? 'N/A' : $s->maxAttendees }}
                                                                         </td>
                                                                     @else
@@ -685,121 +664,119 @@
             @include('v1.parts.end_content')
 
             @if($event->eventInfo)
-                @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+                @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'),
+                         'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
                 {!! $event->eventInfo !!}
                 @if(isset($tags))
-                    <p>
-                        @lang('messages.fields.tags')
-                    </p>
+                    <p>@lang('messages.fields.tags')</p>
                 @endif
                 @include('v1.parts.end_content')
             @endif
             @include('v1.parts.end_content')
+@endsection
 
-            @endsection
+@section('scripts')
+    <script>
+        $('a[data-toggle="tab"]').click(function (e) {
+            $(this).tab('show');
+        });
+        // e.target
+        //e.relatedTarget // previous active tab
+    </script>
+    <script>
+        $('#btn-validate').on('click', function (e) {
+            e.preventDefault();
+            validateCode({{ $event->eventID }});
+        });
+        $('#purchase').on('click', function (e) {
+            e.preventDefault();
+            checksum();
+        });
 
-        @section('scripts')
-            <script>
-                $('a[data-toggle="tab"]').click(function (e) {
-                    $(this).tab('show');
-                });
-                // e.target
-                //e.relatedTarget // previous active tab
-            </script>
-            <script>
-                $('#btn-validate').on('click', function (e) {
-                    e.preventDefault();
-                    validateCode({{ $event->eventID }});
-                });
-                $('#purchase').on('click', function (e) {
-                    e.preventDefault();
-                    checksum();
-                });
+        @php
+            $tkt_vars = ''; $tkt_sum = 'var sum = '; $sum = ''; $i = 0; $j = 0;
+            foreach ($bundles as $t) {
+                $i++;
+                $tkt_vars .= 'var i' . $i . ' = parseInt($("#q-' . $t->ticketID . '").val());' . "\n";
+                $tkt_sum .= "i$i + ";
+                $sum .= "i$i + ";
+            }
 
-                <?php
-                $tkt_vars = ''; $tkt_sum = 'var sum = '; $sum = ''; $i = 0; $j = 0;
-                foreach ($bundles as $t) {
-                    $i++;
-                    $tkt_vars .= 'var i' . $i . ' = parseInt($("#q-' . $t->ticketID . '").val());' . "\n";
-                    $tkt_sum .= "i$i + ";
-                    $sum .= "i$i + ";
-                }
+            foreach ($tickets as $t) {
+                $j++;
+                $tkt_vars .= 'var j' . $j . ' = parseInt($("#q-' . $t->ticketID . '").val());' . "\n";
+                $tkt_sum .= "j$j + ";
+            }
+            $tkt_sum .= "0;";
+            $sum .= "0";
+        @endphp
+        function checksum() {
+            {!! $tkt_vars !!}
+                    {!! $tkt_sum !!}
 
-                foreach ($tickets as $t) {
-                    $j++;
-                    $tkt_vars .= 'var j' . $j . ' = parseInt($("#q-' . $t->ticketID . '").val());' . "\n";
-                    $tkt_sum .= "j$j + ";
-                }
-                $tkt_sum .= "0;";
-                $sum .= "0";
-                ?>
-                function checksum() {
-                    {!! $tkt_vars !!}
-                            {!! $tkt_sum !!}
+            if (sum > 0) {
+                $("#start_registration").submit();
+            } else {
+                alert("{{ trans('messages.instructions.quantity') }}");
+            }
+        }
 
-                    if (sum > 0) {
-                        $("#start_registration").submit();
-                    } else {
-                        alert("{{ trans('messages.instructions.quantity') }}");
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <script>
+        function validateCode(eventID) {
+            var codeValue = $("#discount_code").val();
+            if (FieldIsEmpty(codeValue)) {
+                var message = '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>{{ trans('messages.codes.empty') }}</span>';
+                $('#status_msg').html(message).fadeIn(500).fadeOut(3000);
+
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    async: true,
+                    url: '{{ env('APP_URL') }}/discount/' + eventID,
+                    dataType: 'json',
+                    data: {
+                        event_id: eventID,
+                        discount_code: codeValue
+                    },
+                    beforeSend: function () {
+                        $('#status_msg').html('');
+                        $('#status_msg').fadeIn(0);
+                    },
+                    success: function (data) {
+                        //console.log(data);
+                        var result = eval(data);
+                        $('.status_msg').html(result.message).fadeIn(0);
+                        if (result.status == 'error') {
+                            console.log($("#discount_code" + which).val());
+                            $("#discount_code" + which).val('');
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                        var result = eval(data);
+                        $('#status_msg').html(result.message).fadeIn(0);
                     }
-                }
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
                 });
-            </script>
-            <script>
-                function validateCode(eventID) {
-                    var codeValue = $("#discount_code").val();
-                    if (FieldIsEmpty(codeValue)) {
-                        var message = '<span><i class="fa fa-warning fa-2x text-warning mid_align">&nbsp;</i>{{ trans('messages.codes.empty') }}</span>';
-                        $('#status_msg').html(message).fadeIn(500).fadeOut(3000);
+            }
+        }
+    </script>
+    <script>
+        $('[data-toggle="popover"]').popover({
+            container: 'body',
+            placement: 'top'
+        });
+    </script>
+@endsection
+@else
+@section('content')
+    @lang('messages.instructions.inactive')
+@endsection
+@endif
 
-                    } else {
-                        $.ajax({
-                            type: 'POST',
-                            cache: false,
-                            async: true,
-                            url: '{{ env('APP_URL') }}/discount/' + eventID,
-                            dataType: 'json',
-                            data: {
-                                event_id: eventID,
-                                discount_code: codeValue
-                            },
-                            beforeSend: function () {
-                                $('#status_msg').html('');
-                                $('#status_msg').fadeIn(0);
-                            },
-                            success: function (data) {
-                                //console.log(data);
-                                var result = eval(data);
-                                $('.status_msg').html(result.message).fadeIn(0);
-                                if (result.status == 'error') {
-                                    console.log($("#discount_code" + which).val());
-                                    $("#discount_code" + which).val('');
-                                }
-                            },
-                            error: function (data) {
-                                console.log(data);
-                                var result = eval(data);
-                                $('#status_msg').html(result.message).fadeIn(0);
-                            }
-                        });
-                    }
-                }
-            </script>
-            <script>
-                $('[data-toggle="popover"]').popover({
-                    container: 'body',
-                    placement: 'top'
-                });
-            </script>
-        @endsection
-        @else
-        @section('content')
-            @lang('messages.instructions.inactive')
-        @endsection
-        @endif
-    </div>

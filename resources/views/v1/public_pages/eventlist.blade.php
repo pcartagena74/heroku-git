@@ -47,25 +47,25 @@
                 @foreach($events as $e)
                     <tr>
                         <td>
-                            @if(0)
+                            {{--
+                            This is the image that was displayed in MyEventGuru.  There was a request to remove it.
                                 <div class="col-xs-1" style="float: left;">
                                     <img src="{{ env('APP_URL') }}/images/eventlist.jpg"
-                                         alt='{{ trans('messages.codes.img') }}' height='79'
-                                         width='90' border='0'/>
+                                         alt='{{ trans('messages.codes.img') }}' height='79' width='90' border='0'/>
                                 </div>
-                            @endif
+                            --}}
                             <div class="col-xs-11" style="text-align: left;">
                                 <div class="col-xs-9">
                                     <b> {!! $e->eventName !!}</b>
                                 </div>
                                 <div class="col-xs-3">
-                                    on {{ $e->eventStartDate->toFormattedDateString() }}
+                                    @lang('messages.common.on') {{ $e->eventStartDate->toFormattedDateString() }}
                                 </div>
                                 <div class="col-xs-12 container">
                                     {!! truncate_saw(strip_tags($e->eventDescription, '<br>'), 300) !!}
                                 </div>
                                 <div class="col-xs-9">
-                                    <b>Location: </b>{{ $e->location->locName ?? trans('messages.messages.unknown') }}
+                                    <b>@lang('messages.fields.loc'): </b>{{ $e->location->locName ?? trans('messages.messages.unknown') }}
                                 </div>
                                 @if(!$past)
                                     <div class="col-xs-3" style="text-align: center;">
@@ -105,21 +105,23 @@
                     );
                 }
                 //dd($cal_events, $events);
-                $calendar = Calendar::addEvents($cal_events);
-                /*
-                    ->setCallbacks([
-                        'eventRender' => 'function(info) {
-                            var tooltip = new Tooltip(info.el, {
-                                title: info.options.description,
-                                placement: "top",
-                                trigger: "hover",
-                                container: "body"
-                            });
-                        }'
+                $calendar = Calendar::addEvents($cal_events)
+                ->setCallbacks([
+                    'eventRender' => 'function(event, element) {
+                        element.popover({
+                            container: "body",
+                            width: "90%",
+                            html: true,
+                            placement: "top",
+                            trigger: "hover",
+                            title: "<b>"+event.title+"</b>",
+                            content: strip(event.description)
+                        });
+                     }'
                 ]);
-                */
+
             @endphp
-            @include('v1.parts.calendar')
+            @include('v1.parts.calendar', ['header' => "$org->orgName: $event_tag"])
         @endif
     @else
         @lang('messages.messages.no_events', ['which' => strtolower(trans_choice('messages.var_words.time_period', $past))])

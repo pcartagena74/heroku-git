@@ -110,6 +110,7 @@ return [
 
     // Common words that are often reused
     'common' => [
+        'on' => "on",
         'reminder' => "Reminder",
     ],
 
