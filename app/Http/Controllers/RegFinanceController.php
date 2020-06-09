@@ -797,7 +797,6 @@ class RegFinanceController extends Controller
             ->setOption('no-stop-slow-scripts', true);
         */
 
-        dd($pdf->output());
         //Storage::put($receipt_filename, $pdf->output());
         Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
 
