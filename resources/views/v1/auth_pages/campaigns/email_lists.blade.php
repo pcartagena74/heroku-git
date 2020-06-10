@@ -633,7 +633,30 @@ if(!empty($emailList->metadata)){
             if(pel == false && lyel == false && yel == false ){
                 addSpecificExcludeList();
             }
-
+            if(ths.closest('ul').data('list_name') == 'this-year-event'){
+                let all_check_box = ths.closest('ul').find('input[type="checkbox"]');
+                if(all_check_box.length == all_check_box.filter(':checked').length){
+                    $('#this-year-event-list').iCheck('uncheck');
+                    ths.closest('ul').closest('li').remove();
+                    initializeIcheck();
+                }
+            }
+            if(ths.closest('ul').data('list_name') == 'last-year-event'){
+                let all_check_box = ths.closest('ul').find('input[type="checkbox"]');
+                if(all_check_box.length == all_check_box.filter(':checked').length){
+                    $('#last-year-event-list').iCheck('uncheck');
+                    ths.closest('ul').closest('li').remove();
+                    initializeIcheck();
+                }
+            }
+            if(ths.closest('ul').data('list_name') == 'pd-event'){
+                let all_check_box = ths.closest('ul').find('input[type="checkbox"]');
+                if(all_check_box.length == all_check_box.filter(':checked').length){
+                    $('#pd-event-list').iCheck('uncheck');
+                    ths.closest('ul').closest('li').remove();
+                    initializeIcheck();
+                }
+            }
 
         });
     function removeSpecificExcludeList(){
