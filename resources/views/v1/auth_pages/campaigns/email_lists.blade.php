@@ -638,7 +638,6 @@ if(!empty($emailList->metadata)){
                 if(all_check_box.length == all_check_box.filter(':checked').length){
                     $('#this-year-event-list').iCheck('uncheck');
                     ths.closest('ul').closest('li').remove();
-                    initializeIcheck();
                 }
             }
             if(ths.closest('ul').data('list_name') == 'last-year-event'){
@@ -646,7 +645,6 @@ if(!empty($emailList->metadata)){
                 if(all_check_box.length == all_check_box.filter(':checked').length){
                     $('#last-year-event-list').iCheck('uncheck');
                     ths.closest('ul').closest('li').remove();
-                    initializeIcheck();
                 }
             }
             if(ths.closest('ul').data('list_name') == 'pd-event'){
@@ -654,7 +652,6 @@ if(!empty($emailList->metadata)){
                 if(all_check_box.length == all_check_box.filter(':checked').length){
                     $('#pd-event-list').iCheck('uncheck');
                     ths.closest('ul').closest('li').remove();
-                    initializeIcheck();
                 }
             }
 
@@ -708,7 +705,7 @@ if(!empty($emailList->metadata)){
             let year_date = @json($ytd_events_list);
             $.each(year_date, function(index,value){
                 let checked = '';
-                if(exclude_list[index]){
+                if(exclude_list[index] >= 0){
                     checked = 'checked';
                 }
                 let checkbox = '<input class="flat" name="exclude[]" type="checkbox" value="'+index+'" '+checked+'>&nbsp;';
@@ -731,7 +728,7 @@ if(!empty($emailList->metadata)){
             let year_date = @json($last_year_events_list);
             $.each(year_date, function(index,value){
                 let checked = '';
-                if(exclude_list[index]){
+                if(exclude_list[index] >= 0){
                     checked = 'checked';
                 }
                 let checkbox = '<input class="flat" name="exclude[]" type="checkbox" value="'+index+'" '+checked+'>&nbsp;';
@@ -754,7 +751,7 @@ if(!empty($emailList->metadata)){
             let year_date = @json($pd_day_events_list);
             $.each(year_date, function(index,value){
                 let checked = '';
-                if(exclude_list[index]){
+                if(exclude_list[index] >= 0){
                     checked = 'checked';
                 }
                 let checkbox = '<input class="flat" name="exclude[]" type="checkbox" value="'+index+'" '+checked+'>&nbsp;';
