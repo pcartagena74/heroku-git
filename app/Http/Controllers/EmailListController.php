@@ -32,10 +32,22 @@ class EmailListController extends Controller
 
         $today = Carbon::now();
         // list of eventIDs from this year's events
+        $e = Event::with('event_type')
+            ->whereDate('eventStartDate', '<', $today)
+            ->where('orgID', $this->currentPerson->defaultOrgID)
+            ->select('eventID', 'eventStartDate', 'eventName', 'eventTypeID')
+            ->get();
+        $result                 = generateEmailListEventArray($e);
+        $all_events_list        = $result['events_with_date'];
+        $all_event_min_max_date = $result['min_max_date'];
+        $all_events             = implode(',', $result['ids']);
+        $ids                    = [];
+
+        // list of eventIDs from this year's events
         $e = Event::with('event_type')->whereYear('eventStartDate', '=', date('Y'))
             ->whereDate('eventStartDate', '<', $today)
             ->where('orgID', $this->currentPerson->defaultOrgID)
-            ->select('eventID', 'eventStartDate', 'eventName','eventTypeID')
+            ->select('eventID', 'eventStartDate', 'eventName', 'eventTypeID')
             ->get();
         $result          = generateEmailListEventArray($e);
         $ytd_events_list = $result['events_with_date'];
@@ -62,7 +74,7 @@ class EmailListController extends Controller
 
         $excludes = Event::whereYear('eventStartDate', '=', date('Y'))->get();
 
-        return view('v1.auth_pages.campaigns.email_lists', compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'ytd_events_list', 'last_year_events_list', 'pd_day_events_list'));
+        return view('v1.auth_pages.campaigns.email_lists', compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'ytd_events_list', 'last_year_events_list', 'pd_day_events_list', 'all_events_list', 'all_events', 'all_event_min_max_date'));
     }
 
     /**
@@ -99,57 +111,65 @@ class EmailListController extends Controller
             return response()->json(['success' => false, 'errors_validation' => $validator->errors()]);
         }
 
-        $name         = request()->input('name');
-        $description  = request()->input('description');
-        $foundation   = request()->input('foundation');
-        $include      = request()->input('include');
-        $exclude      = request()->input('exclude');
-        $year_date    = $request->input('eventStartDate');
-        $include_list = [];
-        $exclude_list = [];
-
+        $name            = request()->input('name');
+        $description     = request()->input('description');
+        $foundation      = request()->input('foundation');
+        $include         = request()->input('include');
+        $exclude         = request()->input('exclude');
+        $year_date       = $request->input('eventStartDate');
+        $include_list    = [];
+        $exclude_list    = [];
         $has_this_year   = false;
         $current_year_in = '';
         if (!empty($include)) {
             foreach ($include as $event_id) {
-                if (strpos($event_id, 'current-year#') === 0) {
-                    $date       = explode('-', $year_date);
-                    $from       = date('Y-m-d', strtotime($date[0]));
-                    $to         = date('Y-m-d', strtotime($date[1]));
-                    $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    foreach ($event_list as $key => $value) {
-                        $include_list[$value['eventID']] = $value['eventID'];
-                    }
+                if (strpos($event_id, 'this-year#') === 0) {
+                    // $date       = explode('-', $year_date);
+                    // $from       = date('Y-m-d', strtotime($date[0]));
+                    // $to         = date('Y-m-d', strtotime($date[1]));
+                    // $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+                    // foreach ($event_list as $key => $value) {
+                    //     $include_list[$value['eventID']] = $value['eventID'];
+                    // }
                     // $has_this_year = 'include';
-                    // $list          = str_replace('current-year#', '', $event_id);
-                    // $list          = array_flip(explode(',', $list));
-                    // $include_list  = array_replace($include_list, $list);
+                    $list         = str_replace('this-year#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $include_list = array_replace($include_list, $list);
                 } else if (strpos($event_id, 'last-year#') === 0) {
                     $list         = str_replace('last-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $include_list = array_replace($include_list, $list);
+                } else if (strpos($event_id, 'pd#') === 0) {
+                    $list         = str_replace('pd#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $include_list = array_replace($include_list, $list);
                 } else {
-                    $include_list[$event_id] = $event_id;
+                    if ($event_id != 'specific') {
+                        $include_list[$event_id] = $event_id;
+                    }
                 }
             }
         }
         if (!empty($exclude)) {
             foreach ($exclude as $event_id) {
-                if (strpos($event_id, 'current-year#') === 0) {
-                    $date       = explode('-', $year_date);
-                    $from       = date('Y-m-d', strtotime($date[0]));
-                    $to         = date('Y-m-d', strtotime($date[1]));
-                    $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    foreach ($event_list as $key => $value) {
-                        $exclude_list[$value['eventID']] = $value['eventID'];
-                    }
-                } else if (strpos($event_id, 'last-year#') === 0) {
-                    $list         = str_replace('last-year#', '', $event_id);
-                    $list         = array_flip(explode(',', $list));
-                    $exclude_list = array_replace($exclude_list, $list);
-                } else {
+                if ($event_id != 'specific_exclude') {
                     $exclude_list[$event_id] = $event_id;
                 }
+                /*
+            if (strpos($event_id, 'current-year#') === 0) {
+            $date       = explode('-', $year_date);
+            $from       = date('Y-m-d', strtotime($date[0]));
+            $to         = date('Y-m-d', strtotime($date[1]));
+            $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+            foreach ($event_list as $key => $value) {
+            $exclude_list[$value['eventID']] = $value['eventID'];
+            }
+            } else if (strpos($event_id, 'last-year#') === 0) {
+            $list         = str_replace('last-year#', '', $event_id);
+            $list         = array_flip(explode(',', $list));
+            $exclude_list = array_replace($exclude_list, $list);
+            } else {
+            }*/
             }
         }
         // if ($has_this_year != false) {
@@ -186,14 +206,15 @@ class EmailListController extends Controller
         //ask phil if we need to check in advance that if a list has some contact or not
         /* end show result before save */
 
-        $e                    = new EmailList;
-        $e->orgID             = $this->currentPerson->defaultOrgID;
-        $e->listName          = $name;
-        $e->listDesc          = $description;
-        $e->included          = $include_string;
-        $e->excluded          = $exclude_string;
-        $e->foundation        = $foundation;
-        $e->current_year_date = $year_date;
+        $e             = new EmailList;
+        $e->orgID      = $this->currentPerson->defaultOrgID;
+        $e->listName   = $name;
+        $e->listDesc   = $description;
+        $e->included   = $include_string;
+        $e->excluded   = $exclude_string;
+        $e->foundation = $foundation;
+        // $e->current_year_date = $year_date;
+        $e->metadata = json_encode($request->input());
         $e->save();
         request()->session()->flash('alert-success', trans('messages.messages.email_list_created', ['name' => $name]));
         return response()->json(['success' => true, 'redirect_url' => url('lists')]);
@@ -363,40 +384,40 @@ class EmailListController extends Controller
             array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y')]);
         }
         $lists = $rows;
+        $e     = Event::with('event_type')
+            ->whereDate('eventStartDate', '<', $today)
+            ->where('orgID', $this->currentPerson->defaultOrgID)
+            ->select('eventID', 'eventStartDate', 'eventName', 'eventTypeID')
+            ->get();
+        $result                 = generateEmailListEventArray($e);
+        $all_events_list        = $result['events_with_date'];
+        $all_event_min_max_date = $result['min_max_date'];
+        $all_events             = implode(',', $result['ids']);
 
         // list of eventIDs from this year's events
-        $e = Event::whereYear('eventStartDate', '=', date('Y'))
+        $e = Event::with('event_type')
+            ->whereYear('eventStartDate', '=', date('Y'))
             ->whereDate('eventStartDate', '<', $today)
-            ->select('eventID', 'eventStartDate', 'eventName')
+            ->select('eventID', 'eventStartDate', 'eventName', 'eventTypeID')
             ->get();
-        $ytd_events_date = [];
-        foreach ($e as $id) {
-            array_push($ids, $id->eventID);
-            $date = Carbon::createFromFormat('Y-m-d H:i:s', $id->eventStartDate);
-            $name = substr($id->eventName, 0, 60);
-            if (strlen($name) > 60) {
-                $name .= "...";
-            }
-            $ytd_events_date[$id->eventID] = ['date' => $date->format('Y-m-d'), 'name' => $name];
-        }
-        $ytd_events = implode(',', $ids);
-        $ids        = [];
+        $result          = generateEmailListEventArray($e);
+        $ytd_events_list = $result['events_with_date'];
+        $ytd_events      = implode(',', $result['ids']);
+        $ids             = [];
 
         // list of eventIDs from last year's events
-        $e = Event::whereYear('eventStartDate', '=', date('Y') - 1)
-            ->select('eventID')
+        $e = Event::with('event_type')
+            ->whereYear('eventStartDate', '=', date('Y') - 1)
+            ->select('eventID', 'eventStartDate', 'eventName', 'eventTypeID')
             ->get();
-        foreach ($e as $id) {
-            array_push($ids, $id->eventID);
-        }
-        $last_year = implode(',', $ids);
-        $ids       = [];
-
-        $e = Event::where('eventTypeID', '=', 3)->select('eventID')->get();
-        foreach ($e as $id) {
-            array_push($ids, $id->eventID);
-        }
-        $pddays = implode(',', $ids);
+        $result                = generateEmailListEventArray($e);
+        $last_year_events_list = $result['events_with_date'];
+        $last_year             = implode(',', $result['ids']);
+        $ids                   = [];
+        $e                     = Event::where('eventTypeID', '=', 3)->select('eventID', 'eventStartDate', 'eventName', 'eventTypeID')->get();
+        $result                = generateEmailListEventArray($e);
+        $pd_day_events_list    = $result['events_with_date'];
+        $pddays                = implode(',', $result['ids']);
 
         $excludes       = Event::whereYear('eventStartDate', '=', date('Y'))->get();
         $event_list     = $excludes;
@@ -417,7 +438,7 @@ class EmailListController extends Controller
         $lists = getEmailList($this->currentPerson);
         return view(
             'v1.auth_pages.campaigns.email_lists',
-            compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'emailList', 'excluded_list', 'ytd_events_date')
+            compact('defaults', 'lists', 'ytd_events', 'last_year', 'pddays', 'excludes', 'emailList', 'excluded_list', 'ytd_events_list', 'last_year_events_list', 'pd_day_events_list', 'all_events_list', 'all_events', 'all_event_min_max_date')
         )->withInput(['tab' => 'tab_content2']);
 
     }
@@ -453,56 +474,68 @@ class EmailListController extends Controller
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors_validation' => $validator->errors()]);
         }
-        $id           = $request->input('id');
-        $email_list   = EmailList::where('id', $id)->get()->first();
-        $name         = $request->input('name');
-        $description  = $request->input('description');
-        $foundation   = $request->input('foundation');
-        $include      = $request->input('include');
-        $exclude      = $request->input('exclude');
-        $year_date    = $request->input('eventStartDate');
-        $include_list = [];
-        $exclude_list = [];
-
+        $id              = $request->input('id');
+        $email_list      = EmailList::where('id', $id)->get()->first();
+        $name            = $request->input('name');
+        $description     = $request->input('description');
+        $foundation      = $request->input('foundation');
+        $include         = $request->input('include');
+        $exclude         = $request->input('exclude');
+        $year_date       = $request->input('eventStartDate');
+        $include_list    = [];
+        $exclude_list    = [];
         $has_this_year   = false;
         $current_year_in = '';
         if (!empty($include)) {
             foreach ($include as $event_id) {
-                if (strpos($event_id, 'current-year#') === 0) {
-                    $date       = explode('-', $year_date);
-                    $from       = date('Y-m-d', strtotime($date[0]));
-                    $to         = date('Y-m-d', strtotime($date[1]));
-                    $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    foreach ($event_list as $key => $value) {
-                        $include_list[$value['eventID']] = $value['eventID'];
-                    }
+                if (strpos($event_id, 'this-year#') === 0) {
+                    // $date       = explode('-', $year_date);
+                    // $from       = date('Y-m-d', strtotime($date[0]));
+                    // $to         = date('Y-m-d', strtotime($date[1]));
+                    // $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+                    // foreach ($event_list as $key => $value) {
+                    //     $include_list[$value['eventID']] = $value['eventID'];
+                    // }
                     // $has_this_year = 'include';
-                    // $list          = str_replace('current-year#', '', $event_id);
-                    // $list          = array_flip(explode(',', $list));
-                    // $include_list  = array_replace($include_list, $list);
+                    $list         = str_replace('this-year#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $include_list = array_replace($include_list, $list);
                 } else if (strpos($event_id, 'last-year#') === 0) {
                     $list         = str_replace('last-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $include_list = array_replace($include_list, $list);
+                } else if (strpos($event_id, 'pd#') === 0) {
+                    $list         = str_replace('pd#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $include_list = array_replace($include_list, $list);
                 } else {
-                    $include_list[$event_id] = $event_id;
+                    if ($event_id != 'specific') {
+                        $include_list[$event_id] = $event_id;
+                    }
                 }
             }
         }
         if (!empty($exclude)) {
             foreach ($exclude as $event_id) {
-                if (strpos($event_id, 'current-year#') === 0) {
-                    $date       = explode('-', $year_date);
-                    $from       = date('Y-m-d', strtotime($date[0]));
-                    $to         = date('Y-m-d', strtotime($date[1]));
-                    $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    foreach ($event_list as $key => $value) {
-                        $exclude_list[$value['eventID']] = $value['eventID'];
-                    }
+                if (strpos($event_id, 'this-year#') === 0) {
+                    // $date       = explode('-', $year_date);
+                    // $from       = date('Y-m-d', strtotime($date[0]));
+                    // $to         = date('Y-m-d', strtotime($date[1]));
+                    // $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
+                    // foreach ($event_list as $key => $value) {
+                    //     $exclude_list[$value['eventID']] = $value['eventID'];
+                    // }
+                    $list         = str_replace('this-year#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $exclude_list = array_replace($exclude_list, $list);
                 } else if (strpos($event_id, 'last-year#') === 0) {
                     $list         = str_replace('last-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $exclude_list = array_replace($exclude_list, $list);
+                } else if (strpos($event_id, 'pd#') === 0) {
+                    $list         = str_replace('pd#', '', $event_id);
+                    $list         = array_flip(explode(',', $list));
+                    $include_list = array_replace($include_list, $list);
                 } else {
                     $exclude_list[$event_id] = $event_id;
                 }
@@ -542,12 +575,13 @@ class EmailListController extends Controller
         //ask phil if we need to check in advance that if a list has some contact or not
         /* end show result before save */
 
-        $email_list->listName          = $name;
-        $email_list->listDesc          = $description;
-        $email_list->included          = $include_string;
-        $email_list->excluded          = $exclude_string;
-        $email_list->foundation        = $foundation;
-        $email_list->current_year_date = $year_date;
+        $email_list->listName   = $name;
+        $email_list->listDesc   = $description;
+        $email_list->included   = $include_string;
+        $email_list->excluded   = $exclude_string;
+        $email_list->foundation = $foundation;
+        // $email_list->current_year_date = $year_date;
+        $email_list->metadata = json_encode($request->input());
         $email_list->save();
         request()->session()->flash('alert-success', trans('messages.messages.email_list_updated', ['name' => $name]));
         return response()->json(['success' => true, 'redirect_url' => url('lists')]);

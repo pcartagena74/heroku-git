@@ -96,7 +96,7 @@ return [
         'mbr_work'       => 'Work (:count)',
         'mbr_other'      => 'Other (:count)',
         'create_list'    => 'Create List',
-        'edit_list'      => 'Edit List',
+        'edit_list'      => 'Update List',
     ],
 
     'codes'                         => [
@@ -770,19 +770,10 @@ return [
         'email_list_foundation'        => '<p>To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
         'email_list_foundation_select' => '<p>Selecting a foundation either gives you a starting point for your list or will filter from the event
                     lists you include (below).</p>',
-        'email_list_inclusion'         => '<p>
-                                     Attendees of all the events in this list will be included in the Emailing List. If you want to exclude any event then, simply Darg them accross to Exclusions list.
-                                </p>
+        'email_list_inclusion'         => '<p>Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
                                 ',
-        'email_list_this_year'         => '<p>
-                                    <b>
-                                        This Year\'s Events
-                                    </b>
-                                    is a filter. You can select any date range it will filter out the events that does not fall in these range. Then you can choose where to put event in inclusion or exclusion list.
-                                </p>',
-        'email_list_exclusion'         => '<p>
-                                     Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.
-                                </p>',
+        'email_list_general'           => '<p><b>This year\'s Events, Last Year\'s Events and All PD Day Events</b> are group of events. If you check any of those all the event in the group will be added in Inclusion List. You can also remove any particular event from that group via checking them in Exclusion list. <br> <b>Specific Event\'s(by date range)</b> will allow to add events fall into the seleted date range. To remove any simply uncheck them.</b></p>',
+        'email_list_exclusion'         => '<p>Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.</p>',
     ],
 
     'mCentric_text'                 => [

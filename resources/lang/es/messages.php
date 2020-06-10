@@ -96,7 +96,7 @@ return [
         'mbr_work'       => 'es-Work (:count)',
         'mbr_other'      => 'es-Other (:count)',
         'create_list'    => 'es-Create List',
-        'edit_list'      => 'es-Edit List',
+        'edit_list'      => 'es-Update List',
     ],
 
     'codes'                  => [

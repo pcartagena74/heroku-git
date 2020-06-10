@@ -825,7 +825,9 @@ if (!function_exists('getEmailList')) {
         foreach ($lists as $l) {
             $included   = explode(',', $l->included);
             $foundation = $l->foundation;
-            $excluded   = explode(',', $l->excluded);
+            // $foundation1 = array_shift($included);
+            // dd($foundation,$foundation1);
+            $excluded = explode(',', $l->excluded);
 
             // foundations are either filters (when $included !== null) or true foundations
             if ($included != null) {
@@ -1398,24 +1400,68 @@ if (!function_exists('has_org_property')) {
 
     }
 }
-function generateEmailListEventArray($event)
-{
-    $ytd_events_date = [];
-    $ids             = [];
-    foreach ($event as $id) {
-        array_push($ids, $id->eventID);
-        $event_type_name = 'NA';
-        if (!empty($id->event_type->etName)) {
-            $event_type_name = $id->event_type->etName;
+
+if (!function_exists('generateEmailListEventArray')) {
+    /**
+     * get event ids with date and name wise list from event query object.
+     * @param  object $event event model object
+     * @return array        ids, datewithname, min & max dates
+     */
+    function generateEmailListEventArray($event)
+    {
+        $ytd_events_date = [];
+        $ids             = [];
+        $date_array      = [];
+        foreach ($event as $id) {
+            array_push($ids, $id->eventID);
+            $event_type_name = 'NA';
+            if (!empty($id->event_type->etName)) {
+                $event_type_name = $id->event_type->etName;
+            }
+            $date         = $id->eventStartDate->format('Y-m-d');
+            $date_array[] = $date;
+            $name         = substr($id->eventName, 0, 60);
+            if (strlen($name) > 60) {
+                $name .= "...";
+            }
+            $display_date                  = $id->eventStartDate->format(trans('messages.app_params.date_format'));
+            $list_name                     = $event_type_name . ': ' . $name . ' - ' . $display_date;
+            $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => $list_name];
         }
-        $date = $id->eventStartDate->format('Y-m-d');
-        $name = substr($id->eventName, 0, 60);
-        if (strlen($name) > 60) {
-            $name .= "...";
-        }
-        $display_date                  = $id->eventStartDate->format(trans('messages.app_params.date_format'));
-        $list_name                     = $event_type_name . ': ' . $name . ' - ' . $display_date;
-        $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => $list_name];
+        $min          = min($date_array);
+        $date         = Carbon::createFromFormat('Y-m-d', $min);
+        $min          = [];
+        $min['year']  = $date->format('Y');
+        $min['month'] = $date->format('m');
+        $min['day']   = $date->format('d');
+        $max          = max($date_array);
+        $date         = Carbon::createFromFormat('Y-m-d', $max);
+        $max          = [];
+        $max['year']  = $date->format('Y');
+        $max['month'] = $date->format('m');
+        $max['day']   = $date->format('d');
+        return [
+            'events_with_date' => $ytd_events_date,
+            'ids'              => $ids,
+            'min_max_date'     => ['min' => $min, 'max' => $max],
+        ];
     }
-    return ['events_with_date' => $ytd_events_date, 'ids' => $ids];
+}
+if (!function_exists('getJavaScriptDate')) {
+    /**
+     * return js compactible date from daterangepicker specific date
+     * @param  string $date m/d/Y style date
+     * @return string       Y-m-d style date
+     */
+    function getJavaScriptDate($date)
+    {
+        $date = trim($date);
+        $date = Carbon::createFromFormat('m/d/Y', $date);
+        return $date->format('Y-m-d');
+        $js          = [];
+        $js['year']  = $date->format('Y');
+        $js['month'] = $date->format('m');
+        $js['day']   = $date->format('d');
+        return $js;
+    }
 }
