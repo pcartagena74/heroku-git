@@ -124,14 +124,6 @@ class EmailListController extends Controller
         if (!empty($include)) {
             foreach ($include as $event_id) {
                 if (strpos($event_id, 'this-year#') === 0) {
-                    // $date       = explode('-', $year_date);
-                    // $from       = date('Y-m-d', strtotime($date[0]));
-                    // $to         = date('Y-m-d', strtotime($date[1]));
-                    // $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    // foreach ($event_list as $key => $value) {
-                    //     $include_list[$value['eventID']] = $value['eventID'];
-                    // }
-                    // $has_this_year = 'include';
                     $list         = str_replace('this-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $include_list = array_replace($include_list, $list);
@@ -155,37 +147,8 @@ class EmailListController extends Controller
                 if ($event_id != 'specific_exclude') {
                     $exclude_list[$event_id] = $event_id;
                 }
-                /*
-            if (strpos($event_id, 'current-year#') === 0) {
-            $date       = explode('-', $year_date);
-            $from       = date('Y-m-d', strtotime($date[0]));
-            $to         = date('Y-m-d', strtotime($date[1]));
-            $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-            foreach ($event_list as $key => $value) {
-            $exclude_list[$value['eventID']] = $value['eventID'];
-            }
-            } else if (strpos($event_id, 'last-year#') === 0) {
-            $list         = str_replace('last-year#', '', $event_id);
-            $list         = array_flip(explode(',', $list));
-            $exclude_list = array_replace($exclude_list, $list);
-            } else {
-            }*/
             }
         }
-        // if ($has_this_year != false) {
-        //     $date       = explode('-', $year_date);
-        //     $from       = date('Y-m-d', strtotime($date[0]));
-        //     $to         = date('Y-m-d', strtotime($date[1]));
-        //     $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-        //     foreach ($event_list as $key => $value) {
-        //         if ($has_this_year == 'include') {
-        //             $include_list[$value['eventID']] = $value['eventID'];
-        //         } else if ($has_this_year == 'exclude') {
-        //             $exclude_list[$value['eventID']] = $value['eventID'];
-        //         }
-        //     }
-        // }
-
         // dd($foundation, $include_list, $exclude_list);
         if ($foundation == 'none' && empty($include_list) && empty($exclude_list)) {
             return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_member_for_list')]]);
@@ -194,8 +157,8 @@ class EmailListController extends Controller
             // request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
             return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_foundation_or_include')]]);
         }
-        $include_string = implode(',', $include_list);
-        $exclude_string = implode(',', $exclude_list);
+        $include_string = implode(',', array_flip($include_list));
+        $exclude_string = implode(',', array_flip($exclude_list));
         if (empty($include_list) && $foundation) {
             $include_string = $foundation;
         }
@@ -489,17 +452,10 @@ class EmailListController extends Controller
         if (!empty($include)) {
             foreach ($include as $event_id) {
                 if (strpos($event_id, 'this-year#') === 0) {
-                    // $date       = explode('-', $year_date);
-                    // $from       = date('Y-m-d', strtotime($date[0]));
-                    // $to         = date('Y-m-d', strtotime($date[1]));
-                    // $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    // foreach ($event_list as $key => $value) {
-                    //     $include_list[$value['eventID']] = $value['eventID'];
-                    // }
-                    // $has_this_year = 'include';
                     $list         = str_replace('this-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $include_list = array_replace($include_list, $list);
+                    // dd($list,$include_list);
                 } else if (strpos($event_id, 'last-year#') === 0) {
                     $list         = str_replace('last-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
@@ -518,13 +474,6 @@ class EmailListController extends Controller
         if (!empty($exclude)) {
             foreach ($exclude as $event_id) {
                 if (strpos($event_id, 'this-year#') === 0) {
-                    // $date       = explode('-', $year_date);
-                    // $from       = date('Y-m-d', strtotime($date[0]));
-                    // $to         = date('Y-m-d', strtotime($date[1]));
-                    // $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-                    // foreach ($event_list as $key => $value) {
-                    //     $exclude_list[$value['eventID']] = $value['eventID'];
-                    // }
                     $list         = str_replace('this-year#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
                     $exclude_list = array_replace($exclude_list, $list);
@@ -535,26 +484,12 @@ class EmailListController extends Controller
                 } else if (strpos($event_id, 'pd#') === 0) {
                     $list         = str_replace('pd#', '', $event_id);
                     $list         = array_flip(explode(',', $list));
-                    $include_list = array_replace($include_list, $list);
+                    $exclude_list = array_replace($exclude_list, $list);
                 } else {
                     $exclude_list[$event_id] = $event_id;
                 }
             }
         }
-        // if ($has_this_year != false) {
-        //     $date       = explode('-', $year_date);
-        //     $from       = date('Y-m-d', strtotime($date[0]));
-        //     $to         = date('Y-m-d', strtotime($date[1]));
-        //     $event_list = Event::whereBetween('eventStartDate', [$from, $to])->select('eventID')->get()->toArray();
-        //     foreach ($event_list as $key => $value) {
-        //         if ($has_this_year == 'include') {
-        //             $include_list[$value['eventID']] = $value['eventID'];
-        //         } else if ($has_this_year == 'exclude') {
-        //             $exclude_list[$value['eventID']] = $value['eventID'];
-        //         }
-        //     }
-        // }
-
         // dd($foundation, $include_list, $exclude_list);
         if ($foundation == 'none' && empty($include_list) && empty($exclude_list)) {
             return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_member_for_list')]]);
@@ -563,8 +498,8 @@ class EmailListController extends Controller
             // request()->session()->flash('alert-warning', "You need to choose a foundation or events to include.");
             return response()->json(['success' => false, 'errors' => ['gen' => trans('messages.errors.no_foundation_or_include')]]);
         }
-        $include_string = implode(',', $include_list);
-        $exclude_string = implode(',', $exclude_list);
+        $include_string = implode(',', array_flip($include_list));
+        $exclude_string = implode(',', array_flip($exclude_list));
         if (empty($include_list) && $foundation) {
             $include_string = $foundation;
         }
