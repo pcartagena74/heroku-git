@@ -28,8 +28,8 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
 	#file_manager .fm-content.d-flex.flex-column.col .fm-disk-list{
 		display: none;
 	}
-	#file_manager .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(n+3) {
-		display:none;
+	#file_manager .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(n+2) {
+		/*display:none;*/
 	}
 	#file_manager .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(1) {
 		display:none;
