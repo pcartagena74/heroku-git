@@ -20,9 +20,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
+use PHPHtmlParser\Dom;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
 
+// $client = new Client();
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -1463,5 +1465,171 @@ if (!function_exists('getJavaScriptDate')) {
         $js['month'] = $date->format('m');
         $js['day']   = $date->format('d');
         return $js;
+    }
+}
+
+if (!function_exists('replaceAddressWithOrgAddress')) {
+    /**
+     * replace address string for email builder footer with org address
+     * @param  array $item category 6 rows
+     * @return array       row data with updated address
+     */
+    function replaceAddressWithOrgAddress($item)
+    {
+        $default = 'Your company, Pier 9, San Francisco, CA 12345';
+        $start   = '<td contenteditable="true" style="text-align:right">';
+        $end     = '</td>';
+        $matches = [];
+        // for single line address
+        if (strpos($item['html'], $default) !== false) {
+            $currentPerson = Person::find(auth()->user()->id);
+            $org           = $currentPerson->defaultOrg;
+            $add_str       = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
+            }
+            $add_str .= $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
+                $add_str .= $org->orgState;
+                $add_str .= $org->orgZip . ', ';
+            } else {
+                $add_str .= $org->State . ', ';
+            }
+            $add_str      = rtrim($add_str, ', ');
+            $item['html'] = str_replace($default, $add_str, $item['html']);
+            return $item;
+        } else if (preg_match("#$start(.*)$end#s", $item['html'], $matches)) {
+            // for multiline address first finding if exist then replacing it line by line
+            $currentPerson = Person::find(auth()->user()->id);
+            $org           = $currentPerson->defaultOrg;
+            $add_str       = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
+            }
+            $line1   = $add_str;
+            $add_str = $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
+                $add_str .= $org->orgState;
+                $add_str .= $org->orgZip . ', ';
+            } else {
+                $add_str .= $org->State . ', ';
+            }
+            $add_str      = rtrim($add_str, ', ');
+            $line2        = $add_str;
+            $default      = [];
+            $add_str      = [];
+            $default[]    = 'Your company, Pier 9,';
+            $default[]    = ' San Francisco, CA 12345';
+            $add_str[]    = $line1;
+            $add_str[]    = $line2;
+            $item['html'] = str_replace($default, $add_str, $item['html']);
+            return $item;
+        } else {
+            // return address row as itis
+            return $item;
+        }
+    }
+}
+
+if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
+    /**
+     * replace social icon links with actual links, hides if link is not set.
+     * @param  array $item category 6 rows
+     * @return array       row data with updated links and style
+     */
+    function replaceSocialLinksWithOrgSocialLinks($item)
+    {
+        $parsed = new Dom;
+        $parsed->load($item['html']);
+        //find all anchor tags
+        $a             = $parsed->find('a');
+        $currentPerson = Person::find(auth()->user()->id);
+        $org           = $currentPerson->defaultOrg;
+        foreach ($a as $key => $value) {
+            $tag = $value->getTag();
+            //get anchor tag html attributes
+            $class = $tag->getAttribute('class');
+            $class = $class['value'];
+            switch ($class) {
+                case 'instagram':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+                case 'pinterest':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+                case 'google-plus':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->googleURL)) {
+                        $tag->setAttribute('href', $org->googleURL);
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'facebook':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->facebookURL)) {
+                        $tag->setAttribute('href', $org->facebookURL);
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'twitter':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->orgHandle)) {
+                        $tag->setAttribute('href', 'https://twitter.com/' . str_replace("@", '', $org->orgHandle));
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'linkedin':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->linkedinURL)) {
+                        $tag->setAttribute('href', $org->linkedinURL);
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'youtube':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+                case 'skype':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+            } //switch end
+        } //foreach end
+        //save output
+        ob_start();
+        echo $parsed;
+        $str          = ob_get_clean();
+        $item['html'] = $str;
+        return $item;
     }
 }

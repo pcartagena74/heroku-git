@@ -256,95 +256,31 @@ var returnVal;
             _outputSideBar = '<aside class="left-menu-container clearfix scroll-view">' + _nav + _elements + '</aside>';
             _outputContent = '<div class="content">' + '<div id="editorContent" class="content-wrapper" data-types="background,padding,width">' + '<div class="content-main lg-width">' + '<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _loadPageHtml + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>';
             _contentMenu = '';
-            // if (_this.config.showContextMenu == true) {
-            //     _contentMenu = '<div class="context-menu">' +
-            //         '<ul class="context-menu-items">';
+            //temporary 
+            // if (_this.config.showContextMenu == true || true) {
+            //     _contentMenu = '<div class="context-menu">' + '<ul class="context-menu-items">';
             //     if (_this.config.showContextMenu_FontFamily == true) {
-            //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-family">' +
-            //             '    <div>' +
-            //             '<select class="form-control font-family" >' +
-            //             '<option value="Arial" selected="selected">Arial</option>' +
-            //             '<option value="Helvetica">Helvetica</option>' +
-            //             '<option value="Georgia">Georgia</option>' +
-            //             '<option value="Times New Roman">Times New Roman</option>' +
-            //             '<option value="Verdana">Verdana</option>' +
-            //             '<option value="Tahoma">Tahoma</option>' +
-            //             '<option value="Calibri">Calibri</option>' +
-            //             '</select>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-family">' + '    <div>' + '<select class="form-control font-family" >' + '<option value="Arial" selected="selected">Arial</option>' + '<option value="Helvetica">Helvetica</option>' + '<option value="Georgia">Georgia</option>' + '<option value="Times New Roman">Times New Roman</option>' + '<option value="Verdana">Verdana</option>' + '<option value="Tahoma">Tahoma</option>' + '<option value="Calibri">Calibri</option>' + '</select>' + '</div>' + '</li>';
             //     }
-            //
             //     if (_this.config.showContextMenu_FontSize == true) {
-            //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-size">' +
-            //             '<div>' +
-            //             '<select class="font-size form-control">' +
-            //             '<option value="6px">6px</option>' +
-            //             '<option value="8px">8px</option>' +
-            //             '<option value="9px">9px</option>' +
-            //             '<option value="10px">10px</option>' +
-            //             '<option value="11px">11px</option>' +
-            //             '<option value="12px">12px</option>' +
-            //             '<option value="14px" selected="selected">14px</option>' +
-            //             '<option value="18px">18px</option>' +
-            //             '<option value="24px">24px</option>' +
-            //             '<option value="30px">30px</option>' +
-            //             '<option value="36px">36px</option>' +
-            //             '<option value="48px">48px</option>' +
-            //             '</select>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-size">' + '<div>' + '<select class="font-size form-control">' + '<option value="6px">6px</option>' + '<option value="8px">8px</option>' + '<option value="9px">9px</option>' + '<option value="10px">10px</option>' + '<option value="11px">11px</option>' + '<option value="12px">12px</option>' + '<option value="14px" selected="selected">14px</option>' + '<option value="18px">18px</option>' + '<option value="24px">24px</option>' + '<option value="30px">30px</option>' + '<option value="36px">36px</option>' + '<option value="48px">48px</option>' + '</select>' + '</div>' + '</li>';
             //     }
-            //
             //     if (_this.config.showContextMenu_Bold == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="bold">' +
-            //             '<div>' +
-            //             '<i class="fa fa-bold"></i>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item" data-menu-type="bold">' + '<div>' + '<i class="fa fa-bold"></i>' + '</div>' + '</li>';
             //     }
-            //
             //     if (_this.config.showContextMenu_Italic == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="italic">' +
-            //             '<div>' +
-            //             '<i class="fa fa-italic"></i>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item" data-menu-type="italic">' + '<div>' + '<i class="fa fa-italic"></i>' + '</div>' + '</li>';
             //     }
-            //
             //     if (_this.config.showContextMenu_Underline == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="underline">' +
-            //             '<div>' +
-            //             '<i class="fa fa-underline"></i>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item" data-menu-type="underline">' + '<div>' + '<i class="fa fa-underline"></i>' + '</div>' + '</li>';
             //     }
-            //
             //     if (_this.config.showContextMenu_Strikethrough == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="strikethrough">' +
-            //             '<div>' +
-            //             '<i class="fa fa-strikethrough"></i>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item" data-menu-type="strikethrough">' + '<div>' + '<i class="fa fa-strikethrough"></i>' + '</div>' + '</li>';
             //     }
-            //
             //     if (_this.config.showContextMenu_Hyperlink == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="link">' +
-            //             '<div>' +
-            //             '<i class="fa fa-link"></i>' +
-            //             '</div>' +
-            //             '</li>';
+            //         _contentMenu += '<li class="context-menu-item" data-menu-type="link">' + '<div>' + '<i class="fa fa-link"></i>' + '</div>' + '</li>';
             //     }
-            //     _contentMenu += '</ul>' +
-            //         '<div class="context-menu-hyperlink ">' +
-            //         '<div class="row">' +
-            //         '<div class="col-md-10"> <input type="text" class="form-control context-menu-hyperlink-input" ></div>' +
-            //         '<div class="col-md-1">' +
-            //         '<a href="javascript:void(0)" class="context-menu-hyperlink-close" title="Close">&times;</a>' +
-            //         '</div>' +
-            //         '</div>' +
-            //         '</div>' +
-            //         '</div>';
+            //     _contentMenu += '</ul>' + '<div class="context-menu-hyperlink ">' + '<div class="row">' + '<div class="col-md-10"> <input type="text" class="form-control context-menu-hyperlink-input" ></div>' + '<div class="col-md-1">' + '<a href="javascript:void(0)" class="context-menu-hyperlink-close" title="Close">&times;</a>' + '</div>' + '</div>' + '</div>' + '</div>';
             // }
             _outputHtml = '<div class="editor-container clearfix"> ' + _outputSideBar + _outputContent + _contentMenu + '</div>';
             _this.generatePopups();
@@ -514,15 +450,16 @@ var returnVal;
                     // Get position of dragged item relative to drop target:
                     let dragItemPositionX = dropPositionX - dragItemOffsetX;
                     let dragItemPositionY = dropPositionY - dragItemOffsetY;
-                    var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
+                    let element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
                     let ele = $(element).find('.sortable-row-content').find('.text-content');
                     if (ele.length > 0) {
                         let content = ui.item.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
                         if (content.data('id') == 4) {
-                            // return ele[0].append(tag);
+                            return ele[0].append(tag);
                         }
+                        // 20 button
                         if (content.data('id') == 20) {
                             let link = content.find('a');
                             if (link[0]) {
@@ -533,6 +470,7 @@ var returnVal;
                                 return ele[0].append(link[0]);
                             }
                         }
+                        // 28 - 45 user info
                         if (content.data('id') >= 28 && content.data('id') <= 45) {
                             let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
@@ -541,12 +479,41 @@ var returnVal;
                             }
                             // ui.helper.remove();
                         }
+                        //46 - 65 org info
                         if (content.data('id') >= 46 && content.data('id') <= 65) {
                             let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
                             // ui.helper.remove();
                             if (tag !== 'undefined') {
                                 return ele[0].append(tag);
+                            }
+                        }
+                        //7 unordered list
+                        if (content.data('id') == 7) {
+                            let content = ui.item.find('.sortable-row-content').find('ul');
+                            if (content[0]) {
+                                return ele[0].append(content[0]);
+                            }
+                        }
+                        //8 ordered list
+                        if (content.data('id') == 8) {
+                            let content = ui.item.find('.sortable-row-content').find('ul');
+                            if (content[0]) {
+                                return ele[0].append(content[0]);
+                            }
+                        }
+                        //16 - 19 layout
+                        if (content.data('id') >= 16 && content.data('id') <= 19) {
+                            if (content.data('id') == 19) {
+                                let content = ui.item.find('.sortable-row-content').find('a');
+                                if (content[0]) {
+                                    return ele[0].append(content[0]);
+                                }
+                            } else {
+                                let content = ui.item.find('.sortable-row-content').find('.divider-simple').find('div');
+                                if (content[0]) {
+                                    return ele[0].append(content[0]);
+                                }
                             }
                         }
                     }
@@ -579,6 +546,14 @@ var returnVal;
                         let content = ui.helper.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
+                        // 20 button
+                        if (content.data('id') == 20) {
+                            let link = content.find('a');
+                            if (link[0]) {
+                                ui.helper.remove();
+                            }
+                        }
+                        // 28 - 45 user info
                         if (content.data('id') >= 28 && content.data('id') <= 45) {
                             let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
@@ -586,7 +561,24 @@ var returnVal;
                                 ui.helper.remove();
                             }
                         }
+                        //46 - 65 org info
                         if (content.data('id') >= 46 && content.data('id') <= 65) {
+                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
+                            let tag = content.html();
+                            if (tag !== 'undefined') {
+                                ui.helper.remove();
+                            }
+                        }
+                        //7 unordered list
+                        if (content.data('id') == 7) {
+                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
+                            let tag = content.html();
+                            if (tag !== 'undefined') {
+                                ui.helper.remove();
+                            }
+                        }
+                        //8 ordered list
+                        if (content.data('id') == 7) {
                             let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
                             if (tag !== 'undefined') {

@@ -21,6 +21,7 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 
             for ($j = 0; $j< sizeof($_items); $j++) {
                 $item_name = $_items[$j]['name'];
+                // 8 Organization table
                 if($_items[$j]['cat_id'] == 8){
                     $has_prop = has_org_property($org,$_items[$j]);
                     if($has_prop === false){
@@ -28,6 +29,16 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
                     } else {
                         $item_name = $has_prop;
                     }
+                }
+                //6 footer
+                if($_items[$j]['cat_id'] == 6){
+                    // to replace default address with org address in footer menu
+                    $_items[$j] = replaceAddressWithOrgAddress($_items[$j]);
+                }
+                //5 Social
+                if($_items[$j]['cat_id'] == 5){
+                    // to replace default address with org address in footer menu
+                    $_items[$j] = replaceSocialLinksWithOrgSocialLinks($_items[$j]);
                 }
                 $_outputHtml .= '
             <li>
@@ -162,7 +173,7 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 <link href="{{url('css/colorpicker.css')}}" rel="stylesheet"/>
 <link href="{{url('css/editor-color.css')}}" rel="stylesheet"/>
 <link href="{{url('vendor/sweetalert2/dist/sweetalert2.min.css')}}" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" rel="stylesheet"/>
 <style type="text/css">
     .ui-tooltip.ui-corner-all.ui-widget-shadow.ui-widget.ui-widget-content {
     position: absolute!important;
@@ -217,7 +228,8 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 </script>
 <script src="{{url('vendor/jquery-nicescroll/dist/jquery.nicescroll.min.js')}}">
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js" integrity="sha256-qE/6vdSYzQu9lgosKxhFplETvWvqAAlmAuR+yPh/0SI=" crossorigin="anonymous"></script>
+<script crossorigin="anonymous" integrity="sha256-qE/6vdSYzQu9lgosKxhFplETvWvqAAlmAuR+yPh/0SI=" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js">
+</script>
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
 </script> -->
 <!--for ace editor  -->
