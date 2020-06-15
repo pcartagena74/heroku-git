@@ -321,7 +321,7 @@ try{
                         </li>
                         @endif
 
-                    @if(Entrust::hasRole('Developer'))
+                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Marketing'))
                         <li>
                             <a>
                                 <i class="far fa-fw fa-envelope">
