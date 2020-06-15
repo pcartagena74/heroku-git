@@ -237,6 +237,7 @@ return [
         'future_topics' => 'Future Topics',
         'hasFood' => "Will food be served?",
         'heatmap' => "Default Heat Map Zoom Level",
+        'heatmapDensity' => "Heat Map Density",
         'indName' => 'Industry',
 
         'industries' => [

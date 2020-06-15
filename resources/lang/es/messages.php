@@ -237,6 +237,7 @@ return [
         'future_topics' => 'Temas Futuros',
         'hasFood' => '¿Se servirá comida?',
         'heatmap' => "Nivel de Zoom de Mapa de Calor",
+        'heatmapDensity' => "es-Heat Map Density",
         'indName' => 'Industria',
 
         'industries' => [

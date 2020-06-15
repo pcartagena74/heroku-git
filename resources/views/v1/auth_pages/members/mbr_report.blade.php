@@ -80,9 +80,9 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="floating-panel">
                         @php
-                        $home = count($heat_map_home);
-                        $work = count($heat_map_work);
-                        $other = count($heat_map_other);
+                        $home = ($heat_map_home_count);
+                        $work = ($heat_map_work_count);
+                        $other = ($heat_map_other_count);
                         $total = $home + $work + $other;
                         @endphp
                         <button class="btn btn-primary btn-sm active" onclick="initMap('all',this)">
@@ -346,7 +346,7 @@
     function initMap(type = 'all',ths) {
         var bounds = new google.maps.LatLngBounds();
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: {{ $org->heatMapZoomLevel }},
+          zoom: {{ empty($org->heatMapZoomLevel) ? 8 : $org->heatMapZoomLevel }},
           center: {lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}}},
           mapTypeId: 'roadmap',
           styles: [{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]}]
@@ -359,13 +359,11 @@
         if(bounds.isEmpty()) {
             map.setCenter({lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}} });
         } else {
-            map.fitBounds(bounds);
-            // map.panToBounds(bounds);
-            // map.fitBounds(bounds);
+            // map.fitBounds(bounds); removed as now we have org based zoom 
             // var listener = google.maps.event.addListener(map, "bounds_changed", function() { 
             //     console.log('here1',map.getZoom());
             //   if (map.getZoom()){
-            //     map.setZoom(13); 
+            //     map.setZoom(8); 
             //     console.log('here2');
             //   } 
             //   // google.maps.event.removeListener(listener); 
@@ -373,21 +371,6 @@
             // setTimeout(function(){google.maps.event.removeListener(listener)}, 2000);
         }
 
-        // code to draw  boundary rectangle
-        // var ne = bounds.getNorthEast(); // LatLng of the north-east corner
-        // var sw = bounds.getSouthWest(); // LatLng of the south-west corder
-        // var nw = new google.maps.LatLng(ne.lat(), sw.lng());
-        // var se = new google.maps.LatLng(sw.lat(), ne.lng());
-        // var rectangle = new google.maps.Rectangle({
-        //     strokeColor: '#FF0000',
-        //     strokeOpacity: 0.8,
-        //     strokeWeight: 1,
-        //     fillColor: '#FFF',
-        //     fillOpacity: 0.25,
-        //     map: map,
-        //     bounds: bounds
-        // });
-        // rectangle.setMap(map);
         heatmap = new google.maps.visualization.HeatmapLayer({
               data: all_points,
               map: map,
