@@ -1,6 +1,6 @@
 var _content = $('.content');
 var _menu = $('.left-menu-container');
-var _is_demo=true;
+var _is_demo = true;
 $(function() {
     /*Nicescroll*/
     $(".elements-container").niceScroll({
@@ -20,10 +20,10 @@ $(function() {
         _element = $(this);
         _tabMenuItemClick(_element, true);
     });
-    _menu.find('.blank-page').on('click',function () {
-      _element = $(this);
-      $('.content-main').html('<div class="email-editor-elements-sortable ui-sortable"><div class="elements-list-item ui-draggable ui-draggable-handle" style="width: auto; height: auto;"><div class="sortable-row"><div class="sortable-row-container"><div class="sortable-row-actions"><div class="row-move row-action"><i class="fa fa-arrows-alt"></i></div><div class="row-remove row-action"><i class="fa fa-remove"></i></div><div class="row-duplicate row-action"><i class="fa fa-files-o"></i></div></div><div class="sortable-row-content"><table class="main" width="100%" cellspacing="0" cellpadding="0" border="0" data-types="background,border-radius,text-style,padding" data-last-type="text-style" style="background-color:#FFFFFF" align="center"><tbody><tr><td class="element-content" align="left" style="padding-left:50px;padding-right:50px;padding-top:10px;padding-bottom:10px;font-family:Arial;font-size:13px;color:#000000;line-height:22px"><div contenteditable="true" class="test-text" style="text-align: center;"><span style="text-align: center;">Drag elements from left menu</span></div></td></tr></tbody></table></div></div></div></div></div>');
-      makeSortable();
+    _menu.find('.blank-page').on('click', function() {
+        _element = $(this);
+        $('.content-main').html('<div class="email-editor-elements-sortable ui-sortable"><div class="elements-list-item ui-draggable ui-draggable-handle" style="width: auto; height: auto;"><div class="sortable-row"><div class="sortable-row-container"><div class="sortable-row-actions"><div class="row-move row-action"><i class="fa fa-arrows-alt"></i></div><div class="row-remove row-action"><i class="fa fa-remove"></i></div><div class="row-duplicate row-action"><i class="fa fa-files-o"></i></div></div><div class="sortable-row-content"><table class="main" width="100%" cellspacing="0" cellpadding="0" border="0" data-types="background,border-radius,text-style,padding" data-last-type="text-style" style="background-color:#FFFFFF" align="center"><tbody><tr><td class="element-content" align="left" style="padding-left:50px;padding-right:50px;padding-top:10px;padding-bottom:10px;font-family:Arial;font-size:13px;color:#000000;line-height:22px"><div contenteditable="true" class="test-text" style="text-align: center;"><span style="text-align: center;">Drag elements from left menu</span></div></td></tr></tbody></table></div></div></div></div></div>');
+        makeSortable();
     });
     _menu.find('.collapse').on('click', function() {
         _element = $(this);
@@ -71,23 +71,27 @@ $(function() {
             //console.log(ui.helper);
         },
         start: function(event, ui) {
-            $(".elements-container").css({'overflow':''});
+            $(".elements-container").css({
+                'overflow': ''
+            });
             ui.helper.find('.preview').hide();
             ui.helper.find('.view').show()
-                //$(this).find('.demo').show();
+            //$(this).find('.demo').show();
         },
         stop: function(event, ui) {
             //ui.helper.find('.demo').hide()
             //$(this).find('.demo').hide();
             //ui.helper.find('.configrutaion,.preview').hide()
             //console.log('ddd')
-            $(".elements-container").css({'overflow':'hidden'});
+            $(".elements-container").css({
+                'overflow': 'hidden'
+            });
             ui.helper.html(ui.helper.find('.view').html());
             $('.email-editor-elements-sortable .elements-list-item').css({
                 'width': 'auto',
                 'height': 'auto'
             });
-          //  $('.email-editor-elements-sortable .elements-list-item').removeClass('elements-list-item ui-draggable ui-draggable-handle');
+            //  $('.email-editor-elements-sortable .elements-list-item').removeClass('elements-list-item ui-draggable ui-draggable-handle');
         }
     });
     /*elements*/
@@ -156,23 +160,21 @@ $(function() {
     });
     $('.content-wrapper').click();
     _tabMenu('typography');
-
-
     _aceEditor = ace.edit("editorHtml");
     _aceEditor.setTheme("ace/theme/monokai");
     _aceEditor.getSession().setMode("ace/mode/html");
-
 });
 var _aceEditor;
+
 function makeSortable() {
-  $(".email-editor-elements-sortable").sortable({
-      //revert: true,
-      group: 'no-drop',
-      handle: '.row-move'
-          // ,scroll: false
-          // , tolerance: "pointer"
-          //,axis: "y"
-  });
+    $(".email-editor-elements-sortable").sortable({
+        //revert: true,
+        group: 'no-drop',
+        handle: '.row-move'
+        // ,scroll: false
+        // , tolerance: "pointer"
+        //,axis: "y"
+    });
 }
 //change settings
 $(document).on('keyup', '.left-menu-container .form-control', function() {
@@ -205,6 +207,7 @@ $(document).on('click', '.element-content', function(event) {
     _menuEditor($(this), event);
     event.stopPropagation();
 });
+
 function _sortableClick(_this) {
     _element = _this.parents('.sortable-row');
     //select current item
@@ -446,7 +449,6 @@ function getSettings() {
         _ytbUrl = _element.find('iframe').attr('src');
         _menu.find('.youtube').val(_ytbUrl.split('/')[4]);
     }
-
     //hyperlink
     if (_element.hasClass('hyperlink')) {
         _href = _element.attr('href');
@@ -455,23 +457,17 @@ function getSettings() {
     //image size
     _menu.find('.tab-property .elements-accordion-item .image-width').val(_element.find('.content-image').css('width'));
     _menu.find('.tab-property .elements-accordion-item .image-height').val(_element.find('.content-image').css('height'));
-
 }
 $(document).on('keyup', '.image-size', function() {
-
-
-  //  image-width number image-size
-      _activeElement = getActiveElementContent();
-
-
+    //  image-width number image-size
+    _activeElement = getActiveElementContent();
     if ($(this).hasClass('image-height')) {
-        console.log($(this).val()+' width');
-      _activeElement.find('.content-image').css('height',$(this).val());
+        console.log($(this).val() + ' width');
+        _activeElement.find('.content-image').css('height', $(this).val());
     } else if ($(this).hasClass('image-width')) {
-      console.log($(this).val()+' width');
-      _activeElement.find('.content-image').css('width',$(this).val());
+        console.log($(this).val() + ' width');
+        _activeElement.find('.content-image').css('width', $(this).val());
     }
-
 });
 $(document).on('keydown', '.number', function(e) {
     // Allow: backspace, delete, tab, escape, enter and .
@@ -525,17 +521,16 @@ $(document).on('click', '.sortable-row .row-remove', function() {
 });
 /*for inline edit action*/
 $(document).on('click', '.sortable-row .row-code', function() {
-  $(this).parents('.sortable-row').addClass('code-editor');
-  _html=$(this).parents('.sortable-row').find('.sortable-row-content').html();
-  _aceEditor.session.setValue(_html);
-  $('#popup_editor').modal('show');
+    $(this).parents('.sortable-row').addClass('code-editor');
+    _html = $(this).parents('.sortable-row').find('.sortable-row-content').html();
+    _aceEditor.session.setValue(_html);
+    $('#popup_editor').modal('show');
 });
-
 /*for dublicate action*/
 $(document).on('click', '.sortable-row .row-duplicate', function() {
     if ($(this).hasParent('.elements-list-item')) {
         _parentSelector = '.elements-list-item';
-    }else {
+    } else {
         _parentSelector = '.sortable-row';
     }
     _parent = $(this).parents(_parentSelector);
@@ -543,10 +538,10 @@ $(document).on('click', '.sortable-row .row-duplicate', function() {
     $('.elements-list-item').removeClass('active');
     _parent.addClass('active');
     //_parent.after('<div class="sortable-row">'+ _parent.html()+"</div>");
-    _parent.clone().insertAfter(_parentSelector+'.active');
+    _parent.clone().insertAfter(_parentSelector + '.active');
 });
-$.fn.hasParent=function(e){
-   return ($(this).parents(e).length==1?true:false);
+$.fn.hasParent = function(e) {
+    return ($(this).parents(e).length == 1 ? true : false);
 }
 $(document).on('click', '.setting-item.other-devices', function() {
     _parent = $(this).parents('.settings');
@@ -596,13 +591,11 @@ $(document).on('click', '.content-wrapper', function() {
             _accordionMenuItem.hide();
         }
     }
-      _menu.find('[setting-type="padding-top"]').val($(this).css('padding-top').replace('px',''));
-      _menu.find('[setting-type="padding-bottom"]').val($(this).css('padding-bottom').replace('px',''));
-      _menu.find('[setting-type="padding-left"]').val($(this).css('padding-left').replace('px',''));
-      _menu.find('[setting-type="padding-right"]').val($(this).css('padding-right').replace('px',''));
-
-      _menu.find('.email-width').val($('.content-main').width());
-
+    _menu.find('[setting-type="padding-top"]').val($(this).css('padding-top').replace('px', ''));
+    _menu.find('[setting-type="padding-bottom"]').val($(this).css('padding-bottom').replace('px', ''));
+    _menu.find('[setting-type="padding-left"]').val($(this).css('padding-left').replace('px', ''));
+    _menu.find('[setting-type="padding-right"]').val($(this).css('padding-right').replace('px', ''));
+    _menu.find('.email-width').val($('.content-main').width());
     _tabMenu(_typeArr[0]);
 });
 $(document).on('keyup', '.elements-accordion-item-content .youtube', function() {
@@ -622,15 +615,15 @@ String.prototype.replaceAll = function(target, replacement) {
 };
 $(document).on('click', '.setting-item.save-template', function() {
     if (_is_demo) {
-      $('#popup_demo').modal('show');
-      return;
+        $('#popup_demo').modal('show');
+        return;
     }
     $('.input-error').text('');
     $('.template-name').val('');
     $('#popup_save_template').modal('show');
 });
 $(document).on('click', '.setting-item.load-templates', function() {
-      loadTemplates();
+    loadTemplates();
     $('#popup_load_template').modal('show');
 });
 $(document).on('click', '.setting-item.send-email', function() {
@@ -639,19 +632,15 @@ $(document).on('click', '.setting-item.send-email', function() {
     $('#popup_send_email').modal('show');
 });
 $(document).on('click', '.btn-send-email-template', function() {
-    _element=$(this);
+    _element = $(this);
     if ($(this).hasClass('has-loading')) {
-      return;
+        return;
     }
-
     _element.addClass('has-loading');
     _element.text('Loading...');
-
-    _email  = $('.recipient-email').val();
+    _email = $('.recipient-email').val();
     _result = getContentHtml();
-
-    output=$('.popup_send_email_output');
-
+    output = $('.popup_send_email_output');
     $.ajax({
         url: 'send.php',
         type: 'POST',
@@ -661,25 +650,20 @@ $(document).on('click', '.btn-send-email-template', function() {
         },
         dataType: 'json',
         success: function(data) {
-          if (data.code==0) {
-            output.css('color','green');
-          }else {
-            output.css('color','red');
-          }
-
-          _element.removeClass('has-loading');
-          _element.text('Send Email');
-
-          output.text(data.message);
+            if (data.code == 0) {
+                output.css('color', 'green');
+            } else {
+                output.css('color', 'red');
+            }
+            _element.removeClass('has-loading');
+            _element.text('Send Email');
+            output.text(data.message);
         },
         error: function() {
-          output.text('Internal error');
+            output.text('Internal error');
         }
     });
-
-
 });
-
 //for export email form
 $(document).on('click', '.setting-item.export', function() {
     _settingsClick('export');
@@ -688,25 +672,23 @@ $(document).on('click', '.setting-item.export', function() {
 $(document).on('click', '.setting-item.preview', function() {
     _settingsClick('preview');
 });
-function getContentHtml(){
+
+function getContentHtml() {
     _html = '';
     $('.content .content-wrapper .sortable-row').each(function() {
         _html += $(this).find('.sortable-row-content').html().replaceAll('contenteditable="true"', '');
     });
-    _width=$('.content-main').css('width');
+    _width = $('.content-main').css('width');
     _style = '';
     _style += 'background:' + $('.content-wrapper').css('background') + ';';
     _style += 'padding:' + $('.content-wrapper').css('padding');
-   _result = '<div class="email-content" style="' + _style + '">' + _html + '</div>';
-
-   _result = '<table width="100%" cellspacing="0" cellpadding="0" border="0" style="' + _style + '"><tbody><tr><td><div style="margin:0 auto;width:'+_width+';">'+_html+'</div></td></tr></table>';
-   return _result;
+    _result = '<div class="email-content" style="' + _style + '">' + _html + '</div>';
+    _result = '<table width="100%" cellspacing="0" cellpadding="0" border="0" style="' + _style + '"><tbody><tr><td><div style="margin:0 auto;width:' + _width + ';">' + _html + '</div></td></tr></table>';
+    return _result;
 }
 
-
 function _settingsClick(settingsType) {
-   _result = getContentHtml();
-
+    _result = getContentHtml();
     $.ajax({
         url: 'export.php',
         type: 'POST',
@@ -715,10 +697,10 @@ function _settingsClick(settingsType) {
         },
         dataType: 'json',
         success: function(data) {
-            if (data.code==-5) {
-              $('#popup_demo').modal('show');
-              return;
-            }else if (data.code == 0) {
+            if (data.code == -5) {
+                $('#popup_demo').modal('show');
+                return;
+            } else if (data.code == 0) {
                 if (settingsType == 'export') {
                     window.location.href = data.url;
                 }
@@ -754,7 +736,6 @@ $(document).on('click', '.btn-select', function() {
     // _content.find('.content-image.active').attr('src', _url);
     // _content.find('.content-image.active').removeClass('active');
     getActiveElementContent().find('.content-image').attr('src', _url);
-
     $('#popup_images').modal('hide');
 });
 //upload image to server
@@ -763,7 +744,7 @@ $(document).on('click', '.modal .btn-upload', function() {
     var form_data = new FormData();
     form_data.append('file', file_data);
     $.ajax({
-        url: base_url+'upload.php', // point to server-side PHP script
+        url: base_url + 'upload.php', // point to server-side PHP script
         dataType: 'text', // what to expect back from the PHP script, if anything
         cache: false,
         contentType: false,
@@ -789,9 +770,7 @@ function loadImages() {
                 _output = '';
                 for (var k in data.files) {
                     if (typeof data.files[k] !== 'function') {
-                        _output += "<div class='col-sm-3'>" +
-                            "<img class='upload-image-item' src='" + data.directory + data.files[k] + "' alt='" + data.files[k] + "' data-url='" + data.directory + data.files[k] + "'>" +
-                            "</div>";
+                        _output += "<div class='col-sm-3'>" + "<img class='upload-image-item' src='" + data.directory + data.files[k] + "' alt='" + data.files[k] + "' data-url='" + data.directory + data.files[k] + "'>" + "</div>";
                         // console.log("Key is " + k + ", value is" + data.files[k]);
                     }
                 }
@@ -802,34 +781,27 @@ function loadImages() {
     });
 }
 var _templateListItems;
+
 function loadTemplates() {
-  $('.template-list').html('<div style="text-align:center">Loading...</div>');
-  $.ajax({
-      url: 'load_templates.php',
-      type: 'GET',
-      dataType: 'json',
-      success: function(data) {
-          if (data.code == 0) {
-            _templateItems='';
-            _templateListItems=data.files;
-            for (var i = 0; i < data.files.length; i++) {
-                  _templateItems+='<div class="template-item" data-id="'+data.files[i].id+'">'+
-                                       '<div class="template-item-icon">'+
-                                         '<i class="fa fa-file-text-o"></i>'+
-                                       '</div>'+
-                                       '<div class="template-item-name">'+
-                                         data.files[i].name+
-                                       '</div>'+
-                                   '</div>';
+    $('.template-list').html('<div style="text-align:center">Loading...</div>');
+    $.ajax({
+        url: 'load_templates.php',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.code == 0) {
+                _templateItems = '';
+                _templateListItems = data.files;
+                for (var i = 0; i < data.files.length; i++) {
+                    _templateItems += '<div class="template-item" data-id="' + data.files[i].id + '">' + '<div class="template-item-icon">' + '<i class="fa fa-file-text-o"></i>' + '</div>' + '<div class="template-item-name">' + data.files[i].name + '</div>' + '</div>';
+                }
+                $('.template-list').html(_templateItems);
+            } else if (data.code == 1) {
+                $('.template-list').html('<div style="text-align:center">No items</div>');
             }
-            $('.template-list').html(_templateItems);
-          }
-        else if (data.code==1) {
-              $('.template-list').html('<div style="text-align:center">No items</div>');
-          }
-      },
-      error: function() {}
-  });
+        },
+        error: function() {}
+    });
 }
 $(document).on('click', '.btn-save-template', function() {
     $('.input-error').text('');
@@ -846,11 +818,11 @@ $(document).on('click', '.btn-save-template', function() {
             content: $('.content-wrapper').html()
         },
         success: function(data) {
-        //  console.log(data);
+            //  console.log(data);
             if (data.success === true) {
                 $('#popup_save_template').modal('hide');
             } else {
-              $('.input-error').text(data.error);
+                $('.input-error').text(data.error);
             }
         },
         error: function(error) {
@@ -864,32 +836,35 @@ $(document).on('click', '.template-list .template-item', function() {
     $('.btn-load-template').show();
 });
 $(document).on('click', '.btn-load-template', function() {
-  _dataId=$('.template-list .template-item.active').attr('data-id');
-  //search template in array
-  var result = $.grep(_templateListItems, function(e){
-    return e.id == _dataId;
-  });
-  if (result.length == 0) {
-    //show error
-    $('.template-load-error').text('An error has occurred');
-  }
+    _dataId = $('.template-list .template-item.active').attr('data-id');
+    //search template in array
+    var result = $.grep(_templateListItems, function(e) {
+        return e.id == _dataId;
+    });
+    if (result.length == 0) {
+        //show error
+        $('.template-load-error').text('An error has occurred');
+    }
     _contentText = $('<div/>').html(result[0].content).text();
     $('.content-wrapper').html(_contentText);
     $('#popup_load_template').modal('hide');
     makeSortable();
 });
-
-
 $(document).on('keyup', '.email-width', function() {
     _element = $(this);
-    _val=$('.email-width').val();
-    if (parseInt(_val)<300 ||  parseInt(_val)>1000 ) {
-      return false;
+    _val = $('.email-width').val();
+    if (parseInt(_val) < 300 || parseInt(_val) > 1000) {
+        return false;
     }
-    $('.content-main').css('width',_val+'px');
+    $('.content-main').css('width', _val + 'px');
 });
 $(document).on('click', '.btn-save-editor', function() {
-  $('.sortable-row.code-editor .sortable-row-content').html(_aceEditor.getSession().getValue());
-  $('#popup_editor').modal('hide');
-  $('.sortable-row.code-editor').removeClass('code-editor');
+    $('.sortable-row.code-editor .sortable-row-content').html(_aceEditor.getSession().getValue());
+    $('#popup_editor').modal('hide');
+    $('.sortable-row.code-editor').removeClass('code-editor');
+});
+$(document).on('focusin', function(e) {
+    if ($(e.target).closest(".mce-window").length) {
+        e.stopImmediatePropagation();
+    }
 });

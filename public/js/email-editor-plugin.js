@@ -257,31 +257,31 @@ var returnVal;
             _outputContent = '<div class="content">' + '<div id="editorContent" class="content-wrapper" data-types="background,padding,width">' + '<div class="content-main lg-width">' + '<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _loadPageHtml + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>';
             _contentMenu = '';
             //temporary 
-            // if (_this.config.showContextMenu == true || true) {
-            //     _contentMenu = '<div class="context-menu">' + '<ul class="context-menu-items">';
-            //     if (_this.config.showContextMenu_FontFamily == true) {
-            //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-family">' + '    <div>' + '<select class="form-control font-family" >' + '<option value="Arial" selected="selected">Arial</option>' + '<option value="Helvetica">Helvetica</option>' + '<option value="Georgia">Georgia</option>' + '<option value="Times New Roman">Times New Roman</option>' + '<option value="Verdana">Verdana</option>' + '<option value="Tahoma">Tahoma</option>' + '<option value="Calibri">Calibri</option>' + '</select>' + '</div>' + '</li>';
-            //     }
-            //     if (_this.config.showContextMenu_FontSize == true) {
-            //         _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-size">' + '<div>' + '<select class="font-size form-control">' + '<option value="6px">6px</option>' + '<option value="8px">8px</option>' + '<option value="9px">9px</option>' + '<option value="10px">10px</option>' + '<option value="11px">11px</option>' + '<option value="12px">12px</option>' + '<option value="14px" selected="selected">14px</option>' + '<option value="18px">18px</option>' + '<option value="24px">24px</option>' + '<option value="30px">30px</option>' + '<option value="36px">36px</option>' + '<option value="48px">48px</option>' + '</select>' + '</div>' + '</li>';
-            //     }
-            //     if (_this.config.showContextMenu_Bold == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="bold">' + '<div>' + '<i class="fa fa-bold"></i>' + '</div>' + '</li>';
-            //     }
-            //     if (_this.config.showContextMenu_Italic == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="italic">' + '<div>' + '<i class="fa fa-italic"></i>' + '</div>' + '</li>';
-            //     }
-            //     if (_this.config.showContextMenu_Underline == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="underline">' + '<div>' + '<i class="fa fa-underline"></i>' + '</div>' + '</li>';
-            //     }
-            //     if (_this.config.showContextMenu_Strikethrough == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="strikethrough">' + '<div>' + '<i class="fa fa-strikethrough"></i>' + '</div>' + '</li>';
-            //     }
-            //     if (_this.config.showContextMenu_Hyperlink == true) {
-            //         _contentMenu += '<li class="context-menu-item" data-menu-type="link">' + '<div>' + '<i class="fa fa-link"></i>' + '</div>' + '</li>';
-            //     }
-            //     _contentMenu += '</ul>' + '<div class="context-menu-hyperlink ">' + '<div class="row">' + '<div class="col-md-10"> <input type="text" class="form-control context-menu-hyperlink-input" ></div>' + '<div class="col-md-1">' + '<a href="javascript:void(0)" class="context-menu-hyperlink-close" title="Close">&times;</a>' + '</div>' + '</div>' + '</div>' + '</div>';
-            // }
+            if (_this.config.showContextMenu == true) {
+                _contentMenu = '<div class="context-menu">' + '<ul class="context-menu-items">';
+                if (_this.config.showContextMenu_FontFamily == true) {
+                    _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-family">' + '    <div>' + '<select class="form-control font-family" >' + '<option value="Arial" selected="selected">Arial</option>' + '<option value="Helvetica">Helvetica</option>' + '<option value="Georgia">Georgia</option>' + '<option value="Times New Roman">Times New Roman</option>' + '<option value="Verdana">Verdana</option>' + '<option value="Tahoma">Tahoma</option>' + '<option value="Calibri">Calibri</option>' + '</select>' + '</div>' + '</li>';
+                }
+                if (_this.config.showContextMenu_FontSize == true) {
+                    _contentMenu += '<li class="context-menu-item font-style" data-menu-type="font-size">' + '<div>' + '<select class="font-size form-control">' + '<option value="6px">6px</option>' + '<option value="8px">8px</option>' + '<option value="9px">9px</option>' + '<option value="10px">10px</option>' + '<option value="11px">11px</option>' + '<option value="12px">12px</option>' + '<option value="14px" selected="selected">14px</option>' + '<option value="18px">18px</option>' + '<option value="24px">24px</option>' + '<option value="30px">30px</option>' + '<option value="36px">36px</option>' + '<option value="48px">48px</option>' + '</select>' + '</div>' + '</li>';
+                }
+                if (_this.config.showContextMenu_Bold == true) {
+                    _contentMenu += '<li class="context-menu-item" data-menu-type="bold">' + '<div>' + '<i class="fa fa-bold"></i>' + '</div>' + '</li>';
+                }
+                if (_this.config.showContextMenu_Italic == true) {
+                    _contentMenu += '<li class="context-menu-item" data-menu-type="italic">' + '<div>' + '<i class="fa fa-italic"></i>' + '</div>' + '</li>';
+                }
+                if (_this.config.showContextMenu_Underline == true) {
+                    _contentMenu += '<li class="context-menu-item" data-menu-type="underline">' + '<div>' + '<i class="fa fa-underline"></i>' + '</div>' + '</li>';
+                }
+                if (_this.config.showContextMenu_Strikethrough == true) {
+                    _contentMenu += '<li class="context-menu-item" data-menu-type="strikethrough">' + '<div>' + '<i class="fa fa-strikethrough"></i>' + '</div>' + '</li>';
+                }
+                if (_this.config.showContextMenu_Hyperlink == true) {
+                    _contentMenu += '<li class="context-menu-item" data-menu-type="link">' + '<div>' + '<i class="fa fa-link"></i>' + '</div>' + '</li>';
+                }
+                _contentMenu += '</ul>' + '<div class="context-menu-hyperlink ">' + '<div class="row">' + '<div class="col-md-10"> <input type="text" class="form-control context-menu-hyperlink-input" ></div>' + '<div class="col-md-1">' + '<a href="javascript:void(0)" class="context-menu-hyperlink-close" title="Close">&times;</a>' + '</div>' + '</div>' + '</div>' + '</div>';
+            }
             _outputHtml = '<div class="editor-container clearfix"> ' + _outputSideBar + _outputContent + _contentMenu + '</div>';
             _this.generatePopups();
             _this.display(_outputHtml);
@@ -368,13 +368,13 @@ var returnVal;
             setTimeout(function() {
                 jQuery('.content-wrapper').click();
                 _this.tabMenu('typography');
+                _this.tinymceContextMenu();
             }, 100);
             _this.makeSortable();
             //_this.tabMenu('typography');
             _aceEditor = ace.edit("editorHtml");
             _aceEditor.setTheme("ace/theme/monokai");
             _aceEditor.getSession().setMode("ace/mode/html");
-            _this.tinymceContextMenu();
             _this.remove_row_elements();
             $('.content-wrapper').removeAttr('contenteditable');
             _this.commandsUndoManager();
@@ -497,7 +497,7 @@ var returnVal;
                         }
                         //8 ordered list
                         if (content.data('id') == 8) {
-                            let content = ui.item.find('.sortable-row-content').find('ul');
+                            let content = ui.item.find('.sortable-row-content').find('ol');
                             if (content[0]) {
                                 return ele[0].append(content[0]);
                             }
@@ -1633,6 +1633,7 @@ var returnVal;
          * tinymce Context Menu
          */
         tinymceContextMenu: function() {
+            console.log('here', _this.config.showContextMenu);
             if (_this.config.showContextMenu == false) {
                 return false;
             }
@@ -1660,16 +1661,21 @@ var returnVal;
             }
             //default options
             _toolBar += ' | alignleft aligncenter alignright alignjustify | bullist numlist | forecolor backcolor |  unlink removeformat  ';
-            tinymce.init({
+            let _tinymce = tinymce.init({
                 selector: 'div.content-wrapper',
                 theme: 'inlite',
-                plugins: ' link textcolor',
-                width: 300,
+                inline: true,
+                plugins: 'paste lists advlist textcolor link autolink textpattern',
+                // insert_toolbar: 'quicktable',
                 selection_toolbar: _toolBar,
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
-                inline: true,
-                paste_data_images: false
+                paste_data_images: false,
+                contextmenu_never_use_native: true,
+                dialog_type: "modal",
+                // width: 300,
             });
+            // let menu = _tinymce.activeEditor.ui.registry.getAll().contextMenus;
+            console.log('here', _toolBar);
         },
         /**
          * Get languages

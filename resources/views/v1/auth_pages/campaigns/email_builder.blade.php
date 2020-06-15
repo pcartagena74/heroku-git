@@ -37,7 +37,8 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
                 }
                 //5 Social
                 if($_items[$j]['cat_id'] == 5){
-                    // to replace default address with org address in footer menu
+                    // to add actual link to social icon and uncheck which are not present
+                    // logic written in helper
                     $_items[$j] = replaceSocialLinksWithOrgSocialLinks($_items[$j]);
                 }
                 $_outputHtml .= '
