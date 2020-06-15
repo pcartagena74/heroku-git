@@ -14,7 +14,7 @@ class AddHeatmapzoomlevelColumnToOrganizationTable extends Migration
     public function up()
     {
         Schema::table('organization', function (Blueprint $table) {
-            $table->unsignedInteger('heatMapZoomLevel')->default(8);
+            $table->unsignedInteger('heatMapZoomLevel')->default(7);
             $table->unsignedInteger('heatMapDensity')->default(5);
         });
     }
