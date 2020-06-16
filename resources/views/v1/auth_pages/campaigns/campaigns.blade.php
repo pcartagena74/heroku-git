@@ -68,9 +68,11 @@ $topBits = '';  // remove this if this was set in the controller
                         @foreach($campaigns as $c)
                         @php
                             if($c->sendDate === null) {
-                                $status = "DRAFT";
+                                $date = $c->createDate->format(trans('messages.app_params.datetime_format'));
+                                $status = trans('messages.fields.camp_status_draft',['date'=>$date]);
                             } else {
-                                $status = "SENT";
+                                $date = $c->sendDate->format(trans('messages.app_params.datetime_format'));
+                                $status = trans('messages.fields.camp_status_sent',['date'=>$date]);
                             }
                             $opens = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('opens');
                             $clicks = DB::table('sent_emails')->where('campaignID', $c->campaignID)->sum('clicks');
@@ -101,7 +103,7 @@ $topBits = '';  // remove this if this was set in the controller
                         <tr class="even pointer campaign-panel-{{$c->campaignID}}">
                             <td class=" ">
                                 <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
-                                    <img class="img-thumbnail" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px" height="70px">
+                                    <img class="img-thumbnail" height="70px" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px">
                                     </img>
                                 </a>
                             </td>

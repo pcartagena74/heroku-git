@@ -388,6 +388,8 @@ return [
         'this_year_event' => 'es-This Year\'s Events',
         'last_year_event' => 'es-Last Year\'s Events',
         'all_pd_day_event' => 'es-All PD Day Events',
+        'camp_status_draft' => 'es-Draft : :date',
+        'camp_status_sent' => 'es-Sent : :date',
     ],
     'headers' => [
         'acc_lookup' => 'es-Account Lookup',

@@ -387,6 +387,8 @@ return [
         'last_year_event' => 'Last Year\'s Events',
         'all_pd_day_event' => 'All PD Day Events',
         'specific_event' => 'Specific Event\'s (by date range)',
+        'camp_status_draft' => 'Draft : :date',
+        'camp_status_sent' => 'Sent : :date',
     ],
     'headers' => [
         'acc_lookup' => "Account Lookup",
