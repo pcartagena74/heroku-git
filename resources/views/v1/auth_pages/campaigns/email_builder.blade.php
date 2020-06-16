@@ -169,7 +169,6 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 
 
 @endphp
-<link href="{{url('css/demo.css?v=3')}}" rel="stylesheet"/>
 <link href="{{url('css/email-editor.css?'.rand(10,1000))}}" rel="stylesheet"/>
 <link href="{{url('css/colorpicker.css')}}" rel="stylesheet"/>
 <link href="{{url('css/editor-color.css')}}" rel="stylesheet"/>

@@ -1666,13 +1666,10 @@ var returnVal;
                 theme: 'inlite',
                 inline: true,
                 plugins: 'paste lists advlist textcolor link autolink textpattern',
-                // insert_toolbar: 'quicktable',
                 selection_toolbar: _toolBar,
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
-                contextmenu_never_use_native: true,
                 dialog_type: "modal",
-                // width: 300,
             });
             // let menu = _tinymce.activeEditor.ui.registry.getAll().contextMenus;
             console.log('here', _toolBar);

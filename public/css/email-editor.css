@@ -3226,18 +3226,27 @@ li {
     width: 90%;
 }
 .mce-tinymce.mce-tinymce-inline.mce-arrow.mce-container.mce-panel.mce-floatpanel.mce-arrow-up {
-    z-index: 150000 !important;
+    z-index: 70000 !important;
 }
 .mce-container.mce-panel.mce-floatpanel.mce-menu.mce-animate.mce-fixed.mce-menu-align.mce-in {
-    z-index: 150000 !important;
+    z-index: 70000 !important;
 }
 .mce-contextmenu.mce-container.mce-panel.mce-floatpanel.mce-menu.mce-menu-has-icons.mce-menu-align.mce-in {
-    z-index: 150000 !important;
+    z-index: 70000 !important;
 }
 .mce-tinymce.mce-tinymce-inline.mce-arrow.mce-container.mce-panel.mce-floatpanel.mce-arrow-down {
-    z-index: 150000 !important;
+    z-index: 70000 !important;
 }
 .mce-container.mce-panel.mce-floatpanel.mce-window.mce-in {
-    z-index: 150000 !important;
+    z-index: 70000 !important;
 }
-
+.mce-window {
+    opacity: 1!important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: scale(1) translate(-50%, -50%)!important;
+    z-index: 65555!important;
+}
+.mce-window .mce-abs-layout-item, .mce-abs-end {
+    position: relative!important;
+}
