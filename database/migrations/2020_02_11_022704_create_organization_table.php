@@ -32,8 +32,8 @@ class CreateOrganizationTable extends Migration {
 			$table->string('facebookURL')->nullable();
 			$table->string('linkedinURL')->nullable();
 			$table->string('googleURL')->nullable();
-            $table->integer('heatMapZoomLevel')->default(7);
-            $table->integer('heatMapDensity')->default(5);
+            $table->unsignedInteger('heatMapZoomLevel')->default(7);
+            $table->unsignedInteger('heatMapDensity')->default(5);
 			$table->string('defaultTicketLabel', 100)->nullable()->default('Event Ticket');
 			$table->string('creditLabel', 25)->default('Credit');
 			$table->string('orgZone', 5)->default('-0');
