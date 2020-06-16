@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             PrefixSeeder::class,
             TimezoneSeeder::class,
             UserRoleSeeder::class,
+            TicketitSeeder::class,
         ]);
 
         $roles      = Role::find([9, 8]);
@@ -39,6 +40,7 @@ class DatabaseSeeder extends Seeder
                 $r_value->attachPermission($p_value);
             }
         }
+        /*
         $org       = Org::first();
         $user      = User::first();
         $all_roles = Role::all();
@@ -47,5 +49,6 @@ class DatabaseSeeder extends Seeder
             $bulk[] = ['role_id' => $value->id, 'user_id' => $user->id, 'orgID' => $org->orgID];
         }
         DB::table('role_user')->insert($bulk);
+        */
     }
 }

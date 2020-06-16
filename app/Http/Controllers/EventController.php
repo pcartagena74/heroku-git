@@ -155,8 +155,9 @@ class EventController extends Controller
         if (null === $past) {
             // Function called was "Manage Events" so there should be future events and limited past events"
             // Get a list of current events, showing events that have not yet ended.
-            $current_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
-                'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+            $current_events = Event::with('registrations', 'event_type', 'location')
+                ->select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+                'hasTracks', 'etName', 'slug', 'eventTypeID', 'locationID')
                 ->where([
                     ['org-event.orgID', $this->currentPerson->defaultOrgID],
                 ])
@@ -165,40 +166,19 @@ class EventController extends Controller
                     $q->orWhereBetween('eventStartDate', [$today->addDays(-1), $today->addDays(1)]);
                 })
                 ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
-                ->with('registrations', 'event_type')
                 ->withCount('registrations')
                 ->orderBy('eventStartDate', 'ASC')
                 ->get();
 
-            /*
-            $past_sql = "SELECT date_format(e.eventStartDate, '%Y/%m/%d %l:%i %p') AS eventStartDateF, e.eventID, e.eventName,
-            date_format(e.eventEndDate, '%Y/%m/%d %l:%i %p') AS eventEndDateF, e.isActive, e.eventStartDate,
-            count(er.eventID) AS 'cnt', et.etName, e.slug, e.hasTracks
-            FROM `org-event` e
-            LEFT JOIN `event-registration` er ON er.eventID=e.eventID
-            AND er.regStatus != 'In Progress'
-            AND er.deleted_at IS NULL
-            LEFT JOIN `org-event_types` et ON et.etID = e.eventTypeID AND et.orgID in (1, e.orgID)
-            WHERE e.orgID = ?
-            AND eventStartDate < NOW() AND e.deleted_at is null
-            GROUP BY e.eventStartDate, e.eventID, e.eventName, e.eventEndDate, e.isActive, e.eventStartDate
-            ORDER BY eventStartDateF DESC";
-
-            $past = Event::where([
-            ['org-event.orgID', $this->currentPerson->defaultOrgID],
-            ]);
-            $past_events = DB::select($past_sql, [$this->currentPerson->defaultOrgID]);
-             */
-
             $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
-                'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+                'hasTracks', 'etName', 'slug', 'eventTypeID', 'locationID')
                 ->where([
                     ['org-event.orgID', $this->currentPerson->defaultOrgID],
                     ['eventEndDate', '<', $today],
                 ])
                 ->whereIn(DB::raw("year(eventEndDate)"), [$today->year, $today->year - 1])
                 ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
-                ->with('registrations', 'event_type')
+                ->with('registrations', 'event_type', 'location')
                 ->withCount('registrations')
                 ->orderBy('eventStartDate', 'DESC')
                 ->get();
@@ -206,13 +186,13 @@ class EventController extends Controller
         } else {
             $current_events = null;
             $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
-                'hasTracks', 'etName', 'slug', 'hasTracks', 'eventTypeID')
+                'hasTracks', 'etName', 'slug', 'eventTypeID', 'locationID')
                 ->where([
                     ['org-event.orgID', $this->currentPerson->defaultOrgID],
                     ['eventEndDate', '<', $today],
                 ])
                 ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
-                ->with('registrations', 'event_type')
+                ->with('registrations', 'event_type', 'location')
                 ->withCount('registrations')
                 ->orderBy('eventStartDate', 'DESC')
                 ->get();

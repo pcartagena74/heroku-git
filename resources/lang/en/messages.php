@@ -942,7 +942,7 @@ return [
             'line3' => "This survey is for the PDC session named:  :name",
             'action' => "Take Survey",
             'post_mail_msg' => ":count survey email sent to the attendee.  :c2 survey was already completed.|" .
-            ":count survey emails sent to the attendees. :c2 surveys were already completed",
+                ":count survey emails sent to the attendees. :c2 surveys were already completed",
         ],
 
         // Set Your Password
@@ -957,6 +957,20 @@ return [
         // TicketIt Notification
         'ticketit' => [
             'action' => 'View Ticket'
+        ],
+
+        // Undo Login Change
+        'UNDO' => [
+            'subject' => "Your mCentric Login",
+            'line1' => "Your mCentric login was changed back to :email.",
+        ],
+
+        // Wait List No More
+        'WLNM' => [
+            'subject' => ":org Event: You are off the wait list!",
+            'line1' => "A spot has opened up for :event.",
+            'line2' => "If you didn't already register, you may continue your registration.",
+            'action' => "Continue Registration",
         ],
 
         // Undo Login Change

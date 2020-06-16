@@ -1142,6 +1142,18 @@ if (!function_exists('generateLatLngForAddress')) {
     function generateLatLngForAddress($address, $for_org = false)
     {
         if (!empty($address)) {
+            if (!empty($address->zip)) {
+                $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
+                    ->orWhere('zip', ltrim($address->zip, "0"))->get()->first();
+                if (empty($zip_lat_lng)) {
+                    // continue to google api
+                } else {
+                    $address->lati  = $zip_lat_lng->lat;
+                    $address->longi = $zip_lat_lng->lng;
+                    $address->save();
+                    return true;
+                }
+            }
             $add_str = '';
             if ($for_org == false) {
                 $add_str = $address->addr1 . ', ';

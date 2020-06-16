@@ -48,10 +48,10 @@ class EventAPIController extends Controller
      * @param int $orgID
      * @param int $past
      * @param int $etID
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      * @throws \Throwable
      */
-    public function show($orgID, $past, $etID = null)
+    public function show($orgID, $past, $cal = 0, $etID = null)
     {
         $org = Org::find($orgID);
         if (null === $org) {
@@ -146,7 +146,7 @@ class EventAPIController extends Controller
 
             return json_encode(array('status' => 'success', 'message' => $view));
         } else {
-            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag', 'past'));
+            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag', 'past', 'cal'));
         }
     }
 

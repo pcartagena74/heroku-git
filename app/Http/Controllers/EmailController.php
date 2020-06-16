@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Email;
 use App\Person;
@@ -69,9 +70,10 @@ class EmailController extends Controller
     public function destroy($id)
     {
         // responds to DELETE /blah/id
+        $now = Carbon::now()->format('Ymd\TH:i:s.uP');
         $this->currentPerson = Person::find(auth()->user()->id);
         $email = Email::find($id);
-        $email->emailADDR = 'deleted_' . $email->emailADDR;
+        $email->emailADDR = 'deleted_' . $email->emailADDR . "_$now";
         $email->updaterID = $this->currentPerson->personID;
         $email->save();
         $email->delete();

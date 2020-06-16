@@ -22,6 +22,7 @@ class ReportController extends Controller
         $topBits             = '';
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgID               = $this->currentPerson->defaultOrgID;
+        $org                 = Org::find($orgID);
         $quote_string        = Session::get('quote_string');
 
         if ($quote_string == "''" && null !== $year_string) {
@@ -136,7 +137,7 @@ class ReportController extends Controller
         $no_other = true;
         foreach ($indPie as $key => $value) {
             if ($value->indName == 'Other') {
-                $n_other = false;
+                $no_other = false;
             }
         }
         if ($no_other) {
@@ -147,24 +148,52 @@ class ReportController extends Controller
             ->where('addrType', 'Work')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
+            ->groupby(['lati', 'longi'])
+            ->having(DB::raw('count(lati)'), '>', $org->heatMapDensity)
             ->whereHas('person', function ($query) use ($cp) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->toArray();
+        $heat_map_work_count = Address::select(['lati', 'longi'])
+            ->where('addrType', 'Work')
+            ->where('lati', '!=', '0')
+            ->where('longi', '!=', '0')
+            ->whereHas('person', function ($query) use ($cp) {
+                $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
+            })->get()->count();
         $heat_map_home = Address::select(['lati', 'longi'])
+            ->where('addrType', 'Home')
+            ->where('lati', '!=', '0')
+            ->where('longi', '!=', '0')
+            ->groupby(['lati', 'longi'])
+            ->having(DB::raw('count(lati)'), '>', $org->heatMapDensity)
+            ->whereHas('person', function ($query) use ($cp) {
+                $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
+            })->get()->toArray();
+        $heat_map_home_count = Address::select(['lati', 'longi'])
             ->where('addrType', 'Home')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
             ->whereHas('person', function ($query) use ($cp) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
-            })->get()->toArray();
+            })->get()->count();
         $heat_map_other = Address::select(['lati', 'longi'])
+            ->where('addrType', '!=', 'Work')
+            ->where('addrType', '!=', 'Home')
+            ->where('lati', '!=', '0')
+            ->where('longi', '!=', '0')
+            ->groupby(['lati', 'longi'])
+            ->having(DB::raw('count(lati)'), '>', $org->heatMapDensity)
+            ->whereHas('person', function ($query) use ($cp) {
+                $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
+            })->get()->toArray();
+        $heat_map_other_count = Address::select(['lati', 'longi'])
             ->where('addrType', '!=', 'Work')
             ->where('addrType', '!=', 'Home')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
             ->whereHas('person', function ($query) use ($cp) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
-            })->get()->toArray();
+            })->get()->count();
         $org_lat_lng  = ['lati' => 42.4072, 'longi' => -71.3824]; //Massachusetts lat lng default
         $organization = Org::where('orgID', $orgID)->get()->first();
         if (!empty($organization->lati) && !empty($organization->longi)) {
@@ -187,8 +216,8 @@ class ReportController extends Controller
             }
         }
 
-        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years',
-            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home', 'heat_map_other', 'heat_map_work', 'org_lat_lng'));
+        return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'org',
+            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home', 'heat_map_other', 'heat_map_work', 'org_lat_lng', 'heat_map_work_count', 'heat_map_home_count', 'heat_map_other_count'));
     }
 
     public function update(Request $request, $id)

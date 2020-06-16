@@ -168,7 +168,8 @@ try{
                         </li>
                         @endif
                     
-                    @if(((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
+                    @if( ((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') ||
+                          Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>
@@ -219,6 +220,11 @@ try{
                                 <li>
                                     <a href="{{ url('event/create')}}" id="add">
                                         @lang('messages.nav.ev_add')
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url('eventstats')}}">
+                                        @lang('messages.nav.ev_stats')
                                     </a>
                                 </li>
                                 <li>
@@ -293,7 +299,8 @@ try{
                         </li>
                         @endif
 
-                    @if(((Entrust::hasRole('Board') || Entrust::can('event-management') || Entrust::can('speaker-management')))
+                    @if(((Entrust::hasRole('Board') ||
+                            Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>

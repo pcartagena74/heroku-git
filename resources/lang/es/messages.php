@@ -104,7 +104,7 @@ return [
     ],
     // Common words that are often reused
     'common' => [
-        'on' => "", // This is purposely blank.  There is no "on" in the context this is being used in English
+        'on' => "",  // This is purposely blank.  There is no "on" in the context this is being used in English
         'reminder' => 'es-Reminder',
     ],
     'directions' => [
@@ -883,6 +883,7 @@ return [
         'login' => 'Inicie sesión en mCentric',
         'disclaimer' => "Si tiene problemas para hacer clic en el botón [:a], copie y pegue la URL en su navegador: (:u)< br/>",
         'regards' => "Saludos",
+
         // Login Change
         'login_change' => [
             'subject' => "Su login de mCentric",

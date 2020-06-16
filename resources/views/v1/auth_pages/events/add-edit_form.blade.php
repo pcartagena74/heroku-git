@@ -11,13 +11,12 @@
     use GrahamCampbell\Flysystem\Facades\Flysystem;
 
     $topBits = '';
-    $dateFormat = trans('messages.app_params.date_format');
+    $dateFormat = trans('messages.app_params.datetime_format');
     $org = $current_person->defaultOrg;
 
     if(isset($event)) {
         $eventStartDate = date($dateFormat, strtotime($event->eventStartDate));
         $eventEndDate   = date($dateFormat, strtotime($event->eventEndDate));
-
         if($exLoc->isVirtual==1 || $exLoc->orgID==1){
             $show_virtual = true;
         } else {

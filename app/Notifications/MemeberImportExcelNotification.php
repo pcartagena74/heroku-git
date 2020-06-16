@@ -14,7 +14,8 @@ class MemeberImportExcelNotification extends Notification
 
     protected $person;
     protected $import_detail;
-
+    protected $records;
+    public $name;
     /**
      * Create a new notification instance.
      *
@@ -25,6 +26,8 @@ class MemeberImportExcelNotification extends Notification
     {
         $this->person        = $person;
         $this->import_detail = $import_detail->refresh();
+        $this->records = $records;
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -52,18 +55,21 @@ class MemeberImportExcelNotification extends Notification
         // $name  = $o->orgName;
         // $ename = $this->event->eventName;
         $i_d  = $this->import_detail;
+        /*
+
         $name = trim($this->person->firstName . ' ' . $this->person->lastName);
         if (empty($name)) {
             $name = $this->person->login;
-        }
+        }*/
+
         if ($i_d->total == 0) {
             return (new MailMessage)
                 ->subject(trans('messages.notifications.member_import.subject_failed'))
                 ->line(trans('messages.notifications.member_import.imp_failed',
-                    ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]));
+                    ['user' => $this->name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]));
         } else if ($i_d->failed > 0) {
             $import_message = trans('messages.notifications.member_import.imp_warning',
-                ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
+                ['user' => $this->name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
             $subject = trans('messages.notifications.member_import.subject_warning');
             $mail    = new MailMessage;
             $mail->subject($subject);
@@ -112,7 +118,7 @@ class MemeberImportExcelNotification extends Notification
             return $mail;
         } else {
             $import_message = trans('messages.notifications.member_import.imp_success',
-                ['user' => $name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
+                ['user' => $this->name, 'file_name' => $i_d->file_name, 'completed_date' => $i_d->completed_at]);
             $subject = trans('messages.notifications.member_import.subject');
             $mail    = new MailMessage;
             $mail->subject($subject);

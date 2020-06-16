@@ -16,6 +16,7 @@ class AccountCreation extends Notification
 
     protected $person;
     protected $event;
+    public $name;
 
     /**
      * Create a new notification instance.
@@ -26,6 +27,7 @@ class AccountCreation extends Notification
     {
         $this->person = $person;
         $this->event = $event;
+        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -48,14 +50,15 @@ class AccountCreation extends Notification
     public function toMail($notifiable)
     {
         $o = Org::find($this->person->defaultOrgID);
-        $name = $o->orgName;
+        $oname = $o->orgName;
         $ename = $this->event->eventName;
         return (new MailMessage)
-            ->subject(trans('messages.notifications.new_reg_acct.subject', ['org' => $name]))
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
+            ->subject(trans('messages.notifications.new_reg_acct.subject', ['org' => $oname]))
             ->line(trans('messages.notifications.new_reg_acct.line1', ['ename' => $ename]))
             ->line(trans('messages.notifications.new_reg_acct.line2'))
             ->action(trans('messages.notifications.login'), env('APP_URL'))
-            ->line(trans('messages.notifications.thanks', ['org' => $name]));
+            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
     /**

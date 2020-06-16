@@ -6,7 +6,6 @@
  * Updated: 10/4/2019 for configurable graph (display years)
  *
  */
- $heat_map_other = [];
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -22,7 +21,7 @@
             </a>
         </li>
         <li class="">
-            <a aria-expanded="false" data-toggle="tab" href="#tab_content2" id="everyone_tab">
+            <a aria-expanded="false" data-toggle="tab" href="#tab_content2" id="heatmap_tab">
                 <b>
                     @lang('messages.tabs.heat_map')
                 </b>
@@ -74,16 +73,16 @@
             </div>
             @include('v1.parts.end_content')
         </div>
-        <div aria-labelledby="everyone_tab" class="tab-pane fade" id="tab_content2">
+        <div aria-labelledby="heatmap_tab" class="tab-pane fade" id="tab_content2">
             @include('v1.parts.start_content', ['header' => trans('messages.reports.person_address'), 'subheader' => '',
                      'w1' => '12', 'w2' => '0', 'r1' => 0, 'r2' => 0, 'r3' => 0])
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="floating-panel">
                         @php
-                        $home = count($heat_map_home);
-                        $work = count($heat_map_work);
-                        $other = count($heat_map_other);
+                        $home = ($heat_map_home_count);
+                        $work = ($heat_map_work_count);
+                        $other = ($heat_map_other_count);
                         $total = $home + $work + $other;
                         @endphp
                         <button class="btn btn-primary btn-sm active" onclick="initMap('all',this)">
@@ -202,9 +201,17 @@
             type: 'pie',
             data: {
                 labels: [
-                    @foreach($indPie as $i)
-                        '% {{ trans('messages.fields.industries.' . $i->indName) }}',
-                    @endforeach
+                    @php
+                    // if industry not found in transalation show realname
+                    foreach($indPie as $i){
+                        $ind_name = trim($i->indName);
+                        if(trans('messages.fields.industries.' . $ind_name) == 'messages.fields.industries.' . $ind_name){
+                            echo '"% '.$ind_name.'",';
+                        } else {
+                            echo '"% '.trans('messages.fields.industries.' . $ind_name).'",';
+                        }
+                    }
+                    @endphp
                 ],
                 datasets: [{
                     backgroundColor: [
@@ -339,10 +346,12 @@
     function initMap(type = 'all',ths) {
         var bounds = new google.maps.LatLngBounds();
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 13,
+          zoom: {{ empty($org->heatMapZoomLevel) ? 7 : $org->heatMapZoomLevel }},
           center: {lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}}},
           mapTypeId: 'roadmap',
+          styles: [{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]}]
         });
+
         var all_points = getPoints(type);
         for (var i = 0; i < all_points.length; i++) {
             bounds.extend(all_points[i]);
@@ -350,22 +359,23 @@
         if(bounds.isEmpty()) {
             map.setCenter({lat: {{$org_lat_lng['lati']}}, lng: {{$org_lat_lng['longi']}} });
         } else {
-            map.fitBounds(bounds);
+            // map.fitBounds(bounds); removed as now we have org based zoom 
             // var listener = google.maps.event.addListener(map, "bounds_changed", function() { 
             //     console.log('here1',map.getZoom());
             //   if (map.getZoom()){
-            //     map.setZoom(13); 
+            //     map.setZoom(8); 
             //     console.log('here2');
             //   } 
             //   // google.maps.event.removeListener(listener); 
             // });
             // setTimeout(function(){google.maps.event.removeListener(listener)}, 2000);
         }
+
         heatmap = new google.maps.visualization.HeatmapLayer({
-          data: all_points,
-          map: map,
-          opacity:1
-        });
+              data: all_points,
+              map: map,
+              opacity:1
+            });
         heatmap.setMap(map);
         if(ths) {
             $('#floating-panel').find('.btn').removeClass('active');

@@ -139,15 +139,16 @@ class Person extends Model
 
     public function add_speaker_role()
     {
-
-        $org_role     = $this->org_role_id()->id;
+        //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
         if (!$this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role);
         }
+        /*
         if (!$this->roles->contains('id', $this->org_role_id()->id)) {
             $this->roles()->attach($org_role);
         }
+        */
         $s = Speaker::find($this->personID);
         if ($s === null) {
             $s     = new Speaker;
