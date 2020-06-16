@@ -39,7 +39,7 @@ class CampaignController extends Controller
             ->with('mailgun')
             ->withCount('emails', 'urls')
             ->orderBy('campaignID', 'DESC')
-            ->get();
+            ->paginate(10);
         return view('v1.auth_pages.campaigns.campaigns', compact('campaigns'));
     }
 
