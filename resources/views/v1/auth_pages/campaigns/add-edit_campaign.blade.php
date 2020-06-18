@@ -397,4 +397,5 @@ if(!empty($campaign)){
     
 });//ready end
 </script>
+
 @endsection

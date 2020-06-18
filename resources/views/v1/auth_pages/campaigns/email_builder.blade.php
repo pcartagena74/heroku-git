@@ -237,9 +237,6 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/theme-monokai.js" type="text/javascript">
 </script>
-<!--for tinymce  -->
-<script src="https://cdn.tinymce.com/4/tinymce.min.js">
-</script>
 {{--
 <script src="{{url('vendor/sweetalert2/dist/sweetalert2.min.js')}}">
 </script>
@@ -250,6 +247,9 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
 </script>
 <!--for bootstrap-tour  -->
 <script src="{{url('vendor/bootstrap-tour/build/js/bootstrap-tour.min.js')}}">
+</script>
+<!--for tinymce  -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.3/tinymce.min.js">
 </script>
 <script src="{{url('js/email-editor-plugin.js')}}">
 </script>

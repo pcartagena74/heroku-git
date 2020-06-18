@@ -409,14 +409,19 @@ var returnVal;
          *  Get content active element for change setting
          */
         getActiveElementContent: function() {
+            // console.log('hre',_this.$elem.selection.getStart());
+            // button = _this.$elem.dom.getParent(_this.$elem.selection.getStart(), 'a');
             _element = _this.$elem.find('.sortable-row.active .sortable-row-content .element-content');
+            console.log('here0', _element);
             //element-contenteditable active
             if (_element.find('[contenteditable="true"]').hasClass('element-contenteditable')) {
                 _element = _element.find('.element-contenteditable.active');
+                console.log('here1', _element);
                 // if(_element.find('.button-1.hyperlink')){
                 //     return _element.find('.button-1.hyperlink')
                 // }
             }
+            console.log('here2', _element);
             if (_this.$elem.find('.content-wrapper').hasClass('active')) {
                 _element = _this.$elem.find('.content-wrapper');
             }
@@ -1633,7 +1638,6 @@ var returnVal;
          * tinymce Context Menu
          */
         tinymceContextMenu: function() {
-            console.log('here', _this.config.showContextMenu);
             if (_this.config.showContextMenu == false) {
                 return false;
             }
@@ -1665,14 +1669,123 @@ var returnVal;
                 selector: 'div.content-wrapper',
                 theme: 'inlite',
                 inline: true,
-                plugins: 'paste lists advlist textcolor link autolink textpattern',
-                selection_toolbar: _toolBar,
+                plugins: 'paste lists advlist textcolor link autolink textpattern contextmenu',
+                selection_toolbar: _toolBar + '| createButton removeButton | separator',
+                contextmenu: 'link createButton removeButton separator',
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
                 dialog_type: "modal",
+                trapFocus: false,
+                setup: function(editor) {
+                    function insertButtonHTML() {
+                        var bt_html = '<a style="margin-top: 10px; background-color: rgb(52, 152, 219); font-family: Arial; color: rgb(255, 255, 255); display: inline-block; border-radius: 6px; text-align: center; padding: 12px 20px; text-decoration: none; overflow-wrap: break-word; text-size-adjust: 100%;" class="button-1 hyperlink" href="#" data-default="1">';
+                        bt_html += 'Click me</a>';
+                        editor.insertContent(bt_html);
+                    }
+
+                    function removeButtonHTML() {
+                        let button;
+                        button = editor.dom.getParent(editor.selection.getStart(), 'a');
+                        if (button) {
+                            if (button.className == 'button-1 hyperlink') {
+                                button.remove();
+                            }
+                        }
+                    }
+
+                    function checkInsertButton() {
+                        var btn = this;
+                        editor.on('NodeChange', function(e) {
+                            if (e.element.className == 'button-1 hyperlink' || e.element.className == 'main mce-item-table') {
+                                btn.disabled(true);
+                            } else {
+                                btn.disabled(false);
+                            }
+                        });
+                    }
+
+                    function checkRemoveButton() {
+                        var btn = this;
+                        editor.on('NodeChange', function(e) {
+                            if (e.element.className == 'button-1 hyperlink') {
+                                btn.disabled(false);
+                            } else {
+                                btn.disabled(true);
+                            }
+                        });
+                    }
+
+                    function createButtonMenu() {
+                        return {
+                            icon: 'plus',
+                            text: 'Button',
+                            tooltip: "Insert Button",
+                            onclick: insertButtonHTML,
+                            onpostrender: checkInsertButton
+                        };
+                    }
+
+                    function removeButtonMenu() {
+                        return {
+                            icon: 'remove',
+                            text: 'Button',
+                            tooltip: "Remove Button",
+                            onclick: removeButtonHTML,
+                            onpostrender: checkRemoveButton
+                        };
+                    }
+
+                    function generateSepratorHTML(type = 'divider') {
+                        let html = '<div style="border-top: 1px solid #DADFE1;"></div>';
+                        switch (type) {
+                            case 'divider':
+                                return html;
+                                break;
+                            case 'dotted':
+                                return html;
+                                break;
+                            case 'dashed':
+                                return html;
+                                break;
+                        }
+                    }
+
+                    function separatorMenu(title = 'Seperator\'s') {
+                        return {
+                            type: 'menubutton',
+                            text: 'Separator',
+                            icon: false,
+                            menu: [{
+                                text: 'Divider',
+                                onclick: function() {
+                                    editor.insertContent(generateSepratorHTML());
+                                }
+                            }, {
+                                text: 'Divider (Dotted)',
+                                onclick: function() {
+                                    editor.insertContent(generateSepratorHTML());
+                                }
+                            }, {
+                                text: 'Divider (Dashed)',
+                                onclick: function() {
+                                    editor.insertContent(generateSepratorHTML());
+                                }
+                            }]
+                        };
+                    }
+                    //insert button
+                    editor.addButton('createButton', createButtonMenu());
+                    editor.addMenuItem('createButton', createButtonMenu());
+                    //remove button
+                    editor.addButton('removeButton', removeButtonMenu());
+                    editor.addMenuItem('removeButton', removeButtonMenu());
+                    //separator
+                    editor.addButton('separator', separatorMenu());
+                    editor.addMenuItem('separator', separatorMenu());
+                }
             });
             // let menu = _tinymce.activeEditor.ui.registry.getAll().contextMenus;
-            console.log('here', _toolBar);
+            // console.log('here', _toolBar);
         },
         /**
          * Get languages
