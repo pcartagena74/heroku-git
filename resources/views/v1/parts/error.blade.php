@@ -12,6 +12,10 @@ $margin = 'margin-top:55px;';
 if(Session::has('become')){
     $margin = '';
 }
+//if no auth page is using, no margin is required
+if(!empty($no_auth)){
+    $margin = '';
+}
 @endphp
 {{--
 <style>
