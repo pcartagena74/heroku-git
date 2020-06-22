@@ -254,7 +254,7 @@ var returnVal;
             _elementsContainer = '<div class="elements-container">' + _tabElements + _tabProperty + '</div>';
             _elements = '<div class="elements">' + _elementsContainer + _settings + '</div>';
             _outputSideBar = '<aside class="left-menu-container clearfix scroll-view">' + _nav + _elements + '</aside>';
-            _outputContent = '<div class="content">' + '<div id="editorContent" class="content-wrapper" data-types="background,padding,width">' + '<div class="content-main lg-width">' + '<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _loadPageHtml + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>';
+            _outputContent = '<div class="content">' + '<div id="editorContent" class="content-wrapper" data-types="background,padding,width">' + '<div class="content-main lg-width">' + '<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content" data-last-type="background" data-types="background,padding">' + _loadPageHtml + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>' + '</div>';
             _contentMenu = '';
             //temporary 
             if (_this.config.showContextMenu == true) {
@@ -670,7 +670,7 @@ var returnVal;
                     buttonsStyling: false
                 }).then(function(result) {
                     if (result.value) {
-                        _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content">' + _blankPageHtml + '</div>' + '</div>' + '</div>' + '</div>');
+                        _this.$elem.find('.content-main').html('<div class="email-editor-elements-sortable">' + '<div class="sortable-row">' + '<div class="sortable-row-container">' + '<div class="sortable-row-actions">' + '<div class="row-move row-action">' + '<i class="fa fa-arrows-alt"></i>' + '</div>' + '<div class="row-remove row-action">' + '<i class="fa fa-remove"></i>' + '</div>' + '<div class="row-duplicate row-action">' + '<i class="fa fa-files-o"></i>' + '</div>' + '<div class="row-code row-action">' + '<i class="fa fa-code"></i>' + '</div>' + '</div>' + '<div class="sortable-row-content" data-last-type="padding" data-types="background,padding">' + _blankPageHtml + '</div>' + '</div>' + '</div>' + '</div>');
                         _this.makeSortable();
                         _this.remove_row_elements();
                         jQuery('.project-container').hide();
@@ -762,10 +762,6 @@ var returnVal;
             _this.events_of_popup();
             _this.events_of_setting();
             _this.remove_row_elements();
-            $(document).on('drop', '.text-content', function() {
-                _element_drop = this;
-                console.log('here text ', _element_drop);
-            });
         },
         /**
          *  Events of row
@@ -1670,8 +1666,8 @@ var returnVal;
                 theme: 'inlite',
                 inline: true,
                 plugins: 'paste lists advlist textcolor link autolink textpattern contextmenu',
-                selection_toolbar: _toolBar + '| createButton removeButton | separator',
-                contextmenu: 'link createButton removeButton separator',
+                selection_toolbar: _toolBar + '| createButton removeButton | separator removeSeparator',
+                contextmenu: 'link createButton removeButton separator removeSeparator',
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
                 dialog_type: "modal",
@@ -1736,18 +1732,41 @@ var returnVal;
                     }
 
                     function generateSepratorHTML(type = 'divider') {
-                        let html = '<div style="border-top: 1px solid #DADFE1;"></div>';
+                        let html = '';
+                        html += '<div  class="divider-mce" style="padding: 10px 5px;border-top: 1px solid #DADFE1;margin">&nbsp;</div>';
                         switch (type) {
                             case 'divider':
                                 return html;
                                 break;
                             case 'dotted':
-                                return html;
+                                return html.replace('solid', 'dotted');
                                 break;
                             case 'dashed':
-                                return html;
+                                return html.replace('solid', 'dashed');
                                 break;
                         }
+                    }
+
+                    function seperatorEnableDisable() {
+                        var btn = this;
+                        editor.on('NodeChange', function(e) {
+                            if (e.element.className == 'button-1 hyperlink' || e.element.tagName == 'a') {
+                                btn.disabled(true);
+                            } else {
+                                btn.disabled(false);
+                            }
+                        });
+                    }
+
+                    function seperatorEnableDisable() {
+                        var btn = this;
+                        editor.on('NodeChange', function(e) {
+                            if (e.element.className == 'button-1 hyperlink' || e.element.tagName == 'a') {
+                                btn.disabled(true);
+                            } else {
+                                btn.disabled(false);
+                            }
+                        });
                     }
 
                     function separatorMenu(title = 'Seperator\'s') {
@@ -1763,14 +1782,48 @@ var returnVal;
                             }, {
                                 text: 'Divider (Dotted)',
                                 onclick: function() {
-                                    editor.insertContent(generateSepratorHTML());
+                                    editor.insertContent(generateSepratorHTML('dotted'));
                                 }
                             }, {
                                 text: 'Divider (Dashed)',
                                 onclick: function() {
-                                    editor.insertContent(generateSepratorHTML());
+                                    editor.insertContent(generateSepratorHTML('dashed'));
                                 }
-                            }]
+                            }],
+                            onpostrender: seperatorEnableDisable
+                        };
+                    }
+
+                    function removeSeperator() {
+                        let button;
+                        button = editor.dom.getParent(editor.selection.getStart(), 'div');
+                        console.log('remove', button);
+                        if (button) {
+                            if (button.className == 'divider-mce') {
+                                button.remove();
+                            }
+                        }
+                    }
+
+                    function enableDisableRemoveSeperator() {
+                        var btn = this;
+                        editor.on('NodeChange', function(e) {
+                            console.log('change', e.element);
+                            if (e.element.className == 'divider-mce') {
+                                btn.disabled(false);
+                            } else {
+                                btn.disabled(true);
+                            }
+                        });
+                    }
+
+                    function removeSeparatorMenu() {
+                        return {
+                            icon: 'remove',
+                            text: 'Remove Separator',
+                            tooltip: "Remove Separator Button",
+                            onclick: removeSeperator,
+                            onpostrender: enableDisableRemoveSeperator
                         };
                     }
                     //insert button
@@ -1782,6 +1835,9 @@ var returnVal;
                     //separator
                     editor.addButton('separator', separatorMenu());
                     editor.addMenuItem('separator', separatorMenu());
+                    //remove separator
+                    editor.addButton('removeSeparator', removeSeparatorMenu());
+                    editor.addMenuItem('removeSeparator', removeSeparatorMenu());
                 }
             });
             // let menu = _tinymce.activeEditor.ui.registry.getAll().contextMenus;
