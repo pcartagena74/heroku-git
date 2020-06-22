@@ -46,7 +46,7 @@ if(Session::has('become')){
         </a>
         {!! $e !!}
     </div>
+    @endforeach
 </div>
-@endforeach
-    @endif
+@endif
     @endif
