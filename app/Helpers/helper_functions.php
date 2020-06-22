@@ -264,6 +264,12 @@ if (!function_exists('location_triage')) {
         $locationID  = request()->input('locationID');
         $loc_virtual = request()->input('virtual');
 
+        if($event === null || $event->orgID === null) {
+            $orgID = $current_person->defaultOrgID;
+        } else {
+            $orgID = $event->orgID;
+        }
+
         if (empty($loc_virtual)) {
             $loc_virtual = 0;
         }
@@ -282,7 +288,7 @@ if (!function_exists('location_triage')) {
                 $loc = Location::firstOrNew(
                     [
                         'locName' => $locName,
-                        'orgID'   => $event->orgID,
+                        'orgID'   => $orgID
                     ]
                 );
                 break;
@@ -300,7 +306,7 @@ if (!function_exists('location_triage')) {
 
         }
 
-        if ($loc->orgID == $event->orgID) {
+        if ($loc->orgID == $orgID) {
             $loc->locName   = $locName;
             $loc->addr1     = $addr1;
             $loc->addr2     = $addr2;
