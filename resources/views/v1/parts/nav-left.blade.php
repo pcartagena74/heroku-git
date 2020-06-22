@@ -222,11 +222,13 @@ try{
                                         @lang('messages.nav.ev_add')
                                     </a>
                                 </li>
+                                @if(Entrust::hasRole('Developer'))
                                 <li>
                                     <a href="{{ url('eventstats')}}">
                                         @lang('messages.nav.ev_stats')
                                     </a>
                                 </li>
+                                @endif
                                 <li>
                                     <a href="{{ url('locations')}}">
                                         @lang('messages.nav.ev_loc')
