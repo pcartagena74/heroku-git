@@ -263,7 +263,7 @@ if (!function_exists('location_triage')) {
         //$loc = null;
         $locationID  = request()->input('locationID');
         $loc_virtual = request()->input('virtual');
-        
+
         if($event === null || $event->orgID === null) {
             $orgID = $current_person->defaultOrgID;
         } else {
