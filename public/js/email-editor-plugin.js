@@ -438,8 +438,8 @@ function c(el) {
                 jQuery('.content-wrapper').click();
                 _this.tabMenu('typography');
                 _this.tinymceContextMenu();
+                _this.makeSortable();
             }, 100);
-            _this.makeSortable();
             //_this.tabMenu('typography');
             _aceEditor = ace.edit("editorHtml");
             _aceEditor.setTheme("ace/theme/monokai");
@@ -600,7 +600,7 @@ function c(el) {
                     var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
                     let ele = $(element).find('.sortable-row-content').find('.text-content');
                     if (ele.length > 0) {
-                        console.log('here2');
+                        // console.log('here2');
                         let content = ui.helper.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
@@ -1713,7 +1713,7 @@ function c(el) {
                         let button;
                         button = editor.dom.getParent(editor.selection.getStart(), 'a');
                         if (button) {
-                            if (button.className == 'button-1 hyperlink') {
+                            if (button.className.includes('button-1 hyperlink')) {
                                 button.remove();
                             }
                         }
@@ -1722,7 +1722,7 @@ function c(el) {
                     function checkInsertButton() {
                         var btn = this;
                         editor.on('NodeChange', function(e) {
-                            if (e.element.className == 'button-1 hyperlink' || e.element.className == 'main mce-item-table') {
+                            if (e.element.className.includes('button-1 hyperlink') || e.element.className == 'main mce-item-table') {
                                 btn.disabled(true);
                             } else {
                                 btn.disabled(false);
@@ -1733,7 +1733,7 @@ function c(el) {
                     function checkRemoveButton() {
                         var btn = this;
                         editor.on('NodeChange', function(e) {
-                            if (e.element.className == 'button-1 hyperlink') {
+                            if (e.element.className.includes('button-1 hyperlink')) {
                                 btn.disabled(false);
                             } else {
                                 btn.disabled(true);
