@@ -18,7 +18,7 @@ $topBits = '';  // remove this if this was set in the controller
             <h2>
                 @lang('messages.headers.campaign_heading')
                 <small>
-                    <a class="btn btn-primary btn-sm" href="">
+                    <a class="btn btn-primary btn-sm" href="{{url('campaign/create')}}">
                         @lang('messages.buttons.create_campaign')
                     </a>
                 </small>

@@ -5,6 +5,75 @@ var returnVal;
  * Author Uri : https://cidcode.net
  */
 ;
+$.fn.insertAtCaret = function(myValue) {
+    return this.each(function() {
+        //IE support
+        if (document.selection) {
+            this.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            this.focus();
+        }
+        //MOZILLA / NETSCAPE support
+        else if (this.selectionStart || this.selectionStart == '0') {
+            var startPos = this.selectionStart;
+            var endPos = this.selectionEnd;
+            var scrollTop = this.scrollTop;
+            this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos, this.value.length);
+            this.focus();
+            this.selectionStart = startPos + myValue.length;
+            this.selectionEnd = startPos + myValue.length;
+            this.scrollTop = scrollTop;
+        } else {
+            this.value += myValue;
+            this.focus();
+        }
+    });
+};
+/**
+ * Return an object with the selection range or cursor position (if both have the same value)
+ * @param {DOMElement} el A dom element of a textarea or input text.
+ * @return {Object} reference Object with 2 properties (start and end) with the identifier of the location of the cursor and selected text.
+ **/
+function c(el) {
+    var start = 0,
+        end = 0,
+        normalizedValue, range, textInputRange, len, endRange;
+    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+        start = el.selectionStart;
+        end = el.selectionEnd;
+    } else {
+        range = document.selection.createRange();
+        if (range && range.parentElement() == el) {
+            len = el.value.length;
+            normalizedValue = el.value.replace(/\r\n/g, "\n");
+            // Create a working TextRange that lives only in the input
+            textInputRange = el.createTextRange();
+            textInputRange.moveToBookmark(range.getBookmark());
+            // Check if the start and end of the selection are at the very end
+            // of the input, since moveStart/moveEnd doesn't return what we want
+            // in those cases
+            endRange = el.createTextRange();
+            endRange.collapse(false);
+            if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
+                start = end = len;
+            } else {
+                start = -textInputRange.moveStart("character", -len);
+                start += normalizedValue.slice(0, start).split("\n").length - 1;
+                if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
+                    end = len;
+                } else {
+                    end = -textInputRange.moveEnd("character", -len);
+                    end += normalizedValue.slice(0, end).split("\n").length - 1;
+                }
+            }
+        }
+    }
+    return {
+        start: start,
+        end: end
+    };
+}
 (function(factory) {
     "use strict";
     if (typeof define === 'function' && define.amd) { // AMD
@@ -324,8 +393,8 @@ var returnVal;
             //     background: "#253843"
             // });
             _this.$elem.find(".elements-container").slimScroll({
-                height: '94%',
-                width: '100%',
+                height: "100%",
+                width: '310px',
                 color: "#5D8397",
                 size: "10px",
                 railColor: "#253843"
@@ -409,26 +478,15 @@ var returnVal;
          *  Get content active element for change setting
          */
         getActiveElementContent: function() {
-            // console.log('hre',_this.$elem.selection.getStart());
-            // button = _this.$elem.dom.getParent(_this.$elem.selection.getStart(), 'a');
             _element = _this.$elem.find('.sortable-row.active .sortable-row-content .element-content');
-            console.log('here0', _element);
             //element-contenteditable active
             if (_element.find('[contenteditable="true"]').hasClass('element-contenteditable')) {
                 _element = _element.find('.element-contenteditable.active');
-                console.log('here1', _element);
-                // if(_element.find('.button-1.hyperlink')){
-                //     return _element.find('.button-1.hyperlink')
-                // }
             }
-            console.log('here2', _element);
             if (_this.$elem.find('.content-wrapper').hasClass('active')) {
                 _element = _this.$elem.find('.content-wrapper');
             }
             return _element;
-        },
-        drop: function(event) {
-            console.log('herer', event);
         },
         /**
          *  Make content elements sortable
@@ -441,12 +499,15 @@ var returnVal;
                 //group: 'no-drop',
                 handle: '.row-move',
                 revert: true,
+                start: function(event, ui) {},
                 update: function(event, ui) {
                     // console.log('update here',event, ui);
                     // var fieldname = ui.item.text();
                     // ui.item.html('your new html here');  
                 },
                 receive: function(event, ui) {
+                    // let elent = getInputSelection(ui.item);
+                    // input.focus();
                     let dropPositionX = event.pageX - $(this).offset().left;
                     let dropPositionY = event.pageY - $(this).offset().top;
                     // Get mouse offset relative to dragged item:
@@ -461,26 +522,17 @@ var returnVal;
                         let content = ui.item.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
-                        if (content.data('id') == 4) {
-                            return ele[0].append(tag);
-                        }
-                        // 20 button
-                        if (content.data('id') == 20) {
-                            let link = content.find('a');
-                            if (link[0]) {
-                                $(link[0]).attr('contenteditable', 'true');
-                                $(link[0]).attr('data-last-type', lst_type);
-                                $(link[0]).attr('data-types', types);
-                                // ui.item.remove();
-                                return ele[0].append(link[0]);
-                            }
-                        }
+                        // if (content.data('id') == 4) {
+                        //     return ele[0].append(tag);
+                        // }
                         // 28 - 45 user info
                         if (content.data('id') >= 28 && content.data('id') <= 45) {
                             let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
                             if (tag !== 'undefined') {
                                 return ele[0].append(tag);
+                                // console.log($(ele[0]).insertAtCaret(tag));
+                                // return $(ele[0]).insertAtCaret(tag);
                             }
                             // ui.helper.remove();
                         }
@@ -491,36 +543,37 @@ var returnVal;
                             // ui.helper.remove();
                             if (tag !== 'undefined') {
                                 return ele[0].append(tag);
+                                // return $(ele[0]).insertAtCaret(tag);
                             }
                         }
-                        //7 unordered list
-                        if (content.data('id') == 7) {
-                            let content = ui.item.find('.sortable-row-content').find('ul');
-                            if (content[0]) {
-                                return ele[0].append(content[0]);
-                            }
-                        }
-                        //8 ordered list
-                        if (content.data('id') == 8) {
-                            let content = ui.item.find('.sortable-row-content').find('ol');
-                            if (content[0]) {
-                                return ele[0].append(content[0]);
-                            }
-                        }
-                        //16 - 19 layout
-                        if (content.data('id') >= 16 && content.data('id') <= 19) {
-                            if (content.data('id') == 19) {
-                                let content = ui.item.find('.sortable-row-content').find('a');
-                                if (content[0]) {
-                                    return ele[0].append(content[0]);
-                                }
-                            } else {
-                                let content = ui.item.find('.sortable-row-content').find('.divider-simple').find('div');
-                                if (content[0]) {
-                                    return ele[0].append(content[0]);
-                                }
-                            }
-                        }
+                        // //7 unordered list
+                        // if (content.data('id') == 7) {
+                        //     let content = ui.item.find('.sortable-row-content').find('ul');
+                        //     if (content[0]) {
+                        //         return ele[0].append(content[0]);
+                        //     }
+                        // }
+                        // //8 ordered list
+                        // if (content.data('id') == 8) {
+                        //     let content = ui.item.find('.sortable-row-content').find('ol');
+                        //     if (content[0]) {
+                        //         return ele[0].append(content[0]);
+                        //     }
+                        // }
+                        // //16 - 19 layout
+                        // if (content.data('id') >= 16 && content.data('id') <= 19) {
+                        //     if (content.data('id') == 19) {
+                        //         let content = ui.item.find('.sortable-row-content').find('a');
+                        //         if (content[0]) {
+                        //             return ele[0].append(content[0]);
+                        //         }
+                        //     } else {
+                        //         let content = ui.item.find('.sortable-row-content').find('.divider-simple').find('div');
+                        //         if (content[0]) {
+                        //             return ele[0].append(content[0]);
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             }).droppable({
@@ -547,17 +600,10 @@ var returnVal;
                     var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
                     let ele = $(element).find('.sortable-row-content').find('.text-content');
                     if (ele.length > 0) {
-                        // console.log('here2');
+                        console.log('here2');
                         let content = ui.helper.find('.sortable-row-content');
                         let lst_type = content.data('last-type');
                         let types = content.data('types');
-                        // 20 button
-                        if (content.data('id') == 20) {
-                            let link = content.find('a');
-                            if (link[0]) {
-                                ui.helper.remove();
-                            }
-                        }
                         // 28 - 45 user info
                         if (content.data('id') >= 28 && content.data('id') <= 45) {
                             let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
@@ -568,22 +614,6 @@ var returnVal;
                         }
                         //46 - 65 org info
                         if (content.data('id') >= 46 && content.data('id') <= 65) {
-                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
-                            let tag = content.html();
-                            if (tag !== 'undefined') {
-                                ui.helper.remove();
-                            }
-                        }
-                        //7 unordered list
-                        if (content.data('id') == 7) {
-                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
-                            let tag = content.html();
-                            if (tag !== 'undefined') {
-                                ui.helper.remove();
-                            }
-                        }
-                        //8 ordered list
-                        if (content.data('id') == 7) {
                             let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
                             let tag = content.html();
                             if (tag !== 'undefined') {
@@ -1666,15 +1696,15 @@ var returnVal;
                 theme: 'inlite',
                 inline: true,
                 plugins: 'paste lists advlist textcolor link autolink textpattern contextmenu',
-                selection_toolbar: _toolBar + '| createButton removeButton | separator removeSeparator',
-                contextmenu: 'link createButton removeButton separator removeSeparator',
+                selection_toolbar: _toolBar + '| createButton removeButton | separator',
+                contextmenu: 'link createButton removeButton',
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
                 dialog_type: "modal",
                 trapFocus: false,
                 setup: function(editor) {
                     function insertButtonHTML() {
-                        var bt_html = '<a style="margin-top: 10px; background-color: rgb(52, 152, 219); font-family: Arial; color: rgb(255, 255, 255); display: inline-block; border-radius: 6px; text-align: center; padding: 12px 20px; text-decoration: none; overflow-wrap: break-word; text-size-adjust: 100%;" class="button-1 hyperlink" href="#" data-default="1">';
+                        var bt_html = '<a contenteditable="true"  data-last-type="background" data-types="background,border-radius,padding,button" style="margin-top: 10px; background-color: rgb(52, 152, 219); font-family: Arial; color: rgb(255, 255, 255); display: inline-block; border-radius: 6px; text-align: center; padding: 12px 20px; text-decoration: none; overflow-wrap: break-word; text-size-adjust: 100%;" class="button-1 hyperlink" href="#" data-default="1" >';
                         bt_html += 'Click me</a>';
                         editor.insertContent(bt_html);
                     }

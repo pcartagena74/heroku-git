@@ -586,7 +586,7 @@ li {
     width: 90px;
     height: 80px;
     padding-top: 15px;
-    cursor: pointer;
+    cursor: pointer!important;
 }
 #email_builder_master .left-menu-container .elements .elements-container .elements-list .elements-list-item .preview {
     text-align: center;
@@ -618,7 +618,7 @@ li {
     margin-right: 3px;
     float: left;
     border-radius: 2px;
-    cursor: pointer;
+    cursor: pointer!important;
 }
 #email_builder_master .left-menu-container .elements .elements-container .text-style-box .align-icons {
     float: right;
@@ -771,7 +771,7 @@ li {
     width: calc(100% - 380px);
     box-shadow: 0 0 10px #666;
     position: absolute;
-    height: 100%;
+    height: calc(100% - 40px);
     overflow-y: auto;
 }
 #email_builder_master .editor-container .content .content-main {
@@ -3240,6 +3240,7 @@ li {
 .mce-container.mce-panel.mce-floatpanel.mce-window.mce-in {
     z-index: 70000 !important;
 }*/
+
 /*.mce-window {
     opacity: 1!important;
     left: 50% !important;
@@ -3250,3 +3251,8 @@ li {
 .mce-window .mce-abs-layout-item, .mce-abs-end {
     position: relative!important;
 }*/
+
+.slimScrollDiv .elements-container {
+    width: 276px!important;
+    height: calc(100% - 40px)!important;
+}

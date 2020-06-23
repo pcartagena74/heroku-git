@@ -16,7 +16,7 @@ class EmailBuilderSeeder extends Seeder
             ['id' => 1, 'name' => 'Typography'],
             ['id' => 2, 'name' => 'Media'],
             ['id' => 3, 'name' => 'Layout'],
-            ['id' => 4, 'name' => 'Button'],
+            // ['id' => 4, 'name' => 'Button'],
             ['id' => 5, 'name' => 'Social'],
             ['id' => 6, 'name' => 'Footer'],
             ['id' => 7, 'name' => 'User Info'],
