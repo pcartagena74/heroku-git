@@ -4,76 +4,6 @@ var returnVal;
  * Author: Rufat Askerov
  * Author Uri : https://cidcode.net
  */
-;
-$.fn.insertAtCaret = function(myValue) {
-    return this.each(function() {
-        //IE support
-        if (document.selection) {
-            this.focus();
-            sel = document.selection.createRange();
-            sel.text = myValue;
-            this.focus();
-        }
-        //MOZILLA / NETSCAPE support
-        else if (this.selectionStart || this.selectionStart == '0') {
-            var startPos = this.selectionStart;
-            var endPos = this.selectionEnd;
-            var scrollTop = this.scrollTop;
-            this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos, this.value.length);
-            this.focus();
-            this.selectionStart = startPos + myValue.length;
-            this.selectionEnd = startPos + myValue.length;
-            this.scrollTop = scrollTop;
-        } else {
-            this.value += myValue;
-            this.focus();
-        }
-    });
-};
-/**
- * Return an object with the selection range or cursor position (if both have the same value)
- * @param {DOMElement} el A dom element of a textarea or input text.
- * @return {Object} reference Object with 2 properties (start and end) with the identifier of the location of the cursor and selected text.
- **/
-function c(el) {
-    var start = 0,
-        end = 0,
-        normalizedValue, range, textInputRange, len, endRange;
-    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
-        start = el.selectionStart;
-        end = el.selectionEnd;
-    } else {
-        range = document.selection.createRange();
-        if (range && range.parentElement() == el) {
-            len = el.value.length;
-            normalizedValue = el.value.replace(/\r\n/g, "\n");
-            // Create a working TextRange that lives only in the input
-            textInputRange = el.createTextRange();
-            textInputRange.moveToBookmark(range.getBookmark());
-            // Check if the start and end of the selection are at the very end
-            // of the input, since moveStart/moveEnd doesn't return what we want
-            // in those cases
-            endRange = el.createTextRange();
-            endRange.collapse(false);
-            if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
-                start = end = len;
-            } else {
-                start = -textInputRange.moveStart("character", -len);
-                start += normalizedValue.slice(0, start).split("\n").length - 1;
-                if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
-                    end = len;
-                } else {
-                    end = -textInputRange.moveEnd("character", -len);
-                    end += normalizedValue.slice(0, end).split("\n").length - 1;
-                }
-            }
-        }
-    }
-    return {
-        start: start,
-        end: end
-    };
-}
 (function(factory) {
     "use strict";
     if (typeof define === 'function' && define.amd) { // AMD
@@ -147,6 +77,26 @@ function c(el) {
             parentSelector: 'tab-property'
         }
     };
+    var _userInfo = {
+        '[PREFIX]': 'Prefix',
+        '[FIRSTNAME]': 'Frist Name',
+        '[MIDDLENAME]': 'Middle Name',
+        '[LASTNAME]': 'Last Name',
+        '[SUFFIX]': 'Suffix',
+        '[PREFNAME]': 'Pref Name',
+        '[LOGINEMAIL]': 'Login Email',
+        '[ORGANIZATIONNAME]': 'Organization Name',
+        '[TITLE]': 'Title',
+        '[COMPANYNAME]': 'Company Name',
+        '[INDUSTRY]': 'Industry',
+        '[EXPERINCE]': 'Experince',
+        '[ALLERGENNOTE]': 'Allergen Note',
+        '[SPECIALNEEDS]': 'Special Needs',
+        '[CHAPTERROLE]': 'Chapter Role',
+        '[AFFILIATION]': 'Affiliation',
+        '[TWITTERHANDLE]': 'Twitter Handle',
+        '[CERTIFICATIONS]': 'Certifications',
+    };
     /**
      * Using all variables in plugin
      */
@@ -206,6 +156,7 @@ function c(el) {
             showRowRemoveButton: true,
             showRowDuplicateButton: true,
             showRowCodeEditorButton: true,
+            orgInfoMenuItem: [],
             //events of settings
             onSettingsPreviewButtonClick: function(e) {},
             onSettingsExportButtonClick: function(e) {},
@@ -493,13 +444,30 @@ function c(el) {
          */
         makeSortable: function() {
             _this.$elem.find(".email-editor-elements-sortable").sortable({
+                placeholder: "editor-elements-placeholder",
+                forcePlaceholderSize: true,
+                group: 'no-drop',
+                handle: '.row-move',
+                revert: true,
+                tolerance: "pointer",
+                forceHelperSize:'true',
+                axis: 'y',
+                start: function(event, ui) {
+                    ui.placeholder.height(ui.helper[0].scrollHeight);
+                },
+            });
+            _this.$elem.find(".email-editor-elements-sortable--onon").sortable({
                 connectWith: ".droppable,#draggables",
                 placeholder: "editor-elements-placeholder",
                 forcePlaceholderSize: true,
                 //group: 'no-drop',
                 handle: '.row-move',
                 revert: true,
-                start: function(event, ui) {},
+                tolerance: "pointer",
+                forceHelperSize:'true',
+                start: function(event, ui) {
+                    ui.placeholder.height(ui.helper[0].scrollHeight);
+                },
                 update: function(event, ui) {
                     // console.log('update here',event, ui);
                     // var fieldname = ui.item.text();
@@ -902,21 +870,37 @@ function c(el) {
                 _element = jQuery(this);
                 _val = _element.val();
                 _activeElement = _this.getActiveElementContent();
-                _activeElement.find('a').text(_val);
+                if (_activeElement.find('a').length == 0) {
+                    _activeElement.text(_val);
+                } else {
+                    _activeElement.find('a').text(_val);
+                }
             });
             _this.$elem.on('keyup', '.elements-accordion-item-content .button-hyperlink', function(event) {
                 _element = jQuery(this);
                 _val = _element.val();
                 _activeElement = _this.getActiveElementContent();
-                _activeElement.find('a').attr('href', _val);
+                if (_activeElement.find('a').length == 0) {
+                    _activeElement.attr('href', _val);
+                } else {
+                    _activeElement.find('a').attr('href', _val);
+                }
             });
             _this.$elem.on('change', '.elements-accordion-item-content .button-full-width', function(event) {
                 _element = jQuery(this);
                 _activeElement = _this.getActiveElementContent();
                 if ($('.button-full-width').is(':checked') == true) {
-                    _activeElement.find('a').css('display', 'block');
+                    if (_activeElement.find('a').length == 0) {
+                        _activeElement.css('display', 'block');
+                    } else {
+                        _activeElement.find('a').css('display', 'block');
+                    }
                 } else {
-                    _activeElement.find('a').css('display', 'inline-block');
+                    if (_activeElement.find('a').length == 0) {
+                        _activeElement.css('display', 'inline-block');
+                    } else {
+                        _activeElement.find('a').css('display', 'inline-block');
+                    }
                 }
             });
             //youtube
@@ -925,7 +909,6 @@ function c(el) {
                 _val = _element.val();
                 _activeElement = _this.getActiveElementContent();
                 _activeElement.find('a').attr('href', _val);
-                // console.log(_this.getYoutubeVideoId(_val));
                 _activeElement.find('table').css('background-image', "url('https://img.youtube.com/vi/" + _this.getYoutubeVideoId(_val) + "/sddefault.jpg')");
             });
             //text style
@@ -1519,11 +1502,19 @@ function c(el) {
             if (_dataTypes.length < 1) {
                 return;
             }
+            if (_thisElement.hasClass('button-1') && _thisElement.hasClass('hyperlink')) {
+                _dataTypes = _thisElement.attr('data-types');
+                if (typeof _dataTypes == 'undefined') {
+                    return;
+                }
+                if (_dataTypes.length < 1) {
+                    return;
+                }
+            }
             _typeArr = _dataTypes.toString().split(',');
             _arrSize = _this.$elem.find('.tab-property .elements-accordion-item').length;
             for (var i = 0; i < _arrSize; i++) {
                 _accordionMenuItem = _this.$elem.find('.tab-property .elements-accordion-item').eq(i);
-                //console.log(_accordionMenuItem.attr('data-type'))
                 if (_dataTypes.indexOf(_accordionMenuItem.attr('data-type')) > -1) {
                     _accordionMenuItem.show();
                 } else {
@@ -1534,13 +1525,19 @@ function c(el) {
             if (lastType === undefined) {
                 lastType = _element.find('.sortable-row-content').attr('data-types').split(',')[0];
             }
+            if (_thisElement.hasClass('button-1') && _thisElement.hasClass('hyperlink')) {
+                lastType = _thisElement.attr('data-last-type');
+                if (lastType === undefined) {
+                    lastType = _element.find('.sortable-row-content').attr('data-types').split(',')[0];
+                }
+            }
             _this.tabMenu(lastType);
-            _this.getSettings();
+            _this.getSettings(_thisElement);
         },
         /**
          * Get active element settings
          */
-        getSettings: function() {
+        getSettings: function(_thisElement = null) {
             _element = _this.getActiveElementContent();
             _style = _element.attr('style');
             if (typeof _style === "undefined" || _style.length < 1) {
@@ -1602,6 +1599,7 @@ function c(el) {
                 _this.$elem.find('.youtube').val(_ytbUrl);
             }
             //hyperlink
+            // console.log('herer',_element)
             if (_element.hasClass('hyperlink')) {
                 _href = _element.attr('href');
                 _this.$elem.find('.hyperlink-url').val(_href);
@@ -1696,8 +1694,8 @@ function c(el) {
                 theme: 'inlite',
                 inline: true,
                 plugins: 'paste lists advlist textcolor link autolink textpattern contextmenu',
-                selection_toolbar: _toolBar + '| createButton removeButton | separator',
-                contextmenu: 'link createButton removeButton',
+                selection_toolbar: _toolBar + '| createButton removeButton',
+                contextmenu: 'link createButton removeButton userInfoMenu orgInfoMenu',
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
                 dialog_type: "modal",
@@ -1799,35 +1797,57 @@ function c(el) {
                         });
                     }
 
-                    function separatorMenu(title = 'Seperator\'s') {
+                    function createUserInfoMenu() {
+                        let user_ary = [];
+                        $.each(_userInfo, function(index, value) {
+                            user_ary.push({
+                                text: value,
+                                onclick: function() {
+                                    editor.insertContent(index);
+                                }
+                            });
+                        });
+                        // console.log(user_ary);
+                        return user_ary;
+                    }
+
+                    function createOrgInfoMenu() {
+                        let org_ary = [];
+                        $.each(_this.config.orgInfoMenuItem, function(index, value) {
+                            org_ary.push({
+                                text: value,
+                                onclick: function() {
+                                    editor.insertContent(index);
+                                }
+                            });
+                        });
+                        return org_ary;
+                    }
+
+                    function userInfoMenu(title = 'Seperator\'s') {
                         return {
-                            type: 'menubutton',
-                            text: 'Separator',
-                            icon: false,
-                            menu: [{
-                                text: 'Divider',
-                                onclick: function() {
-                                    editor.insertContent(generateSepratorHTML());
-                                }
-                            }, {
-                                text: 'Divider (Dotted)',
-                                onclick: function() {
-                                    editor.insertContent(generateSepratorHTML('dotted'));
-                                }
-                            }, {
-                                text: 'Divider (Dashed)',
-                                onclick: function() {
-                                    editor.insertContent(generateSepratorHTML('dashed'));
-                                }
-                            }],
+                            separator: 'before',
+                            // type: 'menubutton',
+                            text: 'User Info',
+                            icon: 'user',
+                            menu: createUserInfoMenu(),
                             onpostrender: seperatorEnableDisable
+                        };
+                    }
+
+                    function orgInfoMenu(orgInfo = []) {
+                        return {
+                            separator: 'before',
+                            // type: 'menubutton',
+                            text: 'Org Info',
+                            icon: 'fa fa fa-university',
+                            menu: createOrgInfoMenu(),
                         };
                     }
 
                     function removeSeperator() {
                         let button;
                         button = editor.dom.getParent(editor.selection.getStart(), 'div');
-                        console.log('remove', button);
                         if (button) {
                             if (button.className == 'divider-mce') {
                                 button.remove();
@@ -1838,7 +1858,6 @@ function c(el) {
                     function enableDisableRemoveSeperator() {
                         var btn = this;
                         editor.on('NodeChange', function(e) {
-                            console.log('change', e.element);
                             if (e.element.className == 'divider-mce') {
                                 btn.disabled(false);
                             } else {
@@ -1862,12 +1881,18 @@ function c(el) {
                     //remove button
                     editor.addButton('removeButton', removeButtonMenu());
                     editor.addMenuItem('removeButton', removeButtonMenu());
-                    //separator
-                    editor.addButton('separator', separatorMenu());
-                    editor.addMenuItem('separator', separatorMenu());
-                    //remove separator
-                    editor.addButton('removeSeparator', removeSeparatorMenu());
-                    editor.addMenuItem('removeSeparator', removeSeparatorMenu());
+                    //user info 
+                    editor.addButton('userInfoMenu', userInfoMenu());
+                    editor.addMenuItem('userInfoMenu', userInfoMenu());
+                    //org info 
+                    editor.addButton('orgInfoMenu', orgInfoMenu());
+                    editor.addMenuItem('orgInfoMenu', orgInfoMenu());
+                    // //separator
+                    // editor.addButton('separator', separatorMenu());
+                    // editor.addMenuItem('separator', separatorMenu());
+                    // //remove separator
+                    // editor.addButton('removeSeparator', removeSeparatorMenu());
+                    // editor.addMenuItem('removeSeparator', removeSeparatorMenu());
                 }
             });
             // let menu = _tinymce.activeEditor.ui.registry.getAll().contextMenus;
@@ -2093,6 +2118,12 @@ function c(el) {
          */
         this.setShowRowCodeEditorButton = function(showRowCodeEditorButton) {
             _emailBuilder.config.showRowCodeEditorButton = showRowCodeEditorButton;
+        }
+        /**
+         * Set value for org info menu item in context menu
+         */
+        this.orgInfoMenuItem = function(orgInfoMenuItem) {
+            _emailBuilder.config.orgInfoMenuItem = orgInfoMenuItem;
         }
         /**
          * Init email builder any time

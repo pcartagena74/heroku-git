@@ -77,6 +77,7 @@ var _emailBuilder = $('.editor').emailBuilder({
     showRowRemoveButton: true,
     showRowDuplicateButton: true,
     showRowCodeEditorButton: true,
+    orgInfoMenuItem:@json($org_info_ary),
     onSettingsImportClick: function() {
         $('#popupimport').modal('show');
     },
@@ -596,5 +597,4 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
         // $.widget.bridge('uibutton', $.ui.button);
         // $.widget.bridge('uitooltip', $.ui.tooltip);
     })
-    
 </script>

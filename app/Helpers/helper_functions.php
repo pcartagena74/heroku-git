@@ -1270,140 +1270,140 @@ if (!function_exists('has_org_property')) {
                 if (empty($org->OSN1)) {
                     return false;
                 } else {
-                    return $org->OSN1;
+                    return ['[OSN1]' => $org->OSN1];
                 }
                 break;
             case 'OSN2':
                 if (empty($org->OSN2)) {
                     return false;
                 } else {
-                    return $org->OSN2;
+                    return ['[OSN2]' => $org->OSN2];
                 }
                 break;
             case 'OSN3':
                 if (empty($org->OSN3)) {
                     return false;
                 } else {
-                    return $org->OSN3;
+                    return ['[OSN3]' => $org->OSN3];
                 }
                 break;
             case 'OSN4':
                 if (empty($org->OSN4)) {
                     return false;
                 } else {
-                    return $org->OSN4;
+                    return ['[OSN4]' => $org->OSN4];
                 }
                 break;
             case 'OSN5':
                 if (empty($org->OSN5)) {
                     return false;
                 } else {
-                    return $org->OSN5;
+                    return ['[OSN5]' => $org->OSN5];
                 }
                 break;
             case 'OSN6':
                 if (empty($org->OSN6)) {
                     return false;
                 } else {
-                    return $org->OSN6;
+                    return ['[OSN6]' => $org->OSN6];
                 }
                 break;
             case 'OSN7':
                 if (empty($org->OSN7)) {
                     return false;
                 } else {
-                    return $org->OSN7;
+                    return ['[OSN7]' => $org->OSN7];
                 }
                 break;
             case 'OSN8':
                 if (empty($org->OSN8)) {
                     return false;
                 } else {
-                    return $org->OSN8;
+                    return ['[OSN8]' => $org->OSN8];
                 }
                 break;
             case 'OSN9':
                 if (empty($org->OSN9)) {
                     return false;
                 } else {
-                    return $org->OSN9;
+                    return ['[OSN9]' => $org->OSN9];
                 }
                 break;
             case 'OSN10':
                 if (empty($org->OSN10)) {
                     return false;
                 } else {
-                    return $org->OSN10;
+                    return ['[OSN10]' => $org->OSN10];
                 }
                 break;
             case 'ODN1':
                 if (empty($org->ODN1)) {
                     return false;
                 } else {
-                    return $org->ODN1;
+                    return ['[ODN1]' => $org->ODN1];
                 }
                 break;
             case 'ODN2':
                 if (empty($org->ODN2)) {
                     return false;
                 } else {
-                    return $org->ODN2;
+                    return ['[ODN2]' => $org->ODN2];
                 }
                 break;
             case 'ODN3':
                 if (empty($org->ODN3)) {
                     return false;
                 } else {
-                    return $org->ODN3;
+                    return ['[ODN3]' => $org->ODN3];
                 }
                 break;
             case 'ODN4':
                 if (empty($org->ODN4)) {
                     return false;
                 } else {
-                    return $org->ODN4;
+                    return ['[ODN4]' => $org->ODN4];
                 }
                 break;
             case 'ODN5':
                 if (empty($org->ODN5)) {
                     return false;
                 } else {
-                    return $org->ODN5;
+                    return ['[ODN5]' => $org->ODN5];
                 }
                 break;
             case 'ODN6':
                 if (empty($org->ODN6)) {
                     return false;
                 } else {
-                    return $org->ODN6;
+                    return ['[ODN6]' => $org->ODN6];
                 }
                 break;
             case 'ODN7':
                 if (empty($org->ODN7)) {
                     return false;
                 } else {
-                    return $org->ODN7;
+                    return ['[ODN7]' => $org->ODN7];
                 }
                 break;
             case 'ODN8':
                 if (empty($org->ODN8)) {
                     return false;
                 } else {
-                    return $org->ODN8;
+                    return ['[ODN8]' => $org->ODN8];
                 }
                 break;
             case 'ODN9':
                 if (empty($org->ODN9)) {
                     return false;
                 } else {
-                    return $org->ODN9;
+                    return ['[ODN9]' => $org->ODN9];
                 }
                 break;
             case 'ODN10':
                 if (empty($org->ODN10)) {
                     return false;
                 } else {
-                    return $org->ODN10;
+                    return ['[ODN10]' => $org->ODN10];
                 }
                 break;
             default:

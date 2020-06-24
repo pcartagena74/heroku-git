@@ -198,7 +198,7 @@ class CampaignController extends Controller
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
             ->orWhere('orgID', 1)
             ->orderBy('orgID', 'ASC')
-            ->orderBy('campaignID', 'desc')->paginate(10);
+            ->orderBy('campaignID', 'desc')->paginate(12);
         $pages = $campaigns->links();
         foreach ($campaigns as $key => $value) {
             $campaigns[$key]->thumbnail = getEmailTemplateThumbnailURL($value);

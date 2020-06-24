@@ -4,7 +4,28 @@ $blocks_category=get_template_builder_category();
 
 $actual_link = url('/').'/';
 $_outputHtml='';
+$org_info_ary = [];
+foreach ($blocks_category as $key => $value) {
+    if($value['id'] == 8){
+        $blocks= get_template_builder_block_category($value['id']);
+        // 8 Organization table
+        foreach ($blocks as $b_key => $b_value) {
+            $has_prop = has_org_property($org,$b_value);
+            if($has_prop === false){
+                continue;
+            } else {
+                $org_info_ary[key($has_prop)] = $has_prop[key($has_prop)];
+            }
+        }
+    } else {
+        continue;
+    }
+}
+
 for ($i = 0; $i < sizeof($blocks_category); $i++) {
+    if($blocks_category[$i]['id'] == 8 || $blocks_category[$i]['id'] == 7){
+        continue;
+    }
  $_outputHtml .= '
 <li class="elements-accordion-item" data-type="'.strtolower( $blocks_category[$i]['name']) .'">
     <a class="elements-accordion-item-title">
@@ -16,20 +37,11 @@ for ($i = 0; $i < sizeof($blocks_category); $i++) {
     <div class="elements-accordion-item-content">
         <ul class="elements-list">
             ';
-
             $_items = $blocks= get_template_builder_block_category($blocks_category[$i]['id']);
-
             for ($j = 0; $j< sizeof($_items); $j++) {
                 $item_name = $_items[$j]['name'];
-                // 8 Organization table
-                if($_items[$j]['cat_id'] == 8){
-                    $has_prop = has_org_property($org,$_items[$j]);
-                    if($has_prop === false){
-                        continue;
-                    } else {
-                        $item_name = $has_prop;
-                    }
-                }
+                
+                
                 //6 footer
                 if($_items[$j]['cat_id'] == 6){
                     // to replace default address with org address in footer menu

@@ -3256,3 +3256,6 @@ li {
     width: 276px!important;
     height: calc(100% - 40px)!important;
 }
+ul.elements-list li {
+    vertical-align: middle;
+}
