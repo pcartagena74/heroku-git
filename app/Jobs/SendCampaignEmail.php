@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Mail;
 use Mailgun\Mailgun;
 
 class SendCampaignEmail implements ShouldQueue
@@ -49,6 +50,22 @@ class SendCampaignEmail implements ShouldQueue
                 $mg = Mailgun::create(env("MAILGUN_API_KEY")); // For US servers
                 //first domain parameter requires only domain in local we have to put api too which wont work here
                 // $response = $mg->messages()->send('sandboxdbb4c7116f3a4e0d9ea8a9026d387e02.mailgun.org', [
+                if (!empty(env("APP_ENV")) && (env("APP_ENV") == 'local' || env("APP_ENV") == 'test')) {
+                    $mail = Mail::raw($html, function ($message) use ($campaign, $value, $html) {
+                        $message->from($campaign->fromEmail);
+                        $message->to($value->email_id);
+                        $message->subject($campaign->subject);
+                        $message->setBody($html);
+                    }
+                    );
+                    // $value->failed    = true;
+                    $value->sent      = 1;
+                    $value->delivered = 1;
+                    $value->open      = rand(0, 1);
+                    $value->click     = rand(0, 1);
+                    $value->save();
+                    continue;
+                }
                 $response = $mg->messages()->send(env("MAILGUN_DOMAIN"), [
                     'from'    => $campaign->fromEmail,
                     'to'      => $value->email_id,

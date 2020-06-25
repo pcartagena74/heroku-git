@@ -174,7 +174,7 @@ if(!empty($campaign)){
                 'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
         </div>
         <div class="form-group">
-            {!! Form::button(trans('messages.fields.camp_btn_send_test_message'), array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)')) !!}
+            {!! Form::button(trans('messages.fields.camp_btn_send_test_message'), array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)',$disable)) !!}
         </div>
         <div class="form-group" id="response">
         </div>
