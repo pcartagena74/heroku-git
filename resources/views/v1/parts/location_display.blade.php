@@ -26,28 +26,26 @@ if(!isset($no_title)) {
 @endphp
 
 @if($time)
-    {{ $event->eventStartDate->format('n/j/Y g:i A') }}
-    - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
-    <br>
+{{ $event->eventStartDate->format('n/j/Y g:i A') }} - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
+<br>
 @endif
 @if($no_title)
-    <b> {{ $loc->locName }} </b>
+<b> {{ $loc->locName }} </b>
 @else
-    <b> {{ trans('messages.fields.loc') }}: {{ $loc->locName }} </b>
+<b> {{ trans('messages.fields.loc') }}: {{ $loc->locName }} </b>
 @endif
-
 @if(!$loc->isVirtual)
-    <br/>
-    {{ $loc->addr1 }}
-    @if($loc->addr2)
-        <br/>
-        {!! $loc->addr2 !!}
-    @endif
-    @if($loc->city && $loc->state)
-        <br/>
-        {{ $loc->city }}, {{ $loc->state }} {{ $loc->zip }}
-    @endif
-    <br/>
+<br/>
+{{ $loc->addr1 }}
+@if($loc->addr2)
+<br/>
+{!! $loc->addr2 !!}
+@endif
+@if($loc->city && $loc->state)
+<br/>
+{{ $loc->city }}, {{ $loc->state }} {{ $loc->zip }}
+@endif
+<br/>
 @endif
 
 @if($map && !$loc->isVirtual)
