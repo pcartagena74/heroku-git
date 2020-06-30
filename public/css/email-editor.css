@@ -926,6 +926,9 @@ li {
 }
 #email_builder_master .email-editor-elements-sortable {
     height: 100%;
+    height: fit-content;
+    /*border: 1px solid red;*/
+    padding-bottom: 40px;
 }
 #email_builder_master .editor-elements-placeholder {
     height: 100px;
