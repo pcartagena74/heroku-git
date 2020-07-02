@@ -247,12 +247,14 @@ var _emailBuilder = $('.editor').emailBuilder({
         console.log('onPreviewButtonClick html');
         // _element.addClass('has-loading');
         // _element.text(_this.langArr.loading);
+        let data = {'html':getHtml,'campaign':null};
+        @if(!empty($campaign->campaignID))
+            data.campaign = '{{$campaign->campaignID}}';
+        @endif
         $.ajax({
             url: base_url + 'storeEmailTemplateForPreview',
             type: 'POST',
-            data: {
-                html: getHtml
-            },
+            data: data,
             dataType: 'json',
             success: function(data) {
                 // if (data.success == true) {

@@ -589,6 +589,11 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             if (!empty($raw_html)) {
                 $person       = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
                 $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
+                if (!empty($campaign)) {
+                    if (!empty($campaign->preheader)) {
+                        $raw_html = $campaign->preheader . $raw_html;
+                    }
+                }
             } else {
                 return $raw_html;
             }
@@ -599,7 +604,11 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
                     $raw_html .= $value->content;
                 }
             } else {
-                $raw_html = $campaign->content;
+                if (!empty($campaign->preheader)) {
+                    $raw_html = $campaign->preheader . $campaign->content;
+                } else {
+                    $raw_html = $campaign->content;
+                }
             }
             $person       = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
             $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();

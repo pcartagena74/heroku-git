@@ -407,22 +407,22 @@ var returnVal;
             if (_this.config.showRowMoveButton == false) {
                 jQuery('.row-move').remove();
             } else {
-                jQuery('.sortable-row-actions').append('<div class="row-move row-action"><i class="fa fa-arrows-alt"></i></div>');
+                jQuery('.sortable-row-actions').append('<div class="row-move row-action" data-toggle="tooltip" title="' + _this.langArr.elementMove + '"><i class="fa fa-arrows-alt"></i></div>');
             }
             if (_this.config.showRowRemoveButton == false) {
                 jQuery('.row-remove').remove();
             } else {
-                jQuery('.sortable-row-actions').append('<div class="row-remove row-action"><i class="fa fa-remove"></i></div>');
+                jQuery('.sortable-row-actions').append('<div class="row-remove row-action" data-toggle="tooltip" title="' + _this.langArr.elementDelete + '"><i class="fa fa-remove"></i></div>');
             }
             if (_this.config.showRowDuplicateButton == false) {
                 jQuery('.row-duplicate').remove();
             } else {
-                jQuery('.sortable-row-actions').append('<div class="row-duplicate row-action"><i class="fa fa-files-o"></i></div>');
+                jQuery('.sortable-row-actions').append('<div class="row-duplicate row-action" data-toggle="tooltip" title="' + _this.langArr.elementCopy + '"><i class="fa fa-files-o"></i></div>');
             }
             if (_this.config.showRowCodeEditorButton == false) {
                 jQuery('.row-code').remove();
             } else {
-                jQuery('.sortable-row-actions').append('<div class="row-code row-action"><i class="fa fa-code"></i></div>');
+                jQuery('.sortable-row-actions').append('<div class="row-code row-action" data-toggle="tooltip" title="' + _this.langArr.elementCode + '"><i class="fa fa-code"></i></div>');
             }
         },
         /**
@@ -450,147 +450,11 @@ var returnVal;
                 handle: '.row-move',
                 revert: true,
                 tolerance: "pointer",
-                forceHelperSize:'true',
+                forceHelperSize: 'true',
                 axis: 'y',
                 start: function(event, ui) {
                     ui.placeholder.height(ui.helper[0].scrollHeight);
                 },
-            });
-            _this.$elem.find(".email-editor-elements-sortable--onon").sortable({
-                connectWith: ".droppable,#draggables",
-                placeholder: "editor-elements-placeholder",
-                forcePlaceholderSize: true,
-                //group: 'no-drop',
-                handle: '.row-move',
-                revert: true,
-                tolerance: "pointer",
-                forceHelperSize:'true',
-                start: function(event, ui) {
-                    ui.placeholder.height(ui.helper[0].scrollHeight);
-                },
-                update: function(event, ui) {
-                    // console.log('update here',event, ui);
-                    // var fieldname = ui.item.text();
-                    // ui.item.html('your new html here');  
-                },
-                receive: function(event, ui) {
-                    // let elent = getInputSelection(ui.item);
-                    // input.focus();
-                    let dropPositionX = event.pageX - $(this).offset().left;
-                    let dropPositionY = event.pageY - $(this).offset().top;
-                    // Get mouse offset relative to dragged item:
-                    let dragItemOffsetX = event.offsetX;
-                    let dragItemOffsetY = event.offsetY;
-                    // Get position of dragged item relative to drop target:
-                    let dragItemPositionX = dropPositionX - dragItemOffsetX;
-                    let dragItemPositionY = dropPositionY - dragItemOffsetY;
-                    let element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
-                    let ele = $(element).find('.sortable-row-content').find('.text-content');
-                    if (ele.length > 0) {
-                        let content = ui.item.find('.sortable-row-content');
-                        let lst_type = content.data('last-type');
-                        let types = content.data('types');
-                        // if (content.data('id') == 4) {
-                        //     return ele[0].append(tag);
-                        // }
-                        // 28 - 45 user info
-                        if (content.data('id') >= 28 && content.data('id') <= 45) {
-                            let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
-                            let tag = content.html();
-                            if (tag !== 'undefined') {
-                                return ele[0].append(tag);
-                                // console.log($(ele[0]).insertAtCaret(tag));
-                                // return $(ele[0]).insertAtCaret(tag);
-                            }
-                            // ui.helper.remove();
-                        }
-                        //46 - 65 org info
-                        if (content.data('id') >= 46 && content.data('id') <= 65) {
-                            let content = ui.item.find('.sortable-row-content').find('.user-info-tag');
-                            let tag = content.html();
-                            // ui.helper.remove();
-                            if (tag !== 'undefined') {
-                                return ele[0].append(tag);
-                                // return $(ele[0]).insertAtCaret(tag);
-                            }
-                        }
-                        // //7 unordered list
-                        // if (content.data('id') == 7) {
-                        //     let content = ui.item.find('.sortable-row-content').find('ul');
-                        //     if (content[0]) {
-                        //         return ele[0].append(content[0]);
-                        //     }
-                        // }
-                        // //8 ordered list
-                        // if (content.data('id') == 8) {
-                        //     let content = ui.item.find('.sortable-row-content').find('ol');
-                        //     if (content[0]) {
-                        //         return ele[0].append(content[0]);
-                        //     }
-                        // }
-                        // //16 - 19 layout
-                        // if (content.data('id') >= 16 && content.data('id') <= 19) {
-                        //     if (content.data('id') == 19) {
-                        //         let content = ui.item.find('.sortable-row-content').find('a');
-                        //         if (content[0]) {
-                        //             return ele[0].append(content[0]);
-                        //         }
-                        //     } else {
-                        //         let content = ui.item.find('.sortable-row-content').find('.divider-simple').find('div');
-                        //         if (content[0]) {
-                        //             return ele[0].append(content[0]);
-                        //         }
-                        //     }
-                        // }
-                    }
-                }
-            }).droppable({
-                tolerance: 'pointer',
-                over: function(event, ui) {
-                    // console.log('here over');
-                },
-                activate: function(event, ui) {
-                    // console.log('here activate',ui.draggable);
-                },
-                create: function(event, ui) {
-                    // console.log('here create');
-                },
-                drop: function(event, ui) {
-                    // console.log('here drop');
-                    var dropPositionX = event.pageX - $(this).offset().left;
-                    var dropPositionY = event.pageY - $(this).offset().top;
-                    // Get mouse offset relative to dragged item:
-                    var dragItemOffsetX = event.offsetX;
-                    var dragItemOffsetY = event.offsetY;
-                    // Get position of dragged item relative to drop target:
-                    var dragItemPositionX = dropPositionX - dragItemOffsetX;
-                    var dragItemPositionY = dropPositionY - dragItemOffsetY;
-                    var element = document.elementFromPoint(dragItemPositionX, dragItemPositionY);
-                    let ele = $(element).find('.sortable-row-content').find('.text-content');
-                    if (ele.length > 0) {
-                        // console.log('here2');
-                        let content = ui.helper.find('.sortable-row-content');
-                        let lst_type = content.data('last-type');
-                        let types = content.data('types');
-                        // 28 - 45 user info
-                        if (content.data('id') >= 28 && content.data('id') <= 45) {
-                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
-                            let tag = content.html();
-                            if (tag !== 'undefined') {
-                                ui.helper.remove();
-                            }
-                        }
-                        //46 - 65 org info
-                        if (content.data('id') >= 46 && content.data('id') <= 65) {
-                            let content = ui.helper.find('.sortable-row-content').find('.user-info-tag');
-                            let tag = content.html();
-                            if (tag !== 'undefined') {
-                                ui.helper.remove();
-                            }
-                        }
-                    }
-                    // Get mouse position relative to drop target: 
-                }
             });
             _this.remove_row_elements();
         },
@@ -1695,11 +1559,25 @@ var returnVal;
                 inline: true,
                 plugins: 'paste lists advlist textcolor link autolink textpattern contextmenu',
                 selection_toolbar: _toolBar + '| createButton removeButton',
-                contextmenu: 'link createButton removeButton userInfoMenu orgInfoMenu',
+                contextmenu: 'link createButton removeButton userInfoMenu orgInfoMenu image2',
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
                 dialog_type: "modal",
                 trapFocus: false,
+                file_browser_callback: function(field_name, url, type, win) {
+                    tinyMCE.activeEditor.windowManager.open({
+                        file: '/file-manager/tinymce',
+                        title: 'File Manager',
+                        width: window.innerWidth * 0.8,
+                        height: window.innerHeight * 0.8,
+                        resizable: 'yes',
+                        close_previous: 'no',
+                    }, {
+                        setUrl: function(url) {
+                            win.document.getElementById(field_name).value = url;
+                        },
+                    });
+                },
                 setup: function(editor) {
                     function insertButtonHTML() {
                         var bt_html = '<a contenteditable="true"  data-last-type="background" data-types="background,border-radius,padding,button" style="margin-top: 10px; background-color: rgb(52, 152, 219); font-family: Arial; color: rgb(255, 255, 255); display: inline-block; border-radius: 6px; text-align: center; padding: 12px 20px; text-decoration: none; overflow-wrap: break-word; text-size-adjust: 100%;" class="button-1 hyperlink" href="#" data-default="1" >';
@@ -1803,7 +1681,7 @@ var returnVal;
                             user_ary.push({
                                 text: value,
                                 onclick: function() {
-                                    editor.insertContent(index);
+                                    editor.insertContent(' ' + index + ' ');
                                 }
                             });
                         });
@@ -1875,6 +1753,43 @@ var returnVal;
                             onpostrender: enableDisableRemoveSeperator
                         };
                     }
+
+                    function imageOnClick() {
+                        // let button;
+                        // button = editor.dom.getParent(editor.selection.getStart(), 'image');
+                        editor.on('NodeChange', function(e) {
+                            let img = _this.getActiveElementContent().find('.content-image');
+                            console.log('here1', img);
+                            if (img.length > 0) {
+                                // $('.change-image').trigger('click');
+                                window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+                                evt.preventDefault();
+                            }
+                        });
+                    }
+
+                    function imageCheck() {
+                        var btn = this;
+                        editor.on('NodeChange', function(e) {
+                            let img = _this.getActiveElementContent().find('.content-image');
+                            console.log('here2', img);
+                            if (img.length > 0) {
+                                btn.disabled(false);
+                            } else {
+                                btn.disabled(true);
+                            }
+                        });
+                    }
+
+                    function image1Menu() {
+                        return {
+                            icon: 'image',
+                            text: 'Image',
+                            tooltip: "Image",
+                            onclick: imageOnClick,
+                            onpostrender: imageCheck
+                        };
+                    }
                     //insert button
                     editor.addButton('createButton', createButtonMenu());
                     editor.addMenuItem('createButton', createButtonMenu());
@@ -1887,6 +1802,7 @@ var returnVal;
                     //org info 
                     editor.addButton('orgInfoMenu', orgInfoMenu());
                     editor.addMenuItem('orgInfoMenu', orgInfoMenu());
+                    editor.addMenuItem('image2', image1Menu());
                     // //separator
                     // editor.addButton('separator', separatorMenu());
                     // editor.addMenuItem('separator', separatorMenu());

@@ -214,7 +214,11 @@ class CampaignController extends Controller
     public function storeEmailTemplateForPreview(Request $request)
     {
         $html      = $request->input('html');
-        $html      = replaceUserDataInEmailTemplate($email = null, $campaign = null, $for_preview = true, $raw_html = $html);
+        $campaign  = $request->input('campaign');
+        if(!empty($campaign)){
+            $campaign = Campaign::where('campaignID',$campaign)->get()->first();
+        }
+        $html      = replaceUserDataInEmailTemplate($email = null, $campaign = $campaign, $for_preview = true, $raw_html = $html);
         $file_name = Str::random(40) . '.html';
         $tmp_path  = Storage::disk('local')->put($file_name,
             view('v1.auth_pages.campaigns.preview_email_template')
@@ -443,14 +447,20 @@ class CampaignController extends Controller
         if (empty($html)) {
             return response()->json(['success' => false, 'message' => trans('messages.errors.empty_template')]);
         }
-        $note     = $request->input('note');
-        $campaign = $request->input('campaign');
-        $subject  = 'Test Email';
+        $note       = $request->input('note');
+        $campaign   = $request->input('campaign');
+        $subject    = 'Test Email';
+        $from_email = $currentPerson->login;
+        $sender     = $currentPerson->login;
         if (!empty($campaign)) {
             $campaign = Campaign::where('campaignID', $campaign)->get()->first();
             if (!empty($campaign)) {
                 $subject = 'Test : ' . $campaign->subject;
+                if (!empty($campaign->fromEmail)) {
+                    $from_email = $campaign->fromEmail;
+                }
             }
+
         }
         $html = replaceUserDataInEmailTemplate(null, null, true, $html);
         $mail = Mail::send('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $note],

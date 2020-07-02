@@ -60,7 +60,12 @@
         "setttingsMobileViewMobileDesc": "Mobile content",
         "setttingsMobileViewDesktopDesc": "Desktop content",
         "popupImportTitle":"Select file for the import",
-        "popupImportUpload":"Import template"
+        "popupImportUpload":"Import template",
+
+        "elementCopy":"Copy",
+        "elementDelete":"Delete",
+        "elementMove":"Move",
+        "elementCode":"Code"
     }],
     "fr": [{
         "close": "Fermer",
@@ -112,7 +117,12 @@
         "modalDeleteTitle": "Are you sure ?",
         "modalDeleteText": "You won't be able to revert this!",
         "modalDeleteconfirmButtonText": "Yes",
-        "modalDeletecancelButtonText": "No"
+        "modalDeletecancelButtonText": "No",
+
+        "elementCopy":"Copier",
+        "elementDelete":"Supprimer",
+        "elementMove":"Déplacer",
+        "elementCode":"Code"
     }],
     "it": [{
         "close": "Vicino",
@@ -163,7 +173,12 @@
         "modalDeleteTitle": "Are you sure ?",
         "modalDeleteText": "You won't be able to revert this!",
         "modalDeleteconfirmButtonText": "Yes",
-        "modalDeletecancelButtonText": "No"
+        "modalDeletecancelButtonText": "No",
+
+        "elementCopy":"Copia",
+        "elementDelete":"Elimina",
+        "elementMove":"Sposta",
+        "elementCode":"Codice"
     }],
     "tr": [{
         "close": "Kapat",
@@ -214,7 +229,12 @@
         "modalDeleteTitle": "Are you sure ?",
         "modalDeleteText": "You won't be able to revert this!",
         "modalDeleteconfirmButtonText": "Yes",
-        "modalDeletecancelButtonText": "No"
+        "modalDeletecancelButtonText": "No",
+
+        "elementCopy":"Copy",
+        "elementDelete":"Delete",
+        "elementMove":"Move",
+        "elementCode":"Code"
     }],
     "ru": [{
         "close": "Закрыть",
@@ -265,7 +285,12 @@
         "modalDeleteTitle": "Are you sure ?",
         "modalDeleteText": "You won't be able to revert this!",
         "modalDeleteconfirmButtonText": "Yes",
-        "modalDeletecancelButtonText": "No"
+        "modalDeletecancelButtonText": "No",
+
+        "elementCopy":"Копировать",
+        "elementDelete":"Удалить",
+        "elementMove":"Переместить",
+        "elementCode":"Код"
 
     }],
     "es": [{
@@ -311,7 +336,12 @@
         "popupLoadTemplateTitle": "Abrir boletín",
         "popupLoadTemplateSubtitle": "Por favor selecciona un boletín para abrir",
         "popupLoadTemplateOk": "Abrir",
-        "popupLoadTemplateClose": "Cerrar"
+        "popupLoadTemplateClose": "Cerrar",
+
+        "elementCopy":"Kopii",
+        "elementDelete":"Forigi",
+        "elementMove":"Movi",
+        "elementCode":"Kodi"
     }],
     "de": [{
         "close": "Schließen",
@@ -362,6 +392,11 @@
         "modalDeleteTitle": "Are you sure ?",
         "modalDeleteText": "You won't be able to revert this!",
         "modalDeleteconfirmButtonText": "Yes",
-        "modalDeletecancelButtonText": "No"
+        "modalDeletecancelButtonText": "No",
+
+        "elementCopy":"Kopiëren",
+        "elementDelete":"Verwijderen",
+        "elementMove":"Verplaatsen",
+        "elementCode":"Coderen"
     }]
 }

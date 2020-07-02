@@ -28,7 +28,7 @@
                 display: none;
             }
             .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(n+3) {
-                display:none;
+                /*display:none;*/
             }
             .fm-breadcrumb ol.breadcrumb.active-manager li:nth-child(1) {
                 display:none;
