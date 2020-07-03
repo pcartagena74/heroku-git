@@ -97,6 +97,7 @@ return [
         'common_edit' => 'es-Edit',
         'common_delete' => 'es-Delete',
         'common_copy' => 'es-Copy',
+        'archive' => 'es-Archive',
     ],
     'codes' => [
         'invalid_code' => 'es-Invalid Code: \':code\'',
@@ -815,6 +816,10 @@ return [
         'campaign_send' => 'es-Campaign Sent successfully!',
         'camp_sent_on' => 'es-Campaign was sent on :date',
         'camp_scheduled_sent_on' => 'es-Campaign is scheduled for :date, thou. you can change it.',
+        'email_list_updated' => 'es-Email List :name updated successfully.',
+        'email_list_deleted' => 'es-Email List :name deleted successfully.',
+        'campaign_archive' => 'es-Campaign Archived Successfully!',
+        'campaign_archive_scheduled_send' => 'This campaigns is scheduled for a furture date it cannot be archived. Please delete it instead',
     ],
     'modals' => [
         'gConfirm' => 'es-Attendee Confirmation',
@@ -1331,5 +1336,12 @@ return [
             'assoc_emails' => "La siguiente dirección de correo electrónico está asociada con cualquier cuenta.
                                Todos estarán asociados con <b>\"El Guardado\"</b> después de la fusión.",
         ],
+    ],
+    'campaign_archive_popup_success' => [
+        'title'       => 'Success',
+        'title_error' => 'Error',
+        'body'        => 'Do you want to delete campaign ',
+        'btn_ok'      => 'Ok',
+        'btn_cancel'  => 'Cancel',
     ],
 ];

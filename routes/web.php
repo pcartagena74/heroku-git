@@ -310,6 +310,7 @@ Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
 Route::get('/campaign/{campaign}/copy', 'CampaignController@copy');
 Route::post('/deleteCampaign', 'CampaignController@deleteCampaign');
+Route::post('/archiveCampaign', 'CampaignController@archiveCampaign');
 // Route::patch('/campaign/{campaign}', 'CampaignController@update');
 // Email Builder Routes
 

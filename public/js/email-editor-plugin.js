@@ -1559,7 +1559,7 @@ var returnVal;
                 inline: true,
                 plugins: 'paste lists advlist textcolor link autolink textpattern contextmenu',
                 selection_toolbar: _toolBar + '| createButton removeButton',
-                contextmenu: 'link createButton removeButton userInfoMenu orgInfoMenu image2',
+                contextmenu: 'link createButton removeButton userInfoMenu orgInfoMenu',
                 fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 72pt",
                 paste_data_images: false,
                 dialog_type: "modal",
@@ -1695,7 +1695,7 @@ var returnVal;
                             org_ary.push({
                                 text: value,
                                 onclick: function() {
-                                    editor.insertContent(index);
+                                    editor.insertContent(' ' + index + ' ');
                                 }
                             });
                         });
@@ -1802,7 +1802,7 @@ var returnVal;
                     //org info 
                     editor.addButton('orgInfoMenu', orgInfoMenu());
                     editor.addMenuItem('orgInfoMenu', orgInfoMenu());
-                    editor.addMenuItem('image2', image1Menu());
+                    // editor.addMenuItem('image2', image1Menu());
                     // //separator
                     // editor.addButton('separator', separatorMenu());
                     // editor.addMenuItem('separator', separatorMenu());

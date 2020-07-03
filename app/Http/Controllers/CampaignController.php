@@ -39,6 +39,7 @@ class CampaignController extends Controller
             ->with('mailgun')
             ->withCount('emails', 'urls')
             ->orderBy('campaignID', 'DESC')
+            ->whereNull('archived_date')
             ->paginate(10);
         return view('v1.auth_pages.campaigns.campaigns', compact('campaigns'));
     }
@@ -213,10 +214,10 @@ class CampaignController extends Controller
      */
     public function storeEmailTemplateForPreview(Request $request)
     {
-        $html      = $request->input('html');
-        $campaign  = $request->input('campaign');
-        if(!empty($campaign)){
-            $campaign = Campaign::where('campaignID',$campaign)->get()->first();
+        $html     = $request->input('html');
+        $campaign = $request->input('campaign');
+        if (!empty($campaign)) {
+            $campaign = Campaign::where('campaignID', $campaign)->get()->first();
         }
         $html      = replaceUserDataInEmailTemplate($email = null, $campaign = $campaign, $for_preview = true, $raw_html = $html);
         $file_name = Str::random(40) . '.html';
@@ -622,6 +623,35 @@ class CampaignController extends Controller
                 break;
         }
         // Log::info('User failed to login.', ['id' => $event, 'message_id' => $message_id]);
+        return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
+    }
+
+    public function archiveCampaign(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'campaign' => 'required|exists:org-campaign,campaignID',
+        ]);
+        if ($validator->fails()) {
+            $error = $validator->errors();
+            $error = $error->all();
+            return response()->json(['success' => false, 'message' => $error[0]]);
+        }
+        $campaign_id = $request->input('campaign');
+
+        $campaign = Campaign::where('campaignID', $campaign_id)->get()->first();
+        if (empty($campaign)) {
+            return response()->json(['success' => false, 'message' => trans('messages.errors.campaign_not_exist')]);
+        }
+        if (empty($campaign->sendDate)) {
+            return response()->json(['success' => false, 'message' => trans('messages.errors.campaign_archive_not_send')]);
+        }
+        if (!empty($campaign->sendDate) && !empty($campaign->scheduleDate)) {
+            if (Carbon::parse($campaign->scheduleDate)->gt(Carbon::now())) {
+                return response()->json(['success' => false, 'message' => trans('messages.errors.campaign_archive_scheduled_send')]);
+            }
+        }
+        $campaign->archived_date = Carbon::now()->toDateTimeString();
+        $campaign->save();
         return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
     }
 }

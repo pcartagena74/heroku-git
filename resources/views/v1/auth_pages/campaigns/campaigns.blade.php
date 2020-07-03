@@ -148,6 +148,14 @@ $topBits = '';  // remove this if this was set in the controller
                                     </i>
                                     @lang('messages.buttons.common_delete')
                                 </a>
+                                |
+                                @if($c->sendDate !== null)
+                                <a href="javascript:void(0)" onclick="archiveCampaign('{{$c->title}}','{{$c->campaignID}}')">
+                                    <i aria-hidden="true" class="fa fa-archive">
+                                    </i>
+                                    @lang('messages.buttons.archive')
+                                </a>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -170,6 +178,7 @@ $topBits = '';  // remove this if this was set in the controller
     function deleteCampaign(title,id){
         delete_campaign_id = id;
         $('#popup-confirm-campaign-delete').find('.modal-body').html('{{trans('messages.campaign_delete_popup.body')}} '+ title + ' ?')
+        $('#popup-confirm-campaign-delete').find('.modal-footer .btn-warning').text('{{trans('messages.campaign_delete_popup.btn_ok')}}')
         $('#popup-confirm-campaign-delete').modal('show');
     }
 
@@ -202,7 +211,43 @@ $topBits = '';  // remove this if this was set in the controller
                 }
             });
             break;
+            case 'archive':
+            $('#popup-confirm-campaign-delete').modal('hide');
+                $.ajax({
+                    url: '{{ url('archiveCampaign') }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        campaign:archive_campaign_id
+                    },
+                    success: function(data) {
+                        if(data.success == false){
+                            $('#popup-campaign-delete-success').find('.modal-title').html("{{ trans('messages.campaign_delete_popup_success.title_error') }}");
+                            $('#popup-campaign-delete-success').find('.modal-body').html(data.message)
+                            $('#popup-campaign-delete-success').modal('show');
+                        } else {
+                            $('.campaign-panel-'+archive_campaign_id).hide();
+                            $('#popup-campaign-delete-success').find('.modal-title').html("{{ trans('messages.campaign_delete_popup_success.title') }}");
+                            $('#popup-campaign-delete-success').find('.modal-body').html(data.message)
+                            $('#popup-campaign-delete-success').modal('show');
+                        }
+                        archive_campaign_id = '';
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                });
+            break;
         }
+    }
+
+    var archive_campaign_id = '';
+    function archiveCampaign(title,id){
+        archive_campaign_id = id;
+        $('#popup-confirm-campaign-delete').find('.modal-body').html('{{trans('messages.campaign_archive_popup.body')}} '+ title + ' ?')
+        $('#popup-confirm-campaign-delete').find('.modal-footer .btn-warning').text('{{trans('messages.campaign_archive_popup.btn_ok')}}');
+        $('#popup-confirm-campaign-delete').find('.modal-footer .btn-warning').attr("onclick","setExitPopButtonValue('archive')");
+        $('#popup-confirm-campaign-delete').modal('show');
     }
 </script>
 @endsection
