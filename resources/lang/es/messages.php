@@ -391,6 +391,13 @@ return [
         'all_pd_day_event' => 'es-All PD Day Events',
         'camp_status_draft' => 'es-Draft : :date',
         'camp_status_sent' => 'es-Sent : :date',
+        'camp_open_rate'             => 'es-Open Rate',
+        'camp_open'                  => 'es-Opens',
+        'camp_sent'                  => 'es-Sent',
+        'camp_click'                 => 'es-Clicks',
+        'camp_not_open'              => 'es-Did Not Open',
+        'camp_unsubs'                => 'es-Unsubscribed',
+        'camp_spam'                  => 'es-Spam Reports',
     ],
     'headers' => [
         'acc_lookup' => 'es-Account Lookup',
@@ -636,6 +643,7 @@ return [
         'camp_email_open' => 'es-Opens',
         'camp_email_click' => 'es-Clicks',
         'camp_list_action' => 'es-Actions',
+        'campaign_statics' => 'es-Statics',
     ],
     'subheaders' => [
         'expand_min' => 'es-Click the arrow to expand this section.',

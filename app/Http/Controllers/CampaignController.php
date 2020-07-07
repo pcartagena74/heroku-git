@@ -25,6 +25,126 @@ class CampaignController extends Controller
         $this->middleware('auth', ['except' => ['mailgunWebhook']]);
         $this->currentPerson = Person::find(auth()->id());
     }
+
+    public function listCampaign(Request $request)
+    {
+        $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
+            ->with('emails.click_count')
+            ->with('mailgun')
+            ->withCount('emails', 'urls')
+            ->orderBy('campaignID', 'DESC');
+        // ->whereNull('archived_date');
+        //check if filter is beign applied
+        $filter = $request->input('columns');
+        foreach ($filter as $key => $value) {
+            if ($value['searchable'] == true && $value['data'] == 'status') {
+                // dd($value);
+                if (empty($value['search']['value'])) {
+                    $campaigns->whereNull('archived_date');
+                } else {
+                    if ($value['search']['value'] == 'sent' || $value['search']['value'] == 'draft') {
+                        $campaigns->whereNull('archived_date');
+                    }
+                }
+            }
+        }
+        // dd($filter);
+        // $request->merge($filter);
+
+        $collection = datatables()->of($campaigns);
+        $collection->filterColumn('Status', function ($query, $keyword) {
+            switch ($keyword) {
+                case 'draft':
+                    $query->whereNull('sendDate');
+                    $query->whereNull('archived_date');
+                    break;
+                case 'sent':
+                    $query->whereNotNull('sendDate');
+                    $query->whereNull('archived_date');
+                    break;
+                case 'archive':
+                    $query->whereNotNull('archived_date');
+                    break;
+            }
+        });
+
+        $collection->addColumn('thumb', function ($c) {
+            $str = '<a href="' . url('campaign', [$c->campaignID, 'edit']) . '"><img class="img-thumbnail" height="70px" src="' . getEmailTemplateThumbnailURL($c) . '" width="70px"></img></a>';
+            return $str;
+        });
+        $collection->addColumn('status', function ($c) {
+            $status = '';
+            if ($c->sendDate === null) {
+                $date   = $c->createDate->format(trans('messages.app_params.datetime_format'));
+                $status = trans('messages.fields.camp_status_draft', ['date' => $date]);
+            } else {
+                $date   = $c->sendDate->format(trans('messages.app_params.datetime_format'));
+                $status = trans('messages.fields.camp_status_sent', ['date' => $date]);
+            }
+            return (string) $status;
+        });
+        $collection->addColumn('total_sent', function ($c) {
+            if ($c->mailgun) {
+                return $c->mailgun->total_sent;
+            }
+            return 0;
+        });
+        $collection->addColumn('open', function ($c) {
+            if ($c->mailgun) {
+                return $c->mailgun->open;
+            }
+            return 0;
+        });
+        $collection->addColumn('click', function ($c) {
+            if ($c->mailgun) {
+                return $c->mailgun->click;
+            }
+            return 0;
+        });
+        $collection->addColumn('status', function ($c) {
+            $status = '';
+            if ($c->sendDate === null) {
+                $date   = $c->createDate->format(trans('messages.app_params.datetime_format'));
+                $status = trans('messages.fields.camp_status_draft', ['date' => $date]);
+            } else {
+                $date   = $c->sendDate->format(trans('messages.app_params.datetime_format'));
+                $status = trans('messages.fields.camp_status_sent', ['date' => $date]);
+            }
+            return (string) $status;
+        });
+        $collection->addColumn('action', function ($c) {
+            $str = '';
+            if ($c->sendDate === null) {
+                $str .= '<a class="btn btn-primary btn-sm" href="' . url('campaign', [$c->campaignID, 'edit']) . '" title="' . trans('messages.buttons.common_edit') . '">
+                        <i aria-hidden="true" class="fa fa-edit">
+                        </i>
+                    </a>';
+            } else {
+                $str .= '<a class="btn btn-primary btn-sm" href="' . url('campaign', [$c->campaignID, 'edit']) . '" title="' . trans('messages.buttons.common_view') . '">
+                        <i aria-hidden="true" class="fa fa-eye">
+                        </i>
+                    </a>';
+            }
+            $str .= '<a class="btn btn-success btn-sm" href="' . url('campaign', [$c->campaignID, 'copy']) . '" title="' . trans('messages.buttons.common_copy') . '">
+                    <i class="fa fa-copy">
+                    </i>
+                </a>
+                <a class="btn btn-danger btn-sm" href="javascript:void(0)" onclick="deleteCampaign(\'' . $c->title . '\',\'' . $c->campaignID . '\')" title="' . trans('messages.buttons.common_delete') . '">
+                    <i class="fa fa-close">
+                    </i>
+                </a>';
+            if ($c->sendDate !== null) {
+                $str .= '<a class="btn btn-warning btn-sm" href="javascript:void(0)" onclick="archiveCampaign(\'' . $c->title . '\',\'' . $c->campaignID . '\')" title="' . trans('messages.buttons.archive') . '">
+                        <i aria-hidden="true" class="fa fa-archive">
+                        </i>
+                    </a>';
+            }
+            return (string) $str;
+        });
+        // ->paginate(10);
+        $collection->rawColumns(['thumb', 'status', 'action']);
+        return $collection->make(true);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -364,6 +484,7 @@ class CampaignController extends Controller
      */
     public function edit(Campaign $campaign)
     {
+        $campaign->load('mailgun');
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         $list_dp             = $this->generateEmailList();
@@ -600,6 +721,7 @@ class CampaignController extends Controller
     }
     public function mailgunWebhook(Request $request)
     {
+        //https://mcentric-test.herokuapp.com/email_webhook
         $response   = $request->all();
         $event      = $response['event-data']['event'];
         $message_id = $response['event-data']['message']['headers']['message-id'];

@@ -46,35 +46,35 @@ if(!empty($campaign)){
             <div class="panel-body">
                 @if(!empty($campaign))
                 <div class="form-group col-sm-12 col-xs-12">
-                    {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title','id'=>'campaign_title')) !!}
+                    {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title','id'=>'campaign_title',$disable)) !!}
                 </div>
                 @endif
                 <div class="form-group col-sm-6 col-xs-12">
                     @if($campaign == null)
                             {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name')) !!}
                         @else
-                            {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name')) !!}
+                            {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name',$disable)) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-6 col-xs-12">
                     @if($campaign == null)
-                            {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email')) !!}
+                            {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email',$disable)) !!}
                         @else
-                            {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email')) !!}
+                            {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email',$disable)) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12">
                     @if($campaign == null)
                             {!! Form::text('subject', '', array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject')) !!}
                         @else
-                            {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject')) !!}
+                            {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject',$disable)) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12">
                     @if($campaign == null)
                             {!! Form::text('preheader', '', array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader')) !!}
                         @else
-                            {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader')) !!}
+                            {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader',$disable)) !!}
                         @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12 clear-fix">
@@ -82,7 +82,7 @@ if(!empty($campaign)){
                      @if($campaign == null)
                         {!! Form::select('email_list', $list_dp, null, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
                     @else
-                        {!! Form::select('email_list', $list_dp, $campaign->emailListID, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
+                        {!! Form::select('email_list', $list_dp, $campaign->emailListID, array('class' => 'form-control input-sm','id'=>'email_list',$disable)) !!}
                     @endif
                 </div>
                 <div class="form-group col-sm-12 col-xs-12 clear-fix" id="send_campaign_response">
@@ -132,6 +132,99 @@ if(!empty($campaign)){
         </div>
         @endif
     </div>
+    @if(!empty($campaign->mailgun))
+    <div class="panel">
+        <a aria-controls="headingStatics" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#headingStatics" role="tab">
+            <i class="panel-title">
+                {{ trans('messages.headers.campaign_statics') }}
+            </i>
+        </a>
+        <div aria-labelledby="headingStatics" class="panel-collapse collapse in" id="headingStatics" role="tabpanel">
+            <div class="panel-body">
+                <div class=" col-sm-12 col-xs-12">
+                    @php
+                    $statics = $campaign->mailgun;
+                    $open_rate = round((($statics->open / $statics->total_sent)*100),2) . '%';
+                    $open = $statics->open;
+                    $sent = $statics->sent;
+                    $failed = $statics->failed;
+                    $delivered = $statics->delivered;
+                    $click = $statics->click;
+                    $did_not_open = 0;
+                    $unsubscribed = 0;
+                    $report_spam = 0;
+                    // dd($statics);
+                    //  "campaign_id" => 1
+                    //     "sent" => "34"
+                    //     "failed" => "7"
+                    //     "click" => "0"
+                    //     "delivered" => "17"
+                    //     "open" => "15"
+                    //     "total_sent" => 38
+                    @endphp
+                    <table class="table">
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_open_rate')
+                            </td>
+                            <td>
+                                {{$open_rate}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_open')
+                            </td>
+                            <td>
+                                {{$open}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_sent')
+                            </td>
+                            <td>
+                                {{$sent}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_click')
+                            </td>
+                            <td>
+                                {{$click}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_not_open')
+                            </td>
+                            <td>
+                                {{$did_not_open}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_unsubs')
+                            </td>
+                            <td>
+                                {{$unsubscribed}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @lang('messages.fields.camp_spam')
+                            </td>
+                            <td>
+                                {{$report_spam}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
     {!! Form::close() !!}
 </div>
 @include('v1.parts.end_content')
@@ -397,5 +490,4 @@ if(!empty($campaign)){
     
 });//ready end
 </script>
-
 @endsection

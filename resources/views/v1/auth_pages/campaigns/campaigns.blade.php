@@ -35,8 +35,54 @@ $topBits = '';  // remove this if this was set in the controller
             </div>
         </div>
         <div class="x_content">
+            <div id="search-button-group">
+                <label>
+                    {{ trans('messages.fields.filter_campaign') }}
+                </label>
+                <button class="btn btn-primary" onclick="changeSearch('draft',this)" type="button">
+                    {{ trans('messages.fields.filter_camp_draft') }}
+                </button>
+                <button class="btn btn-primary" onclick="changeSearch('sent',this)" type="button">
+                    {{ trans('messages.fields.filter_camp_sent') }}
+                </button>
+                <button class="btn btn-primary" onclick="changeSearch('archive',this)" type="button">
+                    {{ trans('messages.fields.filter_camp_archive') }}
+                </button>
+                <a href="javascript:void" id="removeFilter" onclick="removeFilter()" style="display: none">
+                    Remove Filter
+                </a>
+            </div>
             <div class="table-responsive">
-                <table class="table table-striped jambo_table bulk_action">
+                <table class="table table-striped jambo_table bulk_action" id="campaign_dt">
+                    <thead>
+                        <tr class="headings">
+                            <th class="column-title">
+                                @lang('messages.headers.camp_thumb')
+                            </th>
+                            <th class="column-title">
+                                @lang('messages.headers.camp_title')
+                            </th>
+                            <th class="column-title">
+                                @lang('messages.headers.camp_status')
+                            </th>
+                            <th class="column-title">
+                                @lang('messages.headers.camp_email_sent')
+                            </th>
+                            <th class="column-title">
+                                @lang('messages.headers.camp_email_open')
+                            </th>
+                            <th class="column-title">
+                                @lang('messages.headers.camp_email_click')
+                            </th>
+                            <th class="column-title no-link last">
+                                <span class="nobr">
+                                    @lang('messages.headers.camp_list_action')
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                <table class="table table-striped jambo_table bulk_action hidden" id="">
                     <thead>
                         <tr class="headings">
                             <th class="column-title">
@@ -124,36 +170,28 @@ $topBits = '';  // remove this if this was set in the controller
                             </td>
                             <td class="last">
                                 @if($c->sendDate === null)
-                                <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
+                                <a class="btn btn-primary btn-sm" href="{!! url('campaign',[$c->campaignID,'edit']) !!}" title="@lang('messages.buttons.common_edit')">
                                     <i aria-hidden="true" class="fa fa-edit">
                                     </i>
-                                    @lang('messages.buttons.common_edit')
                                 </a>
                                 @else
-                                <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
+                                <a class="btn btn-primary btn-sm" href="{!! url('campaign',[$c->campaignID,'edit']) !!}" title="@lang('messages.buttons.common_view')">
                                     <i aria-hidden="true" class="fa fa-eye">
                                     </i>
-                                    @lang('messages.buttons.common_view')
                                 </a>
                                 @endif
-                                |
-                                <a href="{!! url('campaign',[$c->campaignID,'copy']) !!}">
+                                <a class="btn btn-success btn-sm" href="{!! url('campaign',[$c->campaignID,'copy']) !!}" title="@lang('messages.buttons.common_copy')">
                                     <i class="fa fa-copy">
                                     </i>
-                                    @lang('messages.buttons.common_copy')
                                 </a>
-                                |
-                                <a href="javascript:void(0)" onclick="deleteCampaign('{{$c->title}}','{{$c->campaignID}}')">
+                                <a class="btn btn-danger btn-sm" href="javascript:void(0)" onclick="deleteCampaign('{{$c->title}}','{{$c->campaignID}}')" title="@lang('messages.buttons.common_delete')">
                                     <i class="fa fa-close">
                                     </i>
-                                    @lang('messages.buttons.common_delete')
                                 </a>
-                                |
                                 @if($c->sendDate !== null)
-                                <a href="javascript:void(0)" onclick="archiveCampaign('{{$c->title}}','{{$c->campaignID}}')">
+                                <a class="btn btn-warning btn-sm" href="javascript:void(0)" onclick="archiveCampaign('{{$c->title}}','{{$c->campaignID}}')" title="@lang('messages.buttons.archive')">
                                     <i aria-hidden="true" class="fa fa-archive">
                                     </i>
-                                    @lang('messages.buttons.archive')
                                 </a>
                                 @endif
                             </td>
@@ -171,6 +209,7 @@ $topBits = '';  // remove this if this was set in the controller
 @endsection
 
 @section('scripts')
+@include('v1.parts.footer-datatable')
 <script>
     $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
@@ -203,6 +242,7 @@ $topBits = '';  // remove this if this was set in the controller
                         $('#popup-campaign-delete-success').find('.modal-title').html("{{ trans('messages.campaign_delete_popup_success.title') }}");
                         $('#popup-campaign-delete-success').find('.modal-body').html(data.message)
                         $('#popup-campaign-delete-success').modal('show');
+                        table.draw();
                     }
                     delete_campaign_id = '';
                 },
@@ -230,6 +270,7 @@ $topBits = '';  // remove this if this was set in the controller
                             $('#popup-campaign-delete-success').find('.modal-title').html("{{ trans('messages.campaign_delete_popup_success.title') }}");
                             $('#popup-campaign-delete-success').find('.modal-body').html(data.message)
                             $('#popup-campaign-delete-success').modal('show');
+                            table.draw();
                         }
                         archive_campaign_id = '';
                     },
@@ -248,6 +289,43 @@ $topBits = '';  // remove this if this was set in the controller
         $('#popup-confirm-campaign-delete').find('.modal-footer .btn-warning').text('{{trans('messages.campaign_archive_popup.btn_ok')}}');
         $('#popup-confirm-campaign-delete').find('.modal-footer .btn-warning').attr("onclick","setExitPopButtonValue('archive')");
         $('#popup-confirm-campaign-delete').modal('show');
+    }
+    var table;
+    $(document).ready( function () {
+        table = $('#campaign_dt').DataTable({
+           processing: true,
+           serverSide: true,
+           responsive: true,
+           ajax: { 
+                url: "{{ url('list_campaign') }}",
+                data: {
+                    'filter':$('#filter_status').val()
+                }
+            },
+           ordering:false,
+           columns: [
+                    { data: 'thumb', name: '@lang('messages.headers.camp_thumb')' ,searchable: false },
+                    { data: 'title', name: '@lang('messages.headers.camp_title')' },
+                    { data: 'status', name: '@lang('messages.headers.camp_status')' },
+                    { data: 'total_sent', name: '@lang('messages.headers.camp_email_sent')',searchable: false  },
+                    { data: 'open', name: '@lang('messages.headers.camp_email_open')' ,searchable: false },
+                    { data: 'click', name: '@lang('messages.headers.camp_email_click')',searchable: false },
+                    { data: 'action', name: '@lang('messages.headers.camp_list_action')',searchable: false  },
+                 ],
+        });
+
+     });
+    function removeFilter(){
+        table.columns(2).search('').draw(true);
+        $('#search-button-group .btn').removeClass('active');
+        $('#removeFilter').hide();
+    }
+    function changeSearch(search_by,ths){
+        $('#removeFilter').show();
+        $('#search-button-group .btn').removeClass('active');
+        $(ths).addClass('active');
+        table.columns(2).search(search_by).draw(true);
+        $('#removeFilter').show();
     }
 </script>
 @endsection
