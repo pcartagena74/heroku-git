@@ -398,6 +398,13 @@ return [
         'camp_not_open'              => 'es-Did Not Open',
         'camp_unsubs'                => 'es-Unsubscribed',
         'camp_spam'                  => 'es-Spam Reports',
+        'filter_campaign'            => 'es-Filter Campaigns',
+        'filter_camp_draft'          => 'es-Draft',
+        'filter_camp_sent'           => 'es-Sent',
+        'filter_camp_archive'        => 'es-Archive',
+        'camp_temp_fail'             => 'es-Temporary Fail',
+        'camp_perm_fail'             => 'es-Permanent Fail(Bounced)',
+        'camp_delivered'             => 'es-Delivered',
     ],
     'headers' => [
         'acc_lookup' => 'es-Account Lookup',

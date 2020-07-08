@@ -725,27 +725,48 @@ class CampaignController extends Controller
         $response   = $request->all();
         $event      = $response['event-data']['event'];
         $message_id = $response['event-data']['message']['headers']['message-id'];
+        // $message_id = '20200708072347.1.CBBD554EC0F0F5D2@sandbox4aafddd7d2f14bf9a04a148823ffd090.mailgun.org';
         $email_db   = EmailQueue::where(['message_id' => $message_id])->get()->first();
-        switch ($event) {
-            case 'delivered':
-                $email_db->delivered = 1;
-                $email_db->save();
-                break;
-            case 'clicked':
-                $email_db->click = 1;
-                $email_db->save();
-                break;
-            case 'opened':
-                $email_db->open = 1;
-                $email_db->save();
-                break;
-
-            default:
-                # code...
-                break;
+        if (!empty($email_db)) {
+            switch ($event) {
+                case 'clicked':
+                    $email_db->click = 1;
+                    $email_db->save();
+                    break;
+                case 'delivered':
+                    $email_db->delivered = 1;
+                    $email_db->save();
+                    break;
+                case 'opened':
+                    if (!empty($response['event-data']['client-info']['device-type'])) {
+                        $email_db->device_type = $response['event-data']['client-info']['device-type'];
+                    }
+                    $email_db->open = 1;
+                    $email_db->save();
+                    break;
+                case 'failed':
+                    if (!empty($response['event-data']['severity'])) {
+                        if ($response['event-data']['severity'] == 'temporary') {
+                            $email_db->temporary_failure = 1;
+                            $email_db->save();
+                        } else {
+                            $email_db->permanent_fail = 1;
+                            $email_db->save();
+                        }
+                    }
+                    break;
+                case 'complained':
+                    $email_db->spam = 1;
+                    $email_db->save();
+                    break;
+                case 'unsubscribed':
+                    $email_db->unsubscribe = 1;
+                    $email_db->save();
+                    break;
+            }
         }
         // Log::info('User failed to login.', ['id' => $event, 'message_id' => $message_id]);
-        return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
+        return response()->json(['success' => true, 'message' => 'Web-hook triggered']);
     }
 
     public function archiveCampaign(Request $request)

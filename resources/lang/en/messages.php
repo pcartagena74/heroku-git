@@ -403,6 +403,9 @@ return [
         'filter_camp_draft'          => 'Draft',
         'filter_camp_sent'           => 'Sent',
         'filter_camp_archive'        => 'Archive',
+        'camp_temp_fail'             => 'Temporary Fail',
+        'camp_perm_fail'             => 'Permanent Fail(Bounced)',
+        'camp_delivered'             => 'Delivered',
     ],
     'headers'                        => [
         'acc_lookup'            => "Account Lookup",

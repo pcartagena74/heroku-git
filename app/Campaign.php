@@ -45,7 +45,7 @@ class Campaign extends Model
     public function mailgun()
     {
         return $this->hasOne(EmailQueue::class, 'campaign_id', 'campaignID')
-            ->selectRaw('campaign_id, sum(sent) as sent, sum(failed) as failed, sum(click) as click, sum(delivered) as delivered, sum(open) as open,count(campaign_id) as total_sent')
+            ->selectRaw('campaign_id, sum(sent) as sent, sum(permanent_fail) as permanent_fail, sum(click) as click, sum(delivered) as delivered, sum(open) as open,count(campaign_id) as total_sent,sum(temporary_failure) as temporary_failure,sum(unsubscribe) as unsubscribe,sum(spam) as spam, SUM(CASE WHEN device_type = "mobile" THEN 1 else 0 END ) AS mobile_count, SUM( CASE WHEN device_type = "desktop" THEN 1 else 0 END ) AS desktop_count')
             ->groupBy('campaign_id');
     }
     public function template_blocks()

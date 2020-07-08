@@ -42,310 +42,337 @@ if(!empty($campaign)){
                 {{ trans('messages.fields.camp_message_header') }}
             </i>
         </a>
-        <div aria-labelledby="headingOne" class="panel-collapse collapse in" id="collapseOne" role="tabpanel">
-            <div class="panel-body">
-                @if(!empty($campaign))
-                <div class="form-group col-sm-12 col-xs-12">
-                    {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title','id'=>'campaign_title',$disable)) !!}
-                </div>
+        @if(!empty($disable))
+        <div aria-labelledby="headingOne" class="panel-collapse collapse" id="collapseOne" role="tabpanel">
+            @else
+            <div aria-labelledby="headingOne" class="panel-collapse collapse in" id="collapseOne" role="tabpanel">
                 @endif
-                <div class="form-group col-sm-6 col-xs-12">
-                    @if($campaign == null)
+                <div class="panel-body">
+                    @if(!empty($campaign))
+                    <div class="form-group col-sm-12 col-xs-12">
+                        {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title','id'=>'campaign_title',$disable)) !!}
+                    </div>
+                    @endif
+                    <div class="form-group col-sm-6 col-xs-12">
+                        @if($campaign == null)
                             {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name')) !!}
                         @else
                             {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name',$disable)) !!}
                         @endif
-                </div>
-                <div class="form-group col-sm-6 col-xs-12">
-                    @if($campaign == null)
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                        @if($campaign == null)
                             {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email',$disable)) !!}
                         @else
                             {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email',$disable)) !!}
                         @endif
-                </div>
-                <div class="form-group col-sm-12 col-xs-12">
-                    @if($campaign == null)
+                    </div>
+                    <div class="form-group col-sm-12 col-xs-12">
+                        @if($campaign == null)
                             {!! Form::text('subject', '', array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject')) !!}
                         @else
                             {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject',$disable)) !!}
                         @endif
-                </div>
-                <div class="form-group col-sm-12 col-xs-12">
-                    @if($campaign == null)
+                    </div>
+                    <div class="form-group col-sm-12 col-xs-12">
+                        @if($campaign == null)
                             {!! Form::text('preheader', '', array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader')) !!}
                         @else
                             {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader',$disable)) !!}
                         @endif
-                </div>
-                <div class="form-group col-sm-12 col-xs-12 clear-fix">
-                    {{ trans('messages.fields.camp_email_list') }}
+                    </div>
+                    <div class="form-group col-sm-12 col-xs-12 clear-fix">
+                        {{ trans('messages.fields.camp_email_list') }}
                      @if($campaign == null)
                         {!! Form::select('email_list', $list_dp, null, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
                     @else
                         {!! Form::select('email_list', $list_dp, $campaign->emailListID, array('class' => 'form-control input-sm','id'=>'email_list',$disable)) !!}
                     @endif
-                </div>
-                <div class="form-group col-sm-12 col-xs-12 clear-fix" id="send_campaign_response">
+                    </div>
+                    <div class="form-group col-sm-12 col-xs-12 clear-fix" id="send_campaign_response">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    {{--
-    <div class="panel">
-        <a aria-controls="collapseThree" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" id="headingThree" role="tab">
-            <i class="panel-title">
-                {{ trans('messages.fields.camp_email_list') }}
-            </i>
-        </a>
-        <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
-            <div class="panel-body">
+        {{--
+        <div class="panel">
+            <a aria-controls="collapseThree" aria-expanded="false" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" id="headingThree" role="tab">
+                <i class="panel-title">
+                    {{ trans('messages.fields.camp_email_list') }}
+                </i>
+            </a>
+            <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
+                <div class="panel-body">
+                </div>
             </div>
         </div>
-    </div>
-    --}}
-    <div class="panel">
-        <a class="panel-heading" href="javascript:void(0)" id="headingFour">
-            <i class="panel-title" id="show-etb">
+        --}}
+        <div class="panel">
+            <a aria-controls="collapseTwo" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseTwo" role="tab">
                 @if(empty($campaign))
+                <i class="panel-title" id="show-etb">
                     {{ trans('messages.fields.camp_create_email_template') }}
+                </i>
                 @else
-                <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($campaign)}}" width="70px">
-                    {!! $campaign->title !!} {{ trans('messages.fields.camp_edit_email_template') }}
-                </img>
+                <i class="panel-title">
+                    {{ trans('messages.fields.camp_edit_email_template') }}
+                </i>
                 @endif
-            </i>
-        </a>
-        @if(empty($disable))
-        <div class="panel-collapse">
-            <div class="panel-body">
-                <div class="etb-wrapper">
-                    <i class="fa fa-close etb-wrapper__close-btn" id="hide-etb">
-                    </i>
-                    <div class="etb-wrapper__inner">
-                        @include('v1.auth_pages.campaigns.email_builder')
-                        <div class="etb-wrapper__inner-footer">
-                            <img alt="mcentric logo" class="etb-wrapper__inner-footer-logo" src="/images/mCentric_logo_blue.png"/>
+            </a>
+            <div aria-labelledby="collapseTwo" class="panel-collapse collapse" id="collapseTwo" role="tabpanel">
+                <div class="panel-body">
+                    @if(!empty($campaign))
+                    <a href="javascript:void(0)" id="show-etb">
+                        <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($campaign)}}" width="70px">
+                            {!! $campaign->title !!}
+                        </img>
+                    </a>
+                    @endif
+                    @if(empty($disable))
+                    <div class="etb-wrapper">
+                        <i class="fa fa-close etb-wrapper__close-btn" id="hide-etb">
+                        </i>
+                        <div class="etb-wrapper__inner">
+                            @include('v1.auth_pages.campaigns.email_builder')
+                            <div class="etb-wrapper__inner-footer">
+                                <img alt="mcentric logo" class="etb-wrapper__inner-footer-logo" src="/images/mCentric_logo_blue.png"/>
+                            </div>
                         </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @if(!empty($campaign->sendDate))
+        <div class="panel">
+            <a aria-controls="headingStatics" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#headingStatics" role="tab">
+                <i class="panel-title">
+                    {{ trans('messages.headers.campaign_statics') }}
+                </i>
+            </a>
+            <div aria-labelledby="headingStatics" class="panel-collapse collapse in" id="headingStatics" role="tabpanel">
+                <div class="panel-body">
+                    <div class=" col-sm-12 col-xs-12">
+                        @php
+                    $statics = $campaign->mailgun;
+                    $open_rate = round((($statics->open / $statics->total_sent)*100),2) . '%';
+                    $delivered = $statics->delivered;
+                    $click = $statics->click;
+                    $sent = $statics->sent;
+                    $open = $statics->open;
+                    $temp_failed = $statics->temporary_failure;
+                    $perm_failed = $statics->permanent_fail;
+                    $report_spam = $statics->spam;
+                    $unsubscribed = $statics->unsubscribe;
+                    $did_not_open = $delivered - $open;
+                    $mobile_percent = round((($statics->mobile_count / $statics->total_sent)*100),2) . '%';
+                    $desktop_percent = round((($statics->desktop_count / $statics->total_sent)*100),2) . '%';
+                    @endphp
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_open_rate')
+                                </td>
+                                <td>
+                                    <i aria-hidden="true" class="fa fa-mobile">
+                                    </i>
+                                    {{$mobile_percent}}
+                                    <i aria-hidden="true" class="fa fa-desktop">
+                                    </i>
+                                    {{$desktop_percent}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_open')
+                                </td>
+                                <td>
+                                    {{$open}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_delivered')
+                                </td>
+                                <td>
+                                    {{$delivered}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_click')
+                                </td>
+                                <td>
+                                    {{$click}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_not_open')
+                                </td>
+                                <td>
+                                    {{$did_not_open}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_unsubs')
+                                </td>
+                                <td>
+                                    {{$unsubscribed}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_spam')
+                                </td>
+                                <td>
+                                    {{$report_spam}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_temp_fail')
+                                </td>
+                                <td>
+                                    {{$temp_failed}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_perm_fail')
+                                </td>
+                                <td>
+                                    {{$perm_failed}}
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
         @endif
-    </div>
-    @if(!empty($campaign->mailgun))
-    <div class="panel">
-        <a aria-controls="headingStatics" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#headingStatics" role="tab">
-            <i class="panel-title">
-                {{ trans('messages.headers.campaign_statics') }}
-            </i>
-        </a>
-        <div aria-labelledby="headingStatics" class="panel-collapse collapse in" id="headingStatics" role="tabpanel">
-            <div class="panel-body">
-                <div class=" col-sm-12 col-xs-12">
-                    @php
-                    $statics = $campaign->mailgun;
-                    $open_rate = round((($statics->open / $statics->total_sent)*100),2) . '%';
-                    $open = $statics->open;
-                    $sent = $statics->sent;
-                    $failed = $statics->failed;
-                    $delivered = $statics->delivered;
-                    $click = $statics->click;
-                    $did_not_open = 0;
-                    $unsubscribed = 0;
-                    $report_spam = 0;
-                    // dd($statics);
-                    //  "campaign_id" => 1
-                    //     "sent" => "34"
-                    //     "failed" => "7"
-                    //     "click" => "0"
-                    //     "delivered" => "17"
-                    //     "open" => "15"
-                    //     "total_sent" => 38
-                    @endphp
-                    <table class="table">
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_open_rate')
-                            </td>
-                            <td>
-                                {{$open_rate}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_open')
-                            </td>
-                            <td>
-                                {{$open}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_sent')
-                            </td>
-                            <td>
-                                {{$sent}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_click')
-                            </td>
-                            <td>
-                                {{$click}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_not_open')
-                            </td>
-                            <td>
-                                {{$did_not_open}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_unsubs')
-                            </td>
-                            <td>
-                                {{$unsubscribed}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @lang('messages.fields.camp_spam')
-                            </td>
-                            <td>
-                                {{$report_spam}}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
     {!! Form::close() !!}
-</div>
-@include('v1.parts.end_content')
+    </div>
+    @include('v1.parts.end_content')
     {{-- Test Email Div --}}
-<div>
-    @include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_test_email'),
+    <div>
+        @include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_test_email'),
                  'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    <div id="test-email">
-        <div class="form-group">
-            {!! Form::label('email1', trans('messages.fields.camp_five_email') ) !!}
+        <div id="test-email">
+            <div class="form-group">
+                {!! Form::label('email1', trans('messages.fields.camp_five_email') ) !!}
             {!! Form::email('email1', $org->adminEmail, array('class' => 'form-control input-sm')) !!}
             @if($campaign == null)
             @else
             @endif
-        </div>
-        <div class="form-group">
-            {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+            </div>
+            <div class="form-group">
+                {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
                 'id' => 'email2')) !!}
-        </div>
-        <div class="form-group">
-            {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+            </div>
+            <div class="form-group">
+                {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
                 'id' => 'email3')) !!}
-        </div>
-        <div class="form-group">
-            {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+            </div>
+            <div class="form-group">
+                {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email4')) !!}
-        </div>
-        <div class="form-group">
-            {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
+            </div>
+            <div class="form-group">
+                {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
             'id' => 'email5')) !!}
-        </div>
-        <a id="add_email" onclick="add_email();">
-            {{trans('messages.fields.camp_add_another')}}
-        </a>
-        <p>
-        </p>
-        <div class="form-group">
-            {!! Form::label('note', trans('messages.fields.camp_lbl_personal_note')) !!}
+            </div>
+            <a id="add_email" onclick="add_email();">
+                {{trans('messages.fields.camp_add_another')}}
+            </a>
+            <p>
+            </p>
+            <div class="form-group">
+                {!! Form::label('note', trans('messages.fields.camp_lbl_personal_note')) !!}
             {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4','id'=>'text_note',
                 'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
+            </div>
+            <div class="form-group">
+                {!! Form::button(trans('messages.fields.camp_btn_send_test_message'), array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)',$disable)) !!}
+            </div>
+            <div class="form-group" id="response">
+            </div>
+            @include('v1.parts.end_content')
+        </div>
+        @include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_scheduling'),
+             'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0,'class'=>'
+             pull-right'])
+        <div class="form-group">
+            <div class="col-sm-3">
+                {!! Form::label('send', trans('messages.fields.camp_lbl_send_now'), array('class' => 'control-label')) !!}
+            </div>
+            @if(!empty($campaign->scheduleDate))
+            <div class="col-sm-5" style="text-align: center;">
+                {!! Form::checkbox('send', '1', true, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
+            </div>
+            @else
+            <div class="col-sm-5" style="text-align: center;">
+                {!! Form::checkbox('send', '1', false, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
+            </div>
+            @endif
+            <div class="col-sm-3">
+                {!! Form::label('send',trans('messages.fields.camp_lbl_send_later'), array('class' => 'control-label')) !!}
+            </div>
+            @if(!empty($campaign))
+    @if(!empty($campaign->sendDate) && empty($campaign->scheduleDate))
+            <div class="row">
+                <div class="col-sm-12">
+                    {{trans('messages.messages.camp_sent_on',['date'=>$campaign->sendDate])}}
+                </div>
+            </div>
+            @endif
+    @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate <= $current_datetime)
+            <div class="row">
+                <div class="col-sm-12">
+                    {{trans('messages.messages.camp_sent_on',['date'=>$campaign->scheduleDate])}}
+                </div>
+            </div>
+            @endif
+    @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate > $current_datetime)
+            <div class="row">
+                <div class="col-sm-12">
+                    {{trans('messages.messages.camp_scheduled_sent_on',['date'=>$campaign->scheduleDate])}}
+                </div>
+            </div>
+            @endif
+    @endif
+        </div>
+        <p>
+        </p>
+        <div id="schedule" style="display: none;">
+            {!! Form::label('schedule', trans('messages.fields.camp_lbl_release_date')) !!}
+    @if($campaign == null)
+            <div class="form-group col-sm-12">
+                {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left','id'=>'schedule_date')) !!}
+                <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
+                </span>
+            </div>
+            @else
+            <div class="form-group col-sm-12">
+                {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left','id'=>'schedule_date',$disable)) !!}
+                <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
+                </span>
+            </div>
+            @endif
         </div>
         <div class="form-group">
-            {!! Form::button(trans('messages.fields.camp_btn_send_test_message'), array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)',$disable)) !!}
-        </div>
-        <div class="form-group" id="response">
+            {!! Form::button(trans('messages.fields.camp_btn_send_now'), array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id'=>'send_now', 'onclick' => 'sendCampaign()',$disable)) !!}
         </div>
         @include('v1.parts.end_content')
     </div>
-</div>
-@include('v1.parts.start_content', ['header' => trans('messages.headers.campaign_scheduling'),
-             'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-<div class="form-group">
-    <div class="col-sm-3">
-        {!! Form::label('send', trans('messages.fields.camp_lbl_send_now'), array('class' => 'control-label')) !!}
-    </div>
-    @if(!empty($campaign->scheduleDate))
-    <div class="col-sm-5" style="text-align: center;">
-        {!! Form::checkbox('send', '1', true, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
-    </div>
-    @else
-    <div class="col-sm-5" style="text-align: center;">
-        {!! Form::checkbox('send', '1', false, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
-    </div>
-    @endif
-    <div class="col-sm-3">
-        {!! Form::label('send',trans('messages.fields.camp_lbl_send_later'), array('class' => 'control-label')) !!}
-    </div>
-    @if(!empty($campaign))
-    @if(!empty($campaign->sendDate) && empty($campaign->scheduleDate))
-    <div class="row">
-        <div class="col-sm-12">
-            {{trans('messages.messages.camp_sent_on',['date'=>$campaign->sendDate])}}
-        </div>
-    </div>
-    @endif
-    @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate <= $current_datetime)
-    <div class="row">
-        <div class="col-sm-12">
-            {{trans('messages.messages.camp_sent_on',['date'=>$campaign->scheduleDate])}}
-        </div>
-    </div>
-    @endif
-    @if(!empty($campaign->sendDate) && !empty($campaign->scheduleDate) && $campaign->scheduleDate > $current_datetime)
-    <div class="row">
-        <div class="col-sm-12">
-            {{trans('messages.messages.camp_scheduled_sent_on',['date'=>$campaign->scheduleDate])}}
-        </div>
-    </div>
-    @endif
-    @endif
-</div>
-<p>
-</p>
-<div id="schedule" style="display: none;">
-    {!! Form::label('schedule', trans('messages.fields.camp_lbl_release_date')) !!}
-    @if($campaign == null)
-    <div class="form-group col-sm-12">
-        {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left','id'=>'schedule_date')) !!}
-        <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
-        </span>
-    </div>
-    @else
-    <div class="form-group col-sm-12">
-        {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left','id'=>'schedule_date',$disable)) !!}
-        <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
-        </span>
-    </div>
-    @endif
-</div>
-<div class="form-group">
-    {!! Form::button(trans('messages.fields.camp_btn_send_now'), array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id'=>'send_now', 'onclick' => 'sendCampaign()',$disable)) !!}
-</div>
-@include('v1.parts.end_content')
-
-@endsection
+    @endsection
 
 @section('scripts')
     {{-- @include('v1.parts.footer-tinymce2') --}}
     {{-- @include('v1.parts.footer-daterangepicker', ['fieldname' => 'schedule_date', 'time' => 'true', 'single' => 'true']) --}}
-<script type="text/javascript">
-    $('#schedule_date').daterangepicker({
+    <script type="text/javascript">
+        $('#schedule_date').daterangepicker({
             timePicker: true,
             autoUpdateInput: true,
             singleDatePicker: true,
@@ -417,6 +444,7 @@ if(!empty($campaign)){
         });
     }
     function sendCampaign() {
+        $( "#collapseOne" ).collapse("show");
         var campaign = '';
         @if(!empty($campaign->campaignID))
         campaign = '{{$campaign->campaignID}}'
@@ -489,5 +517,6 @@ if(!empty($campaign)){
         });
     
 });//ready end
-</script>
-@endsection
+    </script>
+    @endsection
+</div>
