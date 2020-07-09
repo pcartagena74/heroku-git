@@ -578,20 +578,32 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
      * @param  string  $raw_html    html string used when for_preview is true
      * @return string               replaced html
      */
-    function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null)
+    function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
     {
         // $start = microtime(true);
-        $person       = '';
-        $organization = '';
-        $org_name     = '';
-
+        $person         = '';
+        $organization   = '';
+        $org_name       = '';
+        $pre_header_str = '<table width="100%" cellspacing="0" cellpadding="0" border="0" style="background:rgb(233,234,234) none repeat scroll 0% 0%/auto padding-box border-box"><tbody><tr><td><div style="margin:0 auto;width:600px;padding:0px">
+                                    <table width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:rgb(255,255,255);width:600px;border-spacing:0px;border-collapse:collapse" align="center">
+                <tbody>
+                    <tr>
+                        <td align="left" style="padding:10px 50px;font-family:Arial;font-size:13px;color:rgb(0,0,0);line-height:22px;border-collapse:collapse;text-align:center">
+                            <div>
+                                ##toreplace##
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table></div></td></tr></tbody></table>';
         if ($for_preview) {
             if (!empty($raw_html)) {
                 $person       = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
                 $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
                 if (!empty($campaign)) {
                     if (!empty($campaign->preheader)) {
-                        $raw_html = $campaign->preheader . $raw_html;
+                        $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
+                        $raw_html       = $preheader_html . $raw_html;
                     }
                 }
             } else {
@@ -599,13 +611,15 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
             }
         } else {
             $raw_html = '';
+            //if in case campaign content is empty pick individual blocks
             if (empty($campaign->content)) {
                 foreach ($campaign->template_blocks as $key => $value) {
                     $raw_html .= $value->content;
                 }
             } else {
                 if (!empty($campaign->preheader)) {
-                    $raw_html = $campaign->preheader . $campaign->content;
+                    $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
+                    $raw_html       = $preheader_html . $campaign->content;
                 } else {
                     $raw_html = $campaign->content;
                 }

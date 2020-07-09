@@ -836,6 +836,7 @@ return [
         'email_list_updated'             => 'Email List :name updated successfully.',
         'email_list_deleted'             => 'Email List :name deleted successfully.',
         'campaign_archive'               => 'Campaign Archived Successfully!',
+        'test_email_sent_failed'         => 'Some Error Occured while sending email.',
     ],
     'modals'                         => [
         'gConfirm'   => 'Attendee Confirmation',

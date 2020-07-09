@@ -834,7 +834,8 @@ return [
         'email_list_updated' => 'es-Email List :name updated successfully.',
         'email_list_deleted' => 'es-Email List :name deleted successfully.',
         'campaign_archive' => 'es-Campaign Archived Successfully!',
-        'campaign_archive_scheduled_send' => 'This campaigns is scheduled for a furture date it cannot be archived. Please delete it instead',
+        'campaign_archive_scheduled_send' => 'es-This campaigns is scheduled for a furture date it cannot be archived. Please delete it instead',
+        'test_email_sent_failed' => 'es-Some Error Occured while sending email.',
     ],
     'modals' => [
         'gConfirm' => 'es-Attendee Confirmation',

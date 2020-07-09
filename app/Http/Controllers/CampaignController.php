@@ -585,15 +585,19 @@ class CampaignController extends Controller
 
         }
         $html = replaceUserDataInEmailTemplate(null, null, true, $html);
-        $mail = Mail::send('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $note],
-            function ($message) use ($currentPerson, $valid_email, $subject) {
-                $message->from($currentPerson->login);
-                $message->sender($currentPerson->login);
-                $message->to($valid_email);
-                $message->subject($subject);
-            }
-        );
-        return response()->json(['success' => true, 'message' => trans('messages.messages.test_email_sent')]);
+        try {
+            $mail = Mail::send('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $note],
+                function ($message) use ($currentPerson, $valid_email, $subject, $from_email) {
+                    $message->from($from_email);
+                    $message->sender($from_email);
+                    $message->to($valid_email);
+                    $message->subject($subject);
+                }
+            );
+            return response()->json(['success' => true, 'message' => trans('messages.messages.test_email_sent')]);
+        } catch (\Throwable $ex) {
+            return response()->json(['success' => false, 'message' => trans('messages.messages.test_email_sent_failed')]);
+        }
     }
 
     public function copy(Request $request, $campaign_id)
@@ -726,7 +730,7 @@ class CampaignController extends Controller
         $event      = $response['event-data']['event'];
         $message_id = $response['event-data']['message']['headers']['message-id'];
         // $message_id = '20200708072347.1.CBBD554EC0F0F5D2@sandbox4aafddd7d2f14bf9a04a148823ffd090.mailgun.org';
-        $email_db   = EmailQueue::where(['message_id' => $message_id])->get()->first();
+        $email_db = EmailQueue::where(['message_id' => $message_id])->get()->first();
         if (!empty($email_db)) {
             switch ($event) {
                 case 'clicked':
