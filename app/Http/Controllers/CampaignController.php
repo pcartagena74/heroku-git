@@ -10,6 +10,7 @@ use App\Org;
 use App\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mail;
@@ -677,7 +678,7 @@ class CampaignController extends Controller
         $insert_queue = [];
         EmailQueue::where('campaign_id', $campaign_id)->delete();
         foreach ($contacts as $key => $value) {
-            // $value     = 'mufaddal@systango.com'; /// for testing only
+            // $value     = 'mufaddal@systango2.com'; /// for testing only
             $to_insert = ['campaign_id' => $campaign_id, 'org_id' => $org_id, 'email_id' => $value];
             if (!empty($schedule)) {
                 $to_insert['scheduled_datetime'] = $date_schedule;
@@ -769,7 +770,8 @@ class CampaignController extends Controller
                     break;
             }
         }
-        // Log::info('User failed to login.', ['id' => $event, 'message_id' => $message_id]);
+        // use Illuminate\Support\Facades\Log; to enable log
+        // Log::info('User failed to login.', ['id' => $event, 'message_id' => json_encode($response)]);
         return response()->json(['success' => true, 'message' => 'Web-hook triggered']);
     }
 

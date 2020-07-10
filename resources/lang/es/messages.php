@@ -1360,4 +1360,26 @@ return [
         'btn_ok'      => 'Ok',
         'btn_cancel'  => 'Cancel',
     ],
+    'datatable'                      => [
+        // Datatables
+      'table-decimal'                    => '',
+      'table-empty'                      => 'No hay data esta tabla',
+      'table-info'                       => 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
+      'table-info-empty'                 => 'Mostrando 0 de 0 a 0 records',
+      'table-info-filtered'              => '(filtrados de _MAX_ totales)',
+      'table-info-postfix'               => '',
+      'table-thousands'                  => ',',
+      'table-length-menu'                => 'Mostrar _MENU_ entradas',
+      'table-loading-results'            => 'Cargando...',
+      'table-processing'                 => 'Procesando...',
+      'table-search'                     => 'Buscar:',
+      'table-zero-records'               => 'No hemos encontrado entradas que correspondan',
+      'table-paginate-first'             => 'Primera',
+      'table-paginate-last'              => 'Última',
+      'table-paginate-next'              => 'Siguiente',
+      'table-paginate-prev'              => 'Anterior',
+      'table-aria-sort-asc'              => ': activar para ordernar por esta columna ascendentemente',
+      'table-aria-sort-desc'             => ': activar para ordernar por esta columna descendentemente',
+    ],
+
 ];

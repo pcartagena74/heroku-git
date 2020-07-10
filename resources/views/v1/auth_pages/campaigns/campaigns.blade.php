@@ -303,6 +303,30 @@ $topBits = '';  // remove this if this was set in the controller
                 }
             },
            ordering:false,
+           language: {
+                decimal:        "{{ trans('messages.datatable.table-decimal') }}",
+                emptyTable:     "{{ trans('messages.datatable.table-empty') }}",
+                info:           "{{ trans('messages.datatable.table-info') }}",
+                infoEmpty:      "{{ trans('messages.datatable.table-info-empty') }}",
+                infoFiltered:   "{{ trans('messages.datatable.table-info-filtered') }}",
+                infoPostFix:    "{{ trans('messages.datatable.table-info-postfix') }}",
+                thousands:      "{{ trans('messages.datatable.table-thousands') }}",
+                lengthMenu:     "{{ trans('messages.datatable.table-length-menu') }}",
+                loadingRecords: "{{ trans('messages.datatable.table-loading-results') }}",
+                processing:     "{{ trans('messages.datatable.table-processing') }}",
+                search:         "{{ trans('messages.datatable.table-search') }}",
+                zeroRecords:    "{{ trans('messages.datatable.table-zero-records') }}",
+                paginate: {
+                    first:      "{{ trans('messages.datatable.table-paginate-first') }}",
+                    last:       "{{ trans('messages.datatable.table-paginate-last') }}",
+                    next:       "{{ trans('messages.datatable.table-paginate-next') }}",
+                    previous:   "{{ trans('messages.datatable.table-paginate-prev') }}"
+                },
+                aria: {
+                    sortAscending:  "{{ trans('messages.datatable.table-aria-sort-asc') }}",
+                    sortDescending: "{{ trans('messages.datatable.table-aria-sort-desc') }}"
+                },
+            },
            columns: [
                     { data: 'thumb', name: '@lang('messages.headers.camp_thumb')' ,searchable: false },
                     { data: 'title', name: '@lang('messages.headers.camp_title')' },
