@@ -16,6 +16,9 @@ class NotifyUserOfCompletedImport implements ShouldQueue
 
     public $person;
     public $count;
+
+    public $tries   = 2;
+    // public $timeout = 160;
     /**
      * Create a new job instance.
      *
