@@ -939,7 +939,7 @@ return [
         'UNDO' => [
             'subject' => "Your mCentric Login",
             'line1' => "Your mCentric login was changed back to :email.",
-        ]
+        ],
         //Member import complete
         'member_import' => [
             'subject' => 'Import Complete',
