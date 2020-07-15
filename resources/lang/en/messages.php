@@ -152,7 +152,7 @@ return [
         'no_valid_email'                  => 'Please enter atlest one valid email address',
         'empty_template'                  => 'Please select some element in email template',
         'campaign_not_exist'              => 'Campaign does not exist',
-        'import_validation'               => 'Validation falied, PMI or email address not found.',
+        'import_validation'               => 'Validation failed, PMI or email address not found.',
         'campaign_archive_not_send'       => 'Only sent campaigns can be Archived. Please delete it instead',
         'campaign_archive_scheduled_send' => 'This campaigns is scheduled for a furture date it cannot be archived. Please delete it instead',
     ],

@@ -153,7 +153,7 @@ return [
         'no_valid_email' => 'es-Please enter atlest one valid email address',
         'empty_template' => 'es-Please select some element in email template',
         'campaign_not_exist' => 'es-Campaign does not exist',
-        'import_validation' => 'es-Validation falied, PMI or email address not found.',
+        'import_validation' => 'es-Validation failed, PMI or email address not found.',
     ],
     'flashes' => [
         'custom_slug' => "Establezca una URL personalizada y valídela antes de continuar.",
