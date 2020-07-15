@@ -268,6 +268,12 @@ if (!function_exists('location_triage')) {
         $locationID  = request()->input('locationID');
         $loc_virtual = request()->input('virtual');
 
+        if ($event === null || $event->orgID === null) {
+            $orgID = $current_person->defaultOrgID;
+        } else {
+            $orgID = $event->orgID;
+        }
+
         if (empty($loc_virtual)) {
             $loc_virtual = 0;
         }
@@ -286,7 +292,7 @@ if (!function_exists('location_triage')) {
                 $loc = Location::firstOrNew(
                     [
                         'locName' => $locName,
-                        'orgID'   => $event->orgID,
+                        'orgID'   => $orgID,
                     ]
                 );
                 break;
@@ -304,7 +310,7 @@ if (!function_exists('location_triage')) {
 
         }
 
-        if ($loc->orgID == $event->orgID) {
+        if ($loc->orgID == $orgID) {
             $loc->locName   = $locName;
             $loc->addr1     = $addr1;
             $loc->addr2     = $addr2;
@@ -1666,5 +1672,22 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
         $str          = ob_get_clean();
         $item['html'] = $str;
         return $item;
+    }
+}
+if (!function_exists('sendGetToWakeUpDyno')) {
+    function sendGetToWakeUpDyno()
+    {
+        // API URL
+        $base_url = env('QUEUE_DYNO_URL_TEST');
+        if (env('APP_ENV') == 'production') {
+            $base_url = env('QUEUE_DYNO_URL_LIVE');
+        }
+        $url = $base_url . '/trigger-dyno';
+        $ch  = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
+        $output = curl_exec($ch); //contain string
+        curl_close($ch); //close
+
     }
 }

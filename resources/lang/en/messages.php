@@ -1008,9 +1008,25 @@ return [
         ],
 
         // Undo Login Change
-        'UNDO'          => [
+        'UNDO' => [
             'subject' => "Your mCentric Login",
-            'line1'   => "Your mCentric login was changed back to :email.",
+            'line1' => "Your mCentric login was changed back to :email.",
+        ]
+        //Member import complete
+        'member_import' => [
+            'subject' => 'Import Complete',
+            'subject_failed' => 'Import Failed',
+            'subject_warning' => 'Import Completed with errors',
+            'imp_success' => ':user, the member import for file :file_name was successful. Completed on :completed_date',
+            'imp_failed' => ':user, the member import for file :file_name has failed. No records were imported. Please check the file.',
+            'imp_warning' => ':user, the member import for file :file_name had some errors. All records were not processed. Completed on :completed_date',
+            'total'=>'Total Records : :total',
+            'inserted'=>'Inserted Records : :inserted',
+            'updated'=>'Updated Records : :updated',
+            'failed'=>'Failed Records : :failed',
+            'failed_record'=>'Failed Records : :records',
+            'no_identifier'=>'No unique identifier found for this row.',
+            'nothing_to_update'=>'No update or insert operation was performed.'
         ],
 
         // Wait List No More

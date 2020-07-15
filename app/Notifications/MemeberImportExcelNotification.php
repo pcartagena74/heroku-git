@@ -25,9 +25,8 @@ class MemeberImportExcelNotification extends Notification
     public function __construct(Person $person, $import_detail)
     {
         $this->person        = $person;
+        $this->name          = $person->showDisplayName();
         $this->import_detail = $import_detail->refresh();
-        $this->records = $records;
-        $this->name = $person->showDisplayName();
     }
 
     /**
@@ -55,13 +54,10 @@ class MemeberImportExcelNotification extends Notification
         // $name  = $o->orgName;
         // $ename = $this->event->eventName;
         $i_d  = $this->import_detail;
-        /*
-
-        $name = trim($this->person->firstName . ' ' . $this->person->lastName);
+        $name = trim($this->name);
         if (empty($name)) {
             $name = $this->person->login;
-        }*/
-
+        }
         if ($i_d->total == 0) {
             return (new MailMessage)
                 ->subject(trans('messages.notifications.member_import.subject_failed'))

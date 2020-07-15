@@ -83,7 +83,7 @@ return [
         'save_tkt' => 'es-Save Ticket|Save Tickets',
         'sess_reg' => 'es-Submit Session Registration Changes',
         'unbecome' => 'es-End This / Resume Your Identity',
-        'use_addr' => 'es-Use Address',
+        'use_addr' => 'Encuentra el Sitio',
         'wait' => 'es-Join the Wait List',
         'reset' => 'es-Reset',
         'mbr_total' => 'es-All Data (:count)',
@@ -281,7 +281,7 @@ return [
         'lastName' => 'Apellido',
         'limit' => 'Límite',
         'loc' => 'Sitio',
-        'loc_exist' => 'Sitio Existente',
+        'loc_exist' => 'Seleccione un sitio para reutilizar su dirección. Luego haz clic "Encuentra el Sitio"',
         'loc_id' => 'ID de Sitio',
         'loc_name' => 'Nombre del sitio',
         'login' => 'Email',
@@ -987,6 +987,7 @@ return [
             'line2' => 'Su inicio de sesión es la dirección de correo electrónico donde recibe esta notificación.',
             'line3' => 'La contraseña que se estableció para usted es: \':pass\'',
         ],
+
         //Member import complete
         'member_import' => [
             'subject' => 'Importación Completada',
@@ -1014,6 +1015,7 @@ return [
             'subject' => "Su login de mCentric",
             'line1' => "Su inicio de sesión de mCentric se cambió a :email.",
     ],
+
         // Wait List No More
         'WLNM' => [
             'subject' => ":org Event: You are off the wait list!",

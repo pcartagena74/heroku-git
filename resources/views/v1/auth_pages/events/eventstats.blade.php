@@ -28,9 +28,9 @@ if(count($simple) > 15){
     @if($scroll)
         <script>
             $(document).ready(function () {
-                $('#member_table').DataTable({
+                $('#datatable-fixed-header').DataTable({
                     "fixedHeader": true,
-                    //"order": [[0, "asc"]]
+                    "order": []
                 });
             });
         </script>

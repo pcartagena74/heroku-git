@@ -32,6 +32,12 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 /**
  * below code is for language route do not update
  */
+Route::get('trigger-dyno', 'DynoController@index');
+Route::get('/preview', function () {
+    $e    = \App\Event::find(319);
+    $note = new \App\Notifications\EventICSNote($e);
+    return $note->toMail('blah@test.com');
+});
 
 Route::get('setlocale/{locale}', function ($locale) {
     if (in_array($locale, \Config::get('app.locales'))) {
