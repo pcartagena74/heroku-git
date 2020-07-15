@@ -1214,7 +1214,11 @@ if (!function_exists('sendGetToWakeUpDyno')) {
     function sendGetToWakeUpDyno()
     {
         // API URL
-        $url = 'http://mtest-queue.herokuapp.com/trigger-dyno';
+        $base_url = env('QUEUE_DYNO_URL_TEST');
+        if (env('APP_ENV') == 'production') {
+            $base_url = env('QUEUE_DYNO_URL_LIVE');
+        }
+        $url = $base_url . '/trigger-dyno';
         $ch  = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
