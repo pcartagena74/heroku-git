@@ -148,7 +148,14 @@ return [
         'google_recaptcha' => 'es-Complete el reCAPTCHA para enviar la solicitud.',
         'google_recaptcha_required' => 'es-Please Complete the reCAPTCHA to submit the request.',
         'user_not_found' => 'es-Unable to find user. Please select from search or create new.',
-        'import_validation'=>'es-Validation falied, PMI or email address not found.'
+        'no_member_for_list' => 'es-You need to choose a foundation or events to include.',
+        'no_foundation_or_include' => 'es-You need to choose a foundation or events to include.',
+        'storage_full' => 'es-You have reach your storage quota please remove some files and try again.',
+        'storage_full' => 'es-You have reach your storage quota please remove some files and try again.',
+        'no_valid_email' => 'es-Please enter atlest one valid email address',
+        'empty_template' => 'es-Please select some element in email template',
+        'campaign_not_exist' => 'es-Campaign does not exist',
+        'import_validation' => 'es-Validation failed, PMI or email address not found.',
     ],
 
     'flashes' => [
