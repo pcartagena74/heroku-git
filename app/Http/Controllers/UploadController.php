@@ -8,7 +8,9 @@ use App\Address;
 use App\Email;
 use App\Event;
 use App\Imports\MembersImport;
+use App\Jobs\ImportDetailsUpdateJob;
 use App\Jobs\NotifyUserOfCompletedImport;
+use App\Models\ImportDetail;
 use App\OrgPerson;
 use App\Person;
 use App\PersonStaging;
@@ -111,11 +113,12 @@ class UploadController extends Controller
             return Redirect::back()->withErrors($validate->errors());
         }
 
-        $file      = $request->file('filename');
-        $extension = $file->getClientOriginalExtension();
-        $file_name = Str::random(40) . '.' . $extension;
-        $tmp_path  = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
-        $path      = Storage::disk('local')->path($file_name);
+        $file       = $request->file('filename');
+        $f_ori_name = $file->getClientOriginalName();
+        $extension  = $file->getClientOriginalExtension();
+        $file_name  = Str::random(40) . '.' . $extension;
+        $tmp_path   = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
+        $path       = Storage::disk('local')->path($file_name);
         // dd(storage_path($file_name));
         $eventID = request()->input('eventID');
 
@@ -169,10 +172,17 @@ class UploadController extends Controller
                     //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                     //     ->onConnection('database')
                     //     ->onQueue('default');
-                    $var = (new MembersImport($currentPerson))->queue($path)
-                        ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                        ->onConnection('database')
+                    $import_detail            = new ImportDetail();
+                    $import_detail->file_name = $f_ori_name;
+                    $import_detail->user_id   = $currentPerson->personID;
+                    $import_detail->save();
+                    $var = (new MembersImport($currentPerson, $import_detail))->queue($path)
+                        ->chain([
+                            new ImportDetailsUpdateJob($import_detail),
+                            new NotifyUserOfCompletedImport($currentPerson, $import_detail),
+                        ])->onConnection('database')
                         ->onQueue('default');
+                    sendGetToWakeUpDyno();
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
