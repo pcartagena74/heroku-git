@@ -182,6 +182,7 @@ class UploadController extends Controller
                             new NotifyUserOfCompletedImport($currentPerson, $import_detail),
                         ])->onConnection('database')
                         ->onQueue('default');
+                    sendGetToWakeUpDyno();
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
 
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {

@@ -40,7 +40,7 @@ trait ExcelMemberImportTrait
     public function storeImportDataDB($row, $currentPerson, $import_detail)
     {
         $this->currentPerson = $currentPerson;
-        $user = User::where('id', $currentPerson->personID)->get()->first();
+        $user                = User::where('id', $currentPerson->personID)->get()->first();
         \App::setLocale($user->locale);
         DB::connection()->disableQueryLog();
         $import_detail->refresh();
@@ -468,12 +468,33 @@ trait ExcelMemberImportTrait
                         $ary['OrgStat4'] = $chapRenew;
                     }
                 }
+
                 if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
-                    $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                    // $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                    if ($row['pmi_join_date'] != $newOP->RelDate1) {
+                        $reld_update[$pmi_id]['reldate1_new'] = $row['pmi_join_date'];
+                        $reld_update[$pmi_id]['reldate1_old'] = $newOP->RelDate1;
+                    }
+
                 }
                 if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
-                    $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
+                    // $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
+                    if ($row['pmi_join_date'] != $newOP->RelDate2) {
+                        $reld_update[$pmi_id]['reldate2_new'] = $row['chapter_join_date'];
+                        $reld_update[$pmi_id]['reldate2_old'] = $newOP->RelDate2;
+                    }
                 }
+
+                if (!empty($reld_update)) {
+                    if (!empty($this->import_detail->other)) {
+                        $json                       = json_decode($this->import_detail->other);
+                        $json[]                     = $reld_update;
+                        $this->import_detail->other = json_encode($json);
+                    } else {
+                        $this->import_detail->other = json_encode([$reld_update]);
+                    }
+                }
+
                 if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                     $ary['RelDate3'] = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
                 }
@@ -578,7 +599,6 @@ trait ExcelMemberImportTrait
         if ($has_update && !$has_insert) {
             $import_detail->increment('updated');
         }
-
 
         if ($has_update == false && $has_insert == false) {
             $import_detail->increment('failed');
