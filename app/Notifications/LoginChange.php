@@ -23,14 +23,15 @@ class LoginChange extends Notification
      */
     public function __construct(Person $person, $orig_email)
     {
-        $this->person     = $person;
+        $this->person = $person;
         $this->orig_email = $orig_email;
+        $this->name = $person->firstName;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -41,27 +42,29 @@ class LoginChange extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         $o = Org::find($this->person->defaultOrgID);
-        $name = $o->orgName;
+        $oname = $o->orgName;
         $new_email = $this->person->login;
         return (new MailMessage)
-            ->subject('Your mCentric Login')
-            ->line("Your mCentric login was recently changed from $this->orig_email to $new_email.")
-            ->line('If you initiated this change, you can delete this email.')
-            ->line('If you did not, you can change it back using the button below.')
-            ->action('Undo Login Change', url('/u/'.$this->person->personID .'/'. encrypt($this->orig_email)))
-            ->line("Thank you for using mCentric with $name");
+            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
+            ->subject(trans('messages.notifications.login_change.subject'))
+            ->line(trans('messages.notifications.login_change.line1', ['old' => $this->orig_email, 'new' => $new_email]))
+            ->line(trans('messages.notifications.login_change.line2'))
+            ->line(trans('messages.notifications.login_change.line3'))
+            ->action(trans('messages.notifications.login_change.action'),
+                     url('/u/' . $this->person->personID . '/' . encrypt($this->orig_email)))
+            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)

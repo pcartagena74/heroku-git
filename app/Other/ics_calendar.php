@@ -64,7 +64,15 @@ class ics_calendar
 
     private function _escapeString($string)
     {
-        return wordwrap(preg_replace('/([\,;])/', '\\\$1', ($string) ? $string : ''), 75, "\r\n ", true);
+        return wordwrap(preg_replace('/([\,;])/', '\\\$1', ($string) ? strip_tags($string) : ''), 75, "\r\n ", true);
+    }
+
+    private function _escapeXAlt($string)
+    {
+        $cnt = 0;
+        $tmp = preg_replace('/[\n\r]/', ' ', ($string) ? $string : '');
+        $tmp = preg_replace('/([\,;])/', '\\\$1', ($tmp) ? $tmp : '');
+        return wordwrap(preg_replace('/^(\S+)/s', ' $1', $tmp), 75, "\r\n ", true);
     }
 
     public function get()
@@ -75,15 +83,23 @@ class ics_calendar
 
     private function _gen_loc_string(Location $loc)
     {
-        $this->location = $this->venue_uid . ":" . $loc->locName . "\r\n " . $loc->addr1 . "\r\n ";
+        $this->location = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n ";
         if ($loc->addr2 !== null) {
-            $this->location .= $loc->addr2 . "\r\n ";
+            $this->location .= $loc->addr2 . " \r\n ";
         }
         $this->location .= $loc->city . ", " . $loc->state . " " . $loc->zip;
     }
 
     private function _generate()
     {
+        $header = trans('messages.notifications.RegNote.postRegHeader');
+        $event = $this->event;
+        $loc = $this->event->location;
+        $time = 0;
+        $loc_info = view('v1.parts.location_display', compact('event', 'loc', 'time'))->render();
+        $ics_note = new \App\Notifications\EventICSNote($event);
+        $x_alt = $ics_note->toMail('blah@blah.com');
+
         $this->o_string .= "BEGIN:VCALENDAR\r\n" .
         "PRODID:-//" . $this->title . "\r\n" .
         "VERSION:2.0\r\n" .
@@ -97,7 +113,8 @@ class ics_calendar
         "DTEND;TZID=" . $this->tzid . ":" . $this->end->format('Ymd\THis') . "\r\n" .
         "LOCATION:" . $this->_escapeString($this->location) . "\r\n" .
         "SUMMARY:" . $this->_escapeString($this->description) . "\r\n" .
-        "DESCRIPTION:" . $this->_escapeString($this->summary . "\r\n <br> \r\n Information for Registerred Attendees: \r\n " . $this->event->postRegInfo) . "\r\n" .
+        "DESCRIPTION:" . $this->_escapeString($this->summary) . " \\n\\n" . $this->_escapeString($loc_info) . " \\n\\n" .
+                         $this->_escapeString($header) . ":\\n" . $this->_escapeString($this->event->postRegInfo) . "\r\n" .
         "URL;VALUE=URI:" . $this->_escapeString($this->uri) . "\r\n" .
         "UID:" . $this->uid . "\r\n" .
         "SEQUENCE:0\r\n" .
@@ -105,10 +122,11 @@ class ics_calendar
         "DTSTAMP:" . $this->stamp . "\r\n" .
         "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\r\n" .
         "ORGANIZER;CN=" . $this->_escapeString($this->org) . ":MAILTO:" . $this->contact . "\r\n" .
-            "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed" . "\r\n" .
-            "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed" . "\r\n" .
-            "END:VEVENT\r\n" .
-            "END:VCALENDAR\r\n";
+        "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed" . "\r\n" .
+        "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed" . "\r\n" .
+        "X-ALT-DESC;FMTTYPE=text/html:". $this->_escapeXAlt($x_alt->render()) . "\r\n" .
+        "END:VEVENT\r\n" .
+        "END:VCALENDAR\r\n";
     }
 
     private function _appendTimezoneSettings()

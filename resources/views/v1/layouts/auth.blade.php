@@ -34,7 +34,7 @@ if(auth()){
                   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="container body">
-    <div class="main_container bit">
+    <div class="main_container">
         @include('v1.parts.nav-left')
         @include('v1.parts.nav-top')
         <div class="right_col" role="main">

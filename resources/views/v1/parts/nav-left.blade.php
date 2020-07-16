@@ -168,7 +168,8 @@ try{
                         </li>
                         @endif
                     
-                    @if(((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
+                    @if( ((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') ||
+                          Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>
@@ -221,6 +222,13 @@ try{
                                         @lang('messages.nav.ev_add')
                                     </a>
                                 </li>
+                                @if(Entrust::hasRole('Developer'))
+                                <li>
+                                    <a href="{{ url('eventstats')}}">
+                                        @lang('messages.nav.ev_stats')
+                                    </a>
+                                </li>
+                                @endif
                                 <li>
                                     <a href="{{ url('locations')}}">
                                         @lang('messages.nav.ev_loc')
@@ -293,7 +301,8 @@ try{
                         </li>
                         @endif
 
-                    @if(((Entrust::hasRole('Board') || Entrust::can('event-management') || Entrust::can('speaker-management')))
+                    @if(((Entrust::hasRole('Board') ||
+                            Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>

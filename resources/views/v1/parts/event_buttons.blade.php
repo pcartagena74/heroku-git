@@ -1,38 +1,53 @@
-<?php
-/**
- * Comment: Buttons to display on Event Management pages
- * Created: 10/21/2018
- */
-$today = \Carbon\Carbon::now();
-if (!isset($size)) {
-    $size = 'sm';
-}
+@php
+    /**
+     * Comment: Buttons to display on Event Management pages
+     * Created: 10/21/2018
+     *
+     * @var $event
+     *
+     */
 
-if ($today->gt($event->eventEndDate)) {
-    $past = 1;
-} else {
-    $past = 0;
-}
+    $today = \Carbon\Carbon::now();
+    if (!isset($size)) {
+        $size = 'sm';
+    }
 
-$homeURL = env('APP_URL') . '/manage_events';
-$editURL = env('APP_URL') . '/event/' . $event->eventID . '/edit';
-$displayURL = env('APP_URL') . '/events/' . $event->slug;
-$tktURL = env('APP_URL') . '/event-tickets/' . $event->eventID;
-$eventDiscountURL = env('APP_URL') . '/eventdiscount/' . $event->eventID;
-$trackURL = env('APP_URL') . '/tracks/' . $event->eventID;
-$rptURL = env('APP_URL') . '/eventreport/' . $event->slug;
-$copyURL = env('APP_URL') . '/eventcopy/' . $event->slug;
-$checkinURL = env('APP_URL') . '/checkin/' . $event->slug;
-$recordURL = env('APP_URL') . '/record_attendance/' . $event->slug;
+    if ($today->gt($event->eventEndDate)) {
+        $past = 1;
+    } else {
+        $past = 0;
+    }
 
-?>
+    $homeURL = env('APP_URL') . '/manage_events';
+    $editURL = env('APP_URL') . '/event/' . $event->eventID . '/edit';
+    $displayURL = env('APP_URL') . '/events/' . $event->slug;
+    $tktURL = env('APP_URL') . '/event-tickets/' . $event->eventID;
+    $eventDiscountURL = env('APP_URL') . '/eventdiscount/' . $event->eventID;
+    $trackURL = env('APP_URL') . '/tracks/' . $event->eventID;
+    $rptURL = env('APP_URL') . '/eventreport/' . $event->slug;
+    $copyURL = env('APP_URL') . '/eventcopy/' . $event->slug;
+    $checkinURL = env('APP_URL') . '/checkin/' . $event->slug;
+    $recordURL = env('APP_URL') . '/record_attendance/' . $event->slug;
+
+    $loc = $event->location; $time = 1;
+
+    if($loc !== null) {
+        $loc_tooltip = view('v1.parts.location_display', compact('event', 'loc', 'time'))->render();
+    } else {
+        $loc_tooltip = "";
+    }
+@endphp
 
 @if(!isset($suppress))
-    <!-- div class="col-xs-1" -->
     <a href='{{ $homeURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='right'
        title='{{ trans('messages.buttons.return') }}'><i class='fas fa-fw fa-home'></i></a>
-    <!-- /div -->
 @endif
+
+<button class="btn btn-green btn-{{ $size }}" data-content="{!! $loc_tooltip !!}" data-html="true"
+        data-placement="right" data-toggle="popover" data-trigger="focus" tabindex="0">
+    <i data-toggle='tooltip' title="{{ trans('messages.tooltips.loc') }}" class="fal fa-map-marked-alt"></i>
+</button>
+
 @if($event->ok_to_display() && !$past)
     <!-- div class="col-xs-1" -->
     <a target='_new' href='{{ $displayURL }}' class='btn btn-primary btn-{{ $size }}' data-toggle='tooltip'

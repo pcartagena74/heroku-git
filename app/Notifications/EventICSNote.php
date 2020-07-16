@@ -2,33 +2,29 @@
 
 namespace App\Notifications;
 
+use App\Event;
 use App\Org;
-use App\Person;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class SetYourPassword extends Notification
+class EventICSNote extends Notification
 {
     use Queueable;
-
-    protected $person;
-    protected $o;
-    public $name;
+    protected $event;
+    protected $org;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Person $person)
+    public function __construct(Event $event)
     {
-        $this->person = $person;
-        $this->o = Org::find($this->person->defaultOrgID);
-        $this->name = $person->showDisplayName();
+        $this->event = $event;
+        $this->org = Org::find($event->orgID);
     }
-
 
     /**
      * Get the notification's delivery channels.
@@ -49,15 +45,11 @@ class SetYourPassword extends Notification
      */
     public function toMail($notifiable)
     {
-        $oname = $this->o->orgName;
-        return (new MailMessage)
-            ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
-            ->subject(trans('messages.notifications.SYP.subject'))
-            ->line(trans('messages.notifications.SYP.line1', ['name' => $oname]))
-            ->line(trans('messages.notifications.SYP.line1'))
-            ->line(trans('messages.notifications.SYP.line2'))
-            ->action(trans('messages.notifications.SYP.action'), url('/password/reset?e='.$this->person->login))
-            ->line(trans('messages.notifications.thanks', ['org' => $oname]));
+        return (new MailMessage)->markdown('notifications.ics_note', [
+            'event' => $this->event,
+            'logoPath' => $this->org->logo_path(),
+            'orgURL' => $this->org->org_url()
+        ]);
     }
 
     /**

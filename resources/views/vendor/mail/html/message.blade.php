@@ -1,14 +1,17 @@
 @component('mail::layout')
     {{-- Header --}}
+    @if(isset($orgURL) && isset($logoPath))
     @slot('header')
-        @component('mail::header', ['url' => config('app.url')])
-            {{--  config('app.name') --}}
-            <img src="{{ env('APP_URL') }}/images/mCentric_logo_blue.png" height="30">
+        @component('mail::header', ['url' => $orgURL])
+            @if(isset($logoPath))
+                <img src="{{ $logoPath }}" height="50">
+            @endif
         @endcomponent
     @endslot
+    @endif
 
     {{-- Body --}}
-    {{ $slot }}
+    {{ Illuminate\Mail\Markdown::parse($slot) }}
 
     {{-- Subcopy --}}
     @if (isset($subcopy))
@@ -22,7 +25,7 @@
     {{-- Footer --}}
     @slot('footer')
         @component('mail::footer')
-            &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+            <a href="{{ config('app.url') }}"><img src="{{ env('APP_URL') }}/images/mCentric_logo_blue.png" height="30"></a>
         @endcomponent
     @endslot
 @endcomponent

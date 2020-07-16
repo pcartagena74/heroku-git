@@ -30,8 +30,15 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
 /**
- * below code is for launguage route do not update
+ * below code is for language route do not update
  */
+Route::get('trigger-dyno', 'DynoController@index');
+Route::get('/preview', function () {
+    $e    = \App\Event::find(319);
+    $note = new \App\Notifications\EventICSNote($e);
+    return $note->toMail('blah@test.com');
+});
+
 Route::get('setlocale/{locale}', function ($locale) {
     if (in_array($locale, \Config::get('app.locales'))) {
         if (Auth::check()) {
@@ -46,6 +53,10 @@ Route::get('setlocale/{locale}', function ($locale) {
     Cookie::queue('locale', $locale, 60);
     return redirect()->back();
 });
+
+Route::get('/store-address-from-zip', function () {
+    storeLatiLongiFormZip();
+})->middleware('auth');
 
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
@@ -192,6 +203,7 @@ Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomple
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
 Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity'); // Ajax
+Route::get('/eventstats', 'EventStatsController@index');
 
 Route::get('/search/{query?}', 'PersonController@index2');
 Route::post('/search', 'PersonController@search');
@@ -245,10 +257,8 @@ Route::get('/promote/{reg}', 'RegistrationController@promote');
 Route::get('/eventcopy/{slug}', 'EventCopyController@show');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store'); // Ajax
 
-// API Routes that circumvent AUTH and mCentric navigation, etc.
-Route::get('/eventlist/{orgID}/{past}/{etID?}', 'EventAPIController@show');
-// The files saved as copies w/2 (EvantAPI, eventlist.blade) need this route
-//Route::get('/eventlist/{orgID}/{past}/{cal}/{etID?}', 'EventAPIController@show');
+// Public API Routes that circumvent mCentric navigation, etc.
+Route::get('/eventlist/{orgID}/{past}/{cal?}/{etID?}', 'EventAPIController@show');
 Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
 Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 

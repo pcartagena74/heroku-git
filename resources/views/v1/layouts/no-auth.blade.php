@@ -39,7 +39,7 @@
     </nav>
     <div class="container body col-md-12 col-sm-12 col-xs-12">
         <div class="main_container bit">
-            @include('v1.parts.error')
+            @include('v1.parts.error',['no_auth'=>true])
 
     @yield('content')
 

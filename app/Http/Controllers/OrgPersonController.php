@@ -46,9 +46,9 @@ class OrgPersonController extends Controller
             })->first();
         }
 
-        if ($who && $pmiID) {
+        if (null !== $who && null !== $who->myperson && $pmiID) {
             return redirect(env('APP_URL')."/pmi_account/".$who->myperson->personID);
-        } elseif ($who && $email) {
+        } elseif (null !== $who && null !== $who->myperson && $email) {
             return redirect(env('APP_URL')."/pmi_account/".$who->personID);
         } else {
             if ($pmiID > 0) {

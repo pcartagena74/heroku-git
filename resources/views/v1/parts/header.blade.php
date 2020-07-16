@@ -19,8 +19,8 @@
             integrity="sha384-d84LGg2pm9KhR4mCAs3N29GQ4OYNy+K+FBHX8WhimHpPm86c839++MDABegrZ3gn"
             crossorigin="anonymous"></script>
     --}}
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.1.0/css/all.css"
-          integrity="sha384-87DrmpqHRiY8hPLIr7ByqhPIywuSsjuQAfMXAE0sMUpY3BM7nXjf+mLIUSvhDArs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.13.0/css/all.css"
+          integrity="sha384-IIED/eyOkM6ihtOiQsX2zizxFBphgnv1zbe1bKA+njdFzkr6cDNy16jfIKWu4FNH" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/d28859cec2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css"
           rel="stylesheet">
@@ -35,8 +35,7 @@
     <link href="https://vitalets.github.io/x-editable/assets/select2/select2.css" rel="stylesheet">
     <link href="https://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css"
           rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/switchery.min.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/starrr.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/daterangepicker.css" rel="stylesheet">

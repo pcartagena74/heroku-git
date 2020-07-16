@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: This template is used to show a member profile --> either self or, when authorized, others
  * Created: 2/9/2017
@@ -48,7 +48,7 @@ foreach ($array as $chap) {
     $affiliation_array[$i] = $chap;
 }
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
@@ -219,6 +219,110 @@ foreach ($array as $chap) {
                     @include('v1.parts.end_content')
                 @endif
 
+                {{-- Email Addresses Go Here --}}
+                @include('v1.parts.start_content', ['header' => trans('messages.fields.email'),
+                         'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                @if(count($emails) == 0)
+                    {{ trans_choice('messages.profile.emails', count($emails)) }}
+                @else
+                    {{ trans_choice('messages.profile.emails', count($emails)) }}
+
+                    <table id="email_fields" class="table table-striped table-condensed">
+                        <tr>
+                            <th style="text-align:center;" colspan="2">@lang('messages.profile.type')</th>
+                            <th style="text-align:left;">@lang('messages.headers.email')</th>
+                            <th style="text-align:left;">
+                                @lang('messages.headers.primary')?
+                                @include('v1.parts.tooltip', ['title' => trans('messages.profile.primary')])
+                            </th>
+                        </tr>
+                        @foreach($emails as $email)
+                            @php $em_cnt++; @endphp
+                            <tr>
+                                <td style="text-align: left;">
+                                    @if($email->isPrimary)
+                                        <button class="btn btn-danger btn-xs" disabled>@lang('messages.symbols.trash')</button>
+                                        @include('v1.parts.tooltip', ['title' => trans('messages.profile.cant_delete')])
+                                    @else
+                                        <form method="post" action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="personID" value="{{ $profile->personID }}">
+                                            <button class="btn btn-danger btn-xs" data-toggle="tooltip"
+                                                    title="{{ trans('messages.tooltips.delete') }}"
+                                                    onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
+                                                @lang('messages.symbols.trash')
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+                                <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}"
+                                                                 data-pk="{{ $email->emailID }}"
+                                                                 data-url="{{ $emailURL . $email->emailID }}"
+                                                                 data-title="Enter email type"
+                                                                 data-value="{{ $email->emailTYPE }}"></a>
+                                </td>
+                                <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}"
+                                                                 data-pk="{{ $email->emailID }}"
+                                                                 data-url="{{ $emailURL . $email->emailID }}"
+                                                                 data-title="{{ trans('messages.profile.addr1') }}">{{ $email->emailADDR }}</a>
+                                </td>
+                                <td style="text-align: left;">@if($email->isPrimary) @lang('messages.yesno_check.yes')
+                                    @else
+                                        @lang('messages.yesno_check.no')
+                                    @endif
+
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                @endif
+                <div class="col-md-4 col-sm-9 col-xs-12">
+                    <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
+                            data-target="#email_modal">@lang('messages.profile.add_email')
+                    </button>
+                </div>
+                <p>&nbsp;</p>
+                @include('v1.parts.end_content')
+
+                {{-- Custom Chapter Data --}}
+                @if(Entrust::hasRole('Admin'))
+                    @include('v1.parts.start_content', ['header' => trans('messages.profile.custom'),
+                             'subheader' => '<b class="red">(' . trans('messages.profile.ed_ad') . ')</b>',
+                             'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    <table id='date_fields' class='table table-striped table-condensed'>
+                        @for($i=1;$i<=10;$i++)
+                            @if(isset($profile->{'OSN'.$i}))
+                                <tr>
+                                    <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
+                                    <td style="text-align: left;">
+                                        <a href="#" id="OrgStat{{$i}}" data-value="{!! $profile->{'OrgStat'.$i} !!}"></a>
+                                    </td>
+                                </tr>
+                            @elseif($i == 1)
+                                @lang('messages.profile.no_id')
+                            @endif
+                        @endfor
+                    </table>
+                    @include('v1.parts.end_content')
+                @else
+                    @include('v1.parts.start_content', ['header' => trans('messages.profile.custom'),
+                             'subheader' => '(' . trans('messages.profile.uneditable') . ')', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
+                    <table id='date_fields' class='table table-striped table-condensed'>
+                        @for($i=1;$i<=10;$i++)
+                            @if(isset($profile->{'OSN'.$i}))
+                                <tr>
+                                    <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
+                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
+                                </tr>
+                            @elseif($i == 1)
+                                @lang('messages.profile.no_id')
+                            @endif
+                        @endfor
+                    </table>
+                    @include('v1.parts.end_content')
+                @endif
+
+                {{--  Address Goes Here --}}
                 @include('v1.parts.start_min_content', ['header' => trans_choice('messages.profile.addr', 2),
                          'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -241,7 +345,7 @@ foreach ($array as $chap) {
                         <tbody>
 
                         @foreach($addresses as $address)
-                            <?php $ad_cnt++; ?>
+                            @php $ad_cnt++; @endphp
                             <tr>
                                 <td>
                                     <form id="ad-{{ $ad_cnt }}" method="post"
@@ -249,7 +353,7 @@ foreach ($array as $chap) {
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
-                                            onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
+                                                onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
                                     </form>
@@ -289,114 +393,10 @@ foreach ($array as $chap) {
                             data-toggle="modal" data-target="#address_modal"> @lang('messages.profile.add_addr')
                     </button>
                 </div>
-                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
-                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
                 @include('v1.parts.end_content')
 
-                @if(Entrust::hasRole('Admin'))
-                    @include('v1.parts.start_content', ['header' => trans('messages.profile.custom'),
-                             'subheader' => '<b class="red">(' . trans('messages.profile.ed_ad') . ')</b>',
-                             'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-                    <table id='date_fields' class='table table-striped table-condensed'>
-                        @for($i=1;$i<=10;$i++)
-                            @if(isset($profile->{'OSN'.$i}))
-                                <tr>
-                                    <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
-                                    <td style="text-align: left;">
-                                        <a href="#" id="OrgStat{{$i}}" data-value="{!! $profile->{'OrgStat'.$i} !!}"></a>
-                                    </td>
-                                </tr>
-                            @elseif($i == 1)
-                                @lang('messages.profile.no_id')
-                            @endif
-                        @endfor
-                    </table>
-                    @include('v1.parts.end_content')
-                @else
-                    @include('v1.parts.start_content', ['header' => trans('messages.profile.custom'),
-                             'subheader' => '(' . trans('messages.profile.uneditable') . ')', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-                    <table id='date_fields' class='table table-striped table-condensed'>
-                        @for($i=1;$i<=10;$i++)
-                            @if(isset($profile->{'OSN'.$i}))
-                                <tr>
-                                    <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
-                                    <td style="text-align: left;">{!! $profile->{'OrgStat'.$i} ?? "<i style='color:red;'>" . trans('messages.fields.empty') . "</i>" !!}</td>
-                                </tr>
-                            @elseif($i == 1)
-                                @lang('messages.profile.no_id')
-                            @endif
-                        @endfor
-                    </table>
-                    @include('v1.parts.end_content')
-                @endif
 
-                @include('v1.parts.start_min_content', ['header' => trans('messages.fields.email'),
-                         'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
-                @if(count($emails) == 0)
-                    {{ trans_choice('messages.profile.emails', count($emails)) }}
-                @else
-                    {{ trans_choice('messages.profile.emails', count($emails)) }}
-
-                    <table id="email_fields" class="table table-striped table-condensed">
-                        <tr>
-                            <th style="text-align:center;" colspan="2">@lang('messages.profile.type')</th>
-                            <th style="text-align:left;">@lang('messages.headers.email')</th>
-                            <th style="text-align:left;">
-                                @lang('messages.headers.primary')?
-                                @include('v1.parts.tooltip', ['title' => trans('messages.profile.primary')])
-                            </th>
-                        </tr>
-                        @foreach($emails as $email)
-                            <?php $em_cnt++; ?>
-                            <tr>
-                                <td style="text-align: left;">
-                                    @if($email->isPrimary)
-                                        <button class="btn btn-danger btn-xs" disabled>@lang('messages.symbols.trash')</button>
-                                        @include('v1.parts.tooltip', ['title' => trans('messages.profile.cant_delete')])
-                                    @else
-                                        <form method="post"
-                                              action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
-                                            {{ csrf_field() }}
-                                            <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                            <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
-                                                    onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
-                                                @lang('messages.symbols.trash')
-                                            </button>
-                                        </form>
-                                    @endif
-                                </td>
-                                <td style="text-align: left;"><a href="#" id="emailTYPE{{ $em_cnt }}"
-                                                                 data-pk="{{ $email->emailID }}"
-                                                                 data-url="{{ $emailURL . $email->emailID }}"
-                                                                 data-title="Enter email type"
-                                                                 data-value="{{ $email->emailTYPE }}"></a>
-                                </td>
-                                <td style="text-align: left;"><a href="#" id="emailADDR{{ $em_cnt }}"
-                                                                 data-pk="{{ $email->emailID }}"
-                                                                 data-url="{{ $emailURL . $email->emailID }}"
-                                                                 data-title="{{ trans('messages.profile.addr1') }}">{{ $email->emailADDR }}</a>
-                                </td>
-                                <td style="text-align: left;">@if($email->isPrimary) @lang('messages.yesno_check.yes')
-                                    @else
-                                                                  @lang('messages.yesno_check.no')
-                                    @endif
-
-                                </td>
-                            </tr>
-                        @endforeach
-                    </table>
-                @endif
-                <div class="col-md-4 col-sm-9 col-xs-12">
-                    <button type="button" id="add_email" class="btn btn-sm btn-success" data-toggle="modal"
-                            data-target="#email_modal">@lang('messages.profile.add_email')
-                    </button>
-                </div>
-                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: center"></div>
-                <div class="col-md-4 col-sm-9 col-xs-12" style="text-align: right"></div>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                @include('v1.parts.end_content')
-
+                {{-- Phone Number Section Goes Here --}}
                 @include('v1.parts.start_min_content', ['header' => trans_choice('messages.headers.phone_nums', 2),
                          'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
@@ -540,11 +540,11 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+@php
                     if ($profile->experience <> "") {
                         echo("value: '$profile->experience',\n");
                     }
-?>
+@endphp
                 source: [
                     {value: '1-4', text: '1-4 {{ trans('messages.fields.years') }}'},
                     {value: '5-9', text: '5-9 {{ trans('messages.fields.years') }}'},
@@ -559,17 +559,17 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+@php
                     if ($profile->prefix <> "") {
                         echo("value: '$profile->prefix', \n");
                     }
-?>
+@endphp
                 source: [
-<?php
+@php
                     foreach ($prefixes as $k => $i) {
                         $string .= "{ value: '" . $k . "' , text: '" . $i . "' },\n";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -614,17 +614,17 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-<?php
+@php
                     if ($profile->indName <> "") {
                         echo("value: '$profile->indName', \n");
                     }
-?>
+@endphp
                 source: [
-<?php
+@php
                     foreach ($industries as $k => $i) {
                         $string .= "{ value: '" . $k . "' , text: '" . $i . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -669,21 +669,12 @@ foreach ($array as $chap) {
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 value: '{{ $profile->affiliation }}',
-                {{--
-                    success: function (response, data) {
-                        console.log(response);
-                        if(!response){
-                            alert('no response');
-                        }
-                        console.log(data);
-                    },
-                --}}
                 source: [
-<?php
+@php
                     for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -694,11 +685,11 @@ foreach ($array as $chap) {
                 url: '{{ $profile_script_url }}',
                 value: '{{ $profile->certifications }}',
                 source: [
-<?php
+@php
                     foreach ($cert_array as $x) {
                         $string .= "{ value: '" . $x->certification . "' , text: '" . $x->certification . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ],
             });
@@ -708,11 +699,11 @@ foreach ($array as $chap) {
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 source: [
-<?php
+@php
                     foreach ($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -729,11 +720,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+@php
                     foreach ($addrTypes as $row) {
                         $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -746,12 +737,12 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+@php
                     foreach ($countries as $row) {
                         $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
                     }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+@endphp
+                    {!!  rtrim($string, ",") !!}  @php $string = ''; @endphp
                 ]
             });
             @endfor
@@ -761,11 +752,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+@php
                     foreach ($emailTypes as $row) {
                         $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -777,11 +768,11 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+@php
                     foreach ($phoneTypes as $row) {
                         $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -799,6 +790,13 @@ foreach ($array as $chap) {
                     $('#addr_submit').show();
                     x = "addr" + i + "_row";
                     $('#' + x).show();
+                    $('#addrTYPE-'+i).required = true;
+                    $('#addr1-'+i).required = true;
+                    $('#addr2-'+i).required = true;
+                    $('#city-'+i).required = true;
+                    $('#state-'+i).required = true;
+                    $('#zip-'+i).required = true;
+                    $('#cntryID-'+i).required = true;
                     i++;
                 }
                 if (i >= 3) {
@@ -813,6 +811,13 @@ foreach ($array as $chap) {
                     y = i - 1;
                     x = "addr" + y + "_row";
                     $('#' + x).hide();
+                    $('#addrTYPE-'+i).removeAttr('required');
+                    $('#addr1-'+i).removeAttr('required');
+                    $('#addr2-'+i).removeAttr('required');
+                    $('#city-'+i).removeAttr('required');
+                    $('#state-'+i).removeAttr('required');
+                    $('#zip-'+i).removeAttr('required');
+                    $('#cntryID-'+i).removeAttr('required');
                     i--;
                     $('#add_row').prop('disabled', false);
                 }
@@ -883,6 +888,8 @@ foreach ($array as $chap) {
                     $('#email_submit').show();
                     x = "email" + i + "_row";
                     $('#' + x).show();
+                    $('#emailTYPE-'+i).required = true;
+                    $('#emailADDR-'+i).required = true;
                     i++;
                 }
                 if (i >= 3) {
@@ -897,6 +904,8 @@ foreach ($array as $chap) {
                     y = i - 1;
                     x = "email" + y + "_row";
                     $('#' + x).hide();
+                    $('#emailTYPE-'+i).removeAttr('required');
+                    $('#emailADDR-'+i).removeAttr('required');
                     i--;
                     $('#add_erow').prop('disabled', false);
                 }
@@ -918,6 +927,8 @@ foreach ($array as $chap) {
                     $('#phone_submit').show();
                     x = "phone" + i + "_row";
                     $('#' + x).show();
+                    $('#phoneTYPE-'+i).required = true;
+                    $('#phoneNumber-'+i).required = true;
                     i++;
                 }
                 if (i >= 3) {
@@ -932,6 +943,8 @@ foreach ($array as $chap) {
                     y = i - 1;
                     x = "phone" + y + "_row";
                     $('#' + x).hide();
+                    $('#phoneTYPE-'+i).removeAttr('required');
+                    $('#phoneNumber-'+i).removeAttr('required');
                     i--;
                     $('#add_prow').prop('disabled', false);
                 }
@@ -977,24 +990,24 @@ foreach ($array as $chap) {
 
                             @for($n=1; $n<=5; $n++)
 
-                                <tr id="addr{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
-                                    <td><select name='addrTYPE-{{ $n }}'>
-                                            <option>...</option>
+                                <tr id="addr{{ $n }}_row"{!! $n>1 ? " style='display:none'" : "" !!}>
+                                    <td><select name='addrTYPE-{{ $n }}'{!! $n == 1 ? " required" : "" !!}>
+                                            <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $address_type])
                                         </select></td>
                                     <td><input name='addr1-{{ $n }}' type='text' placeholder='{{ trans('messages.profile.addr1') }}'
-                                               class='form-control input-sm'>
+                                               class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}>
                                         <input name='addr2-{{ $n }}' type='text' placeholder='{{ trans('messages.profile.addr2') }}'
-                                               class='form-control input-sm'></td>
+                                               class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
                                     <td><input name='city-{{ $n }}' type='text' placeholder='{{ trans('messages.profile.city') }}'
-                                               class='form-control input-sm'></td>
-                                    <td><select name='state-{{ $n }}'>
-                                            <option>...</option>
+                                               class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
+                                    <td><select name='state-{{ $n }}'{!! $n == 1 ? " required" : "" !!}>
+                                            <option value="">...</option>
                                     @include('v1.parts.form-option-show', ['array' => $state_list])
                                     <td><input name='zip-{{ $n }}' type='text' size="5" placeholder='{{ trans('messages.profile.zip') }}'
-                                               style="width: 65px" class='form-control input-sm'></td>
-                                    <td><select name='cntryID-{{ $n }}' style="width: 50px">
-                                            <option>...</option>
+                                               style="width: 65px" class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
+                                    <td><select name='cntryID-{{ $n }}' style="width: 50px"{!! $n == 1 ? " required" : "" !!}>
+                                            <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $country_list])
                                         </select></td>
                                 </tr>
@@ -1044,9 +1057,9 @@ foreach ($array as $chap) {
 
                             @for($n=1; $n<=5; $n++)
 
-                                <tr id="email{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
+                                <tr id="email{{ $n }}_row"{!! $n>1 ? ' style="display:none"' : '' !!}>
                                     <td><select name='emailTYPE-{{ $n }}'>
-                                            <option>...</option>
+                                            <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $address_type])
                                         </select></td>
                                     <td><input name='emailADDR-{{ $n }}' type='email' placeholder='{{ trans('messages.fields.email') }}'
@@ -1100,13 +1113,13 @@ foreach ($array as $chap) {
 
                             @for($n=1; $n<=5; $n++)
 
-                                <tr id="phone{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
+                                <tr id="phone{{ $n }}_row"{!!$n>1 ? ' style="display:none"' : '' !!}>
                                     <td><select name='phoneType-{{ $n }}'>
-                                            <option>...</option>
+                                            <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $phone_type])
                                         </select></td>
-                                    <td><input name='phoneNumber-{{ $n }}' type='text' placeholder='Phone Number'
-                                               class='form-control input-sm'>
+                                    <td><input name='phoneNumber-{{ $n }}' placeholder='{{ trans_choice('messages.headers.phone_nums', 1) }}'
+                                               type='text' class='form-control input-sm'>
                                 </tr>
 
                             @endfor

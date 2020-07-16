@@ -1,8 +1,11 @@
-<?php
+@php
 /**
  * Comment: Registration form (multiple ticket quantities)
  * Created: 8/24/2017
  * Updated: October 2018 - This is the one in use (not register_new)
+ * @var $event
+ * @var $tkts
+ * @var $certs
  */
 
 use Illuminate\Support\Facades\DB;
@@ -66,7 +69,8 @@ if ($org->canSubmitPDU !== null) {
     $PDU_org_types = [];
 }
 
-$i = 0;
+$i = 0; $i_cnt = "";
+
 foreach ($array as $chap) {
     $i++;
     $chap = trim($chap);
@@ -93,7 +97,8 @@ $experience_choices = [
 
 //var_dump(Session::all());
 $i = 0;
-?>
+@endphp
+
 @extends('v1.layouts.no-auth')
 
 @section('content')
@@ -107,7 +112,7 @@ $i = 0;
 
     <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-12">
-            @include('v1.parts.event_address')
+            @include('v1.parts.location_display', ['loc' => $loc, 'event' => $event, 'time' => 1])
         </div>
         <div class="col-md-3 col-sm-3 col-xs-12">
         </div>
@@ -128,7 +133,7 @@ $i = 0;
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
     @foreach($tq as $x)
-        <?php
+        @php
 
         $ticket = Ticket::find($x['t']);
         $q = $x['q'];
@@ -141,7 +146,7 @@ $i = 0;
             $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
             $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
         }
-        ?>
+        @endphp
         @if($ticket->waitlisting())
             <div class="clearfix"><p></div>
             <b class="red">
@@ -151,10 +156,10 @@ $i = 0;
         @endif
 
         @for($j=1; $j<=$q; $j++)
-            <?php
+            @php
             $i++;
             $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-            ?>
+            @endphp
             {!! Form::hidden("percent".$i_cnt, 0, array('id' => "i_percent".$i_cnt)) !!}
             {!! Form::hidden("flatamt".$i_cnt, 0, array('id' => "i_flatamt".$i_cnt)) !!}
             {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
@@ -325,7 +330,7 @@ $i = 0;
                     {{--
                     Laravel help re: multiple repeating form elements with variable model
                     --}}
-                    <?php
+                    @php
                         if(old("certifications".$i_cnt)){
                             $selected = old("certifications".$i_cnt);
                         } elseif($person->certifications) {
@@ -333,7 +338,7 @@ $i = 0;
                         } else {
                             $selected = reset($cert_array);
                         }
-                    ?>
+                    @endphp
                     {!! Form::select("certifications" . $i_cnt . "[]", $cert_array, $selected,
                         array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
                 </div>
@@ -441,7 +446,7 @@ $i = 0;
                 @endif
                 {!! Form::textarea("eventQuestion$i_cnt", old("eventQuestion$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventQuestion$i_cnt")) !!}
                 <br/>
-                <?php
+                @php
                 if(old("affiliation".$i_cnt)){
                     $selected = old("affiliation".$i_cnt);
                 } elseif($person->affiliation) {
@@ -449,7 +454,7 @@ $i = 0;
                 } else {
                     $selected = reset($affiliation_array);
                 }
-                ?>
+                @endphp
 
                 <label class="control-label" for="affiliation{{ $i_cnt }}">
                     @lang('messages.fields.affiliation')<sup class='red'>*</sup></label>
@@ -466,7 +471,7 @@ $i = 0;
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.allergenInfo_tip')])
                     <br/>
                     <small>@lang('messages.tooltips.accommodate')</small>
-                    <?php
+                    @php
                     if(old("allergenInfo".$i_cnt)){
                         $selected = old("allergenInfo".$i_cnt);
                     } elseif($person->allergenInfo) {
@@ -474,7 +479,7 @@ $i = 0;
                     } else {
                         $selected = reset($allergen_array);
                     }
-                    ?>
+                    @endphp
                     {!! Form::select("allergenInfo" . $i_cnt .'[]', $allergen_array, $selected,
                         array('required', 'class' => 'form-control input-sm', 'multiple' => 'multiple', 'size' => '3', 'id' => "allergenInfo$i_cnt")) !!}
                     <br/>
@@ -637,9 +642,9 @@ $i = 0;
             $('#i_total').val(subtotal.toFixed(2));
 
                     @for($i=1; $i<=$quantity; $i++)
-                <?php
+                @php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                ?>
+                @endphp
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
@@ -1052,10 +1057,10 @@ $i = 0;
             function recalc() {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
-                <?php
+                @php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                    ?>
-                    percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
+                @endphp
+                percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();
 

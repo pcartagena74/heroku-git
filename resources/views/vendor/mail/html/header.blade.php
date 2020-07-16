@@ -1,7 +1,7 @@
 <tr>
     <td class="header">
         <a href="{{ $url }}">
-             {{ $slot }}
+            {{ Illuminate\Mail\Markdown::parse($slot) ?? '' }}
         </a>
     </td>
 </tr>

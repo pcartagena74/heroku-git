@@ -6,20 +6,20 @@
 
 use App\Address;
 use App\Email;
+use App\Event;
 use App\Location;
 use App\Models\Ticketit\TicketOver;
 use App\Org;
 use App\OrgPerson;
 use App\Person;
 use App\User;
-use App\Event;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
-use Illuminate\Http\Request;
 
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
@@ -29,7 +29,7 @@ use Illuminate\Http\Request;
  * @param Org $org
  * @return string
  */
-if(!function_exists('extract_images')) {
+if (!function_exists('extract_images')) {
     function extract_images($html, $orgID)
     {
         $dom     = new \DOMDocument();
@@ -56,8 +56,8 @@ if(!function_exists('extract_images')) {
 
                     // @see http://image.intervention.io/api/
                     $image = Image::make($src)
-                        // resize if required
-                        /* ->resize(300, 200) */
+                    // resize if required
+                    /* ->resize(300, 200) */
                         ->encode($mimetype, 100); // encode file to the specified mimetype
 
                     //Flysystem::connection('s3_media')->put($event_filename, $contents);
@@ -94,7 +94,7 @@ if(!function_exists('extract_images')) {
  *                      + op: PMI ID
  */
 
-if(!function_exists('check_exists')){
+if (!function_exists('check_exists')) {
     function check_exists($model, $doFlash, $var_array)
     {
         $details = "<ul>";
@@ -168,7 +168,7 @@ if(!function_exists('check_exists')){
  * @return string
  */
 
-if(!function_exists('pLink')){
+if (!function_exists('pLink')) {
     function plink($regID, $personID)
     {
         return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . "</a>";
@@ -179,7 +179,7 @@ if(!function_exists('pLink')){
  * et_translate: array_map function to apply a trans_choice if a translation exists for the term
  */
 
-if(!function_exists('et_translate')){
+if (!function_exists('et_translate')) {
     function et_translate($term)
     {
         $x = 'messages.event_types.';
@@ -198,7 +198,7 @@ if(!function_exists('et_translate')){
  * @return string
  */
 
-if(!function_exists('li_print_array')){
+if (!function_exists('li_print_array')) {
     function li_print_array($array, $type)
     {
         //dd($array);
@@ -233,7 +233,7 @@ if(!function_exists('li_print_array')){
  * @return boolean
  */
 
-if(!function_exists('assoc_email')){
+if (!function_exists('assoc_email')) {
     function assoc_email($email, $p)
     {
         $e = Email::where('emailADDR', '=', $email)->first();
@@ -257,32 +257,38 @@ if(!function_exists('assoc_email')){
  * 3. Checking if there are any discrepancies (changes) to data in the form fields indicating the need to update
  */
 
-if(!function_exists('location_triage')){
+if (!function_exists('location_triage')) {
     function location_triage(Request $request, Event $event, Person $current_person)
     {
         //$loc = null;
-        $locationID = request()->input('locationID');
+        $locationID  = request()->input('locationID');
         $loc_virtual = request()->input('virtual');
+
+        if ($event === null || $event->orgID === null) {
+            $orgID = $current_person->defaultOrgID;
+        } else {
+            $orgID = $event->orgID;
+        }
 
         if (empty($loc_virtual)) {
             $loc_virtual = 0;
         }
 
         $locName = request()->input('locName');
-        $addr1 = request()->input('addr1');
-        $addr2 = request()->input('addr2');
-        $city = request()->input('city');
-        $state = request()->input('state');
-        $zip = request()->input('zip');
+        $addr1   = request()->input('addr1');
+        $addr2   = request()->input('addr2');
+        $city    = request()->input('city');
+        $state   = request()->input('state');
+        $zip     = request()->input('zip');
 
-        switch($locationID) {
+        switch ($locationID) {
             case null:
                 // No location was selected so this is, possibly, a new location.
                 // Determine if there is any preventitive dupe-checking possible
                 $loc = Location::firstOrNew(
                     [
                         'locName' => $locName,
-                        'orgID' => $event->orgID
+                        'orgID'   => $orgID,
                     ]
                 );
                 break;
@@ -300,13 +306,13 @@ if(!function_exists('location_triage')){
 
         }
 
-        if($loc->orgID == $event->orgID){
-            $loc->locName = $locName;
-            $loc->addr1 = $addr1;
-            $loc->addr2 = $addr2;
-            $loc->city = $city;
-            $loc->state = $state;
-            $loc->zip = $zip;
+        if ($loc->orgID == $orgID) {
+            $loc->locName   = $locName;
+            $loc->addr1     = $addr1;
+            $loc->addr2     = $addr2;
+            $loc->city      = $city;
+            $loc->state     = $state;
+            $loc->zip       = $zip;
             $loc->isVirtual = $loc_virtual;
             $loc->updaterID = $current_person->personID;
             $loc->save();
@@ -1060,22 +1066,163 @@ if (!function_exists('isDate')) {
     }
 }
 
+function requestBin($data)
+{
+    // API URL
+    $url = 'https://enpfjlvpu0oo.x.pipedream.net';
+    // Create a new cURL resource
+    $ch = curl_init($url);
+    // Setup request to send json via POST
+    $payload = json_encode(array("user" => $data));
+    // Attach encoded JSON string to the POST fields
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    // Set the content type to application/json
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    // Return response instead of outputting
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Execute the POST request
+    $result = curl_exec($ch);
+    // Close cURL resource
+    curl_close($ch);
+}
 
-function requestBin($data){
-     // API URL
-            $url = 'https://enpfjlvpu0oo.x.pipedream.net';
-            // Create a new cURL resource
-            $ch = curl_init($url);
-            // Setup request to send json via POST
-            $payload = json_encode(array("user" => $data));
-            // Attach encoded JSON string to the POST fields
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-            // Set the content type to application/json
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-            // Return response instead of outputting
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            // Execute the POST request
-            $result = curl_exec($ch);
-            // Close cURL resource
-            curl_close($ch);
+if (!function_exists('generateLatLngForAddress')) {
+    /**
+     * generate lat lng for existing address for testing only bunch on 20
+     * @param  string  $type single / all address
+     * @param bool $for_org true if lat lng is needed for organization
+     * @return boolean true/false
+     */
+    function generateLatLngForAddress($address, $for_org = false)
+    {
+        if (!empty($address)) {
+            if (!empty($address->zip)) {
+                $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
+                    ->orWhere('zip', ltrim($address->zip, "0"))->get()->first();
+                if (empty($zip_lat_lng)) {
+                    // continue to google api
+                } else {
+                    $address->lati  = $zip_lat_lng->lat;
+                    $address->longi = $zip_lat_lng->lng;
+                    $address->save();
+                    return true;
+                }
+            }
+            $add_str = '';
+            if ($for_org == false) {
+                $add_str = $address->addr1 . ', ';
+                if (!empty($address->addr2)) {
+                    $add_str .= $address->addr2 . ', ';
+                }
+                $add_str .= $address->city . ', ';
+                if (!empty($address->zip)) {
+                    $add_str .= $address->state;
+                    $add_str .= $address->zip . ', ';
+                } else {
+                    $add_str .= $address->state . ', ';
+                }
+                if ($address->cntryID == 228) {
+                    //as majority of request will be from this country it will help us reduce query
+                    $add_str .= 'United States';
+                } else {
+                    $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
+                    if (!empty($country)) {
+                        $add_str .= $country->cntryName;
+                    }
+                }
+            } else {
+                $add_str = $address->orgAddr1 . ', ';
+                if (!empty($address->orgAddr2)) {
+                    $add_str .= $address->orgAddr2 . ', ';
+                }
+                $add_str .= $address->orgCity . ', ';
+                if (!empty($address->orgZip)) {
+                    $add_str .= $address->orgState;
+                    $add_str .= $address->orgZip . ', ';
+                } else {
+                    $add_str .= $address->State . ', ';
+                }
+                $add_str .= 'United States'; // as currently org does not have any country field
+                // if ($address->cntryID == 228) {
+                //     //as majority of request will be from this country it will help us reduce query
+                //     $add_str .= 'United States';
+                // } else {
+                //     $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
+                //     if (!empty($country)) {
+                //         $add_str .= $country->cntryName;
+                //     }
+                // }
+            }
+            $add_str_encode = urlencode($add_str);
+            $key            = env('GOOGLE_GEOAPI_KEY');
+            $url            = "https://maps.googleapis.com/maps/api/geocode/json?address={$add_str_encode}&key=$key";
+            try {
+                $resp_json = file_get_contents($url);
+            } catch (Exception $ex) {
+                return false;
+            }
+            $resp = json_decode($resp_json, true);
+            if ($resp['status'] == 'OK') {
+                // get the important data
+                $lati              = isset($resp['results'][0]['geometry']['location']['lat']) ? $resp['results'][0]['geometry']['location']['lat'] : "";
+                $longi             = isset($resp['results'][0]['geometry']['location']['lng']) ? $resp['results'][0]['geometry']['location']['lng'] : "";
+                $formatted_address = isset($resp['results'][0]['formatted_address']) ? $resp['results'][0]['formatted_address'] : "";
+                // verify if data is complete
+                if ($lati && $longi && $formatted_address) {
+                    $address->lati  = $lati;
+                    $address->longi = $longi;
+                    $address->save();
+                    return true;
+                } else {
+                    return false;
+                    // data not found
+                }
+            } else {
+                return false;
+                // api issue;
+            }
+        }
+        return false;
+    }
+}
+if (!function_exists('storeLatiLongiFormZip')) {
+    /**
+     * store lat long for existing address by zip code
+     * @return void
+     */
+    function storeLatiLongiFormZip()
+    {
+        $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
+        foreach ($person_address as $key => $address) {
+            if (!empty($address->zip)) {
+                $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
+                    ->orWhere('zip', ltrim($address->zip, "0"))->get()->first();
+                if (empty($zip_lat_lng)) {
+                    continue;
+                } else {
+                    $address->lati  = $zip_lat_lng->lat;
+                    $address->longi = $zip_lat_lng->lng;
+                    $address->save();
+                    continue;
+                }
+            }
+        } //loop ends
+    }
+}
+
+if (!function_exists('sendGetToWakeUpDyno')) {
+    function sendGetToWakeUpDyno()
+    {
+        // API URL
+        $base_url = env('QUEUE_DYNO_URL_TEST');
+        if (env('APP_ENV') == 'production') {
+            $base_url = env('QUEUE_DYNO_URL_LIVE');
+        }
+        $url = $base_url . '/trigger-dyno';
+        $ch  = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
+        $output = curl_exec($ch); //contain string
+        curl_close($ch); //close
+    }
 }

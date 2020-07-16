@@ -16,6 +16,7 @@ class AddForeignKeysToOrgPersonTable extends Migration {
 		{
 			$table->foreign('orgID', 'op-orgID')->references('orgID')->on('organization')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('personID', 'op-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('CASCADE');
+            $table->unique(['orgID', 'personID'], 'op_fk_un_idx');
 		});
 	}
 

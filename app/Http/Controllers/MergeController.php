@@ -363,7 +363,7 @@ class MergeController extends Controller
                     }
 
                     // Person soft-deletes require unique key 'login' to be uniquely modified
-                    $model2->login = "merged_$model1->personID_" . $model2->login;
+                    $model2->login = "merged_$model1->personID" . "_" . $model2->login;
                     $model2->save();
                     $model2->delete();
 

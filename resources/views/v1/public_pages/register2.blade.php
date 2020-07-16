@@ -96,13 +96,13 @@ $rfp = $rf->person;
                             @endif
                         </button>
                     @else
-                        @if($rf->cost == 0)
-                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                                <b>@lang('messages.buttons.comp_reg')</b>
-                            </button>
-                        @elseif($rf->status == 'wait')
+                        @if($rf->status == 'wait')
                             <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.wait')</b>
+                            </button>
+                        @elseif($rf->cost == 0)
+                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                                <b>@lang('messages.buttons.comp_reg')</b>
                             </button>
                         @endif
                     @endif
@@ -129,11 +129,11 @@ $rfp = $rf->person;
             @endif
 
             @foreach($regs as $reg)
-<?php
+@php
                 $tcount++;
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
-?>
+@endphp
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
@@ -168,13 +168,13 @@ $rfp = $rf->person;
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     @if($reg->discountCode)
                                         <td style="text-align: left;">@lang('messages.headers.earlybird')
-                                            , {{ $rf->discountCode }}</td>
+                                            , {{ $reg->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;">@lang('messages.headers.earlybird')</td>
                                     @endif
                                 @else
                                     @if($reg->discountCode)
-                                        <td style="text-align: left;">{{ $rf->discountCode }}</td>
+                                        <td style="text-align: left;">{{ $reg->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;"> --</td>
                                     @endif
