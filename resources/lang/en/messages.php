@@ -962,7 +962,8 @@ return [
             'failed'=>'Failed Records : :failed',
             'failed_record'=>'Failed Records : :records',
             'no_identifier'=>'No unique identifier found for this row.',
-            'nothing_to_update'=>'No update or insert operation was performed.'
+            'nothing_to_update'=>'No update or insert operation was performed.',
+            'rel_update'=>'Records with Mismatch PMI Join Date or Chapter Joining Date',
         ],
 
         // Wait List No More
