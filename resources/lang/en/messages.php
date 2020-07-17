@@ -996,17 +996,8 @@ return [
         // Undo Login Change
         'UNDO'          => [
             'subject' => "Your mCentric Login",
-            'line1'   => "Your mCentric login was changed back to :email.",
+            'line1' => "Your mCentric login was changed back to :email.",
         ],
-
-        // Wait List No More
-        'WLNM'          => [
-            'subject' => ":org Event: You are off the wait list!",
-            'line1'   => "A spot has opened up for :event.",
-            'line2'   => "If you didn't already register, you may continue your registration.",
-            'action'  => "Continue Registration",
-        ],
-
         //Member import complete
         'member_import' => [
             'subject' => 'Import Complete',
@@ -1021,7 +1012,8 @@ return [
             'failed'=>'Failed Records : :failed',
             'failed_record'=>'Failed Records : :records',
             'no_identifier'=>'No unique identifier found for this row.',
-            'nothing_to_update'=>'No update or insert operation was performed.'
+            'nothing_to_update'=>'No update or insert operation was performed.',
+            'rel_update'=>'Records with Mismatch PMI Join Date or Chapter Joining Date',
         ],
 
         // Wait List No More

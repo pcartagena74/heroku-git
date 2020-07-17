@@ -109,6 +109,20 @@ class MemeberImportExcelNotification extends Notification
                     }
                     $mail->line($str);
                 }
+                if (!empty($i_d->other)) {
+                    $mail->line(trans('messages.notifications.member_import.rel_update'));
+                    $others = json_decode($i_d->other);
+                    foreach ($others as $key => $other) {
+                        $str = '';
+                        if (!empty($other->reldate1_new)) {
+                            $str .= 'PMIJD Old : ' . $other->reldate1_old . ' New : ' . $other->reldate1_new . ' ';
+                        }
+                        if (!empty($other->reldate2_new)) {
+                            $str .= 'ChapJD Old: ' . $other->reldate2_old . ' New : ' . $other->reldate2_new;
+                        }
+                        $mail->line('PMI ID : ' . $other->pmi_id . ' ' . $str);
+                    }
+                }
 
             }
             return $mail;
@@ -125,6 +139,20 @@ class MemeberImportExcelNotification extends Notification
                 ['inserted' => $i_d->inserted]));
             $mail->line(trans('messages.notifications.member_import.updated',
                 ['updated' => $i_d->updated]));
+            if (!empty($i_d->other)) {
+                $mail->line(trans('messages.notifications.member_import.rel_update'));
+                $others = json_decode($i_d->other);
+                foreach ($others as $key => $other) {
+                    $str = '';
+                    if (!empty($other->reldate1_new)) {
+                        $str .= 'PMIJD Old : ' . $other->reldate1_old . ' New : ' . $other->reldate1_new . ' ';
+                    }
+                    if (!empty($other->reldate2_new)) {
+                        $str .= 'ChapJD Old: ' . $other->reldate2_old . ' New : ' . $other->reldate2_new;
+                    }
+                    $mail->line('PMI ID : ' . $other->pmi_id . ' ' . $str);
+                }
+            }
             return $mail;
         }
 
