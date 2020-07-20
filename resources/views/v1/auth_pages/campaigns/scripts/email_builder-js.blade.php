@@ -1,3 +1,182 @@
+@php
+$backgound_extent = '
+<table cellspacing="0" class="mce-grid mce-grid-border mce-colorbutton-grid" role="list">
+    <tbody>
+        <tr>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #000000" tabindex="-1" title="Black">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #993300" tabindex="-1" title="Burnt orange">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #333300" tabindex="-1" title="Dark olive">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #003300" tabindex="-1" title="Dark green">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #003366" tabindex="-1" title="Dark azure">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #000080" tabindex="-1" title="Navy Blue">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #333399" tabindex="-1" title="Indigo">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #333333" tabindex="-1" title="Very dark gray">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #800000" tabindex="-1" title="Maroon">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FF6600" tabindex="-1" title="Orange">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #808000" tabindex="-1" title="Olive">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #008000" tabindex="-1" title="Green">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #008080" tabindex="-1" title="Teal">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #0000FF" tabindex="-1" title="Blue">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #666699" tabindex="-1" title="Grayish blue">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #808080" tabindex="-1" title="Gray">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FF0000" tabindex="-1" title="Red">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FF9900" tabindex="-1" title="Amber">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #99CC00" tabindex="-1" title="Yellow green">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #339966" tabindex="-1" title="Sea green">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #33CCCC" tabindex="-1" title="Turquoise">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #3366FF" tabindex="-1" title="Royal blue">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #800080" tabindex="-1" title="Purple">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #999999" tabindex="-1" title="Medium gray">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FF00FF" tabindex="-1" title="Magenta">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FFCC00" tabindex="-1" title="Gold">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FFFF00" tabindex="-1" title="Yellow">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #00FF00" tabindex="-1" title="Lime">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #00FFFF" tabindex="-1" title="Aqua">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #00CCFF" tabindex="-1" title="Sky blue">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #993366" tabindex="-1" title="Red violet">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FFFFFF" tabindex="-1" title="White">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FF99CC" tabindex="-1" title="Pink">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FFCC99" tabindex="-1" title="Peach">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #FFFF99" tabindex="-1" title="Light yellow">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #CCFFCC" tabindex="-1" title="Pale green">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #CCFFFF" tabindex="-1" title="Pale cyan">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #99CCFF" tabindex="-1" title="Light sky blue">
+                </div>
+            </td>
+            <td class="mce-grid-cell">
+                <div role="option" style="background-color: #CC99FF" tabindex="-1" title="Plum">
+                </div>
+            </td>
+            <td class="mce-grid-cell mce-colorbtn-trans">
+                <div role="option" style="background-color: transparent" tabindex="-1" title="No color">
+                    ×
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+';
+@endphp
 <script>
     var _is_demo = false;
 var base_url = '{!! url('/').'/' !!}';
@@ -77,6 +256,8 @@ var _emailBuilder = $('.editor').emailBuilder({
     showRowRemoveButton: true,
     showRowDuplicateButton: true,
     showRowCodeEditorButton: true,
+    //background extend
+    backgroundExtent: `{!! $backgound_extent !!}`,
     orgInfoMenuItem:@json($org_info_ary),
     onSettingsImportClick: function() {
         $('#popupimport').modal('show');
@@ -538,9 +719,10 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
             }
             _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + property + '  >' + data[i].content + '</div></div></div>';
         }
+        console.log('here',_content);
         setTimeout(function() {
             $('.editor  .content-wrapper .email-editor-elements-sortable').append(_content);
-            _emailBuilder.makeSortable();
+            // _emailBuilder.makeSortable();
         }, 2000);
     }
 @endif
