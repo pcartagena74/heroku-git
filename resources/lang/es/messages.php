@@ -148,6 +148,14 @@ return [
         'google_recaptcha' => 'es-Complete el reCAPTCHA para enviar la solicitud.',
         'google_recaptcha_required' => 'es-Please Complete the reCAPTCHA to submit the request.',
         'user_not_found' => 'es-Unable to find user. Please select from search or create new.',
+        'no_member_for_list' => 'es-You need to choose a foundation or events to include.',
+        'no_foundation_or_include' => 'es-You need to choose a foundation or events to include.',
+        'storage_full' => 'es-You have reach your storage quota please remove some files and try again.',
+        'storage_full' => 'es-You have reach your storage quota please remove some files and try again.',
+        'no_valid_email' => 'es-Please enter atlest one valid email address',
+        'empty_template' => 'es-Please select some element in email template',
+        'campaign_not_exist' => 'es-Campaign does not exist',
+        'import_validation' => 'es-Validation failed, PMI or email address not found.',
     ],
 
     'flashes' => [
@@ -937,6 +945,23 @@ return [
         'UNDO' => [
             'subject' => "Su login de mCentric",
             'line1' => "Su inicio de sesión de mCentric se cambió a :email.",
+        ],
+        //Member import complete
+        'member_import' => [
+            'subject' => 'es-Import Complete',
+            'subject_failed' => 'es-Import Failed',
+            'subject_warning' => 'es-Import Completed with errors',
+            'imp_success' => 'es-:user, the member import for file :file_name was successful. Completed on :completed_date',
+            'imp_failed' => 'es-:user, the member import for file :file_name has failed. No records were imported. Please check the file.',
+            'imp_warning' => 'es-:user, the member import for file :file_name had some errors. All records were not processed. Completed on :completed_date',
+            'total'=>'es-Total Records : :total',
+            'inserted'=>'es-Inserted Records : :inserted',
+            'updated'=>'es-Updated Records : :updated',
+            'failed'=>'es-Failed Records : :failed',
+            'failed_record'=>'es-Failed Records : :records',
+            'no_identifier'=>'es-No unique identifier found for this row.',
+            'nothing_to_update'=>'es-No update or insert operation was performed.',
+            'rel_update'=>'Records with Mismatch PMI Join Date or Chapter Joining Date',
         ],
 
         // Wait List No More

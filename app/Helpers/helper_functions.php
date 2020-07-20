@@ -264,7 +264,7 @@ if (!function_exists('location_triage')) {
         $locationID  = request()->input('locationID');
         $loc_virtual = request()->input('virtual');
 
-        if($event === null || $event->orgID === null) {
+        if ($event === null || $event->orgID === null) {
             $orgID = $current_person->defaultOrgID;
         } else {
             $orgID = $event->orgID;
@@ -288,7 +288,7 @@ if (!function_exists('location_triage')) {
                 $loc = Location::firstOrNew(
                     [
                         'locName' => $locName,
-                        'orgID'   => $orgID
+                        'orgID'   => $orgID,
                     ]
                 );
                 break;
@@ -1207,5 +1207,22 @@ if (!function_exists('storeLatiLongiFormZip')) {
                 }
             }
         } //loop ends
+    }
+}
+
+if (!function_exists('sendGetToWakeUpDyno')) {
+    function sendGetToWakeUpDyno()
+    {
+        // API URL
+        $base_url = env('QUEUE_DYNO_URL_TEST');
+        if (env('APP_ENV') == 'production') {
+            $base_url = env('QUEUE_DYNO_URL_LIVE');
+        }
+        $url = $base_url . '/trigger-dyno';
+        $ch  = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
+        $output = curl_exec($ch); //contain string
+        curl_close($ch); //close
     }
 }
