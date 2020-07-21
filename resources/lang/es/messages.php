@@ -650,7 +650,7 @@ return [
         'camp_email_open' => 'es-Opens',
         'camp_email_click' => 'es-Clicks',
         'camp_list_action' => 'es-Actions',
-        'campaign_statics' => 'es-Statics',
+        'campaign_statics' => 'es-Statistics',
     ],
     'subheaders' => [
         'expand_min' => 'es-Click the arrow to expand this section.',

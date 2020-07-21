@@ -651,7 +651,7 @@ return [
         'camp_email_open'       => 'Opens',
         'camp_email_click'      => 'Clicks',
         'camp_list_action'      => 'Actions',
-        'campaign_statics'      => 'Statics',
+        'campaign_statics'      => 'Statistics',
     ],
     'subheaders'                     => [
         'expand_min' => "Click the arrow to expand this section.",
