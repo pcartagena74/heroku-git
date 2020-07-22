@@ -719,10 +719,9 @@ var data = {!! json_encode($campaign->template_blocks,JSON_HEX_APOS) !!};
             }
             _content += '</div>' + '<div class="sortable-row-content" data-id=' + data[i].block_id + ' data-types=' + data[i].property + '  data-last-type=' + property + '  >' + data[i].content + '</div></div></div>';
         }
-        console.log('here',_content);
         setTimeout(function() {
             $('.editor  .content-wrapper .email-editor-elements-sortable').append(_content);
-            // _emailBuilder.makeSortable();
+            _emailBuilder.makeSortable();
         }, 2000);
     }
 @endif

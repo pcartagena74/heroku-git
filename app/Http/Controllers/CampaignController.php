@@ -10,7 +10,6 @@ use App\Org;
 use App\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mail;
@@ -677,8 +676,12 @@ class CampaignController extends Controller
         $contacts     = getEmailListContact($list_id, $org_id);
         $insert_queue = [];
         EmailQueue::where('campaign_id', $campaign_id)->delete();
+        // $slt[] = 'mufaddal@systango.com'; /// for testing only
+        // $slt[] = 'pcartagena@fierce.net'; /// for testing only
+        // $slt[] = 'mufaddal@systango1.com'; /// for testing only
+        // $slt[] = 'amithinduj@asystango.com'; /// for testing only
         foreach ($contacts as $key => $value) {
-            // $value     = 'mufaddal@systango2.com'; /// for testing only
+            // $value = $slt[$key];
             $to_insert = ['campaign_id' => $campaign_id, 'org_id' => $org_id, 'email_id' => $value];
             if (!empty($schedule)) {
                 $to_insert['scheduled_datetime'] = $date_schedule;
@@ -735,7 +738,11 @@ class CampaignController extends Controller
         if (!empty($email_db)) {
             switch ($event) {
                 case 'clicked':
-                    $email_db->click = 1;
+                    if (!empty($response['event-data']['client-info']['device-type'])) {
+                        $email_db->device_type = $response['event-data']['client-info']['device-type'];
+                    }
+                    $email_db->click     = 1;
+                    $email_db->delivered = 1;
                     $email_db->save();
                     break;
                 case 'delivered':
@@ -761,11 +768,13 @@ class CampaignController extends Controller
                     }
                     break;
                 case 'complained':
-                    $email_db->spam = 1;
+                    $email_db->spam      = 1;
+                    $email_db->delivered = 1;
                     $email_db->save();
                     break;
                 case 'unsubscribed':
                     $email_db->unsubscribe = 1;
+                    $email_db->delivered   = 1;
                     $email_db->save();
                     break;
             }
