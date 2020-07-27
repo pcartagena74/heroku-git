@@ -329,6 +329,7 @@ Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmai
 Route::get('/email-template-thumb/{filename}', 'CampaignController@getemailTemplateThumbnailImage');
 Route::post('/send-test-email', 'CampaignController@sendTestEmail');
 Route::post('/sendCampaign', 'CampaignController@sendCampaign');
+Route::post('/campaign/url-clicked-email-list', 'CampaignController@urlClickedEmailList');
 Route::post('/email_webhook', 'CampaignController@mailgunWebhook');
 Route::get('/list_campaign', 'CampaignController@listCampaign');
 

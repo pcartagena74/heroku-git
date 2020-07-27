@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Campaign;
 use App\Jobs\SendCampaignEmail;
+use App\Models\EmailCampaignLink;
 use App\Models\EmailCampaignTemplateBlock;
 use App\Models\EmailQueue;
+use App\Models\EmailQueueLink;
 use App\Org;
 use App\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mail;
@@ -485,6 +488,7 @@ class CampaignController extends Controller
     public function edit(Campaign $campaign)
     {
         $campaign->load('mailgun');
+        $campaign->load('campaign_links');
         $this->currentPerson = Person::find(auth()->id());
         $org                 = Org::find($this->currentPerson->defaultOrgID);
         $list_dp             = $this->generateEmailList();
@@ -676,20 +680,31 @@ class CampaignController extends Controller
         $contacts     = getEmailListContact($list_id, $org_id);
         $insert_queue = [];
         EmailQueue::where('campaign_id', $campaign_id)->delete();
-        // $slt[] = 'mufaddal@systango.com'; /// for testing only
-        // $slt[] = 'pcartagena@fierce.net'; /// for testing only
-        // $slt[] = 'mufaddal@systango1.com'; /// for testing only
-        // $slt[] = 'amithinduj@asystango.com'; /// for testing only
+        $slt[] = 'mufaddal@systango.com'; /// for testing only
+        $slt[] = 'testmik2149@gmail.com'; /// for testing only
+        $slt[] = 'mik2149@gmail.com'; /// for testing only
+        $slt[] = 'mufaddalismail2149@gmailcom'; /// for testing only
         foreach ($contacts as $key => $value) {
-            // $value = $slt[$key];
+            // $value     = 'mufaddal@systango.com'; // for testing only
+            // $value     = $slt[$key];// for testing only
             $to_insert = ['campaign_id' => $campaign_id, 'org_id' => $org_id, 'email_id' => $value];
             if (!empty($schedule)) {
                 $to_insert['scheduled_datetime'] = $date_schedule;
             }
             $insert_queue[] = $to_insert;
         }
-        $var = EmailQueue::insert($insert_queue);
-
+        $var   = EmailQueue::insert($insert_queue);
+        $links = getAllLinksFromCampaignHTML($campaign);
+        if (!empty($links)) {
+            $url = [];
+            foreach ($links as $key => $value) {
+                $url[] = [
+                    'campaign_id' => $campaign_id,
+                    'url'         => $value,
+                ];
+            }
+            EmailCampaignLink::insert($url);
+        }
         if ($var) {
             $campaign->sendDate = Carbon::now(); // remove for testing only
             $campaign->save();
@@ -729,6 +744,8 @@ class CampaignController extends Controller
     }
     public function mailgunWebhook(Request $request)
     {
+        $campaign = Campaign::find(12);
+        $links    = getAllLinksFromCampaignHTML($campaign);
         //https://mcentric-test.herokuapp.com/email_webhook
         $response   = $request->all();
         $event      = $response['event-data']['event'];
@@ -744,6 +761,32 @@ class CampaignController extends Controller
                     $email_db->click     = 1;
                     $email_db->delivered = 1;
                     $email_db->save();
+                    if (!empty($response['event-data']['url'])) {
+                        $url  = $response['event-data']['url'];
+                        $link = EmailCampaignLink::where([
+                            'campaign_id' => $email_db->campaign_id,
+                            'url'         => $url,
+                        ])->get()->first();
+                        if (!empty($link)) {
+                            $row = [
+                                'email_campaign_links_id' => $link->id,
+                                'email_queue_id'          => $email_db->id,
+                            ];
+                            $queue_link = EmailQueueLink::where($row)->get()->first();
+                            if (empty($queue_link)) {
+                                $link->total_clicks  = $link->total_clicks + 1;
+                                $link->unique_clicks = $link->unique_clicks + 1;
+                                $link->first_click   = Carbon::now();
+                                $link->first_click   = $link->first_click;
+                                $link->save();
+                                EmailQueueLink::insert($row);
+                            } else {
+                                $link->total_clicks = $link->total_clicks + 1;
+                                $link->last_click   = Carbon::now();
+                                $link->save();
+                            }
+                        }
+                    }
                     break;
                 case 'delivered':
                     $email_db->delivered = 1;
@@ -780,7 +823,7 @@ class CampaignController extends Controller
             }
         }
         // use Illuminate\Support\Facades\Log; to enable log
-        // Log::info('User failed to login.', ['id' => $event, 'message_id' => json_encode($response)]);
+        Log::info('User failed to login.', ['id' => $event, 'message_id' => json_encode($response)]);
         return response()->json(['success' => true, 'message' => 'Web-hook triggered']);
     }
 
@@ -811,5 +854,28 @@ class CampaignController extends Controller
         $campaign->archived_date = Carbon::now()->toDateTimeString();
         $campaign->save();
         return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
+    }
+
+    public function urlClickedEmailList(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'campaign' => 'required|exists:org-campaign,campaignID',
+            'url_id'   => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $error = $validator->errors();
+            $error = $error->all();
+            return response()->json(['success' => false, 'message' => $error]);
+        }
+        $campaign_id = $request->input('campaign');
+        $url_id      = $request->input('url_id');
+        $url_list    = EmailCampaignLink::where(['campaign_id' => $campaign_id, 'id' => $url_id])->get()->first();
+        if (empty($url_list)) {
+            return response()->json(['success' => false, 'message' => ['url_nf' => ['Url Not Found!']]]);
+        } else {
+            // $email_list = EmailQueueLink::where(['email_campaign_links_id' => $url_id])->with('email_queue')->get();
+            $email_list = $url_list->email_queue->toArray();
+            return response()->json(['success' => true, 'email_list' => $email_list, 'url' => $url_list->url]);
+        }
     }
 }

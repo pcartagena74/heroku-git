@@ -155,10 +155,11 @@ if(!empty($campaign)){
                     <div class=" col-sm-12 col-xs-12">
                         @php
                     $statics = $campaign->mailgun;
+                    // $total = $statics->total;
                     $open_rate = round((($statics->open / $statics->total_sent)*100),2) . '%';
                     $delivered = $statics->delivered;
                     $click = $statics->click;
-                    $sent = $statics->sent;
+                    $total = $statics->sent;
                     $open = $statics->open;
                     $temp_failed = $statics->temporary_failure;
                     $perm_failed = $statics->permanent_fail;
@@ -169,6 +170,14 @@ if(!empty($campaign)){
                     $desktop_percent = round((($statics->desktop_count / $statics->total_sent)*100),2) . '%';
                     @endphp
                         <table class="table">
+                            <tr>
+                                <td>
+                                    @lang('messages.fields.camp_total')
+                                </td>
+                                <td>
+                                    {{$total}}
+                                </td>
+                            </tr>
                             <tr>
                                 <td>
                                     @lang('messages.fields.camp_open_rate')
@@ -198,7 +207,7 @@ if(!empty($campaign)){
                                     {{$delivered}}
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="hidden">
                                 <td>
                                     @lang('messages.fields.camp_click')
                                 </td>
@@ -247,6 +256,76 @@ if(!empty($campaign)){
                                 </td>
                             </tr>
                         </table>
+                        @if(!empty($campaign->campaign_links) && count($campaign->campaign_links) > 0)
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @lang('messages.fields.camp_url')
+                                    </th>
+                                    <th>
+                                        @lang('messages.fields.camp_unique_click')
+                                    </th>
+                                    <th>
+                                        @lang('messages.fields.camp_total_click')
+                                    </th>
+                                    <th>
+                                        @lang('messages.fields.camp_first_click')
+                                    </th>
+                                    <th>
+                                        @lang('messages.fields.camp_last_click')
+                                    </th>
+                                    <th>
+                                        @lang('messages.fields.camp_url_click_summary')
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($campaign->campaign_links as $row)
+                                <tr>
+                                    <td>
+                                        {{$row->url}}
+                                    </td>
+                                    <td>
+                                        {{$row->unique_clicks}}
+                                    </td>
+                                    <td>
+                                        {{$row->total_clicks}}
+                                    </td>
+                                    <td>
+                                        @php
+                                    if(empty($row->first_click)) {
+                                        echo '--';
+                                    } else {
+                                      echo convertToDatePickerFormat($row->first_click);  
+                                    }
+                                    @endphp
+                                    </td>
+                                    <td>
+                                        @php
+                                    if(empty($row->last_click)) {
+                                        echo '--';
+                                    } else {
+                                      echo convertToDatePickerFormat($row->last_click);  
+                                    }
+                                    @endphp
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onclick="getUrlClickEmails({{$row->id}})">
+                                            Show
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <table class="table" id="url_email_list" style="display: none;">
+                            <thead>
+                            </thead>
+                            <tbody style="overflow-y: auto; height: 200px">
+                            </tbody>
+                        </table>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -439,6 +518,32 @@ if(!empty($campaign)){
                             + data.message +
                             '</div>';
                     $('#response').html(msg);
+                }
+            }, 
+        });
+    }
+    function getUrlClickEmails($url_id){
+        @if($campaign != null)
+            campaign = {{$campaign->campaignID}}
+        @endif
+        $.ajax({
+            url: '{{ url('campaign/url-clicked-email-list') }}',
+            type: 'post',
+            dataType: 'json',       
+            data: {campaign:campaign,url_id:$url_id},
+            success: function(data) {
+                 if (data.success == true) {
+                    $str = '<tr><th>{{trans('messages.fields.camp_url_summary')}} '+ data.url+'</th></tr>';
+                    $('#url_email_list thead').html($str);
+                    $str = '';
+                    $.each(data.email_list,function(index,value){
+                        $str += '<tr><td>'+ value['email_id'] +'</td></tr>';
+                    });
+
+                    $('#url_email_list tbody').html($str);
+                    $('#url_email_list').show();
+                } else {
+                    console.log('heere',data.error);
                 }
             }, 
         });

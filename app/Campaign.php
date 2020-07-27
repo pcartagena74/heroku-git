@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\EmailCampaignLink;
 use App\Models\EmailCampaignTemplateBlock;
 use App\Models\EmailQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -55,5 +56,14 @@ class Campaign extends Model
                 $query->on('email_campaign_template_blocks.block_id', '=', 'eb.id');
             })->select(['email_campaign_template_blocks.*', 'eb.property']);
 
+    }
+
+    public function campaign_links()
+    {
+        return $this->hasMany(EmailCampaignLink::class, 'campaign_id', 'campaignID');
+    }
+    public function email_queue()
+    {
+        return $this->hasManyThrough(UrlClick::class, EmailSent::class, 'campaignID', 'sent_email_id', 'campaignID', 'id');
     }
 }

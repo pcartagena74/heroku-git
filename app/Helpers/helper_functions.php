@@ -1691,3 +1691,36 @@ if (!function_exists('sendGetToWakeUpDyno')) {
 
     }
 }
+
+if (!function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
+    /**
+     * replace social icon links with actual links, hides if link is not set.
+     * @param  array $item category 6 rows
+     * @return array       row data with updated links and style
+     */
+    function getAllLinksFromCampaignHTML($campaign)
+    {
+        $parsed = new Dom;
+        $parsed->load($campaign->content);
+        //find all anchor tags
+        $a         = $parsed->find('a');
+        $link_list = [];
+        foreach ($a as $key => $value) {
+            $tag = $value->getTag();
+            //get anchor tag html attributes
+            $link_list[] = $tag->getAttribute('href');
+            // $class = $class['value'];
+
+        } //foreach end
+        $links = [];
+        if (!empty($link_list)) {
+            foreach ($link_list as $key => $value) {
+                if ($value['value'] == '#' || !filter_var($value['value'], FILTER_VALIDATE_URL)) {
+                    continue;
+                }
+                $links[$value['value']] = $value['value'];
+            }
+        }
+        return $links;
+    }
+}
