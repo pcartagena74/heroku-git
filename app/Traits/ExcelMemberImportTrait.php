@@ -307,7 +307,7 @@ trait ExcelMemberImportTrait
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get()->first();
                 // $this->timeMem('15 get org person 2187');
-                if ($op->isEmpty()) {$need_op_record = 1;}
+                if (empty($op)) {$need_op_record = 1;}
             } catch (Exception $ex) {
                 // dd([$emchk1, $em1]);
             }
@@ -324,7 +324,7 @@ trait ExcelMemberImportTrait
                 ['orgID', $currentPerson->defaultOrgID],
             ])->get()->first();
             // $this->timeMem('16 get org person 2202');
-            if ($op->isEmpty()) {$need_op_record = 1;}
+            if (empty($op)) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
         } elseif ($pchk->isNotEmpty()) {
@@ -340,7 +340,7 @@ trait ExcelMemberImportTrait
                     ['orgID', $currentPerson->defaultOrgID],
                 ])->get()->first();
                 // $this->timeMem('17 get org person 2218');
-                if ($op->isEmpty()) {
+                if (empty($op)) {
                     $need_op_record = 1;
                 }
             }
