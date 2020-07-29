@@ -14,7 +14,7 @@
             timePickerIncrement: 15,
             locale: {
                 format: 'M/D/Y h:mm A'
-            }
+            },
         });
     });
 </script>

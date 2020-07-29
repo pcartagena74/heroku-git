@@ -13,7 +13,8 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<!-- <script src="//code.jquery.com/jquery-1.12.4.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
 <script>
     $.mockjax({

@@ -300,7 +300,9 @@ Route::get('/tb', 'MailGunController@bugsnag');
 
 // Email List Routes
 Route::get('/lists', 'EmailListController@index');
-Route::post('/list', 'EmailListController@store');
+Route::post('/list', 'EmailListController@store')->name('EmailList.Save');
+Route::post('/list/update', 'EmailListController@update')->name('EmailList.Update');
+Route::post('/list/delete', 'EmailListController@destroy')->name('EmailList.Delete');
 Route::get('/list/{emailList}', 'EmailListController@show');
 Route::patch('/list/{list}', 'EmailListController@update')->name('list_update');
 
@@ -312,7 +314,26 @@ Route::post('/campaign', 'CampaignController@store');
 Route::get('/campaign/{campaign}', 'CampaignController@show');
 Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
+Route::get('/campaign/{campaign}/copy', 'CampaignController@copy');
+Route::post('/deleteCampaign', 'CampaignController@deleteCampaign');
+Route::post('/archiveCampaign', 'CampaignController@archiveCampaign');
+// Route::patch('/campaign/{campaign}', 'CampaignController@update');
+// Email Builder Routes
 
+Route::post('/storeEmailTemplate', 'CampaignController@storeEmailTemplate');
+Route::post('/updateEmailTemplate', 'CampaignController@updateEmailTemplate');
+Route::get('/getEmailTemplates', 'CampaignController@getEmailTemplates'); //ajax;
+Route::post('/getEmailTemplateBlocks', 'CampaignController@getEmailTemplateBlocks'); //ajax;
+Route::post('/storeEmailTemplateForPreview', 'CampaignController@storeEmailTemplateForPreview'); //ajax;
+Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmailTemplate');
+Route::get('/email-template-thumb/{filename}', 'CampaignController@getemailTemplateThumbnailImage');
+Route::post('/send-test-email', 'CampaignController@sendTestEmail');
+Route::post('/sendCampaign', 'CampaignController@sendCampaign');
+Route::post('/campaign/url-clicked-email-list', 'CampaignController@urlClickedEmailList');
+Route::post('/email_webhook', 'CampaignController@mailgunWebhook');
+Route::get('/list_campaign', 'CampaignController@listCampaign');
+
+// Email Builder Routes ends
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
@@ -358,6 +379,13 @@ Route::get('snaptest', function () {
     return PDF::loadFile(env('APP_URL') . "/show_orig/159")->inline('blah.pdf');
 });
 
+Route::get('library', 'LibraryController@index');
+Route::get('getExisitingFile', 'LibraryController@getExisitingFile');
+Route::get('/{org_path}/{folder_name}/{file_name}', 'LibraryController@getFile');
+Route::post('/get_complete_url', 'LibraryController@getCompleteURL');
+// Route::group(['prefix' => 'library-manager', 'middleware' => ['auth']], function () {
+//     \UniSharp\LaravelFilemanager\Lfm::routes();
+// });
 // Route::any('{all}', function () {
 //     return view('errors.404');
 // })->where('all', '.*');
