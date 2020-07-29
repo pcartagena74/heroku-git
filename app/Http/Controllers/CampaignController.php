@@ -745,8 +745,6 @@ class CampaignController extends Controller
     }
     public function mailgunWebhook(Request $request)
     {
-        $campaign = Campaign::find(12);
-        $links    = getAllLinksFromCampaignHTML($campaign);
         //https://mcentric-test.herokuapp.com/email_webhook
         $response   = $request->all();
         $event      = $response['event-data']['event'];
