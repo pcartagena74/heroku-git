@@ -415,7 +415,7 @@ class EmailListController extends Controller
             $pddays             = '';
         }
 
-        $excludes       = Event::whereYear('eventStartDate', '=', date('Y'))->get();
+        $excludes       = Event::whereYear('eventStartDate', '=', date('Y'))->where('orgID', $this->currentPerson->defaultOrgID)->get();
         $event_list     = $excludes;
         $excluded_list  = $emailList->excluded;
         $exclude_detail = [];

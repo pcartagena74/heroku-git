@@ -1467,9 +1467,13 @@ if (!function_exists('generateEmailListEventArray')) {
             if (strlen($name) > 60) {
                 $name .= "...";
             }
-            $display_date                  = $id->eventStartDate->format(trans('messages.app_params.date_format'));
-            $list_name                     = $event_type_name . ': ' . $name . ' - ' . $display_date;
-            $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => $list_name];
+            $display_date = $id->eventStartDate->format(trans('messages.app_params.date_format'));
+            $list_name    = $event_type_name . ': ' . $name . ' - ' . $display_date;
+            $encoding     = mb_detect_encoding($list_name, 'UTF-8, ISO-8859-1, WINDOWS-1252, WINDOWS-1251', true);
+            if ($encoding != 'UTF-8') {
+                $list_name = iconv($encoding, 'UTF-8//IGNORE', $list_name);
+            }
+            $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => addslashes($list_name)];
         }
         $min          = min($date_array);
         $date         = Carbon::createFromFormat('Y-m-d', $min);
