@@ -709,6 +709,7 @@ class CampaignController extends Controller
             $campaign->sendDate = Carbon::now(); // remove for testing only
             $campaign->save();
             dispatch(new SendCampaignEmail());
+            sendGetToWakeUpDyno();
             request()->session()->flash('alert-success', trans('messages.messages.campaign_send'));
             return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_send'), 'redirect' => url('campaign', $campaign->campaignID)]);
         }
