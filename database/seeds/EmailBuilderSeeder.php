@@ -24,7 +24,7 @@ class EmailBuilderSeeder extends Seeder
         ]);
 
         // insert into email block category
-        DB::insert("INSERT INTO `email_blocks_1` (`id`, `cat_id`, `icon`, `property`, `name`, `html`, `used_count`, `is_active`)
+        DB::insert("INSERT INTO `email_blocks` (`id`, `cat_id`, `icon`, `property`, `name`, `html`, `used_count`, `is_active`)
                 VALUES
                     (1,1,'fa fa-header','background, padding','PageHeader',' <table align = \"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"main\" style=\"width:100%\">\n  <tbody>\n       <tr>\n          <td style=\"background-color:#ffffff\" class=\"element-content\" contenteditable=\"true\">\n            <h1>Page Header</h1>\n\n           <h4>Your subtitle</h4>\n            </td>\n     </tr>\n </tbody>\n</table>\n',15,b'1'),
                     (2,1,'fa fa-header','background,padding','Heading','<table class=\"main\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"  align=\"center\" >\n    <tbody>\n        <tr>\n            <td align=\"left\" class=\"element-content\" style=\"padding-left:50px;padding-right:50px;padding-top:10px;padding-bottom:10px;background-color:#FFFFFF;\">\n                <h1 contenteditable=\"true\" style=\"font-weight: normal;\">Header</h1>\n            </td>\n        </tr>\n    </tbody>\n</table>\n',3,b'1'),
