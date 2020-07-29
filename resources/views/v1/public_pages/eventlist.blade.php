@@ -29,6 +29,7 @@
 @endphp
 @extends('v1.layouts.no-auth_no-nav_simple')
 @section('header')
+    <base target="_new">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.css"/>
     </head>
