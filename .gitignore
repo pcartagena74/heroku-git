@@ -14,5 +14,5 @@ known_composer.lck
 print_routes.txt
 load_error.txt
 effort/*
-.phpunit.result.cache
 nbproject/*
+.phpunit.result.cache

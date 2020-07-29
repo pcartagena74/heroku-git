@@ -11,10 +11,23 @@ use Mail;
 
 class SendEmailJob implements ShouldQueue
 {
-    public $tries   = 5;
-    public $timeout = 20;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 160;
 
+    /**
+     * user defined varaibles
+     */
     protected $user;
     protected $from_email;
     protected $to_email;
@@ -39,7 +52,7 @@ class SendEmailJob implements ShouldQueue
     public function handle()
     {
         // $email = new EmailForQueuing();
-        $c = $this->details;
+        $c          = $this->details;
         $c->toEmail = 'mufaddal@systango.com';
         // dd([$c->fromEmail,$c->toEmail,$c->fromName,$c->subject]);
         // Mail::to($this->details['email'])->send($email);

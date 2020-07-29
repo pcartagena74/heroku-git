@@ -6,6 +6,7 @@
 
 use App\Address;
 use App\Email;
+use App\EmailList;
 use App\Event;
 use App\Location;
 use App\Models\Ticketit\TicketOver;
@@ -17,10 +18,13 @@ use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
+use PHPHtmlParser\Dom;
+use Spatie\Browsershot\Browsershot;
+use Spatie\Image\Manipulations;
 
+// $client = new Client();
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -500,563 +504,41 @@ if (!function_exists('getTicketPriorities')) {
     }
 }
 
-if (!function_exists('storeImportDataDBs')) {
-
-    $starttime;
-    $phone_master;
-    $email_master;
-    $address_master;
-    $person_staging_master;
-    /*
-    all insert and update are commented from this code for testing on live
+if (!function_exists('get_template_builder_blocks_category')) {
+    /**
+     * get template builder block category from database
+     * @return array of email block category
      */
-    function storeImportDataDBs($row, $currentPerson, $count_g = null)
+    function get_template_builder_category()
     {
-        DB::connection()->disableQueryLog();
-
-        // $this->timeMem('starttime ' . $count_g);
-        $count = 0;
-        $count++;
-        $update_existing_record = 1;
-        $chk1                   = null;
-        $chk2                   = null;
-        $p                      = null;
-        $need_op_record         = 0;
-        $pchk                   = null;
-        $op                     = null;
-        $addr                   = null;
-        $fone                   = null;
-        $pmi_id                 = null;
-        $u                      = null;
-        $f                      = null;
-        $l                      = null;
-        // columns in the MemberDetail sheet are fixed; check directly and then add if not found...
-        // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
-        // if found, get $person, $org-person, $email, $address, $phone records and update, else create
-
-        $pmi_id = trim($row['pmi_id']);
-
-        //merging org-person two queies into one as it will be more light weight
-        // $op = DB::table('org-person')->where(['OrgStat1' => $pmi_id])->get();
-        // $this->timeMem('1 op query ');
-        $op = new Collection();
-
-        // create index on OrgStat1
-        $any_op = DB::table('org-person')->where('OrgStat1', $pmi_id)->get();
-        // $this->timeMem('1 any op query ');
-
-        if ($any_op->isNotEmpty()) {
-            foreach ($any_op as $key => $value) {
-                if ($value->orgID == $currentPerson->defaultOrgID) {
-                    $op = new Collection($value);
-                    break;
-                }
-            }
-            $any_op = new Collection($any_op[0]);
-        }
-        $prefix = trim(ucwords($row['prefix']));
-        // First & Last Name string detection of all-caps or all-lower.
-        // Do not ucwords all entries just in case "DeFrancesco" type names exist
-        $f = trim($row['first_name']);
-        if ($f == strtoupper($f) || $f == strtolower($f)) {
-            $first = ucwords($f);
-        } else {
-            $first = $f;
-        }
-
-        $l = trim($row['last_name']);
-        if ($l == strtoupper($l) || $l == strtolower($l)) {
-            $last = ucwords($l);
-        } else {
-            $last = $l;
-        }
-
-        $midName  = trim(ucwords($row['middle_name']));
-        $suffix   = trim(ucwords($row['suffix']));
-        $title    = trim(ucwords($row['title']));
-        $compName = trim(ucwords($row['company']));
-
-        $em1    = trim(strtolower($row['primary_email']));
-        $em2    = trim(strtolower($row['alternate_email']));
-        $emchk1 = new Collection();
-        $emchk2 = new Collection();
-
-        if (filter_var($em1, FILTER_VALIDATE_EMAIL) && filter_var($em2, FILTER_VALIDATE_EMAIL)) {
-            $email_check = Email::whereRaw('lower(emailADDR) = ?', [$em1])
-                ->whereRaw('lower(emailADDR) = ?', [$em2])
-                ->withTrashed()->limit(1)->get();
-            if ($email_check->isNotEmpty()) {
-                foreach ($email_check as $key => $value) {
-                    if ($value == $em1) {
-                        $emchk1 = new collection($value);
-                    } else {
-                        $emchk2 = new collection($value);
-                    }
-                }
-            }
-        } elseif (filter_var($em1, FILTER_VALIDATE_EMAIL)) {
-            $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->withTrashed()->limit(1)->get();
-            if ($emchk1->isNotEmpty()) {
-                $chk1 = $emchk1[0];
-            }
-        } elseif (filter_var($em2, FILTER_VALIDATE_EMAIL)) {
-            $emchk2 = Email::whereRaw('lower(emailADDR) = ?', [$em2])->withTrashed()->limit(1)->get();
-            if ($emchk2->isNotEmpty()) {
-                $chk2 = $emchk2[0];
-            }
-        }
-        if (!filter_var($em1, FILTER_VALIDATE_EMAIL)) {
-            $em1 = null;
-        }
-        if (!filter_var($em2, FILTER_VALIDATE_EMAIL)) {
-            $em2 = null;
-        }
-
-        $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-        // $this->timeMem('5 $pchk ');
-        if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
-
-            // PMI ID, first & last names, and emails are not found so person is likely completely new; create all records
-
-            $need_op_record = 1;
-            $p              = '';
-            $u              = '';
-
-            $p_array = [
-                'prefix'       => $prefix,
-                'firstName'    => $first,
-                'prefName'     => $first,
-                'midName'      => $midName,
-                'lastName'     => $last,
-                'suffix'       => $suffix,
-                'title'        => $title,
-                'compName'     => $compName,
-                'creatorID'    => auth()->user()->id,
-                'defaultOrgID' => $currentPerson->defaultOrgID,
-                'affiliation'  => $currentPerson->affiliation,
-            ];
-            $update_existing_record = 0;
-
-            // If email1 is not null or blank, use it as primary to login, etc.
-            if ($em1 !== null && $em1 != "" && $em1 != " ") {
-                $p_array['login'] = $em1;
-                // $p                = Person::create($p_array); insert
-
-                // $u_array = [
-                //     'id'    => $p->personID,
-                //     'login' => $em1,
-                //     'name'  => $em1,
-                //     'email' => $em1,
-                // ];
-                // // $u = User::create($u_array); // create
-                // // $this->timeMem('7 u insert');
-                // $this->insertEmail($personID = $p->personID, $email = $em1, $primary = 1);
-
-                // Otherwise, try with email #2
-            } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && $p->login === null) {
-                $p->login = $em2;
-                $p->save();
-                $u->id    = $p->personID;
-                $u->login = $em2;
-                $u->name  = $em2;
-                $u->email = $em2;
-                $u->save();
-                // $this->insertEmail($personID = $p->personID, $email = $em2, $primary = 1);
-                try {
-
-                } catch (\Exception $exception) {
-                    // There was an error with saving the email -- likely an integrity constraint.
-                }
-            } elseif ($pchk !== null) {
-                // I don't think this code can actually run.
-                // The $pchk check in the outer loop is what this should have been.
-
-                // Emails didn't match for some reason but found a first/last name match
-                // Recheck to see if there's just 1 match
-                // no need to query again as we donot have filter for now
-                $p = $pchk[0];
-                // $pchk_count = Person::where([
-                //     ['firstName', '=', $first],
-                //     ['lastName', '=', $last],
-                // ])->get();
-                // $this->timeMem('8 $pchk_count');
-                // if (count($pchk_count) == 1) {
-                //     $p = $pchk;
-                // } else {
-                //     // Would need a way to pick the right one if there's more than 1
-                //     // For now, just taking the first one
-                //     $p = $pchk;
-                // }
-            } else {
-                // This is a last resort when there are no email addresses associated with the record
-                // Better to abandon; avoid $p->save();
-                // Technically, should not ever get here because we check ahead of time.
-                // break;
-            }
-
-            // If email 1 exists and was used as primary but email 2 was also provided and unique, add it.
-            if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $chk2) {
-                // $this->insertEmail($personID = $p->personID, $email = $em2, $primary = 0);
-            } elseif ($em2 !== null && $em2 == strtolower($chk2)) {
-                if ($emchk2->personID != $p->personID) {
-                    $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
-                    $emchk2->personID  = $p->personID;
-                    // $emchk2->save(); update
-
-                }
-
-            }
-
-        } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
-            // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
-            if ($op->isNotEmpty()) {
-                // For modularity, updating the $op record will happen below as there are no dependencies
-                // $p = Person::where(['personID' => $op[0]->personID])->get();
-                $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
-                // dd($p->first());
-                // $this->timeMem('10 op and any op check 2142');
-                $p = $p->first();
-            } else {
-                $need_op_record = 1;
-                // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
-                $p = DB::table('person')->where(['personID' => $any_op->get('personID')])->limit(1)->get();
-                // $this->timeMem('11 op and any op check 2148');
-                $p = $p->first();
-            }
-            if (empty($p->personID)) {
-                return;
-            }
-            // dd(getType($p));
-            // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
-            $pchk = null;
-
-            // Because we should have found a person record, determine if we should create and associate email records
-            if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != strtolower($chk1) && $em1 != strtolower($chk2)) {
-                // $this->insertEmail($personID = $p->personID, $email = $em1, $primary = 0);
-            } elseif ($em1 !== null && $em1 == strtolower($chk1)) {
-                if ($emchk1[0]->personID != $p->personID) {
-                    $emchk1[0]->personID  = $p->personID;
-                    $emchk1[0]->debugNote = "ugh!  Was: $emchk1[0]->personID; Should be: $p->personID";
-                    // DB::table('person-email')->where(['personID' => $emchk1[0]->personID])
-                    // ->update(['personID' => $p->personID, 'debugNote' => $emchk1[0]->debugNote]); //update
-                }
-            }
-            if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != strtolower($chk1) && $em2 != strtolower($chk2) && $em2 != $em1) {
-                // $this->insertEmail($personID = $p->personID, $email = $em2, $primary = 0);
-            } elseif ($em2 !== null && $em2 == strtolower($chk2)) {
-                if ($emchk2->personID != $p->personID) {
-                    $emchk2->debugNote = "ugh!  Was: $emchk2->personID; Should be: $p->personID";
-                    $emchk2->personID  = $p->personID;
-                    // DB::table('person-email')->where(['personID' => $emchk2[0]->personID])
-                    //     ->update(['personID' => $p->personID, 'debugNote' => $emchk2[0]->debugNote]); update
-
-                }
-            }
-            // } elseif ($emchk1->isNotEmpty() && $em1->isNotEmpty() && $em1 != '' && $em1 != ' ') {
-        } elseif ($emchk1->isNotEmpty() && !empty($em1) && $em1 != '' && $em1 != ' ') {
-            $emchk1 = $emchk1[0];
-            // email1 was found in the database, but either no PMI ID match in DB, possibly due to a different/incorrect entry
-            $p = Person::where(['personID' => $emchk1->personID])->get();
-            // $this->timeMem('14 get person 2180');
-            $p = $p[0];
-            try {
-                $op = OrgPerson::where([
-                    ['personID', $emchk1->personID],
-                    ['orgID', $currentPerson->defaultOrgID],
-                ])->get();
-                // $this->timeMem('15 get org person 2187');
-                if ($op->isEmpty()) {$need_op_record = 1;}
-            } catch (Exception $ex) {
-                // dd([$emchk1, $em1]);
-            }
-            // We have an email record match so we should NOT rely on firstName/lastName matching at all
-            $pchk = null;
-        } elseif ($emchk2->isNotEmpty() && !empty($em2) && $em2 != '' && $em2 != ' ') {
-            $emchk2 = $emchk2[0];
-            // email2 was found in the database
-            // $p  = Person::where(['personID' => $emchk2->personID])->get();
-            // $p  = $p[0];
-            $op = OrgPerson::where([
-                ['personID', $emchk2->personID],
-                ['orgID', $currentPerson->defaultOrgID],
-            ])->get();
-            // $this->timeMem('16 get org person 2202');
-            if ($op->isEmpty()) {$need_op_record = 1;}
-            // We have an email record match so we should NOT rely on firstName/lastName matching at all
-            $pchk = null;
-        } elseif ($pchk->isNotEmpty()) {
-            // Everything else was null but firstName & lastName matches someone
-            $p                      = $pchk[0];
-            $update_existing_record = 1;
-
-            // Should check if there are multiple firstName/lastName matches and then decide what, if anything,
-            // can be done to pick the right one...
-            if (!empty($p->personID)) {
-                $op = OrgPerson::where([
-                    ['personID', $p->personID],
-                    ['orgID', $currentPerson->defaultOrgID],
-                ])->get();
-                // $this->timeMem('17 get org person 2218');
-                if ($op->isEmpty()) {
-                    $need_op_record = 1;
-                }
-            }
-        }
-
-        if ($update_existing_record && !empty($p)) {
-            $ary = [];
-            if (strlen($prefix) > 0) {
-                $ary['prefix'] = $prefix;
-            }
-            $ary['firstName'] = $first;
-            try {
-                if (empty($p->prefName)) {
-                    $ary['prefName'] = $first;
-                }
-                if (strlen($midName) > 0) {
-                    $ary['midName'] = $midName;
-                }
-                $ary['lastName'] = $last;
-                if (strlen($suffix) > 0) {
-                    $ary['suffix'] = $suffix;
-                }
-                if (empty($p->title) || $pchk !== null) {
-                    $ary['title'] = $title;
-                }
-                if (empty($p->compName) || $pchk !== null) {
-                    $ary['compName'] = $compName;
-                }
-                if (empty($p->affiliation)) {
-                    $ary['affiliation'] = $currentPerson->affiliation;
-                }
-
-                // One day: think about how to auto-populate indName field using compName
-
-                $ary['updaterID']    = auth()->user()->id;
-                $ary['defaultOrgID'] = $currentPerson->defaultOrgID;
-                // DB::table('person')->where('personID', $p->personID)->update($ary); update
-                // $this->timeMem('18 get org person 2257');
-
-            } catch (Exception $ex) {
-                dd($p);
-            }
-
-        }
-
-        $memClass  = trim(ucwords($row['chapter_member_class']));
-        $pmiRenew  = trim(ucwords($row['pmiauto_renew_status']));
-        $chapRenew = trim(ucwords($row['chapter_auto_renew_status']));
-
-        if ($need_op_record) {
-            // A new OP record must be created because EITHER:
-            // 1. the member is completely new to the system or
-            // 2. the member is in the system but under another chapter/orgID
-            $newOP = new OrgPerson;
-            // $newOP->orgID    = $p->defaultOrgID;
-            // $newOP->personID = $p->personID;
-            $newOP->OrgStat1 = $pmi_id;
-
-            if (strlen($memClass) > 0) {
-                $newOP->OrgStat2 = $memClass;
-            }
-            // Because OrgStat3 & OrgStat4 data has 'Yes' or blanks as values
-            if (strlen($pmiRenew) > 0) {
-                if ($pmiRenew != "Yes") {
-                    $newOP->OrgStat3 = "No";
-                } else {
-                    $newOP->OrgStat3 = $pmiRenew;
-                }
-            }
-
-            if (strlen($chapRenew) > 0) {
-                if ($chapRenew != "Yes") {
-                    $newOP->OrgStat4 = "No";
-                } else {
-                    $newOP->OrgStat4 = $chapRenew;
-                }
-            }
-
-            if (!empty($row['pmi_join_date'])) {
-                $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
-            }
-            if (!empty($row['chapter_join_date'])) {
-                $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
-            }
-            if (!empty($row['pmi_expiration'])) {
-                $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
-            }
-            if (!empty($row['pmi_expiration'])) {
-                $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
-            }
-            $newOP->creatorID = auth()->user()->id;
-            // $newOP->save(); update
-            // $this->timeMem('19 new po update 2312');
-            // if ($p->defaultOrgPersonID === null) {
-            // DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
-            // $this->timeMem('20 person update 2315');
-            // }
-        } else {
-            // We'll update some fields on the off chance they weren't properly filled in a previous creation
-            if (isset($op[0])) {
-                $newOP = $op[0];
-                // dd($newOP);
-                $ary = [];
-                if ($newOP->OrgStat1 === null) {
-                    $ary['OrgStat1'] = $pmi_id;
-                }
-
-                if (strlen($pmiRenew) > 0) {
-                    if ($pmiRenew != "Yes") {
-                        $ary['OrgStat3'] = "No";
-                    } else {
-                        $ary['OrgStat3'] = $pmiRenew;
-                    }
-                }
-
-                if (strlen($chapRenew) > 0) {
-                    if ($chapRenew != "Yes") {
-                        $ary['OrgStat4'] = "No";
-                    } else {
-                        $ary['OrgStat4'] = $chapRenew;
-                    }
-                }
-                if (!empty($row['pmi_join_date'])) {
-                    $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
-                }
-                if (!empty($row['chapter_join_date'])) {
-                    $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
-                }
-                if (!empty($row['pmi_expiration'])) {
-                    $ary['RelDate3'] = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
-                }
-                if (!empty($row['pmi_expiration'])) {
-                    $ary['RelDate4'] = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
-                }
-                $ary['updaterID'] = auth()->user()->id;
-                // DB::table('org-person')->where('id', $newOP->id)->update($ary); update
-
-                // $newOP->save();
-            }
-        }
-
-        // Add the person-specific records as needed
-        if (!empty($p)) {
-            $pa   = trim(ucwords($row['preferred_address']));
-            $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
-            // $this->timeMem('22 get address 2367');
-            if ($addr->isEmpty() && $pa !== null && $pa != "" && $pa != " ") {
-                $z = trim($row['zip']);
-                if (strlen($z) == 4) {
-                    $z = "0" . $z;
-                } elseif (strlen($z) == 8) {
-                    $r2 = substr($z, -4, 4);
-                    $l2 = substr($z, 0, 4);
-                    $z  = "0" . $l2 . "-" . $r2;
-                } elseif (strlen($z) == 9) {
-                    $r2 = substr($z, -4, 4);
-                    $l2 = substr($z, 0, 5);
-                    $z  = $l2 . "-" . $r2;
-                }
-                // $addr->zip = $z;
-
-                // // Need a smarter way to determine country code
-                $cntry    = trim(ucwords($row['country']));
-                $cntry_id = 228;
-                if ($cntry == 'United States') {
-                    $addr->cntryID = 228;
-                    $cntry_id      = 228;
-                } elseif ($cntry == 'Canada') {
-                    $addr->cntryID = 36;
-                    $cntry_id      = 36;
-                }
-
-                // $this->insertAddress(
-                //     $personID = $p->personID,
-                //     $addresstype = trim(ucwords($row['preferred_address_type'])),
-                //     $addr1 = trim(ucwords($row['preferred_address'])),
-                //     $city = trim(ucwords($row['city'])),
-                //     $state = trim(ucwords($row['state'])),
-                //     $zip = $z,
-                //     $country = $cntry_id);
-            }
-            $num = [];
-            if (strlen($row['home_phone']) > 7) {
-                $num[] = trim($row['home_phone']);
-            }
-
-            if (strlen($row['work_phone']) > 7) {
-                $num[] = trim($row['work_phone']);
-            }
-
-            if (strlen($row['mobile_phone']) > 7) {
-                $num[] = trim($row['mobile_phone']);
-            }
-
-            if (!empty($num)) {
-                // $phone = Phone::whereIn('phoneNumber', $num)->get();
-                $phone = DB::table('person-phone')->whereIn('phoneNumber', $num)->get();
-                // $this->timeMem('23 get phone 2419');
-                if ($phone->isNotEmpty()) {
-                    foreach ($phone as $key => $value) {
-                        if ($value->phoneID == $p->personID) {
-                            $ary = [
-                                'debugNote' => "ugh!  Was: $value->personID; Should be: $p->personID",
-                                'personID'  => $p->personID,
-                            ];
-                            // DB::table('person-phone')->where('id', $value->phoneID)->update($ary); //update
-                        }
-                    }
-                } else {
-                    if (strlen($row['home_phone']) > 7) {
-                        // $this->insertPhone($personid = $p->personID, $phonenumber = $row['home_phone'], $phonetype = 'Home');
-                    }
-
-                    if (strlen($row['work_phone']) > 7) {
-                        // $this->insertPhone($personid = $p->personID, $phonenumber = $row['work_phone'], $phonetype = 'Work');
-                    }
-
-                    if (strlen($row['mobile_phone']) > 7) {
-                        // $this->insertPhone($personid = $p->personID, $phonenumber = $row['mobile_phone'], $phonetype = 'Mobile');
-                    }
-                }
-            }
-
-            // $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
-        }
-        unset($chk1);
-        unset($chk2);
-        unset($p);
-        unset($u);
-        unset($f);
-        unset($l);
-        unset($e);
-        unset($need_op_record);
-        unset($pchk);
-        unset($op);
-        unset($addr);
-        unset($fone);
-        unset($pmi_id);
-        unset($fone);
-        unset($newOP);
-        unset($emchk1);
-        unset($emchk2);
-        unset($ps);
-        unset($row);
-
-        // $this->bulkInsertAll();5863 baki me kuch problem h
-        //
-        gc_collect_cycles();
+        return App\Models\EmailBlockCategory::all()->toArray();
     }
+}
 
+if (!function_exists('get_template_builder_blocks_category')) {
+    /**
+     * get template blocks by category id
+     * @param  integer $email_cat_id  email category id
+     * @return array               of category blocks
+     */
+    function get_template_builder_block_category($email_cat_id)
+    {
+        return App\Models\EmailBlock::where(['cat_id' => $email_cat_id, 'is_active' => 1])->get()->toArray();
+    }
 }
 
 if (!function_exists('isDate')) {
-    function isDate($value)
+    /**
+     * check if given string is date type
+     * @param  string  $date_str date
+     * @return boolean        true/false
+     */
+    function isDate($date_str)
     {
-        if (!$value) {
+        if (!$date_str) {
             return false;
         } else {
-            $date = date_parse($value);
+            $date = date_parse($date_str);
             if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
                 return checkdate($date['month'], $date['day'], $date['year']);
             } else {
@@ -1066,24 +548,617 @@ if (!function_exists('isDate')) {
     }
 }
 
-function requestBin($data)
-{
-    // API URL
-    $url = 'https://enpfjlvpu0oo.x.pipedream.net';
-    // Create a new cURL resource
-    $ch = curl_init($url);
-    // Setup request to send json via POST
-    $payload = json_encode(array("user" => $data));
-    // Attach encoded JSON string to the POST fields
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    // Set the content type to application/json
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-    // Return response instead of outputting
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // Execute the POST request
-    $result = curl_exec($ch);
-    // Close cURL resource
-    curl_close($ch);
+if (!function_exists('requestBin')) {
+    /**
+     * send data to request bin for queue debug
+     * @param  array $data
+     */
+    function requestBin($data)
+    {
+        return;
+        // API URL
+        $url = 'https://enpfjlvpu0oo.x.pipedream.net';
+        // Create a new cURL resource
+        $ch = curl_init($url);
+        // Setup request to send json via POST
+        $payload = json_encode(array("user" => $data));
+        // Attach encoded JSON string to the POST fields
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        // Set the content type to application/json
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        // Return response instead of outputting
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Execute the POST request
+        $result = curl_exec($ch);
+        // Close cURL resource
+        curl_close($ch);
+    }
+}
+
+if (!function_exists('replaceUserDataInEmailTemplate')) {
+    /**
+     * replace text placeholder with actual data from database
+     * @param  string  $email       user email whose data needed to be replaced by placeholder
+     * @param  object  $campaign    the campaign object
+     * @param  boolean $for_preview true if using for preview only false while sending actual email
+     * @param  string  $raw_html    html string used when for_preview is true
+     * @return string               replaced html
+     */
+    function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
+    {
+        // $start = microtime(true);
+        $person         = '';
+        $organization   = '';
+        $org_name       = '';
+        $pre_header_str = '<table width="100%" cellspacing="0" cellpadding="0" border="0" style="background:rgb(233,234,234) none repeat scroll 0% 0%/auto padding-box border-box"><tbody><tr><td><div style="margin:0 auto;width:600px;padding:0px">
+                                    <table width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:rgb(255,255,255);width:600px;border-spacing:0px;border-collapse:collapse" align="center">
+                <tbody>
+                    <tr>
+                        <td align="left" style="padding:10px 50px;font-family:Arial;font-size:13px;color:rgb(0,0,0);line-height:22px;border-collapse:collapse;text-align:center">
+                            <div>
+                                ##toreplace##
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table></div></td></tr></tbody></table>';
+        if ($for_preview) {
+            if (!empty($raw_html)) {
+                $person       = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
+                $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
+                if (!empty($campaign)) {
+                    if (!empty($campaign->preheader)) {
+                        $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
+                        $raw_html       = $preheader_html . $raw_html;
+                    }
+                }
+            } else {
+                return $raw_html;
+            }
+        } else {
+            $raw_html = '';
+            //if in case campaign content is empty pick individual blocks
+            if (empty($campaign->content)) {
+                foreach ($campaign->template_blocks as $key => $value) {
+                    $raw_html .= $value->content;
+                }
+            } else {
+                if (!empty($campaign->preheader)) {
+                    $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
+                    $raw_html       = $preheader_html . $campaign->content;
+                } else {
+                    $raw_html = $campaign->content;
+                }
+            }
+            $person       = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
+            $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
+        }
+        if (empty($person) || empty($organization)) {
+            return $raw_html;
+        }
+        if (!empty($organization)) {
+            $org_name = $organization->orgName;
+        }
+        $mapping = [
+            '[PREFIX]'           => $person->prefix,
+            '[FIRSTNAME]'        => $person->firstName,
+            '[MIDDLENAME]'       => $person->midName,
+            '[LASTNAME]'         => $person->lastName,
+            '[SUFFIX]'           => $person->suffix,
+            '[PREFNAME]'         => $person->prefName,
+            '[LOGINEMAIL]'       => $person->login,
+            '[ORGANIZATIONNAME]' => $org_name,
+            '[TITLE]'            => $person->title,
+            '[COMPANYNAME]'      => $person->compName,
+            '[INDUSTRY]'         => $person->indName,
+            '[EXPERINCE]'        => $person->experience,
+            '[ALLERGENNOTE]'     => $person->allergenNote,
+            '[SPECIALNEEDS]'     => $person->specialNeeds,
+            '[CHAPTERROLE]'      => $person->chapterRole,
+            '[AFFILIATION]'      => $person->affiliation,
+            '[TWITTERHANDLE]'    => $person->twitterHandle,
+            '[CERTIFICATIONS]'   => $person->certifications,
+            '[OSN1]'             => $person->orgperson->OrgStat1,
+            '[OSN2]'             => $person->orgperson->OrgStat2,
+            '[OSN3]'             => $person->orgperson->OrgStat3,
+            '[OSN4]'             => $person->orgperson->OrgStat4,
+            '[OSN5]'             => $person->orgperson->OrgStat5,
+            '[OSN6]'             => $person->orgperson->OrgStat6,
+            '[OSN7]'             => $person->orgperson->OrgStat7,
+            '[OSN8]'             => $person->orgperson->OrgStat8,
+            '[OSN9]'             => $person->orgperson->OrgStat9,
+            '[OSN10]'            => $person->orgperson->OrgStat10,
+            '[ODN1]'             => $person->orgperson->RelDate1,
+            '[ODN2]'             => $person->orgperson->RelDate2,
+            '[ODN3]'             => $person->orgperson->RelDate3,
+            '[ODN4]'             => $person->orgperson->RelDate4,
+            '[ODN5]'             => $person->orgperson->RelDate5,
+            '[ODN6]'             => $person->orgperson->RelDate6,
+            '[ODN7]'             => $person->orgperson->RelDate7,
+            '[ODN8]'             => $person->orgperson->RelDate8,
+            '[ODN9]'             => $person->orgperson->RelDate9,
+            '[ODN10]'            => $person->orgperson->RelDate10,
+        ];
+        // $rep = str_replace(array_keys($mapping), $mapping, $raw_html);
+        // $test = (microtime(true) - $start) . "Seconds";
+        // dd($test);
+        return str_replace(array_keys($mapping), $mapping, $raw_html);
+    }
+}
+
+if (!function_exists('generateEmailTemplateThumbnail')) {
+    /**
+     * Generate thumbnail from email html
+     * @param  string $html     email html
+     * @param  object $campaign campaign object for name
+     * @return string           file path
+     */
+    function generateEmailTemplateThumbnail($html, $campaign)
+    {
+        if (empty($html) || empty($campaign)) {
+            return false;
+        }
+        $file_name = generateEmailTemplateThumbnailName($campaign);
+        $html      = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
+        $org       = Org::where('orgID', $campaign->orgID)->get()->first();
+        $path      = getAllDirectoryPathFM($org);
+        $full_path = $path['campaign'] . '/thumb/' . $file_name;
+        $img       = Browsershot::html($html)
+            ->fullPage()
+            ->fit(Manipulations::FIT_CONTAIN, 70, 120)
+            ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
+            ->screenshot();
+        // ->save(Storage::disk('local')->path($full_path));
+        Storage::disk(getDefaultDiskFM())->put($full_path, $img);
+        return Storage::disk(getDefaultDiskFM())->url($full_path);
+    }
+}
+
+if (!function_exists('generateEmailTemplateThumbnailName')) {
+    /**
+     * generate email template thumbnail name
+     * @param  object $campaign campaign object
+     * @return string           template thumbnail name
+     */
+    function generateEmailTemplateThumbnailName($campaign)
+    {
+        //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
+        $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
+    }
+}
+
+if (!function_exists('getEmailTemplateThumbnailName')) {
+    /**
+     * same as generate just for sake of naming convension
+     * @param  [type] $campaign [description]
+     * @return [type]           [description]
+     */
+    function getEmailTemplateThumbnailName($campaign)
+    {
+        //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
+        $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
+    }
+}
+
+if (!function_exists('getEmailTemplateThumbnailURL')) {
+    /**
+     * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
+     * @param  object $campaign campaign object
+     * @return string           URL for thumbnail
+     */
+    function getEmailTemplateThumbnailURL($campaign)
+    {
+        $path      = getAllDirectoryPathFM();
+        $file_name = getEmailTemplateThumbnailName($campaign);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->url($path['campaign'] . '/thumb/' . $file_name);
+        } else {
+            return url('images/mCentric_square.png');
+
+        }
+    }
+}
+
+if (!function_exists('getAllDirectoryPathFM')) {
+    /**
+     * all static directory path for filemanger this has a system wide impact
+     * @param  object $org org model if available
+     * @return array      all path that are created
+     */
+    function getAllDirectoryPathFM($org = null)
+    {
+        if (empty($org)) {
+            $currentPerson = Person::find(auth()->user()->id);
+            $org           = $currentPerson->defaultOrg;
+        }
+        // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
+        $base_path = $org->orgPath . '/filemanager/';
+        // $base_path              = $org->orgPath . '/';
+        $path['event']          = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
+        $path['campaign']       = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
+        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files/thumb');
+        $path['orgPath']        = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
+        $path['orgPathFM']      = Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
+        return $path;
+    }
+
+}
+
+if (!function_exists('generateDirectoriesForOrg')) {
+    /**
+     * generate default directory set for new organizations
+     * @param  object $org organization object
+     * @return null
+     */
+    function generateDirectoriesForOrg($org)
+    {
+        $path = getAllDirectoryPathFM($org);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['orgPath']) == false) {
+            Storage::disk(getDefaultDiskFM())->makeDirectory($path['orgPath']);
+        }
+        foreach ($path as $key => $value) {
+            if (Storage::disk(getDefaultDiskFM())->exists($value) == false) {
+                $var = Storage::disk(getDefaultDiskFM())->makeDirectory($value);
+            }
+        }
+    }
+}
+
+if (!function_exists('getDefaultPathFM')) {
+    /**
+     * for filemanager config default path for filemanager (do not change)
+     * @return string folder path
+     */
+    function getDefaultPathFM()
+    {
+        $currentPerson = Person::find(auth()->user()->id);
+        $org           = $currentPerson->defaultOrg;
+        return Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
+    }
+}
+
+if (!function_exists('getDefaultDiskFM')) {
+    /**
+     * return value of default disk for file manager
+     * @return string diskname
+     */
+    function getDefaultDiskFM()
+    {
+        return 's3_media';
+    }
+}
+if (!function_exists('getAllDiskFM')) {
+    /**
+     * return all available disk for file manager
+     * @return array of disk names
+     */
+    function getAllDiskFM()
+    {
+        // return ['public', 's3_receipts', 's3_media', 'events'];
+        return ['s3_media'];
+    }
+}
+if (!function_exists('getEmailList')) {
+    /**
+     * get count and email list for selected user org
+     * @param  object  $currentPerson model object
+     * @param  boolean $for_select    if needed for dropdown use true
+     * @return array                 either only name and id or complete details
+     */
+    function getEmailList($currentPerson, $for_select = false)
+    {
+        $rows        = [];
+        $lists       = EmailList::where('orgID', $currentPerson->defaultOrgID)->get();
+        $select_rows = [];
+        $today       = Carbon::now();
+        foreach ($lists as $l) {
+            $included   = explode(',', $l->included);
+            $foundation = $l->foundation;
+            // $foundation1 = array_shift($included);
+            // dd($foundation,$foundation1);
+            $excluded = explode(',', $l->excluded);
+
+            // foundations are either filters (when $included !== null) or true foundations
+            if ($included != null) {
+                switch ($foundation) {
+                    case "none":
+                    case "everyone":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                                $q->whereIn('eventID', $included);
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "pmiid":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                                $q->whereIn('eventID', $included);
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) {
+                                $q->whereNotNull('OrgStat1');
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "nonexpired":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                                $q->whereIn('eventID', $included);
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) use ($today) {
+                                $q->whereNotNull('OrgStat1');
+                                $q->whereDate('RelDate4', '>=', $today);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                }
+            } else {
+                // $included === null
+                switch ($foundation) {
+                    case "none":
+                    // none with a null $included is not possible
+                    case "everyone":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereDoesntHave('registrations', function ($q) use ($excluded) {
+                                $q->whereIn('eventID', $excluded);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "pmiid":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($excluded) {
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) use ($today) {
+                                $q->whereNotNull('OrgStat1');
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                    case "nonexpired":
+                        $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                            $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                        })
+                            ->whereHas('registrations', function ($q) use ($excluded) {
+                                $q->whereNotIn('eventID', $excluded);
+                            })
+                            ->whereHas('orgperson', function ($q) use ($today) {
+                                $q->whereNotNull('OrgStat1');
+                                $q->whereDate('RelDate4', '>=', $today);
+                            })
+                            ->distinct()
+                            ->select('person.personID')
+                            ->count();
+                        break;
+                }
+            }
+            $edit_link   = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
+            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete(' . $l->id . ')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
+            $links       = $edit_link . ' | ' . $delete_link;
+            array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $links]);
+            array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
+        }
+        if ($for_select) {
+            return $select_rows;
+        } else {
+            return $rows;
+        }
+    }
+}
+if (!function_exists('getDefaultEmailList')) {
+    /**
+     * get default email list (list from efcico corporation)
+     * @param  object  $currentPerson default
+     * @param  boolean $for_select    only for dropdown
+     * @return array                  either only name and id or complete details
+     */
+    function getDefaultEmailList($currentPerson, $for_select = false)
+    {
+        $defaults    = EmailList::where('orgID', 1)->get();
+        $rows        = [];
+        $select_rows = [];
+        foreach ($defaults as $l) {
+            if ($l->foundation == 'everyone') {
+                $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                    $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                })->count();
+            } elseif ($l->foundation == 'pmiid') {
+                $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                    $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                })->whereHas('orgperson', function ($q) {
+                    $q->whereNotNull('OrgStat1');
+                })->count();
+            } elseif ($l->foundation == 'nonexpired') {
+                $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
+                    $q->where('organization.orgID', $currentPerson->defaultOrgID);
+                })->whereHas('orgperson', function ($q) {
+                    $q->whereDate('RelDate4', '>=', Carbon::now());
+                })->count();
+            } else {
+                // For default lists, we shouldn't ever get here
+                $c = 0;
+            }
+            array_push($rows, [$l->listName, $c, $l->created_at->format('n/j/Y')]);
+            array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
+        }
+        if ($for_select) {
+            return $select_rows;
+        } else {
+            return $rows;
+        }
+    }
+}
+
+if (!function_exists('getEmailListContact')) {
+    /**
+     * get email list from email list management
+     * @param  int $list_id list management id
+     * @param  int $org_id  organization id
+     * @return array        email id list
+     */
+    function getEmailListContact($list_id, $org_id)
+    {
+        $list       = EmailList::whereId($list_id)->get()->first();
+        $rows       = [];
+        $included   = explode(',', $list->included);
+        $foundation = $list->foundation;
+        $excluded   = explode(',', $list->excluded);
+        $today      = Carbon::now();
+        // foundations are either filters (when $included !== null) or true foundations
+        if ($included != null) {
+            switch ($foundation) {
+                case "none":
+                case "everyone":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                            $q->whereIn('eventID', $included);
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "pmiid":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                            $q->whereIn('eventID', $included);
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) {
+                            $q->whereNotNull('OrgStat1');
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "nonexpired":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($included, $excluded) {
+                            $q->whereIn('eventID', $included);
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) use ($today) {
+                            $q->whereNotNull('OrgStat1');
+                            $q->whereDate('RelDate4', '>=', $today);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+            }
+        } else {
+            // $included === null
+            switch ($foundation) {
+                case "none":
+                // none with a null $included is not possible
+                case "everyone":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereDoesntHave('registrations', function ($q) use ($excluded) {
+                            $q->whereIn('eventID', $excluded);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "pmiid":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($excluded) {
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) use ($today) {
+                            $q->whereNotNull('OrgStat1');
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+                case "nonexpired":
+                    $c = Person::whereHas('orgs', function ($q) use ($org_id) {
+                        $q->where('organization.orgID', $org_id);
+                    })
+                        ->whereHas('registrations', function ($q) use ($excluded) {
+                            $q->whereNotIn('eventID', $excluded);
+                        })
+                        ->whereHas('orgperson', function ($q) use ($today) {
+                            $q->whereNotNull('OrgStat1');
+                            $q->whereDate('RelDate4', '>=', $today);
+                        })
+                        ->distinct()
+                        ->select('person.personID', 'person.login')
+                        ->get();
+                    break;
+            } //switch end
+        } //else end
+        $email_list = [];
+        foreach ($c as $key => $value) {
+            if (!empty($value->email[0])) {
+                $email_list[] = $value->email[0]->emailADDR;
+            } else {
+                $email_list[] = $value->login;
+            }
+        }
+        return $email_list;
+    } //function end
+}
+if (!function_exists('convertToDatePickerFormat')) {
+    /**
+     * convert date to date picker format
+     * @param  string $date_time mysql date string
+     * @return string in datepicker formate (m/d/Y h:i A)
+     */
+    function convertToDatePickerFormat($date_time)
+    {
+        $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
+        return $date->format('m/d/Y h:i A');
+    }
+}
+if (!function_exists('deleteCampaignThumb')) {
+    /**
+     * delete campaign thumbnail image from s3
+     * @param  object $campaign campaign model
+     * @return boolean          true/false
+     */
+    function deleteCampaignThumb($campaign)
+    {
+        $path      = getAllDirectoryPathFM();
+        $file_name = getEmailTemplateThumbnailName($campaign);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'] . '/thumb/' . $file_name);
+        }
+    }
 }
 
 if (!function_exists('generateLatLngForAddress')) {
@@ -1210,6 +1285,395 @@ if (!function_exists('storeLatiLongiFormZip')) {
     }
 }
 
+if (!function_exists('has_org_property')) {
+    /**
+     * check if org property exist and return its value if found
+     * @param  object  $org      org object
+     * @param  array  $property template category array
+     * @return boolean/string   bool if not found otherwise string.
+     */
+    function has_org_property($org, $property)
+    {
+        switch ($property['name']) {
+            case 'OSN1':
+                if (empty($org->OSN1)) {
+                    return false;
+                } else {
+                    return ['[OSN1]' => $org->OSN1];
+                }
+                break;
+            case 'OSN2':
+                if (empty($org->OSN2)) {
+                    return false;
+                } else {
+                    return ['[OSN2]' => $org->OSN2];
+                }
+                break;
+            case 'OSN3':
+                if (empty($org->OSN3)) {
+                    return false;
+                } else {
+                    return ['[OSN3]' => $org->OSN3];
+                }
+                break;
+            case 'OSN4':
+                if (empty($org->OSN4)) {
+                    return false;
+                } else {
+                    return ['[OSN4]' => $org->OSN4];
+                }
+                break;
+            case 'OSN5':
+                if (empty($org->OSN5)) {
+                    return false;
+                } else {
+                    return ['[OSN5]' => $org->OSN5];
+                }
+                break;
+            case 'OSN6':
+                if (empty($org->OSN6)) {
+                    return false;
+                } else {
+                    return ['[OSN6]' => $org->OSN6];
+                }
+                break;
+            case 'OSN7':
+                if (empty($org->OSN7)) {
+                    return false;
+                } else {
+                    return ['[OSN7]' => $org->OSN7];
+                }
+                break;
+            case 'OSN8':
+                if (empty($org->OSN8)) {
+                    return false;
+                } else {
+                    return ['[OSN8]' => $org->OSN8];
+                }
+                break;
+            case 'OSN9':
+                if (empty($org->OSN9)) {
+                    return false;
+                } else {
+                    return ['[OSN9]' => $org->OSN9];
+                }
+                break;
+            case 'OSN10':
+                if (empty($org->OSN10)) {
+                    return false;
+                } else {
+                    return ['[OSN10]' => $org->OSN10];
+                }
+                break;
+            case 'ODN1':
+                if (empty($org->ODN1)) {
+                    return false;
+                } else {
+                    return ['[ODN1]' => $org->ODN1];
+                }
+                break;
+            case 'ODN2':
+                if (empty($org->ODN2)) {
+                    return false;
+                } else {
+                    return ['[ODN2]' => $org->ODN2];
+                }
+                break;
+            case 'ODN3':
+                if (empty($org->ODN3)) {
+                    return false;
+                } else {
+                    return ['[ODN3]' => $org->ODN3];
+                }
+                break;
+            case 'ODN4':
+                if (empty($org->ODN4)) {
+                    return false;
+                } else {
+                    return ['[ODN4]' => $org->ODN4];
+                }
+                break;
+            case 'ODN5':
+                if (empty($org->ODN5)) {
+                    return false;
+                } else {
+                    return ['[ODN5]' => $org->ODN5];
+                }
+                break;
+            case 'ODN6':
+                if (empty($org->ODN6)) {
+                    return false;
+                } else {
+                    return ['[ODN6]' => $org->ODN6];
+                }
+                break;
+            case 'ODN7':
+                if (empty($org->ODN7)) {
+                    return false;
+                } else {
+                    return ['[ODN7]' => $org->ODN7];
+                }
+                break;
+            case 'ODN8':
+                if (empty($org->ODN8)) {
+                    return false;
+                } else {
+                    return ['[ODN8]' => $org->ODN8];
+                }
+                break;
+            case 'ODN9':
+                if (empty($org->ODN9)) {
+                    return false;
+                } else {
+                    return ['[ODN9]' => $org->ODN9];
+                }
+                break;
+            case 'ODN10':
+                if (empty($org->ODN10)) {
+                    return false;
+                } else {
+                    return ['[ODN10]' => $org->ODN10];
+                }
+                break;
+            default:
+                return false;
+                break;
+        }
+        return true;
+
+    }
+}
+
+if (!function_exists('generateEmailListEventArray')) {
+    /**
+     * get event ids with date and name wise list from event query object.
+     * @param  object $event event model object
+     * @return array        ids, datewithname, min & max dates
+     */
+    function generateEmailListEventArray($event)
+    {
+        $ytd_events_date = [];
+        $ids             = [];
+        $date_array      = [];
+        foreach ($event as $id) {
+            array_push($ids, $id->eventID);
+            $event_type_name = 'NA';
+            if (!empty($id->event_type->etName)) {
+                $event_type_name = $id->event_type->etName;
+            }
+            $date         = $id->eventStartDate->format('Y-m-d');
+            $date_array[] = $date;
+            $name         = substr($id->eventName, 0, 60);
+            if (strlen($name) > 60) {
+                $name .= "...";
+            }
+            $display_date                  = $id->eventStartDate->format(trans('messages.app_params.date_format'));
+            $list_name                     = $event_type_name . ': ' . $name . ' - ' . $display_date;
+            $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => $list_name];
+        }
+        $min          = min($date_array);
+        $date         = Carbon::createFromFormat('Y-m-d', $min);
+        $min          = [];
+        $min['year']  = $date->format('Y');
+        $min['month'] = $date->format('m');
+        $min['day']   = $date->format('d');
+        $max          = max($date_array);
+        $date         = Carbon::createFromFormat('Y-m-d', $max);
+        $max          = [];
+        $max['year']  = $date->format('Y');
+        $max['month'] = $date->format('m');
+        $max['day']   = $date->format('d');
+        return [
+            'events_with_date' => $ytd_events_date,
+            'ids'              => $ids,
+            'min_max_date'     => ['min' => $min, 'max' => $max],
+        ];
+    }
+}
+if (!function_exists('getJavaScriptDate')) {
+    /**
+     * return js compactible date from daterangepicker specific date
+     * @param  string $date m/d/Y style date
+     * @return string       Y-m-d style date
+     */
+    function getJavaScriptDate($date)
+    {
+        $date = trim($date);
+        $date = Carbon::createFromFormat('m/d/Y', $date);
+        return $date->format('Y-m-d');
+        $js          = [];
+        $js['year']  = $date->format('Y');
+        $js['month'] = $date->format('m');
+        $js['day']   = $date->format('d');
+        return $js;
+    }
+}
+
+if (!function_exists('replaceAddressWithOrgAddress')) {
+    /**
+     * replace address string for email builder footer with org address
+     * @param  array $item category 6 rows
+     * @return array       row data with updated address
+     */
+    function replaceAddressWithOrgAddress($item)
+    {
+        $default = 'Your company, Pier 9, San Francisco, CA 12345';
+        $start   = '<td contenteditable="true" style="text-align:right">';
+        $end     = '</td>';
+        $matches = [];
+        // for single line address
+        if (strpos($item['html'], $default) !== false) {
+            $currentPerson = Person::find(auth()->user()->id);
+            $org           = $currentPerson->defaultOrg;
+            $add_str       = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
+            }
+            $add_str .= $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
+                $add_str .= $org->orgState;
+                $add_str .= $org->orgZip . ', ';
+            } else {
+                $add_str .= $org->State . ', ';
+            }
+            $add_str      = rtrim($add_str, ', ');
+            $item['html'] = str_replace($default, $add_str, $item['html']);
+            return $item;
+        } else if (preg_match("#$start(.*)$end#s", $item['html'], $matches)) {
+            // for multiline address first finding if exist then replacing it line by line
+            $currentPerson = Person::find(auth()->user()->id);
+            $org           = $currentPerson->defaultOrg;
+            $add_str       = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
+            }
+            $line1   = $add_str;
+            $add_str = $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
+                $add_str .= $org->orgState;
+                $add_str .= $org->orgZip . ', ';
+            } else {
+                $add_str .= $org->State . ', ';
+            }
+            $add_str      = rtrim($add_str, ', ');
+            $line2        = $add_str;
+            $default      = [];
+            $add_str      = [];
+            $default[]    = 'Your company, Pier 9,';
+            $default[]    = ' San Francisco, CA 12345';
+            $add_str[]    = $line1;
+            $add_str[]    = $line2;
+            $item['html'] = str_replace($default, $add_str, $item['html']);
+            return $item;
+        } else {
+            // return address row as itis
+            return $item;
+        }
+    }
+}
+
+if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
+    /**
+     * replace social icon links with actual links, hides if link is not set.
+     * @param  array $item category 6 rows
+     * @return array       row data with updated links and style
+     */
+    function replaceSocialLinksWithOrgSocialLinks($item)
+    {
+        $parsed = new Dom;
+        $parsed->load($item['html']);
+        //find all anchor tags
+        $a             = $parsed->find('a');
+        $currentPerson = Person::find(auth()->user()->id);
+        $org           = $currentPerson->defaultOrg;
+        foreach ($a as $key => $value) {
+            $tag = $value->getTag();
+            //get anchor tag html attributes
+            $class = $tag->getAttribute('class');
+            $class = $class['value'];
+            switch ($class) {
+                case 'instagram':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+                case 'pinterest':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+                case 'google-plus':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->googleURL)) {
+                        $tag->setAttribute('href', $org->googleURL);
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'facebook':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->facebookURL)) {
+                        $tag->setAttribute('href', $org->facebookURL);
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'twitter':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->orgHandle)) {
+                        $tag->setAttribute('href', 'https://twitter.com/' . str_replace("@", '', $org->orgHandle));
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'linkedin':
+                    //check if link exist and set it into href tag otherwise hide it.
+                    if (!empty($org->linkedinURL)) {
+                        $tag->setAttribute('href', $org->linkedinURL);
+                    } else {
+                        $style = $tag->getAttribute('style');
+                        $style = $style['value'];
+                        $style = str_replace('inline-block', 'none', $style);
+                        $tag->setAttribute('style', $style);
+                    }
+                    break;
+                case 'youtube':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+                case 'skype':
+                    // as this link is not yet available in db we can hide it
+                    $style = $tag->getAttribute('style');
+                    $style = $style['value'];
+                    $style = str_replace('inline-block', 'none', $style);
+                    $tag->setAttribute('style', $style);
+                    break;
+            } //switch end
+        } //foreach end
+        //save output
+        ob_start();
+        echo $parsed;
+        $str          = ob_get_clean();
+        $item['html'] = $str;
+        return $item;
+    }
+}
 if (!function_exists('sendGetToWakeUpDyno')) {
     function sendGetToWakeUpDyno()
     {
@@ -1224,5 +1688,39 @@ if (!function_exists('sendGetToWakeUpDyno')) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
         $output = curl_exec($ch); //contain string
         curl_close($ch); //close
+
+    }
+}
+
+if (!function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
+    /**
+     * replace social icon links with actual links, hides if link is not set.
+     * @param  array $item category 6 rows
+     * @return array       row data with updated links and style
+     */
+    function getAllLinksFromCampaignHTML($campaign)
+    {
+        $parsed = new Dom;
+        $parsed->load($campaign->content);
+        //find all anchor tags
+        $a         = $parsed->find('a');
+        $link_list = [];
+        foreach ($a as $key => $value) {
+            $tag = $value->getTag();
+            //get anchor tag html attributes
+            $link_list[] = $tag->getAttribute('href');
+            // $class = $class['value'];
+
+        } //foreach end
+        $links = [];
+        if (!empty($link_list)) {
+            foreach ($link_list as $key => $value) {
+                if ($value['value'] == '#' || !filter_var($value['value'], FILTER_VALIDATE_URL)) {
+                    continue;
+                }
+                $links[$value['value']] = $value['value'];
+            }
+        }
+        return $links;
     }
 }

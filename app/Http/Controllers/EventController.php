@@ -530,6 +530,10 @@ class EventController extends Controller
         }
 
         // Make the event_{id}.ics file if it doesn't exist
+        $event_filename = 'event_' . $event->eventID . '.ics';
+        $ical           = new ics_calendar($event);
+        $contents       = $ical->get();
+        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
         $event->create_or_update_event_ics();
 
         return redirect('/event-tickets/' . $event->eventID);
@@ -703,6 +707,10 @@ class EventController extends Controller
         }
 
         // Make and overwrite the event_{id}.ics file
+        $event_filename = 'event_' . $event->eventID . '.ics';
+        $ical           = new ics_calendar($event);
+        $contents       = $ical->get();
+        Flysystem::connection('s3_events')->put($event_filename, $contents);
         $event->create_or_update_event_ics();
 
         // Think about whether ticket modification should be done here.
