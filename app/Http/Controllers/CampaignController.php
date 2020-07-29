@@ -682,10 +682,10 @@ class CampaignController extends Controller
         EmailQueue::where('campaign_id', $campaign_id)->delete();
         $slt[] = 'mufaddal@systango.com'; /// for testing only
         $slt[] = 'testmik2149@gmail.com'; /// for testing only
-        $slt[] = 'mik2149@gmail.com'; /// for testing only
-        $slt[] = 'mufaddalismail2149@gmailcom'; /// for testing only
+        $slt[] = 'mufaddal@systango.com'; /// for testing only
+        $slt[] = 'mufaddal@systango.com'; /// for testing only
         foreach ($contacts as $key => $value) {
-            $value     = 'mufaddal@systango.com'; // for testing only
+            // $value     = 'mufaddal@systango.com'; // for testing only
             // $value     = $slt[$key];// for testing only
             $to_insert = ['campaign_id' => $campaign_id, 'org_id' => $org_id, 'email_id' => $value];
             if (!empty($schedule)) {
