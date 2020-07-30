@@ -113,14 +113,16 @@ trait ExcelMemberImportTrait
 
         if (filter_var($em1, FILTER_VALIDATE_EMAIL) && filter_var($em2, FILTER_VALIDATE_EMAIL)) {
             $email_check = Email::whereRaw('lower(emailADDR) = ?', [$em1])
-                ->whereRaw('lower(emailADDR) = ?', [$em2])
-                ->withTrashed()->limit(1)->get();
+                ->orWhereRaw('lower(emailADDR) = ?', [$em2])
+                ->withTrashed()->get();
             if ($email_check->isNotEmpty()) {
                 foreach ($email_check as $key => $value) {
-                    if ($value == $em1) {
-                        $emchk1 = new collection($value);
-                    } else {
-                        $emchk2 = new collection($value);
+                    if ($value->emailADDR == $em1) {
+                        $emchk1 = new collection();
+                        $emchk1->push($value);
+                    } else if ($value->emailADDR == $em2) {
+                        $emchk2 = new collection();
+                        $emchk2->push($value);
                     }
                 }
             }
@@ -143,7 +145,6 @@ trait ExcelMemberImportTrait
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-
         // $this->timeMem('5 $pchk ');
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
@@ -418,7 +419,6 @@ trait ExcelMemberImportTrait
                     $newOP->OrgStat4 = $chapRenew;
                 }
             }
-
             if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
@@ -428,7 +428,7 @@ trait ExcelMemberImportTrait
             if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
+            if (!empty($row['chapter_expiration']) && isDate($row['chapter_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = $currentPerson->personID;
@@ -487,7 +487,6 @@ trait ExcelMemberImportTrait
                     }
 
                 }
-                // dd($rl1, $row['pmi_join_date'], $existing_relDate1, $newOP->RelDate1);
                 if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
                     if (empty($newOP->RelDate2)) {
                         $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
@@ -520,7 +519,7 @@ trait ExcelMemberImportTrait
                 if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                     $ary['RelDate3'] = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
                 }
-                if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
+                if (!empty($row['chapter_expiration']) && isDate($row['chapter_expiration'])) {
                     $ary['RelDate4'] = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
                 }
                 $ary['updaterID'] = $currentPerson->personID;

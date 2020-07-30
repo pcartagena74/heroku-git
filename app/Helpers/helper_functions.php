@@ -538,9 +538,10 @@ if (!function_exists('isDate')) {
         if (!$date_str) {
             return false;
         } else {
-            $date = date_parse($date_str);
-            if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
-                return checkdate($date['month'], $date['day'], $date['year']);
+            // $date = date_parse($date_str);
+            $date = explode('/', $date_str);
+            if (count($date) == 3) {
+                return checkdate($date[1], $date[0], $date[2]);
             } else {
                 return false;
             }
