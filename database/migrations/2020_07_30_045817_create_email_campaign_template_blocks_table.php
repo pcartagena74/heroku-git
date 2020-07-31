@@ -29,6 +29,6 @@ class CreateEmailCampaignTemplateBlocksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('email_queue_links');
+        Schema::dropIfExists('email_campaign_template_blocks');
     }
 }
