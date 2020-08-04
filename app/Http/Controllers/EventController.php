@@ -657,12 +657,13 @@ class EventController extends Controller
         $event->updaterID = $this->currentPerson->personID;
         $today = Carbon::now();
 
-        // Edit the default ticket for the event IF the end date changed.
-        if ($original['eventEndDate'] == $event->eventEndDate) {
-            $tkt = Ticket::where('eventID', $event->eventID)->first();
-            $tkt->availabilityEndDate = $event->eventStartDate;
-            $tkt->earlyBirdEndDate = $today;
-            $tkt->save();
+        // Edit all tickets for the event ONLY IF the end date changed.
+        if ($original['eventEndDate'] != $event->eventEndDate) {
+            $tkts = Ticket::where('eventID', $event->eventID)->get();
+            foreach ($tkts as $tkt) {
+                $tkt->availabilityEndDate = $event->eventStartDate;
+                $tkt->save();
+            }
         }
 
         $event_discounts = EventDiscount::where('eventID', $event->eventID)->get();
