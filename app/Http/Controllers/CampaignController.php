@@ -748,7 +748,12 @@ class CampaignController extends Controller
         //https://mcentric-test.herokuapp.com/email_webhook
         $response   = $request->all();
         $event      = $response['event-data']['event'];
-        $message_id = $response['event-data']['message']['headers']['message-id'];
+        try {
+            $message_id = $response['event-data']['message']['headers']['message-id'];
+        } catch(\Exception $e) {
+            // Do nothing but skip trying to use $message_id if it's not available
+            $message_id = null;
+        }
         // $message_id = '20200708072347.1.CBBD554EC0F0F5D2@sandbox4aafddd7d2f14bf9a04a148823ffd090.mailgun.org';
         $email_db = EmailQueue::where(['message_id' => $message_id])->get()->first();
         if (!empty($email_db)) {
