@@ -62,8 +62,8 @@ class AddressController extends Controller
                 $newAddr->cntryID   = $cnt;
                 $newAddr->creatorID = $this->currentPerson->personID;
                 $newAddr->updaterID = $this->currentPerson->personID;
-                $newAddr->save();
                 generateLatLngForAddress($newAddr);
+                $newAddr->save();
             }
         }
         if ($this->currentPerson->personID == request()->input('personID')) {
