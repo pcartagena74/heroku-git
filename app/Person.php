@@ -142,7 +142,7 @@ class Person extends Model
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
         if (!$this->roles->contains('id', $speaker_role)) {
-            $this->roles()->attach($speaker_role);
+            $this->roles()->attach($speaker_role, ['orgID' => $this->defaultOrgID]);
         }
         /*
         if (!$this->roles->contains('id', $this->org_role_id()->id)) {
