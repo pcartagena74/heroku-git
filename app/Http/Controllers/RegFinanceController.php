@@ -339,7 +339,11 @@ class RegFinanceController extends Controller
                 }
                 if (preg_match("/speaker/i", $reg->discountCode)) {
                     $p = Person::find($reg->personID);
-                    $p->add_speaker_role();
+                    try {
+                        $p->add_speaker_role();
+                    } catch(\Exception $e) {
+                        // If the above fails, it's because $p is probably already a speaker
+                    }
                 }
 
                 $totalHandle += $handleFee;
