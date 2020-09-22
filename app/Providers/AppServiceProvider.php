@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Registration;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Dusk\DuskServiceProvider;
 use Phirehose;
 use App\TwitterStream;
 use \Illuminate\Support\Facades\Blade;
@@ -35,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('trans_choice', function ($expression) {
             return "<?php trans_choice({$expression}); ?>";
         });
+        
     }
 
     /**
@@ -52,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
+
+        if($this->app->environment('local', 'test')) {
+            $this->app->register(DuskServiceProvider::class);
+        }
 
         \App\RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver() );
         \App\RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver() );

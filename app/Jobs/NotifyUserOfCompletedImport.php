@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Importdetail;
 use App\Notifications\MemeberImportExcelNotification;
 use App\Person;
 use Illuminate\Bus\Queueable;
@@ -15,16 +16,16 @@ class NotifyUserOfCompletedImport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $person;
-    public $count;
+    public $import_detail;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Person $person,$count)
+    public function __construct(Person $person, Importdetail $import_detail)
     {
-        $this->person = $person;
-        $this->count = $count;
+        $this->person        = $person;
+        $this->import_detail = $import_detail;
     }
 
     /**
@@ -34,6 +35,6 @@ class NotifyUserOfCompletedImport implements ShouldQueue
      */
     public function handle()
     {
-        $this->person->notify(new MemeberImportExcelNotification($this->person,$this->count));
+        $this->person->notify(new MemeberImportExcelNotification($this->person, $this->import_detail));
     }
 }

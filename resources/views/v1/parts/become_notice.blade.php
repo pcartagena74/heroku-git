@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Display to keep a "you've become XYZ" banner persistent until ended
  * Created: 2/5/2019
@@ -19,14 +19,16 @@ $p = Person::find($become);
 Session::put('become', $become);
 Session::put('prior_id', $prior_id);
 Session::save();
-?>
+@endphp
 {!! Form::open(array('url' => env('APP_URL')."/become", 'method' => 'POST')) !!}
 {!! Form::hidden('new_id', $prior_id) !!}
 {!! Form::hidden('cancel', 1) !!}
-<div class="form-group">
+<div class="form-group" style="margin-top:55px;">
     <p class="alert alert-warning">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        {!!  trans('messages.messages.become', ['name' => $p->showFullName()]) !!} &nbsp; &nbsp;
+        <a aria-label="close" class="close" data-dismiss="alert" href="#">
+            ×
+        </a>
+        {!!  trans('messages.messages.become', ['name' => $p->showFullName()]) !!}    
         {!! Form::submit(trans('messages.buttons.unbecome'), array('class' => 'btn btn-primary btn-xs')) !!}
     </p>
 </div>

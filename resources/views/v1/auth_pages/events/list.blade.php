@@ -1,9 +1,12 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 2/2/2017
  *
  * $header, $subheader, $w1, $w2, $r1, $r2, $r3
+ * @var $past
+ * @var $current_events
+ * @var $past_events
  *
  */
 
@@ -64,7 +67,8 @@ if ($past) {
 } else {
     $header = '';
 }
-?>
+@endphp
+
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
@@ -75,6 +79,7 @@ if ($past) {
 
     @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @if(!$past)
+        {{-- This gets suppressed in the 'past-only' display setting for this page --}}
         <div class="col-md-12 col-sm-12 col-xs-12">
             <ul id="myTab" class="nav nav-tabs bar_tabs nav-justified" role="tablist">
                 <li class="active"><a href="#tab_content1" id="current_events-tab" data-toggle="tab"
@@ -87,9 +92,7 @@ if ($past) {
                     <p>&nbsp;</p>
                     @if(count($current_data) > 0)
                         @include('v1.parts.datatable', ['headers' => $current_headers,
-                            'data' => $current_data,
-                            'id' => 'current_events',
-                            'scroll' => $current_scroll])
+                            'data' => $current_data, 'id' => 'current_events', 'scroll' => $current_scroll])
                     @else
                         @lang('messages.messages.no_events', ['which' => strtolower(trans('messages.fields.up'))])
                     @endif
@@ -98,9 +101,7 @@ if ($past) {
                     @endif
                     <p>&nbsp;</p>
                     @include('v1.parts.datatable', ['headers' => $past_headers,
-                        'data' => $past_data,
-                        'id' => 'past_events',
-                        'scroll' => $past_scroll])
+                        'data' => $past_data, 'id' => 'past_events', 'scroll' => $past_scroll])
                     @if(!$past)
                 </div>
             </div>
@@ -117,6 +118,11 @@ if ($past) {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+    </script>
+    <script>
+        $('[data-toggle="popover"]').popover({
+            container: 'body',
         });
     </script>
     <script>

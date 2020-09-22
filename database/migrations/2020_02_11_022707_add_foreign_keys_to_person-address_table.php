@@ -14,7 +14,7 @@ class AddForeignKeysToPersonAddressTable extends Migration {
 	{
 		Schema::table('person-address', function(Blueprint $table)
 		{
-			$table->foreign('personID', 'pa-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('personID', 'pa-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('CASCADE');
 		});
 	}
 

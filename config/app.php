@@ -63,8 +63,9 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
      */
-
     'timezone'        => 'America/New_York',
+
+    /*'timezone'        => 'Asia/Kolkata', //for localtesting only*/
 
     /*
     |--------------------------------------------------------------------------
@@ -217,6 +218,7 @@ return [
         'Crypt'        => Illuminate\Support\Facades\Crypt::class,
         'DB'           => Illuminate\Support\Facades\DB::class,
         'Eloquent'     => Illuminate\Database\Eloquent\Model::class,
+        'Entrust'      => Zizaco\Entrust\EntrustFacade::class,
         'Event'        => Illuminate\Support\Facades\Event::class,
         'File'         => Illuminate\Support\Facades\File::class,
         'Form'         => Collective\Html\FormFacade::class,

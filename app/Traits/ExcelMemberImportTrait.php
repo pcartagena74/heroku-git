@@ -5,9 +5,9 @@ use App\Address;
 use App\Email;
 use App\OrgPerson;
 use App\Person;
+use App\PersonStaging;
 use App\Phone;
 use App\User;
-use App\PersonStaging;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ trait ExcelMemberImportTrait
     public $email_master;
     public $address_master;
     public $person_staging_master;
-    public $currentPerson; 
+    public $currentPerson;
 
     public function timeMem($msg = null)
     {
@@ -37,11 +37,13 @@ trait ExcelMemberImportTrait
         // $str .=  round((memory_get_peak_usage() / $m), 2) . "<br>\n";
     }
 
-    public function storeImportDataDB($row, $currentPerson)
+    public function storeImportDataDB($row, $currentPerson, $import_detail)
     {
         $this->currentPerson = $currentPerson;
+        $user                = User::where('id', $currentPerson->personID)->get()->first();
+        \App::setLocale($user->locale);
         DB::connection()->disableQueryLog();
-
+        $import_detail->refresh();
         // $this->timeMem('starttime ' . $count_g);
         $count = 0;
         $count++;
@@ -58,6 +60,8 @@ trait ExcelMemberImportTrait
         $u                      = null;
         $f                      = null;
         $l                      = null;
+        $has_update             = false;
+        $has_insert             = false;
         // columns in the MemberDetail sheet are fixed; check directly and then add if not found...
         // foreach $row, search on $row->pmi_id, then $row->primary_email, then $row->alternate_email
         // if found, get $person, $org-person, $email, $address, $phone records and update, else create
@@ -109,14 +113,16 @@ trait ExcelMemberImportTrait
 
         if (filter_var($em1, FILTER_VALIDATE_EMAIL) && filter_var($em2, FILTER_VALIDATE_EMAIL)) {
             $email_check = Email::whereRaw('lower(emailADDR) = ?', [$em1])
-                ->whereRaw('lower(emailADDR) = ?', [$em2])
-                ->withTrashed()->limit(1)->get();
+                ->orWhereRaw('lower(emailADDR) = ?', [$em2])
+                ->withTrashed()->get();
             if ($email_check->isNotEmpty()) {
                 foreach ($email_check as $key => $value) {
-                    if ($value == $em1) {
-                        $emchk1 = new collection($value);
-                    } else {
-                        $emchk2 = new collection($value);
+                    if ($value->emailADDR == $em1) {
+                        $emchk1 = new collection();
+                        $emchk1->push($value);
+                    } else if ($value->emailADDR == $em2) {
+                        $emchk2 = new collection();
+                        $emchk2->push($value);
                     }
                 }
             }
@@ -139,7 +145,6 @@ trait ExcelMemberImportTrait
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-
         // $this->timeMem('5 $pchk ');
         if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
@@ -163,11 +168,11 @@ trait ExcelMemberImportTrait
                 'affiliation'  => $currentPerson->affiliation,
             ];
             $update_existing_record = 0;
-
             // If email1 is not null or blank, use it as primary to login, etc.
             if ($em1 !== null && $em1 != "" && $em1 != " ") {
                 $p_array['login'] = $em1;
                 $p                = Person::create($p_array);
+                $has_insert       = true;
                 // $this->timeMem('6 p insert');
                 // $p->login = $em1;
                 // $p->save();
@@ -185,7 +190,9 @@ trait ExcelMemberImportTrait
             } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && empty($p_array['login'])) {
                 $p_array['login'] = $em2;
                 $p                = Person::create($p_array);
-                $u_array          = [
+                $has_insert       = true;
+
+                $u_array = [
                     'id'    => $p->personID,
                     'login' => $em2,
                     'name'  => $em2,
@@ -299,9 +306,9 @@ trait ExcelMemberImportTrait
                 $op = OrgPerson::where([
                     ['personID', $emchk1->personID],
                     ['orgID', $currentPerson->defaultOrgID],
-                ])->get();
+                ])->get()->first();
                 // $this->timeMem('15 get org person 2187');
-                if ($op->isEmpty()) {$need_op_record = 1;}
+                if (empty($op)) {$need_op_record = 1;}
             } catch (Exception $ex) {
                 // dd([$emchk1, $em1]);
             }
@@ -316,9 +323,9 @@ trait ExcelMemberImportTrait
             $op = OrgPerson::where([
                 ['personID', $emchk2->personID],
                 ['orgID', $currentPerson->defaultOrgID],
-            ])->get();
+            ])->get()->first();
             // $this->timeMem('16 get org person 2202');
-            if ($op->isEmpty()) {$need_op_record = 1;}
+            if (empty($op)) {$need_op_record = 1;}
             // We have an email record match so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
         } elseif ($pchk->isNotEmpty()) {
@@ -332,14 +339,13 @@ trait ExcelMemberImportTrait
                 $op = OrgPerson::where([
                     ['personID', $p->personID],
                     ['orgID', $currentPerson->defaultOrgID],
-                ])->get();
+                ])->get()->first();
                 // $this->timeMem('17 get org person 2218');
-                if ($op->isEmpty()) {
+                if (empty($op)) {
                     $need_op_record = 1;
                 }
             }
         }
-
         if ($update_existing_record && !empty($p)) {
             $ary = [];
             if (strlen($prefix) > 0) {
@@ -372,6 +378,7 @@ trait ExcelMemberImportTrait
                 $ary['updaterID']    = $currentPerson->personID;
                 $ary['defaultOrgID'] = $currentPerson->defaultOrgID;
                 DB::table('person')->where('personID', $p->personID)->update($ary);
+                $has_update = true;
                 // $this->timeMem('18 get org person 2257');
 
             } catch (Exception $ex) {
@@ -412,7 +419,6 @@ trait ExcelMemberImportTrait
                     $newOP->OrgStat4 = $chapRenew;
                 }
             }
-
             if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
             }
@@ -422,22 +428,25 @@ trait ExcelMemberImportTrait
             if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                 $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
             }
-            if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
+            if (!empty($row['chapter_expiration']) && isDate($row['chapter_expiration'])) {
                 $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
             }
             $newOP->creatorID = $currentPerson->personID;
             $newOP->save();
+
             // $this->timeMem('19 new po update 2312');
             if ($p->defaultOrgPersonID === null) {
                 DB::table('person')->where('personID', $p->personID)->update(['defaultOrgPersonID' => $newOP->id]);
+                $has_update = true;
                 // $this->timeMem('20 person update 2315');
                 // $p->defaultOrgPersonID = $newOP->id;
                 // $p->save();
             }
         } else {
             // We'll update some fields on the off chance they weren't properly filled in a previous creation
-            if (isset($op[0])) {
-                $newOP = $op[0];
+            $op = $op->toArray();
+            if (!empty($op)) {
+                $newOP = (object) $op;
                 // dd($newOP);
                 $ary = [];
                 if ($newOP->OrgStat1 === null) {
@@ -459,21 +468,64 @@ trait ExcelMemberImportTrait
                         $ary['OrgStat4'] = $chapRenew;
                     }
                 }
+                $reld_update = [];
+                $rl1         = [];
+                $rl2         = [];
                 if (!empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
-                    $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                    if (empty($newOP->RelDate1)) {
+                        $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                    } else {
+                        $existing_relDate1 = Carbon::createFromFormat('Y-m-d H:i:s', $newOP->RelDate1);
+                        $existing_relDate1 = $existing_relDate1->format('d/m/Y');
+                        if ($row['pmi_join_date'] != $existing_relDate1) {
+                            $rl1 = [
+                                'pmi_id'       => $pmi_id,
+                                'reldate1_new' => $row['pmi_join_date'],
+                                'reldate1_old' => $existing_relDate1,
+                            ];
+                        }
+                    }
+
                 }
                 if (!empty($row['chapter_join_date']) && isDate($row['chapter_join_date'])) {
-                    $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
+                    if (empty($newOP->RelDate2)) {
+                        $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
+                    } else {
+                        $existing_relDate2 = Carbon::createFromFormat('Y-m-d H:i:s', $newOP->RelDate2);
+                        $existing_relDate2 = $existing_relDate2->format('d/m/Y');
+                        if ($row['chapter_join_date'] != $existing_relDate2) {
+                            $reld_update[$pmi_id]['reldate2_new'] = $row['chapter_join_date'];
+                            $reld_update[$pmi_id]['reldate2_old'] = $existing_relDate2;
+                            $rl2                                  = [
+                                'pmi_id'       => $pmi_id,
+                                'reldate2_new' => $row['chapter_join_date'],
+                                'reldate2_old' => $existing_relDate2,
+                            ];
+                        }
+                    }
                 }
+                $reld_update = array_merge($rl1, $rl2);
+                if (!empty($reld_update)) {
+                    if (!empty($this->import_detail->other)) {
+                        $json                       = json_decode($this->import_detail->other);
+                        $json[]                     = $reld_update;
+                        $this->import_detail->other = json_encode($json);
+                    } else {
+                        $this->import_detail->other = json_encode([$reld_update]);
+                    }
+                    $this->import_detail->save();
+                }
+
                 if (!empty($row['pmi_expiration']) && isDate($row['pmi_expiration'])) {
                     $ary['RelDate3'] = Carbon::createFromFormat('d/m/Y', $row['pmi_expiration'])->toDateTimeString();
                 }
-                if (!empty($row['pmi_expiration']) && isDate($row['chapter_expiration'])) {
+                if (!empty($row['chapter_expiration']) && isDate($row['chapter_expiration'])) {
                     $ary['RelDate4'] = Carbon::createFromFormat('d/m/Y', $row['chapter_expiration'])->toDateTimeString();
                 }
                 $ary['updaterID'] = $currentPerson->personID;
                 DB::table('org-person')->where('id', $newOP->id)->update($ary);
-                $this->timeMem('21 update org person 2358');
+                $has_update = true;
+                // $this->timeMem('21 update org person 2358');
                 // $newOP->save();
             }
         }
@@ -562,7 +614,31 @@ trait ExcelMemberImportTrait
 
             $this->insertPersonStaging($p->personID, $prefix, $first, $midName, $last, $suffix, $p->login, $title, $compName, $currentPerson->defaultOrgID);
         }
+        if ($has_insert) {
+            $import_detail->increment('inserted');
+        }
+        if ($has_update && !$has_insert) {
+            $import_detail->increment('updated');
+        }
 
+        if ($has_update == false && $has_insert == false) {
+            $import_detail->increment('failed');
+            if (!empty($import_detail->failed_records)) {
+                $json = json_decode($import_detail->failed_records);
+                $data = [
+                    'reason'                => trans('messages.notifications.member_import.nothing_to_update'),
+                    'pmi_id'                => $pmi_id,
+                    'first_name'            => $first,
+                    'last_name'             => $last,
+                    'primary_email'         => $em1,
+                    'alternate_email_email' => $em2];
+                $json[]                        = $data;
+                $import_detail->failed_records = json_encode($json);
+            } else {
+                $import_detail->failed_records = json_encode([$row]);
+            }
+            $import_detail->save();
+        }
         $this->bulkInsertAll();
         unset($chk1);
         unset($chk2);
@@ -723,9 +799,9 @@ trait ExcelMemberImportTrait
             // $this->timeMem('27 inset bulk personstaggin ' . count($this->person_staging_master));
         }
 
-        $this->email_master   = array();
-        $this->phone_master   = array();
-        $this->address_master = array();
+        $this->email_master          = array();
+        $this->phone_master          = array();
+        $this->address_master        = array();
         $this->person_staging_master = array();
         // $this->person_staging_master = array();
 

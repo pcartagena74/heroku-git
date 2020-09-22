@@ -30,8 +30,15 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
 /**
- * below code is for launguage route do not update
+ * below code is for language route do not update
  */
+Route::get('trigger-dyno', 'DynoController@index');
+Route::get('/preview', function () {
+    $e    = \App\Event::find(319);
+    $note = new \App\Notifications\EventICSNote($e);
+    return $note->toMail('blah@test.com');
+});
+
 Route::get('setlocale/{locale}', function ($locale) {
     if (in_array($locale, \Config::get('app.locales'))) {
         if (Auth::check()) {
@@ -46,6 +53,10 @@ Route::get('setlocale/{locale}', function ($locale) {
     Cookie::queue('locale', $locale, 60);
     return redirect()->back();
 });
+
+Route::get('/store-address-from-zip', function () {
+    storeLatiLongiFormZip();
+})->middleware('auth');
 
 // Public Routes
 Route::get('/', 'HomeController@index')->name('home');
@@ -192,6 +203,7 @@ Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomple
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
 Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity'); // Ajax
+Route::get('/eventstats', 'EventStatsController@index');
 
 Route::get('/search/{query?}', 'PersonController@index2');
 Route::post('/search', 'PersonController@search');
@@ -245,10 +257,8 @@ Route::get('/promote/{reg}', 'RegistrationController@promote');
 Route::get('/eventcopy/{slug}', 'EventCopyController@show');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store'); // Ajax
 
-// API Routes that circumvent AUTH and mCentric navigation, etc.
-Route::get('/eventlist/{orgID}/{past}/{etID?}', 'EventAPIController@show');
-// The files saved as copies w/2 (EvantAPI, eventlist.blade) need this route
-//Route::get('/eventlist/{orgID}/{past}/{cal}/{etID?}', 'EventAPIController@show');
+// Public API Routes that circumvent mCentric navigation, etc.
+Route::get('/eventlist/{orgID}/{past}/{cal?}/{etID?}', 'EventAPIController@show');
 Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
 Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 
@@ -290,7 +300,9 @@ Route::get('/tb', 'MailGunController@bugsnag');
 
 // Email List Routes
 Route::get('/lists', 'EmailListController@index');
-Route::post('/list', 'EmailListController@store');
+Route::post('/list', 'EmailListController@store')->name('EmailList.Save');
+Route::post('/list/update', 'EmailListController@update')->name('EmailList.Update');
+Route::post('/list/delete', 'EmailListController@destroy')->name('EmailList.Delete');
 Route::get('/list/{emailList}', 'EmailListController@show');
 Route::patch('/list/{list}', 'EmailListController@update')->name('list_update');
 
@@ -302,7 +314,26 @@ Route::post('/campaign', 'CampaignController@store');
 Route::get('/campaign/{campaign}', 'CampaignController@show');
 Route::get('/campaign/{campaign}/edit', 'CampaignController@edit');
 Route::patch('/campaign/{campaign}', 'CampaignController@update');
+Route::get('/campaign/{campaign}/copy', 'CampaignController@copy');
+Route::post('/deleteCampaign', 'CampaignController@deleteCampaign');
+Route::post('/archiveCampaign', 'CampaignController@archiveCampaign');
+// Route::patch('/campaign/{campaign}', 'CampaignController@update');
+// Email Builder Routes
 
+Route::post('/storeEmailTemplate', 'CampaignController@storeEmailTemplate');
+Route::post('/updateEmailTemplate', 'CampaignController@updateEmailTemplate');
+Route::get('/getEmailTemplates', 'CampaignController@getEmailTemplates'); //ajax;
+Route::post('/getEmailTemplateBlocks', 'CampaignController@getEmailTemplateBlocks'); //ajax;
+Route::post('/storeEmailTemplateForPreview', 'CampaignController@storeEmailTemplateForPreview'); //ajax;
+Route::get('/preview-email-template/{filename}', 'CampaignController@previewEmailTemplate');
+Route::get('/email-template-thumb/{filename}', 'CampaignController@getemailTemplateThumbnailImage');
+Route::post('/send-test-email', 'CampaignController@sendTestEmail');
+Route::post('/sendCampaign', 'CampaignController@sendCampaign');
+Route::post('/campaign/url-clicked-email-list', 'CampaignController@urlClickedEmailList');
+Route::post('/email_webhook', 'CampaignController@mailgunWebhook');
+Route::get('/list_campaign', 'CampaignController@listCampaign');
+
+// Email Builder Routes ends
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
@@ -348,6 +379,13 @@ Route::get('snaptest', function () {
     return PDF::loadFile(env('APP_URL') . "/show_orig/159")->inline('blah.pdf');
 });
 
+Route::get('library', 'LibraryController@index');
+Route::get('getExisitingFile', 'LibraryController@getExisitingFile');
+Route::get('/{org_path}/{folder_name}/{file_name}', 'LibraryController@getFile');
+Route::post('/get_complete_url', 'LibraryController@getCompleteURL');
+// Route::group(['prefix' => 'library-manager', 'middleware' => ['auth']], function () {
+//     \UniSharp\LaravelFilemanager\Lfm::routes();
+// });
 // Route::any('{all}', function () {
 //     return view('errors.404');
 // })->where('all', '.*');

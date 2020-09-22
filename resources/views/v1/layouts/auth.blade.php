@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Template for pages that require authentication
  * Created: 2/2/2017
@@ -7,7 +7,16 @@
 if(!isset($topBits)){
     $topBits = '';
 }
-?>
+
+// This is a reminder to NOT perform tests using orgID=1 because there are checks that are performed to keep default
+// data created in orgID=1--for use with all other orgs--in a clean state.
+if(auth()){
+    $p = \App\Person::find(auth()->user()->id);
+    if($p->defaultOrgID==1){
+        request()->session()->flash('alert-danger', trans('messages.app_defaults.orgID1'));
+    }
+}
+@endphp
 <!DOCTYPE html>
 @include('v1.parts.header')
 @yield('header')
@@ -25,7 +34,7 @@ if(!isset($topBits)){
                   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="container body">
-    <div class="main_container bit">
+    <div class="main_container">
         @include('v1.parts.nav-left')
         @include('v1.parts.nav-top')
         <div class="right_col" role="main">

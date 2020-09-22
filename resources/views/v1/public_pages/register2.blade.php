@@ -1,7 +1,12 @@
-<?php
+@php
 /**
  * Comment: Confirmation screen post and Stripe Payment Processing
  * Created: 3/12/2017
+ *
+ * @var Event $event
+ * @var Org $org
+ * @var RegFinance $rf
+ *
  */
 
 use App\EventSession;
@@ -48,7 +53,8 @@ if ($event->isSymmetric && $event->hasTracks) {
 }
 $rfp = $rf->person;
 
-?>
+@endphp
+
 @extends('v1.layouts.no-auth')
 @section('content')
     @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_con'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -68,12 +74,7 @@ $rfp = $rf->person;
                 <div class="col-md-6 col-sm-6">
                     <h2><b>{{ $event->eventName }}</b></h2>
                     <div style="margin-left: 10px;">
-                        {{ $event->eventStartDate->format('n/j/Y g:i A') }}
-                        - {{ $event->eventEndDate->format('n/j/Y g:i A') }}
-                        <br>
-                        {{ $loc->locName }}<br>
-                        {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }}
-                        , {{ $loc->state }} {{ $loc->zip }}
+                        @include('v1.parts.location_display', ['loc' => $loc, 'event' => $event, 'time' => 1])
                     </div>
                     <br />
                 </div>
@@ -95,13 +96,13 @@ $rfp = $rf->person;
                             @endif
                         </button>
                     @else
-                        @if($rf->cost == 0)
-                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
-                                <b>@lang('messages.buttons.comp_reg')</b>
-                            </button>
-                        @elseif($rf->status == 'wait')
+                        @if($rf->status == 'wait')
                             <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.wait')</b>
+                            </button>
+                        @elseif($rf->cost == 0)
+                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                                <b>@lang('messages.buttons.comp_reg')</b>
                             </button>
                         @endif
                     @endif
@@ -128,11 +129,11 @@ $rfp = $rf->person;
             @endif
 
             @foreach($regs as $reg)
-<?php
+@php
                 $tcount++;
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
-?>
+@endphp
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
@@ -167,13 +168,13 @@ $rfp = $rf->person;
                                 @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($today))
                                     @if($reg->discountCode)
                                         <td style="text-align: left;">@lang('messages.headers.earlybird')
-                                            , {{ $rf->discountCode }}</td>
+                                            , {{ $reg->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;">@lang('messages.headers.earlybird')</td>
                                     @endif
                                 @else
                                     @if($reg->discountCode)
-                                        <td style="text-align: left;">{{ $rf->discountCode }}</td>
+                                        <td style="text-align: left;">{{ $reg->discountCode }}</td>
                                     @else
                                         <td style="text-align: left;"> --</td>
                                     @endif

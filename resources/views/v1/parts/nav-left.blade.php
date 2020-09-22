@@ -80,13 +80,6 @@ try{
                                 </span>
                             </a>
                             <ul class="nav child_menu">
-                                @if (count($currentPerson->orgs)>1)
-                                <li>
-                                    <a href="{{ url('orgsettings')}}">
-                                        @lang('messages.nav.ms_org')
-                                    </a>
-                                </li>
-                                @endif
                                 <li>
                                     <a href="{{ url('dashboard')}}">
                                         @lang('messages.nav.ms_dash')
@@ -102,6 +95,13 @@ try{
                                         @lang('messages.nav.ms_profile')
                                     </a>
                                 </li>
+                                @if (count($currentPerson->orgs)>1)
+                                    <li>
+                                        <a href="{{ url('orgsettings')}}">
+                                            @lang('messages.nav.ms_org')
+                                        </a>
+                                    </li>
+                                @endif
                                 @if(showActiveTicketUser())
                                 <li>
                                     <a href="{{url('tickets')}}">
@@ -168,7 +168,8 @@ try{
                         </li>
                         @endif
                     
-                    @if(((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') || Entrust::can('settings-management')))
+                    @if( ((Entrust::hasRole('Board')|| Entrust::hasRole('Admin') ||
+                          Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>
@@ -221,6 +222,13 @@ try{
                                         @lang('messages.nav.ev_add')
                                     </a>
                                 </li>
+                                @if(Entrust::hasRole('Developer'))
+                                <li>
+                                    <a href="{{ url('eventstats')}}">
+                                        @lang('messages.nav.ev_stats')
+                                    </a>
+                                </li>
+                                @endif
                                 <li>
                                     <a href="{{ url('locations')}}">
                                         @lang('messages.nav.ev_loc')
@@ -293,7 +301,8 @@ try{
                         </li>
                         @endif
 
-                    @if(((Entrust::hasRole('Board') || Entrust::can('event-management') || Entrust::can('speaker-management')))
+                    @if(((Entrust::hasRole('Board') ||
+                            Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
                             <a>
@@ -321,7 +330,7 @@ try{
                         </li>
                         @endif
 
-                    @if(Entrust::hasRole('Developer'))
+                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Marketing'))
                         <li>
                             <a>
                                 <i class="far fa-fw fa-envelope">

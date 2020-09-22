@@ -15,6 +15,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Person;
 use App\Location;
+use Kordy\Ticketit\Models\Ticket;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\AccountMerge;
@@ -170,14 +171,14 @@ class MergeController extends Controller
         list($personID, $field) = array_pad(explode("-", $string, 2), 2, null);
         $person = Person::with('orgperson')->find($personID);
 
-        if(null !== $person) {
+        if (null !== $person) {
             return json_encode(array('status' => 'success',
                 'p' => $person,
                 'personID' => $person->personID,
                 'firstName' => $person->firstName,
                 'lastName' => $person->lastName,
                 'login' => $person->login,
-                'OrgStat1' => $person->orgperson->OrgStat1
+                'OrgStat1' => $person->orgStat1()
             ));
         }
     }
@@ -194,6 +195,7 @@ class MergeController extends Controller
      * 3. update $model1->updaterID
      * 4. Take all emails, addresses, reg->regID, rf->regID on $model2 and move to $model1
      * 4b. Change the model2->person->login to "merged_$login" to avoid key conflicts
+     * 4c. Change user_id in ticketit as appropriate
      * 5. Remove duplicates:  $model2, $orgPerson, $user
      *
      */
@@ -291,6 +293,12 @@ class MergeController extends Controller
                         $m2->updaterID = $this->currentPerson->personID;
                         $m2->save();
                     }
+                    // on the off chance $m2 owns TicketIt tickets...
+                    foreach ($model2->user->tickets as $t) {
+                        $m2 = Ticket::find($t->id);
+                        $m2->user_id = $model1->personID;
+                        $m2->save();
+                    }
 
                     $o1 = OrgPerson::where([
                         ['personID', $model1->personID],
@@ -302,6 +310,8 @@ class MergeController extends Controller
                         ['orgID', $this->currentPerson->defaultOrgID]
                     ])->first();
 
+                    // if OrgStat1 (pmi_id) is set in either orgperson record, it will survive.
+                    // if there happen to be 2 OrgStat1 values, the "keeper's" OrgStat1 survives.
                     if (($o1->OrgStat1 === null || $o1->OrgStat1 == '') && isset($o2)) {
                         if ($o2->OrgStat1) {
                             $o1->OrgStat1 = $o2->OrgStat1;
@@ -324,8 +334,8 @@ class MergeController extends Controller
                     // DB::statement("update role_user set user_id = $model1->personID where user_id = $model2->personID");
 
                     $weedout = $u1->roles()->pluck('id')->toArray();
-                    foreach($u2->roles as $r){
-                        if(!in_array($r->id, $weedout)){
+                    foreach ($u2->roles as $r) {
+                        if (!in_array($r->id, $weedout)) {
                             $u1->roles()->attach($r->id);
                         }
                         $u2->roles()->detach($r->id);
@@ -353,7 +363,7 @@ class MergeController extends Controller
                     }
 
                     // Person soft-deletes require unique key 'login' to be uniquely modified
-                    $model2->login = 'merged_' . $model2->login;
+                    $model2->login = "merged_$model1->personID" . "_" . $model2->login;
                     $model2->save();
                     $model2->delete();
 
@@ -382,7 +392,7 @@ class MergeController extends Controller
                     break;
             }
             DB::commit();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             request()->session()->flash('alert-warning', trans('messages.flashes.merge_failure', ['e' => $e]));
             return back()->withInput();

@@ -17,6 +17,7 @@ class TicketItNotification extends Notification
     private $data;
     private $subject;
     private $type;
+    public $name;
     /**
      * Create a new notification instance.
      *
@@ -24,12 +25,13 @@ class TicketItNotification extends Notification
      */
     public function __construct($to, $notification_owner, $template, $data, $subject, $type)
     {
-        $this->to                 = $to;
+        $this->to                 = $to; // User
         $this->notification_owner = $notification_owner;
         $this->template           = $template;
         $this->data               = $data;
         $this->subject            = $subject;
         $this->type               = $type;
+        $this->name               = $to->person->showDisplayName();
     }
 
     /**
@@ -116,7 +118,8 @@ class TicketItNotification extends Notification
         }
 
         return $mail->line($content)
-            ->action('Click to here view ticket', route(SettingOver::grab('main_route') . '.show', $ticket->id));
+            ->action(trans('messages.notifications.ticketit.action'),
+                     route(SettingOver::grab('main_route') . '.show', $ticket->id));
     }
 
     /**

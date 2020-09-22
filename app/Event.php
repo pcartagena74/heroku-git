@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Other\ics_calendar;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Spatie\Activitylog\Traits\LogsActivity;
@@ -9,6 +11,7 @@ use App\EventSession;
 use App\Person;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use League\Flysystem\AdapterInterface;
 
 class Event extends Model
 {
@@ -28,6 +31,7 @@ class Event extends Model
 
     protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'slug', 'hasTracks'];
     protected static $ignoreChangedAttributes = ['createDate'];
+    protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
 
     public function location()
     {
@@ -62,6 +66,12 @@ class Event extends Model
     public function org()
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
+    }
+
+    public function main_session()
+    {
+        return $this->hasOne(EventSession::class,'sessionID', 'mainSession');
+
     }
 
     public static function events_this_year()
@@ -201,9 +211,6 @@ class Event extends Model
 
         $ticketIDs = $es->ticket->bundle_parent_array();
 
-        // DB::listen(function ($sql){var_dump($sql->sql, $sql->bindings);});
-        // DB::enableQueryLog();
-
         $out = Registration::whereIn('event-registration.ticketID', $ticketIDs)
             ->select('p.personID', 'p.firstName', 'p.prefName', 'p.lastName', 'op.OrgStat1', 'rs.hasAttended', 'event-registration.regID')
             //->with('ticket', 'event', 'person.orgperson', 'regsessions', 'person')
@@ -220,8 +227,23 @@ class Event extends Model
             ->distinct()
             ->orderBy('p.lastName')
             ->get();
-        // dd(DB::getQueryLog());
 
         return $out;
+    }
+
+    public function create_or_update_event_ics()
+    {
+        // Make the event_{id}.ics file if it doesn't exist
+        $event_filename = 'event_' . $this->eventID . '.ics';
+        $ical = new ics_calendar($this);
+        $contents = $ical->get();
+        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+    }
+
+    public function event_ics_url()
+    {
+        $s3m = Flysystem::connection('s3_events');
+        $ics_file = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET1'), "event_$this->eventID.ics");
+        return $ics_file;
     }
 }
