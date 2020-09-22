@@ -124,7 +124,7 @@ return [
         'corruption' => 'es-Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check',
         'event' => 'es-Please select an event.',
         'exists' => 'es-{p}The person record cannot be created to prevent potential duplication.  See details below. <br /> :details|' .
-        '{e}The email address entered already exists. <br /> :details|{op}The PMI ID entered already exists. <br /> :details',
+            '{e}The email address entered already exists. <br /> :details|{op}The PMI ID entered already exists. <br /> :details',
         'existing_account' => 'es-Existing account: :f :l with login :e',
         'html_error' => 'es-An unexpected HTML error occurred while processing your entry.  Check for a trailing &lt;p&gt;&lt;/p&gt; in the code view and remove before saving when you try again.',
         'no_id' => 'es-There is no :modifier ID: :id.  :errormsg',
@@ -391,29 +391,29 @@ return [
         'all_pd_day_event' => 'es-All PD Day Events',
         'camp_status_draft' => 'es-Draft : :date',
         'camp_status_sent' => 'es-Sent : :date',
-        'camp_open_rate'             => 'es-Open Rate',
-        'camp_open'                  => 'es-Opens',
-        'camp_sent'                  => 'es-Sent',
-        'camp_click'                 => 'es-Clicks',
-        'camp_not_open'              => 'es-Did Not Open',
-        'camp_unsubs'                => 'es-Unsubscribed',
-        'camp_spam'                  => 'es-Spam Reports',
-        'filter_campaign'            => 'es-Filter Campaigns',
-        'filter_camp_draft'          => 'es-Draft',
-        'filter_camp_sent'           => 'es-Sent',
-        'filter_camp_archive'        => 'es-Archive',
-        'camp_temp_fail'             => 'es-Temporary Fail',
-        'camp_perm_fail'             => 'es-Permanent Fail(Bounced)',
-        'camp_delivered'             => 'es-Delivered',
-        'camp_total'                 => 'es-Total Sent',
-        'camp_url'                   => 'es-URL',
-        'camp_unique_click'          => 'es-Unique Clicks',
-        'camp_total_click'           => 'es-Total Clicks',
-        'camp_first_click'           => 'es-First Click',
-        'camp_last_click'            => 'es-Last Click',
-        'camp_url_click_summary'     => 'es-Summary',
-        'camp_show'                  => 'es-Show',
-        'camp_url_summary'           => 'es-Click Summary for URL :',
+        'camp_open_rate' => 'es-Open Rate',
+        'camp_open' => 'es-Opens',
+        'camp_sent' => 'es-Sent',
+        'camp_click' => 'es-Clicks',
+        'camp_not_open' => 'es-Did Not Open',
+        'camp_unsubs' => 'es-Unsubscribed',
+        'camp_spam' => 'es-Spam Reports',
+        'filter_campaign' => 'es-Filter Campaigns',
+        'filter_camp_draft' => 'es-Draft',
+        'filter_camp_sent' => 'es-Sent',
+        'filter_camp_archive' => 'es-Archive',
+        'camp_temp_fail' => 'es-Temporary Fail',
+        'camp_perm_fail' => 'es-Permanent Fail(Bounced)',
+        'camp_delivered' => 'es-Delivered',
+        'camp_total' => 'es-Total Sent',
+        'camp_url' => 'es-URL',
+        'camp_unique_click' => 'es-Unique Clicks',
+        'camp_total_click' => 'es-Total Clicks',
+        'camp_first_click' => 'es-First Click',
+        'camp_last_click' => 'es-Last Click',
+        'camp_url_click_summary' => 'es-Summary',
+        'camp_show' => 'es-Show',
+        'camp_url_summary' => 'es-Click Summary for URL :',
     ],
     'headers' => [
         'acc_lookup' => 'es-Account Lookup',
@@ -596,6 +596,7 @@ return [
         'reset_pass' => 'es-Reset Your mCentric Account Password',
         'results' => 'es-Results',
         'ret_sess_list' => 'es-Return to Session List',
+        'revenue' => "Ingresos",
         'role' => 'es-Role',
         'role_ass' => 'es-Role Assignment',
         'roles' => 'es-Roles',
@@ -676,7 +677,7 @@ return [
         'early_values' => 'es-Changing the date or discount percent will apply to all associated tickets shown below or created.',
         'ev_defaults' => 'es-Default values for this event only.',
         'ev_discounts' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here are active for this event.<br>' .
-        'Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.',
+            'Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.',
         'ev_loc' => 'es-This is a listing of locations used for all of the events that have been entered.
                     <ul>
                     <li>You can add new locations here <b>OR</b> when adding/editing an event.</li>
@@ -713,7 +714,7 @@ return [
         'merge_dupe' => 'es-{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.',
         'merge_notes' => 'es-{p}<b class=\'red\'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should keep <b>UNLESS</b> you know for a fact the record from PMI is wrong.
                             <p></p><b>Note:</b> Keep in mind that the first name, last name and PMI ID number must match PMI\'s records for PDU reconciliation.' .
-        '|{l}<b class=\'red\'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.',
+            '|{l}<b class=\'red\'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.',
         'merge_overwrite' => 'es-If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.',
         'merge_survive' => 'es-{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.',
         'name_change' => 'es-You need to contact PMI directly to change this data.',
@@ -727,8 +728,8 @@ return [
         'no_org_disc' => 'es-<b style=\'color: darkorange;\'>WARNING:</b><br />No organizational discounts have been added to
                           this event.  If you wish to add them, do it now via the button below.',
         'no_password' => 'es-An mCentric account was found for you and its password has not been set. ' .
-        'You will need to set it and login to complete your registration. ' .
-        'Click to <a style="color: red;" href="' . env("APP_URL") . ' /password/reset">reset it now.</a>',
+            'You will need to set it and login to complete your registration. ' .
+            'Click to <a style="color: red;" href="' . env("APP_URL") . ' /password/reset">reset it now.</a>',
         'no_pmiID' => 'es-Or, if you do not have a PMI ID, enter your email address.',
         'no_pmiID_zero' => 'es-Enter 0 if you are not a PMI member',
         'no_reg_sess' => 'es-You have not yet registered for sessions. You can do so below.',
@@ -739,22 +740,22 @@ return [
         'not_self' => 'es-If you are not logged in, and do not already have an account, this first ticket must be for you.',
         'one-at-time' => 'es-The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.',
         'org_disc' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here will be applied to all new events as they are created.' .
-        '<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
+            '<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
         'pmiID' => 'es-Please enter your PMI Identification Number.',
         'pmiID_found' => 'es-<h2>An mCentric account was found for PMI ID: :pmiID.</h2>' .
-        'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
+            'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
         'pmi_pass' => 'es-{0}<p>The acccount password has been set. <br />' .
-        'If you don\'t remember your password, you can <a class=\'red\' href=\'/password/reset\'>reset</a> it.  Otherwise, <a class=\'red\' href=\'/login\'>login</a>.<br />' .
-        '<a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Reset Password</a> &nbsp; <a class=\'btn btn-success btn-xs\' href=\'/login\'>Login</a> </p>' .
-        '|{1}<p>The account password has <b class=\'red\'>not</b> been set. <br />' .
-        'If you have access to the login email, you can <a class=\'red\' href=\'/password/reset\'>begin</a> the password setting process now.<br />
+            'If you don\'t remember your password, you can <a class=\'red\' href=\'/password/reset\'>reset</a> it.  Otherwise, <a class=\'red\' href=\'/login\'>login</a>.<br />' .
+            '<a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Reset Password</a> &nbsp; <a class=\'btn btn-success btn-xs\' href=\'/login\'>Login</a> </p>' .
+            '|{1}<p>The account password has <b class=\'red\'>not</b> been set. <br />' .
+            'If you have access to the login email, you can <a class=\'red\' href=\'/password/reset\'>begin</a> the password setting process now.<br />
              <a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Set Password</a></p>' .
-        '<p>If you do not receive an email with a link to set your password, check your spam folder and/or email
+            '<p>If you do not receive an email with a link to set your password, check your spam folder and/or email
              :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>',
         'pmi_emails' => 'es-The following email address(es) are associated with this account: <ul>:emails</ul><p></p>' .
-        'If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email',
+            'If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email',
         'pmiID_not_found' => 'es-{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|' .
-        '[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.',
+            '[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.',
         'postRegInfo' => 'es-Anything added here will be displayed and emailed to attendees AFTER they\'ve registered.',
         'pro_change_err' => 'es-There was an error while attempting to change your profile.',
         'pw_conf' => 'es-Confirm your password',
@@ -852,8 +853,8 @@ return [
         'confirm' => 'es-The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
         'confirm2' => 'es-The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
         'login_msg' => 'es-If registering resulted in mCentric telling you that an account exists for you, login or ' .
-        'click on the \'Forgot Your Password?\' link above and enter the email you used to register.<br>' .
-        'If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.',
+            'click on the \'Forgot Your Password?\' link above and enter the email you used to register.<br>' .
+            'If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.',
         'login_msg2' => 'es-If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.',
         'loginform' => 'es-Login Form',
         'remember' => 'es-Remember Me',
@@ -979,7 +980,7 @@ return [
             'line3' => 'es-This survey is for the PDC session named:  :name',
             'action' => 'es-Take Survey',
             'post_mail_msg' => 'es-:count survey email sent to the attendee.  :c2 survey was already completed.|' .
-            ':count survey emails sent to the attendees. :c2 surveys were already completed',
+                ':count survey emails sent to the attendees. :c2 surveys were already completed',
         ],
         // Set Your Password
         'SYP' => [
@@ -1007,14 +1008,14 @@ return [
             'imp_success' => 'es-:user, the member import for file :file_name was successful. Completed on :completed_date',
             'imp_failed' => 'es-:user, the member import for file :file_name has failed. No records were imported. Please check the file.',
             'imp_warning' => 'es-:user, the member import for file :file_name had some errors. All records were not processed. Completed on :completed_date',
-            'total'=>'es-Total Records : :total',
-            'inserted'=>'es-Inserted Records : :inserted',
-            'updated'=>'es-Updated Records : :updated',
-            'failed'=>'es-Failed Records : :failed',
-            'failed_record'=>'es-Failed Records : :records',
-            'no_identifier'=>'es-No unique identifier found for this row.',
-            'nothing_to_update'=>'es-No update or insert operation was performed.',
-            'rel_update'=>'Records with Mismatch PMI Join Date or Chapter Joining Date',
+            'total' => 'es-Total Records : :total',
+            'inserted' => 'es-Inserted Records : :inserted',
+            'updated' => 'es-Updated Records : :updated',
+            'failed' => 'es-Failed Records : :failed',
+            'failed_record' => 'es-Failed Records : :records',
+            'no_identifier' => 'es-No unique identifier found for this row.',
+            'nothing_to_update' => 'es-No update or insert operation was performed.',
+            'rel_update' => 'Records with Mismatch PMI Join Date or Chapter Joining Date',
         ],
         // TicketIt Notification
         'ticketit' => [
@@ -1024,7 +1025,7 @@ return [
         'UNDO' => [
             'subject' => "Su login de mCentric",
             'line1' => "Su inicio de sesión de mCentric se cambió a :email.",
-    ],
+        ],
 
         // Wait List No More
         'WLNM' => [
@@ -1215,11 +1216,11 @@ return [
         'accept_cash' => 'es-Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.',
         'accommodate' => 'es-We will do our best to accommodate you.',
         'addl_ticket' => 'es-If you are attempting to buy any tickets for members, they will need to purchase their ticket '
-        . 'separately to benefit from the member discount.',
+            . 'separately to benefit from the member discount.',
         'affiliation_tip' => 'es-Ctrl-Click to select more than one affiliation.',
         'allergenInfo_tip' => 'es-Ctrl-Click to select more than one dietary restriction.',
         'anoncat' => 'es-These are the event categories where multiple tickets, if an attendee wishes to buy multiple'
-        . ' tickets, can be purchased without requiring the identification for every individual ticket.',
+            . ' tickets, can be purchased without requiring the identification for every individual ticket.',
         'bundle_include' => 'es-Change to "Yes" to add each corresponding ticket to this bundle.',
         'bundles' => 'es-Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.',
         'cant_cancel_reg' => 'es-You cannot cancel this registration. Find an admin.',
@@ -1252,7 +1253,7 @@ return [
         'no_auth' => 'es-You must be authorized to perform this function.',
         'no_discount' => 'es-Change to \'Yes\' to prevent ALL discount codes from affecting this ticket\'s price.  Early Bird pricing will still be possible.',
         'no_switch' => 'es-For events with sessions, if you prohibit session switching for a given session, this message would be displayed if an attendee attempts to ' .
-        'checkin to a session for which they have not already registered.',
+            'checkin to a session for which they have not already registered.',
         'nope' => 'es-This value cannot be edited or removed.',
         'not_new' => 'es-Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.',
         'orgName' => 'es-You can change the organization\'s display name. Ensure that it fits above.  Click name to edit.',
@@ -1366,32 +1367,32 @@ return [
         ],
     ],
     'campaign_archive_popup_success' => [
-        'title'       => 'Success',
+        'title' => 'Success',
         'title_error' => 'Error',
-        'body'        => 'Do you want to delete campaign ',
-        'btn_ok'      => 'Ok',
-        'btn_cancel'  => 'Cancel',
+        'body' => 'Do you want to delete campaign ',
+        'btn_ok' => 'Ok',
+        'btn_cancel' => 'Cancel',
     ],
-    'datatable'                      => [
+    'datatable' => [
         // Datatables
-      'table-decimal'                    => '',
-      'table-empty'                      => 'No hay data esta tabla',
-      'table-info'                       => 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
-      'table-info-empty'                 => 'Mostrando 0 de 0 a 0 records',
-      'table-info-filtered'              => '(filtrados de _MAX_ totales)',
-      'table-info-postfix'               => '',
-      'table-thousands'                  => ',',
-      'table-length-menu'                => 'Mostrar _MENU_ entradas',
-      'table-loading-results'            => 'Cargando...',
-      'table-processing'                 => 'Procesando...',
-      'table-search'                     => 'Buscar:',
-      'table-zero-records'               => 'No hemos encontrado entradas que correspondan',
-      'table-paginate-first'             => 'Primera',
-      'table-paginate-last'              => 'Última',
-      'table-paginate-next'              => 'Siguiente',
-      'table-paginate-prev'              => 'Anterior',
-      'table-aria-sort-asc'              => ': activar para ordernar por esta columna ascendentemente',
-      'table-aria-sort-desc'             => ': activar para ordernar por esta columna descendentemente',
+        'table-decimal' => '',
+        'table-empty' => 'No hay data esta tabla',
+        'table-info' => 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
+        'table-info-empty' => 'Mostrando 0 de 0 a 0 records',
+        'table-info-filtered' => '(filtrados de _MAX_ totales)',
+        'table-info-postfix' => '',
+        'table-thousands' => ',',
+        'table-length-menu' => 'Mostrar _MENU_ entradas',
+        'table-loading-results' => 'Cargando...',
+        'table-processing' => 'Procesando...',
+        'table-search' => 'Buscar:',
+        'table-zero-records' => 'No hemos encontrado entradas que correspondan',
+        'table-paginate-first' => 'Primera',
+        'table-paginate-last' => 'Última',
+        'table-paginate-next' => 'Siguiente',
+        'table-paginate-prev' => 'Anterior',
+        'table-aria-sort-asc' => ': activar para ordernar por esta columna ascendentemente',
+        'table-aria-sort-desc' => ': activar para ordernar por esta columna descendentemente',
     ],
 
 ];

@@ -597,6 +597,7 @@ return [
         'reset_pass'            => 'Reset Your mCentric Account Password',
         'results'               => "Results",
         'ret_sess_list'         => "Return to Session List",
+        'revenue'               => "Revenue",
         'role'                  => 'Role',
         'role_ass'              => 'Role Assignment',
         'roles'                 => 'Roles',
