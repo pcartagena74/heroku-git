@@ -23,6 +23,9 @@ return [
         'remove' => 'Remove ',
     ],
     'admin'                          => [
+        'api' => [
+            'api_props' => 'Event API Properties',
+        ],
         'upload' => [
             'count'    => 'Prior upload of :count records, successful.',
             'evtdata'  => 'Event registration records',
@@ -369,7 +372,6 @@ return [
         'tech_contact_statement'     => 'Tech Contact Statement',
         'org_path'                   => 'Organization Path',
         'filter_tickets'             => 'Filter Tickets',
-        'camp_message_header'        => 'Message Header',
         'camp_email_list'            => 'Email List',
         'camp_create_email_template' => 'Create Email Template',
         'camp_edit_email_template'   => 'Edit Email Template',
@@ -563,6 +565,7 @@ return [
         'pass_new'              => "New Password",
         'pass_ver'              => "Verify Password",
         'pay'                   => 'Pay',
+        'pdu_detail'            => 'PDU Detail',
         'percent'               => "Percent",
         'perms'                 => "Permissions",
         'person_search'         => "Member Search",
@@ -818,6 +821,8 @@ return [
         'partial_fail'                   => "The attempt to get a partial refund failed with order: :rfid.",
         'pass_change'                    => "The password was changed successfully.",
         'pass_change_for'                => "The password for :name was changed successfully.",
+        'pdu_total'                      => "The PDU total cannot exceed the duration of the event (in hours).",
+        'pdu_tracks'                      => "In a multi-track/multi-day event, the PDUs here are only for the default session.",
         'receipt_recreated'              => 'Your receipt was successfully recreated.',
         'reg_success'                    => ":name was successfully checked into the session.",
         'saved'                          => 'saved',

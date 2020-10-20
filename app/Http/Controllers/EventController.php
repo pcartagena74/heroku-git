@@ -502,6 +502,9 @@ class EventController extends Controller
         $mainSession->start = $event->eventStartDate;
         $mainSession->end = $event->eventEndDate;
         $mainSession->order = 0;
+        $mainSession->leadAmt = request()->input('leadAmt');
+        $mainSession->stratAmt = request()->input('stratAmt');
+        $mainSession->techAmt = request()->input('techAmt');
         $mainSession->creatorID = $this->currentPerson->personID;
         $mainSession->updaterID = $this->currentPerson->personID;
         $mainSession->save();
@@ -690,17 +693,35 @@ class EventController extends Controller
             $mainSession = new EventSession;
             $mainSession->trackID = 0;
             $mainSession->eventID = $event->eventID;
-            $mainSession->sessionName = 'Default Session';
+            $mainSession->sessionName = 'def_sess';
             $mainSession->confDay = 0;
             $mainSession->start = $event->eventStartDate;
             $mainSession->end = $event->eventEndDate;
             $mainSession->order = 0;
+            $mainSession->leadAmt = request()->input('leadAmt');
+            $mainSession->stratAmt = request()->input('stratAmt');
+            $mainSession->techAmt = request()->input('techAmt');
             $mainSession->creatorID = $this->currentPerson->personID;
             $mainSession->updaterID = $this->currentPerson->personID;
             $mainSession->save();
 
             $event->mainSession = $mainSession->sessionID;
             $event->updaterID = $this->currentPerson->personID;
+        } else {
+            $mainSession = EventSession::find($event->mainSession);
+            $mainSession->trackID = 0;
+            $mainSession->eventID = $event->eventID;
+            $mainSession->sessionName = 'def_sess';
+            $mainSession->confDay = 0;
+            $mainSession->start = $event->eventStartDate;
+            $mainSession->end = $event->eventEndDate;
+            $mainSession->order = 0;
+            $mainSession->leadAmt = request()->input('leadAmt');
+            $mainSession->stratAmt = request()->input('stratAmt');
+            $mainSession->techAmt = request()->input('techAmt');
+            $mainSession->creatorID = $this->currentPerson->personID;
+            $mainSession->updaterID = $this->currentPerson->personID;
+            $mainSession->save();
         }
         try {
             $event->save();

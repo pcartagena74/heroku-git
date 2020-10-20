@@ -4,10 +4,13 @@
      * Created: 2/11/2017
      *
      * @var $current_person
+     * @var $exLoc
+     * @var $session
      *
      */
     use App\Location;
     use App\Event;
+    use App\EventSession;
     use GrahamCampbell\Flysystem\Facades\Flysystem;
 
     $topBits = '';
@@ -22,6 +25,7 @@
         } else {
             $show_virtual = false;
         }
+        $session = $event->main_session;
 
     } elseif(old('eventStartDate')) {
         $eventStartDate = date($dateFormat, strtotime(old('eventStartDate')));
@@ -31,6 +35,7 @@
     } else {
         $event          = new Event;
         $exLoc          = new Location;
+        $session        = new EventSession;
         $eventStartDate = date($dateFormat, strtotime("now"));
         $eventEndDate   = date($dateFormat, strtotime("now"));
     }
@@ -133,6 +138,12 @@
         $logo = '';
     }
 
+if($event->hasTracks){
+    $track_header = view('v1.parts.tooltip', ['title' => trans('messages.messages.pdu_tracks')])->render();
+    $pdu_header = trans('messages.headers.pdu_detail') . $track_header;
+} else {
+    $pdu_header = trans('messages.headers.pdu_detail');
+}
 @endphp
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -261,19 +272,52 @@
 
     <div class="form-group col-md-12">
         {!! Form::label('eventTimeZone', trans('messages.headers.tz').'*', array('class' => 'control-label')) !!}
-        @if(isset($event->eventTimeZone)) 
-        {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $event->eventTimeZone, array('class' =>'form-control')) !!}
+        @if(isset($event->eventTimeZone))
+            {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $event->eventTimeZone, array('class' =>'form-control')) !!}
         @else
-        {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $defaults->orgZone, array('class' =>'form-control')) !!}
+            {!! Form::select('eventTimeZone', $timezones, old('eventTimeZone') ?: $defaults->orgZone, array('class' =>'form-control')) !!}
         @endif
     </div>
 
     @include('v1.parts.end_content')
 
+    @include('v1.parts.start_content', ['header' => $pdu_header,
+             'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+    <table class="table table-bordered table-striped table-condensed table-responsive jambo_table">
+        <thead class="cf">
+        <tr>
+            <td width="25%"> @lang('messages.pdus.lead') </td>
+            <td width="25%"> @lang('messages.pdus.strat') </td>
+            <td width="25%"> @lang('messages.pdus.tech') </td>
+            <td width="25%"> @lang('messages.fields.total')
+                @include('v1.parts.tooltip',['title' => trans('messages.messages.pdu_total'), 'c' => 'text-warning']) </td>
+        </tr>
+        </thead>
+        <tbody>
+        <td>
+            {!! Form::number('leadAmt', old('leadAmt') ?: $session->leadAmt, $attributes =
+                array('id' => 'leadAmt', 'step' => '0.25', 'class'=>'form-control has-feedback-left input-sm', 'onblur'=>'fixPDUs();')) !!}
+        </td>
+        <td>
+            {!! Form::number('stratAmt', old('stratAmt') ?: $session->stratAmt, $attributes =
+                array('id' => 'stratAmt', 'step' => '0.25', 'class'=>'form-control has-feedback-left input-sm', 'onblur'=>'fixPDUs();')) !!}
+        </td>
+        <td>
+            {!! Form::number('techAmt', old('techAmt') ?: $session->techAmt, $attributes =
+                array('id' => 'techAmt', 'step' => '0.25', 'class'=>'form-control has-feedback-left input-sm', 'onblur'=>'fixPDUs();')) !!}
+        </td>
+        <td>
+            {!! Form::number('pdu-total', old('pdu-total') ?: null, $attributes =
+                array('class'=>'form-control has-feedback-left input-sm', 'onfocus' => 'blur();', 'onblur'=>'fixPDUs();')) !!}
+        </td>
+        </tbody>
+    </table>
+    @include('v1.parts.end_content')
+
     @include('v1.parts.start_content', ['header' => trans('messages.fields.event').' '. trans('messages.fields.loc'),
              'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-    <div>
+    <div class="col-md-12">
         <div class="col-md-3 col-md-offset-1">
             {!! Form::label('virtual', trans('messages.headers.virtual'), array('class' => 'control-label')) !!} &nbsp;
 
@@ -290,7 +334,7 @@
             {!! Form::label('virtual', trans('messages.yesno_check.yes'), array('class' => 'control-label')) !!}
         </div>
     </div>
-    &nbsp;<br />
+    &nbsp;<br/>
 
     <div class="form-group">
         <div class="col-md-8">
@@ -305,8 +349,8 @@
 
     <div class="form-group col-md-12">
         {!! Form::text('locName', old('locName'),
-            $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '50',
-                                'id'=>'locName', 'placeholder'=>trans('messages.fields.loc_name'), 'required')) !!}
+        $attributes = array('class'=>'form-control has-feedback-left', 'maxlength' => '50',
+                            'id'=>'locName', 'placeholder'=>trans('messages.fields.loc_name'), 'required')) !!}
         <span class="far fa-building fa-fw form-control-feedback left fa-border" aria-hidden="true"></span>
     </div>
 
@@ -345,7 +389,7 @@
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.contact_det'),
-             'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+     'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div class="form-group col-md-12">
         <div class="form-group col-md-3">
@@ -381,7 +425,7 @@
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.ev_logo'),
-             'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+     'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     <div>
 
@@ -421,7 +465,7 @@
     </div>
 
     @include('v1.parts.start_content', ['header' => strtoupper(trans('messages.headers.opt')).': '. trans('messages.headers.post-reg').' '.trans('messages.headers.info'),
-             'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+     'subheader' => '', 'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     <div class="form-group col-md-12">
         {!! Form::label('postRegInfo', trans('messages.instructions.postRegInfo'), array('class' => 'control-label red')) !!}
         {!! Form::textarea('postRegInfo', old('postRegInfo'), array('class'=>'form-control summernote')) !!}
@@ -441,6 +485,7 @@
         $(document).ready(function () {
             $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
             $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
+            fixPDUs();
         });
     </script>
 
@@ -483,6 +528,16 @@
             $("#trackInput").toggle();
         }
 
+        function fixPDUs() {
+            var lead = $("#leadAmt").val();
+            //console.log('lead: '+lead);
+            var strat = $("#stratAmt").val();
+            //console.log('strat: '+strat);
+            var tech = $("#techAmt").val();
+            //console.log('tech: '+tech);
+            $('input[name ="pdu-total"]').attr('value', lead*1+strat*1+tech*1).trigger('change');
+            //console.log($('input[name ="pdu-total"]').val());
+        }
         function toggleHide() {
             $("#address_info").toggle();
             if (show) {
@@ -506,7 +561,7 @@
                 $('#org_location_list').empty().append('{!! $loc_list_html !!}');
                 $('#org_location_list').val('');
             }
-            //$('#locName').val('');
+//$('#locName').val('');
             $('#addr1').val('');
             $('#addr2').val('');
             $('#city').val('');
@@ -515,7 +570,7 @@
         }
 
         $(document).ready(function () {
-            // We'll help out users by populating the end date/time based on the start
+// We'll help out users by populating the end date/time based on the start
             $('#eventStartDate').on('change', function () {
                 foo = new moment($('#eventStartDate').val()).add(1, 'h').toDate();
                 $('#eventEndDate').val(moment(new Date(foo)).format("MM/DD/YYYY HH:mm A"));
