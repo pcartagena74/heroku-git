@@ -143,7 +143,7 @@ Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 Route::get('/panel', 'AdminController@index');
-Route::post('/panel/update', 'AdminController@update');
+Route::post('/panel/update', 'AdminController@update');         // VUEJS Route
 Route::get('/create_organization', 'OrgController@create');
 Route::post('/save_organization', 'OrgController@store');
 
@@ -154,8 +154,8 @@ Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
 Route::get('/profile/{id}/{modal?}', 'PersonController@show')->name('showMemberProfile');
-Route::post('/profile/{id}', 'PersonController@update'); // Ajax
-Route::post('/op/{id}', 'PersonController@update_op'); // Ajax
+Route::post('/profile/{id}', 'PersonController@update');        // Ajax
+Route::post('/op/{id}', 'PersonController@update_op');          // Ajax
 Route::post('/address/{id}', 'AddressController@update');
 Route::post('/addresses/create', 'AddressController@store');
 Route::post('/locations/create', 'LocationController@store');
@@ -175,23 +175,23 @@ Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogi
 // Organizational Routes
 // ---------------------
 // Settings
-Route::get('/orgsettings', 'OrgController@index'); //updated for org listing if available
+Route::get('/orgsettings', 'OrgController@index');                  //updated for org listing if available
 Route::get('/orgsettings/{id}', 'OrgController@show');
-Route::post('/orgsettings/{id}', 'OrgController@update'); // Ajax
+Route::post('/orgsettings/{id}', 'OrgController@update');           // Ajax
 Route::get('/eventdefaults', 'OrgController@event_defaults');
 Route::post('/update-default-org', 'OrgController@updateDefaultOrg');
-Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update'); // Ajax
+Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');  // Ajax
 
 Route::get('/load_data', 'UploadController@index');
 Route::post('/load_data', 'UploadController@store');
 
 Route::get('/role_mgmt/{query?}', 'RoleController@index');
 Route::post('/role_search', 'RoleController@search');
-Route::post('/role/{person}/{role}', 'RoleController@update'); // Ajax
+Route::post('/role/{person}/{role}', 'RoleController@update');      // Ajax
 
 Route::post('/eventtype/create', 'EventTypeController@store');
 Route::delete('/eventtype/{etID}/delete', 'EventTypeController@destroy');
-Route::post('/eventtype/{etID}', 'EventTypeController@update'); // Ajax
+Route::post('/eventtype/{etID}', 'EventTypeController@update');    // Ajax
 
 // Member Routes
 // ---------------------
