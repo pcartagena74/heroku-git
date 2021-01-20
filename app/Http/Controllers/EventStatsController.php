@@ -25,9 +25,10 @@ class EventStatsController extends Controller
     {
         $this->currentPerson = Person::find(auth()->user()->id);
 
+        /*
         $simple = Event::where([
             ['orgID', $this->currentPerson->defaultOrgID],
-            ['isActive', 1]
+            ['isActive', 1],
         ])
             ->select('eventName', 'eventStartDate')
             ->withCount(['registrations'])
@@ -48,12 +49,45 @@ class EventStatsController extends Controller
             ])
             ->orderBy('eventStartDate', 'DESC')
             ->get();
+        */
 
+        $simple = Event::where([
+            ['orgID', $this->currentPerson->defaultOrgID],
+            ['isActive', 1],
+        ])
+            ->select('eventName', 'eventStartDate')
+            ->withCount(['registrations'])
+            ->withCount([
+                'regfinances AS cost_sum' => function ($query) {
+                    $query->select(DB::raw("format(COALESCE(SUM(cost),0), 2) as costsum"));
+                }
+            ])
+            ->withCount([
+                'regfinances AS fee_sum' => function ($query) {
+                    $query->select(DB::raw("format(COALESCE(SUM(handleFee + ccFee),0), 2) as handlesum"));
+                }
+            ])
+            ->withCount([
+                'regfinances AS net_sum' => function ($query) {
+                    $query->select(DB::raw("format(COALESCE(SUM(cost - handleFee - ccFee),0), 2) as netsum"));
+                }
+            ])
+            ->orderBy('eventStartDate', 'DESC')
+            ->get();
+
+        /*
         $simple_header = [
             implode(" ", [trans('messages.fields.event'), trans('messages.fields.name')]),
             implode(" ", [trans('messages.headers.start'), trans_choice('messages.headers.date', 1)]),
             trans_choice('messages.headers.regs', 2), trans('messages.headers.revenue'),
             trans('messages.headers.handling'), trans('messages.headers.ccfee')
+        ];
+        */
+        $simple_header = [
+            implode(" ", [trans('messages.fields.event'), trans('messages.fields.name')]),
+            implode(" ", [trans('messages.headers.start'), trans_choice('messages.headers.date', 1)]),
+            trans_choice('messages.headers.regs', 2), trans('messages.headers.revenue'),
+            trans('messages.headers.handling'), trans('messages.headers.net_rev')
         ];
 
         return view('v1.auth_pages.events.eventstats', compact('simple', 'simple_header'));

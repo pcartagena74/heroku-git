@@ -217,4 +217,9 @@ class MCConfigRepository implements ConfigRepository
     {
         return config('file-manager.aclRulesCache');
     }
+
+    public function getRoutePrefix(): string
+    {
+        return config('file-manager.routePrefix');
+    }
 }

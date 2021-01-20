@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Shows Custom Field Labels and Demographic Information for an Organization
  * Created: 3/11/2017
@@ -14,7 +14,7 @@ $fieldnames =
 
 $currentPerson = App\Person::find(auth()->user()->id);
 $currentOrg    = $currentPerson->defaultOrg;
-?>
+@endphp
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -105,9 +105,18 @@ $currentOrg    = $currentPerson->defaultOrg;
         <tr>
             <td colspan="5" style="text-align: left;"><a href="#" id="techContactStatement" data-value="{{ $org->techContactStatement }}"></a></td>
         </tr>
+        <tr>
+            <th colspan="5" style="text-align: left;">@lang('messages.headers.pdu_stmt')</th>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align: left;"><a href="#" id="chapPDUReportStatement" data-value="{{ $org->chapPDUReportStatement }}"></a></td>
+        </tr>
 
     </table>
-    Need to add a logo upload/validation here.
+    @if(Entrust::hasRole('Developer'))
+        <b class="red">PHIL:</b> Need to add a logo upload/validation here.
+    @endif
+
     @include('v1.parts.end_content')
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.cdata') . $fieldnames, 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -239,6 +248,11 @@ $currentOrg    = $currentPerson->defaultOrg;
             });
             $('#techContactStatement').editable({
                 type: 'textarea',
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk:  '{{ $org->orgID }}'
+            });
+            $('#chapPDUReportStatement').editable({
+                type: 'text',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 pk:  '{{ $org->orgID }}'
             });

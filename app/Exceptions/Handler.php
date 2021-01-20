@@ -11,6 +11,7 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 
 class Handler extends ExceptionHandler
 {
@@ -26,6 +27,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
+        SuspiciousOperationException::class,
     ];
 
     /**

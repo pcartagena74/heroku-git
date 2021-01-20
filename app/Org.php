@@ -43,6 +43,11 @@ class Org extends Model
         return $this->hasMany(Event::class,'orgID', 'orgID');
     }
 
+    public function admin_props()
+    {
+        return $this->hasMany(OrgAdminProp::class,'orgID', 'orgID');
+    }
+
     public function logo_path()
     {
         $s3m = Flysystem::connection('s3_media');

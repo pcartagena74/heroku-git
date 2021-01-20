@@ -143,8 +143,9 @@ Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 Route::get('/panel', 'AdminController@index');
-Route::get('/create_organization', 'AdminController@create');
-Route::post('/save_organization', 'AdminController@store');
+Route::post('/panel/update', 'AdminController@update');
+Route::get('/create_organization', 'OrgController@create');
+Route::post('/save_organization', 'OrgController@store');
 
 // My Profile / Member Editing
 // ---------------------

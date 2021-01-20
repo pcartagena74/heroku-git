@@ -53,6 +53,7 @@ class CreateOrganizationTable extends Migration {
 			$table->string('discountChapters')->nullable();
 			$table->string('adminContactStatement')->nullable();
 			$table->text('techContactStatement', 65535)->nullable();
+            $table->string('chapPDUReportStatement')->nullable();
 			$table->boolean('useExprDates')->default(0);
 			$table->string('canSubmitPDU')->nullable()->comment('comma-separated list of eventTypeIDs that the chapter will submit PDUs to PMI if authorized by registrant');
 			$table->string('OSN1', 45)->nullable();

@@ -46,6 +46,7 @@ class CreateOrgEventTable extends Migration {
 			$table->boolean('hasTracks')->default(0);
 			$table->text('refundNote', 16777215)->nullable();
 			$table->boolean('isNonRefundable')->default(0);
+            $table->boolean('isPDUReported')->default(0);
 			$table->integer('confDays')->default(0);
 			$table->string('eventTags')->nullable();
 			$table->boolean('isSymmetric')->default(1);
