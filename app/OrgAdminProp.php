@@ -13,6 +13,7 @@ class OrgAdminProp extends Model
     const CREATED_AT      = 'createDate';
     const UPDATED_AT      = 'updateDate';
     protected $dates      = ['createDate', 'updateDate'];
+    protected $fillable   = ['orgID', 'propID', 'value'];
 
     protected function setKeysForSaveQuery(Builder $query)
     {

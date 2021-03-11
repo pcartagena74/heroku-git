@@ -35,7 +35,7 @@ class OrgController extends Controller
     {
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
-        $orgId               = $this->currentPerson->defaultOrgID;
+        $orgID               = $this->currentPerson->defaultOrgID;
 
         // This function will eventually need to determine if there are multiple organizations attached to the
         // $this->currentPerson and then render a page allowing selection of a new organization
@@ -197,12 +197,17 @@ class OrgController extends Controller
         $org->updaterID             = $this->currentPerson->personID;
         $org->save();
         $orgID = $org->orgID;
+
+        /*
+         * This can be removed because roles will be static / not org-dependent.  1/24/2021
+         *
         $roles = Role::where('orgID', 10)->get();
         foreach ($roles as $key => $value) {
             $new_role        = $value->replicate();
             $new_role->orgID = $orgID;
             $new_role->save();
         }
+        */
 
         $email                 = request()->input('email');
         $pmiID                 = request()->input('pmiID');
@@ -211,6 +216,7 @@ class OrgController extends Controller
         $password              = request()->input('password');
         $notify                = request()->input('notify');
         $password_confirmation = request()->input('password_confirmation');
+
         // create org name path on selected disk
         generateDirectoriesForOrg($org);
         if ($password !== null) {
@@ -276,6 +282,7 @@ class OrgController extends Controller
                 $u->email    = $email;
                 $u->password = $make_pass;
                 $u->save();
+
                 // assign all roles so this user will act as admin for this organization
                 $all_role = Role::where('orgID', $orgID)->get();
                 foreach ($all_role as $key => $value) {

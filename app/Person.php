@@ -25,8 +25,10 @@ class Person extends Model
     public function roles()
     {
         // we need to get default person org id so running another query to fetch same
-        $person = Person::find(auth()->user()->id);
-        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')->where('person_role.org_id', $person->defaultOrgID);
+        // $person = Person::find(auth()->user()->id);
+
+        // NOTE: person_role is a view, not a table.
+        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')->where('person_role.org_id', $this->defaultOrgID);
     }
 
     public function orgs()
@@ -142,7 +144,7 @@ class Person extends Model
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
         if (!$this->roles->contains('id', $speaker_role)) {
-            $this->roles()->attach($speaker_role, ['orgID' => $this->defaultOrgID]);
+            $this->roles()->attach($speaker_role, ['org_id' => $this->defaultOrgID]);
         }
         /*
         if (!$this->roles->contains('id', $this->org_role_id()->id)) {

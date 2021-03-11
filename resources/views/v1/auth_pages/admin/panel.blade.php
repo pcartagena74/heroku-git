@@ -52,40 +52,74 @@
             el: '#el',
             data: {
                 admin_props: @json($admin_props),
+                chars: '{{ $org_props[7]->value }}',
                 separator: '{{ $org_props[0]->value }}',
                 header: '{{ $org_props[1]->value }}',
                 choices: [],
-                enabled: true,
                 drag: false,
+                checkbox_list: [
+                    {sort: 0, checked: 0, value: "@lang('messages.fields.category')", id: "category", instr: '@lang('messages.admin.api.api_info_cat')'},
+                    {sort: 0, checked: 0, value: "{!! trans_choice('messages.headers.et', 1) !!}", id: "et", instr: '@lang('messages.admin.api.api_info_et')'},
+                    {sort: 0, checked: 0, value: "@lang('messages.admin.api.api_times')", id: "times"},
+                    {sort: 0, checked: 0, value: "@lang('messages.headers.pdu_detail')", id: "pdus"},
+                    {sort: 0, checked: 0, value: "@lang('messages.fields.memprice')", id: "memprice"},
+                    {sort: 0, checked: 0, value: "@lang('messages.fields.nonprice')", id: "nonprice"},
+                ],
+                // enabled: true,
             },
             computed: {
-                draggingInfo() {
-                    return this.drag ? "under drag" : "";
-                },
+            },
+
+            mounted: function () {
+                this.choices = this.admin_props[1].value.split(' ' + this.separator + ' ',);
+                this.varArray_update();
+            },
+
+            watch: {
+                choices: function () {
+                    this.admin_props[1].value = this.choices.join(' ' + this.separator + ' ');
+                    this.api_update('header', this.admin_props[1].value);
+                    this.varArray_update();
+                }
             },
 
             methods: {
                 onSubmit() {
-                    console.log('submit btn clicked')
                 },
 
-                onUpdate: function (event) {
-                    this.choices.splice(event.newIndex, 0, this.choices.splice(event.oldIndex, 1)[0]);
-                    org_props[1].value = choices.join(' '+ separator + ' ');
-                },
+                api_update: function (name, value) {
 
-                api_update: function(name, value) {
-                    {{--
-                    console.log(name);
-                    console.log(value);
-                    --}}
                     axios.post('/panel/update', {
                         name: name,
                         value: value,
                     })
-                        //.then(console.log('Update happened'))
                         .catch(error => console.log(error.response));
-                }
+                },
+
+                varArray_update: function() {
+                    var index = 0;
+                    this.checkbox_list.forEach(e => {
+                        e.checked = 0;
+                        e.sort = 0;
+                    });
+
+                    this.choices.forEach(element => {
+                        index += 1;
+                        var x = this.checkbox_list.filter(function(ele) {
+                            if(ele.value == element) {
+                                ele.checked = 1;
+                                ele.sort = index;
+                            }
+                        });
+                    });
+                    var out = [];
+                    var array_copy = this.checkbox_list;
+                    array_copy = array_copy.filter(function(v){ return v.checked == 1; });
+                    array_copy.sort((a, b) => (a.sort > b.sort) ? 1 : -1);
+                    array_copy.forEach(function(v) { out.push(v.id); });
+                    var id_hdr = out.join(this.separator);
+                    this.api_update('var_array', id_hdr);
+                },
             }
         });
     </script>

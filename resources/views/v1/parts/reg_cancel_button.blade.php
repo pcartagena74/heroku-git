@@ -1,10 +1,10 @@
-<?php
+@php
 /**
  * Comment: Template for registration cancel/refund button that can be reused
  * Created: 10/23/2018
  *
- * @param $reg : the regID concerned
- * @param $wait : will be set to 1 if wait list button needed
+ * @var $reg : the regID concerned
+ * @var $wait : will be set to 1 if wait list button needed
  *
  */
 
@@ -52,10 +52,10 @@ if (Entrust::hasRole('Admin')) {
     $button_class = "btn-secondary";
     $button_tooltip = trans('messages.tooltips.cant_cancel_reg');
 }
-?>
-@if(Entrust::hasRole('Admin'))
+@endphp
+@if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
 
-    @if(!$post_event)
+    @if(!$post_event || Entrust::hasRole('Developer'))
         @if($reg->regStatus == 'wait')
             <a class="btn btn-primary btn-sm" onclick="return confirm('{{ $wait_confirm }}');"
                href="{!! env('APP_URL')."/promote/$reg->regID" !!}" data-toggle="tooltip" title="{!! $wait_tooltip !!}"><i

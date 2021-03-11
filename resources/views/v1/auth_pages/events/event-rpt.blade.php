@@ -2,6 +2,20 @@
 /**
  * Comment: The page to show all Event-related statistics
  * Created: 5/11/2017
+ *
+ * @var $event
+ * @var $tkts
+ * @var $nametags
+ * @var $regs
+ * @var $deadbeats
+ * @var $notregs
+ * @var $discPie
+ * @var $refunds
+ * @var $tracks
+ * @var $discountCounts
+ * @var $format
+ *
+ * Updated: 2/20/2021 to make function buttons available for Devs even after events are past
  */
 
 use App\Person;
@@ -42,7 +56,7 @@ $rows = []; $reg_rows = []; $notreg_rows = []; $tag_rows = []; $dead_rows = []; 
 if ($event->eventEndDate->gte($today)) {
     $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'), trans('messages.headers.this'),
         trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
-    if (Entrust::hasRole('Developer') || Entrust::hasRole('Admin')) {
+    if (Entrust::hasRole('Developer')) {
         foreach ($tkts as $t) {
             $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
                 '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
@@ -169,6 +183,7 @@ foreach ($regs as $r) {
 $c = null;
 
 if (!$post_event) {
+    // These are the buttons that allow for cash/credit processing while at the event
     foreach ($deadbeats as $r) {
         $f = '';
         if ($r->subtotal > 0) {
@@ -182,7 +197,7 @@ if (!$post_event) {
 }
 
 foreach ($notregs as $r) {
-    if (!$post_event) {
+    if (!$post_event || Entrust::hasRole('Developer')) {
         $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
         $c = $v->render();
     } else {
@@ -421,13 +436,13 @@ $count = 0;
                                 @endforeach
                             </tr>
                             @for($j=1;$j<=$event->confDays;$j++)
-                                <?php
+                                @php
                                 $z = EventSession::where([
                                     ['confDay', '=', $j],
                                     ['eventID', '=', $event->eventID]
                                 ])->first();
                                 $y = Ticket::find($z->ticketID);
-                                ?>
+                                @endphp
 
                                 <tr>
                                     <th style="text-align:center; color: yellow; background-color: #2a3f54;"
@@ -436,7 +451,7 @@ $count = 0;
                                     </th>
                                 </tr>
                                 @for($x=1;$x<=5;$x++)
-                                    <?php
+                                    @php
                                     // Check to see if there are any events for $x (this row)
                                     $s = EventSession::where([
                                         ['eventID', $event->eventID],
@@ -445,7 +460,7 @@ $count = 0;
                                     ])->first();
 
                                     // As long as there are any sessions, the row will be displayed
-                                    ?>
+                                    @endphp
                                     @if($s !== null)
                                         <tr>
                                             @foreach($tracks as $track)

@@ -24,6 +24,9 @@ return [
     ],
     'admin' => [
         'api' => [
+            'api_bkgd' => 'Color de Fondo del Banner',
+            'api_btxt' => 'Color del Texto del Banner',
+            'api_chars' => '# Chars',
             'api_props' => 'Propiedades de la API de Eventos',
             'api_sep' => 'Separador',
             'api_header' => 'Encabezado del Evento',
@@ -35,7 +38,9 @@ return [
             'api_btn_color' => 'Color del botón',
             'api_hdr_color' => 'Color del encabezado',
             'api_info_cat'  => 'Event categories default to "Project Management" and are rarely changed.',
+            'api_info_char'  => 'The event description will be truncated to this number of characters.',
             'api_info_et'  => 'Event Types like Chapter Meeting, Roundtable, etc.',
+            'example' => 'See Example Event',
         ],
         // These are instructions specific to the Admin Features available via 'Admin Panel'
         'instructions' => [
@@ -697,6 +702,13 @@ return [
         'customURL' => 'es-Please enter a custom URL.',
         'early_bird' => 'es-<span style=\'color:red;\'>Act Now!</span> Early Bird Pricing in Effect until ',
         'early_values' => 'es-Changing the date or discount percent will apply to all associated tickets shown below or created.',
+        'email_list_foundation' => '<p>es-To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
+        'email_list_foundation_select' => '<p>es-Selecting a foundation either gives you a starting point for your list or will filter from the event
+                    lists you include (below).</p>',
+        'email_list_inclusion' => '<p>es-Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
+                                ',
+        'email_list_general' => '<p>es-<b>This year\'s Events, Last Year\'s Events and All PD Day Events</b> are group of events. If you check any of those all the event in the group will be added in Inclusion List. You can also remove any particular event from that group via checking them in Exclusion list. <br> <b>Specific Event\'s(by date range)</b> will allow to add events fall into the seleted date range. To remove any simply uncheck them.</b></p>',
+        'email_list_exclusion' => '<p>es-Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.</p>',
         'ev_defaults' => 'es-Default values for this event only.',
         'ev_discounts' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here are active for this event.<br>' .
         'Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.',
@@ -786,6 +798,7 @@ return [
         'reg_sess' => 'es-You can review and/or modify your session registrations below.',
         'role_toggle' => 'es-The role :role was toggled for :person.',
         'role_txt' => 'es-The values in these tables are not editable and are here for informational purposes only.',
+        'select_default_organization' => 'es-Select One Organization to make it your default and switch to it',
         'select_event' => 'es-Select the event for registration',
         'survey_instructions' => 'es-Please provide your objective feedback so that we may continuously improve the value
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.',
@@ -806,17 +819,10 @@ return [
             <li>PDU values are calculated based on the end date/time - start date/time.</li>
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
         ',
-        'userid' => 'es-This has been autopopulated and cannot be edited.',
-        'waitlist' => 'es-Registering will secure a spot on the wait list. You will not be charged at this time.|
-                   Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
-        'select_default_organization' => 'es-Select One Organization to make it your default and switch to it',
-        'email_list_foundation' => '<p>es-To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
-        'email_list_foundation_select' => '<p>es-Selecting a foundation either gives you a starting point for your list or will filter from the event
-                    lists you include (below).</p>',
-        'email_list_inclusion' => '<p>es-Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
-                                ',
-        'email_list_general' => '<p>es-<b>This year\'s Events, Last Year\'s Events and All PD Day Events</b> are group of events. If you check any of those all the event in the group will be added in Inclusion List. You can also remove any particular event from that group via checking them in Exclusion list. <br> <b>Specific Event\'s(by date range)</b> will allow to add events fall into the seleted date range. To remove any simply uncheck them.</b></p>',
-        'email_list_exclusion' => '<p>es-Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.</p>',
+        'userid' => 'Esto se ha completado automáticamente y no se puede editar.',
+        'waitlist' => 'El registro asegurará un lugar en la lista de espera. No se le cobrará en este momento.|
+                   El registro asegurará hasta :count lugares en la lista de espera. No se le cobrará en este momento.',
+        'zero_att' => 'Un 0 en la columna Asistentes indica que la asistencia, probablemente, NO se registró.<br>No se pueden enviar encuestas si no se registró la asistencia.',
     ],
     'mCentric_text' => [
         'hosted_event' => 'es-mCentric-hosted :org Event',
@@ -1119,6 +1125,7 @@ return [
         ],
     ],
     'pdus' => [
+        'pdus' => 'PDU|PDUs',
         'lead' => 'es-Leadership',
         'strat' => 'es-Strategy',
         'tech' => 'es-Technical Skills',

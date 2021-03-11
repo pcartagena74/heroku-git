@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use App\Org;
+use App\OrgAdminProp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +60,14 @@ class EventAPIController extends Controller
             return view('v1.public_pages.error_display', compact('message'));
         }
 
+        $admin_props = OrgAdminProp::where('orgID', $orgID)
+            ->whereHas('prop', function($q) {
+                $q->whereHas('group', function($q2) {
+                    $q2->where('groupID', 1);
+                });
+            })
+            ->get();
+
         $override = null;
 
         // Check to see if $etID is sent as a comma-separated list of etIDs
@@ -76,7 +85,7 @@ class EventAPIController extends Controller
             ])
                 ->whereIn('eventTypeID', $etID_array)
                 ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
-                ->with('location', 'event_type')
+                ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                 ->orderBy('eventStartDate')
                 ->get();
         } elseif (null !== $etID) {
@@ -101,7 +110,7 @@ class EventAPIController extends Controller
                 ])
                     ->whereIn('eventTypeID', $etID_array)
                     ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
-                    ->with('location', 'event_type')
+                    ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                     ->orderBy('eventStartDate')
                     ->get();
             } else {
@@ -111,7 +120,7 @@ class EventAPIController extends Controller
                     ['isPrivate', 0],
                 ])
                     ->whereDate('eventStartDate', '>=', Carbon::today()->toDateString())
-                    ->with('location', 'event_type')
+                    ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                     ->orderBy('eventStartDate')
                     ->get();
             }
@@ -123,7 +132,7 @@ class EventAPIController extends Controller
                 ['isPrivate', 0],
             ])
                 ->whereDate('eventEndDate', '<=', Carbon::today()->toDateString())
-                ->with('location', 'event_type')
+                ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                 ->orderBy('eventStartDate', 'DESC')
                 ->get();
             } else {
@@ -132,7 +141,7 @@ class EventAPIController extends Controller
                     ['isPrivate', 0],
                 ])
                     ->whereDate('eventEndDate', '<=', Carbon::today()->toDateString())
-                    ->with('location', 'event_type')
+                    ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                     ->orderBy('eventStartDate', 'DESC')
                     ->get();
             }
@@ -146,7 +155,7 @@ class EventAPIController extends Controller
 
             return json_encode(array('status' => 'success', 'message' => $view));
         } else {
-            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag', 'past', 'cal'));
+            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag', 'past', 'cal', 'admin_props'));
         }
     }
 

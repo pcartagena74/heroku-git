@@ -143,6 +143,7 @@ Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 Route::get('/panel', 'AdminController@index');
+Route::post('/panel', 'AdminController@store');
 Route::post('/panel/update', 'AdminController@update');         // VUEJS Route
 Route::get('/create_organization', 'OrgController@create');
 Route::post('/save_organization', 'OrgController@store');

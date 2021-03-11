@@ -33,6 +33,11 @@ class Event extends Model
     protected static $ignoreChangedAttributes = ['createDate'];
     protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
 
+    public function category()
+    {
+        return $this->hasOne(Category::class, 'catID', 'catID');
+    }
+
     public function location()
     {
         return $this->hasOne(Location::class, 'locID', 'locationID');
@@ -68,10 +73,24 @@ class Event extends Model
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
+    public function sessions()
+    {
+        return $this->hasMany(EventSession::class,'eventID', 'eventID');
+    }
+
+    public function regsessions()
+    {
+        return $this->hasMany(RegSession::class,'eventID', 'eventID');
+    }
+
     public function main_session()
     {
         return $this->hasOne(EventSession::class,'sessionID', 'mainSession');
+    }
 
+    public function surveys()
+    {
+        return $this->hasManyThrough(RSSurvey::class, EventSession::class,'eventID', 'sessionID', 'eventID', 'sessionID');
     }
 
     public static function events_this_year()

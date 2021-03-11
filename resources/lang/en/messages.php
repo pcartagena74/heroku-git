@@ -24,6 +24,9 @@ return [
     ],
     'admin' => [
         'api' => [
+            'api_bkgd' => 'Banner Background',
+            'api_btxt' => 'Banner Text',
+            'api_chars' => '# Chars',
             'api_props' => 'Event API Properties',
             'api_sep' => 'Separator',
             'api_header' => 'Event Header',
@@ -35,7 +38,9 @@ return [
             'api_btn_color' => 'Button Color',
             'api_hdr_color' => 'Header Color',
             'api_info_cat'  => 'Event categories default to "Project Management" and are rarely changed.',
+            'api_info_char'  => 'The event description will be truncated to this number of characters.',
             'api_info_et'  => 'Event Types like Chapter Meeting, Roundtable, etc.',
+            'example' => 'See Example Event',
         ],
         // These are instructions specific to the Admin Features available via 'Admin Panel'
         'instructions' => [
@@ -697,6 +702,13 @@ return [
         'customURL' => "Please enter a custom URL.",
         'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect until ",
         'early_values' => "Changing the date or discount percent will apply to all associated tickets shown below or created.",
+        'email_list_foundation' => '<p>To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
+        'email_list_foundation_select' => '<p>Selecting a foundation either gives you a starting point for your list or will filter from the event
+                    lists you include (below).</p>',
+        'email_list_inclusion' => '<p>Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
+                                ',
+        'email_list_general' => '<p><b>This year\'s Events, Last Year\'s Events and All PD Day Events</b> are group of events. If you check any of those all the event in the group will be added in Inclusion List. You can also remove any particular event from that group via checking them in Exclusion list. <br> <b>Specific Event\'s(by date range)</b> will allow to add events fall into the seleted date range. To remove any simply uncheck them.</b></p>',
+        'email_list_exclusion' => '<p>Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.</p>',
         'ev_defaults' => "Default values for this event only.",
         'ev_discounts' => "The <b style='color: red;'>non-empty discount codes</b> here are active for this event.<br>" .
             "Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.",
@@ -786,6 +798,7 @@ return [
         'reg_sess' => "You can review and/or modify your session registrations below.",
         'role_toggle' => 'The role :role was toggled for :person.',
         'role_txt' => "The values in these tables are not editable and are here for informational purposes only.",
+        'select_default_organization' => 'Select One Organization to make it your default and switch to it',
         'select_event' => "Select the event for registration",
         'survey_instructions' => "Please provide your objective feedback so that we may continuously improve the value
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.",
@@ -809,14 +822,7 @@ return [
         'userid' => "This has been autopopulated and cannot be edited.",
         'waitlist' => 'Registering will secure a spot on the wait list. You will not be charged at this time.|
                    Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
-        'select_default_organization' => 'Select One Organization to make it your default and switch to it',
-        'email_list_foundation' => '<p>To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
-        'email_list_foundation_select' => '<p>Selecting a foundation either gives you a starting point for your list or will filter from the event
-                    lists you include (below).</p>',
-        'email_list_inclusion' => '<p>Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
-                                ',
-        'email_list_general' => '<p><b>This year\'s Events, Last Year\'s Events and All PD Day Events</b> are group of events. If you check any of those all the event in the group will be added in Inclusion List. You can also remove any particular event from that group via checking them in Exclusion list. <br> <b>Specific Event\'s(by date range)</b> will allow to add events fall into the seleted date range. To remove any simply uncheck them.</b></p>',
-        'email_list_exclusion' => '<p>Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.</p>',
+        'zero_att' => 'A 0 in the Attendees column indicates that attendance was, likely, NOT recorded.<br>Surveys cannot be sent if attendance was not recorded.',
     ],
     'mCentric_text' => [
         'hosted_event' => "mCentric-hosted :org Event",
@@ -1119,6 +1125,7 @@ return [
         ],
     ],
     'pdus' => [
+        'pdus' => 'PDU|PDUs',
         'lead' => 'Leadership',
         'strat' => 'Strategy',
         'tech' => 'Technical Skills',

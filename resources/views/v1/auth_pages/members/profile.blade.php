@@ -2,6 +2,12 @@
 /**
  * Comment: This template is used to show a member profile --> either self or, when authorized, others
  * Created: 2/9/2017
+ *
+ * @var $profile
+ * @var $em_cnt
+ * @var $ad_cnt
+ * @var $prefixes
+ *
  */
 
 use Illuminate\Support\Facades\DB;

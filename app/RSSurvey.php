@@ -26,4 +26,10 @@ class RSSurvey extends Model
     {
         return $this->belongsTo(EventSession::class, 'sessionID', 'sessionID');
     }
+
+    public function registration()
+    {
+        return $this->belongsTo(Registration::class, 'regID', 'regID');
+    }
+
 }

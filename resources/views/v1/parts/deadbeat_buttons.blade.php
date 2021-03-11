@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: Template for Cash/Check or Delete Buttons
  * Created: 1/11/2019
@@ -7,7 +7,7 @@
  * @param $rfID
  *
  */
-?>
+@endphp
 @if (Entrust::hasRole('Admin'))
     {!! Form::open(['method' => 'patch', 'route' => ['accept_payment', $regID, $rfID], 'data-toggle' => 'validator']) !!}
     <button type="submit" value="1" name="{!! trans('messages.buttons.cash') !!}"

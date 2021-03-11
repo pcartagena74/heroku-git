@@ -35,7 +35,7 @@ class EmailForQueuing extends Mailable
             if (empty($reply_to)) {
                 $reply_to = $campaign->fromEmail;
             }
-            return $this->view('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $campaign->perheader])
+            return $this->view('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $campaign->preheader])
                 ->from($campaign->fromEmail, $campaign->fromName)
                 ->subject($campaign->subject)
                 ->replyTo($reply_to);
