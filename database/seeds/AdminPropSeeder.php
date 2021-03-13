@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Seeder;
 
-class CategorySeeder extends Seeder
+class AdminPropSeeder extends Seeder
 {
     /**
      * Run the database seeds.
