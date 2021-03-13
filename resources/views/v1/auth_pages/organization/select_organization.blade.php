@@ -19,7 +19,7 @@ $topBits = '';  // remove this if this was set in the controller
 
             {!! Form::open(array('url' => url('update-default-org'), 'method' => 'POST')) !!}
             {!! Form::label('org', trans('messages.instructions.select_default_organization').':', array('class' => 'control-label')) !!}
-            {!! Form::select('org', $org_list, $orgId, array('id' => 'eventID', 'class' =>'form-control')) !!}
+            {!! Form::select('org', $org_list, $orgID, array('id' => 'eventID', 'class' =>'form-control')) !!}
             {!! Form::submit('Submit', array('class' => 'btn btn-primary btn-sm')) !!}
             {!! Form::close() !!}
 

@@ -19,7 +19,7 @@ class OrgController extends Controller
     {
         // responds to /blah
         $this->currentPerson = Person::find(auth()->user()->id);
-        $orgId               = $this->currentPerson->defaultOrgID;
+        $orgID               = $this->currentPerson->defaultOrgID;
 
         // This function will eventually need to determine if there are multiple organizations attached to the
         // $this->currentPerson and then render a page allowing selection of a new organization
@@ -29,7 +29,7 @@ class OrgController extends Controller
         $org_list      = $currentPerson->orgs->pluck('orgName', 'orgID')->all();
 
         if ($currentPerson->orgs->count() > 1) {
-            return view('v1.auth_pages.organization.select_organization', compact('org_list', 'orgId'));
+            return view('v1.auth_pages.organization.select_organization', compact('org_list', 'orgID'));
         } else {
             return redirect('/orgsettings/' . $orgID);
         }

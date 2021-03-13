@@ -45,7 +45,7 @@ class OrgController extends Controller
         $org_list      = $currentPerson->orgs->pluck('orgName', 'orgID')->all();
 
         if ($currentPerson->orgs->count() > 1) {
-            return view('v1.auth_pages.organization.select_organization', compact('org_list', 'orgId'));
+            return view('v1.auth_pages.organization.select_organization', compact('org_list', 'orgID'));
         } else {
             return redirect('/orgsettings/' . $orgID);
         }
