@@ -15,7 +15,7 @@ class AdminPropSeeder extends Seeder
      */
     public function run()
     {
-        $sql = 'INSERT INTO `admin_group`
+        $sql = 'INSERT INTO `admin_group` (id, name, order, viewname)
                 VALUES
                     (1,	"messages.admin.api.api_props",1,"v1.auth_pages.admin.panels.event_api");';
 
@@ -24,7 +24,7 @@ class AdminPropSeeder extends Seeder
         DB::commit();
 
         $sql = 'INSERT INTO `admin_prop`
-                VALUES
+                VALUES (id, groupID, order, name, displayName, type)
 	                (1,1,1,"separator","messages.admin.api.api_sep","string"),
 	                (2,1,2,"header","messages.admin.api.api_header","string"),
 	                (3,1,3,"btntxt","messages.admin.api.api_btntxt","string"),
@@ -42,7 +42,7 @@ class AdminPropSeeder extends Seeder
         DB::commit();
 
         $sql = 'INSERT INTO `org-admin_prop`
-                VALUES
+                VALUES (orgID, propID, value)
 	                (1,1,"|"),
 	                (1,2,null),
 	                (1,3,"R E G I S T E R"),
