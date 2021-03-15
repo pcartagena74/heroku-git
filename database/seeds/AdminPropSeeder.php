@@ -44,12 +44,12 @@ class AdminPropSeeder extends Seeder
         $sql = 'INSERT INTO `org-admin_prop` (`orgID`, `propID`, `value`)
                 VALUES
 	                (1,1,"|"),
-	                (1,2,null),
+	                (1,2,""),
 	                (1,3,"R E G I S T E R"),
 	                (1,4,"primary"),
 	                (1,5,"purple"),
 	                (1,6,"sm"),
-	                (1,7,null),
+	                (1,7,""),
 	                (1,8,"300"),
 	                (1,9,"primary"),
 	                (1,10,"light");
