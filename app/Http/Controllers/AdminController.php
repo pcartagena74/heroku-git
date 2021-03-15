@@ -131,12 +131,6 @@ class AdminController extends Controller
         );
 
         try {
-
-            /*
-             * // Not sure why there'd be session flashing in an AJAX request
-            request()->session()->flash('prop', $prop);
-            request()->session()->flash('orgprop', $orgProp);
-            */
             switch ($name) {
                 case 'xvar_array':
                     1;
@@ -147,10 +141,10 @@ class AdminController extends Controller
 
             $orgProp->updateDate = now();
             $orgProp->save();
+
             return ['message' => "Field: $name was updated."];
         } catch (\Exception $e) {
             return ['failure' => "Field: $name was not updated.", 'data' => $orgProp];
-
         }
     }
 

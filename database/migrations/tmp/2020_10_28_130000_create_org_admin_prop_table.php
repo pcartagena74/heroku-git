@@ -21,7 +21,7 @@ class CreateOrgAdminPropTable extends Migration
         Schema::create('org-admin_prop', function (Blueprint $table) {
             $table->integer('orgID');
             $table->integer('propID')->unsigned();
-            $table->string('value', 255);
+            $table->string('value', 255)->nullable();
             $table->timestamp('createDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreign('orgID')->references('orgID')->on('organization');
