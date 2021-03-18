@@ -1,11 +1,11 @@
-<?php
+@php
 /**
  * Comment: Separating the header css file for inclusion
  * Created: 10/6/2017
  *
  * Updated: 2/18/2019 with style
  */
-?>
+@endphp
 <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 <style>
     @media only screen and (max-width: 800px) {

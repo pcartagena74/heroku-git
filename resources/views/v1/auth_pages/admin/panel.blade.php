@@ -127,3 +127,7 @@
 
 @section('footer')
 @endsection
+
+@section('modals')
+    @include('v1.modals.dynamic', ['header' => trans('messages.admin.api.example'), 'url' => 'show_record_attendance'])
+@endsection

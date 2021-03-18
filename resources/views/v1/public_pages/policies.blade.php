@@ -120,8 +120,8 @@
                         mCentric offers the use of its site to clients for a recurring monthly or annual fee.<br />
                         mCentric may also provide payment processing for events that clients may wish to hold.<br />
                         Fees associated with processed transactions are not refundable.<p>
-                        Clients that wish to terminate the use of mCentric's services may do so in writing via the
-                        mCentric support interface.
+                        Clients that wish to terminate the use of mCentric's services may do so with 30 days notice in writing via the
+                        mCentric support interface or email.
                     </li>
                     <br/>
 
@@ -146,7 +146,8 @@
                     the terms then you may not access the Service.
                 </p>
                 <p><strong>Accounts</strong></p>
-                <p>When you create an account with us, you must provide us information that is accurate, complete, and
+                <p>When you create an account with us, or when you use an account that was created on your behalf by an
+                    mCentric client, you must provide us information that is accurate, complete, and
                     current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate
                     termination of your account on our Service.</p>
                 <p>You are responsible for safeguarding the password that you use to access the Service and for any

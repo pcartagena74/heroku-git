@@ -46,10 +46,7 @@ $sizes = [
 @endphp
 <div>
     <template>
-        <form action="/panel" method="POST">
-            {{--
-            @submit.prevent="onSubmit">
-            --}}
+        <form action="#" @submit.prevent="onSubmit" method="POST">
             {{-- button params and demo --}}
             <div class="col-sm-8">
                 <div class="from-group">
@@ -213,9 +210,8 @@ $sizes = [
             </div>
             <div class="form-group col-sm-12">
                 <button class="btn btn-sm btn-primary"
-                        data-toggle="modal" data-target="#email_modal">
+                        data-toggle="modal" data-target="#dynamic_modal">
                     @lang('messages.admin.api.example')
-                </button>
                 </button>
                 Show me choices: @{{ choices }}
                 <p>
