@@ -73,25 +73,27 @@ This is the image that was displayed in MyEventGuru.  There was a request to rem
     <div class="col-xs-9">
         <b> {!! $e->eventName !!}</b>
     </div>
-    <div class="col-xs-3">
+    <div class="col-xs-3 text-center">
         @lang('messages.common.on') {{ $e->eventStartDate->toFormattedDateString() }}
     </div>
     <div class="col-xs-12 container">
+        @if($hdr)
         <b class="text-{{ $hdrcolor }}">{!! $hdr !!}</b>
         <br/>
+        @endif
         {!! truncate_saw(strip_tags($e->eventDescription, '<br>'), $chars) !!}
     </div>
     <div class="col-xs-9">
         <b>@lang('messages.fields.loc'): </b>{{ $e->location->locName ?? trans('messages.messages.unknown') }}
     </div>
-    @if(!$past)
-        <div class="col-xs-3" style="text-align: center;">
+    @if($past)
+        <div class="col-xs-3 text-center">
             <a class="btn btn-{{ $btncolor }} btn-{{ $btnsize }}" target="_new"
                href="https://www.mcentric.org/events/{{ $e->slug }}">{!! $btntxt !!}</a>
         </div>
     @else
-        <div class="col-xs-3" style="text-align: left;">
-            <b> {!! trans_choice('messages.headers.et', 1) !!} :</b>
+        <div class="col-xs-3 text-center">
+            <b> {!! trans_choice('messages.headers.et', 1) !!}:</b>
             {!! $e->event_type->etName ?? trans('messages.messages.unknown') !!}
         </div>
     @endif
