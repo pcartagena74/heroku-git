@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PermissionRole extends Model
+class PermissionRole extends Pivot
 {
     protected $table = 'permission_role';
 

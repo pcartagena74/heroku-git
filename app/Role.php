@@ -18,12 +18,12 @@ class Role extends EntrustRole
 
     public function people()
     {
-        return $this->belongsToMany(Person::class);
+        return $this->belongsToMany(Person::class, 'person_role','role_id', 'user_id');
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'person_role', 'role_id', 'user_id');
     }
 
     public function permissions()

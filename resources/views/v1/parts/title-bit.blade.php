@@ -1,6 +1,6 @@
-<?php
+@php
 /**
- * Comment: This is widget display at the top of pages
+ * Comment: This is widget display of counts of things at the top of pages
  * Created: 2/2/2017
  *
  * @param int $icon   This is a number that corresponds to the icon list below
@@ -18,7 +18,7 @@ if(!isset($width)){
     $width = 1;
 }
 
-if($ctext == 0){
+if($ctext == 0 || $ctext == ''){
     $up = 0;
 }
 
@@ -69,11 +69,11 @@ switch($up){
         $up = '';
         $color = 'red';
 }
-?>
+@endphp
 <div class="col-xs-{{ $width }} tile_stats_count">
     <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
-    @if(isset($ctext) && isset($rtext))
+    @if(isset($ctext) && isset($rtext) && strlen($ctext)>0 && strlen($rtext)>0 )
         <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fas fa-sort{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>
     @endif
 </div>

@@ -25,6 +25,25 @@ use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
 
 // $client = new Client();
+
+/**
+ * Takes a role id and returns the count of others with that role within the current user's org
+ *
+ * @param integer $id
+ * @return integer
+ */
+if(!function_exists('count_roles')) {
+    function count_roles($id) {
+        $p = Person::find(auth()->user()->id);
+        return Person::leftJoin('person_role', 'user_id', '=', 'person.personID')
+            ->whereHas('orgperson', function ($q) use ($p) {
+                $q->where('org-person.orgID', '=', $p->defaultOrgID);
+            })->whereHas('roles', function ($q) use ($p, $id) {
+                $q->where('id', '=', $id);
+            })->distinct()->count('personID');
+    }
+}
+
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -346,7 +365,7 @@ if (!function_exists('getAgentList')) {
             $person = Person::find(auth()->user()->id);
             $orgId  = $person->defaultOrgID;
         } else {
-            $orgId = $ticket->orgId;
+            $orgId = $ticket->orgID;
         }
 
         $user = User::where('id', auth()->user()->id)->get()->first();
@@ -354,14 +373,15 @@ if (!function_exists('getAgentList')) {
         if ($user->hasRole(['Admin']) && !$user->hasRole(['Developer'])) {
             $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
                 $q->select('user_id')
-                    ->from('role_user')
-                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                    ->where('roles.name', 'Admin')
-                    ->where('roles.orgId', $orgId);
+                    ->from('person_role')
+                    ->where('person_role.org_id', $orgId)
+                    ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
+                    ->where('roles.name', 'Admin');
             })->whereNotIn('personID', function ($q) use ($orgId) {
                 $q->select('user_id')
-                    ->from('role_user')
-                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->from('person_role')
+                    ->where('person_role.org_id', $orgId)
+                    ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
                     ->where('roles.name', '=', 'Developer');
             })->get()->pluck('login', 'personID')->toArray();
 
@@ -374,18 +394,20 @@ if (!function_exists('getAgentList')) {
 
         $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
             $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Admin')
-                ->where('roles.orgId', $orgId);
+                ->from('person_role')
+                ->where('person_role.org_id', $orgId)
+                ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
+                ->where('roles.name', 'Admin');
         })->get()->pluck('login', 'personID')->toArray();
 
+        // This $dev_agents query is NOT taking orgID into account and that should be OK.
         $dev_agents = Person::whereIn('personID', function ($q) {
             $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->from('person_role')
+                ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
                 ->where('roles.name', 'Developer');
         })->get()->pluck('login', 'personID')->toArray();
+
         $dev_agents = array_map(function ($value) {
             return $value . '(Developer)';
         }, $dev_agents);

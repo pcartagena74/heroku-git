@@ -28,7 +28,9 @@ class Person extends Model
         // $person = Person::find(auth()->user()->id);
 
         // NOTE: person_role is a view, not a table.
-        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')->where('person_role.org_id', $this->defaultOrgID);
+        return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')
+            ->using(PersonRoleOrgPivot::class)->withPivot('org_id');
+            //->where('person_role.org_id', $this->defaultOrgID);
     }
 
     public function orgs()
