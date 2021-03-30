@@ -206,14 +206,19 @@ class PersonController extends Controller
     {
         $topBits = $this->member_bits();
         $mbr_list = null;
+        $p = Person::find(auth()->user()->id);
+        $orgID = $p->defaultOrgID;
 
         if ($query !== null) {
             $mbr_list = Person::where('firstName', 'LIKE', "%$query%")
                 ->orWhere('person.personID', 'LIKE', "%$query%")
                 ->orWhere('lastName', 'LIKE', "%$query%")
                 ->orWhere('login', 'LIKE', "%$query%")
-                ->orWhereHas('orgperson', function ($q) use ($query) {
-                    $q->where('OrgStat1', 'LIKE', "%$query%");
+                ->orWhereHas('orgperson', function ($q) use ($query, $orgID) {
+                    $q->where([
+                        ['OrgStat1', 'LIKE', "%$query%"],
+                        ['orgID', $orgID]
+                    ]);
                 })
                 ->orWhereHas('emails', function ($q) use ($query) {
                     $q->where('emailADDR', 'LIKE', "%$query%");
@@ -221,11 +226,14 @@ class PersonController extends Controller
                 ->whereHas('orgs', function ($q) {
                     $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                 })
-                ->join('org-person as op', 'op.personID', '=', 'person.personID')
+                ->join('org-person as op', function($join) use ($orgID) {
+                    $join->on('op.personID', '=', 'person.personID')
+                        ->where('orgID', $orgID);
+                })
                 ->select(DB::raw("person.personID, concat(coalesce(`firstName`, ''), ' ', coalesce(`lastName`, '')) AS fullName, op.OrgStat1, op.OrgStat2, compName, 
                            title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
-                ->get();
+                ->distinct()->get();
 
             return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
         }

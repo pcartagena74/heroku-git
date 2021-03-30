@@ -71,16 +71,22 @@ $sizes = [
                         </label>
                     </div>
                     <div class="col-sm-3">
+                        @lang('messages.admin.nc')
+                        {{--
                         {!! Form::select($ban_bkgd->prop->name, $colors, $ban_bkgd->value,
                             ['class' => "form-control input-sm",
                             'v-model' => 'admin_props[8].value',
                             '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        --}}
                     </div>
                     <div class="col-sm-3">
+                        @lang('messages.admin.nc')
+                        {{--
                         {!! Form::select($ban_btxt->prop->name, $colors, $ban_btxt->value,
                             ['class' => "form-control input-sm",
                             'v-model' => 'admin_props[9].value',
                             '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        --}}
                     </div>
                     <div class="col-sm-3">
                         <input class="form-control input-sm" type="text" size="3" name="{{ $chars->prop->name }}"
@@ -98,7 +104,7 @@ $sizes = [
             <div class="col-sm-4 form-group">
                 <h2>
                 <span v-bind:class="'bg-'+admin_props[8].value + ' text-'+admin_props[9].value">
-                        @lang('messages.admin.api.api_btxt')
+                        @lang('messages.admin.nc')
                 </span>
                 </h2>
             </div>
@@ -195,6 +201,7 @@ $sizes = [
                                :name="item.id">
                     </div>
                 </div>
+                <p>&nbsp;</p>
             </div>
             <div class="col-sm-4">
                 <p>
@@ -210,10 +217,9 @@ $sizes = [
             </div>
             <div class="form-group col-sm-12">
                 <button class="btn btn-sm btn-primary"
-                        data-toggle="modal" data-target="#dynamic_modal">
+                        data-toggle="modal" data-target="#dynamic_modal" data-target-id="{{ $currentOrg->orgID . "/0/0/0/1" }}">
                     @lang('messages.admin.api.example')
                 </button>
-                Show me choices: @{{ choices }}
                 <p>
                 </p>
             </div>

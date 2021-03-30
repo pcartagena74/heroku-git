@@ -51,7 +51,7 @@
         new Vue({
             el: '#el',
             data: {
-                admin_props: @json($admin_props),
+                admin_props: @json($admin_props_json),
                 chars: '{{ $org_props[7]->value }}',
                 separator: '{{ $org_props[0]->value }}',
                 header: '{{ $org_props[1]->value }}',
@@ -77,6 +77,11 @@
 
             watch: {
                 choices: function () {
+                    this.admin_props[1].value = this.choices.join(' ' + this.separator + ' ');
+                    this.api_update('header', this.admin_props[1].value);
+                    this.varArray_update();
+                },
+                separator: function () {
                     this.admin_props[1].value = this.choices.join(' ' + this.separator + ' ');
                     this.api_update('header', this.admin_props[1].value);
                     this.varArray_update();
@@ -129,5 +134,5 @@
 @endsection
 
 @section('modals')
-    @include('v1.modals.dynamic', ['header' => trans('messages.admin.api.example'), 'url' => 'show_record_attendance'])
+    @include('v1.modals.dynamic', ['header' => trans('messages.admin.api.example'), 'url' => "eventlist"])
 @endsection

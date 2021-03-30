@@ -1,16 +1,17 @@
-<?php
+@php
 /**
  * Comment: New user creation utility for Admins
  *          Creates a new user for $this->currentPerson->defaultOrgID
  *
  * Created: 12/31/2018
+ * @var $org
  */
 
 $topBits = '';  // remove this if this was set in the controller
 $header = implode(" ", [trans('messages.nav.ad_new'), trans('messages.headers.for'), $org->orgName]);
 $currentOrg = $org;
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')

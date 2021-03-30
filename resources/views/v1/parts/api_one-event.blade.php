@@ -52,7 +52,7 @@ foreach($hdr_array as $hdr) {
         case "nonprice":
             $working_string = trans('messages.fields.nonmbr'). ": ";
             $working_string .= trans('messages.symbols.cur');
-            $working_string .= number_format($e->tickets->first()->nonmbrBasePrice, 2);
+            $working_string .= number_format($e->tickets->first()->nonmbrBasePrice, 0);
             break;
     }
     array_push($header, $working_string);

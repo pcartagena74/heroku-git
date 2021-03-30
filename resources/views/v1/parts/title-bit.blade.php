@@ -3,13 +3,13 @@
  * Comment: This is widget display of counts of things at the top of pages
  * Created: 2/2/2017
  *
- * @param int $icon   This is a number that corresponds to the icon list below
- * @param str $label  This is the small text that above the big stat
- * @param int $number This is the main statistic (big green number) in the widget
- * @param str $ctext  This is the greed/red statistic small text
- * @param str $rtext  This is the black accompanying text
- * @param int $up     override of $up value of 1
- * @param int $width  override of col-xs-1 if provided
+ * @var int $icon   This is a number that corresponds to the icon list below
+ * @var str $label  This is the small text that above the big stat
+ * @var int $number This is the main statistic (big green number) in the widget
+ * @var str $ctext  This is the greed/red statistic small text
+ * @var str $rtext  This is the black accompanying text
+ * @var int $up     override of $up value of 1
+ * @var int $width  override of col-xs-1 if provided
  *
  * icons: fa-user, fa-bar-chart, fa-calendar, fa-clock-o, fa-home, fa-heart
  */

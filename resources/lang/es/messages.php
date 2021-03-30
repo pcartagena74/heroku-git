@@ -23,6 +23,7 @@ return [
         'remove' => 'Quitar ',
     ],
     'admin' => [
+        'nc' => 'No Configurable',
         'api' => [
             'api_bkgd' => 'Color de Fondo del Banner',
             'api_btxt' => 'Color del Texto del Banner',

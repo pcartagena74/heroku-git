@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash as Hash;
 use Validator;
 use App\OrgAdminProp;
 use App\AdminProp;
+use Response;
 
 class AdminController extends Controller
 {
@@ -45,6 +46,7 @@ class AdminController extends Controller
         $currentPerson = $this->currentPerson;
         $currentOrg = $this->currentPerson->defaultOrg;
         $admin_props = $currentOrg->admin_props;
+        $admin_props_json = json_decode($admin_props, true);
 
         $prop_list = [];
         $group_list = [];
@@ -61,8 +63,9 @@ class AdminController extends Controller
         $prop_list = array_unique($prop_list, SORT_REGULAR);
         $groups = AdminPropGroup::whereIn('id', $group_list)->get();
 
-        return view('v1.auth_pages.admin.panel', compact('currentPerson', 'currentOrg', 'prop_list', 'groups', 'admin_props'))
-            ->with('admin_props', json_decode($admin_props, true));
+        return Response::view('v1.auth_pages.admin.panel',
+                compact('currentPerson', 'currentOrg', 'prop_list', 'groups', 'admin_props', 'admin_props_json'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
     /**

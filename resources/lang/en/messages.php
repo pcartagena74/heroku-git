@@ -23,6 +23,7 @@ return [
         'remove' => 'Remove ',
     ],
     'admin' => [
+        'nc' => 'Not Configurable',
         'api' => [
             'api_bkgd' => 'Banner Background',
             'api_btxt' => 'Banner Text',
