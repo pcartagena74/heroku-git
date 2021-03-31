@@ -8,8 +8,6 @@
      *
      */
 
-//@include('v1.auth_pages.admin.panels.event_api')
-
     $topBits = '';  // remove this if this was set in the controller
     $header = trans('messages.admin.api.api_props');
 
@@ -71,8 +69,10 @@
             },
 
             mounted: function () {
-                this.choices = this.admin_props[1].value.split(' ' + this.separator + ' ',);
-                this.varArray_update();
+                if(this.admin_props[1].value && this.admin_props[1].value.length > 0) {
+                    this.choices = this.admin_props[1].value.split(' ' + this.separator + ' ',);
+                    this.varArray_update();
+                }
             },
 
             watch: {
@@ -81,6 +81,7 @@
                     this.api_update('header', this.admin_props[1].value);
                     this.varArray_update();
                 },
+
                 separator: function () {
                     this.admin_props[1].value = this.choices.join(' ' + this.separator + ' ');
                     this.api_update('header', this.admin_props[1].value);

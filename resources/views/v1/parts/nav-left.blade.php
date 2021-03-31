@@ -233,11 +233,6 @@ try{
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ url('group')}}" id="grp">
-                                        @lang('messages.nav.ev_grp')
-                                    </a>
-                                </li>
-                                <li>
                                     <a href="{{ url('manage_events/past')}}">
                                         @lang('messages.nav.ev_old')
                                     </a>

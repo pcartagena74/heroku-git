@@ -19,8 +19,9 @@
     }
 
     $homeURL = env('APP_URL') . '/manage_events';
-    $editURL = env('APP_URL') . '/event/' . $event->eventID . '/edit';
     $displayURL = env('APP_URL') . '/events/' . $event->slug;
+    $editURL = env('APP_URL') . '/event/' . $event->eventID . '/edit';
+    $groupURL = env('APP_URL') . '/group/' . $event->eventID;
     $tktURL = env('APP_URL') . '/event-tickets/' . $event->eventID;
     $eventDiscountURL = env('APP_URL') . '/eventdiscount/' . $event->eventID;
     $trackURL = env('APP_URL') . '/tracks/' . $event->eventID;
@@ -115,7 +116,13 @@
     <!-- /div -->
 @endif
 
-@if($event->checkin_time())
+@if($event->isActive && !$past)
+
+    <a href='{{ $groupURL }}' class='btn btn-success btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+       title='{{ trans('messages.nav.ev_grp') }}'><i class="fas fa-users"></i></a>
+@endif
+
+    @if($event->checkin_time())
     @if($event->hasTracks > 0)
         <!-- div class="col-xs-1" -->
         <a href='{{ $checkinURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
