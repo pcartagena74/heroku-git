@@ -86,7 +86,7 @@ This is the image that was displayed in MyEventGuru.  There was a request to rem
     <div class="col-xs-9">
         <b>@lang('messages.fields.loc'): </b>{{ $e->location->locName ?? trans('messages.messages.unknown') }}
     </div>
-    @if($past)
+    @if(!$past)
         <div class="col-xs-3 text-center">
             <a class="btn btn-{{ $btncolor }} btn-{{ $btnsize }}" target="_new"
                href="https://www.mcentric.org/events/{{ $e->slug }}">{!! $btntxt !!}</a>
