@@ -56,7 +56,7 @@ class SetYourPassword extends Notification
             ->line(trans('messages.notifications.SYP.line1', ['name' => $oname]))
             ->line(trans('messages.notifications.SYP.line1'))
             ->line(trans('messages.notifications.SYP.line2'))
-            ->action(trans('messages.notifications.SYP.action'), url('/password/reset?e='.$this->person->login))
+            ->action(trans('messages.notifications.SYP.action'), 'https://www.mcentric.org/password/reset?e='.$this->person->login)
             ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 

@@ -74,7 +74,7 @@ class SendSurvey extends Notification implements ShouldQueue
                     ->line(trans('messages.notifications.SS.line1', ['etype' => $etype, 'ename' => $ename, 'date' => $date]))
                     ->line(trans('messages.notifications.SS.line2'))
                     ->line(trans('messages.notifications.SS.line3', ['name' => $this->es->sessionName]))
-                    ->action(trans('messages.notifications.SS.action'), env('APP_URL') . "/rs_survey/" . $this->rs->id)
+                    ->action(trans('messages.notifications.SS.action'), "https://www.mcentric.org/rs_survey/" . $this->rs->id)
                     ->line(trans('messages.notifications.thanks', ['org' => $oname]));
             } else {
                 return (new MailMessage)

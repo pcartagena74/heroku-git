@@ -17,7 +17,7 @@ class AdminPropSeeder extends Seeder
     {
         $sql = 'INSERT INTO `admin_group` (`id`, `name`, `order`, `viewname`)
                 VALUES
-                    (1,	"messages.admin.api.api_props",1,"v1.auth_pages.admin.panels.event_api");';
+                    (1,	"messages.admin.api.api_props",1,"v1.auth_pages.admin.panels.event_api_panel");';
 
         DB::beginTransaction();
         DB::insert($sql);
