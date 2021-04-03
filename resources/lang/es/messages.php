@@ -847,7 +847,8 @@ return [
         'partial_fail' => 'es-The attempt to get a partial refund failed with order: :rfid.',
         'pass_change' => 'es-The password was changed successfully.',
         'pass_change_for' => 'es-The password for :name was changed successfully.',
-        'pdu_total' => "El total de PDU no puede exceder la duración (en horas).",
+        'pdu_total' => "El total de PDU no puede exceder la duración del evento (en horas).
+                        Si tiene varias sesiones, la cantidad será el total de PDU posibles para el evento.",
         'pdu_tracks' => "En un evento de varias pistas/días, PDUs son para la sesión primera.",
         'receipt_recreated' => 'es-Your receipt was successfully recreated.',
         'reg_success' => 'es-:name was successfully checked into the session.',

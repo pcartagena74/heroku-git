@@ -763,13 +763,6 @@ class RegistrationController extends Controller
         }
 
 // Everything is saved and updated and such, now display the data back for review
-        /*
-        // This is a temporary outgoing message re: Fatal Error when paying
-        request()->session()->flash(
-        'alert-warning',
-        "You may see a 'Fatal Error' message after paying on the next screen.  Your registration is successfully processing.  Email vpfinance@pmimassbay.org for verification and further instructions."
-        );
-         */
         return redirect('/confirm_registration/' . $rf->regID);
     }
 

@@ -447,11 +447,11 @@ $rfp = $rf->person;
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+@php
                     foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -464,11 +464,11 @@ $rfp = $rf->person;
             $('#indName-{{ $i }}').editable({
                 type: 'select',
                 source: [
-<?php
+@php
                     foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -481,11 +481,11 @@ $rfp = $rf->person;
             $('#affiliation-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-<?php
+@php
                     for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -493,11 +493,11 @@ $rfp = $rf->person;
             $('#certifications-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-<?php
+@php
                     foreach ($cert_array as $row) {
                         $string .= "{ value: '" . $row->certification . "' , text: '" . $row->certification . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
@@ -535,11 +535,11 @@ $rfp = $rf->person;
             $("#allergenInfo-{{ $i }}").editable({
                 type: 'checklist',
                 source: [
-<?php
+@php
                     foreach ($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
                     }
-?>
+@endphp
                     {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });

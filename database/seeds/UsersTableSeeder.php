@@ -24,57 +24,69 @@ class UsersTableSeeder extends Seeder
         //     'login'    => 'system_admin@gmail.com',
         // ]);
 
-        $org       = new Org;
-        $org->orgName = 'First Organization';
-        $org->orgPath = '/firstorg';
+        $org = new Org;
+        $org->orgName = 'Efcico Corporation';
+        $org->orgPath = '/efcico';
         $org->eventEmail = 'events@gmail.com';
         $org->orgZone = '-0500';                    // Default timezone of Eastern Standard Time
         $org->save();
 
+        $list = [
+            [
+                'id' => '0',
+                'firstName' => 'No',
+                'lastName' => 'Body',
+                'email' => 'nobody@mcentric.org'
+            ],
+            [
+                'id' => '1',
+                'firstName' => 'System',
+                'lastName' => 'Admin',
+                'email' => 'admin@mcentric.org'
+            ]
+        ];
 
-        $firstName = 'System';
-        $lastName  = 'Admin';
-        $email     = 'system_admin@gmail.com';
+        foreach ($list as $l) {
+            DB::beginTransaction();
+            $p = new Person;
+            $p->personID = $l->id;
+            $p->firstName = $l->firstName;
+            $p->prefName = $l->firstName;
+            $p->lastName = $l->lastName;
+            $p->login = $l->email;
+            $p->defaultOrgID = 0;
+            $p->creatorID = 0;
+            $p->updaterID = 0;
+            $p->save();
 
-        DB::beginTransaction();
-        $p               = new Person;
-        $p->firstName    = $firstName;
-        $p->prefName     = $firstName;
-        $p->lastName     = $lastName;
-        $p->login        = $email;
-        $p->defaultOrgID = 1;
-        $p->creatorID    = 1;
-        $p->updaterID    = 1;
-        $p->save();
+            $op = new OrgPerson;
+            $op->OrgStat0 = 1;
+            $op->personID = $p->personID;
+            $op->orgID = 0;
+            $op->creatorID = 0;
+            $op->updaterID = 0;
+            $op->save();
 
-        $op            = new OrgPerson;
-        $op->OrgStat1  = 1;
-        $op->personID  = $p->personID;
-        $op->orgID     = 1;
-        $op->creatorID = 1;
-        $op->updaterID = 1;
-        $op->save();
-        
-        $p->defaultOrgPersonID = $op->id;
-        $p->save();
+            $p->defaultOrgPersonID = $op->id;
+            $p->save();
 
-        $u           = new User;
-        $u->id       = $p->personID;
-        $u->login    = $email;
-        $u->name     = $email;
-        $u->email    = $email;
-        $u->password = bcrypt('password');
-        $u->save();
+            $u = new User;
+            $u->id = $p->personID;
+            $u->login = $l->email;
+            $u->name = $l->email;
+            $u->email = $l->email;
+            $u->password = bcrypt('password');
+            $u->save();
 
-        $e            = new Email;
-        $e->emailADDR = $email;
-        $e->personID  = $p->personID;
-        $e->isPrimary = 1;
-        $e->creatorID = 1;
-        $e->updaterID = 1;
-        $e->save();
+            $e = new Email;
+            $e->emailADDR = $l->email;
+            $e->personID = $p->personID;
+            $e->isPrimary = 0;
+            $e->creatorID = 0;
+            $e->updaterID = 0;
+            $e->save();
 
-        
-        DB::commit();
+            DB::commit();
+        }
     }
 }
