@@ -57,6 +57,7 @@ class EventAPIController extends Controller
         $org = Org::find($orgID);
         if (null === $org) {
             $message = trans('messages.instructions.no_org');
+
             return view('v1.public_pages.error_display', compact('message'));
         }
 
@@ -80,7 +81,7 @@ class EventAPIController extends Controller
                 ])
                     ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                     ->take(1)->get();
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $events = Event::find(1)
                     ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                     ->get();
@@ -90,10 +91,10 @@ class EventAPIController extends Controller
             // Check to see if $etID is sent as a comma-separated list of etIDs
             if (preg_match('/,/', $etID)) {
                 // change value of $etID to be the list of edIDs if it's a list
-                $etID_array = explode(",", $etID);
+                $etID_array = explode(',', $etID);
                 $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
-                $tag = array_map("et_translate", $tag);
-                $tag = implode(" or ", (array)$tag);
+                $tag = array_map('et_translate', $tag);
+                $tag = implode(' or ', (array) $tag);
 
                 $events = Event::where([
                     ['orgID', $orgID],
@@ -107,9 +108,9 @@ class EventAPIController extends Controller
                     ->get();
             } elseif (null !== $etID) {
                 $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
-                $etID_array = explode(",", $etID);
-                if (Lang::has('messages.event_types' . $tag->etName)) {
-                    $tag->etName = trans_choice('messages.event_types.' . $tag->etName, 1);
+                $etID_array = explode(',', $etID);
+                if (Lang::has('messages.event_types'.$tag->etName)) {
+                    $tag->etName = trans_choice('messages.event_types.'.$tag->etName, 1);
                 }
             } else {
                 // a null etID means all event categories
@@ -118,7 +119,7 @@ class EventAPIController extends Controller
                 $tag = trans('messages.codes.etID99', ['which' => $which]);
             }
 
-            if (!$past) {
+            if (! $past) {
                 if ($etID_array) {
                     $events = Event::where([
                         ['orgID', $orgID],
@@ -173,7 +174,7 @@ class EventAPIController extends Controller
                     ->render();
             $view = trim(preg_replace('/\r\n/', ' ', $view));
 
-            return json_encode(array('status' => 'success', 'html' => $view));
+            return json_encode(['status' => 'success', 'html' => $view]);
         } else {
             return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag', 'past', 'cal', 'admin_props'));
         }
@@ -185,8 +186,7 @@ class EventAPIController extends Controller
      * @param Event $event
      * @return \Illuminate\Http\Response
      */
-    public
-    function edit(Event $event)
+    public function edit(Event $event)
     {
         //
     }
@@ -198,8 +198,7 @@ class EventAPIController extends Controller
      * @param Event $event
      * @return \Illuminate\Http\Response
      */
-    public
-    function update(Request $request, Event $event)
+    public function update(Request $request, Event $event)
     {
         //
     }
@@ -210,8 +209,7 @@ class EventAPIController extends Controller
      * @param Event $event
      * @return \Illuminate\Http\Response
      */
-    public
-    function destroy(Event $event)
+    public function destroy(Event $event)
     {
         //
     }

@@ -11,7 +11,6 @@ class CreateUsersTable extends Migration
      *
      * @return void
      */
-
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
@@ -32,7 +31,6 @@ class CreateUsersTable extends Migration
             $table->timestamp('createDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
-
     }
 
     /**

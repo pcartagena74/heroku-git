@@ -53,10 +53,10 @@ class CommentsControllerOver extends CommentsController
         $comment->setPurifiedContent($request->get('content'));
 
         $comment->ticket_id = $request->get('ticket_id');
-        $comment->user_id   = \Auth::user()->id;
+        $comment->user_id = \Auth::user()->id;
         $comment->save();
 
-        $ticket             = Models\Ticket::find($comment->ticket_id);
+        $ticket = Models\Ticket::find($comment->ticket_id);
         $ticket->updated_at = $comment->created_at;
         //added by mufaddal for user / agent badge count
         if ($ticket->user_id != auth()->user()->id) {

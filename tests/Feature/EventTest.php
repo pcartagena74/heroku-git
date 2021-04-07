@@ -5,13 +5,12 @@ namespace Tests\Feature;
 use App\Org;
 use App\User;
 use Carbon\Carbon;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class EventTest extends TestCase
 {
-
     use WithFaker;
 
     protected $event_attributes;
@@ -91,7 +90,7 @@ class EventTest extends TestCase
         $session = $event->main_session()->create(factory('App\EventSession')->raw([
             'eventID' => $event->eventID,
             'start' => $event->eventStartDate,
-            'end' => $event->eventEndDate
+            'end' => $event->eventEndDate,
         ]));
 
         $event->mainSession = $session->sessionID;
@@ -103,12 +102,13 @@ class EventTest extends TestCase
 
         $this->assertDatabaseHas('event-sessions', [
             'eventID' => $event->eventID,
-            'sessionID' => $event->mainSession
+            'sessionID' => $event->mainSession,
         ]);
 
         $this->assertDatabaseHas('event-tickets', [
-            'eventID' => $event->eventID
+            'eventID' => $event->eventID,
         ]);
+
         return $event;
         // $response->assertStatus(200);
     }
@@ -117,7 +117,6 @@ class EventTest extends TestCase
      * @test - Ticket Creation Test
      *
      * @depends an_event_can_be_created
-     *
      */
 
     /*

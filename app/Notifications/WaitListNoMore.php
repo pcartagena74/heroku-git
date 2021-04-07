@@ -2,13 +2,13 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use App\Registration;
 use App\Event;
 use App\Org;
+use App\Registration;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class WaitListNoMore extends Notification implements ShouldQueue
 {
@@ -46,8 +46,8 @@ class WaitListNoMore extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $event  = Event::find($this->reg->eventID);
-        $org    = Org::find($event->orgID);
+        $event = Event::find($this->reg->eventID);
+        $org = Org::find($event->orgID);
 
         return (new MailMessage)
             ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))

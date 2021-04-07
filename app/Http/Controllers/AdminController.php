@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\AdminProp;
 use App\AdminPropGroup;
 use App\Email;
 use App\Notifications\NewUserAcct;
 use App\Org;
+use App\OrgAdminProp;
 use App\OrgPerson;
 use App\Permission;
 use App\PermissionRole;
@@ -15,10 +17,8 @@ use App\User;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash as Hash;
-use Validator;
-use App\OrgAdminProp;
-use App\AdminProp;
 use Response;
+use Validator;
 
 class AdminController extends Controller
 {
@@ -30,6 +30,7 @@ class AdminController extends Controller
             if (auth()) {
                 $this->currentPerson = Person::find(auth()->user()->id);
             }
+
             return $next($request);
         });
     }
@@ -75,7 +76,6 @@ class AdminController extends Controller
      */
     public function create()
     {
-
     }
 
     /**
@@ -122,14 +122,13 @@ class AdminController extends Controller
      */
     public function update(Request $request)
     {
-
         $name = request()->input('name');
         $value = request()->input('value');
         $orgID = $this->currentPerson->defaultOrgID;
 
         $prop = AdminProp::where('name', $name)->firstOrFail();
         $orgProp = OrgAdminProp::updateOrCreate(
-            ['propID' => $prop->id, 'orgID' => $orgID, ],
+            ['propID' => $prop->id, 'orgID' => $orgID],
             ['value' => $value]
         );
 

@@ -78,15 +78,15 @@ class ReadChunk implements ShouldQueue
      */
     public function __construct(WithChunkReading $import, IReader $reader, TemporaryFile $temporaryFile, string $sheetName, $sheetImport, int $startRow, int $chunkSize)
     {
-        $this->import        = $import;
-        $this->reader        = $reader;
+        $this->import = $import;
+        $this->reader = $reader;
         $this->temporaryFile = $temporaryFile;
-        $this->sheetName     = $sheetName;
-        $this->sheetImport   = $sheetImport;
-        $this->startRow      = $startRow;
-        $this->chunkSize     = $chunkSize;
-        $this->timeout       = $import->timeout ?? null;
-        $this->tries         = $import->tries ?? null;
+        $this->sheetName = $sheetName;
+        $this->sheetImport = $sheetImport;
+        $this->startRow = $startRow;
+        $this->chunkSize = $chunkSize;
+        $this->timeout = $import->timeout ?? null;
+        $this->tries = $import->tries ?? null;
     }
 
     /**

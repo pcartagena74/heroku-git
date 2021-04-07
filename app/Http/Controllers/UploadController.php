@@ -49,7 +49,7 @@ class UploadController extends Controller
         // displays the data upload form
 
         $today = Carbon::now();
-        $user  = Person::find(auth()->user()->id);
+        $user = Person::find(auth()->user()->id);
 
         $events = Event::where([
             ['orgID', '=', $user->defaultOrgID],
@@ -88,11 +88,11 @@ class UploadController extends Controller
     {
         // responds to POST to /blah and creates, adds, stores the event
 
-        $this->counter       = 0;
+        $this->counter = 0;
         $this->currentPerson = Person::find(auth()->user()->id);
-        $what                = request()->input('data_type');
-        $filename            = $_FILES['filename']['tmp_name'];
-        $validate            = Validator::make(
+        $what = request()->input('data_type');
+        $filename = $_FILES['filename']['tmp_name'];
+        $validate = Validator::make(
             [
                 'data_type' => $request->input('data_type'),
                 'filename'  => $request->file('filename'),
@@ -112,12 +112,12 @@ class UploadController extends Controller
             return Redirect::back()->withErrors($validate->errors());
         }
 
-        $file       = $request->file('filename');
+        $file = $request->file('filename');
         $f_ori_name = $file->getClientOriginalName();
-        $extension  = $file->getClientOriginalExtension();
-        $file_name  = Str::random(40) . '.' . $extension;
-        $tmp_path   = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
-        $path       = Storage::disk('local')->path($file_name);
+        $extension = $file->getClientOriginalExtension();
+        $file_name = Str::random(40).'.'.$extension;
+        $tmp_path = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
+        $path = Storage::disk('local')->path($file_name);
         // dd(storage_path($file_name));
         $eventID = request()->input('eventID');
 
@@ -129,7 +129,6 @@ class UploadController extends Controller
         switch ($what) {
             case 'mbrdata':
                 try {
-
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
                     // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
                     // $import = new MembersImport($currentPerson);
@@ -144,9 +143,9 @@ class UploadController extends Controller
                     //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
                     //     ->onConnection('database')
                     //     ->onQueue('default');
-                    $import_detail            = new ImportDetail();
+                    $import_detail = new ImportDetail();
                     $import_detail->file_name = $f_ori_name;
-                    $import_detail->user_id   = $currentPerson->personID;
+                    $import_detail->user_id = $currentPerson->personID;
                     $import_detail->save();
                     $var = (new MembersImport($currentPerson, $import_detail))->queue($path)
                         ->chain([
@@ -156,7 +155,6 @@ class UploadController extends Controller
                         ->onQueue('default');
                     sendGetToWakeUpDyno();
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
-
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                     // $failures = $e->failures();
                     //not using this any more
@@ -179,21 +177,21 @@ class UploadController extends Controller
                     $results = $reader->get();
 
                     $eventID = request()->input('eventID');
-                    $tktID   = Ticket::where('eventID', '=', $eventID)->first();
+                    $tktID = Ticket::where('eventID', '=', $eventID)->first();
                     if ($tktID === null) {
-                        $e                      = Event::find($eventID);
-                        $t                      = new Ticket;
-                        $t->eventID             = $eventID;
-                        $t->ticketLabel         = 'Default Ticket';
+                        $e = Event::find($eventID);
+                        $t = new Ticket;
+                        $t->eventID = $eventID;
+                        $t->ticketLabel = 'Default Ticket';
                         $t->availabilityEndDate = $e->eventStartDate;
-                        $t->creatorID           = $this->currentPerson->personID;
+                        $t->creatorID = $this->currentPerson->personID;
                         $t->save();
                         $tktID = $t->ticketID;
                     } else {
                         $tktID = $tktID->ticketID;
                     }
                     $orgID = $this->currentPerson->defaultOrgID;
-                    $rows  = $results->toArray();
+                    $rows = $results->toArray();
 
                     foreach ($rows as $row) {
                         $this->counter++;
@@ -220,37 +218,37 @@ class UploadController extends Controller
                                 case preg_match('/salutation|prefix/i', $k):
                                     $prefix = trim(substr($row[$k], 0, 5));
                                     break;
-                                case (preg_match('/^first.name$/i', $k)):
+                                case preg_match('/^first.name$/i', $k):
                                     $first = ucwords($row[$k]);
                                     break;
-                                case (preg_match('/last.name/i', $k)):
+                                case preg_match('/last.name/i', $k):
                                     $last = ucwords($row[$k]);
                                     break;
-                                case (preg_match('/suffix/i', $k)):
+                                case preg_match('/suffix/i', $k):
                                     $suffix = trim(substr($row[$k], 0, 9));
                                     break;
-                                case (preg_match('/email/i', $k)):
+                                case preg_match('/email/i', $k):
                                     $email = $row[$k];
                                     break;
-                                case (preg_match('/^ticket$/i', $k)):
+                                case preg_match('/^ticket$/i', $k):
                                     $tkt = $row[$k];
                                     break;
-                                case (preg_match('/seat/i', $k)):
+                                case preg_match('/seat/i', $k):
                                     $seat = $row[$k];
                                     break;
-                                case (preg_match('/registered.on/i', $k)):
+                                case preg_match('/registered.on/i', $k):
                                     $regDate = $row[$k];
                                     break;
-                                case (preg_match('/registered.by/i', $k)):
+                                case preg_match('/registered.by/i', $k):
                                     $regBy = $row[$k];
                                     break;
-                                case (preg_match('/^payment$/i', $k)):
+                                case preg_match('/^payment$/i', $k):
                                     $pmtType = $row[$k];
                                     break;
-                                case (preg_match('/confirmation.co/i', $k)):
+                                case preg_match('/confirmation.co/i', $k):
                                     $confCode = $row[$k];
                                     break;
-                                case (preg_match('/payment.rec/i', $k)):
+                                case preg_match('/payment.rec/i', $k):
                                     $pmtRecd = $row[$k];
                                     if (preg_match('/[no|0]/i', $pmtRecd)) {
                                         $pmtRecd = 0;
@@ -258,48 +256,48 @@ class UploadController extends Controller
                                         $pmtRecd = 1;
                                     }
                                     break;
-                                case (preg_match('/^status$/i', $k)):
+                                case preg_match('/^status$/i', $k):
                                     $status = $row[$k];
                                     break;
-                                case (preg_match('/cancelled.on/i', $k)):
+                                case preg_match('/cancelled.on/i', $k):
                                     $cancelDate = $row[$k];
                                     break;
-                                case (preg_match('/^cost$/i', $k)):
+                                case preg_match('/^cost$/i', $k):
                                     $cost = $row[$k];
                                     break;
-                                case (preg_match('/cc.charge/i', $k)):
+                                case preg_match('/cc.charge/i', $k):
                                     $ccFee = $row[$k];
                                     break;
-                                case (preg_match('/handling/i', $k)):
+                                case preg_match('/handling/i', $k):
                                     $handleFee = $row[$k];
                                     break;
-                                case (preg_match('/your.amount/i', $k)):
+                                case preg_match('/your.amount/i', $k):
                                     $orgAmt = $row[$k];
                                     break;
-                                case (preg_match('/disc.code/i', $k)):
+                                case preg_match('/disc.code/i', $k):
                                     $disCode = $row[$k];
                                     break;
-                                case (preg_match('/disc.desc/i', $k)):
+                                case preg_match('/disc.desc/i', $k):
                                     $discDesc = $row[$k];
                                     break;
-                                case (preg_match('/disc.amount/i', $k)):
+                                case preg_match('/disc.amount/i', $k):
                                     $discAmt = $row[$k];
                                     break;
-                                case (preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k)):
+                                case preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k):
                                     $pmiID = $row[$k];
-                                    if (!is_numeric($pmiID)) {
+                                    if (! is_numeric($pmiID)) {
                                         $pmiID = null;
                                     } else {
                                         $pmiID = number_format($pmiID, 0, '', '');
                                     }
                                     break;
-                                case (preg_match('/preferred.first/i', $k)):
+                                case preg_match('/preferred.first/i', $k):
                                     $prefName = $row[$k];
                                     break;
-                                case (preg_match('/topic/i', $k)):
+                                case preg_match('/topic/i', $k):
                                     $topics = $row[$k];
                                     break;
-                                case (preg_match('/(pmp|certification)/i', $k)):
+                                case preg_match('/(pmp|certification)/i', $k):
                                     $hasPMP = $row[$k];
                                     if (preg_match('/Yes/i', $hasPMP)) {
                                         $hasPMP = 1;
@@ -307,7 +305,7 @@ class UploadController extends Controller
                                         $hasPMP = 0;
                                     }
                                     break;
-                                case (preg_match('/first.time/i', $k)):
+                                case preg_match('/first.time/i', $k):
                                     $firstEvent = $row[$k];
                                     if ($firstEvent !== null) {
                                         $firstEvent = 1;
@@ -318,13 +316,13 @@ class UploadController extends Controller
                                         $firstEvent = 0;
                                     }
                                     break;
-                                case (preg_match('/city.and.state/i', $k)):
+                                case preg_match('/city.and.state/i', $k):
                                     $commute = $row[$k];
                                     break;
-                                case (preg_match('/company.name/i', $k)):
+                                case preg_match('/company.name/i', $k):
                                     $coName = $row[$k];
                                     break;
-                                case (preg_match('/authorize/i', $k)):
+                                case preg_match('/authorize/i', $k):
                                     $canPDU = $row[$k];
                                     if ($canPDU === null) {
                                         $canPDU = 0;
@@ -335,16 +333,16 @@ class UploadController extends Controller
                                         $canPDU = 0;
                                     }
                                     break;
-                                case (preg_match('/[question(s)*|challenges]/i', $k)):
+                                case preg_match('/[question(s)*|challenges]/i', $k):
                                     $questions = $row[$k];
                                     break;
-                                case (preg_match('/(allergy)|(dietary)/i', $k)):
+                                case preg_match('/(allergy)|(dietary)/i', $k):
                                     $allergy = $row[$k];
                                     break;
-                                case (preg_match('/industry/i', $k)):
+                                case preg_match('/industry/i', $k):
                                     $indName = $row[$k];
                                     break;
-                                case (preg_grep('/[(networking)|(registration.list)|(roster)]/i', $k)):
+                                case preg_grep('/[(networking)|(registration.list)|(roster)]/i', $k):
                                     $canNtwk = $row[$k];
                                     if ($canNtwk === null) {
                                         $canNtwk = 0;
@@ -355,40 +353,40 @@ class UploadController extends Controller
                                         $canNtwk = 0;
                                     }
                                     break;
-                                case (preg_match('/special|wheel/i', $k)):
+                                case preg_match('/special|wheel/i', $k):
                                     $specialNeeds = $row[$k];
                                     break;
-                                case (preg_match('/hear/i', $k)):
+                                case preg_match('/hear/i', $k):
                                     $hear = $row[$k];
                                     break;
-                                case (preg_match('/affiliation/i', $k)):
+                                case preg_match('/affiliation/i', $k):
                                     $affiliation = $row[$k];
                                     break;
-                                case (preg_match('/experience/i', $k)):
+                                case preg_match('/experience/i', $k):
                                     $experience = $row[$k];
                                     break;
-                                case (preg_match('/1_Friday$/i', $k)):
+                                case preg_match('/1_Friday$/i', $k):
                                     $f1 = $row[$k];
                                     //dd($f1);
                                     break;
-                                case (preg_match('/1_Saturday$/i', $k)):
+                                case preg_match('/1_Saturday$/i', $k):
                                     $s1 = $row[$k];
                                     break;
-                                case (preg_match('/2_Friday$/i', $k)):
+                                case preg_match('/2_Friday$/i', $k):
                                     $f2 = $row[$k];
                                     break;
-                                case (preg_match('/2_Saturday$/i', $k)):
+                                case preg_match('/2_Saturday$/i', $k):
                                     $s2 = $row[$k];
                                     break;
-                                case (preg_match('/3_Friday$/i', $k)):
+                                case preg_match('/3_Friday$/i', $k):
                                     $f3 = $row[$k];
                                     break;
-                                case (preg_match('/3_Saturday$/i', $k)):
+                                case preg_match('/3_Saturday$/i', $k):
                                     $s3 = $row[$k];
                                     break;
 
                                 default:
-                                    echo ("Encountered an unknown column: '" . $k . "'<br>");
+                                    echo "Encountered an unknown column: '".$k."'<br>";
                                     break;
                             }
                         }
@@ -454,52 +452,52 @@ class UploadController extends Controller
                         }
                          */
 
-                        if (!isset($canNtwk)) {
+                        if (! isset($canNtwk)) {
                             $canNtwk = 0;
                         }
-                        if (!isset($allergy)) {
+                        if (! isset($allergy)) {
                             $allergy = 0;
                         }
-                        if (!isset($pmiID)) {
+                        if (! isset($pmiID)) {
                             $pmiID = null;
                         }
-                        if (!isset($canPDU)) {
+                        if (! isset($canPDU)) {
                             $canPDU = 0;
                         }
-                        if (!isset($firstEvent)) {
+                        if (! isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (!isset($firstEvent)) {
+                        if (! isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (!isset($pmtRecd)) {
+                        if (! isset($pmtRecd)) {
                             $pmtRecd = 0;
                         }
-                        if (!isset($specialNeeds)) {
+                        if (! isset($specialNeeds)) {
                             $specialNeeds = null;
                         }
-                        if (!isset($coName)) {
+                        if (! isset($coName)) {
                             $coName = null;
                         }
-                        if (!isset($indName)) {
+                        if (! isset($indName)) {
                             $indName = null;
                         }
-                        if (!isset($hear)) {
+                        if (! isset($hear)) {
                             $hear = null;
                         }
-                        if (!isset($questions)) {
+                        if (! isset($questions)) {
                             $questions = null;
                         }
-                        if (!isset($commute)) {
+                        if (! isset($commute)) {
                             $commute = null;
                         }
-                        if (!isset($topics)) {
+                        if (! isset($topics)) {
                             $topics = null;
                         }
-                        if (!isset($prefName)) {
+                        if (! isset($prefName)) {
                             $prefName = null;
                         }
-                        if (!isset($experience)) {
+                        if (! isset($experience)) {
                             $experience = null;
                         }
                         // foreach cycle through $row's keys() and switch on preg_match
@@ -523,10 +521,10 @@ class UploadController extends Controller
                             $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
                             if ($op !== null) {
                                 // record of PMI member found in DB and matches provided PMI ID
-                                $create_user     = 0;
-                                $p               = Person::find($op->personID);
+                                $create_user = 0;
+                                $p = Person::find($op->personID);
                                 $p->defaultOrgID = $orgID;
-                                $p->updaterID    = $this->currentPerson->personID;
+                                $p->updaterID = $this->currentPerson->personID;
                                 if ($experience != null && $p->experience === null) {
                                     $p->experience = $experience;
                                 }
@@ -534,8 +532,8 @@ class UploadController extends Controller
 
                                 $e = Email::where('emailADDR', '=', $email)->withTrashed()->first();
                                 if ($e === null) {
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $email;
                                     $e->creatorID = $this->currentPerson->personID;
                                     $e->save();
@@ -544,10 +542,10 @@ class UploadController extends Controller
                                 $e = Email::where('emailADDR', '=', $email)->withTrashed()->first();
                                 if ($e !== null) {
                                     // record of registrant found, by $email, in DB but no $pmiID provided with reg
-                                    $create_user     = 0;
-                                    $p               = Person::find($e->personID);
+                                    $create_user = 0;
+                                    $p = Person::find($e->personID);
                                     $p->defaultOrgID = $orgID;
-                                    $p->updaterID    = $this->currentPerson->personID;
+                                    $p->updaterID = $this->currentPerson->personID;
                                     if ($experience != null && $p->experience === null) {
                                         $p->experience = $experience;
                                     }
@@ -555,25 +553,25 @@ class UploadController extends Controller
 
                                     if ($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                         // creating a staging record instead of merging person records just in case
-                                        $ps               = new PersonStaging;
-                                        $ps->personID     = $p->personID;
-                                        $ps->prefix       = $prefix;
-                                        $ps->firstName    = $first;
-                                        $ps->lastName     = $last;
-                                        $ps->suffix       = $suffix;
+                                        $ps = new PersonStaging;
+                                        $ps->personID = $p->personID;
+                                        $ps->prefix = $prefix;
+                                        $ps->firstName = $first;
+                                        $ps->lastName = $last;
+                                        $ps->suffix = $suffix;
                                         $ps->defaultOrgID = $orgID;
-                                        $ps->prefName     = $prefName;
-                                        $ps->login        = $email;
-                                        $ps->compName     = $coName;
-                                        $ps->indName      = $indName;
-                                        $ps->experience   = $experience;
+                                        $ps->prefName = $prefName;
+                                        $ps->login = $email;
+                                        $ps->compName = $coName;
+                                        $ps->indName = $indName;
+                                        $ps->experience = $experience;
                                         if (isset($affiliation)) {
                                             $ps->affiliation = $affiliation;
                                         } else {
                                             $ps->affiliation = 'MassBay';
                                         }
                                         $ps->allergenInfo = $allergy;
-                                        $ps->creatorID    = $this->currentPerson->personID;
+                                        $ps->creatorID = $this->currentPerson->personID;
                                         $ps->save();
                                     }
                                     $op = OrgPerson::where([
@@ -582,54 +580,54 @@ class UploadController extends Controller
                                     ])->first();
                                     // If this Person didn't have an org-person record for this orgID
                                     if ($op === null) {
-                                        $op            = new OrgPerson;
-                                        $op->personID  = $p->personID;
-                                        $op->orgID     = $orgID;
-                                        $op->OrgStat1  = $pmiID;
+                                        $op = new OrgPerson;
+                                        $op->personID = $p->personID;
+                                        $op->orgID = $orgID;
+                                        $op->OrgStat1 = $pmiID;
                                         $op->creatorID = $this->currentPerson->personID;
                                         $op->save();
                                     } else {
                                         // update PMI ID if one doesn't already exist
                                         if ($op->OrgStat1 === null) {
-                                            $op->OrgStat1  = $pmiID;
+                                            $op->OrgStat1 = $pmiID;
                                             $op->updaterID = $this->currentPerson->personID;
                                             $op->save();
                                         }
                                     }
                                 } else {
                                     // Didn't find registrant by provided PMI ID or email address
-                                    $create_user     = 1;
-                                    $p               = new Person;
-                                    $p->prefix       = $prefix;
-                                    $p->firstName    = $first;
-                                    $p->lastName     = $last;
-                                    $p->suffix       = $suffix;
+                                    $create_user = 1;
+                                    $p = new Person;
+                                    $p->prefix = $prefix;
+                                    $p->firstName = $first;
+                                    $p->lastName = $last;
+                                    $p->suffix = $suffix;
                                     $p->defaultOrgID = $orgID;
-                                    $p->prefName     = $prefName;
-                                    $p->login        = $email;
-                                    $p->compName     = $coName;
-                                    $p->indName      = $indName;
+                                    $p->prefName = $prefName;
+                                    $p->login = $email;
+                                    $p->compName = $coName;
+                                    $p->indName = $indName;
                                     if (isset($affiliation)) {
                                         $p->affiliation = $affiliation;
                                     } else {
                                         $p->affiliation = 'PMI MassBay';
                                     }
                                     $p->allergenInfo = $allergy;
-                                    $p->creatorID    = $this->currentPerson->personID;
+                                    $p->creatorID = $this->currentPerson->personID;
                                     if ($experience != null) {
                                         $p->experience = $experience;
                                     }
                                     $p->save();
 
-                                    $op            = new OrgPerson;
-                                    $op->personID  = $p->personID;
-                                    $op->orgID     = $orgID;
-                                    $op->OrgStat1  = $pmiID;
+                                    $op = new OrgPerson;
+                                    $op->personID = $p->personID;
+                                    $op->orgID = $orgID;
+                                    $op->OrgStat1 = $pmiID;
                                     $op->creatorID = $this->currentPerson->personID;
                                     $op->save();
 
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $email;
                                     $e->creatorID = $this->currentPerson->personID;
                                     $e->save();
@@ -642,46 +640,46 @@ class UploadController extends Controller
 
                                 if ($e !== null) {
                                     // record of this email in DB
-                                    $create_user     = 0;
-                                    $p               = Person::find($e->personID);
+                                    $create_user = 0;
+                                    $p = Person::find($e->personID);
                                     $p->defaultOrgID = $orgID;
-                                    $p->updaterID    = $this->currentPerson->personID;
+                                    $p->updaterID = $this->currentPerson->personID;
                                     $p->save();
 
                                     if ($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                         // firstName, lastName or company name changed; making staging record
-                                        $ps               = new PersonStaging;
-                                        $ps->personID     = $p->personID;
-                                        $ps->prefix       = $prefix;
-                                        $ps->firstName    = $first;
-                                        $ps->lastName     = $last;
-                                        $ps->suffix       = $suffix;
+                                        $ps = new PersonStaging;
+                                        $ps->personID = $p->personID;
+                                        $ps->prefix = $prefix;
+                                        $ps->firstName = $first;
+                                        $ps->lastName = $last;
+                                        $ps->suffix = $suffix;
                                         $ps->defaultOrgID = $orgID;
-                                        $ps->prefName     = $prefName;
-                                        $ps->login        = $email;
-                                        $ps->compName     = $coName;
-                                        $ps->indName      = $indName;
+                                        $ps->prefName = $prefName;
+                                        $ps->login = $email;
+                                        $ps->compName = $coName;
+                                        $ps->indName = $indName;
                                         if (isset($affiliation)) {
                                             $ps->affiliation = $affiliation;
                                         } else {
                                             $ps->affiliation = 'PMI MassBay';
                                         }
                                         $ps->allergenInfo = $allergy;
-                                        $ps->creatorID    = $this->currentPerson->personID;
+                                        $ps->creatorID = $this->currentPerson->personID;
                                         $ps->save();
                                     } else {
-                                        $p->prefix       = $prefix;
-                                        $p->suffix       = $suffix;
+                                        $p->prefix = $prefix;
+                                        $p->suffix = $suffix;
                                         $p->defaultOrgID = $orgID;
-                                        $p->prefName     = $prefName;
-                                        $p->indName      = $indName;
+                                        $p->prefName = $prefName;
+                                        $p->indName = $indName;
                                         if (isset($affiliation)) {
                                             $p->affiliation = $affiliation;
                                         } else {
                                             $p->affiliation = 'PMI MassBay';
                                         }
                                         $p->allergenInfo = $allergy;
-                                        $p->creatorID    = $this->currentPerson->personID;
+                                        $p->creatorID = $this->currentPerson->personID;
                                         $p->save();
                                     }
                                     $op = OrgPerson::where([
@@ -690,42 +688,42 @@ class UploadController extends Controller
                                     ])->first();
                                     if ($op === null) {
                                         // need to create a stub org-person record if one doesn't already exist
-                                        $op            = new OrgPerson;
-                                        $op->personID  = $p->personID;
-                                        $op->orgID     = $orgID;
+                                        $op = new OrgPerson;
+                                        $op->personID = $p->personID;
+                                        $op->orgID = $orgID;
                                         $op->creatorID = $this->currentPerson->personID;
                                         $op->save();
                                     }
                                 } else {
                                     // record of this email not in DB
-                                    $create_user     = 1;
-                                    $p               = new Person;
-                                    $p->prefix       = $prefix;
-                                    $p->firstName    = $first;
-                                    $p->lastName     = $last;
-                                    $p->suffix       = $suffix;
+                                    $create_user = 1;
+                                    $p = new Person;
+                                    $p->prefix = $prefix;
+                                    $p->firstName = $first;
+                                    $p->lastName = $last;
+                                    $p->suffix = $suffix;
                                     $p->defaultOrgID = $orgID;
-                                    $p->prefName     = $prefName;
-                                    $p->login        = $email;
-                                    $p->compName     = $coName;
-                                    $p->indName      = $indName;
+                                    $p->prefName = $prefName;
+                                    $p->login = $email;
+                                    $p->compName = $coName;
+                                    $p->indName = $indName;
                                     if (isset($affiliation)) {
                                         $p->affiliation = $affiliation;
                                     } else {
                                         $p->affiliation = 'PMI MassBay';
                                     }
                                     $p->allergenInfo = $allergy;
-                                    $p->creatorID    = $this->currentPerson->personID;
+                                    $p->creatorID = $this->currentPerson->personID;
                                     $p->save();
 
-                                    $op            = new OrgPerson;
-                                    $op->personID  = $p->personID;
-                                    $op->orgID     = $orgID;
+                                    $op = new OrgPerson;
+                                    $op->personID = $p->personID;
+                                    $op->orgID = $orgID;
                                     $op->creatorID = $this->currentPerson->personID;
                                     $op->save();
 
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $email;
                                     $e->creatorID = $this->currentPerson->personID;
                                     $e->save();
@@ -735,8 +733,8 @@ class UploadController extends Controller
                             }
                         }
                         if ($create_user) {
-                            $u        = new User;
-                            $u->id    = $p->personID;
+                            $u = new User;
+                            $u->id = $p->personID;
                             $u->login = $p->login;
                             $u->email = $p->login;
                             $u->save();
@@ -746,30 +744,30 @@ class UploadController extends Controller
                         if ($eventID == 97) {
                             $tktID = $ticketID;
                         }
-                        $r                   = new Registration;
-                        $r->eventID          = $eventID;
-                        $r->ticketID         = $tktID;
-                        $r->personID         = $p->personID;
-                        $r->eventTopics      = $topics;
+                        $r = new Registration;
+                        $r->eventID = $eventID;
+                        $r->ticketID = $tktID;
+                        $r->personID = $p->personID;
+                        $r->eventTopics = $topics;
                         $r->reportedIndustry = $indName;
-                        $r->isFirstEvent     = $firstEvent;
-                        $r->cityState        = $commute;
-                        $r->isAuthPDU        = $canPDU;
-                        $r->eventQuestion    = $questions;
-                        $r->allergenInfo     = $allergy;
-                        $r->canNetwork       = $canNtwk;
-                        $r->specialNeeds     = $specialNeeds;
+                        $r->isFirstEvent = $firstEvent;
+                        $r->cityState = $commute;
+                        $r->isAuthPDU = $canPDU;
+                        $r->eventQuestion = $questions;
+                        $r->allergenInfo = $allergy;
+                        $r->canNetwork = $canNtwk;
+                        $r->specialNeeds = $specialNeeds;
                         if (isset($affiliation)) {
                             $r->affiliation = $affiliation;
                         } else {
                             $r->affiliation = 'PMI MassBay';
                         }
-                        $r->regStatus    = $status;
-                        $r->referalText  = $hear;
+                        $r->regStatus = $status;
+                        $r->referalText = $hear;
                         $r->registeredBy = $regBy;
                         $r->discountCode = $disCode;
-                        $r->origcost     = number_format($cost, 2, '.', '');
-                        $r->subtotal     = number_format($cost, 2, '.', '');
+                        $r->origcost = number_format($cost, 2, '.', '');
+                        $r->subtotal = number_format($cost, 2, '.', '');
                         if (preg_match('/Non/', $tktTxt)) {
                             $r->membership = 'Non-Member';
                         } else {
@@ -778,23 +776,23 @@ class UploadController extends Controller
                         $r->creatorID = $this->currentPerson->personID;
                         $r->save();
 
-                        $rf               = new RegFinance;
-                        $rf->regID        = $r->regID;
-                        $rf->eventID      = $eventID;
-                        $rf->ticketID     = $tktID;
-                        $rf->personID     = $p->personID;
-                        $rf->seats        = $seat;
-                        $rf->cost         = number_format($cost, 2, '.', '');
-                        $rf->ccFee        = number_format($ccFee, 2, '.', '');
-                        $rf->handleFee    = number_format($handleFee, 2, '.', '');
-                        $rf->orgAmt       = number_format($orgAmt, 2, '.', '');
+                        $rf = new RegFinance;
+                        $rf->regID = $r->regID;
+                        $rf->eventID = $eventID;
+                        $rf->ticketID = $tktID;
+                        $rf->personID = $p->personID;
+                        $rf->seats = $seat;
+                        $rf->cost = number_format($cost, 2, '.', '');
+                        $rf->ccFee = number_format($ccFee, 2, '.', '');
+                        $rf->handleFee = number_format($handleFee, 2, '.', '');
+                        $rf->orgAmt = number_format($orgAmt, 2, '.', '');
                         $rf->discountCode = $disCode;
-                        $rf->discountAmt  = number_format($discAmt, 2, '.', '');
-                        $rf->creatorID    = $this->currentPerson->personID;
-                        $rf->pmtType      = $pmtType;
+                        $rf->discountAmt = number_format($discAmt, 2, '.', '');
+                        $rf->creatorID = $this->currentPerson->personID;
+                        $rf->pmtType = $pmtType;
                         $rf->confirmation = $confCode;
-                        $rf->pmtRecd      = $pmtRecd;
-                        $rf->status       = $status;
+                        $rf->pmtRecd = $pmtRecd;
+                        $rf->status = $status;
                         $rf->save();
 
                         if ($eventID == 97) {
@@ -815,27 +813,27 @@ class UploadController extends Controller
                                 $t->save();
                             }
 
-                            foreach (array($fs1, $fs2, $fs3) as $sessID) {
+                            foreach ([$fs1, $fs2, $fs3] as $sessID) {
                                 if ($sessID !== null) {
-                                    $rs            = new RegSession;
-                                    $rs->regID     = $r->regID;
-                                    $rs->eventID   = $eventID;
-                                    $rs->personID  = $p->personID;
+                                    $rs = new RegSession;
+                                    $rs->regID = $r->regID;
+                                    $rs->eventID = $eventID;
+                                    $rs->personID = $p->personID;
                                     $rs->sessionID = $sessID;
-                                    $rs->confDay   = 1;
+                                    $rs->confDay = 1;
                                     $rs->creatorID = auth()->user()->id;
                                     $rs->updaterID = auth()->user()->id;
                                     $rs->save();
                                 }
                             }
-                            foreach (array($ss1, $ss2, $ss3) as $sessID) {
+                            foreach ([$ss1, $ss2, $ss3] as $sessID) {
                                 if ($sessID !== null) {
-                                    $rs            = new RegSession;
-                                    $rs->regID     = $r->regID;
-                                    $rs->eventID   = $eventID;
-                                    $rs->personID  = $p->personID;
+                                    $rs = new RegSession;
+                                    $rs->regID = $r->regID;
+                                    $rs->eventID = $eventID;
+                                    $rs->personID = $p->personID;
                                     $rs->sessionID = $sessID;
-                                    $rs->confDay   = 1;
+                                    $rs->confDay = 1;
                                     $rs->creatorID = auth()->user()->id;
                                     $rs->updaterID = auth()->user()->id;
                                     $rs->save();
@@ -879,11 +877,11 @@ class UploadController extends Controller
     {
         // responds to POST to /blah and creates, adds, stores the event
 
-        $this->counter       = 0;
+        $this->counter = 0;
         $this->currentPerson = Person::find(auth()->user()->id);
-        $what                = request()->input('data_type');
-        $filename            = $_FILES['filename']['tmp_name'];
-        $eventID             = request()->input('eventID');
+        $what = request()->input('data_type');
+        $filename = $_FILES['filename']['tmp_name'];
+        $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == 'Select an event...')) {
             // go back with message
@@ -897,7 +895,7 @@ class UploadController extends Controller
                     $filename = $_FILES['filename']['tmp_name'];
                     Excel::load($filename, function ($reader) {
                         $results = $reader->get();
-                        $orgID   = $this->currentPerson->defaultOrgID;
+                        $orgID = $this->currentPerson->defaultOrgID;
                         foreach ($results as $row) {
                             $process = 1;
                             $this->counter++;
@@ -921,14 +919,14 @@ class UploadController extends Controller
                             } else {
                                 $last = $l;
                             }
-                            $midName  = trim(ucwords($row->middle_name));
-                            $suffix   = trim(ucwords($row->suffix));
-                            $title    = trim(ucwords($row->title));
+                            $midName = trim(ucwords($row->middle_name));
+                            $suffix = trim(ucwords($row->suffix));
+                            $title = trim(ucwords($row->title));
                             $compName = trim(ucwords($row->company));
 
-                            $op     = OrgPerson::where('OrgStat1', '=', (integer) $pmi_id)->first();
-                            $em1    = trim(strtolower($row->primary_email));
-                            $em2    = trim(strtolower($row->alternate_email));
+                            $op = OrgPerson::where('OrgStat1', '=', (int) $pmi_id)->first();
+                            $em1 = trim(strtolower($row->primary_email));
+                            $em2 = trim(strtolower($row->alternate_email));
                             $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->first();
                             if ($emchk1 !== null) {
                                 $chk1 = $emchk1->emailADDR;
@@ -950,50 +948,50 @@ class UploadController extends Controller
                             if ($op === null && $emchk1 === null && $emchk2 === null && $pchk === null) {
                                 // PMI ID, first & last names, and emails are not found so person is likely completely new; create all records
 
-                                $p               = new Person;
-                                $u               = new User;
-                                $p->prefix       = $prefix;
-                                $p->firstName    = $first;
-                                $p->prefName     = $first;
-                                $p->midName      = $midName;
-                                $p->lastName     = $last;
-                                $p->suffix       = $suffix;
-                                $p->title        = $title;
-                                $p->compName     = $compName;
-                                $p->creatorID    = auth()->user()->id;
+                                $p = new Person;
+                                $u = new User;
+                                $p->prefix = $prefix;
+                                $p->firstName = $first;
+                                $p->prefName = $first;
+                                $p->midName = $midName;
+                                $p->lastName = $last;
+                                $p->suffix = $suffix;
+                                $p->title = $title;
+                                $p->compName = $compName;
+                                $p->creatorID = auth()->user()->id;
                                 $p->defaultOrgID = $this->currentPerson->defaultOrgID;
-                                $process         = 0;
+                                $process = 0;
 
                                 // If email1 is not null or blank, use it as primary to login, etc.
-                                if ($em1 !== null && $em1 != "" && $em1 != " ") {
+                                if ($em1 !== null && $em1 != '' && $em1 != ' ') {
                                     $p->login = $em1;
                                     $p->save();
-                                    $u->id    = $p->personID;
+                                    $u->id = $p->personID;
                                     $u->login = $em1;
-                                    $u->name  = $em1;
+                                    $u->name = $em1;
                                     $u->email = $em1;
                                     $u->save();
 
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $em1;
                                     $e->isPrimary = 1;
                                     $e->creatorID = auth()->user()->id;
                                     $e->updaterID = auth()->user()->id;
                                     $e->save();
 
-                                    // Otherwise, try with email #2
+                                // Otherwise, try with email #2
                                 } elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
                                     $p->login = $em2;
                                     $p->save();
-                                    $u->id    = $p->personID;
+                                    $u->id = $p->personID;
                                     $u->login = $em2;
-                                    $u->name  = $em2;
+                                    $u->name = $em2;
                                     $u->email = $em2;
                                     $u->save();
 
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $em2;
                                     $e->isPrimary = 1;
                                     $e->creatorID = auth()->user()->id;
@@ -1010,22 +1008,22 @@ class UploadController extends Controller
                                     break;
                                 }
 
-                                $newOP            = new OrgPerson;
-                                $newOP->orgID     = $p->defaultOrgID;
-                                $newOP->personID  = $p->personID;
-                                $newOP->OrgStat1  = (integer) $row->pmi_id;
-                                $newOP->OrgStat2  = trim(ucwords($row->chapter_member_class));
-                                $newOP->RelDate1  = Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
-                                $newOP->RelDate2  = Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
-                                $newOP->RelDate3  = Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
-                                $newOP->RelDate4  = Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
+                                $newOP = new OrgPerson;
+                                $newOP->orgID = $p->defaultOrgID;
+                                $newOP->personID = $p->personID;
+                                $newOP->OrgStat1 = (int) $row->pmi_id;
+                                $newOP->OrgStat2 = trim(ucwords($row->chapter_member_class));
+                                $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
+                                $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
+                                $newOP->RelDate3 = Carbon::createFromFormat('d/m/Y', $row->pmi_expiration)->toDateTimeString();
+                                $newOP->RelDate4 = Carbon::createFromFormat('d/m/Y', $row->chapter_expiration)->toDateTimeString();
                                 $newOP->creatorID = auth()->user()->id;
                                 $newOP->save();
 
                                 // If email 1 existed and was used as primary but email 2 was also provided, add it.
-                                if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != "" && $em2 != " " && $em2 != $chk2) {
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                if ($em1 !== null && $em2 !== null && $em2 != $em1 && $em2 != '' && $em2 != ' ' && $em2 != $chk2) {
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $em2;
                                     $e->creatorID = auth()->user()->id;
                                     $e->updaterID = auth()->user()->id;
@@ -1037,7 +1035,7 @@ class UploadController extends Controller
                                 }
                             } elseif ($op !== null) {
                                 // There was an org-person record (found by $OrgStat1 == PMI ID)
-                                $newOP           = $op;
+                                $newOP = $op;
                                 $newOP->OrgStat2 = trim(ucwords($row->chapter_member_class));
                                 if (isset($row->pmi_join_date)) {
                                     $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
@@ -1055,18 +1053,18 @@ class UploadController extends Controller
                                 $newOP->save();
 
                                 $p = Person::find($newOP->personID);
-                                if ($em1 !== null && $em1 != "" && $em1 != " " && $em1 != $chk1) {
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                if ($em1 !== null && $em1 != '' && $em1 != ' ' && $em1 != $chk1) {
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $em1;
                                     $e->isPrimary = 1;
                                     $e->creatorID = auth()->user()->id;
                                     $e->updaterID = auth()->user()->id;
                                     $e->save();
                                 }
-                                if ($em2 !== null && $em2 != "" && $em2 != " " && $em2 != $chk2 && $em2 != $em1) {
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                if ($em2 !== null && $em2 != '' && $em2 != ' ' && $em2 != $chk2 && $em2 != $em1) {
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $em2;
                                     $e->isPrimary = 1;
                                     $e->creatorID = auth()->user()->id;
@@ -1075,14 +1073,14 @@ class UploadController extends Controller
                                 }
                             } elseif ($emchk1 !== null && $em1 !== null && $em1 != '' && $em1 != ' ') {
                                 // email1 was found in the database
-                                $p  = Person::find($emchk1->personID);
+                                $p = Person::find($emchk1->personID);
                                 $op = OrgPerson::where([
                                     ['personID', $p->personID],
                                     ['orgID', $p->defaultOrgID],
                                 ])->first();
                             } elseif ($emchk2 !== null && $em2 !== null && $em2 != '' && $em2 != ' ') {
                                 // email2 was found in the database
-                                $p  = Person::find($emchk2->personID);
+                                $p = Person::find($emchk2->personID);
                                 $op = OrgPerson::where([
                                     ['personID', $p->personID],
                                     ['orgID', $p->defaultOrgID],
@@ -1090,15 +1088,15 @@ class UploadController extends Controller
                             }
 
                             if ($process) {
-                                $p->prefix       = $prefix;
-                                $p->firstName    = $first;
-                                $p->prefName     = $first;
-                                $p->midName      = $midName;
-                                $p->lastName     = $last;
-                                $p->suffix       = $suffix;
-                                $p->title        = $title;
-                                $p->compName     = $compName;
-                                $p->updaterID    = auth()->user()->id;
+                                $p->prefix = $prefix;
+                                $p->firstName = $first;
+                                $p->prefName = $first;
+                                $p->midName = $midName;
+                                $p->lastName = $last;
+                                $p->suffix = $suffix;
+                                $p->title = $title;
+                                $p->compName = $compName;
+                                $p->updaterID = auth()->user()->id;
                                 $p->defaultOrgID = $this->currentPerson->defaultOrgID;
                                 $p->save();
                             }
@@ -1106,20 +1104,20 @@ class UploadController extends Controller
                             // Add the person-specific records
 
                             $addr = Address::where('addr1', '=', trim(ucwords($row->preferred_address)))->get();
-                            if ($addr === null && $row->preferred_address !== null && $row->preferred_address != "" && $row->preferred_address != " ") {
-                                $addr           = new Address;
+                            if ($addr === null && $row->preferred_address !== null && $row->preferred_address != '' && $row->preferred_address != ' ') {
+                                $addr = new Address;
                                 $addr->personID = $p->personID;
                                 $addr->addrTYPE = trim(ucwords($row->preferred_address_type));
-                                $addr->addr1    = trim(ucwords($row->preferred_address));
-                                $addr->city     = trim(ucwords($row->city));
-                                $addr->state    = trim(ucwords($row->state));
-                                $z              = (integer) trim($row->zip);
+                                $addr->addr1 = trim(ucwords($row->preferred_address));
+                                $addr->city = trim(ucwords($row->city));
+                                $addr->state = trim(ucwords($row->state));
+                                $z = (int) trim($row->zip);
                                 if (strlen($z) == 4) {
-                                    $z = "0" . $z;
+                                    $z = '0'.$z;
                                 } elseif (strlen($z) == 8) {
                                     $r2 = substr($z, -4);
                                     $l2 = substr($z, 4);
-                                    $z  = "0" . $l2 . "-" . $r2;
+                                    $z = '0'.$l2.'-'.$r2;
                                 }
                                 $addr->zip = $z;
 
@@ -1139,12 +1137,12 @@ class UploadController extends Controller
                             ])->first();
 
                             if ($row->home_phone !== null && $fone === null) {
-                                $fone              = new Phone;
-                                $fone->personID    = $p->personID;
-                                $fone->phoneNumber = (integer) $row->home_phone;
-                                $fone->phoneType   = 'Home';
-                                $fone->creatorID   = auth()->user()->id;
-                                $fone->updaterID   = auth()->user()->id;
+                                $fone = new Phone;
+                                $fone->personID = $p->personID;
+                                $fone->phoneNumber = (int) $row->home_phone;
+                                $fone->phoneType = 'Home';
+                                $fone->creatorID = auth()->user()->id;
+                                $fone->updaterID = auth()->user()->id;
                                 $fone->save();
                             }
 
@@ -1153,12 +1151,12 @@ class UploadController extends Controller
                             ])->first();
 
                             if ($row->work_phone !== null && $row->work_phone != $row->home_phone && $fone === null) {
-                                $fone              = new Phone;
-                                $fone->personID    = $p->personID;
-                                $fone->phoneNumber = (integer) $row->work_phone;
-                                $fone->phoneType   = 'Work';
-                                $fone->creatorID   = auth()->user()->id;
-                                $fone->updaterID   = auth()->user()->id;
+                                $fone = new Phone;
+                                $fone->personID = $p->personID;
+                                $fone->phoneNumber = (int) $row->work_phone;
+                                $fone->phoneType = 'Work';
+                                $fone->creatorID = auth()->user()->id;
+                                $fone->updaterID = auth()->user()->id;
                                 $fone->save();
                             }
 
@@ -1168,26 +1166,26 @@ class UploadController extends Controller
 
                             if ($row->mobile_phone !== null && $row->mobile_phone != $row->work_phone
                                 && $row->mobile_phone != $row->home_phone && $fone === null) {
-                                $fone              = new Phone;
-                                $fone->personID    = $p->personID;
-                                $fone->phoneNumber = (integer) $row->mobile_phone;
-                                $fone->phoneType   = 'Mobile';
-                                $fone->creatorID   = auth()->user()->id;
-                                $fone->updaterID   = auth()->user()->id;
+                                $fone = new Phone;
+                                $fone->personID = $p->personID;
+                                $fone->phoneNumber = (int) $row->mobile_phone;
+                                $fone->phoneType = 'Mobile';
+                                $fone->creatorID = auth()->user()->id;
+                                $fone->updaterID = auth()->user()->id;
                                 $fone->save();
                             }
 
-                            $ps               = new PersonStaging;
-                            $ps->prefix       = $prefix;
-                            $ps->firstName    = $first;
-                            $ps->midName      = $midName;
-                            $ps->lastName     = $last;
-                            $ps->suffix       = $suffix;
-                            $ps->login        = $p->login;
-                            $ps->title        = $title;
-                            $ps->compName     = $compName;
+                            $ps = new PersonStaging;
+                            $ps->prefix = $prefix;
+                            $ps->firstName = $first;
+                            $ps->midName = $midName;
+                            $ps->lastName = $last;
+                            $ps->suffix = $suffix;
+                            $ps->login = $p->login;
+                            $ps->title = $title;
+                            $ps->compName = $compName;
                             $ps->defaultOrgID = $this->currentPerson->defaultOrgID;
-                            $ps->creatorID    = auth()->user()->id;
+                            $ps->creatorID = auth()->user()->id;
                             $ps->save();
                         }
                     }); // end of Excel chunk
@@ -1213,21 +1211,21 @@ class UploadController extends Controller
                     $results = $reader->get();
 
                     $eventID = request()->input('eventID');
-                    $tktID   = Ticket::where('eventID', '=', $eventID)->first();
+                    $tktID = Ticket::where('eventID', '=', $eventID)->first();
                     if ($tktID === null) {
-                        $e                      = Event::find($eventID);
-                        $t                      = new Ticket;
-                        $t->eventID             = $eventID;
-                        $t->ticketLabel         = 'Default Ticket';
+                        $e = Event::find($eventID);
+                        $t = new Ticket;
+                        $t->eventID = $eventID;
+                        $t->ticketLabel = 'Default Ticket';
                         $t->availabilityEndDate = $e->eventStartDate;
-                        $t->creatorID           = $this->currentPerson->personID;
+                        $t->creatorID = $this->currentPerson->personID;
                         $t->save();
                         $tktID = $t->ticketID;
                     } else {
                         $tktID = $tktID->ticketID;
                     }
                     $orgID = $this->currentPerson->defaultOrgID;
-                    $rows  = $results->toArray();
+                    $rows = $results->toArray();
 
                     foreach ($rows as $row) {
                         $this->counter++;
@@ -1254,37 +1252,37 @@ class UploadController extends Controller
                                 case preg_match('/salutation|prefix/i', $k):
                                     $prefix = trim(substr($row[$k], 0, 5));
                                     break;
-                                case (preg_match('/^first.name$/i', $k)):
+                                case preg_match('/^first.name$/i', $k):
                                     $first = ucwords($row[$k]);
                                     break;
-                                case (preg_match('/last.name/i', $k)):
+                                case preg_match('/last.name/i', $k):
                                     $last = ucwords($row[$k]);
                                     break;
-                                case (preg_match('/suffix/i', $k)):
+                                case preg_match('/suffix/i', $k):
                                     $suffix = trim(substr($row[$k], 0, 9));
                                     break;
-                                case (preg_match('/email/i', $k)):
+                                case preg_match('/email/i', $k):
                                     $email = $row[$k];
                                     break;
-                                case (preg_match('/^ticket$/i', $k)):
+                                case preg_match('/^ticket$/i', $k):
                                     $tkt = $row[$k];
                                     break;
-                                case (preg_match('/seat/i', $k)):
+                                case preg_match('/seat/i', $k):
                                     $seat = $row[$k];
                                     break;
-                                case (preg_match('/registered.on/i', $k)):
+                                case preg_match('/registered.on/i', $k):
                                     $regDate = $row[$k];
                                     break;
-                                case (preg_match('/registered.by/i', $k)):
+                                case preg_match('/registered.by/i', $k):
                                     $regBy = $row[$k];
                                     break;
-                                case (preg_match('/^payment$/i', $k)):
+                                case preg_match('/^payment$/i', $k):
                                     $pmtType = $row[$k];
                                     break;
-                                case (preg_match('/confirmation.co/i', $k)):
+                                case preg_match('/confirmation.co/i', $k):
                                     $confCode = $row[$k];
                                     break;
-                                case (preg_match('/payment.rec/i', $k)):
+                                case preg_match('/payment.rec/i', $k):
                                     $pmtRecd = $row[$k];
                                     if (preg_match('/[no|0]/i', $pmtRecd)) {
                                         $pmtRecd = 0;
@@ -1292,48 +1290,48 @@ class UploadController extends Controller
                                         $pmtRecd = 1;
                                     }
                                     break;
-                                case (preg_match('/^status$/i', $k)):
+                                case preg_match('/^status$/i', $k):
                                     $status = $row[$k];
                                     break;
-                                case (preg_match('/cancelled.on/i', $k)):
+                                case preg_match('/cancelled.on/i', $k):
                                     $cancelDate = $row[$k];
                                     break;
-                                case (preg_match('/^cost$/i', $k)):
+                                case preg_match('/^cost$/i', $k):
                                     $cost = $row[$k];
                                     break;
-                                case (preg_match('/cc.charge/i', $k)):
+                                case preg_match('/cc.charge/i', $k):
                                     $ccFee = $row[$k];
                                     break;
-                                case (preg_match('/handling/i', $k)):
+                                case preg_match('/handling/i', $k):
                                     $handleFee = $row[$k];
                                     break;
-                                case (preg_match('/your.amount/i', $k)):
+                                case preg_match('/your.amount/i', $k):
                                     $orgAmt = $row[$k];
                                     break;
-                                case (preg_match('/disc.code/i', $k)):
+                                case preg_match('/disc.code/i', $k):
                                     $disCode = $row[$k];
                                     break;
-                                case (preg_match('/disc.desc/i', $k)):
+                                case preg_match('/disc.desc/i', $k):
                                     $discDesc = $row[$k];
                                     break;
-                                case (preg_match('/disc.amount/i', $k)):
+                                case preg_match('/disc.amount/i', $k):
                                     $discAmt = $row[$k];
                                     break;
-                                case (preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k)):
+                                case preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k):
                                     $pmiID = $row[$k];
-                                    if (!is_numeric($pmiID)) {
+                                    if (! is_numeric($pmiID)) {
                                         $pmiID = null;
                                     } else {
                                         $pmiID = number_format($pmiID, 0, '', '');
                                     }
                                     break;
-                                case (preg_match('/preferred.first/i', $k)):
+                                case preg_match('/preferred.first/i', $k):
                                     $prefName = $row[$k];
                                     break;
-                                case (preg_match('/topic/i', $k)):
+                                case preg_match('/topic/i', $k):
                                     $topics = $row[$k];
                                     break;
-                                case (preg_match('/(pmp|certification)/i', $k)):
+                                case preg_match('/(pmp|certification)/i', $k):
                                     $hasPMP = $row[$k];
                                     if (preg_match('/Yes/i', $hasPMP)) {
                                         $hasPMP = 1;
@@ -1341,7 +1339,7 @@ class UploadController extends Controller
                                         $hasPMP = 0;
                                     }
                                     break;
-                                case (preg_match('/first.time/i', $k)):
+                                case preg_match('/first.time/i', $k):
                                     $firstEvent = $row[$k];
                                     if ($firstEvent !== null) {
                                         $firstEvent = 1;
@@ -1352,13 +1350,13 @@ class UploadController extends Controller
                                         $firstEvent = 0;
                                     }
                                     break;
-                                case (preg_match('/city.and.state/i', $k)):
+                                case preg_match('/city.and.state/i', $k):
                                     $commute = $row[$k];
                                     break;
-                                case (preg_match('/company.name/i', $k)):
+                                case preg_match('/company.name/i', $k):
                                     $coName = $row[$k];
                                     break;
-                                case (preg_match('/authorize/i', $k)):
+                                case preg_match('/authorize/i', $k):
                                     $canPDU = $row[$k];
                                     if ($canPDU === null) {
                                         $canPDU = 0;
@@ -1369,16 +1367,16 @@ class UploadController extends Controller
                                         $canPDU = 0;
                                     }
                                     break;
-                                case (preg_match('/[question(s)*|challenges]/i', $k)):
+                                case preg_match('/[question(s)*|challenges]/i', $k):
                                     $questions = $row[$k];
                                     break;
-                                case (preg_match('/(allergy)|(dietary)/i', $k)):
+                                case preg_match('/(allergy)|(dietary)/i', $k):
                                     $allergy = $row[$k];
                                     break;
-                                case (preg_match('/industry/i', $k)):
+                                case preg_match('/industry/i', $k):
                                     $indName = $row[$k];
                                     break;
-                                case (preg_grep('/[(networking)|(registration.list)|(roster)]/i', $k)):
+                                case preg_grep('/[(networking)|(registration.list)|(roster)]/i', $k):
                                     $canNtwk = $row[$k];
                                     if ($canNtwk === null) {
                                         $canNtwk = 0;
@@ -1389,40 +1387,40 @@ class UploadController extends Controller
                                         $canNtwk = 0;
                                     }
                                     break;
-                                case (preg_match('/special|wheel/i', $k)):
+                                case preg_match('/special|wheel/i', $k):
                                     $specialNeeds = $row[$k];
                                     break;
-                                case (preg_match('/hear/i', $k)):
+                                case preg_match('/hear/i', $k):
                                     $hear = $row[$k];
                                     break;
-                                case (preg_match('/affiliation/i', $k)):
+                                case preg_match('/affiliation/i', $k):
                                     $affiliation = $row[$k];
                                     break;
-                                case (preg_match('/experience/i', $k)):
+                                case preg_match('/experience/i', $k):
                                     $experience = $row[$k];
                                     break;
-                                case (preg_match('/1_Friday$/i', $k)):
+                                case preg_match('/1_Friday$/i', $k):
                                     $f1 = $row[$k];
                                     //dd($f1);
                                     break;
-                                case (preg_match('/1_Saturday$/i', $k)):
+                                case preg_match('/1_Saturday$/i', $k):
                                     $s1 = $row[$k];
                                     break;
-                                case (preg_match('/2_Friday$/i', $k)):
+                                case preg_match('/2_Friday$/i', $k):
                                     $f2 = $row[$k];
                                     break;
-                                case (preg_match('/2_Saturday$/i', $k)):
+                                case preg_match('/2_Saturday$/i', $k):
                                     $s2 = $row[$k];
                                     break;
-                                case (preg_match('/3_Friday$/i', $k)):
+                                case preg_match('/3_Friday$/i', $k):
                                     $f3 = $row[$k];
                                     break;
-                                case (preg_match('/3_Saturday$/i', $k)):
+                                case preg_match('/3_Saturday$/i', $k):
                                     $s3 = $row[$k];
                                     break;
 
                                 default:
-                                    echo ("Encountered an unknown column: '" . $k . "'<br>");
+                                    echo "Encountered an unknown column: '".$k."'<br>";
                                     break;
                             }
                         }
@@ -1488,52 +1486,52 @@ class UploadController extends Controller
                         }
                          */
 
-                        if (!isset($canNtwk)) {
+                        if (! isset($canNtwk)) {
                             $canNtwk = 0;
                         }
-                        if (!isset($allergy)) {
+                        if (! isset($allergy)) {
                             $allergy = 0;
                         }
-                        if (!isset($pmiID)) {
+                        if (! isset($pmiID)) {
                             $pmiID = null;
                         }
-                        if (!isset($canPDU)) {
+                        if (! isset($canPDU)) {
                             $canPDU = 0;
                         }
-                        if (!isset($firstEvent)) {
+                        if (! isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (!isset($firstEvent)) {
+                        if (! isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (!isset($pmtRecd)) {
+                        if (! isset($pmtRecd)) {
                             $pmtRecd = 0;
                         }
-                        if (!isset($specialNeeds)) {
+                        if (! isset($specialNeeds)) {
                             $specialNeeds = null;
                         }
-                        if (!isset($coName)) {
+                        if (! isset($coName)) {
                             $coName = null;
                         }
-                        if (!isset($indName)) {
+                        if (! isset($indName)) {
                             $indName = null;
                         }
-                        if (!isset($hear)) {
+                        if (! isset($hear)) {
                             $hear = null;
                         }
-                        if (!isset($questions)) {
+                        if (! isset($questions)) {
                             $questions = null;
                         }
-                        if (!isset($commute)) {
+                        if (! isset($commute)) {
                             $commute = null;
                         }
-                        if (!isset($topics)) {
+                        if (! isset($topics)) {
                             $topics = null;
                         }
-                        if (!isset($prefName)) {
+                        if (! isset($prefName)) {
                             $prefName = null;
                         }
-                        if (!isset($experience)) {
+                        if (! isset($experience)) {
                             $experience = null;
                         }
                         // foreach cycle through $row's keys() and switch on preg_match
@@ -1557,10 +1555,10 @@ class UploadController extends Controller
                             $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
                             if ($op !== null) {
                                 // record of PMI member found in DB and matches provided PMI ID
-                                $create_user     = 0;
-                                $p               = Person::find($op->personID);
+                                $create_user = 0;
+                                $p = Person::find($op->personID);
                                 $p->defaultOrgID = $orgID;
-                                $p->updaterID    = $this->currentPerson->personID;
+                                $p->updaterID = $this->currentPerson->personID;
                                 if ($experience != null && $p->experience === null) {
                                     $p->experience = $experience;
                                 }
@@ -1568,8 +1566,8 @@ class UploadController extends Controller
 
                                 $e = Email::where('emailADDR', '=', $email)->withTrashed()->first();
                                 if ($e === null) {
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $email;
                                     $e->creatorID = $this->currentPerson->personID;
                                     $e->save();
@@ -1578,10 +1576,10 @@ class UploadController extends Controller
                                 $e = Email::where('emailADDR', '=', $email)->withTrashed()->first();
                                 if ($e !== null) {
                                     // record of registrant found, by $email, in DB but no $pmiID provided with reg
-                                    $create_user     = 0;
-                                    $p               = Person::find($e->personID);
+                                    $create_user = 0;
+                                    $p = Person::find($e->personID);
                                     $p->defaultOrgID = $orgID;
-                                    $p->updaterID    = $this->currentPerson->personID;
+                                    $p->updaterID = $this->currentPerson->personID;
                                     if ($experience != null && $p->experience === null) {
                                         $p->experience = $experience;
                                     }
@@ -1589,25 +1587,25 @@ class UploadController extends Controller
 
                                     if ($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                         // creating a staging record instead of merging person records just in case
-                                        $ps               = new PersonStaging;
-                                        $ps->personID     = $p->personID;
-                                        $ps->prefix       = $prefix;
-                                        $ps->firstName    = $first;
-                                        $ps->lastName     = $last;
-                                        $ps->suffix       = $suffix;
+                                        $ps = new PersonStaging;
+                                        $ps->personID = $p->personID;
+                                        $ps->prefix = $prefix;
+                                        $ps->firstName = $first;
+                                        $ps->lastName = $last;
+                                        $ps->suffix = $suffix;
                                         $ps->defaultOrgID = $orgID;
-                                        $ps->prefName     = $prefName;
-                                        $ps->login        = $email;
-                                        $ps->compName     = $coName;
-                                        $ps->indName      = $indName;
-                                        $ps->experience   = $experience;
+                                        $ps->prefName = $prefName;
+                                        $ps->login = $email;
+                                        $ps->compName = $coName;
+                                        $ps->indName = $indName;
+                                        $ps->experience = $experience;
                                         if (isset($affiliation)) {
                                             $ps->affiliation = $affiliation;
                                         } else {
                                             $ps->affiliation = 'MassBay';
                                         }
                                         $ps->allergenInfo = $allergy;
-                                        $ps->creatorID    = $this->currentPerson->personID;
+                                        $ps->creatorID = $this->currentPerson->personID;
                                         $ps->save();
                                     }
                                     $op = OrgPerson::where([
@@ -1616,54 +1614,54 @@ class UploadController extends Controller
                                     ])->first();
                                     // If this Person didn't have an org-person record for this orgID
                                     if ($op === null) {
-                                        $op            = new OrgPerson;
-                                        $op->personID  = $p->personID;
-                                        $op->orgID     = $orgID;
-                                        $op->OrgStat1  = $pmiID;
+                                        $op = new OrgPerson;
+                                        $op->personID = $p->personID;
+                                        $op->orgID = $orgID;
+                                        $op->OrgStat1 = $pmiID;
                                         $op->creatorID = $this->currentPerson->personID;
                                         $op->save();
                                     } else {
                                         // update PMI ID if one doesn't already exist
                                         if ($op->OrgStat1 === null) {
-                                            $op->OrgStat1  = $pmiID;
+                                            $op->OrgStat1 = $pmiID;
                                             $op->updaterID = $this->currentPerson->personID;
                                             $op->save();
                                         }
                                     }
                                 } else {
                                     // Didn't find registrant by provided PMI ID or email address
-                                    $create_user     = 1;
-                                    $p               = new Person;
-                                    $p->prefix       = $prefix;
-                                    $p->firstName    = $first;
-                                    $p->lastName     = $last;
-                                    $p->suffix       = $suffix;
+                                    $create_user = 1;
+                                    $p = new Person;
+                                    $p->prefix = $prefix;
+                                    $p->firstName = $first;
+                                    $p->lastName = $last;
+                                    $p->suffix = $suffix;
                                     $p->defaultOrgID = $orgID;
-                                    $p->prefName     = $prefName;
-                                    $p->login        = $email;
-                                    $p->compName     = $coName;
-                                    $p->indName      = $indName;
+                                    $p->prefName = $prefName;
+                                    $p->login = $email;
+                                    $p->compName = $coName;
+                                    $p->indName = $indName;
                                     if (isset($affiliation)) {
                                         $p->affiliation = $affiliation;
                                     } else {
                                         $p->affiliation = 'PMI MassBay';
                                     }
                                     $p->allergenInfo = $allergy;
-                                    $p->creatorID    = $this->currentPerson->personID;
+                                    $p->creatorID = $this->currentPerson->personID;
                                     if ($experience != null) {
                                         $p->experience = $experience;
                                     }
                                     $p->save();
 
-                                    $op            = new OrgPerson;
-                                    $op->personID  = $p->personID;
-                                    $op->orgID     = $orgID;
-                                    $op->OrgStat1  = $pmiID;
+                                    $op = new OrgPerson;
+                                    $op->personID = $p->personID;
+                                    $op->orgID = $orgID;
+                                    $op->OrgStat1 = $pmiID;
                                     $op->creatorID = $this->currentPerson->personID;
                                     $op->save();
 
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $email;
                                     $e->creatorID = $this->currentPerson->personID;
                                     $e->save();
@@ -1676,46 +1674,46 @@ class UploadController extends Controller
 
                                 if ($e !== null) {
                                     // record of this email in DB
-                                    $create_user     = 0;
-                                    $p               = Person::find($e->personID);
+                                    $create_user = 0;
+                                    $p = Person::find($e->personID);
                                     $p->defaultOrgID = $orgID;
-                                    $p->updaterID    = $this->currentPerson->personID;
+                                    $p->updaterID = $this->currentPerson->personID;
                                     $p->save();
 
                                     if ($p->firstName != $first || $p->lastName != $last || $p->compName !== $coName) {
                                         // firstName, lastName or company name changed; making staging record
-                                        $ps               = new PersonStaging;
-                                        $ps->personID     = $p->personID;
-                                        $ps->prefix       = $prefix;
-                                        $ps->firstName    = $first;
-                                        $ps->lastName     = $last;
-                                        $ps->suffix       = $suffix;
+                                        $ps = new PersonStaging;
+                                        $ps->personID = $p->personID;
+                                        $ps->prefix = $prefix;
+                                        $ps->firstName = $first;
+                                        $ps->lastName = $last;
+                                        $ps->suffix = $suffix;
                                         $ps->defaultOrgID = $orgID;
-                                        $ps->prefName     = $prefName;
-                                        $ps->login        = $email;
-                                        $ps->compName     = $coName;
-                                        $ps->indName      = $indName;
+                                        $ps->prefName = $prefName;
+                                        $ps->login = $email;
+                                        $ps->compName = $coName;
+                                        $ps->indName = $indName;
                                         if (isset($affiliation)) {
                                             $ps->affiliation = $affiliation;
                                         } else {
                                             $ps->affiliation = 'PMI MassBay';
                                         }
                                         $ps->allergenInfo = $allergy;
-                                        $ps->creatorID    = $this->currentPerson->personID;
+                                        $ps->creatorID = $this->currentPerson->personID;
                                         $ps->save();
                                     } else {
-                                        $p->prefix       = $prefix;
-                                        $p->suffix       = $suffix;
+                                        $p->prefix = $prefix;
+                                        $p->suffix = $suffix;
                                         $p->defaultOrgID = $orgID;
-                                        $p->prefName     = $prefName;
-                                        $p->indName      = $indName;
+                                        $p->prefName = $prefName;
+                                        $p->indName = $indName;
                                         if (isset($affiliation)) {
                                             $p->affiliation = $affiliation;
                                         } else {
                                             $p->affiliation = 'PMI MassBay';
                                         }
                                         $p->allergenInfo = $allergy;
-                                        $p->creatorID    = $this->currentPerson->personID;
+                                        $p->creatorID = $this->currentPerson->personID;
                                         $p->save();
                                     }
                                     $op = OrgPerson::where([
@@ -1724,42 +1722,42 @@ class UploadController extends Controller
                                     ])->first();
                                     if ($op === null) {
                                         // need to create a stub org-person record if one doesn't already exist
-                                        $op            = new OrgPerson;
-                                        $op->personID  = $p->personID;
-                                        $op->orgID     = $orgID;
+                                        $op = new OrgPerson;
+                                        $op->personID = $p->personID;
+                                        $op->orgID = $orgID;
                                         $op->creatorID = $this->currentPerson->personID;
                                         $op->save();
                                     }
                                 } else {
                                     // record of this email not in DB
-                                    $create_user     = 1;
-                                    $p               = new Person;
-                                    $p->prefix       = $prefix;
-                                    $p->firstName    = $first;
-                                    $p->lastName     = $last;
-                                    $p->suffix       = $suffix;
+                                    $create_user = 1;
+                                    $p = new Person;
+                                    $p->prefix = $prefix;
+                                    $p->firstName = $first;
+                                    $p->lastName = $last;
+                                    $p->suffix = $suffix;
                                     $p->defaultOrgID = $orgID;
-                                    $p->prefName     = $prefName;
-                                    $p->login        = $email;
-                                    $p->compName     = $coName;
-                                    $p->indName      = $indName;
+                                    $p->prefName = $prefName;
+                                    $p->login = $email;
+                                    $p->compName = $coName;
+                                    $p->indName = $indName;
                                     if (isset($affiliation)) {
                                         $p->affiliation = $affiliation;
                                     } else {
                                         $p->affiliation = 'PMI MassBay';
                                     }
                                     $p->allergenInfo = $allergy;
-                                    $p->creatorID    = $this->currentPerson->personID;
+                                    $p->creatorID = $this->currentPerson->personID;
                                     $p->save();
 
-                                    $op            = new OrgPerson;
-                                    $op->personID  = $p->personID;
-                                    $op->orgID     = $orgID;
+                                    $op = new OrgPerson;
+                                    $op->personID = $p->personID;
+                                    $op->orgID = $orgID;
                                     $op->creatorID = $this->currentPerson->personID;
                                     $op->save();
 
-                                    $e            = new Email;
-                                    $e->personID  = $p->personID;
+                                    $e = new Email;
+                                    $e->personID = $p->personID;
                                     $e->emailADDR = $email;
                                     $e->creatorID = $this->currentPerson->personID;
                                     $e->save();
@@ -1769,8 +1767,8 @@ class UploadController extends Controller
                             }
                         }
                         if ($create_user) {
-                            $u        = new User;
-                            $u->id    = $p->personID;
+                            $u = new User;
+                            $u->id = $p->personID;
                             $u->login = $p->login;
                             $u->email = $p->login;
                             $u->save();
@@ -1780,30 +1778,30 @@ class UploadController extends Controller
                         if ($eventID == 97) {
                             $tktID = $ticketID;
                         }
-                        $r                   = new Registration;
-                        $r->eventID          = $eventID;
-                        $r->ticketID         = $tktID;
-                        $r->personID         = $p->personID;
-                        $r->eventTopics      = $topics;
+                        $r = new Registration;
+                        $r->eventID = $eventID;
+                        $r->ticketID = $tktID;
+                        $r->personID = $p->personID;
+                        $r->eventTopics = $topics;
                         $r->reportedIndustry = $indName;
-                        $r->isFirstEvent     = $firstEvent;
-                        $r->cityState        = $commute;
-                        $r->isAuthPDU        = $canPDU;
-                        $r->eventQuestion    = $questions;
-                        $r->allergenInfo     = $allergy;
-                        $r->canNetwork       = $canNtwk;
-                        $r->specialNeeds     = $specialNeeds;
+                        $r->isFirstEvent = $firstEvent;
+                        $r->cityState = $commute;
+                        $r->isAuthPDU = $canPDU;
+                        $r->eventQuestion = $questions;
+                        $r->allergenInfo = $allergy;
+                        $r->canNetwork = $canNtwk;
+                        $r->specialNeeds = $specialNeeds;
                         if (isset($affiliation)) {
                             $r->affiliation = $affiliation;
                         } else {
                             $r->affiliation = 'PMI MassBay';
                         }
-                        $r->regStatus    = $status;
-                        $r->referalText  = $hear;
+                        $r->regStatus = $status;
+                        $r->referalText = $hear;
                         $r->registeredBy = $regBy;
                         $r->discountCode = $disCode;
-                        $r->origcost     = number_format($cost, 2, '.', '');
-                        $r->subtotal     = number_format($cost, 2, '.', '');
+                        $r->origcost = number_format($cost, 2, '.', '');
+                        $r->subtotal = number_format($cost, 2, '.', '');
                         if (preg_match('/Non/', $tktTxt)) {
                             $r->membership = 'Non-Member';
                         } else {
@@ -1812,23 +1810,23 @@ class UploadController extends Controller
                         $r->creatorID = $this->currentPerson->personID;
                         $r->save();
 
-                        $rf               = new RegFinance;
-                        $rf->regID        = $r->regID;
-                        $rf->eventID      = $eventID;
-                        $rf->ticketID     = $tktID;
-                        $rf->personID     = $p->personID;
-                        $rf->seats        = $seat;
-                        $rf->cost         = number_format($cost, 2, '.', '');
-                        $rf->ccFee        = number_format($ccFee, 2, '.', '');
-                        $rf->handleFee    = number_format($handleFee, 2, '.', '');
-                        $rf->orgAmt       = number_format($orgAmt, 2, '.', '');
+                        $rf = new RegFinance;
+                        $rf->regID = $r->regID;
+                        $rf->eventID = $eventID;
+                        $rf->ticketID = $tktID;
+                        $rf->personID = $p->personID;
+                        $rf->seats = $seat;
+                        $rf->cost = number_format($cost, 2, '.', '');
+                        $rf->ccFee = number_format($ccFee, 2, '.', '');
+                        $rf->handleFee = number_format($handleFee, 2, '.', '');
+                        $rf->orgAmt = number_format($orgAmt, 2, '.', '');
                         $rf->discountCode = $disCode;
-                        $rf->discountAmt  = number_format($discAmt, 2, '.', '');
-                        $rf->creatorID    = $this->currentPerson->personID;
-                        $rf->pmtType      = $pmtType;
+                        $rf->discountAmt = number_format($discAmt, 2, '.', '');
+                        $rf->creatorID = $this->currentPerson->personID;
+                        $rf->pmtType = $pmtType;
                         $rf->confirmation = $confCode;
-                        $rf->pmtRecd      = $pmtRecd;
-                        $rf->status       = $status;
+                        $rf->pmtRecd = $pmtRecd;
+                        $rf->status = $status;
                         $rf->save();
 
                         if ($eventID == 97) {
@@ -1849,27 +1847,27 @@ class UploadController extends Controller
                                 $t->save();
                             }
 
-                            foreach (array($fs1, $fs2, $fs3) as $sessID) {
+                            foreach ([$fs1, $fs2, $fs3] as $sessID) {
                                 if ($sessID !== null) {
-                                    $rs            = new RegSession;
-                                    $rs->regID     = $r->regID;
-                                    $rs->eventID   = $eventID;
-                                    $rs->personID  = $p->personID;
+                                    $rs = new RegSession;
+                                    $rs->regID = $r->regID;
+                                    $rs->eventID = $eventID;
+                                    $rs->personID = $p->personID;
                                     $rs->sessionID = $sessID;
-                                    $rs->confDay   = 1;
+                                    $rs->confDay = 1;
                                     $rs->creatorID = auth()->user()->id;
                                     $rs->updaterID = auth()->user()->id;
                                     $rs->save();
                                 }
                             }
-                            foreach (array($ss1, $ss2, $ss3) as $sessID) {
+                            foreach ([$ss1, $ss2, $ss3] as $sessID) {
                                 if ($sessID !== null) {
-                                    $rs            = new RegSession;
-                                    $rs->regID     = $r->regID;
-                                    $rs->eventID   = $eventID;
-                                    $rs->personID  = $p->personID;
+                                    $rs = new RegSession;
+                                    $rs->regID = $r->regID;
+                                    $rs->eventID = $eventID;
+                                    $rs->personID = $p->personID;
                                     $rs->sessionID = $sessID;
-                                    $rs->confDay   = 1;
+                                    $rs->confDay = 1;
                                     $rs->creatorID = auth()->user()->id;
                                     $rs->updaterID = auth()->user()->id;
                                     $rs->save();
@@ -1896,7 +1894,7 @@ class UploadController extends Controller
             $what = 'Event registration records';
         }
 
-        request()->session()->flash('alert-success', "$what were successfully loaded. (" . $this->counter . ")");
+        request()->session()->flash('alert-success', "$what were successfully loaded. (".$this->counter.')');
         $events = Event::where([
             ['orgID', '=', $this->currentPerson->defaultOrgID],
         ])->get();
@@ -1918,5 +1916,4 @@ class UploadController extends Controller
     {
         // responds to DELETE /blah/id
     }
-
 }

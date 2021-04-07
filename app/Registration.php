@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\RegSession;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -48,7 +48,7 @@ class Registration extends Model
 
     public function checkin($sessionID = null)
     {
-        if(null === $sessionID){
+        if (null === $sessionID) {
             $sessionID = $this->event->default_session()->sessionID;
         }
 
@@ -57,7 +57,7 @@ class Registration extends Model
             ['eventID', '=', $this->eventID],
             ['regID', '=', $this->regID],
             ['sessionID', '=', $sessionID],
-            ['personID', '=', $this->personID]
+            ['personID', '=', $this->personID],
         ])->first();
 
         try {
@@ -81,7 +81,7 @@ class Registration extends Model
         return RegSession::where([
             ['regID', $this->regID],
             ['sessionID', $sessionID],
-            ['hasAttended', 1]
+            ['hasAttended', 1],
         ])->first();
     }
 }

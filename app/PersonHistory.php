@@ -11,7 +11,7 @@ class PersonHistory extends Model
     protected $primaryKey = 'revision';
     protected $dates = ['changeDate', 'createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
 
-    protected $hidden = [ 'remember_token' ];
+    protected $hidden = ['remember_token'];
 
     public function emails()
     {

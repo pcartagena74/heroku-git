@@ -2,15 +2,15 @@
 
 namespace App\Notifications;
 
-use App\RegFinance;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Event;
+use App\Location;
 use App\Org;
 use App\Person;
-use App\Location;
+use App\RegFinance;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ReceiptNotification extends Notification
 {
@@ -41,10 +41,10 @@ class ReceiptNotification extends Notification
     public function __construct(RegFinance $rf, $receiptURL)
     {
         $this->rf = $rf;
-        $this->event  = Event::find($this->rf->eventID);
-        $this->org    = Org::find($this->event->orgID);
+        $this->event = Event::find($this->rf->eventID);
+        $this->org = Org::find($this->event->orgID);
         $this->person = Person::find($this->rf->personID);
-        $this->loc    = Location::find($this->event->locationID);
+        $this->loc = Location::find($this->event->locationID);
         $this->receipt = $receiptURL;
         $this->name = $this->person->showDisplayName();
     }
@@ -68,10 +68,10 @@ class ReceiptNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $event  = $this->event;
-        $org    = $this->org;
+        $event = $this->event;
+        $org = $this->org;
         $person = $this->person;
-        $loc    = $this->loc;
+        $loc = $this->loc;
 
         $line1 = trans('messages.notifications.RegNote.line1',
             ['event' => $event->eventName, 'datetime' => $event->eventStartDate->format('n/j/Y g:i A'), 'loc' => $loc->locName]);
@@ -80,7 +80,7 @@ class ReceiptNotification extends Notification
         $url1 = $this->receipt;
         $line2 = trans('messages.notifications.thanks', ['org' => $org->orgName]);
         $action2 = trans('messages.notifications.RegNote.action2');
-        $url2 = env('APP_URL')."/events/".$event->slug;
+        $url2 = env('APP_URL').'/events/'.$event->slug;
         $line3 = trans('messages.notifications.RegNote.line2'); // See you...
         $c1 = 'success';
         $c2 = 'default';
@@ -105,9 +105,9 @@ class ReceiptNotification extends Notification
                 'postRegInfo' => $event->postRegInfo,
                 'name' => $person->showDisplayName(),
                 'logoPath' => $this->org->logo_path(),
-                'orgURL' => $this->org->org_url()
+                'orgURL' => $this->org->org_url(),
             ]);
-            // ->with($line1, $action1, $url1, $line2, $c1, $action2, $url2, $c2, $line3, $postRegInfo, $name);
+        // ->with($line1, $action1, $url1, $line2, $c1, $action2, $url2, $c2, $line3, $postRegInfo, $name);
             //->with(compact('line1','action1', 'url1', 'line2', 'c1', 'action2', 'url2', 'c2', 'line3', 'postRegInfo', 'name'));
     }
 

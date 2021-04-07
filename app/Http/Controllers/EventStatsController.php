@@ -29,7 +29,6 @@ class EventStatsController extends Controller
         // to record whether an event was paid.
 
         if (\Entrust::hasRole('Developer') || 1) {
-
             $simple = Event::where([
                 ['org-event.orgID', $this->currentPerson->defaultOrgID],
                 ['eventStartDate', '<', $today],
@@ -44,23 +43,23 @@ class EventStatsController extends Controller
                 ->withCount(['surveys'])
                 ->withCount([
                     'regfinances AS fee_sum' => function ($query) {
-                        $query->select(DB::raw("format(COALESCE(SUM(handleFee + ccFee),0), 2) as handlesum"));
-                    }
+                        $query->select(DB::raw('format(COALESCE(SUM(handleFee + ccFee),0), 2) as handlesum'));
+                    },
                 ])
                 ->withCount([
                     'regfinances AS net_sum' => function ($query) {
-                        $query->select(DB::raw("format(COALESCE(SUM(cost - handleFee - ccFee),0), 2) as netsum"));
-                    }
+                        $query->select(DB::raw('format(COALESCE(SUM(cost - handleFee - ccFee),0), 2) as netsum'));
+                    },
                 ])
                 ->orderBy('eventStartDate', 'DESC')
                 ->get();
 
             $simple_header = [
-                implode(" ", [trans('messages.fields.event'), trans('messages.fields.name')]),
-                implode(" ", [trans('messages.headers.start'), trans_choice('messages.headers.date', 1)]),
+                implode(' ', [trans('messages.fields.event'), trans('messages.fields.name')]),
+                implode(' ', [trans('messages.headers.start'), trans_choice('messages.headers.date', 1)]),
                 trans_choice('messages.headers.et', 1), trans_choice('messages.headers.regs', 2),
                 trans_choice('messages.headers.att', 2), trans('messages.surveys.surveys'),
-                trans('messages.headers.handling'), trans('messages.headers.net_rev')
+                trans('messages.headers.handling'), trans('messages.headers.net_rev'),
             ];
         }
 

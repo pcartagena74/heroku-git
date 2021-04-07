@@ -15,12 +15,12 @@ class Person extends Model
     use Notifiable;
 
     // The table
-    protected $table      = 'person';
+    protected $table = 'person';
     protected $primaryKey = 'personID';
-    const CREATED_AT      = 'createDate';
-    const UPDATED_AT      = 'updateDate';
-    protected $dates      = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
-    protected $hidden     = ['remember_token'];
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
+    protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
+    protected $hidden = ['remember_token'];
 
     public function roles()
     {
@@ -30,7 +30,7 @@ class Person extends Model
         // NOTE: person_role is a view, not a table.
         return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')
             ->using(PersonRoleOrgPivot::class)->withPivot('org_id');
-            //->where('person_role.org_id', $this->defaultOrgID);
+        //->where('person_role.org_id', $this->defaultOrgID);
     }
 
     public function orgs()
@@ -87,7 +87,7 @@ class Person extends Model
 
     public function orgStat1()
     {
-        if(null !== $this->orgperson){
+        if (null !== $this->orgperson) {
             return $this->orgperson->OrgStat1;
         } else {
             return null;
@@ -106,9 +106,9 @@ class Person extends Model
     public function showFullName()
     {
         if ($this->prefName) {
-            return $this->prefName . " " . $this->lastName;
+            return $this->prefName.' '.$this->lastName;
         } else {
-            return $this->firstName . " " . $this->lastName;
+            return $this->firstName.' '.$this->lastName;
         }
     }
 
@@ -126,6 +126,7 @@ class Person extends Model
     public function is_member($orgID)
     {
         $personID = $this->personID;
+
         return DB::table('person')
             ->join('org-person', function ($join) use ($orgID, $personID) {
                 $join->on('person.personID', '=', 'org-person.personID')
@@ -145,7 +146,7 @@ class Person extends Model
     {
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
-        if (!$this->roles->contains('id', $speaker_role)) {
+        if (! $this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role, ['org_id' => $this->defaultOrgID]);
         }
         /*
@@ -155,7 +156,7 @@ class Person extends Model
         */
         $s = Speaker::find($this->personID);
         if ($s === null) {
-            $s     = new Speaker;
+            $s = new Speaker;
             $s->id = $this->personID;
             $s->save();
         }

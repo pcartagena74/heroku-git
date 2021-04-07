@@ -10,7 +10,8 @@ class EmailQueueLink extends Model
 
     public function email_queue()
     {
-        return $this->hasManyThrough(EmailQueueLink::class, EmailQueue::class, 'email_campaign_link_id', 'id', 'email_queue_id', 'id');
+        return $this->hasManyThrough(self::class, EmailQueue::class, 'email_campaign_link_id', 'id', 'email_queue_id', 'id');
+
         return $this->hasMany(EmailQueue::class, 'campaign_id', 'campaignID');
     }
 }

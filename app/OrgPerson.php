@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 //use Spatie\Activitylog\Traits\LogsActivity;
 
 class OrgPerson extends Model
@@ -33,12 +34,11 @@ class OrgPerson extends Model
         'RelDate7',
         'RelDate8',
         'RelDate9',
-        'RelDate10'
+        'RelDate10',
     ];
 
     protected static $logAttributes = ['OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4'];
     protected static $ignoreChangedAttributes = ['createDate'];
-
 
     public function myperson()
     {

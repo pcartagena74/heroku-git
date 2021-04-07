@@ -333,7 +333,7 @@ class TicketitSeeder extends Seeder
              *
              * Default: __DIR__.'/routes.php'
              */
-            'routes'                       => base_path('vendor/kordy/ticketit/src') . '/routes.php',
+            'routes'                       => base_path('vendor/kordy/ticketit/src').'/routes.php',
 
         ];
     }

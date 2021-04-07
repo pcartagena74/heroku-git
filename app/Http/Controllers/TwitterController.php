@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Event;
 use App\Tweet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TwitterController extends Controller
 {
@@ -27,6 +27,7 @@ class TwitterController extends Controller
         } else {
             $tweets = Tweet::where('approved', 1)->orderBy('created_at', 'desc')->take(5)->get();
         }
+
         return view('v1.public_pages.display_tweets', compact('event', 'tweets'));
     }
 

@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Models\Entrust\EntrustRoleOver as EntrustRole;
+
 //use Spatie\Activitylog\Traits\LogsActivity;
 
 class Role extends EntrustRole
@@ -18,7 +19,7 @@ class Role extends EntrustRole
 
     public function people()
     {
-        return $this->belongsToMany(Person::class, 'person_role','role_id', 'user_id');
+        return $this->belongsToMany(Person::class, 'person_role', 'role_id', 'user_id');
     }
 
     public function users()
@@ -30,6 +31,4 @@ class Role extends EntrustRole
     {
         return $this->belongsToMany(Permission::class);
     }
-
-    
 }

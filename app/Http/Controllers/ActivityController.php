@@ -26,7 +26,7 @@ class ActivityController extends Controller
     {
         // responds to GET /upcoming
         $this->currentPerson = Person::find(auth()->user()->id);
-        $now                 = Carbon::now();
+        $now = Carbon::now();
 
         // Registrations bought by someone else for $this->currentPerson
         $bought = Registration::where('personID', $this->currentPerson->personID)
@@ -99,8 +99,8 @@ class ActivityController extends Controller
 
         // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
-        $orgID               = $this->currentPerson->defaultOrgID;
-        $today               = Carbon::now();
+        $orgID = $this->currentPerson->defaultOrgID;
+        $today = Carbon::now();
 
         $attendance = Event::where('er.personID', '=', $this->currentPerson->personID)
             ->join('org-event_types as oet', function ($join) {
@@ -125,37 +125,37 @@ class ActivityController extends Controller
             ->orderBy('org-event.eventStartDate', 'DESC')->get(20);
 
         $bar2 = Event::select('eventID', 'eventStartDate', 'eventTypeID',
-            DB::raw("(select count(*) from `event-registration` er2 where er2.eventID = `org-event`.eventID and er2.personID="
-                . $this->currentPerson->personID . " and er2.deleted_at is null) as 'attended'"))
+            DB::raw('(select count(*) from `event-registration` er2 where er2.eventID = `org-event`.eventID and er2.personID='
+                .$this->currentPerson->personID." and er2.deleted_at is null) as 'attended'"))
             ->where([
                 ['orgID', $orgID],
                 ['eventEndDate', '<', $today],
             ])->whereIn('eventTypeID', [1, 9])
             ->whereHas('event_type', function ($q) use ($orgID) {
-                $q->whereIn('orgID', array(1, $orgID));
+                $q->whereIn('orgID', [1, $orgID]);
             })
             ->withCount('registrations')
             ->with('event_type')
             ->orderBy('eventStartDate', 'DESC')->limit(14)->get();
 
-        $datastring = "";
+        $datastring = '';
         $myevents[] = null;
         foreach ($bar2 as $bar_row) {
-            $label  = $bar_row->eventStartDate->format('M Y') . " " . $bar_row->event_type->etName;
+            $label = $bar_row->eventStartDate->format('M Y').' '.$bar_row->event_type->etName;
             $attend = $bar_row->registrations_count;
-            $there  = $bar_row->attended;
+            $there = $bar_row->attended;
 
             if ($there == 1) {
                 array_push($myevents, $label);
             }
-            $datastring .= "{ ChMtg: '" . $label . "', " . trans_choice('messages.headers.att', 2) . ": " . $attend . "},";
+            $datastring .= "{ ChMtg: '".$label."', ".trans_choice('messages.headers.att', 2).': '.$attend.'},';
         }
-        rtrim($datastring, ",");
+        rtrim($datastring, ',');
 
-        $output_string = "";
+        $output_string = '';
         foreach ($myevents as $single) {
             if ($single !== null) {
-                $output_string .= " row.label == '" . $single . "' ||";
+                $output_string .= " row.label == '".$single."' ||";
             }
         }
         if ($output_string == '') {
@@ -165,6 +165,7 @@ class ActivityController extends Controller
         }
 
         $topBits = '';
+
         return view('v1.auth_pages.dashboard', compact('attendance', 'datastring', 'output', 'topBits'));
     }
 
@@ -174,17 +175,18 @@ class ActivityController extends Controller
 
         $event_list = Event::join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
             ->where('event-registration.personID', '=', $id)
-            ->selectRaw("distinct `org-event`.eventStartDate, `org-event`.eventName")
+            ->selectRaw('distinct `org-event`.eventStartDate, `org-event`.eventName')
             ->orderBy('org-event.eventStartDate', 'ASC')
             ->get();
         $html = view('v1.modals.activity_modal', compact('event_list'))->render();
-        return json_encode(array('html' => $html));
+
+        return json_encode(['html' => $html]);
     }
 
     public function networking(Request $request)
     {
         // responds to POST to /networking
-        $eventID   = request()->input('eventID');
+        $eventID = request()->input('eventID');
         $eventName = request()->input('eventName');
 
         $er = Registration::where([
@@ -197,7 +199,8 @@ class ActivityController extends Controller
             ->distinct()
             ->orderBy('p.lastName', 'asc')
             ->get();
-        return json_encode(array('event' => $eventName, 'data' => $er->toArray()));
+
+        return json_encode(['event' => $eventName, 'data' => $er->toArray()]);
     }
 
     public function create()
@@ -210,14 +213,15 @@ class ActivityController extends Controller
     {
         // triggered by POST /become
 
-        $new_id   = request()->input('new_id');
-        $cancel   = request()->input('cancel');
+        $new_id = request()->input('new_id');
+        $cancel = request()->input('cancel');
         $prior_id = auth()->user()->id;
 
         // "Become" by logging in the $new_id
         $u = User::find($new_id);
         if (null === $u) {
             request()->session()->flash('alert-warning', trans('messages.errors.become_error', ['id' => $new_id]));
+
             return redirect()->back();
         } else {
             Auth::loginUsingId($new_id, 0);
@@ -231,7 +235,7 @@ class ActivityController extends Controller
                 Session::forget(['become', 'prior_id']);
             }
 
-            return redirect(env('APP_URL') . "/dashboard");
+            return redirect(env('APP_URL').'/dashboard');
         }
     }
 

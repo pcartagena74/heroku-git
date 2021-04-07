@@ -15,7 +15,6 @@ class CreateAdminPropTable extends Migration
      *
      * @return void
      */
-
     public function up()
     {
         Schema::create('admin_prop', function (Blueprint $table) {
@@ -30,7 +29,6 @@ class CreateAdminPropTable extends Migration
             $table->foreign('groupID')->references('id')->on('admin_group');
             $table->unique(['groupID', 'order']);
         });
-
     }
 
     /**

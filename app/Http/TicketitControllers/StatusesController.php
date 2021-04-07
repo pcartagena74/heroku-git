@@ -5,8 +5,8 @@ namespace Kordy\Ticketit\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Kordy\Ticketit\Models\Status;
 use Kordy\Ticketit\Helpers\LaravelVersion;
+use Kordy\Ticketit\Models\Status;
 
 class StatusesController extends Controller
 {
@@ -18,7 +18,7 @@ class StatusesController extends Controller
     public function index()
     {
         // seconds expected for L5.8<=, minutes before that
-        $time = LaravelVersion::min('5.8') ? 60*60 : 60;
+        $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
         $statuses = \Cache::remember('ticketit::statuses', $time, function () {
             return Status::all();
         });

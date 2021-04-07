@@ -4,20 +4,19 @@ namespace Tests\Feature;
 
 use App\Event;
 use App\Org;
-use App\User;
 use App\Person;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\User;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class EventRegistrationTest extends TestCase
 {
     use WithFaker;
 
     // , RefreshDatabase;
-
 
     protected function setUp(): void
     {
@@ -26,7 +25,7 @@ class EventRegistrationTest extends TestCase
         $this->user = User::find(1);
         $this->person = $this->user->person;
     }
-    
+
     /**
      * @test - Member Creation Test
      *         Member defined as org-person.OrgStat1 is not null
@@ -53,7 +52,7 @@ class EventRegistrationTest extends TestCase
             ->raw([
                 'personID' => $new_member->personID,
                 'emailADDR' => $new_member->login,
-                'isPrimary' => 1]));
+                'isPrimary' => 1, ]));
 
         $new_member->user()->create(factory('App\User')
             ->raw([
@@ -64,17 +63,17 @@ class EventRegistrationTest extends TestCase
             ]));
 
         $this->assertDatabaseHas('person', [
-            'personID' => $new_member->personID
+            'personID' => $new_member->personID,
         ]);
 
         $this->assertDatabaseHas('person-email', [
             'personID' => $new_member->personID,
-            'emailADDR' => $new_member->login
+            'emailADDR' => $new_member->login,
         ]);
 
         $this->assertDatabaseHas('org-person', [
             'personID' => $new_member->personID,
-            'orgID' => $new_member->defaultOrgID
+            'orgID' => $new_member->defaultOrgID,
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -108,7 +107,7 @@ class EventRegistrationTest extends TestCase
             ->raw([
                 'personID' => $new_nonmember->personID,
                 'emailADDR' => $new_nonmember->login,
-                'isPrimary' => 1]));
+                'isPrimary' => 1, ]));
 
         $new_nonmember->user()->create(factory('App\User')
             ->raw([
@@ -119,17 +118,17 @@ class EventRegistrationTest extends TestCase
             ]));
 
         $this->assertDatabaseHas('person', [
-            'personID' => $new_nonmember->personID
+            'personID' => $new_nonmember->personID,
         ]);
 
         $this->assertDatabaseHas('person-email', [
             'personID' => $new_nonmember->personID,
-            'emailADDR' => $new_nonmember->login
+            'emailADDR' => $new_nonmember->login,
         ]);
 
         $this->assertDatabaseHas('org-person', [
             'personID' => $new_nonmember->personID,
-            'orgID' => $new_nonmember->defaultOrgID
+            'orgID' => $new_nonmember->defaultOrgID,
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -142,7 +141,6 @@ class EventRegistrationTest extends TestCase
      *
      * depends an_event_can_be_created - $event
      * depends a_member_can_be_created - $new_member
-     *
      */
 
     /*

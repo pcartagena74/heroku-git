@@ -118,7 +118,6 @@ class Handler extends ExceptionHandler
                     return response()->view('errors.genericException', ['code' => $exception->getStatusCode(), 'description' => trans('messages.exceptions.no_msg_available')], $exception->getStatusCode());
                     break;
             }
-
         }
 
         if ($exception instanceof AuthenticationException) {

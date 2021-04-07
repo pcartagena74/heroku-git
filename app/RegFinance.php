@@ -42,7 +42,7 @@ class RegFinance extends Model
     {
         $s3m = Flysystem::connection('s3_media');
         $receipt = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET2'), "$this->eventID/$this->confirmation.pdf");
+
         return $receipt;
     }
-
 }

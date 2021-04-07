@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\OrgPerson;
 use App\Person;
 use App\User;
-use App\OrgPerson;
+use Illuminate\Http\Request;
 
 class PublicFunctionController extends Controller
 {
-
     public function __construct()
     {
         //$this->middleware('guest');
@@ -29,11 +28,12 @@ class PublicFunctionController extends Controller
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
             if (null !== $p && null === $p->orgperson) {
                 $p->load('orgperson');
-            return json_encode(array('status' => 'success', 'p' => $p, 'pass' => $x,
-                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()])));
+
+                return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
+                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
             }
         } else {
-            return json_encode(array('status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id));
+            return json_encode(['status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id]);
         }
     }
 }

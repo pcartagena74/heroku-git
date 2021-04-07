@@ -14,14 +14,13 @@ use Faker\Generator as Faker;
 */
 
 $factory->define(App\User::class, function (Faker $faker, $params) {
-
     try {
         $p = $params['person'];
-    } catch(Exception $e){
+    } catch (Exception $e) {
         $p = null;
     }
 
-    if($p !== null) {
+    if ($p !== null) {
         return [
             'name' => $p->login,
             'email' => $p->login,

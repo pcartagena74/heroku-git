@@ -6,9 +6,9 @@ use App\Event;
 use App\Org;
 use App\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class NewUserAcct extends Notification
 {
@@ -53,6 +53,7 @@ class NewUserAcct extends Notification
     {
         $o = Org::find($this->person->defaultOrgID);
         $oname = $o->orgName;
+
         return (new MailMessage)
             ->subject(trans('messages.notifications.new_user_acct.subject', ['org' => $oname]))
             ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))

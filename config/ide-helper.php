@@ -13,7 +13,7 @@ return [
 
     'filename'  => '_ide_helper',
     'format'    => 'php',
-    
+
     'meta_filename' => '.phpstorm.meta.php',
 
     /*
@@ -68,7 +68,6 @@ return [
         'app',
     ],
 
-
     /*
     |--------------------------------------------------------------------------
     | Extra classes
@@ -93,7 +92,7 @@ return [
             'critical'  => 'Monolog\Logger::addCritical',
             'alert'     => 'Monolog\Logger::addAlert',
             'emergency' => 'Monolog\Logger::addEmergency',
-        ]
+        ],
     ],
 
     /*

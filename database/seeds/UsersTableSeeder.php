@@ -36,14 +36,14 @@ class UsersTableSeeder extends Seeder
                 'id' => '0',
                 'firstName' => 'No',
                 'lastName' => 'Body',
-                'email' => 'nobody@mcentric.org'
+                'email' => 'nobody@mcentric.org',
             ],
             [
                 'id' => '1',
                 'firstName' => 'System',
                 'lastName' => 'Admin',
-                'email' => 'admin@mcentric.org'
-            ]
+                'email' => 'admin@mcentric.org',
+            ],
         ];
 
         foreach ($list as $l) {

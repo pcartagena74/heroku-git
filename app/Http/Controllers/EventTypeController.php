@@ -41,7 +41,7 @@ class EventTypeController extends Controller
         $orgID = $this->currentPerson->defaultOrgID;
 
         for ($i = 1; $i <= 5; $i++) {
-            $eventType = "eventType-" . $i;
+            $eventType = 'eventType-'.$i;
 
             $type = request()->input($eventType);
             if (isset($type)) {
@@ -52,6 +52,7 @@ class EventTypeController extends Controller
                 $newET->save();
             }
         }
+
         return redirect('/eventdefaults');
     }
 
@@ -92,12 +93,12 @@ class EventTypeController extends Controller
         $name = request()->input('name');
         if (strpos($name, '-')) {
             // if passed from the registration receipt, the $name will have a dash
-            list($name, $field) = array_pad(explode("-", $name, 2), 2, null);
+            list($name, $field) = array_pad(explode('-', $name, 2), 2, null);
         }
         $value = request()->input('value');
 
         $oet = EventType::find($etID);
-        $oet->{$name}   = $value;
+        $oet->{$name} = $value;
         $oet->updaterID = auth()->user()->id;
         $oet->save();
     }

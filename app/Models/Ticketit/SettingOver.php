@@ -4,9 +4,9 @@ namespace App\Models\Ticketit;
 
 use Cache;
 use Illuminate\Database\Eloquent\Model;
-use Kordy\Ticketit\Models\Setting as Table;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models\SetingOver as Setting;
+use Kordy\Ticketit\Models\Setting as Table;
 
 class SettingOver extends Model
 {
@@ -51,7 +51,7 @@ class SettingOver extends Model
         //       Cache::flush();
 
         // seconds expected for L5.8<=, minutes before that
-        $time = LaravelVersion::min('5.8') ? 60*60 : 60;
+        $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
 
         $setting = Cache::remember('ticketit::settings.'.$slug, $time, function () use ($slug, $time) {
             $settings = Cache::remember('ticketit::settings', $time, function () {
@@ -88,7 +88,7 @@ class SettingOver extends Model
     public static function is_serialized($data, $strict = true)
     {
         // if it isn't a string, it isn't serialized.
-        if (!is_string($data)) {
+        if (! is_string($data)) {
             return false;
         }
         $data = trim($data);

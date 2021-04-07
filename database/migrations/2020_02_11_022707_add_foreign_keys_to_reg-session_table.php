@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class AddForeignKeysToRegSessionTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -18,10 +17,10 @@ class AddForeignKeysToRegSessionTable extends Migration
             $table->foreign('eventID', 'rs-eventID')->references('eventID')->on('org-event')->onUpdate('NO ACTION')->onDelete('CASCADE');
             $table->foreign('personID', 'rs-personID')->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('NO ACTION');
             $table->foreign('regID', 'rs-regID')->references('regID')->on('event-registration')->onUpdate('NO ACTION')->onDelete('CASCADE');
-   //          DB::raw('alter table `reg-session` add constraint `rs-sessionID`
-			// foreign key (`personID`) references `event-sessions` (`sessionID`)
-			// on delete CASCADE
-			// on update NO ACTION');
+            //          DB::raw('alter table `reg-session` add constraint `rs-sessionID`
+            // foreign key (`personID`) references `event-sessions` (`sessionID`)
+            // on delete CASCADE
+            // on update NO ACTION');
         });
     }
 
@@ -39,5 +38,4 @@ class AddForeignKeysToRegSessionTable extends Migration
             $table->dropForeign('rs-regID');
         });
     }
-
 }

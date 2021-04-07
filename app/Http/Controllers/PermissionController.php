@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Event;
 use App\EventDiscount;
+use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {

@@ -17,6 +17,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
 
     public $person;
     public $import_detail;
+
     /**
      * Create a new job instance.
      *
@@ -24,7 +25,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
      */
     public function __construct(Person $person, Importdetail $import_detail)
     {
-        $this->person        = $person;
+        $this->person = $person;
         $this->import_detail = $import_detail;
     }
 

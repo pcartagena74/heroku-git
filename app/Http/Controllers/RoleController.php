@@ -44,7 +44,7 @@ class RoleController extends Controller
         array_push($topBits, [1, trans('messages.topBits.speaker'), $speaker, '', '', '', 2]);
         array_push($topBits, [1, trans('messages.topBits.admin'), $admin, '', '', '']);
 
-        return ($topBits);
+        return $topBits;
     }
 
     public function index($query = null)
@@ -65,11 +65,10 @@ class RoleController extends Controller
         // DB::enableQueryLog();
 
         if ($query !== null) {
-
-            $persons = Person::orWhere('firstName', "LIKE", "%$query%")
-                ->orWhere('lastName', "LIKE", "%$query%")
-                ->orWhere('login', "LIKE", "%$query%")
-                ->orWhere('personID', "LIKE", "%$query%")
+            $persons = Person::orWhere('firstName', 'LIKE', "%$query%")
+                ->orWhere('lastName', 'LIKE', "%$query%")
+                ->orWhere('login', 'LIKE', "%$query%")
+                ->orWhere('personID', 'LIKE', "%$query%")
                 ->orWhereHas('orgperson', function ($q) use ($query) {
                     $q->where('OrgStat1', 'LIKE', "%$query%");
                 })
@@ -87,7 +86,8 @@ class RoleController extends Controller
     public function search(Request $request)
     {
         $string = $request->input('string');
-        return redirect('/role_mgmt/' . $string);
+
+        return redirect('/role_mgmt/'.$string);
     }
 
     public function show($id)
@@ -128,7 +128,6 @@ class RoleController extends Controller
             DB::table('role_user')
                 ->where(['user_id' => $person->personID, 'orgID' => $admin->defaultOrgID, 'role_id' => $role->id])
                 ->delete();
-
         } else {
             $person->roles()->attach($role->id, ['org_id' => $admin->defaultOrgID]);
         }
@@ -139,11 +138,11 @@ class RoleController extends Controller
         //not needed now as orgname role is not needed admin will be the admin of that org
         if (isset($person->org_role_id()->id) && false) {
             // Check to see if a role for the orgName is in the DB...
-            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
+            if (! $person->roles->contains('id', $person->org_role_id()->id)) {
                 $orgID_needed = 1;
             }
             // Remove the orgName role if it's the only one...
-            if (count($person->roles) == 1 && !$orgID_needed) {
+            if (count($person->roles) == 1 && ! $orgID_needed) {
                 $person->roles->forget('id', $person->org_role_id()->id);
             }
 
@@ -167,12 +166,12 @@ class RoleController extends Controller
          */
 
         $message =
-            '<div class="well bg-blue">' . trans(
+            '<div class="well bg-blue">'.trans(
                 'messages.instructions.role_toggle',
                 ['role' => $role->display_name, 'person' => $person->showFullName()]
-            ) . "</div>";
+            ).'</div>';
 
-        return json_encode(array('status' => 'success', 'message' => $message));
+        return json_encode(['status' => 'success', 'message' => $message]);
     }
 
     public function destroy($id)

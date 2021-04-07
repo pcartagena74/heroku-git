@@ -27,9 +27,9 @@ class TicketItComposer
     {
         // Passing to views the master view value from the setting file
         view()->composer('ticketit::*', function ($view) {
-            $tools  = new ToolsController();
+            $tools = new ToolsController();
             $master = Setting::grab('master_template');
-            $email  = Setting::grab('email.template');
+            $email = Setting::grab('email.template');
             $view->with(compact('master', 'email', 'tools'));
         });
     }
@@ -38,9 +38,9 @@ class TicketItComposer
     {
         // Passing to views the master view value from the setting file
         view()->composer('ticketit::*', function ($view) {
-            $editor_enabled     = Setting::grab('editor_enabled');
+            $editor_enabled = Setting::grab('editor_enabled');
             $codemirror_enabled = Setting::grab('editor_html_highlighter');
-            $codemirror_theme   = Setting::grab('codemirror_theme');
+            $codemirror_theme = Setting::grab('codemirror_theme');
             $view->with(compact('editor_enabled', 'codemirror_enabled', 'codemirror_theme'));
         });
     }
@@ -48,8 +48,7 @@ class TicketItComposer
     public static function summerNotes()
     {
         view()->composer('ticketit::tickets.partials.summernote', function ($view) {
-
-            $editor_locale  = EditorLocale::getEditorLocale();
+            $editor_locale = EditorLocale::getEditorLocale();
             $editor_options = file_get_contents(base_path(Setting::grab('summernote_options_json_file')));
 
             $view->with(compact('editor_locale', 'editor_options'));

@@ -9,7 +9,6 @@ class Activity extends Model
     protected $primaryKey = 'activityID';
     protected $dates = ['createDate', 'updateDate'];
 
-
     public function person()
     {
         return $this->belongsTo(Person::class, 'personID');

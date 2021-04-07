@@ -7,6 +7,7 @@
 namespace App;
 
 use Zizaco\Entrust\EntrustPermission;
+
 //use Spatie\Activitylog\Traits\LogsActivity;
 
 class Permission extends EntrustPermission

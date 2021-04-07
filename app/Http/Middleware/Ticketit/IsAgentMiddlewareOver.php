@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware\Ticketit;
 
-use Closure;
 use App\Models\Ticketit\AgentOver as Agent;
-use Kordy\Ticketit\Middleware\IsAgentMiddleware as IsAgentMiddleware;
 use App\Models\Ticketit\SettingOver as Setting;
+use Closure;
+use Kordy\Ticketit\Middleware\IsAgentMiddleware as IsAgentMiddleware;
 
 class IsAgentMiddlewareOver extends IsAgentMiddleware
 {
@@ -25,7 +25,7 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
 
         // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index')
         //     ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
-         return redirect()->route(Setting::grab('main_route'). '.index')
+        return redirect()->route(Setting::grab('main_route').'.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
     }
 }

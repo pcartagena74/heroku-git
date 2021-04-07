@@ -67,6 +67,5 @@ class RoleSeeder extends Seeder
         foreach ($role as $key => $value) {
             $each = Role::create($value);
         }
-        
     }
 }

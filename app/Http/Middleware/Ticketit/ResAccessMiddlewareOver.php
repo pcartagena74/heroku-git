@@ -31,7 +31,7 @@ class ResAccessMiddlewareOver extends ResAccessMiddleware
             }
         }
         // if this is a ticket show page
-        if ($request->route()->getName() == Setting::grab('main_route') . '.show') {
+        if ($request->route()->getName() == Setting::grab('main_route').'.show') {
             if (LaravelVersion::lt('5.2.0')) {
                 $ticket_id = $request->route(Setting::grab('main_route'));
             } else {
@@ -40,10 +40,10 @@ class ResAccessMiddlewareOver extends ResAccessMiddleware
         }
 
         // if this is a new comment on a ticket
-        if ($request->route()->getName() == Setting::grab('main_route') . '-comment.store') {
+        if ($request->route()->getName() == Setting::grab('main_route').'-comment.store') {
             $ticket_id = $request->get('ticket_id');
         }
-        
+
         // assigned Agent has access in the restricted mode enabled
         if (Agent::isAgent() && Agent::isAssignedAgent($ticket_id)) {
             return $next($request);
@@ -54,7 +54,7 @@ class ResAccessMiddlewareOver extends ResAccessMiddleware
             return $next($request);
         }
 
-        return redirect()->route(Setting::grab('main_route') . '.index')
+        return redirect()->route(Setting::grab('main_route').'.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
     }
 }
