@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\EventSession;
+use App\Models\EventSession;
 use App\Other\ics_calendar;
 use App\Person;
 use Carbon\Carbon;

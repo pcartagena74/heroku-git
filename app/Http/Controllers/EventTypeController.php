@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\EventType;
+use App\Models\EventType;
 use App\Person;
 use Illuminate\Http\Request;
 
@@ -59,7 +59,7 @@ class EventTypeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\EventType  $eventType
+     * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
     public function show(EventType $eventType)
@@ -70,7 +70,7 @@ class EventTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\EventType  $eventType
+     * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
     public function edit(EventType $eventType)

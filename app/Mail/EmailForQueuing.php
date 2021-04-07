@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Campaign;
+use App\Models\Campaign;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;

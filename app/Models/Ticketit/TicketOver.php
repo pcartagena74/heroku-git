@@ -5,7 +5,7 @@ namespace App\Models\Ticketit;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\CategoryOver as Category;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Date\Date;
@@ -123,7 +123,7 @@ class TicketOver extends Ticket
      */
     public function user()
     {
-        return $this->belongsTo(\App\User::class, 'user_id');
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
     /**

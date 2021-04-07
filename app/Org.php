@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\EventType;
+use App\Models\EventType;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 
 class Org extends Model

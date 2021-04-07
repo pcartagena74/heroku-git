@@ -3,7 +3,7 @@
 use App\Org;
 use App\Permission;
 use App\Role;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

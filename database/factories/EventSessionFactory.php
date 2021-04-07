@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\EventSession;
+use App\Models\EventSession;
 use Faker\Generator as Faker;
 
 $factory->define(EventSession::class, function (Faker $faker, $params) {

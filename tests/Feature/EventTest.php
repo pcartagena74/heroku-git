@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Org;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -55,7 +55,7 @@ class EventTest extends TestCase
      */
     public function only_authenticated_users_can_create_events()
     {
-        $attributes = factory(\App\Event::class)->raw(['org' => $this->org]);
+        $attributes = factory(\App\Models\Event::class)->raw(['org' => $this->org]);
         $this->post('/event/create', $attributes)->assertRedirect('login');
     }
 
@@ -87,7 +87,7 @@ class EventTest extends TestCase
             'nonmbrBasePrice' => 35.00,
         ]));
 
-        $session = $event->main_session()->create(factory(\App\EventSession::class)->raw([
+        $session = $event->main_session()->create(factory(\App\Models\EventSession::class)->raw([
             'eventID' => $event->eventID,
             'start' => $event->eventStartDate,
             'end' => $event->eventEndDate,

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Event;
+use App\Models\Event;
 use App\EventDiscount;
-use App\EventSession;
+use App\Models\EventSession;
 use App\Location;
 use App\Org;
 use App\OrgDiscount;

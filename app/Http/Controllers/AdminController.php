@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\AdminProp;
-use App\AdminPropGroup;
+use App\Models\AdminProp;
+use App\Models\AdminPropGroup;
 use App\Email;
 use App\Notifications\NewUserAcct;
 use App\Org;
-use App\OrgAdminProp;
+use App\Models\OrgAdminProp;
 use App\OrgPerson;
 use App\Permission;
-use App\PermissionRole;
+use App\Models\PermissionRole;
 use App\Person;
 use App\Role;
-use App\User;
+use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash as Hash;

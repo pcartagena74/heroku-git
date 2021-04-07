@@ -4,7 +4,7 @@ use App\Email;
 use App\Org;
 use App\OrgPerson;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

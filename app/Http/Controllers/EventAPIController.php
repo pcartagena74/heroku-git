@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
-use App\OrgAdminProp;
+use App\Models\OrgAdminProp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

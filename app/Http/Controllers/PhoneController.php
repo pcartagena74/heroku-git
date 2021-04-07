@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Person;
-use App\Phone;
+use App\Models\Phone;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller

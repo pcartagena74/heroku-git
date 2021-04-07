@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Traits\EntrustUserTraitOver;
 use Illuminate\Foundation\Auth\User as Authenticatable;

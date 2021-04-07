@@ -6,7 +6,7 @@
 
 namespace App\Other;
 
-use App\Event;
+use App\Models\Event;
 use App\Location;
 use App\Org;
 use Carbon\Carbon;

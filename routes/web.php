@@ -34,7 +34,7 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
  */
 Route::get('trigger-dyno', 'DynoController@index');
 Route::get('/preview', function () {
-    $e = \App\Event::find(319);
+    $e = \App\Models\Event::find(319);
     $note = new \App\Notifications\EventICSNote($e);
 
     return $note->toMail('blah@test.com');
@@ -342,7 +342,7 @@ Route::get('/list_campaign', 'CampaignController@listCampaign');
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
 Route::get('/mytest', function () {
-    $events = App\Event::all();
+    $events = App\Models\Event::all();
 
     return view('v1.auth_pages.welcome', compact('events'));
 });
@@ -353,7 +353,7 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
     foreach ($request->all() as $input_key => $input_val) {
         if (strpos($input_key, 'approval-status-') === 0) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
-            $tweet = App\Tweet::where('id', $tweet_id)->first();
+            $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
                 $tweet->approved = (int) $input_val;
                 $tweet->save();

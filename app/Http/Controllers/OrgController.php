@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Email;
-use App\EventType;
+use App\Models\EventType;
 use App\Notifications\NewUserAcct;
 use App\Org;
 use App\OrgPerson;
 use App\Permission;
-use App\PermissionRole;
+use App\Models\PermissionRole;
 use App\Person;
 use App\Role;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash as Hash;

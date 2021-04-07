@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Email;
-use App\Event;
+use App\Models\Event;
 use App\EventDiscount;
-use App\EventSession;
+use App\Models\EventSession;
 use App\Location;
 use App\Notifications\AccountCreation;
 use App\Notifications\ReceiptNotification;
@@ -16,8 +16,8 @@ use App\RegFinance;
 use App\Registration;
 use App\RegSession;
 use App\Ticket;
-use App\Track;
-use App\User;
+use App\Models\Track;
+use App\Models\User;
 use Aws\S3\S3Client;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;

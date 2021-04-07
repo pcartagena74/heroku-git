@@ -9,7 +9,7 @@
  *
  */
 
-use App\EventSession;
+use App\Models\EventSession;
 use App\Ticket;
 use App\Registration;
 use App\Person;

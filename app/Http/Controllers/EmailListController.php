@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\EmailList;
-use App\Event;
+use App\Models\EmailList;
+use App\Models\Event;
 use App\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

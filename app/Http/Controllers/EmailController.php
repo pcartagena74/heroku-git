@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Email;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

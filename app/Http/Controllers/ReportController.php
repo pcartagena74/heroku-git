@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Address;
-use App\Event;
+use App\Models\Event;
 use App\Org;
 use App\Person;
 use Illuminate\Http\Request;

@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Event;
+use App\Models\Event;
 use App\Location;
 use App\Org;
 use App\RegFinance;

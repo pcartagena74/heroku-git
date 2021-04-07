@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Campaign;
+use App\Models\Campaign;
 use App\Jobs\SendCampaignEmail;
 use App\Models\EmailCampaignLink;
 use App\Models\EmailCampaignTemplateBlock;

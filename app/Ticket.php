@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Bundle;
-use App\EventSession;
+use App\Models\EventSession;
 //use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;

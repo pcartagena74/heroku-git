@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Event;
-use App\EventSession;
-use App\Track;
+use App\Models\Event;
+use App\Models\EventSession;
+use App\Models\Track;
 use Illuminate\Http\Request;
 
 class EventSessionController extends Controller

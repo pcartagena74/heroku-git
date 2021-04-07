@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Event;
-use App\EventSession;
+use App\Models\Event;
+use App\Models\EventSession;
 use App\Person;
 use App\Registration;
 use App\RegSession;

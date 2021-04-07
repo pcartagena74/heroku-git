@@ -8,7 +8,7 @@
  * @param $reg : the individual registration for which session display is required
  */
 
-use App\EventSession;
+use App\Models\EventSession;
 use App\RegSession;
 use App\Ticket;
 

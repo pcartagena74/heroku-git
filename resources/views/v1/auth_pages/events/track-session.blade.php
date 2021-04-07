@@ -3,7 +3,7 @@
  * Comment: Track and Session Setup for PD Day Events
  * Created: 4/11/2017
  */
-use App\EventSession;
+use App\Models\EventSession;
 use App\Ticket;
 
 $topBits = '';

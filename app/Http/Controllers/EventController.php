@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
-use App\Event;
+use App\Models\Event;
 use App\EventDiscount;
-use App\EventSession;
+use App\Models\EventSession;
 use App\Location;
 use App\Org;
 use App\OrgDiscount;
 use App\Other\ics_cal_full;
 use App\Other\ics_calendar;
 use App\Person;
-use App\ReferLink;
+use App\Models\ReferLink;
 use App\Ticket;
-use App\Track;
-use App\User;
+use App\Models\Track;
+use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;

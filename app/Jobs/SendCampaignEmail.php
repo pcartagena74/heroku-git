@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Campaign;
+use App\Models\Campaign;
 use App\Models\EmailQueue;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;

@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
 use App\Person;
 use Illuminate\Bus\Queueable;

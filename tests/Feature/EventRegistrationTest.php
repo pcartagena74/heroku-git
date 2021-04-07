@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,7 +54,7 @@ class EventRegistrationTest extends TestCase
                 'emailADDR' => $new_member->login,
                 'isPrimary' => 1, ]));
 
-        $new_member->user()->create(factory(\App\User::class)
+        $new_member->user()->create(factory(\App\Models\User::class)
             ->raw([
                 'id' => $new_member->personID,
                 'name' => $new_member->login,
@@ -109,7 +109,7 @@ class EventRegistrationTest extends TestCase
                 'emailADDR' => $new_nonmember->login,
                 'isPrimary' => 1, ]));
 
-        $new_nonmember->user()->create(factory(\App\User::class)
+        $new_nonmember->user()->create(factory(\App\Models\User::class)
             ->raw([
                 'id' => $new_nonmember->personID,
                 'name' => $new_nonmember->login,

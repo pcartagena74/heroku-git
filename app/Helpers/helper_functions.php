@@ -6,14 +6,14 @@
 
 use App\Address;
 use App\Email;
-use App\EmailList;
-use App\Event;
+use App\Models\EmailList;
+use App\Models\Event;
 use App\Location;
 use App\Models\Ticketit\TicketOver;
 use App\Org;
 use App\OrgPerson;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;

@@ -30,14 +30,14 @@ $year = '';
         {!! $entry->eventStartDate->format('M d, Y') !!}<p>
 
     <?php
-    $event = \App\Event::find($entry->eventID);
+    $event = \App\Models\Event::find($entry->eventID);
     if (null === $entry->sessionID) {
         $es = $event->mainSession;
     } else {
         $es = $entry->sessionID;
     }
 
-        $sess = \App\EventSession::find($es);
+        $sess = \App\Models\EventSession::find($es);
     ?>
         @include('v1.parts.session_stats', ['session' => $sess, 'event' => $event])
     </li>

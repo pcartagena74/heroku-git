@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Event;
-use App\EventSession;
+use App\Models\Event;
+use App\Models\EventSession;
 use App\Org;
 use App\Registration;
 use App\RegSession;
-use App\Track;
+use App\Models\Track;
 use Illuminate\Http\Request;
 
 set_time_limit(0);

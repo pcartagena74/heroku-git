@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\OrgPerson;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PublicFunctionController extends Controller

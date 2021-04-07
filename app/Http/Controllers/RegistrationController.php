@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Email;
-use App\Event;
+use App\Models\Event;
 use App\EventDiscount;
-use App\EventSession;
+use App\Models\EventSession;
 use App\Notifications\SetYourPassword;
 use App\Notifications\WaitListNoMore;
 use App\Org;
@@ -15,8 +15,8 @@ use App\RegFinance;
 use App\Registration;
 use App\RegSession;
 use App\Ticket;
-use App\Track;
-use App\User;
+use App\Models\Track;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

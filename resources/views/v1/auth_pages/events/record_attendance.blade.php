@@ -90,7 +90,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                 @for($i=1;$i<=$event->confDays;$i++)
                     <?php
                     try {
-                        $tmp = \App\EventSession::where([
+                        $tmp = \App\Models\EventSession::where([
                             ['eventID', $event->eventID],
                             ['confDay', $i]
                         ])->first();
@@ -107,7 +107,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                     @for($x=1;$x<=5;$x++)
                         <?php
                         try {
-                            $tmp = \App\EventSession::where([
+                            $tmp = \App\Models\EventSession::where([
                                 ['eventID', $event->eventID],
                                 ['confDay', $i],
                                 ['order', $x]
@@ -122,7 +122,7 @@ $expand_msg = trans('messages.subheaders.expand_min');
                             @foreach($tracks as $track)
                                 <?php
                                 try {
-                                    $es = \App\EventSession::where([
+                                    $es = \App\Models\EventSession::where([
                                         ['eventID', $event->eventID],
                                         ['confDay', $i],
                                         ['order', $x],

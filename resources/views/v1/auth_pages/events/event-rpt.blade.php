@@ -21,7 +21,7 @@
 use App\Person;
 use App\Ticket;
 use App\RegFinance;
-use App\EventSession;
+use App\Models\EventSession;
 use App\RegSession;
 
 /**

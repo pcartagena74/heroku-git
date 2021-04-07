@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
 use App\Person;
 use App\RegFinance;
 use App\Registration;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

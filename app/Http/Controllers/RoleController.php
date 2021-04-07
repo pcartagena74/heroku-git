@@ -6,7 +6,7 @@ use App\Org;
 use App\Permission;
 use App\Person;
 use App\Role;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\DataExport;
-use App\Event;
-use App\EventSession;
+use App\Models\Event;
+use App\Models\EventSession;
 use App\Org;
 use App\Person;
 use App\Registration;

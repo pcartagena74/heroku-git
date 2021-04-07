@@ -6,8 +6,8 @@
  * $attendance: the list of events where registration completed
  * $progress: the list of events where registration was not completed
  */
-use App\Event;
-use App\EventSession;
+use App\Models\Event;
+use App\Models\EventSession;
 use App\Person;
 use App\Registration;
 use App\RegSession;

@@ -13,7 +13,7 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker, $params) {
+$factory->define(App\Models\User::class, function (Faker $faker, $params) {
     try {
         $p = $params['person'];
     } catch (Exception $e) {
