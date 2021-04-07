@@ -41,13 +41,13 @@ if ($event->hasTracks) {
 // I don't think I ever made use of it.
 
 if ($event->hasTracks && !$event->isSymmetric) {
-    $mda = array('days' => $event->confDays, 'sym' => $event->isSymmetric, 'tracks' => count($tracks));
+    $mda = ['days' => $event->confDays, 'sym' => $event->isSymmetric, 'tracks' => count($tracks)];
     for ($d = 1; $d <= $event->confDays; $d++) {
         $t = 0;
-        ${'d' . $d} = array();
+        ${'d' . $d} = [];
         foreach ($tracks as $track) {
             $t++;
-            ${'t' . $t} = array();
+            ${'t' . $t} = [];
             for ($x = 1; $x <= 5; $x++) {
                 $es = EventSession::where([
                     ['trackID', '=', $track->trackID],
