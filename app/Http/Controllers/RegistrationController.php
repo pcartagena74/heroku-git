@@ -379,9 +379,8 @@ class RegistrationController extends Controller
                 ['status', '!=', 'processed'],
             ])->first();
         } elseif ($authorID == 0 && !$logged_in) {
-            // no in-progress submissions found
+            // no check for in-progress submissions when $authorID == 0
             $resubmit = null;
-            // but check if there are any paid ones to flag user with message
         } else {
             // No one should EVER be able to get here.
             die($org->techContactStatement);
@@ -393,6 +392,8 @@ class RegistrationController extends Controller
             $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
             // if there was a resubmit, delete the old registration records and redo later...
             foreach ($resubmitted_regs as $reg) {
+                $reg->debugNotes = "Deleting due to resubmission.";
+                $reg->save();
                 $reg->delete();
             }
             $resubmitted_regs = null;
@@ -757,8 +758,14 @@ class RegistrationController extends Controller
 
         if ($flag_dupe) {
             request()->session()->flash(
+                'dupes',
+                trans_choice('messages.warning.dupe_reg', count($dupe_names),
+                    ['names' => li_print_array($dupe_names, "ul")])
+            );
+            request()->session()->flash(
                 'alert-warning',
-                trans_choice('messages.warning.dupe_reg', count($dupe_names), ['names' => li_print_array($dupe_names, "ul")])
+                trans_choice('messages.warning.dupe_reg', count($dupe_names),
+                ['names' => li_print_array($dupe_names, "ul")])
             );
         }
 

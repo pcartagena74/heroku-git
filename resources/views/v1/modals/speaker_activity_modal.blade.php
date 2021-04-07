@@ -1,11 +1,12 @@
-<?php
-/**
- * Comment:
- * Date: 9/30/2019
- */
+@php
+    /**
+     * Comment:
+     * Date: 9/30/2019
+     *
+     */
 
-$year = '';
-?>
+    $year = '';
+@endphp
 
 @if(count($speaker_event_list) > 0)
     <h2>@lang('messages.headers.sAct'):
@@ -13,35 +14,35 @@ $year = '';
         {!! $speaker_event_list->first()->lastName !!}
     </h2>
     @foreach($speaker_event_list as $entry)
-    <?php
-    $date = \Carbon\Carbon::create($entry->eventStartDate);
-    $entry->eventStartDate = $date;
-    ?>
-    @if($year != $entry->eventStartDate->year)
-    @if($year != '')
-    </ul>
-    @endif
+        @php
+            $date = \Carbon\Carbon::create($entry->eventStartDate);
+            $entry->eventStartDate = $date;
+        @endphp
 
-<b>{!! $year = $entry->eventStartDate->year !!}</b>
-<ul>
-    @endif
-    <li>
-        {!! ucwords(strtolower($entry->eventName)) !!} <br/>
-        {!! $entry->eventStartDate->format('M d, Y') !!}<p>
+        @if($year != $entry->eventStartDate->year)
+            @if($year != '')
+                </ul>
+            @endif
 
-    <?php
-    $event = \App\Event::find($entry->eventID);
-    if (null === $entry->sessionID) {
-        $es = $event->mainSession;
-    } else {
-        $es = $entry->sessionID;
-    }
+            <b>{!! $year = $entry->eventStartDate->year !!}</b>
+            <ul>
+        @endif
+        <li>
+            {!! ucwords(strtolower($entry->eventName)) !!} <br/>
+            {!! $entry->eventStartDate->format('M d, Y') !!}<p>
 
-        $sess = \App\EventSession::find($es);
-    ?>
-        @include('v1.parts.session_stats', ['session' => $sess, 'event' => $event])
-    </li>
+            @php
+                $event = \App\Event::find($entry->eventID);
+                if (null === $entry->sessionID) {
+                    $es = $event->mainSession;
+                } else {
+                    $es = $entry->sessionID;
+                }
 
+                $sess = \App\EventSession::find($es);
+            @endphp
+            @include('v1.parts.session_stats', ['session' => $sess, 'event' => $event])
+        </li>
     @endforeach
 </ul>
 @endif
