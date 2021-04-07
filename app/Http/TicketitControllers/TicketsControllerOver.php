@@ -24,9 +24,9 @@ class TicketsControllerOver extends TicketController
 
     public function __construct(Ticket $tickets, Agent $agent)
     {
-        $this->middleware('\App\Http\Middleware\Ticketit\ResAccessMiddlewareOver', ['only' => ['show']]);
-        $this->middleware('\App\Http\Middleware\Ticketit\IsAgentMiddlewareOver', ['only' => ['edit', 'update']]);
-        $this->middleware('\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver', ['only' => ['destroy']]);
+        $this->middleware(\App\Http\Middleware\Ticketit\ResAccessMiddlewareOver::class, ['only' => ['show']]);
+        $this->middleware(\App\Http\Middleware\Ticketit\IsAgentMiddlewareOver::class, ['only' => ['edit', 'update']]);
+        $this->middleware(\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver::class, ['only' => ['destroy']]);
 
         $this->tickets = $tickets;
         $this->agent = $agent;

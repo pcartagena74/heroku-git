@@ -35,26 +35,26 @@ class EventRegistrationTest extends TestCase
         //$this->withoutExceptionHandling();
         $this->actingAs($this->user);
 
-        $new_member = factory('App\Person')
+        $new_member = factory(\App\Person::class)
             ->create([
                 'defaultOrgID' => $this->org->orgID,
                 'defaultOrgPersonID' => 0,  // temporary value for DB integrity constraint
             ]);
 
-        $new_member->orgperson()->create(factory('App\OrgPerson')
+        $new_member->orgperson()->create(factory(\App\OrgPerson::class)
             ->raw([
                 'orgID' => $this->org->orgID,
                 'personID' => $new_member->personID,
                 'OrgStat1' => $this->faker->unique()->randomNumber(rand(5, 7)),
             ]));
 
-        $new_member->emails()->create(factory('App\Email')
+        $new_member->emails()->create(factory(\App\Email::class)
             ->raw([
                 'personID' => $new_member->personID,
                 'emailADDR' => $new_member->login,
                 'isPrimary' => 1, ]));
 
-        $new_member->user()->create(factory('App\User')
+        $new_member->user()->create(factory(\App\User::class)
             ->raw([
                 'id' => $new_member->personID,
                 'name' => $new_member->login,
@@ -90,26 +90,26 @@ class EventRegistrationTest extends TestCase
         //$this->withoutExceptionHandling();
         $this->actingAs($this->user);
 
-        $new_nonmember = factory('App\Person')
+        $new_nonmember = factory(\App\Person::class)
             ->create([
                 'defaultOrgID' => $this->org->orgID,
                 'defaultOrgPersonID' => 0,  // temporary value for DB integrity constraint
             ]);
 
-        $new_nonmember->orgperson()->create(factory('App\OrgPerson')
+        $new_nonmember->orgperson()->create(factory(\App\OrgPerson::class)
             ->raw([
                 'orgID' => $this->org->orgID,
                 'personID' => $new_nonmember->personID,
                 'OrgStat1' => null,
             ]));
 
-        $new_nonmember->emails()->create(factory('App\Email')
+        $new_nonmember->emails()->create(factory(\App\Email::class)
             ->raw([
                 'personID' => $new_nonmember->personID,
                 'emailADDR' => $new_nonmember->login,
                 'isPrimary' => 1, ]));
 
-        $new_nonmember->user()->create(factory('App\User')
+        $new_nonmember->user()->create(factory(\App\User::class)
             ->raw([
                 'id' => $new_nonmember->personID,
                 'name' => $new_nonmember->login,

@@ -2,8 +2,8 @@
 
 Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddleware()], function () use ($main_route, $main_route_path, $admin_route, $admin_route_path) {
     $ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController';
-    $new_tickets_path = 'App\Http\TicketitControllers\TicketsControllerOver';
-    $new_tickets_comment_path = 'App\Http\TicketitControllers\CommentsControllerOver';
+    $new_tickets_path = \App\Http\TicketitControllers\TicketsControllerOver::class;
+    $new_tickets_comment_path = \App\Http\TicketitControllers\CommentsControllerOver::class;
     //Route::group(['middleware' => '', function () use ($main_route) {
     //Ticket public route
     Route::get("$main_route_path/complete", $new_tickets_path.'@indexComplete')
@@ -61,7 +61,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ->name("$main_route.reopen");
     //});
 
-    Route::group(['middleware' => 'App\Http\Middleware\Ticketit\IsAgentMiddlewareOver'], function () use ($main_route, $main_route_path, $new_tickets_path) {
+    Route::group(['middleware' => \App\Http\Middleware\Ticketit\IsAgentMiddlewareOver::class], function () use ($main_route, $main_route_path, $new_tickets_path) {
 
         //API return list of agents in particular category
         Route::get("$main_route_path/agents/list/{category_id?}/{ticket_id?}", [
@@ -70,7 +70,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
     });
 
-    Route::group(['middleware' => 'App\Http\Middleware\Ticketit\IsAdminMiddlewareOver'], function () use ($admin_route, $admin_route_path) {
+    Route::group(['middleware' => \App\Http\Middleware\Ticketit\IsAdminMiddlewareOver::class], function () use ($admin_route, $admin_route_path) {
         //Ticket admin index route (ex. http://url/tickets-admin/)
         Route::get("$admin_route_path/indicator/{indicator_period?}", [
             'as'   => $admin_route.'.dashboard.indicator',
