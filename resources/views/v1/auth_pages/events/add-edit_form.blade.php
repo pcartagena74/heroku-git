@@ -9,8 +9,8 @@
      *
      */
     use App\Location;
-    use App\Event;
-    use App\EventSession;
+    use App\Models\Event;
+    use App\Models\EventSession;
     use GrahamCampbell\Flysystem\Facades\Flysystem;
 
     $topBits = '';

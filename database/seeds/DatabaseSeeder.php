@@ -3,7 +3,7 @@
 use App\Org;
 use App\Permission;
 use App\Role;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             TicketitSeeder::class,
         ]);
 
-        $roles      = Role::find([9, 8]);
+        $roles = Role::find([9, 8]);
         $permission = Permission::get();
         foreach ($roles as $key => $r_value) {
             foreach ($permission as $p_key => $p_value) {

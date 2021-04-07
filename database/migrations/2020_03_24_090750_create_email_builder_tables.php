@@ -27,7 +27,6 @@ class CreateEmailBuilderTables extends Migration
             $table->unsignedInteger('used_count')->default(0);
             $table->boolean('is_active')->default(1);
         });
-
     }
 
     /**

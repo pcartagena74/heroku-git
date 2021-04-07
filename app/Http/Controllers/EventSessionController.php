@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\EventSession;
+use App\Models\Track;
 use Illuminate\Http\Request;
-use App\EventSession;
-use App\Event;
-use App\Track;
 
 class EventSessionController extends Controller
 {
@@ -26,9 +26,9 @@ class EventSessionController extends Controller
         $event = Event::find($es->eventID);
         $updaterID = auth()->user()->id;
 
-        switch($function){
+        switch ($function) {
             case 'restore_session':
-                if(null !== $es){
+                if (null !== $es) {
                     $es->deleted_at = null;
                     $es->updaterID = $updaterID;
                     $es->save();
@@ -40,17 +40,18 @@ class EventSessionController extends Controller
                 $row = EventSession::where([
                     ['eventID', $es->eventID],
                     ['confDay', $confDay],
-                    ['order', $order]
+                    ['order', $order],
                 ])->withTrashed()->get();
 
-                foreach($row as $es){
+                foreach ($row as $es) {
                     $es->deleted_at = null;
                     $es->updaterID = $updaterID;
                     $es->save();
                 }
                 break;
         }
-        return redirect('/tracks/' . $event->eventID);
+
+        return redirect('/tracks/'.$event->eventID);
     }
 
     /**
@@ -78,6 +79,6 @@ class EventSessionController extends Controller
             $es->delete();
         }
 
-        return redirect('/tracks/' . $event->eventID);
+        return redirect('/tracks/'.$event->eventID);
     }
 }

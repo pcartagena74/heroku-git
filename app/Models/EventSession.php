@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +15,6 @@ class EventSession extends Model
     const UPDATED_AT = 'updateDate';
     protected $dates = ['start', 'end', 'createDate', 'updateDate', 'deleted_at'];
     protected $fillable = ['sessionName', 'sessionAbstract', 'eventID', 'start', 'end'];
-
 
     public function track()
     {
@@ -49,19 +48,20 @@ class EventSession extends Model
 
     public function show_speakers()
     {
-        $output = "";
+        $output = '';
 
         if ($this->speakers !== null && count($this->speakers) > 0) {
             foreach ($this->speakers as $speaker) {
                 $speaker->load('person');
                 $output .= $speaker->person->showFullName();
                 if ($this->speakers->last() != $speaker) {
-                    $output .= ", ";
+                    $output .= ', ';
                 }
             }
         } else {
             $output = trans('messages.fields.tbd');
         }
+
         return $output;
     }
 }

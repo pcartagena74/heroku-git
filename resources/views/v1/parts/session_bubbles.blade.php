@@ -22,8 +22,8 @@
  */
 
 use App\Ticket;
-use App\Track;
-use App\EventSession;
+use App\Models\Track;
+use App\Models\EventSession;
 use App\RegSession;
 use App\Org;
 

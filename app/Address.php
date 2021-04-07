@@ -11,9 +11,9 @@ class Address extends Model
     use InsertOnDuplicateKey;
 
     // The table
-    protected $table      = 'person-address';
+    protected $table = 'person-address';
     protected $primaryKey = 'addrID';
-    protected $dates      = ['createDate', 'deleted_at', 'updateDate'];
+    protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
     public function person()
     {

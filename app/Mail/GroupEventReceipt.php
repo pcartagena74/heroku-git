@@ -2,15 +2,15 @@
 
 namespace App\Mail;
 
-use App\Event;
+use App\Models\Event;
 use App\Location;
 use App\Org;
 use App\RegFinance;
 use App\Ticket;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class GroupEventReceipt extends Mailable
 {
@@ -53,7 +53,7 @@ class GroupEventReceipt extends Mailable
             ->subject("$orgName Group Registration Confirmation")
             ->view('v1.auth_pages.events.registration.group_receipt')
             ->with([
-                'event' => $this->array['event'] , 'quantity' => $this->array['quantity'],
+                'event' => $this->array['event'], 'quantity' => $this->array['quantity'],
                  'loc' => $this->array['loc'],
                 'rf' => $this->rf, 'person' => $this->array['person'], 'org' => $this->array['org'],
             ])->attach($this->attachment);

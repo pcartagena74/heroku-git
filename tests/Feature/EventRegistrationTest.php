@@ -2,22 +2,21 @@
 
 namespace Tests\Feature;
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
-use App\User;
 use App\Person;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class EventRegistrationTest extends TestCase
 {
     use WithFaker;
 
     // , RefreshDatabase;
-
 
     protected function setUp(): void
     {
@@ -26,7 +25,7 @@ class EventRegistrationTest extends TestCase
         $this->user = User::find(1);
         $this->person = $this->user->person;
     }
-    
+
     /**
      * @test - Member Creation Test
      *         Member defined as org-person.OrgStat1 is not null
@@ -36,26 +35,26 @@ class EventRegistrationTest extends TestCase
         //$this->withoutExceptionHandling();
         $this->actingAs($this->user);
 
-        $new_member = factory('App\Person')
+        $new_member = factory(\App\Person::class)
             ->create([
                 'defaultOrgID' => $this->org->orgID,
                 'defaultOrgPersonID' => 0,  // temporary value for DB integrity constraint
             ]);
 
-        $new_member->orgperson()->create(factory('App\OrgPerson')
+        $new_member->orgperson()->create(factory(\App\OrgPerson::class)
             ->raw([
                 'orgID' => $this->org->orgID,
                 'personID' => $new_member->personID,
                 'OrgStat1' => $this->faker->unique()->randomNumber(rand(5, 7)),
             ]));
 
-        $new_member->emails()->create(factory('App\Email')
+        $new_member->emails()->create(factory(\App\Email::class)
             ->raw([
                 'personID' => $new_member->personID,
                 'emailADDR' => $new_member->login,
-                'isPrimary' => 1]));
+                'isPrimary' => 1, ]));
 
-        $new_member->user()->create(factory('App\User')
+        $new_member->user()->create(factory(\App\Models\User::class)
             ->raw([
                 'id' => $new_member->personID,
                 'name' => $new_member->login,
@@ -64,17 +63,17 @@ class EventRegistrationTest extends TestCase
             ]));
 
         $this->assertDatabaseHas('person', [
-            'personID' => $new_member->personID
+            'personID' => $new_member->personID,
         ]);
 
         $this->assertDatabaseHas('person-email', [
             'personID' => $new_member->personID,
-            'emailADDR' => $new_member->login
+            'emailADDR' => $new_member->login,
         ]);
 
         $this->assertDatabaseHas('org-person', [
             'personID' => $new_member->personID,
-            'orgID' => $new_member->defaultOrgID
+            'orgID' => $new_member->defaultOrgID,
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -91,26 +90,26 @@ class EventRegistrationTest extends TestCase
         //$this->withoutExceptionHandling();
         $this->actingAs($this->user);
 
-        $new_nonmember = factory('App\Person')
+        $new_nonmember = factory(\App\Person::class)
             ->create([
                 'defaultOrgID' => $this->org->orgID,
                 'defaultOrgPersonID' => 0,  // temporary value for DB integrity constraint
             ]);
 
-        $new_nonmember->orgperson()->create(factory('App\OrgPerson')
+        $new_nonmember->orgperson()->create(factory(\App\OrgPerson::class)
             ->raw([
                 'orgID' => $this->org->orgID,
                 'personID' => $new_nonmember->personID,
                 'OrgStat1' => null,
             ]));
 
-        $new_nonmember->emails()->create(factory('App\Email')
+        $new_nonmember->emails()->create(factory(\App\Email::class)
             ->raw([
                 'personID' => $new_nonmember->personID,
                 'emailADDR' => $new_nonmember->login,
-                'isPrimary' => 1]));
+                'isPrimary' => 1, ]));
 
-        $new_nonmember->user()->create(factory('App\User')
+        $new_nonmember->user()->create(factory(\App\Models\User::class)
             ->raw([
                 'id' => $new_nonmember->personID,
                 'name' => $new_nonmember->login,
@@ -119,17 +118,17 @@ class EventRegistrationTest extends TestCase
             ]));
 
         $this->assertDatabaseHas('person', [
-            'personID' => $new_nonmember->personID
+            'personID' => $new_nonmember->personID,
         ]);
 
         $this->assertDatabaseHas('person-email', [
             'personID' => $new_nonmember->personID,
-            'emailADDR' => $new_nonmember->login
+            'emailADDR' => $new_nonmember->login,
         ]);
 
         $this->assertDatabaseHas('org-person', [
             'personID' => $new_nonmember->personID,
-            'orgID' => $new_nonmember->defaultOrgID
+            'orgID' => $new_nonmember->defaultOrgID,
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -142,7 +141,6 @@ class EventRegistrationTest extends TestCase
      *
      * depends an_event_can_be_created - $event
      * depends a_member_can_be_created - $new_member
-     *
      */
 
     /*

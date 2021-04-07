@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class EventICSNote extends Notification
 {
@@ -48,7 +48,7 @@ class EventICSNote extends Notification
         return (new MailMessage)->markdown('notifications.ics_note', [
             'event' => $this->event,
             'logoPath' => $this->org->logo_path(),
-            'orgURL' => $this->org->org_url()
+            'orgURL' => $this->org->org_url(),
         ]);
     }
 

@@ -11,8 +11,8 @@ use App\RegSession;
 use App\Registration;
 use App\Person;
 use App\Ticket;
-use App\EventSession;
-use App\Event;
+use App\Models\EventSession;
+use App\Models\Event;
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();

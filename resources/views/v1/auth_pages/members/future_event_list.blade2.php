@@ -5,14 +5,13 @@
  *
  * $attendance: the list of events where registration completed
  * $progress: the list of events where registration was not completed
- *
  */
-use App\RegSession;
-use App\Registration;
+use App\Models\Event;
+use App\Models\EventSession;
 use App\Person;
+use App\Registration;
+use App\RegSession;
 use App\Ticket;
-use App\EventSession;
-use App\Event;
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();

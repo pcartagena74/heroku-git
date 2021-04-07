@@ -1,4 +1,5 @@
 <?php
+
 return [
     /**
      * Generic values are filled when when neither package was able to guess out the value.
@@ -40,7 +41,7 @@ return [
          * so you should not set a too long interval if you
          * lack on memory or space where to cache the results.
          *
-         * @var integer
+         * @var int
          */
         'interval'  => 10080, // 7 days
 

@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\EventType;
+use App\Models\EventType;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 
 class Org extends Model
@@ -35,32 +35,34 @@ class Org extends Model
     public function eventTypes()
     {
         // NOT NOT NOT a relationship return but a true function
-        return EventType::whereIn('orgID', array(1, $this->orgID))->get();
+        return EventType::whereIn('orgID', [1, $this->orgID])->get();
     }
 
     public function events()
     {
-        return $this->hasMany(Event::class,'orgID', 'orgID');
+        return $this->hasMany(Event::class, 'orgID', 'orgID');
     }
 
     public function admin_props()
     {
-        return $this->hasMany(OrgAdminProp::class,'orgID', 'orgID');
+        return $this->hasMany(OrgAdminProp::class, 'orgID', 'orgID');
     }
 
     public function logo_path()
     {
         $s3m = Flysystem::connection('s3_media');
-        $logopath = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $this->orgPath . "/" . $this->orgLogo);
+        $logopath = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $this->orgPath.'/'.$this->orgLogo);
+
         return $logopath;
     }
 
     public function org_URL()
     {
         $u = $this->orgURL;
-        if(!preg_match("#^https?://#", $u)){
-            $u = "http://" . $u;
+        if (! preg_match('#^https?://#', $u)) {
+            $u = 'http://'.$u;
         }
+
         return $u;
     }
 }

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use App\Event;
+use App\Models\Event;
 use App\EventDiscount;
-use App\EventSession;
+use App\Models\EventSession;
+use App\Location;
 use App\Org;
 use App\OrgDiscount;
-use App\Location;
 use App\Person;
 use App\Ticket;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class EventCopyController extends Controller
 {
@@ -87,13 +87,13 @@ class EventCopyController extends Controller
         $page_title = trans('messages.headers.copy_event');
 
         // Create a stub for the default ticket for the event
-        $label                    = Org::find($this->currentPerson->defaultOrgID);
-        $tkt                      = new Ticket;
-        $tkt->ticketLabel         = $label->defaultTicketLabel;
+        $label = Org::find($this->currentPerson->defaultOrgID);
+        $tkt = new Ticket;
+        $tkt->ticketLabel = $label->defaultTicketLabel;
         $tkt->availabilityEndDate = $event->eventStartDate;
-        $tkt->eventID             = $event->eventID;
-        $tkt->earlyBirdPercent    = $label->earlyBirdPercent;
-        $tkt->earlyBirdEndDate    = Carbon::now();
+        $tkt->eventID = $event->eventID;
+        $tkt->earlyBirdPercent = $label->earlyBirdPercent;
+        $tkt->earlyBirdEndDate = Carbon::now();
         $tkt->save();
 
         // Create a mainSession for the default ticket for the event
@@ -117,7 +117,7 @@ class EventCopyController extends Controller
         // A copied event should always get the discount codes.
         $orgDiscounts = OrgDiscount::where([
             ['orgID', $this->currentPerson->defaultOrgID],
-            ['discountCODE', "<>", '']
+            ['discountCODE', '<>', ''],
         ])->get();
 
         foreach ($orgDiscounts as $od) {

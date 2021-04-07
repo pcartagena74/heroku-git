@@ -12,16 +12,14 @@ use ReCaptcha\ReCaptcha;
 
 trait CaptchaTrait
 {
-
     public function captchaCheck()
     {
-
         $response = Input::get('g-recaptcha-response');
         $remoteip = $_SERVER['REMOTE_ADDR'];
-        $secret   = env('RECAPTCHA_PRIVATE_KEY');
+        $secret = env('RECAPTCHA_PRIVATE_KEY');
 
         $recaptcha = new ReCaptcha($secret);
-        $resp      = $recaptcha->verify($response, $remoteip);
+        $resp = $recaptcha->verify($response, $remoteip);
         if ($resp->isSuccess()) {
             return 1;
         } else {

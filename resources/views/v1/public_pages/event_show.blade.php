@@ -10,7 +10,7 @@
      * @var Track $tracks
      */
 
-    use App\EventSession;
+    use App\Models\EventSession;
     use App\Ticket;
     use GrahamCampbell\Flysystem\Facades\Flysystem;
     use League\Flysystem\AwsS3v3\AwsS3Adapter;

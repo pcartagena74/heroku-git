@@ -15,7 +15,6 @@ class CreateOrgAdminPropTable extends Migration
      *
      * @return void
      */
-
     public function up()
     {
         Schema::create('org-admin_prop', function (Blueprint $table) {
@@ -28,7 +27,6 @@ class CreateOrgAdminPropTable extends Migration
             $table->foreign('propID')->references('id')->on('admin_prop');
             $table->unique(['orgID', 'propID']);
         });
-
     }
 
     /**

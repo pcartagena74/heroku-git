@@ -6,7 +6,6 @@ use App\Person;
 use Faker\Generator as Faker;
 
 $factory->define(Person::class, function (Faker $faker, $params) {
-
     return [
         'firstName' => $faker->firstName,
         'lastName' => $faker->lastName,

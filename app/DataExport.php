@@ -6,8 +6,8 @@
 
 namespace App;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class DataExport implements FromCollection, WithHeadings
@@ -22,6 +22,7 @@ class DataExport implements FromCollection, WithHeadings
         $this->header_array = $header;
         $this->data_array = $data;
     }
+
     public function collection()
     {
         return collect($this->data_array);

@@ -1,15 +1,15 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Models\EventSession;
 use App\Other\ics_calendar;
+use App\Person;
+use Carbon\Carbon;
+//use Spatie\Activitylog\Traits\LogsActivity;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-//use Spatie\Activitylog\Traits\LogsActivity;
-use App\EventSession;
-use App\Person;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use League\Flysystem\AdapterInterface;
 
@@ -75,22 +75,22 @@ class Event extends Model
 
     public function sessions()
     {
-        return $this->hasMany(EventSession::class,'eventID', 'eventID');
+        return $this->hasMany(EventSession::class, 'eventID', 'eventID');
     }
 
     public function regsessions()
     {
-        return $this->hasMany(RegSession::class,'eventID', 'eventID');
+        return $this->hasMany(RegSession::class, 'eventID', 'eventID');
     }
 
     public function main_session()
     {
-        return $this->hasOne(EventSession::class,'sessionID', 'mainSession');
+        return $this->hasOne(EventSession::class, 'sessionID', 'mainSession');
     }
 
     public function surveys()
     {
-        return $this->hasManyThrough(RSSurvey::class, EventSession::class,'eventID', 'sessionID', 'eventID', 'sessionID');
+        return $this->hasManyThrough(RSSurvey::class, EventSession::class, 'eventID', 'sessionID', 'eventID', 'sessionID');
     }
 
     public static function events_this_year()
@@ -146,10 +146,10 @@ class Event extends Model
     public function checkin_period()
     {
         $today = Carbon::now();
-        if($this->orgID > 0){
+        if ($this->orgID > 0) {
             $org = Org::find($this->orgID);
         } else {
-            $e = Event::find($this->eventID);
+            $e = self::find($this->eventID);
             $org = Org::find($e->orgID);
         }
 
@@ -202,7 +202,7 @@ class Event extends Model
     {
         return RegSession::where([
             ['sessionID', $this->mainSession],
-            ['eventID', $this->eventID]
+            ['eventID', $this->eventID],
         ])->get();
     }
 
@@ -213,6 +213,7 @@ class Event extends Model
         foreach ($this->tickets as $t) {
             $count += $t->week_sales();
         }
+
         return $count;
     }
 
@@ -253,7 +254,7 @@ class Event extends Model
     public function create_or_update_event_ics()
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_' . $this->eventID . '.ics';
+        $event_filename = 'event_'.$this->eventID.'.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
@@ -263,6 +264,7 @@ class Event extends Model
     {
         $s3m = Flysystem::connection('s3_events');
         $ics_file = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET1'), "event_$this->eventID.ics");
+
         return $ics_file;
     }
 }

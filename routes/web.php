@@ -34,15 +34,16 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
  */
 Route::get('trigger-dyno', 'DynoController@index');
 Route::get('/preview', function () {
-    $e    = \App\Event::find(319);
+    $e = \App\Models\Event::find(319);
     $note = new \App\Notifications\EventICSNote($e);
+
     return $note->toMail('blah@test.com');
 });
 
 Route::get('setlocale/{locale}', function ($locale) {
     if (in_array($locale, \Config::get('app.locales'))) {
         if (Auth::check()) {
-            $user         = Auth::user();
+            $user = Auth::user();
             $user->locale = $locale;
             $user->update();
         }
@@ -51,6 +52,7 @@ Route::get('setlocale/{locale}', function ($locale) {
     }
     session(['locale' => $locale]);
     Cookie::queue('locale', $locale, 60);
+
     return redirect()->back();
 });
 
@@ -83,8 +85,7 @@ Route::get('/mail', function () {
 })->name('mail');
 Route::get('/mtgs', function () {
     return view('v1.public_pages.details');
-})->name('mtgs')
-;
+})->name('mtgs');
 Route::get('/pmi_lookup/{org}', 'OrgPersonController@index');
 Route::post('/pmi_lookup', 'OrgPersonController@find');
 Route::get('/pmi_account/{person}', 'OrgPersonController@show');
@@ -114,6 +115,7 @@ Route::post('/record_attendance/{event}', 'AuthCheckinController@store');
 
 Route::get('/storage/events/{filename}', function ($filename) {
     $filePath = Flysystem::connection('awss3')->get($filename);
+
     return redirect($filePath);
 });
 
@@ -340,7 +342,8 @@ Route::get('/list_campaign', 'CampaignController@listCampaign');
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
 Route::get('/mytest', function () {
-    $events = App\Event::all();
+    $events = App\Models\Event::all();
+
     return view('v1.auth_pages.welcome', compact('events'));
 });
 
@@ -350,13 +353,14 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
     foreach ($request->all() as $input_key => $input_val) {
         if (strpos($input_key, 'approval-status-') === 0) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
-            $tweet    = App\Tweet::where('id', $tweet_id)->first();
+            $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
                 $tweet->approved = (int) $input_val;
                 $tweet->save();
             }
         }
     }
+
     return redirect()->back();
 }]);
 
@@ -367,7 +371,7 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 Auth::routes();
 
 Route::get('ste2', function () {
-    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
+    Mail::raw('Sending email is easy from '.env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
         $message->to('pcartagena@partners.org');
@@ -378,7 +382,7 @@ Route::get('snaptest', function () {
     // $snap = App::make('snappy.pdf');
     // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
     // return $snap->inline();
-    return PDF::loadFile(env('APP_URL') . "/show_orig/159")->inline('blah.pdf');
+    return PDF::loadFile(env('APP_URL').'/show_orig/159')->inline('blah.pdf');
 });
 
 Route::get('library', 'LibraryController@index');

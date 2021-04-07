@@ -15,7 +15,6 @@ class CreateAdminPropGroupTable extends Migration
      *
      * @return void
      */
-
     public function up()
     {
         Schema::create('admin_group', function (Blueprint $table) {
@@ -26,7 +25,6 @@ class CreateAdminPropGroupTable extends Migration
             $table->timestamp('createDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updateDate')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
-
     }
 
     /**

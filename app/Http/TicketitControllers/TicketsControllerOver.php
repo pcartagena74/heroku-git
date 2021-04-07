@@ -10,25 +10,26 @@ use Carbon\Carbon;
 use Entrust;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
+use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
 use Validator;
-use \Kordy\Ticketit\Helpers\LaravelVersion;
 
 class TicketsControllerOver extends TicketController
 {
     protected $tickets;
     protected $agent;
     protected $currentPerson;
+
     public function __construct(Ticket $tickets, Agent $agent)
     {
-        $this->middleware('\App\Http\Middleware\Ticketit\ResAccessMiddlewareOver', ['only' => ['show']]);
-        $this->middleware('\App\Http\Middleware\Ticketit\IsAgentMiddlewareOver', ['only' => ['edit', 'update']]);
-        $this->middleware('\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver', ['only' => ['destroy']]);
+        $this->middleware(\App\Http\Middleware\Ticketit\ResAccessMiddlewareOver::class, ['only' => ['show']]);
+        $this->middleware(\App\Http\Middleware\Ticketit\IsAgentMiddlewareOver::class, ['only' => ['edit', 'update']]);
+        $this->middleware(\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver::class, ['only' => ['destroy']]);
 
         $this->tickets = $tickets;
-        $this->agent   = $agent;
+        $this->agent = $agent;
     }
 
     public function data($complete = false)
@@ -39,9 +40,9 @@ class TicketsControllerOver extends TicketController
             $datatables = app(\Yajra\Datatables\Datatables::class);
         }
 
-        $user   = $this->agent->find(auth()->user()->id);
+        $user = $this->agent->find(auth()->user()->id);
         $person = Person::find(auth()->user()->id);
-        $orgId  = $person->defaultOrgID;
+        $orgId = $person->defaultOrgID;
         if ($user->isAdmin()) {
             if ($complete) {
                 $collection = Ticket::complete($orgId);
@@ -105,28 +106,28 @@ class TicketsControllerOver extends TicketController
     {
         $collection->editColumn('subject', function ($ticket) {
             return (string) link_to_route(
-                Setting::grab('main_route') . '.show',
+                Setting::grab('main_route').'.show',
                 $ticket->subject,
                 $ticket->id
             );
         });
 
         $collection->editColumn('status', function ($ticket) {
-            $color  = $ticket->color_status;
+            $color = $ticket->color_status;
             $status = e($ticket->status);
 
             return "<div style='color: $color'>$status</div>";
         });
 
         $collection->editColumn('priority', function ($ticket) {
-            $color    = $ticket->color_priority;
+            $color = $ticket->color_priority;
             $priority = e($ticket->priority);
 
             return "<div style='color: $color'>$priority</div>";
         });
 
         $collection->editColumn('category', function ($ticket) {
-            $color    = $ticket->color_category;
+            $color = $ticket->color_category;
             $category = e($ticket->category);
 
             return "<div style='color: $color'>$category</div>";
@@ -137,16 +138,19 @@ class TicketsControllerOver extends TicketController
             // return e($ticket->agent->name);
             // removed as now we are not using ticketit agent table for same.
             $ticket = Person::where('personID', $ticket->agent_id)->get()->first();
+
             return e($ticket->login);
         });
 
         // added by mufaddal for filter
         $collection->editColumn('agent_id', function ($ticket) {
             $ticket = Person::where('personID', $ticket->agent_id)->get()->first();
+
             return e($ticket->login);
         });
         $collection->editColumn('user_id', function ($ticket) {
             $ticket = Person::where('personID', $ticket->user_id)->get()->first();
+
             return e($ticket->login);
         });
 
@@ -161,6 +165,7 @@ class TicketsControllerOver extends TicketController
     public function index()
     {
         $complete = false;
+
         return view('ticketit::index', compact('complete'));
     }
 
@@ -244,9 +249,9 @@ class TicketsControllerOver extends TicketController
         $ticket->category_id = $request->category_id;
 
         $ticket->status_id = Setting::grab('default_status_id');
-        $ticket->user_id   = auth()->user()->id;
-        $person            = Person::find(auth()->user()->id);
-        $ticket->orgId     = $person->defaultOrgID;
+        $ticket->user_id = auth()->user()->id;
+        $person = Person::find(auth()->user()->id);
+        $ticket->orgId = $person->defaultOrgID;
 
         $ticket->autoSelectAgent();
 
@@ -255,7 +260,7 @@ class TicketsControllerOver extends TicketController
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-created'));
 
         // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index');
-        return redirect()->route(Setting::grab('main_route') . '.index');
+        return redirect()->route(Setting::grab('main_route').'.index');
     }
 
     /**
@@ -273,7 +278,7 @@ class TicketsControllerOver extends TicketController
                 'category_id' => 'required|exists:ticketit_categories,id',
                 'url'         => 'required',
             ]);
-            if (!$validator->passes()) {
+            if (! $validator->passes()) {
                 return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
         } else {
@@ -282,13 +287,12 @@ class TicketsControllerOver extends TicketController
                 'content' => 'required|min:6',
                 'url'     => 'required',
             ]);
-            if (!$validator->passes()) {
+            if (! $validator->passes()) {
                 return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
-
         }
 
-        $ticket   = new Ticket();
+        $ticket = new Ticket();
         $page_url = $request->input('url');
         $referrer = $request->headers->get('referer');
         if ($referrer != $request->input('url')) {
@@ -296,28 +300,28 @@ class TicketsControllerOver extends TicketController
         }
         $ticket->subject = $request->subject;
 
-        $ticket->setPurifiedContent($request->get('content') . ' <br> URL: ' . $referrer);
+        $ticket->setPurifiedContent($request->get('content').' <br> URL: '.$referrer);
 
         $ticket->category_id = 4;
         $ticket->priority_id = 2;
 
-        if (!empty($request->input('category_id'))) {
+        if (! empty($request->input('category_id'))) {
             $ticket->category_id = $request->input('category_id');
         }
-        if (!empty($request->input('priority_id'))) {
+        if (! empty($request->input('priority_id'))) {
             $ticket->priority_id = $request->input('priority_id');
         }
 
         $ticket->status_id = Setting::grab('default_status_id');
-        $ticket->user_id   = auth()->user()->id;
-        $person            = Person::find(auth()->user()->id);
-        $ticket->orgId     = $person->defaultOrgID;
+        $ticket->user_id = auth()->user()->id;
+        $person = Person::find(auth()->user()->id);
+        $ticket->orgId = $person->defaultOrgID;
 
         if (empty($request->input('agent_id'))) {
             $ticket->autoSelectAgent();
-        } else if ($request->input('agent_id') == 'auto') {
+        } elseif ($request->input('agent_id') == 'auto') {
             $ticket->autoSelectAgent();
-        } else if ($request->input('agent_id') == 'auto_dev') {
+        } elseif ($request->input('agent_id') == 'auto_dev') {
             $ticket->autoSelectAgent('dev');
         } else {
             $ticket->agent_id = $request->input('agent_id');
@@ -342,13 +346,13 @@ class TicketsControllerOver extends TicketController
 
         list($priority_lists, $category_lists, $status_lists) = $this->PCS();
 
-        $close_perm  = $this->permToClose($id);
+        $close_perm = $this->permToClose($id);
         $reopen_perm = $this->permToReopen($id);
 
         //removing category agent as it envolves changing laravel default add role remove role to add remove entires from tickeit it as well and will have same effect without it.
         // $cat_agents = Models\Category::find($ticket->category_id)->agents()->agentsLists();
         $agent_lists = getAgentList($ticket);
-        $comments    = $ticket->comments()->paginate(Setting::grab('paginate_items'));
+        $comments = $ticket->comments()->paginate(Setting::grab('paginate_items'));
         if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
             $ticket->agent_read = 1;
             $ticket->save();
@@ -388,13 +392,13 @@ class TicketsControllerOver extends TicketController
 
         $ticket->setPurifiedContent($request->get('content'));
 
-        $ticket->status_id   = $request->status_id;
+        $ticket->status_id = $request->status_id;
         $ticket->category_id = $request->category_id;
         $ticket->priority_id = $request->priority_id;
 
         if ($request->input('agent_id') == 'auto') {
             $ticket->autoSelectAgent();
-        } else if ($request->input('agent_id') == 'auto_dev') {
+        } elseif ($request->input('agent_id') == 'auto_dev') {
             $ticket->autoSelectAgent('dev');
         } else {
             $ticket->agent_id = $request->input('agent_id');
@@ -407,7 +411,7 @@ class TicketsControllerOver extends TicketController
 
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-modified'));
 
-        return redirect()->route(Setting::grab('main_route') . '.show', $id);
+        return redirect()->route(Setting::grab('main_route').'.show', $id);
     }
 
     /**
@@ -419,13 +423,13 @@ class TicketsControllerOver extends TicketController
      */
     public function destroy($id)
     {
-        $ticket  = $this->tickets->findOrFail($id);
+        $ticket = $this->tickets->findOrFail($id);
         $subject = $ticket->subject;
         $ticket->delete();
 
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-deleted', ['name' => $subject]));
 
-        return redirect()->route(Setting::grab('main_route') . '.index');
+        return redirect()->route(Setting::grab('main_route').'.index');
     }
 
     /**
@@ -438,7 +442,7 @@ class TicketsControllerOver extends TicketController
     public function complete($id)
     {
         if ($this->permToClose($id) == 'yes') {
-            $ticket               = $this->tickets->findOrFail($id);
+            $ticket = $this->tickets->findOrFail($id);
             $ticket->completed_at = Carbon::now();
 
             if (Setting::grab('default_close_status_id')) {
@@ -450,10 +454,10 @@ class TicketsControllerOver extends TicketController
 
             session()->flash('status', trans('ticketit::lang.the-ticket-has-been-completed', ['name' => $subject]));
 
-            return redirect()->route(Setting::grab('main_route') . '.index');
+            return redirect()->route(Setting::grab('main_route').'.index');
         }
 
-        return redirect()->route(Setting::grab('main_route') . '.index')
+        return redirect()->route(Setting::grab('main_route').'.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-do-this'));
     }
 
@@ -467,7 +471,7 @@ class TicketsControllerOver extends TicketController
     public function reopen($id)
     {
         if ($this->permToReopen($id) == 'yes') {
-            $ticket               = $this->tickets->findOrFail($id);
+            $ticket = $this->tickets->findOrFail($id);
             $ticket->completed_at = null;
 
             if (Setting::grab('default_reopen_status_id')) {
@@ -486,10 +490,10 @@ class TicketsControllerOver extends TicketController
 
             session()->flash('status', trans('ticketit::lang.the-ticket-has-been-reopened', ['name' => $subject]));
 
-            return redirect()->route(Setting::grab('main_route') . '.index');
+            return redirect()->route(Setting::grab('main_route').'.index');
         }
 
-        return redirect()->route(Setting::grab('main_route') . '.index')
+        return redirect()->route(Setting::grab('main_route').'.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-do-this'));
     }
 
@@ -501,13 +505,13 @@ class TicketsControllerOver extends TicketController
         // } else {
         //     $agents = ['auto' => 'Auto Select'];
         // }
-        $ticket         = $this->tickets->find($ticket_id);
-        $agents         = getAgentList($ticket);
+        $ticket = $this->tickets->find($ticket_id);
+        $agents = getAgentList($ticket);
         $selected_Agent = $ticket->agent->id;
-        $select         = '<select class="form-control" id="agent_id" name="agent_id">';
+        $select = '<select class="form-control" id="agent_id" name="agent_id">';
         foreach ($agents as $id => $name) {
             $selected = ($id == $selected_Agent) ? 'selected' : '';
-            $select .= '<option value="' . $id . '" ' . $selected . '>' . $name . '</option>';
+            $select .= '<option value="'.$id.'" '.$selected.'>'.$name.'</option>';
         }
         $select .= '</select>';
 
@@ -570,10 +574,10 @@ class TicketsControllerOver extends TicketController
         }
 
         for ($m = $period; $m >= 0; $m--) {
-            $from      = Carbon::now();
+            $from = Carbon::now();
             $from->day = 1;
             $from->subMonth($m);
-            $to      = Carbon::now();
+            $to = Carbon::now();
             $to->day = 1;
             $to->subMonth($m);
             $to->endOfMonth();
@@ -599,9 +603,9 @@ class TicketsControllerOver extends TicketController
             return false;
         }
 
-        $created   = new Carbon($ticket->created_at);
+        $created = new Carbon($ticket->created_at);
         $completed = new Carbon($ticket->completed_at);
-        $length    = $created->diff($completed)->days;
+        $length = $created->diff($completed)->days;
 
         return $length;
     }
@@ -627,7 +631,7 @@ class TicketsControllerOver extends TicketController
         }
 
         $performance_count = 0;
-        $counter           = 0;
+        $counter = 0;
         foreach ($tickets as $ticket) {
             $performance_count += $this->ticketPerformance($ticket);
             $counter++;
@@ -640,6 +644,7 @@ class TicketsControllerOver extends TicketController
     public function myTickets(Request $request)
     {
         $complete = 'my-ticket';
+
         return view('ticketit::tickets.my_tickets', compact('complete'));
     }
 }

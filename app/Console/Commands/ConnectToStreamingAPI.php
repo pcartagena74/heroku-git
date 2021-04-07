@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\TwitterStream;
+use Illuminate\Console\Command;
 
 class ConnectToStreamingAPI extends Command
 {
@@ -46,7 +46,7 @@ class ConnectToStreamingAPI extends Command
 
         $this->twitterStream->consumerKey = $twitter_consumer_key;
         $this->twitterStream->consumerSecret = $twitter_consumer_secret;
-        $this->twitterStream->setTrack(array('scotch_io'));
+        $this->twitterStream->setTrack(['scotch_io']);
         $this->twitterStream->consume();
     }
 }

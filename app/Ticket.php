@@ -2,12 +2,12 @@
 
 namespace App;
 
+use App\Bundle;
+use App\Models\EventSession;
+//use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
-//use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
-use App\Bundle;
-use App\EventSession;
 
 class Ticket extends Model
 {
@@ -15,7 +15,7 @@ class Ticket extends Model
     //use LogsActivity;
 
     protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
-        'isaBundle', 'ticketLabel'];
+        'isaBundle', 'ticketLabel', ];
     protected static $ignoreChangedAttributes = ['createDate'];
     // The table
     protected $table = 'event-tickets';
@@ -44,7 +44,7 @@ class Ticket extends Model
 
     public function bundle()
     {
-        return $this->belongsTo(Bundle::class, 'ticketID', 'ticketID', Ticket::class);
+        return $this->belongsTo(Bundle::class, 'ticketID', 'ticketID', self::class);
     }
 
     public function event()
@@ -67,13 +67,14 @@ class Ticket extends Model
      */
     public function week_sales()
     {
-        $tickets = array($this->ticketID);
-        if (!$this->isaBundle) {
+        $tickets = [$this->ticketID];
+        if (! $this->isaBundle) {
             $bundles = Bundle::where('ticketID', $this->ticketID)->select('bundleID')->get();
             foreach ($bundles as $b) {
                 array_push($tickets, $b->bundleID);
             }
         }
+
         return Registration::whereDate('updateDate', '>=', Carbon::now()->subWeek(1))
             ->whereIn('ticketID', $tickets)
             ->whereNull('deleted_at')
@@ -94,6 +95,7 @@ class Ticket extends Model
                     return 1;
                 }
             }
+
             return 0;
         } else {
             if ($this->maxAttendees > 0 && $this->regCount >= $this->maxAttendees) {
@@ -122,10 +124,10 @@ class Ticket extends Model
      */
     public function bundle_members()
     {
-        return Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+        return self::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
             ->where([
                 ['bt.bundleID', '=', $this->ticketID],
-                ['event-tickets.eventID', '=', $this->eventID]
+                ['event-tickets.eventID', '=', $this->eventID],
             ])
             ->get();
     }
@@ -170,7 +172,7 @@ class Ticket extends Model
         foreach ($bundles as $m) {
             $es = EventSession::where([
                 ['eventID', '=', $this->eventID],
-                ['ticketID', '=', $m->ticketID]
+                ['ticketID', '=', $m->ticketID],
             ])->get();
             if (count($es) > 1) {
                 return 1;
@@ -178,22 +180,23 @@ class Ticket extends Model
         }
         $es = EventSession::where([
             ['eventID', '=', $this->eventID],
-            ['ticketID', '=', $this->ticketID]
+            ['ticketID', '=', $this->ticketID],
         ])->get();
-        return (count($es) > 1);
+
+        return count($es) > 1;
     }
 
     public function ok_to_display()
     {
         $today = Carbon::now();
-        return ($this->availabilityEndDate->gte($today) && $this->isSuppressed == 0);
+
+        return $this->availabilityEndDate->gte($today) && $this->isSuppressed == 0;
     }
 
     /**
      * bundle_ticket_array() returns an array of ticketIDs associated with the chosen ticket's bundle members
      *             or an array of just the single ticketID
      */
-
     public function bundle_ticket_array()
     {
         $bundle_members = $this->bundle_members();
@@ -207,13 +210,12 @@ class Ticket extends Model
     /**
      * bundle_parents() returns an array of ticketIDs that could result the purchase of $this ticket
      */
-
     public function bundle_parents()
     {
-        return Ticket::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
+        return self::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
             ->where([
                 ['bt.ticketID', '=', $this->ticketID],
-                ['event-tickets.eventID', '=', $this->eventID]
+                ['event-tickets.eventID', '=', $this->eventID],
             ])
             ->pluck('bundleID')->toArray();
     }
@@ -222,12 +224,11 @@ class Ticket extends Model
      * bundle_parent_array() returns an array of ticketIDs associated with bundles that include $this ticket
      *             or an array of just the single ticketID
      */
-
     public function bundle_parent_array()
     {
         $bundle_parents = $this->bundle_parents();
         array_push($bundle_parents, $this->ticketID);
+
         return $bundle_parents;
     }
-
 }

@@ -6,9 +6,9 @@
 
 namespace App;
 
-use OauthPhirehose;
 use App\Jobs\ProcessTweet;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use OauthPhirehose;
 
 class TwitterStream extends OauthPhirehose
 {

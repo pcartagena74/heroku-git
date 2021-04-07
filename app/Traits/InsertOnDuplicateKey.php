@@ -25,7 +25,7 @@ trait InsertOnDuplicateKey
         }
 
         // Case where $data is not an array of arrays.
-        if (!isset($data[0])) {
+        if (! isset($data[0])) {
             $data = [$data];
         }
 
@@ -50,7 +50,7 @@ trait InsertOnDuplicateKey
         }
 
         // Case where $data is not an array of arrays.
-        if (!isset($data[0])) {
+        if (! isset($data[0])) {
             $data = [$data];
         }
 
@@ -75,7 +75,7 @@ trait InsertOnDuplicateKey
         }
 
         // Case where $data is not an array of arrays.
-        if (!isset($data[0])) {
+        if (! isset($data[0])) {
             $data = [$data];
         }
 
@@ -99,10 +99,10 @@ trait InsertOnDuplicateKey
     }
 
     /**
-    * Static function for getting connection name
-    *
-    * @return string
-    */
+     * Static function for getting connection name
+     *
+     * @return string
+     */
     public static function getModelConnectionName()
     {
         $class = get_called_class();
@@ -145,7 +145,7 @@ trait InsertOnDuplicateKey
         $row = self::getFirstRow($data);
         $questionMarks = array_fill(0, count($row), '?');
 
-        $line = '(' . implode(',', $questionMarks) . ')';
+        $line = '('.implode(',', $questionMarks).')';
         $lines = array_fill(0, count($data), $line);
 
         return implode(', ', $lines);
@@ -166,7 +166,7 @@ trait InsertOnDuplicateKey
 
         list($first) = $data;
 
-        if (!is_array($first)) {
+        if (! is_array($first)) {
             throw new \InvalidArgumentException('$data is not an array of array.');
         }
 
@@ -186,7 +186,7 @@ trait InsertOnDuplicateKey
             throw new \InvalidArgumentException('Empty array.');
         }
 
-        return '`' . implode('`,`', array_keys($first)) . '`';
+        return '`'.implode('`,`', array_keys($first)).'`';
     }
 
     /**
@@ -235,8 +235,8 @@ trait InsertOnDuplicateKey
     {
         $first = static::getFirstRow($data);
 
-        $sql  = 'INSERT INTO `' . static::getTablePrefix() . static::getTableName() . '`(' . static::getColumnList($first) . ') VALUES' . PHP_EOL;
-        $sql .=  static::buildQuestionMarks($data) . PHP_EOL;
+        $sql = 'INSERT INTO `'.static::getTablePrefix().static::getTableName().'`('.static::getColumnList($first).') VALUES'.PHP_EOL;
+        $sql .= static::buildQuestionMarks($data).PHP_EOL;
         $sql .= 'ON DUPLICATE KEY UPDATE ';
 
         if (empty($updateColumns)) {
@@ -259,8 +259,8 @@ trait InsertOnDuplicateKey
     {
         $first = static::getFirstRow($data);
 
-        $sql  = 'INSERT IGNORE INTO `' . static::getTablePrefix() . static::getTableName() . '`(' . static::getColumnList($first) . ') VALUES' . PHP_EOL;
-        $sql .=  static::buildQuestionMarks($data);
+        $sql = 'INSERT IGNORE INTO `'.static::getTablePrefix().static::getTableName().'`('.static::getColumnList($first).') VALUES'.PHP_EOL;
+        $sql .= static::buildQuestionMarks($data);
 
         return $sql;
     }
@@ -276,8 +276,8 @@ trait InsertOnDuplicateKey
     {
         $first = static::getFirstRow($data);
 
-        $sql  = 'REPLACE INTO `' . static::getTablePrefix() . static::getTableName() . '`(' . static::getColumnList($first) . ') VALUES' . PHP_EOL;
-        $sql .=  static::buildQuestionMarks($data);
+        $sql = 'REPLACE INTO `'.static::getTablePrefix().static::getTableName().'`('.static::getColumnList($first).') VALUES'.PHP_EOL;
+        $sql .= static::buildQuestionMarks($data);
 
         return $sql;
     }

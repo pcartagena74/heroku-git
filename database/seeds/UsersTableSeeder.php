@@ -4,7 +4,7 @@ use App\Email;
 use App\Org;
 use App\OrgPerson;
 use App\Person;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -36,14 +36,14 @@ class UsersTableSeeder extends Seeder
                 'id' => '0',
                 'firstName' => 'No',
                 'lastName' => 'Body',
-                'email' => 'nobody@mcentric.org'
+                'email' => 'nobody@mcentric.org',
             ],
             [
                 'id' => '1',
                 'firstName' => 'System',
                 'lastName' => 'Admin',
-                'email' => 'admin@mcentric.org'
-            ]
+                'email' => 'admin@mcentric.org',
+            ],
         ];
 
         foreach ($list as $l) {

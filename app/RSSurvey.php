@@ -31,5 +31,4 @@ class RSSurvey extends Model
     {
         return $this->belongsTo(Registration::class, 'regID', 'regID');
     }
-
 }

@@ -4,25 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Address;
 use App\Email;
-use App\Event;
+use App\Models\Event;
+use App\Location;
+use App\Notifications\AccountMerge;
 use App\OrgPerson;
-use App\PersonSocialite;
-use App\Phone;
+use App\Person;
+use App\Models\PersonSocialite;
+use App\Models\Phone;
 use App\RegFinance;
 use App\Registration;
 use App\Role;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Person;
-use App\Location;
+use Illuminate\Support\Facades\DB;
 use Kordy\Ticketit\Models\Ticket;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\DB;
-use App\Notifications\AccountMerge;
 
 class MergeController extends Controller
 {
-
     protected $models;
 
     public function __construct()
@@ -60,7 +59,7 @@ class MergeController extends Controller
             // go to a blank merge page
         }
 
-        $class = 'App\\' . $this->models[$letter];
+        $class = 'App\\'.$this->models[$letter];
 
         if (class_exists($class)) {
             if ($id1 === null || $id2 === null) {
@@ -71,7 +70,7 @@ class MergeController extends Controller
                             $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
                         })
                             ->where([
-                                ['personID', '!=', 1]
+                                ['personID', '!=', 1],
                             ])->get();
                         break;
                     case 'l':
@@ -89,6 +88,7 @@ class MergeController extends Controller
         } else {
             // class doesn't exist so... ?
         }
+
         return view('v1.auth_pages.organization.merge', compact('model1', 'letter', 'collection', 'model2'));
     }
 
@@ -101,20 +101,19 @@ class MergeController extends Controller
      */
     public function getmodel(Request $request, $letter)
     {
-
         $this->currentPerson = Person::find(auth()->user()->id);
-        $class = 'App\\' . $this->models[$letter];
+        $class = 'App\\'.$this->models[$letter];
         $model1 = request()->input('model1');
         $model2 = request()->input('model2');
 
-        if (isset($model1) && !is_numeric($model1)) {
-            list($id1, $field) = array_pad(explode("-", $model1, 2), 2, null);
+        if (isset($model1) && ! is_numeric($model1)) {
+            list($id1, $field) = array_pad(explode('-', $model1, 2), 2, null);
         } else {
             $id1 = $model1;
         }
 
-        if (isset($model2) && !is_numeric($model2)) {
-            list($id2, $field) = array_pad(explode("-", $model2, 2), 2, null);
+        if (isset($model2) && ! is_numeric($model2)) {
+            list($id2, $field) = array_pad(explode('-', $model2, 2), 2, null);
         } else {
             $id2 = $model2;
         }
@@ -144,19 +143,20 @@ class MergeController extends Controller
 
         switch ($letter) {
             case 'p':
-                $string = "/merge/" . $letter . "/" . $model1->personID;
+                $string = '/merge/'.$letter.'/'.$model1->personID;
                 if (isset($model2)) {
-                    $string .= "/" . $model2->personID;
+                    $string .= '/'.$model2->personID;
                 }
                 break;
 
             case 'l':
-                $string = "/merge/" . $letter . "/" . $model1->locID;
+                $string = '/merge/'.$letter.'/'.$model1->locID;
                 if (isset($model2)) {
-                    $string .= "/" . $model2->locID;
+                    $string .= '/'.$model2->locID;
                 }
                 break;
         }
+
         return redirect($string);
     }
 
@@ -168,18 +168,18 @@ class MergeController extends Controller
     public function getperson(Request $request)
     {
         $string = request()->input('string');
-        list($personID, $field) = array_pad(explode("-", $string, 2), 2, null);
+        list($personID, $field) = array_pad(explode('-', $string, 2), 2, null);
         $person = Person::with('orgperson')->find($personID);
 
         if (null !== $person) {
-            return json_encode(array('status' => 'success',
+            return json_encode(['status' => 'success',
                 'p' => $person,
                 'personID' => $person->personID,
                 'firstName' => $person->firstName,
                 'lastName' => $person->lastName,
                 'login' => $person->login,
-                'OrgStat1' => $person->orgStat1()
-            ));
+                'OrgStat1' => $person->orgStat1(),
+            ]);
         }
     }
 
@@ -197,7 +197,6 @@ class MergeController extends Controller
      * 4b. Change the model2->person->login to "merged_$login" to avoid key conflicts
      * 4c. Change user_id in ticketit as appropriate
      * 5. Remove duplicates:  $model2, $orgPerson, $user
-     *
      */
     public function store(Request $request)
     {
@@ -302,12 +301,12 @@ class MergeController extends Controller
 
                     $o1 = OrgPerson::where([
                         ['personID', $model1->personID],
-                        ['orgID', $this->currentPerson->defaultOrgID]
+                        ['orgID', $this->currentPerson->defaultOrgID],
                     ])->first();
 
                     $o2 = OrgPerson::where([
                         ['personID', $model2->personID],
-                        ['orgID', $this->currentPerson->defaultOrgID]
+                        ['orgID', $this->currentPerson->defaultOrgID],
                     ])->first();
 
                     // if OrgStat1 (pmi_id) is set in either orgperson record, it will survive.
@@ -335,7 +334,7 @@ class MergeController extends Controller
 
                     $weedout = $u1->roles()->pluck('id')->toArray();
                     foreach ($u2->roles as $r) {
-                        if (!in_array($r->id, $weedout)) {
+                        if (! in_array($r->id, $weedout)) {
                             $u1->roles()->attach($r->id);
                         }
                         $u2->roles()->detach($r->id);
@@ -344,7 +343,7 @@ class MergeController extends Controller
                     request()->session()->flash('alert-success', trans(
                         'messages.messages.merge_succ',
                         ['model' => $this->models[$letter], 'record1' => $model2->personID,
-                            'record2' => $model1->personID]
+                            'record2' => $model1->personID, ]
                     ));
 
                     // If a password is set for a user record that will not survive and survivor password is null, copy it.
@@ -363,7 +362,7 @@ class MergeController extends Controller
                     }
 
                     // Person soft-deletes require unique key 'login' to be uniquely modified
-                    $model2->login = "merged_$model1->personID" . "_" . $model2->login;
+                    $model2->login = "merged_$model1->personID".'_'.$model2->login;
                     $model2->save();
                     $model2->delete();
 
@@ -374,7 +373,7 @@ class MergeController extends Controller
                     // Find all events with model2's location and update
                     $events = Event::where([
                         ['orgID', '=', $this->currentPerson->defaultOrgID],
-                        ['locationID', '=', $model2->locID]
+                        ['locationID', '=', $model2->locID],
                     ])->get();
 
                     $cnt = 0;
@@ -395,10 +394,11 @@ class MergeController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             request()->session()->flash('alert-warning', trans('messages.flashes.merge_failure', ['e' => $e]));
+
             return back()->withInput();
         }
 
-        return redirect('/merge/' . $letter . '/' . $return_model);
+        return redirect('/merge/'.$letter.'/'.$return_model);
     }
 
     public function index()
@@ -417,7 +417,7 @@ class MergeController extends Controller
         $query = $request->q;
         $letter = $request->l;
         // jerry-rigging to make work as a get or post
-        if (!isset($query)) {
+        if (! isset($query)) {
             $query = request()->input('query');
         }
         $exclude_model = $request->m;
@@ -451,15 +451,16 @@ class MergeController extends Controller
 
                     foreach ($res as $index => $p) {
                         $usersArray[$index] = ['id' => $p->personID,
-                            'value' => $p->personID . "-" . $p->firstName . " " . $p->lastName . ": " . $p->login];
+                            'value' => $p->personID.'-'.$p->firstName.' '.$p->lastName.': '.$p->login, ];
                     }
+
                     return response()->json($usersArray);
                     break;
 
                 case 'l':
                     $res = Location::where([
                         ['orgID', '=', $this->currentPerson->defaultOrgID],
-                        ['locID', '<>', $exclude_model]
+                        ['locID', '<>', $exclude_model],
                     ])->where(function ($q) use ($query) {
                         $q->where('locName', 'LIKE', "%$query%")
                             ->orWhere('addr1', 'LIKE', "%$query%")
@@ -469,8 +470,9 @@ class MergeController extends Controller
 
                     foreach ($res as $index => $l) {
                         $locArray[$index] = ['id' => $l->locID,
-                            'value' => $l->locID . "-" . $l->locName . " " . $l->addr1];
+                            'value' => $l->locID.'-'.$l->locName.' '.$l->addr1, ];
                     }
+
                     return response()->json($locArray);
                     break;
             }
@@ -496,8 +498,9 @@ class MergeController extends Controller
 
                     foreach ($res as $index => $p) {
                         $usersArray[$index] = ['id' => $p->personID,
-                            'value' => $p->personID . "-" . $p->firstName . " " . $p->lastName . ": " . $p->login];
+                            'value' => $p->personID.'-'.$p->firstName.' '.$p->lastName.': '.$p->login, ];
                     }
+
                     return response()->json($usersArray);
                     break;
 
@@ -512,8 +515,9 @@ class MergeController extends Controller
 
                     foreach ($res as $index => $l) {
                         $locArray[$index] = ['id' => $l->locID,
-                            'value' => $l->locID . "-" . $l->locName . " " . $l->addr1];
+                            'value' => $l->locID.'-'.$l->locName.' '.$l->addr1, ];
                     }
+
                     return response()->json($locArray);
                     break;
             }

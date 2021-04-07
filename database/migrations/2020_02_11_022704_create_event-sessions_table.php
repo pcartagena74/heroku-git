@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateEventSessionsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -57,5 +56,4 @@ class CreateEventSessionsTable extends Migration
     {
         Schema::drop('event-sessions');
     }
-
 }

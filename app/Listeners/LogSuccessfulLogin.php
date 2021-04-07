@@ -3,16 +3,17 @@
 namespace App\Listeners;
 
 use App\Person;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-//use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\User;
 use Carbon\Carbon;
-use App\User;
+use Illuminate\Auth\Events\Login;
+//use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class LogSuccessfulLogin
 {
     public $user;
+
     /**
      * Create the event listener.
      *

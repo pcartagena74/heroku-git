@@ -1,19 +1,19 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class OrgAdminProp extends Model
 {
     // The table
-    protected $table      = 'org-admin_prop';
+    protected $table = 'org-admin_prop';
     //protected $primaryKey = ['orgID', 'propID'];
-    const CREATED_AT      = 'createDate';
-    const UPDATED_AT      = 'updateDate';
-    protected $dates      = ['createDate', 'updateDate'];
-    protected $fillable   = ['orgID', 'propID', 'value'];
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
+    protected $dates = ['createDate', 'updateDate'];
+    protected $fillable = ['orgID', 'propID', 'value'];
 
     protected function setKeysForSaveQuery(Builder $query)
     {
@@ -32,4 +32,3 @@ class OrgAdminProp extends Model
         //return $this->hasOne(AdminProp::class, 'id', 'propID');
     }
 }
-

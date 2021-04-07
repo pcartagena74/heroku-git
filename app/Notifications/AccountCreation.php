@@ -2,13 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Event;
+use App\Models\Event;
 use App\Org;
 use App\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class AccountCreation extends Notification
 {
@@ -52,6 +52,7 @@ class AccountCreation extends Notification
         $o = Org::find($this->person->defaultOrgID);
         $oname = $o->orgName;
         $ename = $this->event->eventName;
+
         return (new MailMessage)
             ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.new_reg_acct.subject', ['org' => $oname]))
