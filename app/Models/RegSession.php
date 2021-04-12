@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-// use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
 
 class RegSession extends Model
 {

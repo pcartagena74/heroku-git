@@ -1,16 +1,16 @@
-<?php
+@php
 /**
  * Comment: Registration form (multiple ticket quantities)
  * Created: 8/24/2017
  * Updated: October 2018 - This is the one in use (not register_new)
  */
 
-use App\Location;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
-use App\Registration;
-use App\Ticket;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
+use App\Models\Registration;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -97,7 +97,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
     $should_skip = 1;
     $orig_q = 0;
 }
-?>
+@endphp
 @extends('v1.layouts.no-auth')
 
 @section('content')

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\OrgPerson;
-use App\Person;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\User;
 use Illuminate\Http\Request;
 

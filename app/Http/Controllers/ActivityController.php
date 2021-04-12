@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
 use App\Models\Event;
-use App\Person;
-use App\RegFinance;
-use App\Registration;
+use App\Models\Person;
+use App\Models\RegFinance;
+use App\Models\Registration;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

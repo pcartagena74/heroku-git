@@ -4,8 +4,9 @@
  * Created: 3/25/2017
  */
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Zizaco\Entrust\EntrustPermission;
 
 //use Spatie\Activitylog\Traits\LogsActivity;

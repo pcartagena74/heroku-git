@@ -2,10 +2,10 @@
 
 namespace App\Imports;
 
-use App\Address;
-use App\Email;
-use App\OrgPerson;
-use App\Person;
+use App\Models\Address;
+use App\Models\Email;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\Phone;
 use App\Traits\ExcelMemberImportTrait;
 use App\Models\User;

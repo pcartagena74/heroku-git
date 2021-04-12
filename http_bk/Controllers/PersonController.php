@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\OrgPerson;
-use App\PersonSocialite;
-use App\Phone;
+use App\Models\OrgPerson;
+use App\Models\PersonSocialite;
+use App\Models\Phone;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Address;
-use App\Email;
-use App\Person;
+use App\Models\Address;
+use App\Models\Email;
+use App\Models\Person;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;

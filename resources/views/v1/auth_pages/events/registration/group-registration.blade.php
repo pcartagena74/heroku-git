@@ -14,7 +14,7 @@
  *
  */
 
-$currentPerson = \App\Person::find(auth()->user()->id);
+$currentPerson = \App\Models\Person::find(auth()->user()->id);
 $today = \Carbon\Carbon::now();
 
 $topBits = '';  // remove this if this was set in the controller

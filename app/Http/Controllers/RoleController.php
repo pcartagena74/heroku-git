@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Org;
-use App\Permission;
-use App\Person;
-use App\Role;
+use App\Models\Org;
+use App\Models\Permission;
+use App\Models\Person;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

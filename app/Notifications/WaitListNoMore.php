@@ -3,8 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\Event;
-use App\Org;
-use App\Registration;
+use App\Models\Org;
+use App\Models\Registration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

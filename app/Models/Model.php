@@ -4,7 +4,7 @@
  * Created: 2/2/2017
  */
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 

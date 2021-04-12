@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Address;
-use App\Email;
+use App\Models\Address;
+use App\Models\Email;
 use App\Models\Event;
-use App\Location;
+use App\Models\Location;
 use App\Notifications\AccountMerge;
-use App\OrgPerson;
-use App\Person;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\PersonSocialite;
 use App\Models\Phone;
-use App\RegFinance;
-use App\Registration;
-use App\Role;
+use App\Models\RegFinance;
+use App\Models\Registration;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

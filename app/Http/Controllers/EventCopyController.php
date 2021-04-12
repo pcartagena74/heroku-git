@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\EventDiscount;
+use App\Models\EventDiscount;
 use App\Models\EventSession;
-use App\Location;
-use App\Org;
-use App\OrgDiscount;
-use App\Person;
-use App\Ticket;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\OrgDiscount;
+use App\Models\Person;
+use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

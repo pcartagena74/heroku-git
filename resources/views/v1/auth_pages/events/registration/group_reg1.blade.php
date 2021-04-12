@@ -7,9 +7,9 @@
  */
 
 use App\Models\EventSession;
-use App\Ticket;
-use App\Registration;
-use App\Person;
+use App\Models\Ticket;
+use App\Models\Registration;
+use App\Models\Person;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();

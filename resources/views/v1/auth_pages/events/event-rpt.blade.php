@@ -18,11 +18,11 @@
  * Updated: 2/20/2021 to make function buttons available for Devs even after events are past
  */
 
-use App\Person;
-use App\Ticket;
-use App\RegFinance;
+use App\Models\Person;
+use App\Models\Ticket;
+use App\Models\RegFinance;
 use App\Models\EventSession;
-use App\RegSession;
+use App\Models\RegSession;
 
 /**
  * To Do:
@@ -31,7 +31,7 @@ use App\RegSession;
  */
 
 $today = \Carbon\Carbon::now();
-$currentOrg = \App\Org::find($event->orgID);
+$currentOrg = \App\Models\Org::find($event->orgID);
 $topBits = ''; // there should be topBits for this
 
 $post_event = $today->gte($event->eventEndDate);

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Org;
+use App\Models\Org;
 use App\Models\OrgAdminProp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

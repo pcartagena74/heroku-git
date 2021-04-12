@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Org;
+use App\Models\Org;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;

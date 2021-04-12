@@ -6,13 +6,17 @@
  * @var Event $event
  * @var Org $org
  * @var RegFinance $rf
+ * @var $cert_array
+ * @var $prefixes
+ * @var $regs
+ * @var $industries
  *
  */
 
 use App\Models\EventSession;
-use App\Ticket;
-use App\Registration;
-use App\Person;
+use App\Models\Ticket;
+use App\Models\Registration;
+use App\Models\Person;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();
@@ -552,5 +556,15 @@ $rfp = $rf->person;
 @section('modals')
     @if($rf->cost > 0)
     @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
+    @endif
+
+    @if(Session::has('dupes'))
+        @include('v1.modals.dynamic', ['header' => trans('messages.headers.dupe_reg'), 'url' => '',
+                                       'content' => Session::get('alert-message')])
+        <script>
+            $(document).ready(function () {
+                $('#dynamic_modal').modal('show');
+            });
+        </script>
     @endif
 @endsection

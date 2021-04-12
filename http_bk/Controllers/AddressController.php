@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Address;
-use App\Person;
+use App\Models\Address;
+use App\Models\Person;
 
 class AddressController extends Controller
 {

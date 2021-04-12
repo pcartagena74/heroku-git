@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Address;
+use App\Models\Address;
 use App\Models\Event;
-use App\Org;
-use App\Person;
+use App\Models\Org;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Session;

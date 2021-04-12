@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Location;
-use App\Person;
+use App\Models\Location;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

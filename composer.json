@@ -5,7 +5,7 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "~7.4.0",
+        "php": "~7.3.0",
         "alexusmai/laravel-file-manager": "^2.4",
         "barryvdh/laravel-ide-helper": "^2.6",
         "barryvdh/laravel-snappy": "^0.4.4",
@@ -44,7 +44,7 @@
         "rap2hpoutre/fast-excel": "^1.6",
         "socialiteproviders/linkedin": "^3.0",
         "spatie/browsershot": "^3.35",
-        "spatie/laravel-referer": "^1.4",
+        "spatie/laravel-referer": "1.7.1",
         "squizlabs/php_codesniffer": "^3.4",
         "stripe/stripe-php": "^6.34",
         "zizaco/entrust": "^1.9"
@@ -72,10 +72,10 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": ["app/"]
         },
         "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php","vendor/kordy/ticketit/src/TicketitServiceProvider.php","vendor/alexusmai/laravel-file-manager/src/FileManager.php"],
-        "classmap": ["database/seeds", "database/factories"],
+        "classmap": ["database/seeds", "database/factories", "app/models"],
         "files": ["app/Helpers/helper_functions.php", "app/Vendor/Ticketit/TicketItComposer.php","app/Vendor/Ticketit/TicketitServiceProvider.php","app/Vendor/Maatwebsite/Excel/ReadChunk.php","app/Vendor/Alexusmai/LaravelFileManager/FileManager.php"]
     },
     "autoload-dev": {

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSession;
-use App\Ticket;
+use App\Models\Ticket;
 use App\Models\Track;
 use Illuminate\Http\Request;
 

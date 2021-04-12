@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Event;
-use App\EventDiscount;
-use App\OrgDiscount;
-use App\Person;
-use App\Org;
+use App\Models\Event;
+use App\Models\EventDiscount;
+use App\Models\OrgDiscount;
+use App\Models\Person;
+use App\Models\Org;
 use Illuminate\Support\Facades\DB;
-use App\RegFinance;
+use App\Models\RegFinance;
 
 class EventDiscountController extends Controller
 {

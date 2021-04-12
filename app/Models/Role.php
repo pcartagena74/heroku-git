@@ -4,10 +4,10 @@
  * Created: 3/25/2017
  */
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Entrust\EntrustRoleOver as EntrustRole;
-
 //use Spatie\Activitylog\Traits\LogsActivity;
 
 class Role extends EntrustRole

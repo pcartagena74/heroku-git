@@ -19,7 +19,7 @@
 //$org_count = $_SESSION['org_count'];
 
 try {
-    $currentPerson = App\Person::find(auth()->user()->id);
+    $currentPerson = App\Models\Person::find(auth()->user()->id);
     $currentOrg    = $currentPerson->defaultOrg;
 } catch(Exception $e) {
     request()->session()->flash('alert-warning', trans('messages.errors.timeout'));

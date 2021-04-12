@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Email;
+use App\Models\Email;
 use App\Notifications\NewUserAcct;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Request;

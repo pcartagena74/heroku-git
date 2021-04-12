@@ -3,6 +3,9 @@
  * Comment: Template for pages that require authentication
  * Created: 2/2/2017
  */
+
+use App\Models\Person;
+
 // footer_fixed
 if(!isset($topBits)){
     $topBits = '';
@@ -11,7 +14,7 @@ if(!isset($topBits)){
 // This is a reminder to NOT perform tests using orgID=1 because there are checks that are performed to keep default
 // data created in orgID=1--for use with all other orgs--in a clean state.
 if(auth()){
-    $p = \App\Person::find(auth()->user()->id);
+    $p = Person::find(auth()->user()->id);
     if($p->defaultOrgID==1){
         request()->session()->flash('alert-danger', trans('messages.app_defaults.orgID1'));
     }

@@ -9,12 +9,12 @@
  */
 
 use Illuminate\Support\Facades\DB;
-use App\Org;
-use App\Person;
-use App\OrgPerson;
-use App\Location;
-use App\Registration;
-use App\Ticket;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\OrgPerson;
+use App\Models\Location;
+use App\Models\Registration;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 
 $org = Org::find($event->orgID);

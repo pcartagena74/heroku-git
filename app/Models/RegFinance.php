@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-//use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

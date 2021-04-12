@@ -1,8 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\Bundle;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Bundle;
 use App\Models\EventSession;
 //use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;

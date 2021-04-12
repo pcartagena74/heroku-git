@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Event;
-use App\OrgDiscount;
-use App\Person;
+use App\Models\Event;
+use App\Models\OrgDiscount;
+use App\Models\Person;
 
 class OrgDiscountController extends Controller
 {

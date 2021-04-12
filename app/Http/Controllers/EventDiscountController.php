@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\EventDiscount;
-use App\Org;
-use App\OrgDiscount;
-use App\Person;
-use App\RegFinance;
+use App\Models\EventDiscount;
+use App\Models\Org;
+use App\Models\OrgDiscount;
+use App\Models\Person;
+use App\Models\RegFinance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

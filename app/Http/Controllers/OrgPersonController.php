@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Org;
-use App\OrgPerson;
-use App\Person;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use Illuminate\Http\Request;
 
 class OrgPersonController extends Controller

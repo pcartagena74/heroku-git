@@ -3,10 +3,10 @@
 namespace App\Notifications;
 
 use App\Models\Event;
-use App\Location;
-use App\Org;
-use App\Person;
-use App\RegFinance;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\RegFinance;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

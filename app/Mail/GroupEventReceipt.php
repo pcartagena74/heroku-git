@@ -3,10 +3,10 @@
 namespace App\Mail;
 
 use App\Models\Event;
-use App\Location;
-use App\Org;
-use App\RegFinance;
-use App\Ticket;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\RegFinance;
+use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

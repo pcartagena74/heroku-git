@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EmailList;
 use App\Models\Event;
-use App\Person;
+use App\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;

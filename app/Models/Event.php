@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\EventSession;
 use App\Other\ics_calendar;
-use App\Person;
+use App\Models\Person;
 use Carbon\Carbon;
 //use Spatie\Activitylog\Traits\LogsActivity;
 use GrahamCampbell\Flysystem\Facades\Flysystem;

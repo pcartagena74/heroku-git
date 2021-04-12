@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\EventType;
-use App\Org;
-use App\Person;
+use App\Models\EventType;
+use App\Models\Org;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

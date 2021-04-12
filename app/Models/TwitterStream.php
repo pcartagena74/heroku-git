@@ -4,8 +4,9 @@
  * Created: 4/1/2017
  */
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Jobs\ProcessTweet;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use OauthPhirehose;

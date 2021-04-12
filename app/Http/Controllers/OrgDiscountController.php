@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\OrgDiscount;
-use App\Person;
+use App\Models\OrgDiscount;
+use App\Models\Person;
 use Illuminate\Http\Request;
 
 class OrgDiscountController extends Controller

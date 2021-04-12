@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\EventSession;
 use App\Notifications\SendSurvey;
-use App\Org;
-use App\Person;
-use App\Registration;
-use App\RegSession;
-use App\RSSurvey;
-use App\Ticket;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\Registration;
+use App\Models\RegSession;
+use App\Models\RSSurvey;
+use App\Models\Ticket;
 use App\Models\Track;
 use Illuminate\Http\Request;
 

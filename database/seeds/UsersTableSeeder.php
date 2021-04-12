@@ -1,9 +1,9 @@
 <?php
 
-use App\Email;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
+use App\Models\Email;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

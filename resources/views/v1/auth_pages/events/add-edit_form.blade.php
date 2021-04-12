@@ -8,7 +8,7 @@
      * @var $session
      *
      */
-    use App\Location;
+    use App\Models\Location;
     use App\Models\Event;
     use App\Models\EventSession;
     use GrahamCampbell\Flysystem\Facades\Flysystem;

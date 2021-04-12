@@ -510,6 +510,7 @@ return [
         'disp_logo' => 'Display Logo',
         'disp_name' => 'Display Name',
         'doored' => 'Payment at Door',
+        'dupe_reg' => "Duplicate Registration",
         'early' => 'Early Bird Percent',
         'earlybird' => 'Early Bird',
         'ed&t' => 'Event Date & Time',

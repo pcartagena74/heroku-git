@@ -1,7 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\EventType;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 

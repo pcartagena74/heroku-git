@@ -4,7 +4,7 @@ namespace App\Models\Ticketit;
 
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\CategoryOver as Category;
-use App\Person;
+use App\Models\Person;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;

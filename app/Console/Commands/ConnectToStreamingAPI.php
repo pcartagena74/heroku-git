@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\TwitterStream;
+use App\Models\TwitterStream;
 use Illuminate\Console\Command;
 
 class ConnectToStreamingAPI extends Command

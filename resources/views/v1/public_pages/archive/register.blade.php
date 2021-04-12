@@ -4,10 +4,10 @@
  * Created: 2/25/2017
  */
 use Illuminate\Support\Facades\DB;
-use App\Person;
-use App\OrgPerson;
-use App\Location;
-use App\Registration;
+use App\Models\Person;
+use App\Models\OrgPerson;
+use App\Models\Location;
+use App\Models\Registration;
 use Illuminate\Support\Facades\Auth;
 
 if(Auth::check()) {

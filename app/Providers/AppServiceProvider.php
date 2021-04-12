@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use App\Registration;
-use App\TwitterStream;
+use App\Models\Registration;
+use App\Models\TwitterStream;
+use App\Models\RegFinance;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\URL as URL;
@@ -45,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(\App\TwitterStream::class, function ($app) {
+        $this->app->bind(TwitterStream::class, function ($app) {
             $twitter_access_token = env('TWITTER_ACCESS_TOKEN', null);
             $twitter_access_token_secret = env('TWITTER_ACCESS_TOKEN_SECRET', null);
 
@@ -59,10 +60,10 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(DuskServiceProvider::class);
         }
 
-        \App\RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
-        \App\RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
-        \App\Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
-        \App\Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
+        RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
+        RegFinance::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
+        Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
+        Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
 
         if ($this->app->environment('local')) {
             $this->app->register(\App\Providers\TelescopeServiceProvider::class);

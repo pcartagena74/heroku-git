@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Event;
-use App\Ticket;
-use App\Person;
-use App\Registration;
+use App\Models\Event;
+use App\Models\Ticket;
+use App\Models\Person;
+use App\Models\Registration;
 use Illuminate\Support\Facades\Log;
 
 class BundleController extends Controller

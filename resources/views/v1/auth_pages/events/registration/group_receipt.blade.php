@@ -15,9 +15,9 @@
     use Aws\S3\S3Client;
     use League\Flysystem\AwsS3v3\AwsS3Adapter;
     use League\Flysystem\Filesystem;
-    use App\Registration;
-    use App\Person;
-    use App\Ticket;
+    use App\Models\Registration;
+    use App\Models\Person;
+    use App\Models\Ticket;
 
     $today = Carbon\Carbon::now();
 

@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSession;
-use App\Org;
-use App\Registration;
-use App\RegSession;
+use App\Models\Org;
+use App\Models\Registration;
+use App\Models\RegSession;
 use App\Models\Track;
 use Illuminate\Http\Request;
 

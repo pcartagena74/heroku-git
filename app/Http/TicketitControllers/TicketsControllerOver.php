@@ -4,7 +4,7 @@ namespace App\Http\TicketitControllers;
 
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\TicketOver as Ticket;
-use App\Person;
+use App\Models\Person;
 use Cache;
 use Carbon\Carbon;
 use Entrust;

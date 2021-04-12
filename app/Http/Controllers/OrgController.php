@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Email;
+use App\Models\Email;
 use App\Models\EventType;
 use App\Notifications\NewUserAcct;
-use App\Org;
-use App\OrgPerson;
-use App\Permission;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Permission;
 use App\Models\PermissionRole;
-use App\Person;
-use App\Role;
+use App\Models\Person;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

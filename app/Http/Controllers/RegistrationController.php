@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Email;
+use App\Models\Email;
 use App\Models\Event;
-use App\EventDiscount;
+use App\Models\EventDiscount;
 use App\Models\EventSession;
 use App\Notifications\SetYourPassword;
 use App\Notifications\WaitListNoMore;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
-use App\RegFinance;
-use App\Registration;
-use App\RegSession;
-use App\Ticket;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
+use App\Models\RegFinance;
+use App\Models\Registration;
+use App\Models\RegSession;
+use App\Models\Ticket;
 use App\Models\Track;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -380,10 +380,9 @@ class RegistrationController extends Controller
                 ['eventID', '=', $event->eventID],
                 ['status', '!=', 'processed'],
             ])->first();
-        } elseif ($authorID == 0 && ! $logged_in) {
-            // no in-progress submissions found
+        } elseif ($authorID == 0 && !$logged_in) {
+            // no check for in-progress submissions when $authorID == 0
             $resubmit = null;
-        // but check if there are any paid ones to flag user with message
         } else {
             // No one should EVER be able to get here.
             die($org->techContactStatement);
@@ -395,6 +394,8 @@ class RegistrationController extends Controller
             $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
             // if there was a resubmit, delete the old registration records and redo later...
             foreach ($resubmitted_regs as $reg) {
+                $reg->debugNotes = "Deleting due to resubmission.";
+                $reg->save();
                 $reg->delete();
             }
             $resubmitted_regs = null;
@@ -762,8 +763,14 @@ class RegistrationController extends Controller
 
         if ($flag_dupe) {
             request()->session()->flash(
+                'dupes',
+                trans_choice('messages.warning.dupe_reg', count($dupe_names),
+                    ['names' => li_print_array($dupe_names, "ul")])
+            );
+            request()->session()->flash(
                 'alert-warning',
-                trans_choice('messages.warning.dupe_reg', count($dupe_names), ['names' => li_print_array($dupe_names, 'ul')])
+                trans_choice('messages.warning.dupe_reg', count($dupe_names),
+                ['names' => li_print_array($dupe_names, "ul")])
             );
         }
 

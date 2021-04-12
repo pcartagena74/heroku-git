@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Person;
+use App\Models\Person;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

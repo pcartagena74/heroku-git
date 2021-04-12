@@ -3,7 +3,7 @@
 namespace App\Vendor\Alexusmai\LaravelFileManager\Services\ACLServices;
 
 use Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository;
-use App\Person;
+use App\Models\Person;
 use Entrust;
 
 /**

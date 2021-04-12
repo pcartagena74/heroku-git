@@ -12,7 +12,7 @@ $fieldnames =
     " &nbsp; <a data-toggle='tooltip' title=" . '"' . trans('messages.tooltips.not_new') .
     '"' . " data-placement='top'>" . '<i class="fa fa-info-circle purple"></i></a>';
 
-$currentPerson = App\Person::find(auth()->user()->id);
+$currentPerson = App\Models\Person::find(auth()->user()->id);
 $currentOrg    = $currentPerson->defaultOrg;
 @endphp
 

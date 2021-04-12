@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Address;
-use App\Email;
+use App\Models\Address;
+use App\Models\Email;
 use App\Notifications\LoginChange;
 use App\Notifications\PasswordChange;
 use App\Notifications\UndoLoginChange;
-use App\OrgPerson;
-use App\Person;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\PersonSocialite;
 use App\Models\Phone;
 use App\Models\User;

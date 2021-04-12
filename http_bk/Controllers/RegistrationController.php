@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\EventDiscount;
-use App\Org;
-use App\Person;
-use App\OrgPerson;
-use App\Registration;
-use App\RegSession;
-use App\User;
+use App\Models\EventDiscount;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\OrgPerson;
+use App\Models\Registration;
+use App\Models\RegSession;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Ticket;
-use App\Event;
-use App\Email;
-use App\RegFinance;
-use App\Track;
+use App\Models\Ticket;
+use App\Models\Event;
+use App\Models\Email;
+use App\Models\RegFinance;
+use App\Models\Track;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;

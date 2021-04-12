@@ -6,8 +6,8 @@
 
 namespace App\Other;
 
-use App\Location;
-use App\Org;
+use App\Models\Location;
+use App\Models\Org;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as Collection;
 use Illuminate\Support\Facades\App;

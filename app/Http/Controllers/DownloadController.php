@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\DataExport;
+use App\Models\DataExport;
 use App\Models\Event;
 use App\Models\EventSession;
-use App\Org;
-use App\Person;
-use App\Registration;
-use App\RegSession;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\Registration;
+use App\Models\RegSession;
 use Excel;
 use Illuminate\Http\Request;
 

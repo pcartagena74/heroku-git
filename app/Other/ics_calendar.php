@@ -7,8 +7,8 @@
 namespace App\Other;
 
 use App\Models\Event;
-use App\Location;
-use App\Org;
+use App\Models\Location;
+use App\Models\Org;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 

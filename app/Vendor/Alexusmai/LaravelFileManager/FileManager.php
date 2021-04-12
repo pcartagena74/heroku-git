@@ -8,7 +8,7 @@ use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
-use App\Person;
+use App\Models\Person;
 use Entrust;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

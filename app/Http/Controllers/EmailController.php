@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Email;
-use App\Person;
+use App\Models\Email;
+use App\Models\Person;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

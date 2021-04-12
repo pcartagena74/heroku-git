@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Email;
+use App\Models\Email;
 use App\Models\Event;
-use App\EventDiscount;
+use App\Models\EventDiscount;
 use App\Models\EventSession;
-use App\Location;
+use App\Models\Location;
 use App\Notifications\AccountCreation;
 use App\Notifications\ReceiptNotification;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
-use App\RegFinance;
-use App\Registration;
-use App\RegSession;
-use App\Ticket;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
+use App\Models\RegFinance;
+use App\Models\Registration;
+use App\Models\RegSession;
+use App\Models\Ticket;
 use App\Models\Track;
 use App\Models\User;
 use Aws\S3\S3Client;

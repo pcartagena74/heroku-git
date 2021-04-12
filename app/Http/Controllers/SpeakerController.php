@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSession;
-use App\Person;
-use App\Registration;
+use App\Models\Person;
+use App\Models\Registration;
 use Illuminate\Http\Request;
 
 class SpeakerController extends Controller

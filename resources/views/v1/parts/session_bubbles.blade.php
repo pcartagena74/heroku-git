@@ -21,11 +21,11 @@
  *                   longer be edited.
  */
 
-use App\Ticket;
+use App\Models\Ticket;
 use App\Models\Track;
 use App\Models\EventSession;
-use App\RegSession;
-use App\Org;
+use App\Models\RegSession;
+use App\Models\Org;
 
 if (!isset($suppress)) {
     $suppress = 0;
