@@ -1,6 +1,5 @@
 <?php
 
-
 return [
 
     /*
@@ -12,7 +11,7 @@ return [
      * When the clean-command is executed, all recording activities older than
      * the number of days specified here will be deleted.
      */
-    'delete_records_older_than_days' => 365,
+    'delete_records_older_than_days' => env('ACTIVITY_LOGGER_KEEP_DAYS', 365),
 
     /*
      * If no log name is passed to the activity() helper
@@ -32,8 +31,22 @@ return [
     'subject_returns_soft_deleted_models' => false,
 
     /*
-     * This model will be used to log activity. The only requirement is that
-     * it should be or extend the Spatie\Activitylog\Models\Activity model.
+     * This model will be used to log activity.
+     * It should be implements the Spatie\Activitylog\Contracts\Activity interface
+     * and extend Illuminate\Database\Eloquent\Model.
      */
     'activity_model' => \Spatie\Activitylog\Models\Activity::class,
+
+    /*
+     * This is the name of the table that will be created by the migration and
+     * used by the Activity model shipped with this package.
+     */
+    'table_name' => 'activity_log',
+
+    /*
+     * This is the database connection that will be used by the migration and
+     * the Activity model shipped with this package. In case it's not set
+     * Laravel database.default will be used instead.
+     */
+    'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION'),
 ];

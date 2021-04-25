@@ -14,4 +14,6 @@ class Model extends Eloquent
     const UPDATED_AT = 'updateDate';
 
     protected $guarded = [];
+
+    protected static $logOnlyDirty = true;
 }

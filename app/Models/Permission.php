@@ -15,7 +15,7 @@ class Permission extends EntrustPermission
 {
     //use LogsActivity;
     protected static $logAttributes = ['name', 'display_name', 'description'];
-    protected static $ignoreChangedAttributes = ['createDate'];
+    protected static $ignoreChangedAttributes = ['created_at'];
 
     public function roles()
     {

@@ -23,14 +23,17 @@ class PublicFunctionController extends Controller
             if (null !== $u) {
                 $x = $u->password ? 1 : 0;
             } else {
+                // Technically, getting here means that the user record doesn't exist BUT should
                 $x = 1;
             }
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
-            if (null !== $p && null === $p->orgperson) {
-                $p->load('orgperson');
-
+            if (null !== $p && null !== $p->orgperson) {
                 return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
                 'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
+            } elseif(null !== $p) {
+                $p->load('orgperson');
+                return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
+                    'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
             }
         } else {
             return json_encode(['status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id]);

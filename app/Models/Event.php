@@ -6,7 +6,7 @@ use App\Models\EventSession;
 use App\Other\ics_calendar;
 use App\Models\Person;
 use Carbon\Carbon;
-//use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\LogsActivity;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +15,7 @@ use League\Flysystem\AdapterInterface;
 
 class Event extends Model
 {
-    //use LogsActivity;
+    use LogsActivity;
     use SoftDeletes;
 
     // The table
@@ -29,9 +29,12 @@ class Event extends Model
         'eventID' => 'integer',
     ];
 
-    protected static $logAttributes = ['eventName', 'eventDescription', 'locationID', 'isActive', 'hasFood', 'slug', 'hasTracks'];
-    protected static $ignoreChangedAttributes = ['createDate'];
     protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
+
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks'];
+    protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
 
     public function category()
     {

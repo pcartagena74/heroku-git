@@ -12,6 +12,8 @@ class PersonStaging extends Model
     // The table
     protected $table = 'person-staging';
     protected $primaryKey = 'personID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
 
     //protected static $logAttributes = ['prefName', 'login', 'defaultOrgID', 'title', 'compName', 'indName', 'allergenInfo', 'affiliation'];

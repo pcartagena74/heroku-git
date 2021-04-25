@@ -14,6 +14,8 @@ class Address extends Model
     // The table
     protected $table = 'person-address';
     protected $primaryKey = 'addrID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
     public function person()

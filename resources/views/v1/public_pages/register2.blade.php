@@ -6,10 +6,14 @@
  * @var Event $event
  * @var Org $org
  * @var RegFinance $rf
- * @var $cert_array
+ * @var Registration $regs
+ * @var $tcount
+ * @var $reg
  * @var $prefixes
- * @var $regs
  * @var $industries
+ * @var $affiliation_array
+ * @var $cert_array
+ * @var $allergen_array
  *
  */
 
@@ -456,7 +460,8 @@ $rfp = $rf->person;
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
 @endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
             $("#firstName-{{ $i }}").editable({type: 'text'});
@@ -473,7 +478,8 @@ $rfp = $rf->person;
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
 @endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
@@ -490,7 +496,8 @@ $rfp = $rf->person;
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
 @endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
@@ -502,7 +509,8 @@ $rfp = $rf->person;
                         $string .= "{ value: '" . $row->certification . "' , text: '" . $row->certification . "' },";
                     }
 @endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
@@ -544,7 +552,8 @@ $rfp = $rf->person;
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
                     }
 @endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 

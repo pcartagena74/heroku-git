@@ -15,6 +15,8 @@ class EventDiscount extends Model
     // The table
     protected $table = 'event-discounts';
     protected $primaryKey = 'discountID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'updateDate', 'deleted_at'];
 
     protected static $logAttributes = ['percent', 'flatAmt', 'discountCODE'];

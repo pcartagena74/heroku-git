@@ -11,6 +11,8 @@ class Org extends Model
     // The table
     protected $table = 'organization';
     protected $primaryKey = 'orgID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'updateDate'];
 
     public function orgpeople()

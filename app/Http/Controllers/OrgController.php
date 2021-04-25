@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash as Hash;
 use Validator;
+use Illuminate\Support\Facades\Storage;
 
 class OrgController extends Controller
 {
@@ -48,7 +49,7 @@ class OrgController extends Controller
         if ($currentPerson->orgs->count() > 1) {
             return view('v1.auth_pages.organization.select_organization', compact('org_list', 'orgID'));
         } else {
-            return redirect('/orgsettings/'.$orgID);
+            return redirect('/orgsettings/' . $orgID);
         }
     }
 
@@ -91,7 +92,7 @@ class OrgController extends Controller
     {
         // responds to GET /blah/id
         $person = Person::find(auth()->user()->id);
-        if (! $person->orgs->contains('orgID', $id)) {
+        if (!$person->orgs->contains('orgID', $id)) {
             $request->session()->flash('alert-danger', 'Org id not found');
 
             return redirect('/');
@@ -100,8 +101,8 @@ class OrgController extends Controller
         $topBits = [];
         $cData = DB::table('organization')->select(DB::raw('10-( isnull(OSN1) + isnull(OSN2) + isnull(OSN3) + isnull(OSN4) + isnull(OSN5) + isnull(OSN6) + isnull(OSN7) + isnull(OSN8) + isnull(OSN9) + isnull(OSN10)) as cnt'))->where('orgID', $org->orgID)->first();
         $cDate = DB::table('organization')->select(DB::raw('10-( isnull(ODN1) + isnull(ODN2) + isnull(ODN3) + isnull(ODN4) + isnull(ODN5) + isnull(ODN6) + isnull(ODN7) + isnull(ODN8) + isnull(ODN9) + isnull(ODN10)) as cnt'))->where('orgID', $org->orgID)->first();
-        array_push($topBits, [8, 'Custom Fields', $cData->cnt.'/10', null, '', '', 2]);
-        array_push($topBits, [3, 'Custom Dates', $cDate->cnt.'/10', null, '', '', 2]);
+        array_push($topBits, [8, 'Custom Fields', $cData->cnt . '/10', null, '', '', 2]);
+        array_push($topBits, [3, 'Custom Dates', $cDate->cnt . '/10', null, '', '', 2]);
 
         return view('v1.auth_pages.organization.settings', compact('org', 'topBits'));
     }
@@ -114,31 +115,42 @@ class OrgController extends Controller
 
     public function store(Request $request)
     {
-        // refactored - previously in AdminController
+        // refactored - previously in AdminController, and not modularized
+        $all_role = Role::all();
         $validation_rules = [
-            'orgName'               => 'required|min:3|max:50',
-            'orgPath'               => 'required|min:3|max:50|alpha_num|unique:organization,orgpath',
-            'formalName'            => 'nullable|max:255',
-            'orgAddr1'              => 'nullable|max:255',
-            'orgAddr2'              => 'nullable|max:255',
-            'orgCity'               => 'nullable|max:100',
-            'orgState'              => 'nullable|min:2|max:2',
-            'orgZip'                => 'nullable|max:10',
-            'orgEmail'              => 'nullable|email',
-            'orgPhone'              => 'nullable|max:20',
-            'orgFax'                => 'nullable',
-            'adminEmail'            => 'nullable',
-            'facebookURL'           => 'nullable',
-            'orgURL'                => 'nullable',
-            'creditLabel'           => 'required',
-            'orgHandle'             => 'nullable',
+            'orgName' => 'required|min:3|max:50',
+            'orgPath' => 'required|min:3|max:50|alpha_num|unique:organization,orgPath',
+            'formalName' => 'nullable|max:255',
+            'orgAddr1' => 'nullable|max:255',
+            'orgAddr2' => 'nullable|max:255',
+            'orgCity' => 'nullable|max:100',
+            'orgState' => 'nullable|min:2|max:2',
+            'orgZip' => 'nullable|max:10',
+            'orgEmail' => 'nullable|email',
+            'orgPhone' => 'nullable|max:20',
+            'orgFax' => 'nullable',
+            'adminEmail' => 'nullable',
+            'facebookURL' => 'nullable',
+            'orgURL' => 'nullable',
+            'creditLabel' => 'required',
+            'orgHandle' => 'nullable',
             'adminContactStatement' => 'nullable',
-            'techContactStatement'  => 'nullable',
-            'create_user'           => 'required',
-            'existing_user'         => 'required_if:create_user,0',
+            'techContactStatement' => 'nullable',
+            'create_user' => 'required',
+            'existing_user' => 'required_if:create_user,0',
         ];
+
         $create_user = $request->input('create_user');
-        if (! empty($create_user) && $create_user == 1) {
+        $existing_user = $request->input('existing_user');
+        $email = request()->input('email');
+        $pmiID = request()->input('pmiID');
+        $firstName = request()->input('firstName');
+        $lastName = request()->input('lastName');
+        $password = request()->input('password');
+        $notify = request()->input('notify');
+        $password_confirmation = request()->input('password_confirmation');
+
+        if (!empty($create_user) && $create_user == 1) {
             $validation_rules['email'] = 'required|email';
             $validation_rules['firstName'] = 'required|min:3|max:50';
             $validation_rules['lastName'] = 'required|min:3|max:50';
@@ -150,34 +162,27 @@ class OrgController extends Controller
         ];
         $validator = Validator::make($request->all(), $validation_rules, $validation_message);
         $validator->setAttributeNames([
-            'orgName'               => trans('messages.fields.org_name'),
-            'formalName'            => trans('messages.fields.formal_name'),
-            'orgAddr1'              => trans('messages.fields.org_addr1'),
-            'orgAddr2'              => trans('messages.fields.org_addr2'),
-            'orgCity'               => trans('messages.fields.city'),
-            'orgState'              => trans('messages.fields.state'),
-            'orgZip'                => trans('messages.fields.zip'),
-            'orgEmail'              => trans('messages.fields.main_email'),
-            'orgPhone'              => trans('messages.fields.main_number'),
-            'orgFax'                => trans('messages.fields.org_fax'),
-            'adminEmail'            => trans('messages.fields.admin_email'),
-            'facebookURL'           => trans('messages.fields.facebook_url'),
-            'orgURL'                => trans('messages.fields.org_website'),
-            'creditLabel'           => trans('messages.fields.credit_label'),
-            'orgHandle'             => trans('messages.fields.twitter_handle'),
+            'orgName' => trans('messages.fields.org_name'),
+            'formalName' => trans('messages.fields.formal_name'),
+            'orgAddr1' => trans('messages.fields.org_addr1'),
+            'orgAddr2' => trans('messages.fields.org_addr2'),
+            'orgCity' => trans('messages.fields.city'),
+            'orgState' => trans('messages.fields.state'),
+            'orgZip' => trans('messages.fields.zip'),
+            'orgEmail' => trans('messages.fields.main_email'),
+            'orgPhone' => trans('messages.fields.main_number'),
+            'orgFax' => trans('messages.fields.org_fax'),
+            'adminEmail' => trans('messages.fields.admin_email'),
+            'facebookURL' => trans('messages.fields.facebook_url'),
+            'orgURL' => trans('messages.fields.org_website'),
+            'creditLabel' => trans('messages.fields.credit_label'),
+            'orgHandle' => trans('messages.fields.twitter_handle'),
             'adminContactStatement' => trans('messages.fields.admin_contact_statement'),
-            'techContactStatement'  => trans('messages.fields.tech_contact_statement'),
+            'techContactStatement' => trans('messages.fields.tech_contact_statement'),
         ]);
 
-        if ($validator->fails()) {
-            // dd($validator);
-            return redirect('create_organization')
-                ->withErrors($validator)
-                ->withInput();
-        }
-        $existing_user = $request->input('existing_user');
-        // dd($request->input('existing_user'));
-        // dd($this->currentPerson);
+        // Setup the org, person, email, etc. structures but DO NOT YET SAVE.
+        // Saving will be done within a try/catch block with rollback.
         $org = new Org();
         $org->orgName = $request->input('orgName');
         $org->formalName = $request->input('formalName');
@@ -199,32 +204,15 @@ class OrgController extends Controller
         $org->orgPath = $request->input('orgPath');
         $org->creatorID = $this->currentPerson->personID;
         $org->updaterID = $this->currentPerson->personID;
-        $org->save();
-        $orgID = $org->orgID;
 
-        /*
-         * This can be removed because roles will be static / not org-dependent.  1/24/2021
-         *
-        $roles = Role::where('orgID', 10)->get();
-        foreach ($roles as $key => $value) {
-            $new_role        = $value->replicate();
-            $new_role->orgID = $orgID;
-            $new_role->save();
+        if ($validator->fails()) {
+            return redirect('create_organization')
+                ->withErrors($validator)
+                ->withInput();
         }
-        */
 
-        $email = request()->input('email');
-        $pmiID = request()->input('pmiID');
-        $firstName = request()->input('firstName');
-        $lastName = request()->input('lastName');
-        $password = request()->input('password');
-        $notify = request()->input('notify');
-        $password_confirmation = request()->input('password_confirmation');
-
-        // create org name path on selected disk
-        generateDirectoriesForOrg($org);
         if ($password !== null) {
-            // validate password matching
+            // validate passwords match
             $validator = Validator::make($request->all(), [
                 'password' => 'required|min:6|confirmed',
             ]);
@@ -237,6 +225,13 @@ class OrgController extends Controller
             $make_pass = null;
         }
 
+        if (Storage::disk(getDefaultDiskFM())->exists($org->orgPath) == true) {
+            request()->session()->flash('alert-warning', trans('messages.messages.user_create_fail'));
+            return redirect('create_organization')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         // 0. Check for the existence of records before creation (Person, Email, OrgPerson (if PMI ID), etc.)
         // 1. Create Person record (firstName => prefName)
         //    populate defaultOrgID
@@ -244,18 +239,24 @@ class OrgController extends Controller
         // 2. Create corresponding User record
         //    Check for password existence (and validation) and set if present
         // 3. Create person-email record for login
+
         if ($create_user) {
-            $op = '';
-            $u = '';
-            $e = '';
+            $op = null;
+            $u = null;
+            $e = null;
             if (check_exists('p', 1, [$firstName, $lastName, $email])
-                || check_exists('e', 1, [$email]) || check_exists('op', 1, [$pmiID])) {
-                // return redirect(env('APP_URL')."/newuser/create");
+                || check_exists('e', 1, [$email])
+                || check_exists('op', 1, [$pmiID])) {
                 return back()->withInput();
             }
 
             try {
                 DB::beginTransaction();
+
+                // Saves that will be done in block
+                $org->save();
+                $orgID = $org->orgID;
+
                 $p = new Person;
                 $p->firstName = $firstName;
                 $p->prefName = $firstName;
@@ -288,7 +289,6 @@ class OrgController extends Controller
                 $u->save();
 
                 // assign all roles so this user will act as admin for this organization
-                $all_role = Role::where('orgID', $orgID)->get();
                 foreach ($all_role as $key => $value) {
                     $u->attachRole($value, ['orgID' => $orgID]);
                 }
@@ -305,17 +305,18 @@ class OrgController extends Controller
                 request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
                 request()->session()->flash('alert-warning', $exception->getMessage());
                 DB::rollBack();
-
                 return back()->withInput();
             }
 
             if ($notify) {
                 $p->notify(new NewUserAcct($p, $password, auth()->user()->id));
             }
-            request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
 
+            request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
             return back();
+
         } else {
+            // Creating the org with an existing user
             $person_id = explode('-', $existing_user);
             $id_exist = false;
             if (is_array($person_id)) {
@@ -328,54 +329,69 @@ class OrgController extends Controller
                     }
                 }
             }
-            if (! $id_exist) {
-                $org->forceDelete();
-                request()->session()->flash('alert-warning', trans('messages.errors.user_not_found'));
 
+            try {
+                DB::beginTransaction();
+                // Saves that will be done in block
+                $org->save();
+                $orgID = $org->orgID;
+
+                if (!$id_exist) {
+                    $org->forceDelete();
+                    request()->session()->flash('alert-warning', trans('messages.errors.user_not_found'));
+                    return back()->withInput();
+                }
+
+                $op = new OrgPerson;
+                if (null !== $person->orgperson && null !== $person->orgperson->OrgStat1) {
+                    $op->OrgStat1 = $person->orgperson->OrgStat1;
+                }
+                $op->personID = $person->personID;
+                $op->orgID = $orgID;
+                $op->creatorID = $this->currentPerson->personID;
+                $op->updaterID = $this->currentPerson->personID;
+                $op->save();
+
+                // assign all roles so this user will act as admin for this organization
+                $user = User::find($person->personID);
+                foreach ($all_role as $key => $value) {
+                    $user->attachRole($value, ['orgID' => $orgID]);
+                }
+
+                DB::commit();
+            } catch (\Exception $exception) {
+                request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
+                request()->session()->flash('alert-warning', $exception->getMessage());
+                DB::rollBack();
                 return back()->withInput();
             }
+        }
+
+        // Housekeeping to insure that user 1 also has all roles for the new org
+        if ($create_user || $person->personID != 1) {
+            // user #1 should be a member of every org
+            $p1 = Person::find(1)->with('orgperson')->first();
+            $u1 = User::find(1);
             $op = new OrgPerson;
-            if ($pmiID > 0) {
-                $op->OrgStat1 = $pmiID;
+            if (null !== $p1->orgperson->OrgStat1) {
+                $op->OrgStat1 = $p1->orgperson->OrgStat1;
             }
-            $op->personID = $person_id[0];
+            $op->personID = 1;
             $op->orgID = $orgID;
             $op->creatorID = $this->currentPerson->personID;
             $op->updaterID = $this->currentPerson->personID;
             $op->save();
-            // assign all roles so this user will act as admin for this organization
-            $all_role = Role::where('orgID', $orgID)->get();
-            $user = User::find($person_id[0]);
-            foreach ($all_role as $key => $value) {
-                $user->attachRole($value, ['orgID' => $orgID]);
-            }
-            $permission = Permission::all();
-            $roles = Role::where('orgID', $orgID)
-                ->where(function ($query) {
-                    $query->orWhere('name', 'Board')
-                        ->orWhere('name', 'Developer')
-                        ->orWhere('name', 'Roundtable-Volunteer')
-                        ->orWhere('name', 'Event-Volunteer');
-                })->get();
-            $role_permission_array = [];
-            foreach ($roles as $role_key => $role_value) {
-                if ($role_value->name == 'Board' || $role_value->name == 'Developer') {
-                    foreach ($permission as $per_key => $per_value) {
-                        $role_permission_array[] = ['permission_id' => $per_value->id, 'role_id' => $role_value->id];
-                    }
-                } elseif ($role_value->name == 'Event-Volunteer' || $role_value->name == 'Roundtable-Volunteer') {
-                    foreach ($permission as $per_key => $per_value) {
-                        if ($per_value->id == 6) {
-                            $role_permission_array[] = ['permission_id' => $per_value->id, 'role_id' => $role_value->id];
-                        }
-                    }
-                }
-            }
-            PermissionRole::insert($role_permission_array);
-            request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
 
-            return back();
+            foreach ($all_role as $key => $value) {
+                $u1->attachRole($value, ['orgID' => $orgID]);
+            }
         }
+
+        // Create orgPath on selected disk AFTER all else succeeds
+        generateDirectoriesForOrg($org);
+
+        request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
+        return back();
     }
 
     public function edit($id)
@@ -392,7 +408,7 @@ class OrgController extends Controller
         $updater = auth()->user()->id;
 
         if ($name == 'anonCats') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $org->anonCats = $value;
         } else {
             // Add logic to change Role information if orgName changes

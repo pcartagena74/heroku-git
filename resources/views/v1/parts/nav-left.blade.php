@@ -97,7 +97,7 @@ try{
                                 </li>
                                 @if (count($currentPerson->orgs)>1)
                                     <li>
-                                        <a href="{{ url('orgsettings')}}">
+                                        <a href="{{ url('orgs/my')}}">
                                             @lang('messages.nav.ms_org')
                                         </a>
                                     </li>

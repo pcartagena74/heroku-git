@@ -21,6 +21,7 @@ $currentOrg = $org;
 
         @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
+        @lang('messages.instructions.new_user')
         {!! Form::open(array('url' => env('APP_URL').'/newuser', 'method' => 'post')) !!}
 
         <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">

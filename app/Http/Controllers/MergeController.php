@@ -59,7 +59,7 @@ class MergeController extends Controller
             // go to a blank merge page
         }
 
-        $class = 'App\\'.$this->models[$letter];
+        $class = 'App\\Models\\'.$this->models[$letter];
 
         if (class_exists($class)) {
             if ($id1 === null || $id2 === null) {
@@ -102,7 +102,7 @@ class MergeController extends Controller
     public function getmodel(Request $request, $letter)
     {
         $this->currentPerson = Person::find(auth()->user()->id);
-        $class = 'App\\'.$this->models[$letter];
+        $class = 'App\\Models\\'.$this->models[$letter];
         $model1 = request()->input('model1');
         $model2 = request()->input('model2');
 

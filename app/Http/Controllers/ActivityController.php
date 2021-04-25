@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Session;
+use Spatie\Activitylog\Models\Activity;
 
 class ActivityController extends Controller
 {
@@ -224,14 +225,27 @@ class ActivityController extends Controller
 
             return redirect()->back();
         } else {
+
             Auth::loginUsingId($new_id, 0);
 
             // Store the old and new IDs
             if ($cancel != 1) {
+                activity()
+                    ->causedBy(auth()->user())
+                    ->inLog('become')
+                    ->performedOn($u)
+                    ->log("User $prior_id became user $new_id");
+
                 Session::put('become', $new_id);
                 Session::put('prior_id', $prior_id);
                 Session::save();
             } else {
+                activity()
+                    ->causedBy(auth()->user())
+                    ->inLog('unbecome')
+                    ->performedOn($u)
+                    ->log("User $new_id stopped emulating user $prior_id");
+
                 Session::forget(['become', 'prior_id']);
             }
 

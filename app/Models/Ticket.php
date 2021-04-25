@@ -21,6 +21,8 @@ class Ticket extends Model
     // The table
     protected $table = 'event-tickets';
     protected $primaryKey = 'ticketID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['availabilityEndDate', 'earlyBirdEndDate', 'createDate', 'updateDate', 'deleted_at'];
 
     protected $appends = ['eb_mbr_price', 'eb_non_price'];

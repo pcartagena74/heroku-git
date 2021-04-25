@@ -12,6 +12,8 @@ class Location extends Model
     // The table
     protected $table = 'event-location';
     protected $primaryKey = 'locID';
+    const CREATED_AT = 'createDate';
+    const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'deleted_at', 'updateDate'];
 
     public function event()

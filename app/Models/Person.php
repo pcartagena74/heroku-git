@@ -6,20 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Person extends Model
 {
-    //use LogsActivity;
+    use LogsActivity;
     use SoftDeletes;
     use Notifiable;
 
     // The table
     protected $table = 'person';
     protected $primaryKey = 'personID';
+
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
     protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
     protected $hidden = ['remember_token'];
+
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logAttributes = ['login', 'defaultOrgID',  'defaultOrgPersonID'];
+    protected static $ignoreChangedAttributes = ['createDate'];
 
     public function roles()
     {

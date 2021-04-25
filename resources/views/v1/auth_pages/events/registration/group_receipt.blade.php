@@ -10,7 +10,7 @@
      *
      */
 
-    use App\RegSession;
+    use App\Models\RegSession;
     use App\Models\EventSession;
     use Aws\S3\S3Client;
     use League\Flysystem\AwsS3v3\AwsS3Adapter;
@@ -18,8 +18,6 @@
     use App\Models\Registration;
     use App\Models\Person;
     use App\Models\Ticket;
-
-    $today = Carbon\Carbon::now();
 
     $tcount = 0;
     $today = Carbon\Carbon::now();
@@ -124,8 +122,8 @@
                     @include('v1.parts.location_display', ['loc' => $loc, 'event' => $event, 'time' => 1])
                 </div>
                 <br/>
-                <b style="color:red;">@lang('messages.headers.purchased'): </b> {{ $rf->createDate->format('n/j/Y') }}
-                <b style="color:red;">@lang('messages.headers.at') </b> {{ $rf->createDate->format('g:i A') }}
+                <b style="color:red;">@lang('messages.headers.purchased'): </b> {{ $rf->cancelDate->format('n/j/Y') }}
+                <b style="color:red;">@lang('messages.headers.at') </b> {{ $rf->cancelDate->format('g:i A') }}
                 @if($rf->cost > 0 && $rf->pmtRecd == 0)
                     <h1 style="color:red;">@lang('messages.headers.bal_due')</h1>
                 @endif
@@ -135,11 +133,11 @@
         </div>
 
         @foreach($rf->registrations as $reg)
-            <?php
+            @php
             $tcount++;
             $person = Person::find($reg->personID);
             $ticket = Ticket::find($reg->ticketID);
-            ?>
+            @endphp
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
                     @if($reg->deleted_at)

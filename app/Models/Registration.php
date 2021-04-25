@@ -19,7 +19,7 @@ class Registration extends Model
     protected $table = 'event-registration';
     protected $primaryKey = 'regID';
     const CREATED_AT = 'createDate';
-    const UPDATED_AT = 'updateDate';
+    const UPDATED_AT = 'cancelDate';
     protected $dates = ['createDate', 'updateDate', 'deleted_at'];
 
     public function event()

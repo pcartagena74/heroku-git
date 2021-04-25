@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: a Login Modal that will submit silently
  * Created: 3/3/2017
@@ -11,7 +11,7 @@ if(!isset($id)){
 if(!isset($msg)){
     $msg = trans('messages.modals.login_msg');
 }
-?>
+@endphp
 
 <div class="modal fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="login_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
