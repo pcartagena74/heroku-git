@@ -76,7 +76,7 @@
             "App\\": ["app/"]
         },
         "exclude-from-classmap": ["vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php","vendor/kordy/ticketit/src/TicketitServiceProvider.php","vendor/alexusmai/laravel-file-manager/src/FileManager.php"],
-        "classmap": ["database/seeds", "database/factories", "app/models"],
+        "classmap": ["database/seeds", "database/factories", "app/Models"],
         "files": ["app/Helpers/helper_functions.php", "app/Vendor/Ticketit/TicketItComposer.php","app/Vendor/Ticketit/TicketitServiceProvider.php","app/Vendor/Maatwebsite/Excel/ReadChunk.php","app/Vendor/Alexusmai/LaravelFileManager/FileManager.php"]
     },
     "autoload-dev": {
