@@ -1361,11 +1361,11 @@ return [
         'page_expired' => 'Page Expired.',
         'too_many_request' => 'Too Many Requests - Rate limit exceeded.',
         'service_unavailable' => 'Service Unavailable. Please try again later.',
-        'error_500' => "<p>Internal Server Error Occurred.</p>
-                        We track these errors automatically, but if the problem persists feel free to contact us.
-                        In the meantime, try refreshing.",
-        'no_msg_available' => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-        'page_no_found' => "Sorry but we couldn't find this page. The page you are looking for does not exist.",
+        'error_500' => "<p>Internal Server Error</p>
+                        We track these errors automatically, but if the problem persists please contact us.",
+        'no_msg_available' => '<p>An error occurred.</p>
+                        We track these errors automatically, but if the problem persists please contact us.',
+        'page_no_found' => "Apologies. The page you are looking for does not exist.",
         'bad_url_link_mail_tracker' => "Oops, the link you are using has expired.",
     ],
     'validation' => [
