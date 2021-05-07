@@ -1365,7 +1365,7 @@ return [
                         We track these errors automatically, but if the problem persists feel free to contact us.
                         In the meantime, try refreshing.",
         'no_msg_available' => 'Some error occurred. We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.',
-        'page_no_found' => "Sorry but we couldn't find this page. This page you are looking for does not exist.",
+        'page_no_found' => "Sorry but we couldn't find this page. The page you are looking for does not exist.",
         'bad_url_link_mail_tracker' => "Oops, the link you are using has expired.",
     ],
     'validation' => [
