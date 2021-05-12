@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\EventSession;
-use App\RegSession;
+use App\Models\EventSession;
+use App\Models\RegSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Event;
-use App\Ticket;
-use App\Person;
-use App\Registration;
+use App\Models\Event;
+use App\Models\Ticket;
+use App\Models\Person;
+use App\Models\Registration;
 
 class TicketController extends Controller
 {

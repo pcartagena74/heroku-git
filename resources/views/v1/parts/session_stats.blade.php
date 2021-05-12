@@ -5,6 +5,8 @@
  * Created: 10/2/2019
  */
 
+use App\Models\RegSession;
+
 //dd($session->sessionID);
 if(null !== $session && null === $es){
     $es = $session->sessionID;
@@ -16,7 +18,7 @@ $surveys = \App\RSSurvey::where([
     ->selectRaw("avg(engageResponse) 'engage', avg(takeResponse) 'take', avg(contentResponse) 'content', avg(styleResponse) 'style', count(*) 'count'")
     ->first();
 
-$rs = \App\RegSession::where([
+$rs = RegSession::where([
     ['eventID', '=', $event->eventID],
     ['sessionID', '=', $es]
 ])->count();

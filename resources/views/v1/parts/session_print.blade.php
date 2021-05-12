@@ -9,8 +9,8 @@
  */
 
 use App\Models\EventSession;
-use App\RegSession;
-use App\Ticket;
+use App\Models\RegSession;
+use App\Models\Ticket;
 
 $check = RegSession::where([
     ['regID', $reg->regID],
