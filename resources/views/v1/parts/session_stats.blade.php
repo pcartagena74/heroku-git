@@ -8,6 +8,7 @@
 
 use App\Models\RegSession;
 use App\Models\RSSurvey;
+use App\Models\Registration;
 
 //dd($session->sessionID);
 if(null !== $session && null === $es){
@@ -26,7 +27,7 @@ $rs = RegSession::where([
 ])->count();
 
 if($rs <= 0){
-    $regs = \App\Registration::where('eventID', '=', $event->eventID)->count();
+    $regs = Registration::where('eventID', '=', $event->eventID)->count();
 }
 @endphp
 
