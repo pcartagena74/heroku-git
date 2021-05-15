@@ -1,9 +1,10 @@
-<?php
+@php
 /**
- * Comment:
- * Created: 10/22/2017
+ * Comment: created by Mufaddal to have locale and form
+ * Created: 2/28/2020
  */
-?>
+@endphp
+
 @extends('v1.layouts.no-auth')
 
 @section('content')
@@ -14,11 +15,11 @@
             <div class="col-middle">
                 <div class="text-center text-center" style="text-align: center;">
                     <h1 class="error-number">
-                        {{$code}}
+                        {{ $code }}
                     </h1>
                     <h2>
-                        {{$description}}
-                    </h2> 
+                        {!! $description !!}
+                    </h2>
                     @auth
                         <a onclick="show()" style="cursor: pointer;" id="report_this">
                             {{ trans('messages.page_generic_exception.report_this') }}
