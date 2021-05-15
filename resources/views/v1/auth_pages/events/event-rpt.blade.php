@@ -18,11 +18,13 @@
  * Updated: 2/20/2021 to make function buttons available for Devs even after events are past
  */
 
+use App\Models\Org;
 use App\Models\Person;
 use App\Models\Ticket;
 use App\Models\RegFinance;
 use App\Models\EventSession;
 use App\Models\RegSession;
+use App\Models\RSSurvey;
 
 /**
  * To Do:
@@ -31,7 +33,7 @@ use App\Models\RegSession;
  */
 
 $today = \Carbon\Carbon::now();
-$currentOrg = \App\Models\Org::find($event->orgID);
+$currentOrg = Org::find($event->orgID);
 $topBits = ''; // there should be topBits for this
 
 $post_event = $today->gte($event->eventEndDate);
@@ -39,7 +41,7 @@ $post_event = $today->gte($event->eventEndDate);
 
 function get_survey_comments($session)
 {
-    $surveys = \App\RSSurvey::where('sessionID', '=', $session->sessionID);
+    $surveys = RSSurvey::where('sessionID', '=', $session->sessionID);
     $ft = trans('messages.surveys.favorite');
     $faves = $surveys->whereNotNull('favoriteResponse')->selectRaw("concat('<li>', favoriteResponse, '</li>') as 'favoriteResponse'")->pluck('favoriteResponse');
     $st = trans('messages.surveys.suggestions');

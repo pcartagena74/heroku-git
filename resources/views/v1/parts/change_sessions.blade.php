@@ -4,7 +4,7 @@
  * Created: 7/13/2017
  */
 
-use App\Ticket;
+use App\Models\Ticket;
 use App\Models\Track;
 use App\Models\EventSession;
 

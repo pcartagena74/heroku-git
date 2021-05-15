@@ -6,8 +6,10 @@
      * @var $org_admin_props
      */
 
-$sep = \App\Models\AdminProp::find(1);
-$header = \App\Models\AdminProp::find(2);
+use App\Models\AdminProp;
+
+$sep = AdminProp::find(1);
+$header = AdminProp::find(2);
 
 $sep = $org_admin_props->where('propID', 1)->first();
 $header = $org_admin_props->where('propID', 2)->first();

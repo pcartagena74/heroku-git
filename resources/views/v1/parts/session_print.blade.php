@@ -1,11 +1,11 @@
-<?php
+@php
 /**
  * Comment: Repeatable session display blade called when read-only display of session selections is required
  * Created: 9/29/2018
  *
- * @param $event :
- * @param $ticket
- * @param $reg : the individual registration for which session display is required
+ * @var $event :
+ * @var $ticket
+ * @var $reg : the individual registration for which session display is required
  */
 
 use App\Models\EventSession;
@@ -17,7 +17,7 @@ $check = RegSession::where([
     ['eventID', $event->eventID],
     ['personID', $reg->personID]
 ])->get();
-?>
+@endphp
 
 @if(count($check) > 0)
     <table class="table table-bordered jambo_table table-striped">

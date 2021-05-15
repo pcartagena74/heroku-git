@@ -9,7 +9,7 @@ use App\Models\OrgPerson;
 use App\Other\ics_cal_full;
 use App\Models\RegFinance;
 use App\Models\Registration;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Email;
-use App\Person;
+use App\Models\Email;
+use App\Models\Person;
 
 class EmailController extends Controller
 {

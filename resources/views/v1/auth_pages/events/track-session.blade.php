@@ -4,7 +4,7 @@
  * Created: 4/11/2017
  */
 use App\Models\EventSession;
-use App\Ticket;
+use App\Models\Ticket;
 
 $topBits = '';
 

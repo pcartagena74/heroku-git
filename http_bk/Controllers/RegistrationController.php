@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
-use App\EventSession;
+use App\Models\EventSession;
 use App\Notifications\SetYourPassword;
 use Session;
 use App\Notifications\WaitListNoMore;

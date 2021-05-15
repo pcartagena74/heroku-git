@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\Person;
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
