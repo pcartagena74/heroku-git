@@ -10,6 +10,20 @@ use Illuminate\Http\Request;
 
 class SpeakerController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+        $this->middleware(function (Request $request, $next) {
+            if (auth()) {
+                $this->currentPerson = Person::find(auth()->user()->id);
+            }
+
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $speakers = Person::whereHas('roles', function ($q) {

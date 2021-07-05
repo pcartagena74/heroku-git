@@ -343,7 +343,7 @@ class RegistrationController extends Controller
             $u = User::find($id);
             $logged_in = 1;
             if ($u->password === null) {
-                // This shouldn't be possible
+                // This shouldn't be possible. How can you be logged in and have no password set?
                 $show_pass_fields = 1;
             }
             $p = $this->currentPerson = Person::find($id)->load('orgperson');
@@ -697,7 +697,7 @@ class RegistrationController extends Controller
                 if ($reg->subtotal == 0 && $reg->origcost > 0 &&
                     ($reg->discountCode == 'N/A' || null !== $dc) ||
                     ($person->is_member($event->orgID) &&
-                        $reg->ticket->memberBasePrice == $reg->subtotal)) {
+                        $reg->ticket->memberBasePrice != $reg->subtotal)) {
                     // Set the debugNote field and adjust the subtotal
                     if ($reg->ticket->memberBasePrice == $reg->subtotal && $person->is_member($event->orgID)) {
                         $x = $request->header('user-agent');
@@ -732,7 +732,9 @@ class RegistrationController extends Controller
                 $subcheck += $subtotal;
                 $sumtotal += $origcost;
             } catch (\Exception $e) {
-                request()->session()->flash('alert-danger', implode(' ', [trans('messages.errors.reg_fail1', ['name' => $person->showFullName()]), $org->techContactStatement])).$e->getMessage();
+                request()->session()->flash('alert-danger',
+                    implode(' ', [trans('messages.errors.reg_fail1', ['name' => $person->showFullName()]),
+                                          $org->techContactStatement]).$e->getMessage());
 
                 return redirect()->back()->withInput();
             }

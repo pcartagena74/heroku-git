@@ -1360,7 +1360,7 @@ return [
                         pero si el problema persiste, comuníquese con nosotros.',
         'no_msg_available' => '<p>Ocurrió un error.</p> Rastreamos estos errores automáticamente,
                         pero si el problema persiste, comuníquese con nosotros.',
-        'page_no_found' => "Disculpas. La página que estás buscando no existe.",
+        'page_not_found' => "Disculpas. La página que estás buscando no existe.",
         'bad_url_link_mail_tracker' => '¡Ups! La URL en la que hizo clic ha caducado.',
     ],
     'validation' => [

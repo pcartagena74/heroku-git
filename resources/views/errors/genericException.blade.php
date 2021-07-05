@@ -17,7 +17,7 @@
                     <h1 class="error-number">
                         {{ $code }}
                     </h1>
-                    <h2>
+                    <h2 class="text-center">
                         {!! $description !!}
                     </h2>
                     @auth

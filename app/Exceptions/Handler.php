@@ -95,7 +95,7 @@ class Handler extends ExceptionHandler
         if ($this->isHttpException($exception)) {
             switch ($exception->getStatusCode()) {
                 case 404:
-                    return response()->view('errors.genericException', ['code' => 404, 'description' => trans('messages.exceptions.page_no_found')], 404);
+                    return response()->view('errors.genericException', ['code' => 404, 'description' => trans('messages.exceptions.page_not_found')], 404);
                     break;
                 case 403:
                     return response()->view('errors.genericException', ['code' => 403, 'description' => trans('messages.exceptions.forbidden')], 403);

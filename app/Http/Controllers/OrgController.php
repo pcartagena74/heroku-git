@@ -66,7 +66,7 @@ class OrgController extends Controller
             $request->session()->flash('alert-danger', $message);
         }
 
-        return redirect('/orgsettings');
+        return redirect("/orgsettings/$org");
     }
 
     public function event_defaults()
