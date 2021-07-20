@@ -442,7 +442,7 @@ class RegFinanceController extends Controller
         $receipt_filename = $rf->eventID . '/' . $rf->confirmation . '.pdf';
 
         // if $receipt_filename matches pending or receipt_pending, don't do anything with the receipt.
-        if (preg_match('/pending/i', $receipt_filename)) {
+        if (!preg_match('/pending/i', $receipt_filename)) {
             try {
                 $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
 
