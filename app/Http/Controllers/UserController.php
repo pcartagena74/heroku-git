@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Email;
-use App\Notifications\NewUserAcct;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Person;
 use App\Models\User;
+use App\Notifications\NewUserAcct;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash as Hash;

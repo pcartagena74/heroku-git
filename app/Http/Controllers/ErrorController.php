@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ticketit\TicketOver as Ticket;
 use App\Models\Person;
+use App\Models\Ticketit\TicketOver as Ticket;
 use App\Rules\GoogleCaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

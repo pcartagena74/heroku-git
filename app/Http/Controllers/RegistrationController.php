@@ -6,8 +6,6 @@ use App\Models\Email;
 use App\Models\Event;
 use App\Models\EventDiscount;
 use App\Models\EventSession;
-use App\Notifications\SetYourPassword;
-use App\Notifications\WaitListNoMore;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Person;
@@ -17,6 +15,8 @@ use App\Models\RegSession;
 use App\Models\Ticket;
 use App\Models\Track;
 use App\Models\User;
+use App\Notifications\SetYourPassword;
+use App\Notifications\WaitListNoMore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -380,7 +380,7 @@ class RegistrationController extends Controller
                 ['eventID', '=', $event->eventID],
                 ['status', '!=', 'processed'],
             ])->first();
-        } elseif ($authorID == 0 && !$logged_in) {
+        } elseif ($authorID == 0 && ! $logged_in) {
             // no check for in-progress submissions when $authorID == 0
             $resubmit = null;
         } else {
@@ -394,7 +394,7 @@ class RegistrationController extends Controller
             $resubmitted_regs = Registration::where('rfID', '=', $resubmit->regID)->get();
             // if there was a resubmit, delete the old registration records and redo later...
             foreach ($resubmitted_regs as $reg) {
-                $reg->debugNotes = "Deleting due to resubmission.";
+                $reg->debugNotes = 'Deleting due to resubmission.';
                 $reg->save();
                 $reg->delete();
             }
@@ -734,7 +734,7 @@ class RegistrationController extends Controller
             } catch (\Exception $e) {
                 request()->session()->flash('alert-danger',
                     implode(' ', [trans('messages.errors.reg_fail1', ['name' => $person->showFullName()]),
-                                          $org->techContactStatement]).$e->getMessage());
+                                          $org->techContactStatement, ]).$e->getMessage());
 
                 return redirect()->back()->withInput();
             }
@@ -767,12 +767,12 @@ class RegistrationController extends Controller
             request()->session()->flash(
                 'dupes',
                 trans_choice('messages.warning.dupe_reg', count($dupe_names),
-                    ['names' => li_print_array($dupe_names, "ul")])
+                    ['names' => li_print_array($dupe_names, 'ul')])
             );
             request()->session()->flash(
                 'alert-warning',
                 trans_choice('messages.warning.dupe_reg', count($dupe_names),
-                ['names' => li_print_array($dupe_names, "ul")])
+                ['names' => li_print_array($dupe_names, 'ul')])
             );
         }
 

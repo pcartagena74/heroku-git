@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Importdetail;
-use App\Notifications\MemeberImportExcelNotification;
 use App\Models\Person;
+use App\Notifications\MemeberImportExcelNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

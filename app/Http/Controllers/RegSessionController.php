@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSession;
-use App\Notifications\SendSurvey;
 use App\Models\Org;
 use App\Models\Person;
 use App\Models\Registration;
@@ -12,6 +11,7 @@ use App\Models\RegSession;
 use App\Models\RSSurvey;
 use App\Models\Ticket;
 use App\Models\Track;
+use App\Notifications\SendSurvey;
 use Illuminate\Http\Request;
 
 class RegSessionController extends Controller
