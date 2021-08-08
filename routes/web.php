@@ -216,6 +216,7 @@ Route::post('/search', 'PersonController@search');
 // ---------------------
 Route::get('/speakers', 'SpeakerController@index')->name('manageSpeakers');
 Route::get('/speakers/{speaker}', 'SpeakerController@show');
+Route::get('/s2', 'SpeakerController@index2')->name('manageSpeakers2');
 
 // Event Routes
 // ---------------------
