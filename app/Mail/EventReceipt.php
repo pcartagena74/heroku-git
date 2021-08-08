@@ -2,15 +2,15 @@
 
 namespace App\Mail;
 
-use App\Event;
-use App\Location;
-use App\Org;
-use App\RegFinance;
-use App\Ticket;
+use App\Models\Event;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\RegFinance;
+use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class EventReceipt extends Mailable
 {
@@ -54,10 +54,10 @@ class EventReceipt extends Mailable
             ->view('v1.public_pages.event_receipt')
             ->with([
                 'needSessionPick' => $this->array['needSessionPick'], 'ticket' => $this->array['ticket'],
-                'event' => $this->array['event'] , 'quantity' => $this->array['quantity'],
+                'event' => $this->array['event'], 'quantity' => $this->array['quantity'],
                 'discount_code' => $this->array['discount_code'], 'loc' => $this->array['loc'],
                 'rf' => $this->rf, 'person' => $this->array['person'], 'org' => $this->array['org'],
-                'tickets' => $this->array['tickets']
+                'tickets' => $this->array['tickets'],
             ])->attach($this->attachment);
     }
 }

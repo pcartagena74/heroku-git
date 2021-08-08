@@ -11,6 +11,7 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 
 class Handler extends ExceptionHandler
 {
@@ -26,6 +27,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
+        SuspiciousOperationException::class,
     ];
 
     /**
@@ -93,7 +95,7 @@ class Handler extends ExceptionHandler
         if ($this->isHttpException($exception)) {
             switch ($exception->getStatusCode()) {
                 case 404:
-                    return response()->view('errors.genericException', ['code' => 404, 'description' => trans('messages.exceptions.page_no_found')], 404);
+                    return response()->view('errors.genericException', ['code' => 404, 'description' => trans('messages.exceptions.page_not_found')], 404);
                     break;
                 case 403:
                     return response()->view('errors.genericException', ['code' => 403, 'description' => trans('messages.exceptions.forbidden')], 403);
@@ -116,7 +118,6 @@ class Handler extends ExceptionHandler
                     return response()->view('errors.genericException', ['code' => $exception->getStatusCode(), 'description' => trans('messages.exceptions.no_msg_available')], $exception->getStatusCode());
                     break;
             }
-
         }
 
         if ($exception instanceof AuthenticationException) {

@@ -1,10 +1,16 @@
-<?php
+@php
 /**
 
 * Comment: This starts all content boxes with a title (and small text) above an <hr>
  * Created: 2/2/2017
-*
- * $header, $subheader, $w1, $w2, $r1, $r2, $r3 [optional $id]
+ *
+ * @var $header
+ * @var $subheader
+ * @var $w1
+ * @var $w2
+ * @var $r1
+ * @var $r2
+ * @var $r3
  *
  * sending 'min' defined will trigger the collapse mechanism
  *
@@ -52,7 +58,7 @@ if(isset($min)){
     $min='';
     $chevron = "up";
 }
-?>
+@endphp
 <div class="{{ $md }} {{ $xs }} {{ $class }}
         @if(isset($o))
         col-md-offset-{{ $o }} col-xs-offset-{{ $o }}

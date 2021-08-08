@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\OrgDiscount;
+use App\Models\Person;
 use Illuminate\Http\Request;
-use App\Event;
-use App\OrgDiscount;
-use App\Person;
 
 class OrgDiscountController extends Controller
 {
@@ -33,20 +33,22 @@ class OrgDiscountController extends Controller
         $event = Event::find($eventID);
         $discounts = OrgDiscount::where([
             ['discountCode', $code],
-            ['orgID', $event->orgID]
+            ['orgID', $event->orgID],
         ])->count();
 
         $discount = OrgDiscount::where([
             ['discountCode', $code],
-            ['orgID', $event->orgID]
+            ['orgID', $event->orgID],
         ])->first();
 
         if ($discounts > 0) {
-            $message = '<span><i class="far fa-trophy fa-2x text-success mid_align">&nbsp;</i>' . "Code: '" . $code . "'" . " provides a " . $discount->percent . "% discount.</span>";
-            return json_encode(array('status' => 'success', 'message' => $message, 'percent' => $discount->percent));
+            $message = '<span><i class="far fa-trophy fa-2x text-success mid_align">&nbsp;</i>'."Code: '".$code."'".' provides a '.$discount->percent.'% discount.</span>';
+
+            return json_encode(['status' => 'success', 'message' => $message, 'percent' => $discount->percent]);
         } else {
-            $message = '<span><i class="far fa-warning fa-2x text-warning mid_align">&nbsp;</i>' . "Invalid code: '" . $code ."'</span>";
-            return json_encode(array('status' => 'error','message' => $message));
+            $message = '<span><i class="far fa-warning fa-2x text-warning mid_align">&nbsp;</i>'."Invalid code: '".$code."'</span>";
+
+            return json_encode(['status' => 'error', 'message' => $message]);
         }
     }
 
@@ -75,11 +77,11 @@ class OrgDiscountController extends Controller
             $value = 0;
         }
         $this->currentPerson = Person::find(auth()->user()->id);
-        $discount            = OrgDiscount::find($id);
+        $discount = OrgDiscount::find($id);
 
-        if ($name == 'discountCODE' . $id) {
+        if ($name == 'discountCODE'.$id) {
             $discount->discountCODE = $value;
-        } elseif ($name == 'percent' . $id) {
+        } elseif ($name == 'percent'.$id) {
             $discount->percent = $value;
         } else {
             // something unexpected occurred

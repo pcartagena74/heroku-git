@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\OrgPerson;
+use App\Models\OrgPerson;
 use Faker\Generator as Faker;
 
 $factory->define(OrgPerson::class, function (Faker $faker, $params) {

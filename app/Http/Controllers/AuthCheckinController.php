@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\EventSession;
+use App\Models\Event;
+use App\Models\EventSession;
+use App\Models\Org;
+use App\Models\Registration;
+use App\Models\RegSession;
+use App\Models\Track;
 use Illuminate\Http\Request;
-use App\Event;
-use App\Org;
-use App\Registration;
-use App\RegSession;
-use App\Track;
 
 set_time_limit(0);
 ini_set('memory_limit', '-1');
@@ -35,13 +35,14 @@ class AuthCheckinController extends Controller
             )->firstOrFail();
         } catch (\Exception $exception) {
             $message = trans('messages.warning.inactive_event_url');
+
             return view('v1.public_pages.error_display', compact('message'));
         }
 
         $currentOrg = Org::find($event->orgID);
         $def_sesses = $event->default_sessions();
 
-        if($event->hasTracks > 0) {
+        if ($event->hasTracks > 0) {
             $tracks = Track::where('eventID', $event->eventID)->get();
         } else {
             $tracks = null;
@@ -53,9 +54,10 @@ class AuthCheckinController extends Controller
 
     public function show(EventSession $es)
     {
-        $url = "record_attendance";
+        $url = 'record_attendance';
         $html = view('v1.parts.session_checkin', compact('es', 'url'))->render();
-        return json_encode(array('html'=>$html));
+
+        return json_encode(['html'=>$html]);
     }
 
     public function store(Request $request, Event $event)
@@ -70,7 +72,7 @@ class AuthCheckinController extends Controller
         // First, delete all RegSession records that were saved
         $old_regs = RegSession::where([
             ['eventID', '=', $event->eventID],
-            ['sessionID', '=', $esID]
+            ['sessionID', '=', $esID],
         ])->get();
         foreach ($old_regs as $o) {
             $o->hasAttended = 0;
@@ -80,13 +82,14 @@ class AuthCheckinController extends Controller
         // Then, cycle through all p-#-# registrants to enter record
         foreach ($request->all() as $key => $value) {
             if (preg_match('/^p-/', $key)) {
-                list($field, $personID, $regID) = array_pad(explode("-", $key, 3), 3, null);
+                list($field, $personID, $regID) = array_pad(explode('-', $key, 3), 3, null);
                 $reg = Registration::find($regID);
                 $reg->checkin($esID);
                 $count++;
             }
         }
         request()->session()->flash('alert-success', trans_choice('messages.headers.count_updated', $count, ['count' => $count]));
+
         return redirect(env('APP_URL')."/record_attendance/$event->slug/");
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Address;
-use App\Person;
+use App\Models\Address;
+use App\Models\Person;
 use Illuminate\Http\Request;
 
 class AddressController extends Controller
@@ -12,6 +12,7 @@ class AddressController extends Controller
     {
         $this->middleware('auth');
     }
+
     public function index()
     {
         // responds to /blah
@@ -34,32 +35,32 @@ class AddressController extends Controller
         $this->currentPerson = Person::find(auth()->user()->id);
 
         for ($i = 1; $i <= 5; $i++) {
-            $adType  = "addrTYPE-" . $i;
-            $addr1   = "addr1-" . $i;
-            $addr2   = "addr2-" . $i;
-            $city    = "city-" . $i;
-            $state   = "state-" . $i;
-            $zip     = "zip-" . $i;
-            $cntryID = "cntryID-" . $i;
+            $adType = 'addrTYPE-'.$i;
+            $addr1 = 'addr1-'.$i;
+            $addr2 = 'addr2-'.$i;
+            $city = 'city-'.$i;
+            $state = 'state-'.$i;
+            $zip = 'zip-'.$i;
+            $cntryID = 'cntryID-'.$i;
 
             $type = request()->input($adType);
-            $ad1  = request()->input($addr1);
-            $ad2  = request()->input($addr2);
-            $cit  = request()->input($city);
-            $sta  = request()->input($state);
-            $zi   = request()->input($zip);
-            $cnt  = request()->input($cntryID);
+            $ad1 = request()->input($addr1);
+            $ad2 = request()->input($addr2);
+            $cit = request()->input($city);
+            $sta = request()->input($state);
+            $zi = request()->input($zip);
+            $cnt = request()->input($cntryID);
 
-            if (!empty($ad1)) {
-                $newAddr            = new Address;
-                $newAddr->personID  = request()->input('personID');
-                $newAddr->addrTYPE  = $type;
-                $newAddr->addr1     = $ad1;
-                $newAddr->addr2     = $ad2;
-                $newAddr->city      = $cit;
-                $newAddr->state     = $sta;
-                $newAddr->zip       = $zi;
-                $newAddr->cntryID   = $cnt;
+            if (! empty($ad1)) {
+                $newAddr = new Address;
+                $newAddr->personID = request()->input('personID');
+                $newAddr->addrTYPE = $type;
+                $newAddr->addr1 = $ad1;
+                $newAddr->addr2 = $ad2;
+                $newAddr->city = $cit;
+                $newAddr->state = $sta;
+                $newAddr->zip = $zi;
+                $newAddr->cntryID = $cnt;
                 $newAddr->creatorID = $this->currentPerson->personID;
                 $newAddr->updaterID = $this->currentPerson->personID;
                 generateLatLngForAddress($newAddr);
@@ -69,7 +70,7 @@ class AddressController extends Controller
         if ($this->currentPerson->personID == request()->input('personID')) {
             return redirect('/profile/my');
         } else {
-            return redirect("/profile/" . request()->input('personID'));
+            return redirect('/profile/'.request()->input('personID'));
         }
     }
 
@@ -82,12 +83,12 @@ class AddressController extends Controller
     {
         // responds to PATCH /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
-        $address             = Address::find($id);
-        $name                = request()->input('name');
-        $name                = substr($name, 0, -1);
-        $value               = request()->input('value');
+        $address = Address::find($id);
+        $name = request()->input('name');
+        $name = substr($name, 0, -1);
+        $value = request()->input('value');
 
-        $address->{$name}   = $value;
+        $address->{$name} = $value;
         $address->updaterID = $this->currentPerson->personID;
         $address->save();
         generateLatLngForAddress($address);
@@ -97,17 +98,17 @@ class AddressController extends Controller
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
-        $address             = Address::find($id);
-        $address->updaterID  = $this->currentPerson->personID;
+        $address = Address::find($id);
+        $address->updaterID = $this->currentPerson->personID;
         $address->save();
         $address->delete();
 
         $personID = request()->input('personID');
 
         if ($personID == $this->currentPerson->personID) {
-            return redirect("/profile/my");
+            return redirect('/profile/my');
         } else {
-            return redirect("/profile/" . $personID);
+            return redirect('/profile/'.$personID);
         }
     }
 }

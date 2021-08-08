@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Jobs\SendCampaignEmail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
 // set_time_limit(0);
 class Kernel extends ConsoleKernel
 {
@@ -27,7 +28,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->job(new SendCampaignEmail)->everyFifteenMinutes();
-        $schedule->job(new SendCampaignEmail)->everyMinute();//as heroku support only 10 mins we will take care of reset from job itself
+        $schedule->job(new SendCampaignEmail)->everyMinute(); //as heroku support only 10 mins we will take care of reset from job itself
         // $schedule->command('inspire')
         //          ->hourly();
     }
@@ -39,7 +40,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__.'/Commands');
         require base_path('routes/console.php');
     }
 }

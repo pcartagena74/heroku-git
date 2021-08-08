@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Person;
+use App\Models\Person;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use RuntimeException;
 
 class MailGunController extends Controller
@@ -17,7 +17,6 @@ class MailGunController extends Controller
         $toaddr = $request->input('to');
 
         Mail::send('v1.email_templates.basic', ['title' => $title, 'content' => $content], function ($message) {
-
             $message->from('support@mcentric.org', 'mCentric Support');
 
             $message->to('register@fierce.net');
@@ -47,7 +46,6 @@ class MailGunController extends Controller
 
     public function bugsnag()
     {
-
-        Bugsnag::notifyException(new RuntimeException("Test error"));
+        Bugsnag::notifyException(new RuntimeException('Test error'));
     }
 }

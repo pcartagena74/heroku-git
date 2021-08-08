@@ -6,9 +6,9 @@
 
 namespace App\Other;
 
-use App\Event;
-use App\Location;
-use App\Org;
+use App\Models\Event;
+use App\Models\Location;
+use App\Models\Org;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -41,24 +41,24 @@ class ics_calendar
         $org = Org::find($event->orgID);
         $loc = Location::find($event->locationID);
 
-        $this->contact     = $event->contactEmail;
-        $this->venue_uid   = $loc->locID . '@mcentric.org';
-        $this->title       = trans('messages.mCentric_text.hosted_event', ['org' => $org->orgName]);
-        $this->start       = $event->eventStartDate;
-        $this->end         = $event->eventEndDate;
-        $this->created     = $event->createDate;
-        $this->updated     = $event->updateDate;
-        $this->html        = str_replace(PHP_EOL, '', $event->eventDescription);
-        $this->org         = $org->orgName;
-        $this->summary     = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/" . $event->slug;
-        $this->description = $org->orgName . " - " . $event->eventName;
-        $this->tzid        = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
-        $this->tzid        = str_replace(" ", "_", $this->tzid->tzid);
-        $this->location    = null; // $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2  or '' . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
-        $this->uri         = env('APP_URL') . "/events/" . $event->slug;
-        $this->uid         = $event->eventStartDate->format('Ymd\THis') . $event->eventID . "@mcentric.org";
-        $this->stamp       = Carbon::now()->format('Ymd\THis');
-        $this->event       = $event;
+        $this->contact = $event->contactEmail;
+        $this->venue_uid = $loc->locID.'@mcentric.org';
+        $this->title = trans('messages.mCentric_text.hosted_event', ['org' => $org->orgName]);
+        $this->start = $event->eventStartDate;
+        $this->end = $event->eventEndDate;
+        $this->created = $event->createDate;
+        $this->updated = $event->updateDate;
+        $this->html = str_replace(PHP_EOL, '', $event->eventDescription);
+        $this->org = $org->orgName;
+        $this->summary = trans('messages.email_txt.for_det_visit').': '.env('APP_URL').'/events/'.$event->slug;
+        $this->description = $org->orgName.' - '.$event->eventName;
+        $this->tzid = DB::table('timezone')->where('zoneOffset', '=', $event->eventTimeZone)->select('tzid')->first();
+        $this->tzid = str_replace(' ', '_', $this->tzid->tzid);
+        $this->location = null; // $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n " . $loc->addr2  or '' . " \r\n " . $loc->city . ", " . $loc->state . " " . $loc->zip . "\r\n";
+        $this->uri = env('APP_URL').'/events/'.$event->slug;
+        $this->uid = $event->eventStartDate->format('Ymd\THis').$event->eventID.'@mcentric.org';
+        $this->stamp = Carbon::now()->format('Ymd\THis');
+        $this->event = $event;
         $this->_gen_loc_string($loc);
     }
 
@@ -72,22 +72,24 @@ class ics_calendar
         $cnt = 0;
         $tmp = preg_replace('/[\n\r]/', ' ', ($string) ? $string : '');
         $tmp = preg_replace('/([\,;])/', '\\\$1', ($tmp) ? $tmp : '');
+
         return wordwrap(preg_replace('/^(\S+)/s', ' $1', $tmp), 75, "\r\n ", true);
     }
 
     public function get()
     {
         ($this->o_string) ? $this->o_string : $this->_generate();
+
         return $this->o_string;
     }
 
     private function _gen_loc_string(Location $loc)
     {
-        $this->location = $this->venue_uid . ":" . $loc->locName . " \r\n " . $loc->addr1 . " \r\n ";
+        $this->location = $this->venue_uid.':'.$loc->locName." \r\n ".$loc->addr1." \r\n ";
         if ($loc->addr2 !== null) {
-            $this->location .= $loc->addr2 . " \r\n ";
+            $this->location .= $loc->addr2." \r\n ";
         }
-        $this->location .= $loc->city . ", " . $loc->state . " " . $loc->zip;
+        $this->location .= $loc->city.', '.$loc->state.' '.$loc->zip;
     }
 
     private function _generate()
@@ -100,32 +102,32 @@ class ics_calendar
         $ics_note = new \App\Notifications\EventICSNote($event);
         $x_alt = $ics_note->toMail('blah@blah.com');
 
-        $this->o_string .= "BEGIN:VCALENDAR\r\n" .
-        "PRODID:-//" . $this->title . "\r\n" .
-        "VERSION:2.0\r\n" .
-        "METHOD:REQUEST\r\n" ;
-        $this->o_string .= $this->_appendTimezoneSettings() . "\r\n";
-        $this->o_string .="BEGIN:VEVENT\r\n" .
-        "SUBJECT:" . $this->_escapeString($this->description) . "\r\n" .
-        "CLASS:PUBLIC" . "\r\n" .
-        "CREATED:" . $this->created->format('Ymd\THis') . "\r\n" .
-        "DTSTART;TZID=" . $this->tzid . ":" . $this->start->format('Ymd\THis') . "\r\n" .
-        "DTEND;TZID=" . $this->tzid . ":" . $this->end->format('Ymd\THis') . "\r\n" .
-        "LOCATION:" . $this->_escapeString($this->location) . "\r\n" .
-        "SUMMARY:" . $this->_escapeString($this->description) . "\r\n" .
-        "DESCRIPTION:" . $this->_escapeString($this->summary) . " \\n\\n" . $this->_escapeString($loc_info) . " \\n\\n" .
-                         $this->_escapeString($header) . ":\\n" . $this->_escapeString($this->event->postRegInfo) . "\r\n" .
-        "URL;VALUE=URI:" . $this->_escapeString($this->uri) . "\r\n" .
-        "UID:" . $this->uid . "\r\n" .
-        "SEQUENCE:0\r\n" .
-        "TRANSP:OPAQUE" . "\r\n" .
-        "DTSTAMP:" . $this->stamp . "\r\n" .
-        "LAST-MODIFIED:" . $this->updated->format('Ymd\THis') . "\r\n" .
-        "ORGANIZER;CN=" . $this->_escapeString($this->org) . ":MAILTO:" . $this->contact . "\r\n" .
-        "X-MICROSOFT-CDO-BUSYSTATUS:Confirmed" . "\r\n" .
-        "X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed" . "\r\n" .
-        "X-ALT-DESC;FMTTYPE=text/html:". $this->_escapeXAlt($x_alt->render()) . "\r\n" .
-        "END:VEVENT\r\n" .
+        $this->o_string .= "BEGIN:VCALENDAR\r\n".
+        'PRODID:-//'.$this->title."\r\n".
+        "VERSION:2.0\r\n".
+        "METHOD:REQUEST\r\n";
+        $this->o_string .= $this->_appendTimezoneSettings()."\r\n";
+        $this->o_string .= "BEGIN:VEVENT\r\n".
+        'SUBJECT:'.$this->_escapeString($this->description)."\r\n".
+        'CLASS:PUBLIC'."\r\n".
+        'CREATED:'.$this->created->format('Ymd\THis')."\r\n".
+        'DTSTART;TZID='.$this->tzid.':'.$this->start->format('Ymd\THis')."\r\n".
+        'DTEND;TZID='.$this->tzid.':'.$this->end->format('Ymd\THis')."\r\n".
+        'LOCATION:'.$this->_escapeString($this->location)."\r\n".
+        'SUMMARY:'.$this->_escapeString($this->description)."\r\n".
+        'DESCRIPTION:'.$this->_escapeString($this->summary).' \\n\\n'.$this->_escapeString($loc_info).' \\n\\n'.
+                         $this->_escapeString($header).':\\n'.$this->_escapeString($this->event->postRegInfo)."\r\n".
+        'URL;VALUE=URI:'.$this->_escapeString($this->uri)."\r\n".
+        'UID:'.$this->uid."\r\n".
+        "SEQUENCE:0\r\n".
+        'TRANSP:OPAQUE'."\r\n".
+        'DTSTAMP:'.$this->stamp."\r\n".
+        'LAST-MODIFIED:'.$this->updated->format('Ymd\THis')."\r\n".
+        'ORGANIZER;CN='.$this->_escapeString($this->org).':MAILTO:'.$this->contact."\r\n".
+        'X-MICROSOFT-CDO-BUSYSTATUS:Confirmed'."\r\n".
+        'X-MICROSOFT-CDO-INTENDEDSTATUS:Confirmed'."\r\n".
+        'X-ALT-DESC;FMTTYPE=text/html:'.$this->_escapeXAlt($x_alt->render())."\r\n".
+        "END:VEVENT\r\n".
         "END:VCALENDAR\r\n";
     }
 
@@ -195,6 +197,7 @@ DTSTART:19701101T020000
 RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
 END:STANDARD
 END:VTIMEZONE';
+
         return $vtimezone;
     }
 

@@ -24,7 +24,7 @@ class CategoryOver extends Model
      */
     public function tickets()
     {
-        return $this->hasMany('App\Models\Ticketit\TicketOver', 'category_id');
+        return $this->hasMany(\App\Models\Ticketit\TicketOver::class, 'category_id');
     }
 
     /**
@@ -34,6 +34,6 @@ class CategoryOver extends Model
      */
     public function agents()
     {
-        return $this->belongsToMany('\App\Models\Ticketit\AgentOver', 'ticketit_categories_users', 'category_id', 'user_id');
+        return $this->belongsToMany(\App\Models\Ticketit\AgentOver::class, 'ticketit_categories_users', 'category_id', 'user_id');
     }
 }

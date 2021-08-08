@@ -11,13 +11,13 @@
  * Created: 8/25/2017
  */
 
-use App\RegSession;
-use App\RegFinance;
-use App\Registration;
-use App\Person;
-use App\Ticket;
-use App\EventSession;
-use App\Event;
+use App\Models\RegSession;
+use App\Models\RegFinance;
+use App\Models\Registration;
+use App\Models\Person;
+use App\Models\Ticket;
+use App\Models\EventSession;
+use App\Models\Event;
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;

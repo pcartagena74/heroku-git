@@ -8,7 +8,7 @@ use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
-use App\Person;
+use App\Models\Person;
 use Entrust;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -42,7 +42,7 @@ class FileManager
     public function initialize()
     {
         // if config not found
-        if (!config()->has('file-manager')) {
+        if (! config()->has('file-manager')) {
             return [
                 'result' => [
                     'status'  => 'danger',
@@ -138,12 +138,12 @@ class FileManager
      */
     public function upload($disk, $path, $files, $overwrite)
     {
-        $fileNotUploaded  = false;
-        $currentPerson    = Person::find(auth()->user()->id);
-        $org              = $currentPerson->defaultOrg;
-        $total_storage    = $org->total_storage;
+        $fileNotUploaded = false;
+        $currentPerson = Person::find(auth()->user()->id);
+        $org = $currentPerson->defaultOrg;
+        $total_storage = $org->total_storage;
         $consumed_storage = $org->consumed_storage;
-        $allow_for_dev    = false;
+        $allow_for_dev = false;
         if (Entrust::hasRole('Developer') || $currentPerson->personID == 1) {
             $allow_for_dev = true;
         }
@@ -159,9 +159,9 @@ class FileManager
         }
         foreach ($files as $file) {
             // skip or overwrite files
-            if (!$overwrite
+            if (! $overwrite
                 && Storage::disk($disk)
-                ->exists($path . '/' . $file->getClientOriginalName())
+                ->exists($path.'/'.$file->getClientOriginalName())
             ) {
                 continue;
             }
@@ -181,7 +181,7 @@ class FileManager
             }
             // check file type if need
             if ($this->configRepository->getAllowFileTypes()
-                && !in_array(
+                && ! in_array(
                     $file->getClientOriginalExtension(),
                     $this->configRepository->getAllowFileTypes()
                 )
@@ -231,7 +231,7 @@ class FileManager
 
         foreach ($items as $item) {
             // check all files and folders - exists or no
-            if (!Storage::disk($disk)->exists($item['path'])) {
+            if (! Storage::disk($disk)->exists($item['path'])) {
                 continue;
             } else {
                 if ($item['type'] === 'dir') {
@@ -240,9 +240,9 @@ class FileManager
                 } else {
                     // delete file
                     $currentPerson = Person::find(auth()->user()->id);
-                    $org           = $currentPerson->defaultOrg;
+                    $org = $currentPerson->defaultOrg;
                     $total_storage = $org->total_storage;
-                    $size          = Storage::disk($disk)->size($item['path']);
+                    $size = Storage::disk($disk)->size($item['path']);
                     $org->decrement('consumed_storage', ($size / 1024));
                     Storage::disk($disk)->delete($item['path']);
                 }
@@ -275,8 +275,7 @@ class FileManager
     {
         // compare disk names
         if ($disk !== $clipboard['disk']) {
-
-            if (!$this->checkDisk($clipboard['disk'])) {
+            if (! $this->checkDisk($clipboard['disk'])) {
                 return $this->notFoundMessage();
             }
         }
@@ -318,7 +317,7 @@ class FileManager
     public function download($disk, $path)
     {
         // if file name not in ASCII format
-        if (!preg_match('/^[\x20-\x7e]*$/', basename($path))) {
+        if (! preg_match('/^[\x20-\x7e]*$/', basename($path))) {
             $filename = Str::ascii(basename($path));
         } else {
             $filename = basename($path);
@@ -427,7 +426,7 @@ class FileManager
         );
 
         // add directory properties for the tree module
-        $tree          = $directoryProperties;
+        $tree = $directoryProperties;
         $tree['props'] = ['hasSubdirectories' => false];
 
         return [
@@ -523,7 +522,7 @@ class FileManager
     public function streamFile($disk, $path)
     {
         // if file name not in ASCII format
-        if (!preg_match('/^[\x20-\x7e]*$/', basename($path))) {
+        if (! preg_match('/^[\x20-\x7e]*$/', basename($path))) {
             $filename = Str::ascii(basename($path));
         } else {
             $filename = basename($path);

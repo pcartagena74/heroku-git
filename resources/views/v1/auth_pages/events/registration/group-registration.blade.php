@@ -14,7 +14,7 @@
  *
  */
 
-$currentPerson = \App\Person::find(auth()->user()->id);
+$currentPerson = \App\Models\Person::find(auth()->user()->id);
 $today = \Carbon\Carbon::now();
 
 $topBits = '';  // remove this if this was set in the controller
@@ -56,15 +56,15 @@ $topBits = '';  // remove this if this was set in the controller
                 <div id="search-results"></div>
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('firstName-'.$i, trans('messages.fields.firstName')) !!}<br/>
+                    {!! Form::label('firstName-'.$i, trans('messages.fields.firstName')) !!}<b class="red">*</b><br/>
                     {!! Form::text('firstName-'.$i, null, array('id' => 'firstName-'.$i, 'class' => 'input-xs', 'onblur' => 'require('. $i .');')) !!}<br />
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('lastName-'.$i, trans('messages.fields.lastName')) !!}<br/>
+                    {!! Form::label('lastName-'.$i, trans('messages.fields.lastName')) !!}<b class="red">*</b><br/>
                     {!! Form::text('lastName-'.$i, null, array('id' => 'lastName-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('email-'.$i, trans('messages.headers.email')) !!}<br/>
+                    {!! Form::label('email-'.$i, trans('messages.headers.email')) !!}<b class="red">*</b><br/>
                     {!! Form::text('email-'.$i, null, array('id' => 'email-'.$i, 'class' => 'input-xs')) !!}<br />
                 </div>
                 @if(is_numeric($tickets))

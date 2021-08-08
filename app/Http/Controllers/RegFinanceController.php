@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Email;
-use App\Event;
-use App\EventDiscount;
-use App\EventSession;
-use App\Location;
+use App\Models\Email;
+use App\Models\Event;
+use App\Models\EventDiscount;
+use App\Models\EventSession;
+use App\Models\Location;
 use App\Notifications\AccountCreation;
 use App\Notifications\ReceiptNotification;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
-use App\RegFinance;
-use App\Registration;
-use App\RegSession;
-use App\Ticket;
-use App\Track;
-use App\User;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
+use App\Models\RegFinance;
+use App\Models\Registration;
+use App\Models\RegSession;
+use App\Models\Ticket;
+use App\Models\Track;
+use App\Models\User;
 use Aws\S3\S3Client;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -89,9 +89,10 @@ class RegFinanceController extends Controller
 
             if (count($regs) == 0) {
                 $rf->delete();
-                $button1 = "<a class='btn btn-primary btn-xs' href='" . env('APP_URL') . "/events/$event->eventID'>" . trans('messages.errors.no_reg1') . "</a>";
-                $button2 = "<a class='btn btn-info btn-xs' href='" . env('APP_URL') . "/dashboard'>" . trans('messages.errors.no_reg2') . "</a>";
+                $button1 = "<a class='btn btn-primary btn-xs' href='" . env('APP_URL') . "/events/$event->eventID'>" . trans('messages.errors.no_reg1') . '</a>';
+                $button2 = "<a class='btn btn-info btn-xs' href='" . env('APP_URL') . "/dashboard'>" . trans('messages.errors.no_reg2') . '</a>';
                 $message = trans('messages.errors.no_regs', ['startover' => $button1, 'close' => $button2]);
+
                 return view('v1.public_pages.error_display', compact('message'));
             }
 
@@ -109,11 +110,13 @@ class RegFinanceController extends Controller
 
             $certs = DB::table('certifications')->select('certification')->get();
             $cert_array = $certs->toArray();
+
             return view('v1.public_pages.register2',
                 compact('event', 'quantity', 'org', 'loc', 'rf', 'person', 'regs', 'cert_array', 'prefixes',
                     'industries', 'tracks', 'tickets', 'show_pass_fields', 'registering', 'bought_for_other'));
         } catch (\Exception $exception) {
             $message = trans('messages.errors.unexpected');
+
             return view('v1.public_pages.error_display', compact('message'));
         }
     }
@@ -129,7 +132,7 @@ class RegFinanceController extends Controller
         $layout = 'auth';
 
         return view('v1.auth_pages.events.registration.group_receipt',
-                    compact('event', 'quantity', 'loc', 'rf', 'person', 'org', 'layout'));
+            compact('event', 'quantity', 'loc', 'rf', 'person', 'org', 'layout'));
     }
 
     public function show_receipt_orig(RegFinance $rf)
@@ -143,7 +146,7 @@ class RegFinanceController extends Controller
         $layout = 'simple';
 
         return view('v1.auth_pages.events.registration.group_receipt',
-                compact('event', 'quantity', 'loc', 'rf', 'person', 'org', 'layout'));
+            compact('event', 'quantity', 'loc', 'rf', 'person', 'org', 'layout'));
     }
 
     public function create()
@@ -167,7 +170,7 @@ class RegFinanceController extends Controller
         $loc = Location::find($event->locationID);
 
         return view('v1.auth_pages.events.registration.group_reg1',
-                compact('event', 'quantity', 'org', 'loc', 'rf'));
+            compact('event', 'quantity', 'org', 'loc', 'rf'));
     }
 
     public function update(Request $request, $id)
@@ -216,7 +219,7 @@ class RegFinanceController extends Controller
 
         if ($rf->status == 'wait') {
             // This transaction, regardless of cost, will increment the waitlist, etc.
-            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
+            $rf->confirmation = $this->currentPerson->personID . '-' . $rf->regID . '-' . $rf->seats;
             $rf->pmtType = 'wait';
             $rf->save();
         } elseif ($rf->status != 'processed') {
@@ -233,10 +236,10 @@ class RegFinanceController extends Controller
 
                 // Get customer handle for this transaction
                 try {
-                    $customer = \Stripe\Customer::create(array(
+                    $customer = \Stripe\Customer::create([
                         'email' => $user->email,
                         'source' => $stripeToken,
-                    ));
+                    ]);
                 } catch (\Exception $exception) {
                     // request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage() . ' Line: ' . $exception->getLine() . ' File: ' . $exception->getFile());
                     request()->session()->flash('alert-danger', trans('messages.instructions.card_error'));
@@ -253,40 +256,48 @@ class RegFinanceController extends Controller
 
                 try {
                     $charge = \Stripe\Charge::create(
-                        array(
+                        [
                             'amount' => $rf->cost * 100,
                             'currency' => 'usd',
-                            'description' => "$org->orgName " . trans('messages.fields.event') . " " .
+                            'description' => "$org->orgName " . trans('messages.fields.event') . ' ' .
                                 trans('messages.headers.reg') . ": $event->eventName",
-                            'customer' => $user->stripe_id),
-                        array('idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats . '-' . $rf->registrations->first()->regID)
+                            'customer' => $user->stripe_id,],
+                        ['idempotency_key' => $person->personID . '-' . $rf->regID . '-' . $rf->seats . '-' . $rf->registrations->first()->regID]
                     );
                 } catch (Card $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch (InvalidRequest $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch (Authentication $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch (ApiConnection $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch (Permission $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch (Base $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 } catch (\Exception $exception) {
-                    request()->session()->flash('alert-danger', trans('messages.instructions.card_error') . $exception->getMessage());
+                    request()->session()->flash('alert-danger',
+                        trans('messages.instructions.card_error') . $exception->getMessage());
                     return back()->withInput();
                 }
                 $rf->stripeChargeID = $charge->id;
                 $rf->status = 'processed';
                 $rf->pmtType = $stripeTokenType;
                 $rf->pmtRecd = 1;
+                $rf->confirmation = 'receipt_pending';
                 $rf->save();
             } elseif ($rf->cost > 0 && $event->acceptsCash) {
                 // cost > 0 and the 'Pay at Door' button was pressed (assumes acceptsCash = 1)
@@ -331,17 +342,17 @@ class RegFinanceController extends Controller
                     if ($handleFee > 5) {
                         $handleFee = 5;
                     }
-                } else if ($reg->origcost > 0) {
+                } elseif ($reg->origcost > 0) {
                     $handleFee = number_format(($reg->origcost * .029) + .30, 2, '.', '');
                     if ($handleFee > 5) {
                         $handleFee = 5;
                     }
                 }
-                if (preg_match("/speaker/i", $reg->discountCode)) {
+                if (preg_match('/speaker/i', $reg->discountCode)) {
                     $p = Person::find($reg->personID);
                     try {
                         $p->add_speaker_role();
-                    } catch(\Exception $e) {
+                    } catch (\Exception $e) {
                         // If the above fails, it's because $p is probably already a speaker
                     }
                 }
@@ -352,7 +363,7 @@ class RegFinanceController extends Controller
                 $reg->save();
             }
             // Confirmation code is:  personID-regFinance->regID/seats
-            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
+            $rf->confirmation = $this->currentPerson->personID . '-' . $rf->regID . '-' . $rf->seats;
 
             // Need to set ccFee IF the cost > $0
             if ($rf->cost > 0) {
@@ -428,40 +439,43 @@ class RegFinanceController extends Controller
 
         $x = compact('needSessionPick', 'event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org');
 
-        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $receipt_filename = $rf->eventID . '/' . $rf->confirmation . '.pdf';
 
-        try {
-            $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+        // if $receipt_filename matches pending or receipt_pending, don't do anything with the receipt.
+        if (!preg_match('/pending/i', $receipt_filename)) {
+            try {
+                $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
 
-            Flysystem::connection('s3_receipts')->put(
-                $receipt_filename,
-                $pdf->output(),
-                ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
-            );
-        } catch (\Exception $exception) {
-            // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
-            // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
-            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
-        }
-        $client = new S3Client([
-            'credentials' => [
-                'key' => env('AWS_KEY'),
-                'secret' => env('AWS_SECRET'),
-            ],
-            'region' => env('AWS_REGION'),
-            'version' => 'latest',
-        ]);
+                Flysystem::connection('s3_receipts')->put(
+                    $receipt_filename,
+                    $pdf->output(),
+                    ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+                );
+            } catch (\Exception $exception) {
+                // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
+                // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
+                request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
+            }
+            $client = new S3Client([
+                'credentials' => [
+                    'key' => env('AWS_KEY'),
+                    'secret' => env('AWS_SECRET'),
+                ],
+                'region' => env('AWS_REGION'),
+                'version' => 'latest',
+            ]);
 
-        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-        $s3fs = new Filesystem($adapter);
-        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+            $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
+            $s3fs = new Filesystem($adapter);
+            $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
-        try {
-            // Consider turning this into a notification instead for reliability.
-            $person->notify(new ReceiptNotification($rf, $event_pdf));
-            // Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
-        } catch (\Exception $exception) {
-            request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
+            try {
+                // Consider turning this into a notification instead for reliability.
+                $person->notify(new ReceiptNotification($rf, $event_pdf));
+                // Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
+            } catch (\Exception $exception) {
+                request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
+            }
         }
 
         return redirect(env('APP_URL') . '/show_receipt/' . $rf->regID);
@@ -524,7 +538,7 @@ class RegFinanceController extends Controller
             $code = request()->input('code-' . $i);
             $override = request()->input('override-' . $i);
             $checkin = request()->input('checkin-' . $i);
-            if ($code === null || $code == " ") {
+            if ($code === null || $code == ' ') {
                 $code = 'N/A';
             }
             if ($personID === null && $firstName !== null) {
@@ -643,7 +657,7 @@ class RegFinanceController extends Controller
                     if ($reg->subtotal < 0) {
                         $reg->subtotal = 0;
                     }
-                    if (preg_match("/speaker/i", $code)) {
+                    if (preg_match('/speaker/i', $code)) {
                         $p->add_speaker_role();
                     }
                 }
@@ -671,6 +685,7 @@ class RegFinanceController extends Controller
         $rf->handleFee = $total_handle;
         $rf->token = request()->input('_token');
         $rf->save();
+
         return redirect('/groupreg/' . $rf->regID);
     }
 
@@ -704,21 +719,21 @@ class RegFinanceController extends Controller
 
                 // Check if a customer id exists, and retrieve or create
                 if (!$user->stripe_id) {
-                    $customer = \Stripe\Customer::create(array(
+                    $customer = \Stripe\Customer::create([
                         'email' => $user->email,
                         'source' => $stripeToken,
-                    ));
+                    ]);
                     $user->stripeEmail = $customer->email;
                     $user->stripe_id = $customer->id;
                     $user->save();
                 }
 
-                $charge = \Stripe\Charge::create(array(
+                $charge = \Stripe\Charge::create([
                     'amount' => $rf->cost * 100,
                     'currency' => 'usd',
                     'description' => "$org->orgName " . trans('messages.headers.reg') . ": $event->eventName",
                     'customer' => $user->stripe_id,
-                ));
+                ]);
                 $rf->stripeChargeID = $charge->id;
                 $rf->status = 'processed';
                 $rf->pmtType = $stripeTokenType;
@@ -760,7 +775,7 @@ class RegFinanceController extends Controller
                 $discountAmt += ($reg->origcost - $reg->subtotal - $handleFee);
             }
             // Confirmation code is:  personID-regID-seats
-            $rf->confirmation = $this->currentPerson->personID . "-" . $rf->regID . "-" . $rf->seats;
+            $rf->confirmation = $this->currentPerson->personID . '-' . $rf->regID . '-' . $rf->seats;
             if ($discountAmt < 0) {
                 $discountAmt = 0;
             }
@@ -788,7 +803,7 @@ class RegFinanceController extends Controller
 
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'prefixes', 'industries', 'org', 'layout');
 
-        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $receipt_filename = $rf->eventID . '/' . $rf->confirmation . '.pdf';
         $pdf = PDF::loadView('v1.auth_pages.events.registration.group_receipt', $x)
             ->setOption('disable-javascript', false)
             ->setOption('javascript-delay', 20)
@@ -850,7 +865,7 @@ class RegFinanceController extends Controller
 
     public function generate_receipt(RegFinance $rf)
     {
-        $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+        $receipt_filename = $rf->eventID . '/' . $rf->confirmation . '.pdf';
         $quantity = $rf->seats;
         $event = Event::find($rf->eventID);
         $loc = Location::find($event->locationID);
@@ -860,15 +875,17 @@ class RegFinanceController extends Controller
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'org');
         try {
             $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+
+            Flysystem::connection('s3_receipts')->put(
+                $receipt_filename,
+                $pdf->output(),
+                ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+            );
+
         } catch (\Exception $exception) {
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
+            return redirect()->back();
         }
-
-        Flysystem::connection('s3_receipts')->put(
-            $receipt_filename,
-            $pdf->output(),
-            ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
-        );
 
         $client = new S3Client([
             'credentials' => [
@@ -889,9 +906,11 @@ class RegFinanceController extends Controller
             // Mail::to($user->login)->send(new EventReceipt($rf, $event_pdf, $x));
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.reg_status.mail_broken', ['org' => $org->orgName]));
+            return redirect()->back();
         }
 
         request()->session()->flash('alert-success', trans('messages.messages.receipt_recreated'));
+
         return redirect()->back();
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Org;
-use App\Person;
+use App\Models\Org;
+use App\Models\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class LoginChange extends Notification
 {
@@ -50,6 +50,7 @@ class LoginChange extends Notification
         $o = Org::find($this->person->defaultOrgID);
         $oname = $o->orgName;
         $new_email = $this->person->login;
+
         return (new MailMessage)
             ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.login_change.subject'))
@@ -57,7 +58,7 @@ class LoginChange extends Notification
             ->line(trans('messages.notifications.login_change.line2'))
             ->line(trans('messages.notifications.login_change.line3'))
             ->action(trans('messages.notifications.login_change.action'),
-                     url('/u/' . $this->person->personID . '/' . encrypt($this->orig_email)))
+                     url('/u/'.$this->person->personID.'/'.encrypt($this->orig_email)))
             ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 

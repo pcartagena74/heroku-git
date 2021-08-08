@@ -3,6 +3,7 @@
  * Comment: Member Search Functionality
  * Created: 11/8/2018
  *
+ * @var $topBits
  * @var $mbr_list
  *
  */
@@ -63,7 +64,7 @@ if ($mbr_list){
     @include('v1.parts.start_content', ['header' => trans('messages.headers.person_search'),
              'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-    {!! Form::open(array('url' => env('APP_URL')."/search", 'method' => 'POST')) !!}
+    {!! Form::open(['url' => env('APP_URL')."/search", 'method' => 'POST', 'data-toggle' => 'validator']) !!}
     <div id="custom-template" class="col-sm-12 form-group">
         <b>{!! trans('messages.instructions.mbr_search') !!}</b>
         <div class="col-xs-2">

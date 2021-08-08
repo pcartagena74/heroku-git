@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\Person;
+use App\Models\Registration;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Event;
-use App\Ticket;
-use App\Person;
-use App\Registration;
 use Illuminate\Support\Facades\Log;
 
 class BundleController extends Controller
@@ -46,14 +46,14 @@ class BundleController extends Controller
     public function update(Request $request, $id)
     {
         // responds to PATCH /blah/id
-        Log::info("Showing ajax input called on eventID: $id " . print_r(request()->all(), true));
+        Log::info("Showing ajax input called on eventID: $id ".print_r(request()->all(), true));
         $eventID = $id;
 
         // $name is passed as eventID-{bundleID]-{ticketID} so it needs to be split
         $name = request()->input('name');
-        list($field1, $field2, $ticketID) = array_pad(explode("-", $name, 3), 3, null);
+        list($field1, $field2, $ticketID) = array_pad(explode('-', $name, 3), 3, null);
 
-        $value    = request()->input('value');
+        $value = request()->input('value');
         // pk is the bundleID.  Yes. Redundancy above done for editable_jQ_uniqueness
         $bundleID = request()->input('pk');
 
@@ -62,24 +62,25 @@ class BundleController extends Controller
             DB::table('bundle-ticket')->where([
                 ['bundleID', $bundleID],
                 ['eventID', $eventID],
-                ['ticketID', $ticketID]
+                ['ticketID', $ticketID],
             ])->delete();
         } elseif ($value == 1) {
             $cp = $this->currentPerson = Person::find(auth()->user()->id);
             DB::table('bundle-ticket')->insert(
                 ['bundleID' => $bundleID, 'eventID' => $eventID, 'ticketID' => $ticketID,
-                    'creatorID' => $cp->personID, 'updaterID' => $cp->personID]
+                    'creatorID' => $cp->personID, 'updaterID' => $cp->personID, ]
             );
         }
-        return json_encode(array('status' => 'success', 'message' => print_r(request()->all(), true)));
+
+        return json_encode(['status' => 'success', 'message' => print_r(request()->all(), true)]);
     }
 
     public function destroy($id)
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
-        $ticket              = Ticket::Find($id);
-        $eventID             = $ticket->eventID;
+        $ticket = Ticket::Find($id);
+        $eventID = $ticket->eventID;
         //check to see if any regIDs have this ticketID
         if (Registration::where('ticketID', $id)->count() > 0) {
             // soft-delete if there are registrations
@@ -93,6 +94,6 @@ class BundleController extends Controller
             DB::table('event-tickets')->where('ticketID', $id)->delete();
         }
 
-        return redirect("/event-tickets/" . $eventID);
+        return redirect('/event-tickets/'.$eventID);
     }
 }

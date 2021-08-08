@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
      */
 
-    'name'            => env('APP_NAME', 'Laravel'),
+    'name'            => env('APP_NAME', 'mCentric'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,7 +25,7 @@ return [
     |
      */
 
-    'env'             => env('APP_ENV', 'production'),
+    'env'             => env('APP_ENV', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -188,6 +188,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
     ],
 

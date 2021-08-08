@@ -4,9 +4,23 @@
      * Created: 11/28/2017
      * @var $events
      * @var $etID
+     * @var $tag
+     * @var $admin_props
      */
 
     use MaddHatter\LaravelFullcalendar\Facades\Calendar;
+
+    /*
+    $sep = $admin_props[0]->value;
+    $btntxt = $admin_props[2]->value;
+    $btncolor = $admin_props[3]->value;
+    $hdrcolor = $admin_props[4]->value;
+    $btnsize = $admin_props[5]->value;
+    $hdr = $admin_props[6]->value;
+    $chars = $admin_props[7]->value;
+    */
+    $ban_bkgd = $admin_props[8]->value;
+    $ban_text = $admin_props[9]->value;
 
     function truncate_saw($string, $limit, $break = ".", $pad = "...")
     {
@@ -30,7 +44,9 @@
 @extends('v1.layouts.no-auth_no-nav_simple')
 @section('header')
     <base target="_new">
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    {{--
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.css"/>
     </head>
 @endsection
@@ -38,7 +54,7 @@
 @section('content')
     @if($cnt > 0)
         @if(!$cal)
-            <table class="table table-bordered table-striped condensed jambo_table" width="100%" id="eventlisting">
+            <table class="table table-bordered table-striped table-sm condensed jambo_table" width="100%" id="eventlisting">
                 <thead>
                 <tr>
                     <td><b>{{ $org->orgName }}: {{ $event_tag }}</b></td>
@@ -48,38 +64,7 @@
                 @foreach($events as $e)
                     <tr>
                         <td>
-                            {{--
-                            This is the image that was displayed in MyEventGuru.  There was a request to remove it.
-                                <div class="col-xs-1" style="float: left;">
-                                    <img src="{{ env('APP_URL') }}/images/eventlist.jpg"
-                                         alt='{{ trans('messages.codes.img') }}' height='79' width='90' border='0'/>
-                                </div>
-                            --}}
-                            <div class="col-xs-11" style="text-align: left;">
-                                <div class="col-xs-9">
-                                    <b> {!! $e->eventName !!}</b>
-                                </div>
-                                <div class="col-xs-3">
-                                    @lang('messages.common.on') {{ $e->eventStartDate->toFormattedDateString() }}
-                                </div>
-                                <div class="col-xs-12 container">
-                                    {!! truncate_saw(strip_tags($e->eventDescription, '<br>'), 300) !!}
-                                </div>
-                                <div class="col-xs-9">
-                                    <b>@lang('messages.fields.loc'): </b>{{ $e->location->locName ?? trans('messages.messages.unknown') }}
-                                </div>
-                                @if(!$past)
-                                    <div class="col-xs-3" style="text-align: center;">
-                                        <a class="btn btn-danger btn-sm" target="_new"
-                                           href="https://www.mcentric.org/events/{{ $e->slug }}">@lang('messages.buttons.ex_register')</a>
-                                    </div>
-                                @else
-                                    <div class="col-xs-3" style="text-align: left;">
-                                        <b>@lang('messages.fields.category'):</b>
-                                        {!! $e->event_type->etName ?? trans('messages.messages.unknown') !!}
-                                    </div>
-                                @endif
-                            </div>
+                            @include('v1.parts.api_one-event', ['e' => $e, 'props' => $admin_props])
                         </td>
                     </tr>
                 @endforeach

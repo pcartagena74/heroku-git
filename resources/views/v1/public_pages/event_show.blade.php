@@ -10,8 +10,8 @@
      * @var Track $tracks
      */
 
-    use App\EventSession;
-    use App\Ticket;
+    use App\Models\EventSession;
+    use App\Models\Ticket;
     use GrahamCampbell\Flysystem\Facades\Flysystem;
     use League\Flysystem\AwsS3v3\AwsS3Adapter;
     use Aws\S3\S3Client;
@@ -326,7 +326,7 @@
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-md-9 col-sm-9 col-xs-9 form-group" style="text-align: right">
                                             <input class="form-control input-sm" id="discount_code" name="discount_code"
-                                                   placeholder="  {{ trans('messages.codes.empty') }}" type="text"/>
+                                                   placeholder="  {{ trans('messages.codes.empty') }}" type="text">
                                         </div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                             <a class="btn btn-sm btn-primary" id="btn-validate">
@@ -334,8 +334,7 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6 col-xs-12"
-                                         style="text-align: left; vertical-align: top;">
+                                    <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: left; vertical-align: top;">
                                         <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png" />
                                         <img alt="MasterCard Logo" src="{{ env('APP_URL') }}/images/mastercard.png" />
                                         <button class="btn btn-success btn-sm" id="purchase" style="height: 32px;" type="submit">
@@ -383,8 +382,7 @@
                                                         @php
                                                             $z = EventSession::where([
                                                                 ['confDay', '=', $i],
-                                                                ['eventID', '=', $event->
-                                                                eventID]
+                                                                ['eventID', '=', $event->eventID]
                                                             ])->first();
                                                             $y = Ticket::find($z->ticketID);
                                                         @endphp
@@ -399,8 +397,7 @@
                                                         @php
                                                             // Check to see if there are any events for $x (this row)
                                                             $check = EventSession::where([
-                                                                ['eventID', $event->
-                                                                eventID],
+                                                                ['eventID', $event->eventID],
                                                                 ['confDay', $i],
                                                                 ['order', $x]
                                                             ])->first();

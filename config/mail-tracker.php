@@ -29,7 +29,7 @@ return [
      */
     'admin-route' => [
         'prefix' => 'email-manager',
-        'middleware' => ['web','auth'],
+        'middleware' => ['web', 'auth'],
     ],
 
     /**
@@ -62,6 +62,6 @@ return [
     /**
      * The SNS notification topic - if set, discard all notifications not in this topic.
      */
-    'sns-topic' => null
+    'sns-topic' => null,
 
 ];

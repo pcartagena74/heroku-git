@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\EventDiscount;
 use Illuminate\Http\Request;
-use App\Event;
-use App\EventDiscount;
 
 class PermissionController extends Controller
 {

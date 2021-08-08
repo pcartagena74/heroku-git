@@ -45,10 +45,10 @@
         <link href="/css/nprogress.css" rel="stylesheet">
         <link href="/css/smart_wizard.css" rel="stylesheet">
         <link href="/css/smart_wizard_theme_arrows.css" rel="stylesheet">
+    <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
     --}}
     <link href="{{ env('APP_URL') }}/css/morris.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/mmmm.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/css/custom.min.css" rel="stylesheet">
-    <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

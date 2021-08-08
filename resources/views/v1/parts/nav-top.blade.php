@@ -6,7 +6,7 @@
  * May need to revisit once sessions and globals are decided post laravel authorization
  */
 
-$currentPerson = App\Person::find(auth()->user()->id);
+$currentPerson = App\Models\Person::find(auth()->user()->id);
 
 try{
     $x = getimagesize($currentPerson->avatarURL);

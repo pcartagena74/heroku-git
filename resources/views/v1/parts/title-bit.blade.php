@@ -1,15 +1,15 @@
-<?php
+@php
 /**
- * Comment: This is widget display at the top of pages
+ * Comment: This is widget display of counts of things at the top of pages
  * Created: 2/2/2017
  *
- * @param int $icon   This is a number that corresponds to the icon list below
- * @param str $label  This is the small text that above the big stat
- * @param int $number This is the main statistic (big green number) in the widget
- * @param str $ctext  This is the greed/red statistic small text
- * @param str $rtext  This is the black accompanying text
- * @param int $up     override of $up value of 1
- * @param int $width  override of col-xs-1 if provided
+ * @var int $icon   This is a number that corresponds to the icon list below
+ * @var str $label  This is the small text that above the big stat
+ * @var int $number This is the main statistic (big green number) in the widget
+ * @var str $ctext  This is the greed/red statistic small text
+ * @var str $rtext  This is the black accompanying text
+ * @var int $up     override of $up value of 1
+ * @var int $width  override of col-xs-1 if provided
  *
  * icons: fa-user, fa-bar-chart, fa-calendar, fa-clock-o, fa-home, fa-heart
  */
@@ -18,7 +18,7 @@ if(!isset($width)){
     $width = 1;
 }
 
-if($ctext == 0){
+if($ctext == 0 || $ctext == ''){
     $up = 0;
 }
 
@@ -69,11 +69,11 @@ switch($up){
         $up = '';
         $color = 'red';
 }
-?>
+@endphp
 <div class="col-xs-{{ $width }} tile_stats_count">
     <span style="text-align: center;" class="animated flipInY count_top"><i class="{{ $itxt }}">&nbsp;</i> {{ $label }}</span>
     <div style="text-align: center;" class="count green tiles-stats">{{ $number }}</div>
-    @if(isset($ctext) && isset($rtext))
+    @if(isset($ctext) && isset($rtext) && strlen($ctext)>0 && strlen($rtext)>0 )
         <span style="text-align: center;" class="count_bottom"><i class="{{ $color }}"><i class="fas fa-sort{{ $up }}"></i> {{ $ctext }}</i> {{ $rtext }}</span>
     @endif
 </div>

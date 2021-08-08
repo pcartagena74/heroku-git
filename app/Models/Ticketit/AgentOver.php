@@ -11,6 +11,7 @@ use Kordy\Ticketit\Models\Agent as User;
 class AgentOver extends User
 {
     protected $table = 'users';
+
     /**
      * list of all agents and returning collection.
      *
@@ -23,7 +24,9 @@ class AgentOver extends User
      */
     public function scopeAgents($query, $paginate = false)
     {
-        $user = User::whereHas('roles', function ($q) {$q->whereIn('name', ['Admin']);})->get();
+        $user = User::whereHas('roles', function ($q) {
+            $q->whereIn('name', ['Admin']);
+        })->get();
         if ($paginate) {
             return $query->where('ticketit_agent', '1')->paginate($paginate, ['*'], 'agents_page');
         } else {
@@ -105,13 +108,14 @@ class AgentOver extends User
         //developer can belongs to any org
         //agent will only be from same org.
         //so manually quering db as exsiting roles are tied with org id(for developer).
-        
+
         if (isset($id)) {
             $is_developer = self::checkUserIsDeveloper($id);
             if ($is_developer) {
                 return true;
             }
             $user = User::where('id', $id)->get()->first();
+
             return $user->hasRole(['Admin']);
         }
         if (auth()->check()) {
@@ -119,6 +123,7 @@ class AgentOver extends User
             if ($is_developer) {
                 return true;
             }
+
             return auth()->user()->hasRole(['Admin']);
         }
 
@@ -154,6 +159,7 @@ class AgentOver extends User
     public static function isAssignedAgent($id)
     {
         $is_admin = Entrust::hasRole('Admin');
+
         return auth()->check() && (($is_admin && Auth::user()->id == TicketOver::find($id)->agent->id) || self::checkUserIsDeveloper(Auth::user()->id));
     }
 
@@ -167,6 +173,7 @@ class AgentOver extends User
     public static function isTicketOwner($id)
     {
         $ticket = TicketOver::find($id);
+
         return $ticket && auth()->check() &&
         auth()->user()->id == $ticket->user->id;
     }
@@ -217,7 +224,6 @@ class AgentOver extends User
     }
 
     public function allTickets($complete = false) // (To be deprecated)
-
     {
         if ($complete) {
             return Ticket::whereNotNull('completed_at');
@@ -227,7 +233,6 @@ class AgentOver extends User
     }
 
     public function getTickets($complete = false) // (To be deprecated)
-
     {
         $user = self::find(auth()->user()->id);
 
@@ -300,6 +305,7 @@ class AgentOver extends User
         $role = DB::table('role_user')
             ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
             ->where(['roles.name' => 'Developer', 'role_user.user_id' => $user_id])->get();
+
         return $role->count() > 0;
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Org;
-use App\Person;
+use App\Models\Org;
+use App\Models\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class SetYourPassword extends Notification
 {
@@ -29,7 +29,6 @@ class SetYourPassword extends Notification
         $this->name = $person->showDisplayName();
     }
 
-
     /**
      * Get the notification's delivery channels.
      *
@@ -50,13 +49,14 @@ class SetYourPassword extends Notification
     public function toMail($notifiable)
     {
         $oname = $this->o->orgName;
+
         return (new MailMessage)
             ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.SYP.subject'))
             ->line(trans('messages.notifications.SYP.line1', ['name' => $oname]))
             ->line(trans('messages.notifications.SYP.line1'))
             ->line(trans('messages.notifications.SYP.line2'))
-            ->action(trans('messages.notifications.SYP.action'), url('/password/reset?e='.$this->person->login))
+            ->action(trans('messages.notifications.SYP.action'), 'https://www.mcentric.org/password/reset?e='.$this->person->login)
             ->line(trans('messages.notifications.thanks', ['org' => $oname]));
     }
 
