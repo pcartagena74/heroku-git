@@ -1,4 +1,4 @@
-<?php
+@php
 
 /**
  * Comment: Create New Organization and associate it with a user.
@@ -9,7 +9,7 @@
 $topBits = '';  // remove this if this was set in the controller
 $header = implode(" ", [trans('messages.nav.o_create')]);
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 @section('header')
     @include('v1.parts.typeahead')
@@ -186,7 +186,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
     </div>
     <div class="col-xs-3">
         {!! Form::label('creditLabel', trans('messages.fields.credit_label'), array('class' => 'control-label')) !!}
-                {!! Form::text('creditLabel', null, array('class' => 'form-control input-sm','required')) !!}
+                {!! Form::text('creditLabel', 'PDU', array('class' => 'form-control input-sm','required')) !!}
                 @if ($errors->has('creditLabel'))
         <span class="help-block red">
             <strong>
@@ -364,10 +364,9 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
                 $('#create_user_link').removeClass('active');
                 $('#create_user_checkbox').val(1);
                 $('#create_user input[type=text]').each(function(){
-                    if($(this).attr('name') == 'pmiID'){
-                        continue;
+                    if($(this).attr('name') != 'pmiID'){
+                        $(this).attr('required','true');
                     }
-                    $(this).attr('required','true');
                 });
             } else {
                 $('#custom-template').show();

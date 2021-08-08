@@ -18,6 +18,7 @@ class TicketItNotification extends Notification
     private $subject;
     private $type;
     public $name;
+
     /**
      * Create a new notification instance.
      *
@@ -25,13 +26,13 @@ class TicketItNotification extends Notification
      */
     public function __construct($to, $notification_owner, $template, $data, $subject, $type)
     {
-        $this->to                 = $to; // User
+        $this->to = $to; // User
         $this->notification_owner = $notification_owner;
-        $this->template           = $template;
-        $this->data               = $data;
-        $this->subject            = $subject;
-        $this->type               = $type;
-        $this->name               = $to->person->showDisplayName();
+        $this->template = $template;
+        $this->data = $data;
+        $this->subject = $subject;
+        $this->type = $type;
+        $this->name = $to->person->showDisplayName();
     }
 
     /**
@@ -60,14 +61,14 @@ class TicketItNotification extends Notification
 
         switch ($this->type) {
             case 'comment':
-                $comment       = unserialize($this->data['comment']);
-                $ticket        = unserialize($this->data['ticket']);
-                $name          = $comment->user->name;
-                $subject       = $ticket->subject;
-                $status        = $ticket->status->name;
-                $category      = $ticket->category->name;
+                $comment = unserialize($this->data['comment']);
+                $ticket = unserialize($this->data['ticket']);
+                $name = $comment->user->name;
+                $subject = $ticket->subject;
+                $status = $ticket->status->name;
+                $category = $ticket->category->name;
                 $comment_short = $comment->getShortContent();
-                $content       = trans('ticketit::email/comment.data', [
+                $content = trans('ticketit::email/comment.data', [
                     'name'     => $comment->user->name,
                     'subject'  => $ticket->subject,
                     'status'   => $ticket->status->name,
@@ -75,10 +76,10 @@ class TicketItNotification extends Notification
                     'comment'  => $comment->getShortContent(),
                 ]);
                 break;
-            case 'status';
+            case 'status':
                 $notification_owner = unserialize($this->data['notification_owner']);
-                $original_ticket    = unserialize($this->data['original_ticket']);
-                $ticket             = unserialize($this->data['ticket']);
+                $original_ticket = unserialize($this->data['original_ticket']);
+                $ticket = unserialize($this->data['ticket']);
 
                 $content = trans('ticketit::email/status.data', [
                     'name'       => $notification_owner->name,
@@ -88,22 +89,21 @@ class TicketItNotification extends Notification
                 ]);
 
                 break;
-            case 'agent';
+            case 'agent':
                 if ($this->template == 'ticketit::emails.assigned') {
                     $notification_owner = unserialize($this->data['notification_owner']);
-                    $ticket             = unserialize($this->data['ticket']);
-                    $content            = trans('ticketit::email/assigned.data', [
+                    $ticket = unserialize($this->data['ticket']);
+                    $content = trans('ticketit::email/assigned.data', [
                         'name'     => $notification_owner->name,
                         'subject'  => $ticket->subject,
                         'status'   => $ticket->status->name,
                         'category' => $ticket->category->name,
                     ]);
-
                 } else {
                     $notification_owner = unserialize($this->data['notification_owner']);
-                    $ticket             = unserialize($this->data['ticket']);
-                    $original_ticket    = unserialize($this->data['original_ticket']);
-                    $content            = trans('ticketit::email/transfer.data', [
+                    $ticket = unserialize($this->data['ticket']);
+                    $original_ticket = unserialize($this->data['original_ticket']);
+                    $content = trans('ticketit::email/transfer.data', [
                         'name'         => $notification_owner->name,
                         'subject'      => $ticket->subject,
                         'status'       => $ticket->status->name,
@@ -111,7 +111,6 @@ class TicketItNotification extends Notification
                         'old_category' => $original_ticket->category->name,
                         'new_category' => $ticket->category->name,
                     ]);
-
                 }
 
                 break;
@@ -119,7 +118,7 @@ class TicketItNotification extends Notification
 
         return $mail->line($content)
             ->action(trans('messages.notifications.ticketit.action'),
-                     route(SettingOver::grab('main_route') . '.show', $ticket->id));
+                     route(SettingOver::grab('main_route').'.show', $ticket->id));
     }
 
     /**

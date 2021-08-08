@@ -4,8 +4,8 @@ namespace App\Models\Ticketit;
 
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\CategoryOver as Category;
-use App\Person;
-use App\User;
+use App\Models\Person;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Date\Date;
@@ -54,7 +54,8 @@ class TicketOver extends Ticket
                 return $query->whereNotNull('completed_at');
             } else {
                 $person = Person::find(auth()->user()->id);
-                $orgId  = $person->defaultOrgID;
+                $orgId = $person->defaultOrgID;
+
                 return $query->whereNotNull('completed_at')->where('orgId', $orgId);
             }
         }
@@ -78,9 +79,9 @@ class TicketOver extends Ticket
                 return $query->whereNull('completed_at');
             } else {
                 $person = Person::find(auth()->user()->id);
-                $orgId  = $person->defaultOrgID;
-                return $query->whereNull('completed_at')->where('orgId', $orgId);
+                $orgId = $person->defaultOrgID;
 
+                return $query->whereNull('completed_at')->where('orgId', $orgId);
             }
         }
     }
@@ -122,7 +123,7 @@ class TicketOver extends Ticket
      */
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
     /**
@@ -173,7 +174,7 @@ class TicketOver extends Ticket
             return Date::createFromTimestamp($value);
         } elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value)) {
             return Date::createFromFormat('Y-m-d', $value)->startOfDay();
-        } elseif (!$value instanceof \DateTimeInterface) {
+        } elseif (! $value instanceof \DateTimeInterface) {
             $format = $this->getDateFormat();
 
             return Date::createFromFormat($format, $value);
@@ -234,6 +235,7 @@ class TicketOver extends Ticket
                     $subquery->where('user_id', $id)->orwhere('agent_id', $id);
                 });
             }
+
             return $query->where(function ($subquery) use ($id) {
                 $subquery->where('user_id', $id);
             });
@@ -248,7 +250,7 @@ class TicketOver extends Ticket
     public function autoSelectAgent($dev = false)
     {
         $cat_id = $this->category_id;
-        $orgId  = $this->orgId;
+        $orgId = $this->orgId;
         //removed as to add category with agent it will required changes in add roles and remove roles methods.
         // $agents = Category::find($cat_id)->agents()->with(['agentOpenTickets' => function ($query) use ($orgId) {
         //     $query->addSelect(['id', 'agent_id']);
@@ -284,7 +286,7 @@ class TicketOver extends Ticket
                     ->where('roles.orgId', $orgId);
             })->get();
         }
-        $count          = 0;
+        $count = 0;
         $lowest_tickets = 1000000;
 
         // If no agent selected, select the admin
@@ -295,12 +297,12 @@ class TicketOver extends Ticket
         $selected_agent_id = 1;
         foreach ($agents as $agent) {
             if ($count == 0) {
-                $lowest_tickets    = $this->agentOpenTicketsCount($agent->personID);
+                $lowest_tickets = $this->agentOpenTicketsCount($agent->personID);
                 $selected_agent_id = $agent->personID;
             } else {
                 $tickets_count = $this->agentOpenTicketsCount($agent->personID);
                 if ($tickets_count < $lowest_tickets) {
-                    $lowest_tickets    = $tickets_count;
+                    $lowest_tickets = $tickets_count;
                     $selected_agent_id = $agent->personID;
                 }
             }

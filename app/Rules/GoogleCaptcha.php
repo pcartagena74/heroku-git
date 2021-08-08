@@ -26,11 +26,10 @@ class GoogleCaptcha implements Rule
      */
     public function passes($attribute, $value)
     {
-        $client   = new Client();
+        $client = new Client();
         $response = $client->post(
             'https://www.google.com/recaptcha/api/siteverify',
-            ['form_params' =>
-                [
+            ['form_params' => [
                     'secret'   => env('RECAPTCHA_PRIVATE_KEY'),
                     'response' => $value,
                 ],
@@ -38,6 +37,7 @@ class GoogleCaptcha implements Rule
         );
 
         $body = json_decode((string) $response->getBody());
+
         return $body->success;
     }
 

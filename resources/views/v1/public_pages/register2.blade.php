@@ -6,13 +6,21 @@
  * @var Event $event
  * @var Org $org
  * @var RegFinance $rf
+ * @var Registration $regs
+ * @var $tcount
+ * @var $reg
+ * @var $prefixes
+ * @var $industries
+ * @var $affiliation_array
+ * @var $cert_array
+ * @var $allergen_array
  *
  */
 
-use App\EventSession;
-use App\Ticket;
-use App\Registration;
-use App\Person;
+use App\Models\EventSession;
+use App\Models\Ticket;
+use App\Models\Registration;
+use App\Models\Person;
 
 $tcount = 0;
 $today = Carbon\Carbon::now();
@@ -447,12 +455,13 @@ $rfp = $rf->person;
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
+@php
                     foreach ($prefixes as $row) {
                         $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
                     }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+@endphp
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
             $("#firstName-{{ $i }}").editable({type: 'text'});
@@ -464,12 +473,13 @@ $rfp = $rf->person;
             $('#indName-{{ $i }}').editable({
                 type: 'select',
                 source: [
-<?php
+@php
                     foreach ($industries as $row) {
                         $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
                     }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+@endphp
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
@@ -481,24 +491,26 @@ $rfp = $rf->person;
             $('#affiliation-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-<?php
+@php
                     for ($j = 1; $j <= count($affiliation_array); $j++) {
                         $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
                     }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+@endphp
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
             $('#certifications-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-<?php
+@php
                     foreach ($cert_array as $row) {
                         $string .= "{ value: '" . $row->certification . "' , text: '" . $row->certification . "' },";
                     }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+@endphp
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
@@ -535,12 +547,13 @@ $rfp = $rf->person;
             $("#allergenInfo-{{ $i }}").editable({
                 type: 'checklist',
                 source: [
-<?php
+@php
                     foreach ($allergen_array as $x) {
                         $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
                     }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+@endphp
+                    {!!  rtrim($string, ",") !!}
+                    @php $string = ''; @endphp
                 ]
             });
 
@@ -552,5 +565,15 @@ $rfp = $rf->person;
 @section('modals')
     @if($rf->cost > 0)
     @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
+    @endif
+
+    @if(Session::has('dupes'))
+        @include('v1.modals.dynamic', ['header' => trans('messages.headers.dupe_reg'), 'url' => '',
+                                       'content' => Session::get('alert-message')])
+        <script>
+            $(document).ready(function () {
+                $('#dynamic_modal').modal('show');
+            });
+        </script>
     @endif
 @endsection

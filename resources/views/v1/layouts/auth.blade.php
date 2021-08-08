@@ -3,6 +3,9 @@
  * Comment: Template for pages that require authentication
  * Created: 2/2/2017
  */
+
+use App\Models\Person;
+
 // footer_fixed
 if(!isset($topBits)){
     $topBits = '';
@@ -11,7 +14,7 @@ if(!isset($topBits)){
 // This is a reminder to NOT perform tests using orgID=1 because there are checks that are performed to keep default
 // data created in orgID=1--for use with all other orgs--in a clean state.
 if(auth()){
-    $p = \App\Person::find(auth()->user()->id);
+    $p = Person::find(auth()->user()->id);
     if($p->defaultOrgID==1){
         request()->session()->flash('alert-danger', trans('messages.app_defaults.orgID1'));
     }
@@ -20,13 +23,6 @@ if(auth()){
 <!DOCTYPE html>
 @include('v1.parts.header')
 @yield('header')
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-K4MGRCX');</script>
-<!-- End Google Tag Manager -->
 </head>
 <body class="nav-md footer_fixed">
 <!-- Google Tag Manager (noscript) -->

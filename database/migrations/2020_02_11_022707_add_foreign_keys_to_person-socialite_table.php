@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class AddForeignKeysToPersonSocialiteTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -13,13 +12,12 @@ class AddForeignKeysToPersonSocialiteTable extends Migration
      */
     public function up()
     {
-   //      DB::raw('alter table `person-socialite` add constraint `ps.personID`
-			// foreign key (`personID`) references `person` (`personID`)
-			// on delete NO ACTION
-			// on update NO ACTION');
-        Schema::table('person-socialite', function(Blueprint $table)
-        {
-        // not working as ps.personID is parsed as table name thou. its not
+        //      DB::raw('alter table `person-socialite` add constraint `ps.personID`
+        // foreign key (`personID`) references `person` (`personID`)
+        // on delete NO ACTION
+        // on update NO ACTION');
+        Schema::table('person-socialite', function (Blueprint $table) {
+            // not working as ps.personID is parsed as table name thou. its not
             $table->foreign('personID', DB::raw('`ps.personID`'))->references('personID')->on('person')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
@@ -35,5 +33,4 @@ class AddForeignKeysToPersonSocialiteTable extends Migration
             $table->dropForeign(DB::raw('`ps.personID`'));
         });
     }
-
 }

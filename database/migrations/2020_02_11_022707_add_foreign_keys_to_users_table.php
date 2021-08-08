@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 
 class AddForeignKeysToUsersTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -30,5 +29,4 @@ class AddForeignKeysToUsersTable extends Migration
             $table->dropForeign('fk-u-personID');
         });
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\RSSurvey;
+use App\Models\RSSurvey;
 use Illuminate\Http\Request;
 
 class RSSurveyController extends Controller

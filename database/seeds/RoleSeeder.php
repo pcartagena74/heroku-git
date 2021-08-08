@@ -1,7 +1,7 @@
 <?php
 
-use App\Role;
-use App\User;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -67,6 +67,5 @@ class RoleSeeder extends Seeder
         foreach ($role as $key => $value) {
             $each = Role::create($value);
         }
-        
     }
 }

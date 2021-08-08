@@ -18,7 +18,7 @@ class CertificationSeeder extends Seeder
         DB::insert($sql);
         DB::commit();
 
-        $sql = "UPDATE `certifications` SET id=0 where id=10;";
+        $sql = 'UPDATE `certifications` SET id=0 where id=10;';
         DB::update($sql);
     }
 }

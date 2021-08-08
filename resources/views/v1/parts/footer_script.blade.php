@@ -52,3 +52,8 @@
     ga('send', 'pageview');
 </script>
 --}}
+@if (env('APP_ENV') == 'local')
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+@else
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+@endif

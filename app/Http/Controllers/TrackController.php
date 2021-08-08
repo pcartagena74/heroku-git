@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\EventSession;
+use App\Models\Event;
+use App\Models\EventSession;
+use App\Models\Ticket;
+use App\Models\Track;
 use Illuminate\Http\Request;
-use App\Event;
-use App\Track;
-use App\Ticket;
 
 class TrackController extends Controller
 {
@@ -40,7 +40,7 @@ class TrackController extends Controller
                             ['order', '=', $i],
                             ['confDay', '=', $d],
                             ['trackID', '=', $t->trackID],
-                            ['eventID', '=', $event->eventID]
+                            ['eventID', '=', $event->eventID],
                         ])->first();
                         $s->delete();
                     }
@@ -88,7 +88,7 @@ class TrackController extends Controller
             $name = request()->input('name');
             $value = request()->input($name);
         }
-        list($name, $track, $day, $order) = array_pad(explode("-", request()->input('name'), 4), 4, null);
+        list($name, $track, $day, $order) = array_pad(explode('-', request()->input('name'), 4), 4, null);
         $s = EventSession::withTrashed()->find(request()->input('pk'));
 
         // symmetric schedules need to update start & end together
@@ -125,14 +125,15 @@ class TrackController extends Controller
             }
             $s->updaterID = auth()->user()->id;
             $s->save();
+
             return redirect(env('APP_URL')."/tracks/$event->eventID");
         } elseif ($name == 'isLinked2') {
             if ($value) {
                 $previous = EventSession::where([
-                    ['order', $order-1],
+                    ['order', $order - 1],
                     ['confDay', '=', $day],
                     ['eventID', $s->eventID],
-                    ['trackID', $track]
+                    ['trackID', $track],
                 ])->withTrashed()->first();
                 $s->isLinked = $previous->isLinked;
                 $s->start = $previous->start;
@@ -143,7 +144,7 @@ class TrackController extends Controller
                 $previous = EventSession::where([
                     ['order', $order],
                     ['confDay', '=', $day],
-                    ['eventID', $s->eventID]
+                    ['eventID', $s->eventID],
                 ])->withTrashed()->first();
                 $s->isLinked = 0;
                 $s->start = $previous->start;
@@ -152,6 +153,7 @@ class TrackController extends Controller
             }
             $s->updaterID = auth()->user()->id;
             $s->save();
+
             return redirect(env('APP_URL')."/tracks/$event->eventID");
         } elseif ($name == 'sessionSpeakers') {
             // Do stuff for sessionSpeaker assignment
@@ -163,8 +165,9 @@ class TrackController extends Controller
             $s->updaterID = auth()->user()->id;
             $s->save();
         }
-        return json_encode(array('status' => 'success', 'message' => 'Did something...' . $event->isSymmetric,
-            'pk' => request()->input('pk'), 'blah' => $name, 'val' => $value, 's' => $s));
+
+        return json_encode(['status' => 'success', 'message' => 'Did something...'.$event->isSymmetric,
+            'pk' => request()->input('pk'), 'blah' => $name, 'val' => $value, 's' => $s, ]);
     }
 
     public function updateSymmetry(Request $request, Event $event)
@@ -178,7 +181,7 @@ class TrackController extends Controller
         $event->updaterID = auth()->user()->id;
         $event->save();
         //return json_encode(array('status' => 'success', 'message' => 'Did something...' . $isSymmetric, 'blah' => $checked));
-        return redirect('/tracks/' . $event->eventID);
+        return redirect('/tracks/'.$event->eventID);
     }
 
     public function assignTicketSessions(Request $request, $day)
@@ -186,10 +189,10 @@ class TrackController extends Controller
         // pass the day of the event in the URL and $value = ticketID
         $value = request()->input('value');
         $ticket = Ticket::find($value);
-        list($name, $day) = array_pad(explode("-", request()->input('name'), 2), 2, null);
+        list($name, $day) = array_pad(explode('-', request()->input('name'), 2), 2, null);
         $sessions = EventSession::where([
             ['confDay', '=', $day],
-            ['eventID', '=', $ticket->eventID]
+            ['eventID', '=', $ticket->eventID],
         ])->get();
 
         foreach ($sessions as $s) {

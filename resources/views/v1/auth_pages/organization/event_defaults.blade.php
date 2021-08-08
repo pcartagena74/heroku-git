@@ -1,7 +1,10 @@
-<?php
+@php
 /**
  * Comment: Shows the Event Defaults for an Organization
  * Created: 3/11/2017
+ *
+ * @var $current_person
+ * @var $org
  */
 
 $cats = DB::table('event-category')
@@ -21,9 +24,9 @@ $discount_headers = ['#', 'Discount Code', 'Discount Percent'];
 $topBits = '';
 $string = '';
 
-$currentPerson = App\Person::find(auth()->user()->id);
+$currentPerson = App\Models\Person::find(auth()->user()->id);
 $currentOrg = $currentPerson->defaultOrg;
-?>
+@endphp
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -366,12 +369,12 @@ $currentOrg = $currentPerson->defaultOrg;
                 url: '{{ env('APP_URL') }}/orgsettings/' + '{{ $org->orgID }}',
                 value: '{{ $org->anonCats }}',
                 source: [
-                    <?php
+                    @php
                     foreach ($event_types as $x) {
                         $string .= "{ value: '" . $x->etID . "' , text: '" . $x->etName . "' },";
                     }
-                    ?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @endphp
+                    {!!  rtrim($string, ",") !!}  @php $string = ''; @endphp
                 ],
             });
 
@@ -463,7 +466,9 @@ $currentOrg = $currentPerson->defaultOrg;
                             </thead>
                             <tbody>
                                  @for($n=1; $n<=5; $n++)
-                                <tr id="et_{{ $n }}_row"<?php if ($n > 1) echo(' style="display:none"'); ?>>
+                                <tr id="et_{{ $n }}_row"@php
+                                    if ($n > 1) echo(' style="display:none"');
+                                    @endphp>
                                     <td><input name='eventType-{{ $n }}' type='text' placeholder='Event Type'
                                                class='form-control input-sm'>
                                     </td>

@@ -33,6 +33,7 @@ class SendEmailJob implements ShouldQueue
     protected $to_email;
     protected $subject;
     protected $details;
+
     /**
      * Create a new job instance.
      *
@@ -41,7 +42,6 @@ class SendEmailJob implements ShouldQueue
     public function __construct($details)
     {
         $this->details = $details;
-
     }
 
     /**
@@ -52,7 +52,7 @@ class SendEmailJob implements ShouldQueue
     public function handle()
     {
         // $email = new EmailForQueuing();
-        $c          = $this->details;
+        $c = $this->details;
         $c->toEmail = 'mufaddal@systango.com';
         // dd([$c->fromEmail,$c->toEmail,$c->fromName,$c->subject]);
         // Mail::to($this->details['email'])->send($email);

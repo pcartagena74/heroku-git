@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Location;
-use App\Person;
 
 class LocationController extends Controller
 {
@@ -18,7 +18,7 @@ class LocationController extends Controller
     {
         // responds to GET /locations
         $this->currentPerson = Person::find(auth()->user()->id);
-        $locations           = DB::table('event-location')->where('orgID', $this->currentPerson->defaultOrgID)
+        $locations = DB::table('event-location')->where('orgID', $this->currentPerson->defaultOrgID)
                                  ->whereNull('deleted_at')
                                  ->orderBy('locName')
                                  ->select(
@@ -29,11 +29,12 @@ class LocationController extends Controller
                                      'city',
                                      'state',
                                      'zip',
-                                     DB::raw("(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt"),
+                                     DB::raw('(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt'),
                                      'locNote'
                                  )->get();
 
         $topBits = '';
+
         return view('v1.auth_pages.events.list-locations', compact('locations', 'topBits'));
     }
 
@@ -41,6 +42,7 @@ class LocationController extends Controller
     {
         // responds to GET /blah/id
         $loc = Location::find($id);
+
         return $loc->toJson();
     }
 
@@ -56,13 +58,13 @@ class LocationController extends Controller
         $count = 0;
 
         for ($i = 1; $i <= 5; $i++) {
-            $locName = "locName-" . $i;
-            $addr1 = "addr1-" . $i;
-            $addr2 = "addr2-" . $i;
-            $city = "city-" . $i;
-            $state = "state-" . $i;
-            $zip = "zip-" . $i;
-            $cntryID = "cntryID-" . $i;
+            $locName = 'locName-'.$i;
+            $addr1 = 'addr1-'.$i;
+            $addr2 = 'addr2-'.$i;
+            $city = 'city-'.$i;
+            $state = 'state-'.$i;
+            $zip = 'zip-'.$i;
+            $cntryID = 'cntryID-'.$i;
 
             $loc = request()->input($locName);
             $ad1 = request()->input($addr1);
@@ -72,16 +74,16 @@ class LocationController extends Controller
             $zi = request()->input($zip);
             $cnt = request()->input($cntryID);
 
-            if (!empty($loc)) {
+            if (! empty($loc)) {
                 $count++;
                 $l = new Location;
                 $l->orgID = $this->currentPerson->defaultOrgID;
                 $l->locName = $loc;
                 $l->addr1 = $ad1;
                 $l->addr2 = $ad2;
-                $l->city  = $cit;
+                $l->city = $cit;
                 $l->state = $sta;
-                $l->zip   = $zi;
+                $l->zip = $zi;
                 $l->countryID = $cnt;
                 $l->creatorID = $this->currentPerson->personID;
                 $l->updaterID = $this->currentPerson->personID;
@@ -89,7 +91,8 @@ class LocationController extends Controller
             }
         }
         request()->session()->flash('alert-success', trans_choice('messages.headers.count_added', $count, ['count' => $count]));
-        return redirect(env('APP_URL')."/locations");
+
+        return redirect(env('APP_URL').'/locations');
     }
 
     public function edit($id)
@@ -101,9 +104,9 @@ class LocationController extends Controller
     {
         // responds to POST /location/update
         $this->currentPerson = Person::find(auth()->user()->id);
-        $locID               = request()->input('locID');
-        $action              = request()->input('action');
-        $location            = Location::find($locID);
+        $locID = request()->input('locID');
+        $action = request()->input('action');
+        $location = Location::find($locID);
 
         if ($action != 'delete') {
             if (request()->input('locName')) {
@@ -126,7 +129,8 @@ class LocationController extends Controller
             $location->save();
             $location->delete();
         }
-        return json_encode(array('input' => request()->all(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID));
+
+        return json_encode(['input' => request()->all(), 'personID' => $this->currentPerson->personID, 'orgID' => $this->currentPerson->defaultOrgID]);
     }
 
     public function destroy($id)

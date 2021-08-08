@@ -5,13 +5,14 @@
  */
 
 use Illuminate\Support\Facades\DB;
-use App\Person;
-use App\OrgPerson;
-use App\Location;
-use App\Registration;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\OrgPerson;
+use App\Models\Location;
+use App\Models\Registration;
 use Illuminate\Support\Facades\Auth;
 
-$org = \App\Org::find($event->orgID);
+$org = Org::find($event->orgID);
 if (Auth::check()) {
     $person = Person::find(auth()->user()->id);
     $op = OrgPerson::where('personID', $person->personID)->first();

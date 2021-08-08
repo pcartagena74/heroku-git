@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use jdavidbakr\MailTracker\Model\SentEmailUrlClicked;
 
 class CreateSentEmailsUrlClickedTable extends Migration

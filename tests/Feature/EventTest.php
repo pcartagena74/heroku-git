@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
-use App\Org;
-use App\User;
+use App\Models\Org;
+use App\Models\User;
 use Carbon\Carbon;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class EventTest extends TestCase
 {
-
     use WithFaker;
 
     protected $event_attributes;
@@ -56,7 +55,7 @@ class EventTest extends TestCase
      */
     public function only_authenticated_users_can_create_events()
     {
-        $attributes = factory('App\Event')->raw(['org' => $this->org]);
+        $attributes = factory(\App\Models\Event::class)->raw(['org' => $this->org]);
         $this->post('/event/create', $attributes)->assertRedirect('login');
     }
 
@@ -81,17 +80,17 @@ class EventTest extends TestCase
 
         $event = $this->person->defaultOrg->events()->create($this->event_attributes);
 
-        $event->tickets()->create(factory('App\Ticket')->raw([
+        $event->tickets()->create(factory(\App\Ticket::class)->raw([
             'eventID' => $event->eventID,
             'availabilityEndDate' => $event->eventStartDate,
             'memberBasePrice' => 25.00,
             'nonmbrBasePrice' => 35.00,
         ]));
 
-        $session = $event->main_session()->create(factory('App\EventSession')->raw([
+        $session = $event->main_session()->create(factory(\App\Models\EventSession::class)->raw([
             'eventID' => $event->eventID,
             'start' => $event->eventStartDate,
-            'end' => $event->eventEndDate
+            'end' => $event->eventEndDate,
         ]));
 
         $event->mainSession = $session->sessionID;
@@ -103,12 +102,13 @@ class EventTest extends TestCase
 
         $this->assertDatabaseHas('event-sessions', [
             'eventID' => $event->eventID,
-            'sessionID' => $event->mainSession
+            'sessionID' => $event->mainSession,
         ]);
 
         $this->assertDatabaseHas('event-tickets', [
-            'eventID' => $event->eventID
+            'eventID' => $event->eventID,
         ]);
+
         return $event;
         // $response->assertStatus(200);
     }
@@ -117,7 +117,6 @@ class EventTest extends TestCase
      * @test - Ticket Creation Test
      *
      * @depends an_event_can_be_created
-     *
      */
 
     /*

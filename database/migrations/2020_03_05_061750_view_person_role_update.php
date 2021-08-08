@@ -28,6 +28,6 @@ class ViewPersonRoleUpdate extends Migration
      */
     public function down()
     {
-        DB::statement("DROP VIEW person_role");
+        DB::statement('DROP VIEW person_role');
     }
 }

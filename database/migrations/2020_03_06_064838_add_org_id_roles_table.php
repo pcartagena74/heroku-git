@@ -14,13 +14,12 @@ class AddOrgIdRolesTable extends Migration
     public function up()
     {
         Schema::table('roles', function (Blueprint $table) {
-            if (!Schema::hasColumn('roles', 'orgID')) {
+            if (! Schema::hasColumn('roles', 'orgID')) {
                 $table->integer('orgID')->default(10);
             }
             $table->dropUnique('un_id_name');
             $table->unique(['orgID', 'name'], 'uq_orgID_name');
         });
-
     }
 
     /**

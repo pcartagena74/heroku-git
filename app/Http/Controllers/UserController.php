@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Org;
-use App\User;
-use App\Person;
-use App\OrgPerson;
-use App\Email;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Email;
 use App\Notifications\NewUserAcct;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
+use App\Models\User;
 use DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash as Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -25,6 +25,7 @@ class UserController extends Controller
             } else {
                 $this->currentPerson = null;
             }
+
             return $next($request);
         });
     }
@@ -48,6 +49,7 @@ class UserController extends Controller
     {
         // responds to GET /newuser
         $org = Org::find($this->currentPerson->defaultOrgID);
+
         return view('v1.auth_pages.admin.newuser', compact('org'));
     }
 
@@ -92,8 +94,8 @@ class UserController extends Controller
         //    Check for password existence (and validation) and set if present
         // 3. Create person-email record for login
 
-        if (check_exists('p', 1, array($firstName, $lastName, $email))
-            || check_exists('e', 1, array($email)) || check_exists('op', 1, array($pmiID))) {
+        if (check_exists('p', 1, [$firstName, $lastName, $email])
+            || check_exists('e', 1, [$email]) || check_exists('op', 1, [$pmiID])) {
             // return redirect(env('APP_URL')."/newuser/create");
             return back()->withInput();
         }
@@ -143,6 +145,7 @@ class UserController extends Controller
             request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
             request()->session()->flash('alert-warning', "Person: $p, OP: $op, U: $u, E: $e");
             DB::rollBack();
+
             return back()->withInput();
         }
 
@@ -151,15 +154,16 @@ class UserController extends Controller
         }
 
         // Send back to same screen but with success message
-        $button = "<a class='btn btn-xs btn-primary' href='" . env('APP_URL') . "/profile/$p->personID'><i class='far fa-id-card'></i></a>";
+        $button = "<a class='btn btn-xs btn-primary' href='".env('APP_URL')."/profile/$p->personID'><i class='far fa-id-card'></i></a>";
         request()->session()->flash('alert-success', trans('messages.messages.user_created', ['profile_button' => $button]));
-        return redirect(env('APP_URL')."/newuser/create");
+
+        return redirect(env('APP_URL').'/newuser/create');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
@@ -170,7 +174,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
@@ -182,7 +186,7 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, User $user)
@@ -193,7 +197,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)

@@ -32,5 +32,4 @@ class HomeController extends Controller
         // Responds to POST /reportissue
         dd($request);
     }
-
 }

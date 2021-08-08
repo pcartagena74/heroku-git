@@ -7,12 +7,12 @@
  * $progress: the list of events where registration was not completed
  *
  */
-use App\RegSession;
-use App\Registration;
-use App\Person;
-use App\Ticket;
-use App\EventSession;
-use App\Event;
+use App\Models\RegSession;
+use App\Models\Registration;
+use App\Models\Person;
+use App\Models\Ticket;
+use App\Models\EventSession;
+use App\Models\Event;
 
 $tcount = 0;
 $today = \Carbon\Carbon::now();

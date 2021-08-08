@@ -7,7 +7,7 @@
  *  - what if the sessionID is somehow incorrect... show options?
  *
  */
-use App\EventSession;
+use App\Models\EventSession;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 
 //use hisorange\BrowserDetect\Provider\BrowserDetectService;

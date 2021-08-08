@@ -88,6 +88,7 @@ class ConfigurationsController extends Controller
 
         Session::flash('configuration', 'Setting saved successfully.');
         \Cache::forget('ticketit::settings'); // refresh cached settings
+
         return redirect()->action('\Kordy\Ticketit\Controllers\ConfigurationsController@index');
     }
 
@@ -123,7 +124,7 @@ class ConfigurationsController extends Controller
 
         if ($request->serialize) {
             //if(!Hash::check($request->password, Auth::user()->password)){
-            if (!Auth::attempt($request->only('password'), false, false)) {
+            if (! Auth::attempt($request->only('password'), false, false)) {
                 return back()->withErrors([trans('ticketit::admin.config-edit-auth-failed')]);
             }
             if (false === eval('$value = serialize('.$value.');')) {

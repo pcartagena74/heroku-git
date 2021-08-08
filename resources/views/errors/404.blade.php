@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 10/22/2017
  */
-?>
+@endphp
 @extends('v1.layouts.no-auth')
 
 @section('content')
@@ -17,15 +17,14 @@
                         404
                     </h1>
                     <h2>
-                        Sorry but we couldn't find this page
+                        @lang("messages.exceptions.page_not_found")
                     </h2>
-                    This page you are looking for does not exist.
                     <a onclick="show()">
-                        Report this?
+                        @lang("messages.page_generic_exception.report_this")
                     </a>
                     <div class="mid_center" style="display:none">
                         <h3>
-                            Report Issue
+                            @lang("messages.page_generic_exception.report_issue")
                         </h3>
                         {{ Form::open(['url' => url('reportissue'), 'method' => 'post']) }}
                         <div class="g-recaptcha" data-sitekey="{{env('RECAPTCHA_PUBLIC_KEY')}}">

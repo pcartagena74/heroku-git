@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddUniqueKeyRolenameRoleidDropUniqueKeyRolename extends Migration
 {
@@ -15,7 +15,7 @@ class AddUniqueKeyRolenameRoleidDropUniqueKeyRolename extends Migration
     {
         Schema::table('roles', function (Blueprint $table) {
             $table->dropUnique('roles_name_unique');
-            $table->unique(['id','name'],'un_id_name');
+            $table->unique(['id', 'name'], 'un_id_name');
         });
     }
 
@@ -27,7 +27,7 @@ class AddUniqueKeyRolenameRoleidDropUniqueKeyRolename extends Migration
     public function down()
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->unique('name','roles_name_unique'); 
+            $table->unique('name', 'roles_name_unique');
             $table->dropUnique('un_id_name');
         });
     }

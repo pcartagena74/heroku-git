@@ -6,7 +6,7 @@
  * @param: $es
  */
 
-$event = \App\Event::find($es->eventID);
+$event = \App\Models\Event::find($es->eventID);
 $registrants = $event->registrants($es->sessionID);
 ?>
 

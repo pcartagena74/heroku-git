@@ -6,8 +6,6 @@ use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 
 /**
  * Class DefaultConfigRepository
- *
- * @package Alexusmai\LaravelFileManager\Services\ConfigService
  */
 class MCConfigRepository implements ConfigRepository
 {
@@ -24,6 +22,7 @@ class MCConfigRepository implements ConfigRepository
         if (\Auth::id() === 1) {
             return ['s3_media', 's3_receipts', 'events'];
         }
+
         return [getDefaultDiskFM()];
     }
 
@@ -191,6 +190,7 @@ class MCConfigRepository implements ConfigRepository
         if (\Auth::id() === 1) {
             return 'blacklist';
         }
+
         return config('file-manager.aclStrategy');
     }
 
@@ -216,5 +216,10 @@ class MCConfigRepository implements ConfigRepository
     public function getAclRulesCache():  ? int
     {
         return config('file-manager.aclRulesCache');
+    }
+
+    public function getRoutePrefix(): string
+    {
+        return config('file-manager.routePrefix');
     }
 }

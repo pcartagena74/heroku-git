@@ -14,6 +14,7 @@ class ImportDetailsUpdateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $import_detail;
+
     /**
      * Create a new job instance.
      *
@@ -34,6 +35,5 @@ class ImportDetailsUpdateJob implements ShouldQueue
         $this->import_detail->refresh();
         $this->import_detail->completed_at = Carbon::now();
         $this->import_detail->save();
-
     }
 }

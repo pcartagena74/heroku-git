@@ -3,15 +3,13 @@
 namespace App\Vendor\Alexusmai\LaravelFileManager\Services\ACLServices;
 
 use Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository;
-use App\Person;
+use App\Models\Person;
 use Entrust;
 
 /**
  * Class ConfigACLRepository
  *
  * Get rules from file-manager config file - aclRules
- *
- * @package Alexusmai\LaravelFileManager\Services\ACLService
  */
 class MCACLRepository implements ACLRepository
 {
@@ -34,8 +32,8 @@ class MCACLRepository implements ACLRepository
     {
         // return config('file-manager.aclRules')[$this->getUserID()] ?? [];
         $currentPerson = Person::find(auth()->user()->id);
-        $currentOrg    = $currentPerson->defaultOrg;
-        $path          = getAllDirectoryPathFM($currentOrg);
+        $currentOrg = $currentPerson->defaultOrg;
+        $path = getAllDirectoryPathFM($currentOrg);
         generateDirectoriesForOrg($currentOrg);
         if (\Auth::id() === 1) {
             return config('file-manager.aclRules')[$this->getUserID()] ?? [];
@@ -47,10 +45,10 @@ class MCACLRepository implements ACLRepository
                 ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1],
                 ['disk' => getDefaultDiskFM(), 'path' => $path['orgPathFM'], 'access' => 1],
                 ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1],
-                ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['event'].'/*', 'access' => 2],
                 ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1],
                 ['disk' => getDefaultDiskFM(), 'path' => $path['campaign_thumb'], 'access' => 0],
-                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2],
+                ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'].'/*', 'access' => 2],
             ];
         }
         $rule_array = [
@@ -58,13 +56,14 @@ class MCACLRepository implements ACLRepository
             ['disk' => getDefaultDiskFM(), 'path' => $path['orgPath'], 'access' => 1],
             ['disk' => getDefaultDiskFM(), 'path' => $path['orgPathFM'], 'access' => 1],
             ['disk' => getDefaultDiskFM(), 'path' => $path['event'], 'access' => 1],
-            ['disk' => getDefaultDiskFM(), 'path' => $path['event'] . '/*', 'access' => 2],
+            ['disk' => getDefaultDiskFM(), 'path' => $path['event'].'/*', 'access' => 2],
         ];
         if (Entrust::hasRole('Marketing') || Entrust::hasRole('Admin')) {
             $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'], 'access' => 1];
             $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign_thumb'], 'access' => 0];
-            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'] . '/*', 'access' => 2];
+            $rule_array[] = ['disk' => getDefaultDiskFM(), 'path' => $path['campaign'].'/*', 'access' => 2];
         }
+
         return $rule_array;
     }
 }

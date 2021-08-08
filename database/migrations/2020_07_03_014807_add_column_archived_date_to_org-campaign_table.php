@@ -17,6 +17,7 @@ class AddColumnArchivedDateToOrgCampaignTable extends Migration
             $table->dateTime('archived_date')->nullable();
         });
     }
+
     /**
      * Reverse the migrations.
      *
