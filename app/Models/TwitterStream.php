@@ -9,9 +9,9 @@ namespace App\Models;
 use App\Jobs\ProcessTweet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use OauthPhirehose;
+//use OauthPhirehose;
 
-class TwitterStream extends OauthPhirehose
+class TwitterStream // extends OauthPhirehose
 {
     use DispatchesJobs;
 

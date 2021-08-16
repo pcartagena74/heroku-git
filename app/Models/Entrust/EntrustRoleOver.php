@@ -4,8 +4,10 @@ namespace App\Models\Entrust;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
-use Zizaco\Entrust\Contracts\EntrustRoleInterface;
-use Zizaco\Entrust\Traits\EntrustRoleTrait;
+//use Zizaco\Entrust\Contracts\EntrustRoleInterface;
+use Shanmuga\LaravelEntrust\Contracts\LaravelEntrustRoleInterface as EntrustRoleInterface;
+//use Zizaco\Entrust\Traits\EntrustRoleTrait;
+use Shanmuga\LaravelEntrust\Traits\LaravelEntrustRoleTrait as EntrustRoleTrait;
 
 class EntrustRoleOver extends Model implements EntrustRoleInterface
 {

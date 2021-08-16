@@ -506,13 +506,13 @@ class RegistrationController extends Controller
             }
 
             // Try to assign $person via OrgStat1 unless $person has the value of $this->currentPerson (and so is not null)
-            if ($pmiID && null === $person) {
+            if ($pmiID && (null === $person)) {
                 $person = Person::whereHas('orgperson', function ($q) use ($pmiID) {
                     $q->where('OrgStat1', '=', $pmiID);
                 })->first();
                 $set_new_user = 0;
             }
-            // If $person is not set, try to assign $person via login (email address)
+            // If $person is still not set, try to assign $person via login (email address)
             if (null === $person) {
                 $person = Person::whereHas('emails', function ($q) use ($login) {
                     $q->where('emailADDR', '=', $login);
@@ -693,13 +693,16 @@ class RegistrationController extends Controller
                 $reg->updaterID = $authorID;
 
                 // Check for ticket price error (There is a cost, but subtotal == 0 w/o a discount that should make it 0
-                // Need to also account for scenario where there is a non-member price but member price is $0 AND origcost is > $0 due to 2nd ticket.
-                if ($reg->subtotal == 0 && $reg->origcost > 0 &&
-                    ($reg->discountCode == 'N/A' || null !== $dc) ||
-                    ($person->is_member($event->orgID) &&
-                        $reg->ticket->memberBasePrice != $reg->subtotal)) {
-                    // Set the debugNote field and adjust the subtotal
+                // Need to also account for scenario where there is a non-member price but member price is $0
+                // AND origcost is > $0 due to 2nd ticket.
+                // Need to account for when a member is buying a ticket for a non-member in position 1
+                if (($reg->subtotal == 0 && $reg->origcost > 0 && ($reg->discountCode == 'N/A' || null !== $dc)) ||
+                    (($person->is_member($event->orgID) && $reg->ticket->memberBasePrice != $reg->subtotal) ||
+                        (! $person->is_member($event->orgID) && $reg->ticket->nonmbrBasePrice != $reg->subtotal))
+                ) {
+                    // Set the debugNote field and adjust the subtotal as needed based on mismatched cost & subtotal
                     if ($reg->ticket->memberBasePrice == $reg->subtotal && $person->is_member($event->orgID)) {
+                        // If this registrant is a member and subtotal = expected member price:
                         $x = $request->header('user-agent');
                         $reg->debugNotes = "2nd Tkt Fail - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
                         $reg->origcost = $reg->subtotal;
