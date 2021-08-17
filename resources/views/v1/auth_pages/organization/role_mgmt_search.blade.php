@@ -1,14 +1,21 @@
-<?php
+@php
 /**
  * Comment: Member Search Functionality for Role Management
  * Created: 11/8/2018
+ *
+ * @var $org
+ * @var $roles
+ * @var $permissions
+ * @var $persons
+ * @var $topBits
  */
 
 if($topBits === null){
     $topBits = '';
 }
 $counter = 0;
-?>
+//dd($persons, $roles);
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
@@ -38,13 +45,13 @@ $counter = 0;
             </div>
 
             @foreach($roles as $r)
-<?php
+@php
                 if($counter++ % 2) {
                     $bg = "bg-info";
                 } else {
                     $bg = "";
                 }
-?>
+@endphp
                 <div class="col-sm-12">
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->name }}</div>
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->display_name }}</div>
@@ -67,15 +74,17 @@ $counter = 0;
                 <div class="col-sm-6" style="background-color:yellow;">@lang('messages.headers.desc')</div>
             </div>
 
-            <?php $counter = 0 ?>
+@php
+  $counter = 0;
+@endphp
             @foreach($permissions as $p)
-<?php
+@php
                 if($counter++ % 2) {
                     $bg = "bg-info";
                 } else {
                     $bg = "";
                 }
-?>
+@endphp
                 <div class="col-sm-12 well-sm">
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $p->name }}</div>
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $p->display_name }}</div>
@@ -140,7 +149,7 @@ $counter = 0;
             </thead>
             <tbody>
             @foreach ($persons as $p)
-<?php
+@php
                 if($p->roles->contains('id', 1)) {
                     $board_color = 'btn-purple';
                     $tooltip     = "data-toggle='tooltip' title='".trans('messages.actions.remove').trans('messages.topBits.board')."'";
@@ -246,12 +255,12 @@ $counter = 0;
                     <i class='far fa-fw fa-code-branch'></i></a>";
 
                 $a = "<a href='" . env('APP_URL')."/profile/$p->personID" . "' target='_new'>";
-?>
+@endphp
                 <tr>
                     <td style="vertical-align: top; text-align: left;">{!! $a . $p->lastName . "</a>" !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->firstName !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->login !!}</td>
-                    <td style="vertical-align: top; text-align: left;">{!! $p->OrgStat1 !!}</td>
+                    <td style="vertical-align: top; text-align: left;">{!! $p->orgperson->OrgStat1 or '' !!}</td>
                     <td style="vertical-align: top; text-align: left;">
                         {!! $board !!}
                         {!! $mktg !!}

@@ -2,6 +2,10 @@
 /**
  * Comment: Display the form to store or update a new campaign
  * Created: 9/18/2017
+ *
+ * @var $current_datetime
+ * @var $campaign
+ *
  */
 
 if(!isset($campaign)) {

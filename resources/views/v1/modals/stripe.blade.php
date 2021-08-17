@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment: A pop-up to collect user charge card info and send to stripe
  * Resurrected on: 11/19/2017
  */
-?>
+@endphp
 
 <div class="modal fade" id="stripe_modal" tabindex="-1" role="dialog" aria-labelledby="stripe_label" aria-hidden="true">
     <div class="modal-dialog" role="document">

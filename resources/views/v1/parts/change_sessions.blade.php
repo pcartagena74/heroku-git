@@ -4,9 +4,9 @@
  * Created: 7/13/2017
  */
 
-use App\Ticket;
-use App\Track;
-use App\EventSession;
+use App\Models\Ticket;
+use App\Models\Track;
+use App\Models\EventSession;
 
 if($event->isSymmetric) {
     $columns = ($event->hasTracks * 2) + 1;

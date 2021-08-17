@@ -29,7 +29,6 @@ class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, With
     {
         requestBin(['should execute this']);
         foreach ($collection as $row) {
-
         }
 
         return $collection;
@@ -63,5 +62,4 @@ class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, With
             'alternate_email' => Rule::requiredIf($em1 === null),
         ];
     }
-
 }

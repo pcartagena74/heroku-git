@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-//use Spatie\Activitylog\Traits\LogsActivity;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+//use Spatie\Activitylog\Traits\LogsActivity;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -30,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '';
+    protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
      * Create a new controller instance.
@@ -49,7 +50,6 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -64,11 +64,11 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
-/*
-        if (! auth()->attempt(request(['email', 'password']))) {
-            return back();
-        }
-*/
+        /*
+                if (! auth()->attempt(request(['email', 'password']))) {
+                    return back();
+                }
+        */
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
@@ -96,6 +96,7 @@ class LoginController extends Controller
     {
         $this->guard()->logout();
         $request->session()->invalidate();
+
         return redirect(env('APP_URL').'/');
     }
 }

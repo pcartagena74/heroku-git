@@ -4,16 +4,16 @@
  * Created: 8/25/2017
  */
 
-use App\Address;
-use App\Email;
-use App\EmailList;
-use App\Event;
-use App\Location;
+use App\Models\Address;
+use App\Models\Email;
+use App\Models\EmailList;
+use App\Models\Event;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
 use App\Models\Ticketit\TicketOver;
-use App\Org;
-use App\OrgPerson;
-use App\Person;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
@@ -25,6 +25,27 @@ use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
 
 // $client = new Client();
+
+/**
+ * Takes a role id and returns the count of others with that role within the current user's org
+ *
+ * @param int $id
+ * @return int
+ */
+if (! function_exists('count_roles')) {
+    function count_roles($id)
+    {
+        $p = Person::find(auth()->user()->id);
+
+        return Person::leftJoin('person_role', 'user_id', '=', 'person.personID')
+            ->whereHas('orgperson', function ($q) use ($p) {
+                $q->where('org-person.orgID', '=', $p->defaultOrgID);
+            })->whereHas('roles', function ($q) use ($p, $id) {
+                $q->where('id', '=', $id);
+            })->distinct()->count('personID');
+    }
+}
+
 /**
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
@@ -33,11 +54,11 @@ use Spatie\Image\Manipulations;
  * @param Org $org
  * @return string
  */
-if (!function_exists('extract_images')) {
+if (! function_exists('extract_images')) {
     function extract_images($html, $orgID)
     {
-        $dom     = new \DOMDocument();
-        $org     = Org::find($orgID);
+        $dom = new \DOMDocument();
+        $org = Org::find($orgID);
         $updated = 0;
 
         try {
@@ -81,7 +102,8 @@ if (!function_exists('extract_images')) {
                 return $html;
             }
         } catch (Exception $exception) {
-            request()->session()->flash('alert-danger', trans('messages.errors.html_error') . "<br /><pre>$exception</pre>");
+            request()->session()->flash('alert-danger', trans('messages.errors.html_error')."<br /><pre>$exception</pre>");
+
             return $html;
         }
     }
@@ -97,15 +119,14 @@ if (!function_exists('extract_images')) {
  *                      + e:  login
  *                      + op: PMI ID
  */
-
-if (!function_exists('check_exists')) {
+if (! function_exists('check_exists')) {
     function check_exists($model, $doFlash, $var_array)
     {
-        $details = "<ul>";
+        $details = '<ul>';
         switch ($model) {
             case 'p':
                 list($first, $last, $login) = $var_array;
-                $p                          = Person::where([
+                $p = Person::where([
                     ['firstName', '=', $first],
                     ['lastName', '=', $last],
                 ])
@@ -119,26 +140,28 @@ if (!function_exists('check_exists')) {
                         $existing = trans('messages.errors.existing_account', ['f' => $x->firstName, 'l' => $x->lastName, 'e' => $x->login]);
                         $details .= "<li>$existing</li>";
                     }
-                    $details .= "</ul>";
+                    $details .= '</ul>';
 
                     if ($doFlash) {
                         request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                     }
+
                     return 1;
                 }
                 break;
             case 'e':
                 list($email) = $var_array;
-                $e           = Email::where('emailADDR', '=', $email)->first();
+                $e = Email::where('emailADDR', '=', $email)->first();
                 if (null !== $e) {
                     $p = Person::find($e->personID);
-                    $details .= '<li>' . $email . "</li>";
+                    $details .= '<li>'.$email.'</li>';
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                     $details .= "<li>$existing</li>";
-                    $details .= "</ul>";
+                    $details .= '</ul>';
                     if ($doFlash) {
                         request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                     }
+
                     return 1;
                 }
                 break;
@@ -148,18 +171,20 @@ if (!function_exists('check_exists')) {
                     $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
                     if (null !== $op) {
                         $p = Person::find($op->personID);
-                        $details .= '<li>' . $op->OrgStat1 . "</li>";
+                        $details .= '<li>'.$op->OrgStat1.'</li>';
                         $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                         $details .= "<li>$existing</li>";
-                        $details .= "</ul>";
+                        $details .= '</ul>';
                         if ($doFlash) {
                             request()->session()->flash('alert-warning', trans_choice('messages.errors.exists', $model, ['details' => $details]));
                         }
+
                         return 1;
                     }
                 }
                 break;
         }
+
         return 0;
     }
 }
@@ -171,24 +196,22 @@ if (!function_exists('check_exists')) {
  * @param $personID
  * @return string
  */
-
-if (!function_exists('pLink')) {
+if (! function_exists('pLink')) {
     function plink($regID, $personID)
     {
-        return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . "</a>";
+        return '<a href="'.env('APP_URL').'/profile/'.$personID.'">'.$regID.'</a>';
     }
 }
 
 /**
  * et_translate: array_map function to apply a trans_choice if a translation exists for the term
  */
-
-if (!function_exists('et_translate')) {
+if (! function_exists('et_translate')) {
     function et_translate($term)
     {
         $x = 'messages.event_types.';
-        if (Lang::has($x . $term)) {
-            return trans_choice($x . $term, 1);
+        if (Lang::has($x.$term)) {
+            return trans_choice($x.$term, 1);
         } else {
             return $term;
         }
@@ -201,31 +224,31 @@ if (!function_exists('et_translate')) {
  * @param $type
  * @return string
  */
-
-if (!function_exists('li_print_array')) {
+if (! function_exists('li_print_array')) {
     function li_print_array($array, $type)
     {
         //dd($array);
         switch ($type) {
-            case "ol":
-                $start = "<OL>";
-                $end   = "</OL>";
+            case 'ol':
+                $start = '<OL>';
+                $end = '</OL>';
                 break;
-            case "ul":
-                $start = "<UL>";
-                $end   = "</UL>";
+            case 'ul':
+                $start = '<UL>';
+                $end = '</UL>';
                 break;
         }
         $output = $start;
         foreach ($array as $item) {
-            $reg  = $item['reg'];
+            $reg = $item['reg'];
             $name = $item['name'];
             $form = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->regfinance->regID]]);
-            $form .= Form::submit(trans('messages.buttons.reg_can'), array('class' => 'btn btn-primary btn-xs'));
+            $form .= Form::submit(trans('messages.buttons.reg_can'), ['class' => 'btn btn-primary btn-xs']);
             $form .= Form::close();
             $output .= "<li>$name $form</li>";
         }
         $output .= $end;
+
         return $output;
     }
 }
@@ -234,10 +257,9 @@ if (!function_exists('li_print_array')) {
  * assoc_email returns 0 or 1 based on whether the $email address is associated with Person $p
  * @param $email
  * @param $p
- * @return boolean
+ * @return bool
  */
-
-if (!function_exists('assoc_email')) {
+if (! function_exists('assoc_email')) {
     function assoc_email($email, $p)
     {
         $e = Email::where('emailADDR', '=', $email)->first();
@@ -260,12 +282,11 @@ if (!function_exists('assoc_email')) {
  * 2. Checking whether data was entered into visible form fields
  * 3. Checking if there are any discrepancies (changes) to data in the form fields indicating the need to update
  */
-
-if (!function_exists('location_triage')) {
+if (! function_exists('location_triage')) {
     function location_triage(Request $request, Event $event, Person $current_person)
     {
         //$loc = null;
-        $locationID  = request()->input('locationID');
+        $locationID = request()->input('locationID');
         $loc_virtual = request()->input('virtual');
 
         if ($event === null || $event->orgID === null) {
@@ -279,11 +300,11 @@ if (!function_exists('location_triage')) {
         }
 
         $locName = request()->input('locName');
-        $addr1   = request()->input('addr1');
-        $addr2   = request()->input('addr2');
-        $city    = request()->input('city');
-        $state   = request()->input('state');
-        $zip     = request()->input('zip');
+        $addr1 = request()->input('addr1');
+        $addr2 = request()->input('addr2');
+        $city = request()->input('city');
+        $state = request()->input('state');
+        $zip = request()->input('zip');
 
         switch ($locationID) {
             case null:
@@ -302,7 +323,7 @@ if (!function_exists('location_triage')) {
                 $loc = Location::find($event->locationID);
                 break;
 
-            case !empty($locationID):
+            case ! empty($locationID):
                 // If the selected locationID does not match one already associated with the event, change association
                 // Update location fields unless orgID=1
                 $loc = Location::find($locationID);
@@ -311,12 +332,12 @@ if (!function_exists('location_triage')) {
         }
 
         if ($loc->orgID == $orgID) {
-            $loc->locName   = $locName;
-            $loc->addr1     = $addr1;
-            $loc->addr2     = $addr2;
-            $loc->city      = $city;
-            $loc->state     = $state;
-            $loc->zip       = $zip;
+            $loc->locName = $locName;
+            $loc->addr1 = $addr1;
+            $loc->addr2 = $addr2;
+            $loc->city = $city;
+            $loc->state = $state;
+            $loc->zip = $zip;
             $loc->isVirtual = $loc_virtual;
             $loc->updaterID = $current_person->personID;
             $loc->save();
@@ -328,11 +349,10 @@ if (!function_exists('location_triage')) {
         $loc->save();
 
         return $loc;
-
     }
 }
 
-if (!function_exists('getAgentList')) {
+if (! function_exists('getAgentList')) {
     /**
      * get ticketit agent list from ticket or from current user
      * @param  ticket collection $ticket
@@ -340,28 +360,29 @@ if (!function_exists('getAgentList')) {
      */
     function getAgentList($ticket = null)
     {
-        $orgId       = 0;
+        $orgId = 0;
         $agent_lists = ['auto' => 'Auto Select'];
         if (empty($ticket)) {
             $person = Person::find(auth()->user()->id);
-            $orgId  = $person->defaultOrgID;
+            $orgId = $person->defaultOrgID;
         } else {
-            $orgId = $ticket->orgId;
+            $orgId = $ticket->orgID;
         }
 
         $user = User::where('id', auth()->user()->id)->get()->first();
         //get list of admins only for use with admin role
-        if ($user->hasRole(['Admin']) && !$user->hasRole(['Developer'])) {
+        if ($user->hasRole(['Admin']) && ! $user->hasRole(['Developer'])) {
             $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
                 $q->select('user_id')
-                    ->from('role_user')
-                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                    ->where('roles.name', 'Admin')
-                    ->where('roles.orgId', $orgId);
+                    ->from('person_role')
+                    ->where('person_role.org_id', $orgId)
+                    ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
+                    ->where('roles.name', 'Admin');
             })->whereNotIn('personID', function ($q) use ($orgId) {
                 $q->select('user_id')
-                    ->from('role_user')
-                    ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                    ->from('person_role')
+                    ->where('person_role.org_id', $orgId)
+                    ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
                     ->where('roles.name', '=', 'Developer');
             })->get()->pluck('login', 'personID')->toArray();
 
@@ -369,25 +390,28 @@ if (!function_exists('getAgentList')) {
             if (is_array($admin_agents)) {
                 $agent_lists += $admin_agents;
             }
+
             return $agent_lists;
         }
 
         $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
             $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
-                ->where('roles.name', 'Admin')
-                ->where('roles.orgId', $orgId);
+                ->from('person_role')
+                ->where('person_role.org_id', $orgId)
+                ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
+                ->where('roles.name', 'Admin');
         })->get()->pluck('login', 'personID')->toArray();
 
+        // This $dev_agents query is NOT taking orgID into account and that should be OK.
         $dev_agents = Person::whereIn('personID', function ($q) {
             $q->select('user_id')
-                ->from('role_user')
-                ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+                ->from('person_role')
+                ->leftJoin('roles', 'roles.id', '=', 'person_role.role_id')
                 ->where('roles.name', 'Developer');
         })->get()->pluck('login', 'personID')->toArray();
+
         $dev_agents = array_map(function ($value) {
-            return $value . '(Developer)';
+            return $value.'(Developer)';
         }, $dev_agents);
 
         $agent_lists['auto_dev'] = 'Developer Queue';
@@ -399,17 +423,18 @@ if (!function_exists('getAgentList')) {
         if (is_array($admin_agents)) {
             foreach ($admin_agents as $key => $value) {
                 if (array_key_exists($key, $agent_lists)) {
-                    $agent_lists[$key] = $value . ' (Admin and Developer)';
+                    $agent_lists[$key] = $value.' (Admin and Developer)';
                 } else {
-                    $agent_lists[$key] = $value . ' (Admin)';
+                    $agent_lists[$key] = $value.' (Admin)';
                 }
             }
         }
+
         return $agent_lists;
     }
 }
 
-if (!function_exists('getActiveTicketCountUser')) {
+if (! function_exists('getActiveTicketCountUser')) {
     /**
      * get logged in user active ticket count
      * @return int ticket count
@@ -417,25 +442,27 @@ if (!function_exists('getActiveTicketCountUser')) {
     function getActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
-        $orgId  = $person->defaultOrgID;
+        $orgId = $person->defaultOrgID;
+
         return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
     }
 }
 
-if (!function_exists('showActiveTicketUser')) {
+if (! function_exists('showActiveTicketUser')) {
     function showActiveTicketUser()
     {
         $person = Person::find(auth()->user()->id);
-        $orgId  = $person->defaultOrgID;
+        $orgId = $person->defaultOrgID;
+
         return TicketOver::where(['user_id' => auth()->user()->id, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
     }
 }
 
-if (!function_exists('markReadActiveTicketCountUser')) {
+if (! function_exists('markReadActiveTicketCountUser')) {
     /**
      * mark logged user all open ticket as read
      * @return bool
@@ -443,13 +470,14 @@ if (!function_exists('markReadActiveTicketCountUser')) {
     function markReadActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
-        $orgId  = $person->defaultOrgID;
+        $orgId = $person->defaultOrgID;
+
         return TicketOver::where(['user_id' => auth()->user()->id, 'user_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')->update(['user_read' => 1]);
     }
 }
 
-if (!function_exists('markUnreadTicketUser')) {
+if (! function_exists('markUnreadTicketUser')) {
     /**
      * make a specific user ticket as unread
      * @param  int $ticket_id ticket id
@@ -460,12 +488,13 @@ if (!function_exists('markUnreadTicketUser')) {
         if (empty($ticket_id)) {
             return;
         }
+
         return TicketOver::where(['id' => $ticket_id])
             ->update(['user_read' => 0]);
     }
 }
 
-if (!function_exists('getActiveTicketCountAgent')) {
+if (! function_exists('getActiveTicketCountAgent')) {
     /**
      * get all active ticket of loggedin user
      * @return int count
@@ -473,14 +502,15 @@ if (!function_exists('getActiveTicketCountAgent')) {
     function getActiveTicketCountAgent()
     {
         $person = Person::find(auth()->user()->id);
-        $orgId  = $person->defaultOrgID;
+        $orgId = $person->defaultOrgID;
+
         return TicketOver::where(['agent_id' => auth()->user()->id, 'agent_read' => 0, 'orgId' => $orgId])
             ->whereNull('completed_at')
             ->get()->count();
     }
 }
 
-if (!function_exists('getTicketCategories')) {
+if (! function_exists('getTicketCategories')) {
     /**
      * get all active ticket of loggedin user
      * @return int count
@@ -488,11 +518,12 @@ if (!function_exists('getTicketCategories')) {
     function getTicketCategories()
     {
         list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+
         return $categories;
     }
 }
 
-if (!function_exists('getTicketPriorities')) {
+if (! function_exists('getTicketPriorities')) {
     /**
      * get all active ticket of loggedin user
      * @return int count
@@ -500,11 +531,12 @@ if (!function_exists('getTicketPriorities')) {
     function getTicketPriorities()
     {
         list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+
         return $priorities;
     }
 }
 
-if (!function_exists('get_template_builder_blocks_category')) {
+if (! function_exists('get_template_builder_blocks_category')) {
     /**
      * get template builder block category from database
      * @return array of email block category
@@ -515,10 +547,10 @@ if (!function_exists('get_template_builder_blocks_category')) {
     }
 }
 
-if (!function_exists('get_template_builder_blocks_category')) {
+if (! function_exists('get_template_builder_blocks_category')) {
     /**
      * get template blocks by category id
-     * @param  integer $email_cat_id  email category id
+     * @param  int $email_cat_id  email category id
      * @return array               of category blocks
      */
     function get_template_builder_block_category($email_cat_id)
@@ -527,15 +559,15 @@ if (!function_exists('get_template_builder_blocks_category')) {
     }
 }
 
-if (!function_exists('isDate')) {
+if (! function_exists('isDate')) {
     /**
      * check if given string is date type
      * @param  string  $date_str date
-     * @return boolean        true/false
+     * @return bool        true/false
      */
     function isDate($date_str)
     {
-        if (!$date_str) {
+        if (! $date_str) {
             return false;
         } else {
             // $date = date_parse($date_str);
@@ -549,7 +581,7 @@ if (!function_exists('isDate')) {
     }
 }
 
-if (!function_exists('requestBin')) {
+if (! function_exists('requestBin')) {
     /**
      * send data to request bin for queue debug
      * @param  array $data
@@ -562,11 +594,11 @@ if (!function_exists('requestBin')) {
         // Create a new cURL resource
         $ch = curl_init($url);
         // Setup request to send json via POST
-        $payload = json_encode(array("user" => $data));
+        $payload = json_encode(['user' => $data]);
         // Attach encoded JSON string to the POST fields
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         // Set the content type to application/json
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
         // Return response instead of outputting
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         // Execute the POST request
@@ -576,21 +608,21 @@ if (!function_exists('requestBin')) {
     }
 }
 
-if (!function_exists('replaceUserDataInEmailTemplate')) {
+if (! function_exists('replaceUserDataInEmailTemplate')) {
     /**
      * replace text placeholder with actual data from database
      * @param  string  $email       user email whose data needed to be replaced by placeholder
      * @param  object  $campaign    the campaign object
-     * @param  boolean $for_preview true if using for preview only false while sending actual email
+     * @param  bool $for_preview true if using for preview only false while sending actual email
      * @param  string  $raw_html    html string used when for_preview is true
      * @return string               replaced html
      */
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
     {
         // $start = microtime(true);
-        $person         = '';
-        $organization   = '';
-        $org_name       = '';
+        $person = '';
+        $organization = '';
+        $org_name = '';
         $pre_header_str = '<table width="100%" cellspacing="0" cellpadding="0" border="0" style="background:rgb(233,234,234) none repeat scroll 0% 0%/auto padding-box border-box"><tbody><tr><td><div style="margin:0 auto;width:600px;padding:0px">
                                     <table width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:rgb(255,255,255);width:600px;border-spacing:0px;border-collapse:collapse" align="center">
                 <tbody>
@@ -604,13 +636,13 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
                 </tbody>
             </table></div></td></tr></tbody></table>';
         if ($for_preview) {
-            if (!empty($raw_html)) {
-                $person       = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
+            if (! empty($raw_html)) {
+                $person = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
                 $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
-                if (!empty($campaign)) {
-                    if (!empty($campaign->preheader)) {
+                if (! empty($campaign)) {
+                    if (! empty($campaign->preheader)) {
                         $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
-                        $raw_html       = $preheader_html . $raw_html;
+                        $raw_html = $preheader_html.$raw_html;
                     }
                 }
             } else {
@@ -624,20 +656,20 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
                     $raw_html .= $value->content;
                 }
             } else {
-                if (!empty($campaign->preheader)) {
+                if (! empty($campaign->preheader)) {
                     $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
-                    $raw_html       = $preheader_html . $campaign->content;
+                    $raw_html = $preheader_html.$campaign->content;
                 } else {
                     $raw_html = $campaign->content;
                 }
             }
-            $person       = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
+            $person = Person::where(['login' => $email, 'defaultOrgID' => $campaign->orgID])->with('orgperson')->get()->first();
             $organization = Org::where('orgID', $campaign->orgID)->select('orgName')->get()->first();
         }
         if (empty($person) || empty($organization)) {
             return $raw_html;
         }
-        if (!empty($organization)) {
+        if (! empty($organization)) {
             $org_name = $organization->orgName;
         }
         $mapping = [
@@ -687,7 +719,7 @@ if (!function_exists('replaceUserDataInEmailTemplate')) {
     }
 }
 
-if (!function_exists('generateEmailTemplateThumbnail')) {
+if (! function_exists('generateEmailTemplateThumbnail')) {
     /**
      * Generate thumbnail from email html
      * @param  string $html     email html
@@ -700,22 +732,23 @@ if (!function_exists('generateEmailTemplateThumbnail')) {
             return false;
         }
         $file_name = generateEmailTemplateThumbnailName($campaign);
-        $html      = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
-        $org       = Org::where('orgID', $campaign->orgID)->get()->first();
-        $path      = getAllDirectoryPathFM($org);
-        $full_path = $path['campaign'] . '/thumb/' . $file_name;
-        $img       = Browsershot::html($html)
+        $html = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
+        $org = Org::where('orgID', $campaign->orgID)->get()->first();
+        $path = getAllDirectoryPathFM($org);
+        $full_path = $path['campaign'].'/thumb/'.$file_name;
+        $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 70, 120)
             ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
             ->screenshot();
         // ->save(Storage::disk('local')->path($full_path));
         Storage::disk(getDefaultDiskFM())->put($full_path, $img);
+
         return Storage::disk(getDefaultDiskFM())->url($full_path);
     }
 }
 
-if (!function_exists('generateEmailTemplateThumbnailName')) {
+if (! function_exists('generateEmailTemplateThumbnailName')) {
     /**
      * generate email template thumbnail name
      * @param  object $campaign campaign object
@@ -725,11 +758,12 @@ if (!function_exists('generateEmailTemplateThumbnailName')) {
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
-        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
+
+        return $campaign->orgID.'-'.$campaign->campaignID.'-'.$date->timestamp.'.png';
     }
 }
 
-if (!function_exists('getEmailTemplateThumbnailName')) {
+if (! function_exists('getEmailTemplateThumbnailName')) {
     /**
      * same as generate just for sake of naming convension
      * @param  [type] $campaign [description]
@@ -739,11 +773,12 @@ if (!function_exists('getEmailTemplateThumbnailName')) {
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
-        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
+
+        return $campaign->orgID.'-'.$campaign->campaignID.'-'.$date->timestamp.'.png';
     }
 }
 
-if (!function_exists('getEmailTemplateThumbnailURL')) {
+if (! function_exists('getEmailTemplateThumbnailURL')) {
     /**
      * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
      * @param  object $campaign campaign object
@@ -751,18 +786,17 @@ if (!function_exists('getEmailTemplateThumbnailURL')) {
      */
     function getEmailTemplateThumbnailURL($campaign)
     {
-        $path      = getAllDirectoryPathFM();
+        $path = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
-            return Storage::disk(getDefaultDiskFM())->url($path['campaign'] . '/thumb/' . $file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'].'/thumb/'.$file_name)) {
+            return Storage::disk(getDefaultDiskFM())->url($path['campaign'].'/thumb/'.$file_name);
         } else {
             return url('images/mCentric_square.png');
-
         }
     }
 }
 
-if (!function_exists('getAllDirectoryPathFM')) {
+if (! function_exists('getAllDirectoryPathFM')) {
     /**
      * all static directory path for filemanger this has a system wide impact
      * @param  object $org org model if available
@@ -772,22 +806,22 @@ if (!function_exists('getAllDirectoryPathFM')) {
     {
         if (empty($org)) {
             $currentPerson = Person::find(auth()->user()->id);
-            $org           = $currentPerson->defaultOrg;
+            $org = $currentPerson->defaultOrg;
         }
         // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
-        $base_path = $org->orgPath . '/filemanager/';
+        $base_path = $org->orgPath.'/filemanager/';
         // $base_path              = $org->orgPath . '/';
-        $path['event']          = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
-        $path['campaign']       = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
-        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files/thumb');
-        $path['orgPath']        = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
-        $path['orgPathFM']      = Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
+        $path['event'] = Storage::disk(getDefaultDiskFM())->path($base_path.'events_files');
+        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path.'campaign_files');
+        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path.'campaign_files/thumb');
+        $path['orgPath'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
+        $path['orgPathFM'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+
         return $path;
     }
-
 }
 
-if (!function_exists('generateDirectoriesForOrg')) {
+if (! function_exists('generateDirectoriesForOrg')) {
     /**
      * generate default directory set for new organizations
      * @param  object $org organization object
@@ -807,7 +841,7 @@ if (!function_exists('generateDirectoriesForOrg')) {
     }
 }
 
-if (!function_exists('getDefaultPathFM')) {
+if (! function_exists('getDefaultPathFM')) {
     /**
      * for filemanager config default path for filemanager (do not change)
      * @return string folder path
@@ -815,12 +849,13 @@ if (!function_exists('getDefaultPathFM')) {
     function getDefaultPathFM()
     {
         $currentPerson = Person::find(auth()->user()->id);
-        $org           = $currentPerson->defaultOrg;
-        return Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
+        $org = $currentPerson->defaultOrg;
+
+        return Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
     }
 }
 
-if (!function_exists('getDefaultDiskFM')) {
+if (! function_exists('getDefaultDiskFM')) {
     /**
      * return value of default disk for file manager
      * @return string diskname
@@ -830,7 +865,7 @@ if (!function_exists('getDefaultDiskFM')) {
         return 's3_media';
     }
 }
-if (!function_exists('getAllDiskFM')) {
+if (! function_exists('getAllDiskFM')) {
     /**
      * return all available disk for file manager
      * @return array of disk names
@@ -841,21 +876,21 @@ if (!function_exists('getAllDiskFM')) {
         return ['s3_media'];
     }
 }
-if (!function_exists('getEmailList')) {
+if (! function_exists('getEmailList')) {
     /**
      * get count and email list for selected user org
      * @param  object  $currentPerson model object
-     * @param  boolean $for_select    if needed for dropdown use true
+     * @param  bool $for_select    if needed for dropdown use true
      * @return array                 either only name and id or complete details
      */
     function getEmailList($currentPerson, $for_select = false)
     {
-        $rows        = [];
-        $lists       = EmailList::where('orgID', $currentPerson->defaultOrgID)->get();
+        $rows = [];
+        $lists = EmailList::where('orgID', $currentPerson->defaultOrgID)->get();
         $select_rows = [];
-        $today       = Carbon::now();
+        $today = Carbon::now();
         foreach ($lists as $l) {
-            $included   = explode(',', $l->included);
+            $included = explode(',', $l->included);
             $foundation = $l->foundation;
             // $foundation1 = array_shift($included);
             // dd($foundation,$foundation1);
@@ -864,8 +899,8 @@ if (!function_exists('getEmailList')) {
             // foundations are either filters (when $included !== null) or true foundations
             if ($included != null) {
                 switch ($foundation) {
-                    case "none":
-                    case "everyone":
+                    case 'none':
+                    case 'everyone':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
                         })
@@ -877,7 +912,7 @@ if (!function_exists('getEmailList')) {
                             ->select('person.personID')
                             ->count();
                         break;
-                    case "pmiid":
+                    case 'pmiid':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
                         })
@@ -892,7 +927,7 @@ if (!function_exists('getEmailList')) {
                             ->select('person.personID')
                             ->count();
                         break;
-                    case "nonexpired":
+                    case 'nonexpired':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
                         })
@@ -912,9 +947,9 @@ if (!function_exists('getEmailList')) {
             } else {
                 // $included === null
                 switch ($foundation) {
-                    case "none":
+                    case 'none':
                     // none with a null $included is not possible
-                    case "everyone":
+                    case 'everyone':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
                         })
@@ -925,7 +960,7 @@ if (!function_exists('getEmailList')) {
                             ->select('person.personID')
                             ->count();
                         break;
-                    case "pmiid":
+                    case 'pmiid':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
                         })
@@ -939,7 +974,7 @@ if (!function_exists('getEmailList')) {
                             ->select('person.personID')
                             ->count();
                         break;
-                    case "nonexpired":
+                    case 'nonexpired':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
                         })
@@ -956,9 +991,9 @@ if (!function_exists('getEmailList')) {
                         break;
                 }
             }
-            $edit_link   = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
-            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete(' . $l->id . ')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
-            $links       = $edit_link . ' | ' . $delete_link;
+            $edit_link = '<a href="'.url('list', $l->id).'"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
+            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete('.$l->id.')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
+            $links = $edit_link.' | '.$delete_link;
             array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $links]);
             array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
         }
@@ -969,17 +1004,17 @@ if (!function_exists('getEmailList')) {
         }
     }
 }
-if (!function_exists('getDefaultEmailList')) {
+if (! function_exists('getDefaultEmailList')) {
     /**
      * get default email list (list from efcico corporation)
      * @param  object  $currentPerson default
-     * @param  boolean $for_select    only for dropdown
+     * @param  bool $for_select    only for dropdown
      * @return array                  either only name and id or complete details
      */
     function getDefaultEmailList($currentPerson, $for_select = false)
     {
-        $defaults    = EmailList::where('orgID', 1)->get();
-        $rows        = [];
+        $defaults = EmailList::where('orgID', 1)->get();
+        $rows = [];
         $select_rows = [];
         foreach ($defaults as $l) {
             if ($l->foundation == 'everyone') {
@@ -1013,7 +1048,7 @@ if (!function_exists('getDefaultEmailList')) {
     }
 }
 
-if (!function_exists('getEmailListContact')) {
+if (! function_exists('getEmailListContact')) {
     /**
      * get email list from email list management
      * @param  int $list_id list management id
@@ -1022,17 +1057,17 @@ if (!function_exists('getEmailListContact')) {
      */
     function getEmailListContact($list_id, $org_id)
     {
-        $list       = EmailList::whereId($list_id)->get()->first();
-        $rows       = [];
-        $included   = explode(',', $list->included);
+        $list = EmailList::whereId($list_id)->get()->first();
+        $rows = [];
+        $included = explode(',', $list->included);
         $foundation = $list->foundation;
-        $excluded   = explode(',', $list->excluded);
-        $today      = Carbon::now();
+        $excluded = explode(',', $list->excluded);
+        $today = Carbon::now();
         // foundations are either filters (when $included !== null) or true foundations
         if ($included != null) {
             switch ($foundation) {
-                case "none":
-                case "everyone":
+                case 'none':
+                case 'everyone':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
                     })
@@ -1044,7 +1079,7 @@ if (!function_exists('getEmailListContact')) {
                         ->select('person.personID', 'person.login')
                         ->get();
                     break;
-                case "pmiid":
+                case 'pmiid':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
                     })
@@ -1059,7 +1094,7 @@ if (!function_exists('getEmailListContact')) {
                         ->select('person.personID', 'person.login')
                         ->get();
                     break;
-                case "nonexpired":
+                case 'nonexpired':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
                     })
@@ -1079,9 +1114,9 @@ if (!function_exists('getEmailListContact')) {
         } else {
             // $included === null
             switch ($foundation) {
-                case "none":
+                case 'none':
                 // none with a null $included is not possible
-                case "everyone":
+                case 'everyone':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
                     })
@@ -1092,7 +1127,7 @@ if (!function_exists('getEmailListContact')) {
                         ->select('person.personID', 'person.login')
                         ->get();
                     break;
-                case "pmiid":
+                case 'pmiid':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
                     })
@@ -1106,7 +1141,7 @@ if (!function_exists('getEmailListContact')) {
                         ->select('person.personID', 'person.login')
                         ->get();
                     break;
-                case "nonexpired":
+                case 'nonexpired':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
                     })
@@ -1125,16 +1160,17 @@ if (!function_exists('getEmailListContact')) {
         } //else end
         $email_list = [];
         foreach ($c as $key => $value) {
-            if (!empty($value->email[0])) {
+            if (! empty($value->email[0])) {
                 $email_list[] = $value->email[0]->emailADDR;
             } else {
                 $email_list[] = $value->login;
             }
         }
+
         return $email_list;
     } //function end
 }
-if (!function_exists('convertToDatePickerFormat')) {
+if (! function_exists('convertToDatePickerFormat')) {
     /**
      * convert date to date picker format
      * @param  string $date_time mysql date string
@@ -1143,80 +1179,82 @@ if (!function_exists('convertToDatePickerFormat')) {
     function convertToDatePickerFormat($date_time)
     {
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
+
         return $date->format('m/d/Y h:i A');
     }
 }
-if (!function_exists('deleteCampaignThumb')) {
+if (! function_exists('deleteCampaignThumb')) {
     /**
      * delete campaign thumbnail image from s3
      * @param  object $campaign campaign model
-     * @return boolean          true/false
+     * @return bool          true/false
      */
     function deleteCampaignThumb($campaign)
     {
-        $path      = getAllDirectoryPathFM();
+        $path = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
-            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'] . '/thumb/' . $file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'].'/thumb/'.$file_name)) {
+            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'].'/thumb/'.$file_name);
         }
     }
 }
 
-if (!function_exists('generateLatLngForAddress')) {
+if (! function_exists('generateLatLngForAddress')) {
     /**
      * generate lat lng for existing address for testing only bunch on 20
      * @param  string  $type single / all address
      * @param bool $for_org true if lat lng is needed for organization
-     * @return boolean true/false
+     * @return bool true/false
      */
     function generateLatLngForAddress($address, $for_org = false)
     {
-        if (!empty($address)) {
-            if (!empty($address->zip)) {
+        if (! empty($address)) {
+            if (! empty($address->zip)) {
                 $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
-                    ->orWhere('zip', ltrim($address->zip, "0"))->get()->first();
+                    ->orWhere('zip', ltrim($address->zip, '0'))->get()->first();
                 if (empty($zip_lat_lng)) {
                     // continue to google api
                 } else {
-                    $address->lati  = $zip_lat_lng->lat;
+                    $address->lati = $zip_lat_lng->lat;
                     $address->longi = $zip_lat_lng->lng;
                     $address->save();
+
                     return true;
                 }
             }
             $add_str = '';
             if ($for_org == false) {
-                $add_str = $address->addr1 . ', ';
-                if (!empty($address->addr2)) {
-                    $add_str .= $address->addr2 . ', ';
+                $add_str = $address->addr1.', ';
+                if (! empty($address->addr2)) {
+                    $add_str .= $address->addr2.', ';
                 }
-                $add_str .= $address->city . ', ';
-                if (!empty($address->zip)) {
+                $add_str .= $address->city.', ';
+                if (! empty($address->zip)) {
                     $add_str .= $address->state;
-                    $add_str .= $address->zip . ', ';
+                    $add_str .= $address->zip.', ';
                 } else {
-                    $add_str .= $address->state . ', ';
+                    $add_str .= $address->state.', ';
                 }
                 if ($address->cntryID == 228) {
                     //as majority of request will be from this country it will help us reduce query
                     $add_str .= 'United States';
                 } else {
                     $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
-                    if (!empty($country)) {
+                    if (! empty($country)) {
                         $add_str .= $country->cntryName;
                     }
                 }
             } else {
-                $add_str = $address->orgAddr1 . ', ';
-                if (!empty($address->orgAddr2)) {
-                    $add_str .= $address->orgAddr2 . ', ';
+                $add_str = $address->orgAddr1.', ';
+                if (! empty($address->orgAddr2)) {
+                    $add_str .= $address->orgAddr2.', ';
                 }
-                $add_str .= $address->orgCity . ', ';
-                if (!empty($address->orgZip)) {
+                $add_str .= $address->orgCity.', ';
+                if (! empty($address->orgZip)) {
                     $add_str .= $address->orgState;
-                    $add_str .= $address->orgZip . ', ';
+                    $add_str .= $address->orgZip.', ';
                 } else {
-                    $add_str .= $address->State . ', ';
+                    $add_str .= $address->State.', ';
                 }
                 $add_str .= 'United States'; // as currently org does not have any country field
                 // if ($address->cntryID == 228) {
@@ -1230,8 +1268,8 @@ if (!function_exists('generateLatLngForAddress')) {
                 // }
             }
             $add_str_encode = urlencode($add_str);
-            $key            = env('GOOGLE_GEOAPI_KEY');
-            $url            = "https://maps.googleapis.com/maps/api/geocode/json?address={$add_str_encode}&key=$key";
+            $key = env('GOOGLE_GEOAPI_KEY');
+            $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$add_str_encode}&key=$key";
             try {
                 $resp_json = file_get_contents($url);
             } catch (Exception $ex) {
@@ -1240,14 +1278,15 @@ if (!function_exists('generateLatLngForAddress')) {
             $resp = json_decode($resp_json, true);
             if ($resp['status'] == 'OK') {
                 // get the important data
-                $lati              = isset($resp['results'][0]['geometry']['location']['lat']) ? $resp['results'][0]['geometry']['location']['lat'] : "";
-                $longi             = isset($resp['results'][0]['geometry']['location']['lng']) ? $resp['results'][0]['geometry']['location']['lng'] : "";
-                $formatted_address = isset($resp['results'][0]['formatted_address']) ? $resp['results'][0]['formatted_address'] : "";
+                $lati = isset($resp['results'][0]['geometry']['location']['lat']) ? $resp['results'][0]['geometry']['location']['lat'] : '';
+                $longi = isset($resp['results'][0]['geometry']['location']['lng']) ? $resp['results'][0]['geometry']['location']['lng'] : '';
+                $formatted_address = isset($resp['results'][0]['formatted_address']) ? $resp['results'][0]['formatted_address'] : '';
                 // verify if data is complete
                 if ($lati && $longi && $formatted_address) {
-                    $address->lati  = $lati;
+                    $address->lati = $lati;
                     $address->longi = $longi;
                     $address->save();
+
                     return true;
                 } else {
                     return false;
@@ -1258,10 +1297,11 @@ if (!function_exists('generateLatLngForAddress')) {
                 // api issue;
             }
         }
+
         return false;
     }
 }
-if (!function_exists('storeLatiLongiFormZip')) {
+if (! function_exists('storeLatiLongiFormZip')) {
     /**
      * store lat long for existing address by zip code
      * @return void
@@ -1270,13 +1310,13 @@ if (!function_exists('storeLatiLongiFormZip')) {
     {
         $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
         foreach ($person_address as $key => $address) {
-            if (!empty($address->zip)) {
+            if (! empty($address->zip)) {
                 $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
-                    ->orWhere('zip', ltrim($address->zip, "0"))->get()->first();
+                    ->orWhere('zip', ltrim($address->zip, '0'))->get()->first();
                 if (empty($zip_lat_lng)) {
                     continue;
                 } else {
-                    $address->lati  = $zip_lat_lng->lat;
+                    $address->lati = $zip_lat_lng->lat;
                     $address->longi = $zip_lat_lng->lng;
                     $address->save();
                     continue;
@@ -1286,7 +1326,7 @@ if (!function_exists('storeLatiLongiFormZip')) {
     }
 }
 
-if (!function_exists('has_org_property')) {
+if (! function_exists('has_org_property')) {
     /**
      * check if org property exist and return its value if found
      * @param  object  $org      org object
@@ -1440,12 +1480,12 @@ if (!function_exists('has_org_property')) {
                 return false;
                 break;
         }
-        return true;
 
+        return true;
     }
 }
 
-if (!function_exists('generateEmailListEventArray')) {
+if (! function_exists('generateEmailListEventArray')) {
     /**
      * get event ids with date and name wise list from event query object.
      * @param  object $event event model object
@@ -1454,40 +1494,41 @@ if (!function_exists('generateEmailListEventArray')) {
     function generateEmailListEventArray($event)
     {
         $ytd_events_date = [];
-        $ids             = [];
-        $date_array      = [];
+        $ids = [];
+        $date_array = [];
         foreach ($event as $id) {
             array_push($ids, $id->eventID);
             $event_type_name = 'NA';
-            if (!empty($id->event_type->etName)) {
+            if (! empty($id->event_type->etName)) {
                 $event_type_name = $id->event_type->etName;
             }
-            $date         = $id->eventStartDate->format('Y-m-d');
+            $date = $id->eventStartDate->format('Y-m-d');
             $date_array[] = $date;
-            $name         = substr($id->eventName, 0, 60);
+            $name = substr($id->eventName, 0, 60);
             if (strlen($name) > 60) {
-                $name .= "...";
+                $name .= '...';
             }
             $display_date = $id->eventStartDate->format(trans('messages.app_params.date_format'));
-            $list_name    = $event_type_name . ': ' . $name . ' - ' . $display_date;
-            $encoding     = mb_detect_encoding($list_name, 'UTF-8, ISO-8859-1, WINDOWS-1252, WINDOWS-1251', true);
+            $list_name = $event_type_name.': '.$name.' - '.$display_date;
+            $encoding = mb_detect_encoding($list_name, 'UTF-8, ISO-8859-1, WINDOWS-1252, WINDOWS-1251', true);
             if ($encoding != 'UTF-8') {
                 $list_name = iconv($encoding, 'UTF-8//IGNORE', $list_name);
             }
             $ytd_events_date[$id->eventID] = ['date' => $date, 'name' => addslashes($list_name)];
         }
-        $min          = min($date_array);
-        $date         = Carbon::createFromFormat('Y-m-d', $min);
-        $min          = [];
-        $min['year']  = $date->format('Y');
+        $min = min($date_array);
+        $date = Carbon::createFromFormat('Y-m-d', $min);
+        $min = [];
+        $min['year'] = $date->format('Y');
         $min['month'] = $date->format('m');
-        $min['day']   = $date->format('d');
-        $max          = max($date_array);
-        $date         = Carbon::createFromFormat('Y-m-d', $max);
-        $max          = [];
-        $max['year']  = $date->format('Y');
+        $min['day'] = $date->format('d');
+        $max = max($date_array);
+        $date = Carbon::createFromFormat('Y-m-d', $max);
+        $max = [];
+        $max['year'] = $date->format('Y');
         $max['month'] = $date->format('m');
-        $max['day']   = $date->format('d');
+        $max['day'] = $date->format('d');
+
         return [
             'events_with_date' => $ytd_events_date,
             'ids'              => $ids,
@@ -1495,7 +1536,7 @@ if (!function_exists('generateEmailListEventArray')) {
         ];
     }
 }
-if (!function_exists('getJavaScriptDate')) {
+if (! function_exists('getJavaScriptDate')) {
     /**
      * return js compactible date from daterangepicker specific date
      * @param  string $date m/d/Y style date
@@ -1505,16 +1546,18 @@ if (!function_exists('getJavaScriptDate')) {
     {
         $date = trim($date);
         $date = Carbon::createFromFormat('m/d/Y', $date);
+
         return $date->format('Y-m-d');
-        $js          = [];
-        $js['year']  = $date->format('Y');
+        $js = [];
+        $js['year'] = $date->format('Y');
         $js['month'] = $date->format('m');
-        $js['day']   = $date->format('d');
+        $js['day'] = $date->format('d');
+
         return $js;
     }
 }
 
-if (!function_exists('replaceAddressWithOrgAddress')) {
+if (! function_exists('replaceAddressWithOrgAddress')) {
     /**
      * replace address string for email builder footer with org address
      * @param  array $item category 6 rows
@@ -1523,52 +1566,54 @@ if (!function_exists('replaceAddressWithOrgAddress')) {
     function replaceAddressWithOrgAddress($item)
     {
         $default = 'Your company, Pier 9, San Francisco, CA 12345';
-        $start   = '<td contenteditable="true" style="text-align:right">';
-        $end     = '</td>';
+        $start = '<td contenteditable="true" style="text-align:right">';
+        $end = '</td>';
         $matches = [];
         // for single line address
         if (strpos($item['html'], $default) !== false) {
             $currentPerson = Person::find(auth()->user()->id);
-            $org           = $currentPerson->defaultOrg;
-            $add_str       = $org->orgAddr1 . ', ';
-            if (!empty($org->orgAddr2)) {
-                $add_str .= $org->orgAddr2 . ', ';
+            $org = $currentPerson->defaultOrg;
+            $add_str = $org->orgAddr1.', ';
+            if (! empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2.', ';
             }
-            $add_str .= $org->orgCity . ', ';
-            if (!empty($org->orgZip)) {
+            $add_str .= $org->orgCity.', ';
+            if (! empty($org->orgZip)) {
                 $add_str .= $org->orgState;
-                $add_str .= $org->orgZip . ', ';
+                $add_str .= $org->orgZip.', ';
             } else {
-                $add_str .= $org->State . ', ';
+                $add_str .= $org->State.', ';
             }
-            $add_str      = rtrim($add_str, ', ');
+            $add_str = rtrim($add_str, ', ');
             $item['html'] = str_replace($default, $add_str, $item['html']);
+
             return $item;
-        } else if (preg_match("#$start(.*)$end#s", $item['html'], $matches)) {
+        } elseif (preg_match("#$start(.*)$end#s", $item['html'], $matches)) {
             // for multiline address first finding if exist then replacing it line by line
             $currentPerson = Person::find(auth()->user()->id);
-            $org           = $currentPerson->defaultOrg;
-            $add_str       = $org->orgAddr1 . ', ';
-            if (!empty($org->orgAddr2)) {
-                $add_str .= $org->orgAddr2 . ', ';
+            $org = $currentPerson->defaultOrg;
+            $add_str = $org->orgAddr1.', ';
+            if (! empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2.', ';
             }
-            $line1   = $add_str;
-            $add_str = $org->orgCity . ', ';
-            if (!empty($org->orgZip)) {
+            $line1 = $add_str;
+            $add_str = $org->orgCity.', ';
+            if (! empty($org->orgZip)) {
                 $add_str .= $org->orgState;
-                $add_str .= $org->orgZip . ', ';
+                $add_str .= $org->orgZip.', ';
             } else {
-                $add_str .= $org->State . ', ';
+                $add_str .= $org->State.', ';
             }
-            $add_str      = rtrim($add_str, ', ');
-            $line2        = $add_str;
-            $default      = [];
-            $add_str      = [];
-            $default[]    = 'Your company, Pier 9,';
-            $default[]    = ' San Francisco, CA 12345';
-            $add_str[]    = $line1;
-            $add_str[]    = $line2;
+            $add_str = rtrim($add_str, ', ');
+            $line2 = $add_str;
+            $default = [];
+            $add_str = [];
+            $default[] = 'Your company, Pier 9,';
+            $default[] = ' San Francisco, CA 12345';
+            $add_str[] = $line1;
+            $add_str[] = $line2;
             $item['html'] = str_replace($default, $add_str, $item['html']);
+
             return $item;
         } else {
             // return address row as itis
@@ -1577,7 +1622,7 @@ if (!function_exists('replaceAddressWithOrgAddress')) {
     }
 }
 
-if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
+if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
     /**
      * replace social icon links with actual links, hides if link is not set.
      * @param  array $item category 6 rows
@@ -1588,9 +1633,9 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
         $parsed = new Dom;
         $parsed->load($item['html']);
         //find all anchor tags
-        $a             = $parsed->find('a');
+        $a = $parsed->find('a');
         $currentPerson = Person::find(auth()->user()->id);
-        $org           = $currentPerson->defaultOrg;
+        $org = $currentPerson->defaultOrg;
         foreach ($a as $key => $value) {
             $tag = $value->getTag();
             //get anchor tag html attributes
@@ -1613,7 +1658,7 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'google-plus':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (!empty($org->googleURL)) {
+                    if (! empty($org->googleURL)) {
                         $tag->setAttribute('href', $org->googleURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -1624,7 +1669,7 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'facebook':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (!empty($org->facebookURL)) {
+                    if (! empty($org->facebookURL)) {
                         $tag->setAttribute('href', $org->facebookURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -1635,8 +1680,8 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'twitter':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (!empty($org->orgHandle)) {
-                        $tag->setAttribute('href', 'https://twitter.com/' . str_replace("@", '', $org->orgHandle));
+                    if (! empty($org->orgHandle)) {
+                        $tag->setAttribute('href', 'https://twitter.com/'.str_replace('@', '', $org->orgHandle));
                     } else {
                         $style = $tag->getAttribute('style');
                         $style = $style['value'];
@@ -1646,7 +1691,7 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'linkedin':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (!empty($org->linkedinURL)) {
+                    if (! empty($org->linkedinURL)) {
                         $tag->setAttribute('href', $org->linkedinURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -1674,12 +1719,13 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
         //save output
         ob_start();
         echo $parsed;
-        $str          = ob_get_clean();
+        $str = ob_get_clean();
         $item['html'] = $str;
+
         return $item;
     }
 }
-if (!function_exists('sendGetToWakeUpDyno')) {
+if (! function_exists('sendGetToWakeUpDyno')) {
     function sendGetToWakeUpDyno()
     {
         // API URL
@@ -1687,17 +1733,16 @@ if (!function_exists('sendGetToWakeUpDyno')) {
         if (env('APP_ENV') == 'production') {
             $base_url = env('QUEUE_DYNO_URL_LIVE');
         }
-        $url = $base_url . '/trigger-dyno';
-        $ch  = curl_init();
+        $url = $base_url.'/trigger-dyno';
+        $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
         $output = curl_exec($ch); //contain string
         curl_close($ch); //close
-
     }
 }
 
-if (!function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
+if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
     /**
      * replace social icon links with actual links, hides if link is not set.
      * @param  array $item category 6 rows
@@ -1708,24 +1753,24 @@ if (!function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
         $parsed = new Dom;
         $parsed->load($campaign->content);
         //find all anchor tags
-        $a         = $parsed->find('a');
+        $a = $parsed->find('a');
         $link_list = [];
         foreach ($a as $key => $value) {
             $tag = $value->getTag();
             //get anchor tag html attributes
             $link_list[] = $tag->getAttribute('href');
             // $class = $class['value'];
-
         } //foreach end
         $links = [];
-        if (!empty($link_list)) {
+        if (! empty($link_list)) {
             foreach ($link_list as $key => $value) {
-                if ($value['value'] == '#' || !filter_var($value['value'], FILTER_VALIDATE_URL)) {
+                if ($value['value'] == '#' || ! filter_var($value['value'], FILTER_VALIDATE_URL)) {
                     continue;
                 }
                 $links[$value['value']] = $value['value'];
             }
         }
+
         return $links;
     }
 }

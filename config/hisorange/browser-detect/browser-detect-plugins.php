@@ -6,9 +6,8 @@
  * @var array
  */
 return [
-    
+
     /**
-     * @package garetjax/phpbrowscap
      * @link    https://github.com/GaretJax/phpbrowscap
      */
     'hisorange\BrowserDetect\Plugin\Browscap'   => [
@@ -38,21 +37,21 @@ return [
         /**
          * Flag to disable the automatic interval based update.
          *
-         * @var boolean
+         * @var bool
          */
         'doAutoUpdate'  => true,
 
         /**
          * The update interval in seconds.
          *
-         * @var integer
+         * @var int
          */
         'updateInterval'=> 432000, // 5 days
 
         /**
          * The next update interval in seconds in case of an error.
          *
-         * @var integer
+         * @var int
          */
         'errorInterval' => 7200, // 2 hours
 
@@ -66,27 +65,25 @@ return [
         /**
          * The timeout for the requests, when downloading th browscap.ini.
          *
-         * @var integer
+         * @var int
          */
         'timeout'       => 5,
 
     ],
 
     /**
-     * @package yzalis/ua-parser
      * @link    https://github.com/yzalis/UAParser
      */
     //'hisorange\BrowserDetect\Plugin\UAParser'	=> [
-        /**
-         * Path to regexps yaml file, if null gona use the package's default.
-         *
-         * @var null|string
-         */
+    /**
+     * Path to regexps yaml file, if null gona use the package's default.
+     *
+     * @var null|string
+     */
     //	'regexesPath' 	=> null,
     //],
 
     /**
-     * @package mobiledetect/mobiledetectlib (v2.*)
      * @link    https://github.com/serbanghita/Mobile-Detect
      */
     'hisorange\BrowserDetect\Plugin\MobileDetect2' => [
@@ -97,7 +94,7 @@ return [
          * @var array
          */
         'fake_headers'  => [
-            'HTTP_FAKE_HEADER' => 'HiSoRange\Browser'
+            'HTTP_FAKE_HEADER' => 'HiSoRange\Browser',
         ],
     ],
 
@@ -108,6 +105,5 @@ return [
      */
     // Uncomment this value to enable the plugin.
     'hisorange\BrowserDetect\Plugin\UserAgentStringApi' => [],
-    
 
 ];

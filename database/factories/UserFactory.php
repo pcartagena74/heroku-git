@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,21 +14,20 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker, $params) {
-
+$factory->define(App\Models\User::class, function (Faker $faker, $params) {
     try {
         $p = $params['person'];
-    } catch(Exception $e){
+    } catch (Exception $e) {
         $p = null;
     }
 
-    if($p !== null) {
+    if ($p !== null) {
         return [
             'name' => $p->login,
             'email' => $p->login,
             'login' => $p->login,
             'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-            'remember_token' => str_random(10),
+            'remember_token' => Str::random(10),
         ];
     } else {
         $e = $faker->unique()->safeEmail;
@@ -37,7 +37,7 @@ $factory->define(App\User::class, function (Faker $faker, $params) {
             'email' => $e,
             'login' => $e,
             'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-            'remember_token' => str_random(10),
+            'remember_token' => Str::random(10),
         ];
     }
 });

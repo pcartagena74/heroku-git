@@ -7,7 +7,7 @@
 //Session::put('become', $new_id);
 //Session::put('prior_id', auth()->user()->id);
 
-use App\Person;
+use App\Models\Person;
 
 // Read in session variables
 $become = Session::get('become');

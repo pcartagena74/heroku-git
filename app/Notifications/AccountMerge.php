@@ -2,13 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Event;
-use App\Org;
-use App\Person;
+use App\Models\Event;
+use App\Models\Org;
+use App\Models\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class AccountMerge extends Notification
 {

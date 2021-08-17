@@ -2,11 +2,17 @@
 /**
  * Comment: This template is used to show a member profile --> either self or, when authorized, others
  * Created: 2/9/2017
+ *
+ * @var $profile
+ * @var $em_cnt
+ * @var $ad_cnt
+ * @var $prefixes
+ *
  */
 
 use Illuminate\Support\Facades\DB;
 
-$currentPerson = App\Person::find(auth()->user()->id);
+$currentPerson = App\Models\Person::find(auth()->user()->id);
 $string = '';
 $profile_script_url = env('APP_URL') . "/profile/$profile->personID";
 $op_script_url = env('APP_URL') . "/op/$profile->personID";

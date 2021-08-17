@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Importdetail;
+use App\Models\Person;
 use App\Notifications\MemeberImportExcelNotification;
-use App\Person;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,6 +17,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
 
     public $person;
     public $import_detail;
+
     /**
      * Create a new job instance.
      *
@@ -24,7 +25,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
      */
     public function __construct(Person $person, Importdetail $import_detail)
     {
-        $this->person        = $person;
+        $this->person = $person;
         $this->import_detail = $import_detail;
     }
 

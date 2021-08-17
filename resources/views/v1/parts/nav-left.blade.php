@@ -19,7 +19,7 @@
 //$org_count = $_SESSION['org_count'];
 
 try {
-    $currentPerson = App\Person::find(auth()->user()->id);
+    $currentPerson = App\Models\Person::find(auth()->user()->id);
     $currentOrg    = $currentPerson->defaultOrg;
 } catch(Exception $e) {
     request()->session()->flash('alert-warning', trans('messages.errors.timeout'));
@@ -33,11 +33,13 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
 //  LinkedIN image access seems to "timeout" after 2-3 months.
 //  This prevents the display of a broken image
 
-try{
-    $x = getimagesize($currentPerson->avatarURL);
-} catch (Exception $exception) {
-    $currentPerson->avatarURL = null;
-    $currentPerson->save();
+if($currentPerson->avatarURL !== null){
+    try{
+        $x = getimagesize($currentPerson->avatarURL);
+    } catch (Exception $exception) {
+        $currentPerson->avatarURL = null;
+        $currentPerson->save();
+    }
 }
 
 
@@ -97,7 +99,7 @@ try{
                                 </li>
                                 @if (count($currentPerson->orgs)>1)
                                     <li>
-                                        <a href="{{ url('orgsettings')}}">
+                                        <a href="{{ url('orgs/my')}}">
                                             @lang('messages.nav.ms_org')
                                         </a>
                                     </li>
@@ -222,21 +224,14 @@ try{
                                         @lang('messages.nav.ev_add')
                                     </a>
                                 </li>
-                                @if(Entrust::hasRole('Developer'))
                                 <li>
                                     <a href="{{ url('eventstats')}}">
                                         @lang('messages.nav.ev_stats')
                                     </a>
                                 </li>
-                                @endif
                                 <li>
                                     <a href="{{ url('locations')}}">
                                         @lang('messages.nav.ev_loc')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('group')}}" id="grp">
-                                        @lang('messages.nav.ev_grp')
                                     </a>
                                 </li>
                                 <li>

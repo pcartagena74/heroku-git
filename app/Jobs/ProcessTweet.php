@@ -2,18 +2,19 @@
 
 namespace App\Jobs;
 
+use App\Models\Tweet;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Tweet;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessTweet implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $tweet;
+
     /**
      * Create a new job instance.
      *
@@ -45,7 +46,7 @@ class ProcessTweet implements ShouldQueue
                 'user_id' => $user_id,
                 'user_screen_name' => $user_screen_name,
                 'user_avatar_url' => $user_avatar_url,
-                'approved' => 0
+                'approved' => 0,
             ]);
         }
     }

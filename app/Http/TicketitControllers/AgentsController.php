@@ -5,9 +5,9 @@ namespace Kordy\Ticketit\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models\Agent;
 use Kordy\Ticketit\Models\Setting;
-use Kordy\Ticketit\Helpers\LaravelVersion;
 
 class AgentsController extends Controller
 {
@@ -27,15 +27,15 @@ class AgentsController extends Controller
 
     public function store(Request $request)
     {
-    	$rules = [
+        $rules = [
             'agents' => 'required|array|min:1',
         ];
 
-        if(LaravelVersion::min('5.2')){
-        	$rules['agents.*'] = 'integer|exists:users,id';
+        if (LaravelVersion::min('5.2')) {
+            $rules['agents.*'] = 'integer|exists:users,id';
         }
 
-    	$this->validate($request, $rules);
+        $this->validate($request, $rules);
 
         $agents_list = $this->addAgents($request->input('agents'));
         $agents_names = implode(',', $agents_list);

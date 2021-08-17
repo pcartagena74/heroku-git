@@ -1,18 +1,18 @@
-<?php
+@php
 /**
  * Comment: Registration form (multiple ticket quantities)
  * Created: 8/24/2017
  * Updated: October 2018 - This is the one in use (not register_new)
  */
 
-use Illuminate\Support\Facades\DB;
-use App\Org;
-use App\Person;
-use App\OrgPerson;
-use App\Location;
-use App\Registration;
-use App\Ticket;
+use App\Models\Location;
+use App\Models\Org;
+use App\Models\OrgPerson;
+use App\Models\Person;
+use App\Models\Registration;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 $org = Org::find($event->orgID);
 if (Auth::check()) {
@@ -20,7 +20,7 @@ if (Auth::check()) {
     $person = Person::find(auth()->user()->id);
     $op = OrgPerson::where([
         ['personID', '=', $person->personID],
-        ['orgID', '=', $org->orgID]
+        ['orgID', '=', $org->orgID],
     ])->first();
     $registration = new Registration;
     if ($person->is_member($org->orgID)) {
@@ -40,13 +40,13 @@ $loc = Location::find($event->locationID);
 $prefixes = DB::table('prefixes')->select('prefix', 'prefix')->get();
 $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
     $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
-        return trans('messages.fields.prefixes.' . $item);
+        return trans('messages.fields.prefixes.'.$item);
     })->toArray();
 
 $industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
 $industry_array = ['' => trans('messages.fields.industries.select')] +
     $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
-        return trans('messages.fields.industries.' . $item);
+        return trans('messages.fields.industries.'.$item);
     })->toArray();
 
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
@@ -83,12 +83,12 @@ $today = Carbon\Carbon::now();
 $tix_dropdown = $tkts->pluck('ticketLabel', 'ticketID');
 
 $experience_choices = [
-    '0' => '0 ' . trans('messages.fields.years'),
-    '1-4' => '1-4 ' . trans('messages.fields.years'),
-    '5-9' => '5-9 ' . trans('messages.fields.years'),
-    '10-14' => '10-14 ' . trans('messages.fields.years'),
-    '15-19' => '15-19 ' . trans('messages.fields.years'),
-    '20+' => '20+ ' . trans('messages.fields.years'),
+    '0' => '0 '.trans('messages.fields.years'),
+    '1-4' => '1-4 '.trans('messages.fields.years'),
+    '5-9' => '5-9 '.trans('messages.fields.years'),
+    '10-14' => '10-14 '.trans('messages.fields.years'),
+    '15-19' => '15-19 '.trans('messages.fields.years'),
+    '20+' => '20+ '.trans('messages.fields.years'),
 ];
 
 //var_dump(Session::all());
@@ -97,7 +97,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
     $should_skip = 1;
     $orig_q = 0;
 }
-?>
+@endphp
 @extends('v1.layouts.no-auth')
 
 @section('content')
@@ -156,7 +156,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
         @for($j=1; $j<=$q; $j++)
             <?php
             $i++;
-            $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+            $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
             if ($q > 1 && $should_skip) {
                 $orig_q = $q;
                 $q = 1;
@@ -343,8 +343,8 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                         Laravel help re: multiple repeating form elements with variable model
                         --}}
                         <?php
-                        if (old("certifications" . $i_cnt)) {
-                            $selected = old("certifications" . $i_cnt);
+                        if (old('certifications'.$i_cnt)) {
+                            $selected = old('certifications'.$i_cnt);
                         } elseif ($person->certifications) {
                             $selected = explode(',', $person->certifications);
                         } else {
@@ -469,8 +469,8 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                     <br/>
                 @endif
                 <?php
-                if (old("affiliation" . $i_cnt)) {
-                    $selected = old("affiliation" . $i_cnt);
+                if (old('affiliation'.$i_cnt)) {
+                    $selected = old('affiliation'.$i_cnt);
                 } elseif ($person->affiliation) {
                     $selected = explode(',', $person->affiliation);
                 } else {
@@ -494,8 +494,8 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                     <br/>
                     <small>@lang('messages.tooltips.accommodate')</small>
                     <?php
-                    if (old("allergenInfo" . $i_cnt)) {
-                        $selected = old("allergenInfo" . $i_cnt);
+                    if (old('allergenInfo'.$i_cnt)) {
+                        $selected = old('allergenInfo'.$i_cnt);
                     } elseif ($person->allergenInfo) {
                         $selected = explode(',', $person->allergenInfo);
                     } else {
@@ -695,7 +695,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
 
                     @for($i=1; $i<=$quantity; $i++)
 <?php
-                $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+                $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
 ?>
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
@@ -1139,7 +1139,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
 <?php
-                    $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+                    $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
 ?>
                     percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();

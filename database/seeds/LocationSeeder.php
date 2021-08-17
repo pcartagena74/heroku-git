@@ -11,7 +11,6 @@ class LocationSeeder extends Seeder
      */
     public function run()
     {
-
         $stmt = "SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'";
 
         $sql = "INSERT INTO `event-location`

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Campaign;
+use App\Models\Campaign;
 use App\Models\EmailQueue;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -16,9 +16,10 @@ use Mailgun\Mailgun;
 class SendCampaignEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $tries        = 1;
-    public $timeout      = 120;
+    public $tries = 1;
+    public $timeout = 120;
     public $display_name = 'Campaign Email';
+
     /**
      * Create a new job instance.
      *
@@ -42,16 +43,16 @@ class SendCampaignEmail implements ShouldQueue
         })->chunk(100, function ($data) {
             foreach ($data as $key => $value) {
                 $campaign = Campaign::where('campaignID', $value->campaign_id)->get()->first();
-                $html     = replaceUserDataInEmailTemplate($value->email_id, $campaign);
+                $html = replaceUserDataInEmailTemplate($value->email_id, $campaign);
                 $reply_to = $campaign->replyEmail;
                 if (empty($reply_to)) {
                     $reply_to = $campaign->fromEmail;
                 }
                 try {
-                    $mg = Mailgun::create(env("MAILGUN_API_KEY")); // For US servers
+                    $mg = Mailgun::create(env('MAILGUN_API_KEY')); // For US servers
                     //first domain parameter requires only domain in local we have to put api too which wont work here
                     // $response = $mg->messages()->send('sandboxdbb4c7116f3a4e0d9ea8a9026d387e02.mailgun.org', [
-                    if (!empty(env("APP_ENV")) && (env("APP_ENV") == 'local' || env("APP_ENV") == 'test')) {
+                    if (! empty(env('APP_ENV')) && (env('APP_ENV') == 'local' || env('APP_ENV') == 'test')) {
                         $mail = Mail::raw($html, function ($message) use ($campaign, $value, $html) {
                             $message->from($campaign->fromEmail);
                             $message->to($value->email_id);
@@ -60,15 +61,15 @@ class SendCampaignEmail implements ShouldQueue
                         }
                         );
                         // $value->failed    = true;
-                        $value->sent      = 1;
+                        $value->sent = 1;
                         $value->delivered = 1;
-                        $value->open      = rand(0, 1);
-                        $value->click     = rand(0, 1);
+                        $value->open = rand(0, 1);
+                        $value->click = rand(0, 1);
                         $value->save();
                         continue;
                     }
 
-                    $response = $mg->messages()->send(env("MAILGUN_DOMAIN"), [
+                    $response = $mg->messages()->send(env('MAILGUN_DOMAIN'), [
                         'from'    => $campaign->fromEmail,
                         'to'      => $value->email_id,
                         'subject' => $campaign->subject,
@@ -76,11 +77,11 @@ class SendCampaignEmail implements ShouldQueue
                     ]);
                     if (empty($response->getId())) {
                         $value->failed = true;
-                        $value->sent   = 1;
+                        $value->sent = 1;
                         $value->save();
                     } else {
                         $value->message_id = str_replace(['<', '>'], '', $response->getId());
-                        $value->sent       = 1;
+                        $value->sent = 1;
                         $value->save();
                     }
                 } catch (\Exception $ex) {

@@ -8,7 +8,7 @@ $discount_headers = ['#', 'Discount Code', 'Discount Percent', 'Flat Amount'];
 
 $topBits = '';
 
-$currentPerson = App\Person::find(auth()->user()->id);
+$currentPerson = App\Models\Person::find(auth()->user()->id);
 $currentOrg    = $currentPerson->defaultOrg;
 ?>
 

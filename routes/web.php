@@ -34,15 +34,16 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
  */
 Route::get('trigger-dyno', 'DynoController@index');
 Route::get('/preview', function () {
-    $e    = \App\Event::find(319);
+    $e = \App\Models\Event::find(319);
     $note = new \App\Notifications\EventICSNote($e);
+
     return $note->toMail('blah@test.com');
 });
 
 Route::get('setlocale/{locale}', function ($locale) {
     if (in_array($locale, \Config::get('app.locales'))) {
         if (Auth::check()) {
-            $user         = Auth::user();
+            $user = Auth::user();
             $user->locale = $locale;
             $user->update();
         }
@@ -51,6 +52,7 @@ Route::get('setlocale/{locale}', function ($locale) {
     }
     session(['locale' => $locale]);
     Cookie::queue('locale', $locale, 60);
+
     return redirect()->back();
 });
 
@@ -83,8 +85,7 @@ Route::get('/mail', function () {
 })->name('mail');
 Route::get('/mtgs', function () {
     return view('v1.public_pages.details');
-})->name('mtgs')
-;
+})->name('mtgs');
 Route::get('/pmi_lookup/{org}', 'OrgPersonController@index');
 Route::post('/pmi_lookup', 'OrgPersonController@find');
 Route::get('/pmi_account/{person}', 'OrgPersonController@show');
@@ -114,6 +115,7 @@ Route::post('/record_attendance/{event}', 'AuthCheckinController@store');
 
 Route::get('/storage/events/{filename}', function ($filename) {
     $filePath = Flysystem::connection('awss3')->get($filename);
+
     return redirect($filePath);
 });
 
@@ -143,8 +145,10 @@ Route::post('/newuser', 'UserController@store');
 Route::get('/become', 'ActivityController@create');
 Route::post('/become', 'ActivityController@become');
 Route::get('/panel', 'AdminController@index');
-Route::get('/create_organization', 'AdminController@create');
-Route::post('/save_organization', 'AdminController@store');
+Route::post('/panel', 'AdminController@store');
+Route::post('/panel/update', 'AdminController@update');         // VUEJS Route
+Route::get('/create_organization', 'OrgController@create');
+Route::post('/save_organization', 'OrgController@store');
 
 // My Profile / Member Editing
 // ---------------------
@@ -153,8 +157,8 @@ Route::get('/profile/linkedin', 'PersonController@redirectToLinkedIn');
 Route::get('/profile/linkedin/callback', 'PersonController@handleLinkedInCallback');
 
 Route::get('/profile/{id}/{modal?}', 'PersonController@show')->name('showMemberProfile');
-Route::post('/profile/{id}', 'PersonController@update'); // Ajax
-Route::post('/op/{id}', 'PersonController@update_op'); // Ajax
+Route::post('/profile/{id}', 'PersonController@update');        // Ajax
+Route::post('/op/{id}', 'PersonController@update_op');          // Ajax
 Route::post('/address/{id}', 'AddressController@update');
 Route::post('/addresses/create', 'AddressController@store');
 Route::post('/locations/create', 'LocationController@store');
@@ -174,23 +178,23 @@ Route::get('/u/{person}/{email}', 'PersonController@undo_login')->name('UndoLogi
 // Organizational Routes
 // ---------------------
 // Settings
-Route::get('/orgsettings', 'OrgController@index'); //updated for org listing if available
+Route::get('/orgs/my', 'OrgController@index');                  //updated for org listing if available
 Route::get('/orgsettings/{id}', 'OrgController@show');
-Route::post('/orgsettings/{id}', 'OrgController@update'); // Ajax
+Route::post('/orgsettings/{id}', 'OrgController@update');           // Ajax
 Route::get('/eventdefaults', 'OrgController@event_defaults');
 Route::post('/update-default-org', 'OrgController@updateDefaultOrg');
-Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update'); // Ajax
+Route::post('/orgdiscounts/{id}', 'OrgDiscountController@update');  // Ajax
 
 Route::get('/load_data', 'UploadController@index');
 Route::post('/load_data', 'UploadController@store');
 
 Route::get('/role_mgmt/{query?}', 'RoleController@index');
 Route::post('/role_search', 'RoleController@search');
-Route::post('/role/{person}/{role}', 'RoleController@update'); // Ajax
+Route::post('/role/{person}/{role}', 'RoleController@update');      // Ajax
 
 Route::post('/eventtype/create', 'EventTypeController@store');
 Route::delete('/eventtype/{etID}/delete', 'EventTypeController@destroy');
-Route::post('/eventtype/{etID}', 'EventTypeController@update'); // Ajax
+Route::post('/eventtype/{etID}', 'EventTypeController@update');    // Ajax
 
 // Member Routes
 // ---------------------
@@ -202,7 +206,7 @@ Route::post('/mbrreport/{id}', 'ReportController@update');
 Route::get('/autocomplete/{string?}', 'MergeController@query')->name('autocomplete'); // Ajax
 Route::post('/merge/{model_code}', 'MergeController@getmodel')->name('step1');
 Route::post('/execute_merge', 'MergeController@store')->name('step2');
-Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity'); // Ajax
+Route::get('/activity/{id}', 'ActivityController@show')->name('modal_activity');      // Ajax
 Route::get('/eventstats', 'EventStatsController@index');
 
 Route::get('/search/{query?}', 'PersonController@index2');
@@ -258,7 +262,7 @@ Route::get('/eventcopy/{slug}', 'EventCopyController@show');
 Route::post('/upload/{folder}/{filetype}', 'AssetController@ajax_store'); // Ajax
 
 // Public API Routes that circumvent mCentric navigation, etc.
-Route::get('/eventlist/{orgID}/{past}/{cal?}/{etID?}', 'EventAPIController@show');
+Route::get('/eventlist/{orgID}/{past}/{cal?}/{etID?}/{override?}', 'EventAPIController@show');
 Route::get('/ticketlist/{eventslug}/{override?}', 'EventController@ticket_listing');
 Route::get('/eventics/{orgID}/{etID?}/{override?}', 'EventController@ics_listing');
 
@@ -338,7 +342,8 @@ Route::get('/list_campaign', 'CampaignController@listCampaign');
 Route::get('/testlogin', 'Auth\LoginController@showLoginForm');
 //Route::post('/testlogin', 'Auth\LoginController@showLoginForm');
 Route::get('/mytest', function () {
-    $events = App\Event::all();
+    $events = App\Models\Event::all();
+
     return view('v1.auth_pages.welcome', compact('events'));
 });
 
@@ -348,13 +353,14 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
     foreach ($request->all() as $input_key => $input_val) {
         if (strpos($input_key, 'approval-status-') === 0) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
-            $tweet    = App\Tweet::where('id', $tweet_id)->first();
+            $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
                 $tweet->approved = (int) $input_val;
                 $tweet->save();
             }
         }
     }
+
     return redirect()->back();
 }]);
 
@@ -365,7 +371,7 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 Auth::routes();
 
 Route::get('ste2', function () {
-    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
+    Mail::raw('Sending email is easy from '.env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
         $message->to('pcartagena@partners.org');
@@ -376,7 +382,7 @@ Route::get('snaptest', function () {
     // $snap = App::make('snappy.pdf');
     // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
     // return $snap->inline();
-    return PDF::loadFile(env('APP_URL') . "/show_orig/159")->inline('blah.pdf');
+    return PDF::loadFile(env('APP_URL').'/show_orig/159')->inline('blah.pdf');
 });
 
 Route::get('library', 'LibraryController@index');

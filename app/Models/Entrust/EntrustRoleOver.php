@@ -1,11 +1,13 @@
-<?php 
+<?php
 
 namespace App\Models\Entrust;
 
-use Zizaco\Entrust\Contracts\EntrustRoleInterface;
-use Zizaco\Entrust\Traits\EntrustRoleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+//use Zizaco\Entrust\Contracts\EntrustRoleInterface;
+use Shanmuga\LaravelEntrust\Contracts\LaravelEntrustRoleInterface as EntrustRoleInterface;
+//use Zizaco\Entrust\Traits\EntrustRoleTrait;
+use Shanmuga\LaravelEntrust\Traits\LaravelEntrustRoleTrait as EntrustRoleTrait;
 
 class EntrustRoleOver extends Model implements EntrustRoleInterface
 {
@@ -29,8 +31,8 @@ class EntrustRoleOver extends Model implements EntrustRoleInterface
         $this->table = Config::get('entrust.roles_table');
     }
 
-    public function toggle($id,$touch = null){
+    public function toggle($id, $touch = null)
+    {
         dd('here');
     }
-
 }

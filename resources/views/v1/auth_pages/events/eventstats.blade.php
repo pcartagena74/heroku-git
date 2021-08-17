@@ -20,6 +20,9 @@ if(count($simple) > 15){
 @extends('v1.layouts.auth')
 
 @section('content')
+    <p>
+        @lang('messages.instructions.zero_att')
+    </p>
     @include('v1.parts.datatable', ['headers' => $simple_header, 'data' => $simple->toArray(), 'scroll' => $scroll])
 @endsection
 

@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: a shortcut to get help text out there
  * Created: 12/4/2017
@@ -12,7 +12,7 @@ if(!isset($p)){
 if(!isset($c)){
     $c = "purple";
 }
-?>
+@endphp
 <a data-toggle="tooltip" title="{{ $title }}" data-placement="{{ $p }}">
     <i class="fas fa-info-square {{ $c }}"></i>
 </a>

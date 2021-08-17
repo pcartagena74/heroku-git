@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Org;
-use App\Person;
+use App\Models\Org;
+use App\Models\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class UndoLoginChange extends Notification
 {
@@ -23,7 +23,7 @@ class UndoLoginChange extends Notification
      */
     public function __construct(Person $person)
     {
-        $this->person     = $person;
+        $this->person = $person;
         $this->name = $person->showDisplayName();
     }
 
@@ -49,6 +49,7 @@ class UndoLoginChange extends Notification
         $o = Org::find($this->person->defaultOrgID);
         $oname = $o->orgName;
         $new_email = $this->person->login;
+
         return (new MailMessage)
             ->greeting(trans('messages.notifications.hello', ['firstName' => $this->name]))
             ->subject(trans('messages.notifications.UNDO.subject'))

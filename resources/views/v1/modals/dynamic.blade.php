@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment:  This is a modal intended to load any content
  * Created: 10/22/2017
@@ -15,7 +15,8 @@ if(!isset($url)){
     $url = '';
 }
 
-?>
+@endphp
+
 <div class="modal fade" id="dynamic_modal" tabindex="-1" role="dialog" aria-labelledby="dynamic_label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

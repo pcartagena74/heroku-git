@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Org;
-use App\Permission;
-use App\Person;
-use App\Role;
-use App\User;
+use App\Models\Org;
+use App\Models\Permission;
+use App\Models\Person;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,58 +21,19 @@ class RoleController extends Controller
 
     protected function role_bits()
     {
-        $topBits             = [];
-        $this->currentPerson = Person::find(auth()->user()->id);
+        $topBits = [];
+        $p = $this->currentPerson = Person::find(auth()->user()->id);
 
-        $org = Org::find($this->currentPerson->defaultOrgID);
-
-        $board = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 1], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $speaker = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 2], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $events = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 3], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $vols = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 4], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $spkvol = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 6], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $round = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 7], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $admin = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 8], ['orgID', '=', $org->orgID]]);
-        })->count();
-
-        $mktg = Person::whereHas('orgperson', function ($q) use ($org) {
-            $q->where('orgID', '=', $org->orgID);
-        })->whereHas('roles', function ($q) use ($org) {
-            $q->where([['id', '=', 10], ['orgID', '=', $org->orgID]]);
-        })->count();
+        $board = count_roles(1);
+        $speaker = count_roles(2);
+        $events = count_roles(3);
+        $vols = count_roles(4);
+        // Room for growth should another role be needed at id=5
+        $spkvol = count_roles(6);
+        $round = count_roles(7);
+        $admin = count_roles(8);
+        $mktg = count_roles(9);
+        // ID 10 is the Developer role which is not advertised/counted
 
         array_push($topBits, [1, trans('messages.topBits.board'), $board, '', '', '']);
         array_push($topBits, [1, trans('messages.topBits.mktg'), $mktg, '', '', '']);
@@ -83,74 +44,50 @@ class RoleController extends Controller
         array_push($topBits, [1, trans('messages.topBits.speaker'), $speaker, '', '', '', 2]);
         array_push($topBits, [1, trans('messages.topBits.admin'), $admin, '', '', '']);
 
-        return ($topBits);
+        return $topBits;
     }
 
     public function index($query = null)
     {
         // responds to GET /role_mgmt
-        $topBits             = $this->role_bits();
-        $this->currentPerson = Person::find(auth()->user()->id);
-        $org                 = Org::find($this->currentPerson->defaultOrgID);
-        $roles               = Role::where([
-            ['orgID', '=', $org->orgID],
-            ['name', '!=', $org->orgName],
-        ])
-        // This line is to prevent the display of roles with relevant ID.  0 blocks nothing...
-            ->whereNotIn('id', [0])
+        $topBits = $this->role_bits();
+        $p = $this->currentPerson = Person::find(auth()->user()->id);
+        $org = Org::find($this->currentPerson->defaultOrgID);
+        $roles = Role::where('id', '<=', 10)
+            // This line is to prevent the display of roles with relevant ID.  0 blocks nothing...
+            ->whereNotIn('id', [0, 5])
             ->with('permissions')
             ->get();
 
         $permissions = Permission::all();
-        $persons     = null;
+        $persons = null;
 
-        //DB::enableQueryLog();
+        // DB::enableQueryLog();
 
         if ($query !== null) {
-            // optimized below code, added check for that org user and their roles would be shown. 
-            // $persons = Person::whereHas('orgs', function ($q) {
-            //     // $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
-            // })->where(function ($q) use ($query) {
-            //     $q->whereHas('roles', function ($q) use ($query) {
-            //         $q->where('roles.name', 'LIKE', "%$query%")
-            //             ->where('orgID', $this->currentPerson->defaultOrgID);
-            //     })->orWhere('person.firstName', 'LIKE', "%$query%")
-            //         ->orWhere('lastName', 'LIKE', "%$query%")
-            //         ->orWhere('login', 'LIKE', "%$query%")
-            //         ->orWhere('person.personID', 'LIKE', "%$query%")
-            //         ->orWhereHas('orgperson', function ($q) use ($query) {
-            //             $q->where('OrgStat1', 'LIKE', "%$query%");
-            //         })->orWhereHas('emails', function ($q) use ($query) {
-            //         $q->where('emailADDR', 'LIKE', "%$query%");
-            //     });
-            // })
-            //     ->join('org-person as op', 'op.personID', '=', 'person.personID')
-            //     ->where('defaultOrgID', $this->currentPerson->defaultOrgID)
-            //     ->select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
-            //     ->with('roles')->get();
-            
-
-            $persons = Person::select(DB::raw('person.personID, person.lastName, person.firstName, person.login, op.OrgStat1'))
-                ->leftJoin('person-email as pe', 'pe.personID', '=', 'person.personID')
-                ->leftJoin('org-person as op', 'op.personID', '=', DB::raw('person.personID and op.orgID = ' . $this->currentPerson->defaultOrgID))
-                ->leftJoin('role_user as ru', 'ru.user_id', '=', DB::raw('person.personID AND ru.orgID = ' . $this->currentPerson->defaultOrgID . ' AND EXISTS (select roles.name from roles where roles.name ="%' . $query . '%")'))
-                ->orWhere(function ($q) use ($query) {
-                    $q->orWhere('person.firstName', 'LIKE', "%$query%")
-                        ->orWhere('person.lastName', 'LIKE', "%$query%")
-                        ->orWhere('person.login', 'LIKE', "%$query%")
-                        ->orWhere('person.personID', 'LIKE', "%$query%")
-                        ->orWhere('pe.emailADDR', 'LIKE', "%$query%")
-                        ->orWhere('op.OrgStat1', 'LIKE', "%$query%");
-                })->with('roles')->get();
+            $persons = Person::orWhere('firstName', 'LIKE', "%$query%")
+                ->orWhere('lastName', 'LIKE', "%$query%")
+                ->orWhere('login', 'LIKE', "%$query%")
+                ->orWhere('personID', 'LIKE', "%$query%")
+                ->orWhereHas('orgperson', function ($q) use ($query) {
+                    $q->where('OrgStat1', 'LIKE', "%$query%");
+                })
+                ->orWhereHas('emails', function ($q) use ($query) {
+                    $q->where('emailADDR', 'LIKE', "%$query%");
+                })
+                ->with('roles', 'orgperson')
+                ->get();
         }
 
-        return view('v1.auth_pages.organization.role_mgmt_search', compact('org', 'roles', 'permissions', 'persons', 'topBits'));
+        return view('v1.auth_pages.organization.role_mgmt_search',
+            compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
 
     public function search(Request $request)
     {
         $string = $request->input('string');
-        return redirect('/role_mgmt/' . $string);
+
+        return redirect('/role_mgmt/'.$string);
     }
 
     public function show($id)
@@ -181,8 +118,8 @@ class RoleController extends Controller
 
         // toggle the role selected
         //as toggle does not offer extra parameter to be added like attach does we are removing toggle and manually attaching or detaching it.
-        $attach          = true;
-        $admin           = Person::find(auth()->user()->id);
+        $attach = true;
+        $admin = Person::find(auth()->user()->id);
         $user_role_pivot = DB::table('role_user')
             ->select(['role_id', 'orgID'])
             ->where(['user_id' => $person->personID, 'orgID' => $admin->defaultOrgID, 'role_id' => $role->id])
@@ -191,7 +128,6 @@ class RoleController extends Controller
             DB::table('role_user')
                 ->where(['user_id' => $person->personID, 'orgID' => $admin->defaultOrgID, 'role_id' => $role->id])
                 ->delete();
-
         } else {
             $person->roles()->attach($role->id, ['org_id' => $admin->defaultOrgID]);
         }
@@ -202,11 +138,11 @@ class RoleController extends Controller
         //not needed now as orgname role is not needed admin will be the admin of that org
         if (isset($person->org_role_id()->id) && false) {
             // Check to see if a role for the orgName is in the DB...
-            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
+            if (! $person->roles->contains('id', $person->org_role_id()->id)) {
                 $orgID_needed = 1;
             }
             // Remove the orgName role if it's the only one...
-            if (count($person->roles) == 1 && !$orgID_needed) {
+            if (count($person->roles) == 1 && ! $orgID_needed) {
                 $person->roles->forget('id', $person->org_role_id()->id);
             }
 
@@ -230,12 +166,12 @@ class RoleController extends Controller
          */
 
         $message =
-        '<div class="well bg-blue">' . trans(
-            'messages.instructions.role_toggle',
-            ['role' => $role->display_name, 'person' => $person->showFullName()]
-        ) . "</div>";
+            '<div class="well bg-blue">'.trans(
+                'messages.instructions.role_toggle',
+                ['role' => $role->display_name, 'person' => $person->showFullName()]
+            ).'</div>';
 
-        return json_encode(array('status' => 'success', 'message' => $message));
+        return json_encode(['status' => 'success', 'message' => $message]);
     }
 
     public function destroy($id)

@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment: Experiment to see if this helps no-auth pages
  * Created: 5/28/2017
  */
-?>
+@endphp
 <head>
     @include('v1.parts.header_meta')
     <title>mCentric</title>

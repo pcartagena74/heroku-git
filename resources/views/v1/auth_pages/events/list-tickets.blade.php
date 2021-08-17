@@ -7,8 +7,8 @@
 // {!! Form::open(['url'=>'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','class'=>'form-horizontal', 'role'=>'form','onsubmit' => 'return confirm("Are you sure?")'])!!}
 
 // <form method="post" action="{{ "/ticket/" . $ticket->ticketID . "/delete" }}">
-use App\Org;
-use App\Person;
+use App\Models\Org;
+use App\Models\Person;
 
 $tc = 0; $bc = 0;  $bi = 0;
 

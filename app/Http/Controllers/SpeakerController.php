@@ -2,14 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\EventSession;
+use App\Models\Person;
+use App\Models\Registration;
 use Illuminate\Http\Request;
-use App\Person;
-use App\Event;
-use App\Registration;
-use App\EventSession;
 
 class SpeakerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+        $this->middleware(function (Request $request, $next) {
+            if (auth()) {
+                $this->currentPerson = Person::find(auth()->user()->id);
+            }
+
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $speakers = Person::whereHas('roles', function ($q) {
@@ -50,7 +63,7 @@ class SpeakerController extends Controller
             })
             ->where([
                 ['er.discountCode', '=', 'speaker'],
-                ['person.personID', '=', $speaker->personID]
+                ['person.personID', '=', $speaker->personID],
             ])
             ->selectRaw("distinct `org-event`.eventStartDate, `org-event`.eventID, es.sessionID, `org-event`.eventStartDate,
                          concat_ws(': ', `org-event`.eventName, es.sessionName) as 'eventName', person.firstName,
@@ -59,6 +72,7 @@ class SpeakerController extends Controller
             ->get();
 
         $html = view('v1.modals.speaker_activity_modal', compact('speaker_event_list'))->render();
-        return json_encode(array('html' => $html));
+
+        return json_encode(['html' => $html]);
     }
 }

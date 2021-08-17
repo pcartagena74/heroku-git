@@ -1,30 +1,35 @@
-<?php
+@php
 /**
- * Comment: Given a sessionID, provide the stats (registrations or check-ins and any survey results)
- * @param: $session
  * Created: 10/2/2019
+ * Comment: Given a sessionID, provide the stats (registrations or check-ins and any survey results)
+ * @var $session: session object
+ * @var $es: optionally passed EventSession id
  */
+
+use App\Models\RegSession;
+use App\Models\RSSurvey;
+use App\Models\Registration;
 
 //dd($session->sessionID);
 if(null !== $session && null === $es){
     $es = $session->sessionID;
 }
 
-$surveys = \App\RSSurvey::where([
+$surveys = RSSurvey::where([
     ['sessionID', '=', $es]
 ])
     ->selectRaw("avg(engageResponse) 'engage', avg(takeResponse) 'take', avg(contentResponse) 'content', avg(styleResponse) 'style', count(*) 'count'")
     ->first();
 
-$rs = \App\RegSession::where([
+$rs = RegSession::where([
     ['eventID', '=', $event->eventID],
     ['sessionID', '=', $es]
 ])->count();
 
 if($rs <= 0){
-    $regs = \App\Registration::where('eventID', '=', $event->eventID)->count();
+    $regs = Registration::where('eventID', '=', $event->eventID)->count();
 }
-?>
+@endphp
 
 @if($rs > 0)
     {!! $rs . " " .  trans_choice('messages.headers.att', $rs) !!}

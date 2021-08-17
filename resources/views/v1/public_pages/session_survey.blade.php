@@ -1,7 +1,10 @@
-<?php
+@php
 /**
  * Comment: after registering for a session, show the session form
  * Created: 7/6/2017
+ *
+ * @var $session
+ * @var $org
  *
  * Consider the following:
  *  -
@@ -14,6 +17,8 @@ try {
     if ($org->orgLogo !== null) {
         $s3m = Flysystem::connection('s3_media');
         $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
+    } else {
+        $logo = '';
     }
 } catch (\League\Flysystem\Exception $exception) {
     $logo = '';
@@ -21,7 +26,7 @@ try {
 
 $speakers = $session->show_speakers();
 
-?>
+@endphp
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')

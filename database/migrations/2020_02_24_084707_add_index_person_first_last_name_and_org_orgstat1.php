@@ -14,14 +14,12 @@ class AddIndexPersonFirstLastNameAndOrgOrgstat1 extends Migration
     public function up()
     {
         Schema::table('org-person', function (Blueprint $table) {
-            $table->index('OrgStat1','idx_orgstat1');
+            $table->index('OrgStat1', 'idx_orgstat1');
         });
 
         Schema::table('person', function (Blueprint $table) {
             $table->index(['firstName', 'lastName']);
-
         });
-
     }
 
     /**
@@ -37,7 +35,6 @@ class AddIndexPersonFirstLastNameAndOrgOrgstat1 extends Migration
 
         Schema::table('person', function (Blueprint $table) {
             $table->dropIndex(['firstName', 'lastName']);
-
         });
     }
 }

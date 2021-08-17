@@ -2,10 +2,10 @@
 
 namespace Tests\Browser;
 
+use App\Models\Event;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
-use App\Event;
 
 class RegisterTest extends DuskTestCase
 {
@@ -41,6 +41,5 @@ class RegisterTest extends DuskTestCase
             $browser->visit(env('APP_URL')."/events/$event->slug")
                 ->assertSee($event->eventName);
         });
-
     }
 }

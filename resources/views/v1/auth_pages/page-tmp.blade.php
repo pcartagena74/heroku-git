@@ -1,19 +1,16 @@
-<?php
+@php
 /**
  * Comment:
- * Created: 2/9/2017
+ * Created: 10/8/20
  */
 
 $topBits = '';  // remove this if this was set in the controller
 $header = '';
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
-
-    {{-- @if((Entrust::hasRole($currentOrg->orgName) && Entrust::can('event-management')) --}}
-        {{-- || Entrust::hasRole('Developer') || Entrust::hasRole('Admin')) // getting $currentOrg as null --}}
 
     @if((Entrust::can('event-management'))
         || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))

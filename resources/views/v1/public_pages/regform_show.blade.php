@@ -9,12 +9,12 @@
  */
 
 use Illuminate\Support\Facades\DB;
-use App\Org;
-use App\Person;
-use App\OrgPerson;
-use App\Location;
-use App\Registration;
-use App\Ticket;
+use App\Models\Org;
+use App\Models\Person;
+use App\Models\OrgPerson;
+use App\Models\Location;
+use App\Models\Registration;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 
 $org = Org::find($event->orgID);
@@ -636,6 +636,10 @@ $i = 0;
             $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
             subtotal += newval{{ $i }} * 1;
             $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+            {{--
+            // Added 8/15/21 to catch when logged in user is not buying a ticket for themselves
+            --}}
+            $("#cost{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -1074,6 +1078,10 @@ $i = 0;
                 }
                 subtotal += newval{{ $i }} * 1;
                 $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                {{--
+                // Added 8/15/21 to catch when logged in user is not buying a ticket for themselves
+                --}}
+                $("#cost{{ $i }}").val(newval{{ $i }}.toFixed(2));
 
                 @endfor
 
