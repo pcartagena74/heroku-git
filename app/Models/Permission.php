@@ -7,7 +7,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Zizaco\Entrust\EntrustPermission;
+//use Zizaco\Entrust\EntrustPermission;
+use Shanmuga\LaravelEntrust\Models\EntrustPermission;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
 

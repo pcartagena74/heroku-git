@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\Email;
-use App\Notifications\LoginChange;
-use App\Notifications\PasswordChange;
-use App\Notifications\UndoLoginChange;
 use App\Models\OrgPerson;
 use App\Models\Person;
 use App\Models\PersonSocialite;
 use App\Models\Phone;
 use App\Models\User;
+use App\Notifications\LoginChange;
+use App\Notifications\PasswordChange;
+use App\Notifications\UndoLoginChange;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
