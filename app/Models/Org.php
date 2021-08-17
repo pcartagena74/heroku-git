@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\EventType;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
+use Illuminate\Database\Eloquent\Model;
 
 class Org extends Model
 {

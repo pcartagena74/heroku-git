@@ -510,7 +510,7 @@ return [
         'disp_logo' => 'es-Display Logo',
         'disp_name' => 'es-Display Name',
         'doored' => 'es-Payment at Door',
-        'dupe_reg' => "Registro Duplicado",
+        'dupe_reg' => 'Registro Duplicado',
         'early' => 'es-Early Bird Percent',
         'earlybird' => 'es-Early Bird',
         'ed&t' => 'es-Event Date & Time',
@@ -756,9 +756,9 @@ return [
         'name_change' => 'es-You need to contact PMI directly to change this data.',
         'name_change_ok' => 'es-You are able to edit these fields as an Admin.  Please only do so if you know PMI\'s records reflect the change.',
         'need_to_login' => 'es-An mCentric account was found for you. <b style=\'color:red;\'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.',
-        'new_user' => "<p>We recommend that new users be created by themselves as part of the registration process
+        'new_user' => '<p>We recommend that new users be created by themselves as part of the registration process
                        OR with the member data import process. <br />Using this form should be done as a last resort 
-                       when on the phone with the member.</p>",
+                       when on the phone with the member.</p>',
         'no_deadbeats' => 'es-There are no pending payments for this event at this time.',
         'no_event' => 'es-Cannot find event',
         'no_events' => 'es-There are no <b class=\'red\'>active</b> future events at this time.',
@@ -1360,7 +1360,7 @@ return [
                         pero si el problema persiste, comuníquese con nosotros.',
         'no_msg_available' => '<p>Ocurrió un error.</p> Rastreamos estos errores automáticamente,
                         pero si el problema persiste, comuníquese con nosotros.',
-        'page_not_found' => "Disculpas. La página que estás buscando no existe.",
+        'page_not_found' => 'Disculpas. La página que estás buscando no existe.',
         'bad_url_link_mail_tracker' => '¡Ups! La URL en la que hizo clic ha caducado.',
     ],
     'validation' => [

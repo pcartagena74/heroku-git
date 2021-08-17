@@ -169,7 +169,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Intouch\LaravelNewrelic\NewrelicServiceProvider::class,
+        //Intouch\LaravelNewrelic\NewrelicServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
 
         //Kouz\LaravelAirbrake\ServiceProvider::class,
@@ -178,6 +178,7 @@ return [
          * Package Service Providers...
          */
         Kordy\Ticketit\TicketitServiceProvider::class,
+        Shanmuga\LaravelEntrust\LaravelEntrustServiceProvider::class,
 
         // Laravel\Cashier\CashierServiceProvider::class,
 
@@ -219,7 +220,8 @@ return [
         'Crypt'        => Illuminate\Support\Facades\Crypt::class,
         'DB'           => Illuminate\Support\Facades\DB::class,
         'Eloquent'     => Illuminate\Database\Eloquent\Model::class,
-        'Entrust'      => Zizaco\Entrust\EntrustFacade::class,
+        //'Entrust'      => Zizaco\Entrust\EntrustFacade::class,
+        'Entrust'      => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
         'Event'        => Illuminate\Support\Facades\Event::class,
         'File'         => Illuminate\Support\Facades\File::class,
         'Form'         => Collective\Html\FormFacade::class,
@@ -229,7 +231,7 @@ return [
         'Lang'         => Illuminate\Support\Facades\Lang::class,
         'Log'          => Illuminate\Support\Facades\Log::class,
         'Mail'         => Illuminate\Support\Facades\Mail::class,
-        'Newrelic'     => Intouch\LaravelNewrelic\Facades\Newrelic::class,
+        //'Newrelic'     => Intouch\LaravelNewrelic\Facades\Newrelic::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password'     => Illuminate\Support\Facades\Password::class,
         'Queue'        => Illuminate\Support\Facades\Queue::class,
@@ -244,8 +246,6 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-        'Form'         => Collective\Html\FormFacade::class,
-        'Html'         => Collective\Html\HtmlFacade::class,
 
     ],
 

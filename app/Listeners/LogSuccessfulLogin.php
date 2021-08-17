@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Models\User;
 use App\Models\Person;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 //use Spatie\Activitylog\Traits\LogsActivity;

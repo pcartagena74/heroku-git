@@ -636,6 +636,10 @@ $i = 0;
             $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
             subtotal += newval{{ $i }} * 1;
             $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+            {{--
+            // Added 8/15/21 to catch when logged in user is not buying a ticket for themselves
+            --}}
+            $("#cost{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             $('#total').text(subtotal.toFixed(2));
@@ -1074,6 +1078,10 @@ $i = 0;
                 }
                 subtotal += newval{{ $i }} * 1;
                 $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                {{--
+                // Added 8/15/21 to catch when logged in user is not buying a ticket for themselves
+                --}}
+                $("#cost{{ $i }}").val(newval{{ $i }}.toFixed(2));
 
                 @endfor
 

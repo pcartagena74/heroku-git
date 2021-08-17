@@ -8,13 +8,17 @@
 
 $currentPerson = App\Models\Person::find(auth()->user()->id);
 
-try{
-    $x = getimagesize($currentPerson->avatarURL);
-    $badge_color = "bg-success";
-} catch (Exception $exception) {
-    $currentPerson->avatarURL = null;
+if($currentPerson->avatarURL !== null){
+    try{
+        $x = getimagesize($currentPerson->avatarURL);
+        $badge_color = "bg-success";
+    } catch (Exception $exception) {
+        $currentPerson->avatarURL = null;
+        $badge_color = "bg-red";
+        $currentPerson->save();
+    }
+} else {
     $badge_color = "bg-red";
-    $currentPerson->save();
 }
 @endphp
 <div class="top_nav">

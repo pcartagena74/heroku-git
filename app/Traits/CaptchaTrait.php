@@ -7,14 +7,14 @@
 
 namespace App\Traits;
 
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use ReCaptcha\ReCaptcha;
 
 trait CaptchaTrait
 {
     public function captchaCheck()
     {
-        $response = Input::get('g-recaptcha-response');
+        $response = Request::get('g-recaptcha-response');
         $remoteip = $_SERVER['REMOTE_ADDR'];
         $secret = env('RECAPTCHA_PRIVATE_KEY');
 

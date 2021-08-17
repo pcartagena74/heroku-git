@@ -33,11 +33,13 @@ $options = array('validate_all' => true); // , 'return_type' => 'both');
 //  LinkedIN image access seems to "timeout" after 2-3 months.
 //  This prevents the display of a broken image
 
-try{
-    $x = getimagesize($currentPerson->avatarURL);
-} catch (Exception $exception) {
-    $currentPerson->avatarURL = null;
-    $currentPerson->save();
+if($currentPerson->avatarURL !== null){
+    try{
+        $x = getimagesize($currentPerson->avatarURL);
+    } catch (Exception $exception) {
+        $currentPerson->avatarURL = null;
+        $currentPerson->save();
+    }
 }
 
 

@@ -63,12 +63,12 @@
                         ['confDay', '=', $d]
                     ])->first();
                     if ($es !== null) {
-                        ${'t' . $t} = array_add(${'t' . $t}, $x, $es);
+                        ${'t' . $t} = Arr::add(${'t' . $t}, $x, $es);
                     }
                 }
-                ${'d' . $d} = array_add(${'d' . $d}, 't' . $t, ${'t' . $t});
+                ${'d' . $d} = Arr::add(${'d' . $d}, 't' . $t, ${'t' . $t});
             }
-            $mda = array_add($mda, 'd' . $d, ${'d' . $d});
+            $mda = Arr::add($mda, 'd' . $d, ${'d' . $d});
         }
     }
 
