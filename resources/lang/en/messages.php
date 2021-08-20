@@ -441,7 +441,8 @@ return [
         'camp_show' => 'Show',
         'camp_url_summary' => 'Click Summary for URL :',
     ],
-    'headers' => [
+
+   'headers' => [
         'acc_lookup' => 'Account Lookup',
         'accept_cash' => "Do you want to allow attendees to 'Pay at the Door?'",
         'add' => 'Add Event Type|Add Additional Event Types',
