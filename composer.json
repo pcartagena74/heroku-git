@@ -15,8 +15,7 @@
         "laravel"
     ],
     "license": "MIT",
-    "repositories":
-    [
+    "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/pcartagena74/ticketit.git"
@@ -65,7 +64,8 @@
         "spatie/laravel-referer": "1.7.1",
         "squizlabs/php_codesniffer": "^3.6",
         "stripe/stripe-php": "^7.92",
-        "shanmuga/laravel-entrust": "^2.2"
+        "shanmuga/laravel-entrust": "^2.2",
+        "laravel/ui": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
