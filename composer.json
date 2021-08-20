@@ -28,7 +28,7 @@
         "bugsnag/bugsnag-laravel": "^2.22",
         "doctrine/dbal": "^3.1",
         "eduardokum/laravel-mail-auto-embed": "^1.0",
-        "fedeisas/laravel-mail-css-inliner": "^2.2",
+        "fedeisas/laravel-mail-css-inliner": "^3.0",
         "fennb/phirehose": "^1.0",
         "fideloper/proxy": "^4.4",
         "google/recaptcha": "^1.2",
