@@ -47,13 +47,13 @@ class SpeakerController extends Controller
         return view('v1.auth_pages.speakers.list', compact('speakers'));
     }
 
-   public function index2()
-   {
-       $speakers = json_decode(Person::whereHas('roles', function ($q) {
-           $q->where([
+    public function index2()
+    {
+        $speakers = json_decode(Person::whereHas('roles', function ($q) {
+            $q->where([
                ['roles.id', '=', '2'],
            ]);
-       })
+        })
            ->where('orgID', '=', $this->currentPerson->defaultOrgID)
            ->join('event-registration as er', function ($q) {
                $q->on('er.personID', '=', 'person.personID')
@@ -69,8 +69,9 @@ class SpeakerController extends Controller
            ->selectRaw("distinct person.personID, person.firstName, person.lastName, person.login, count(*) as 'count', max(`org-event`.eventStartDate) as 'date'")
            ->groupBy('person.personID', 'person.firstName', 'person.lastName', 'person.login')
            ->get(), true);
-       return view('v1.auth_pages.speakers.list2', compact('speakers'));
-   }
+
+        return view('v1.auth_pages.speakers.list2', compact('speakers'));
+    }
 
     public function show(Person $speaker)
     {
