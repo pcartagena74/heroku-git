@@ -10,8 +10,12 @@ class UserHistory extends Model
     protected $primaryKey = 'revision';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-
-    protected $dates = ['changeDate', 'createDate', 'last_login', 'updateDate'];
+    protected $casts = [
+        'changeDate' => 'datetime',
+        'createDate' => 'datetime',
+        'last_login' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     public function person()
     {

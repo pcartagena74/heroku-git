@@ -11,7 +11,7 @@ class EmailList extends Model
 
     // The table
     protected $table = 'email-list';
-    protected $dates = ['created_at', 'deleted_at', 'updated_at'];
+
 
     public function org()
     {

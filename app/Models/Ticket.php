@@ -23,7 +23,12 @@ class Ticket extends Model
     protected $primaryKey = 'ticketID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['availabilityEndDate', 'earlyBirdEndDate', 'createDate', 'updateDate', 'deleted_at'];
+    protected $casts = [
+        'availabilityEndDate' => 'datetime',
+        'earlyBirdEndDate' => 'datetime',
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     protected $appends = ['eb_mbr_price', 'eb_non_price'];
 

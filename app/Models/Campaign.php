@@ -18,7 +18,11 @@ class Campaign extends Model
     const UPDATED_AT = 'updateDate';
 
     protected $primaryKey = 'campaignID';
-    protected $dates = ['createDate', 'deleted_at', 'updateDate', 'sendDate'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+        'sendDate' => 'datetime',
+    ];
 
     protected $with = ['template_blocks'];
 

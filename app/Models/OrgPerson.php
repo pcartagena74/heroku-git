@@ -22,20 +22,19 @@ class OrgPerson extends Model
     const UPDATED_AT = 'updateDate';
 
     public $incrementing = true;
-    protected $dates = [
-        'createDate',
-        'updateDate',
-        'deleted_at',
-        'RelDate1',
-        'RelDate2',
-        'RelDate3',
-        'RelDate4',
-        'RelDate5',
-        'RelDate6',
-        'RelDate7',
-        'RelDate8',
-        'RelDate9',
-        'RelDate10',
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+        'RelDate1' => 'datetime',
+        'RelDate2' => 'datetime',
+        'RelDate3' => 'datetime',
+        'RelDate4' => 'datetime',
+        'RelDate5' => 'datetime',
+        'RelDate6' => 'datetime',
+        'RelDate7' => 'datetime',
+        'RelDate8' => 'datetime',
+        'RelDate9' => 'datetime',
+        'RelDate10' => 'datetime',
     ];
 
     protected static $logAttributes = ['OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4'];

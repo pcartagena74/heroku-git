@@ -11,22 +11,20 @@ class OPHistory extends Model
     protected $primaryKey = 'revision';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-
-    protected $dates = [
-        'createDate',
-        'updateDate',
-        'deleted_at',
-        'RelDate1',
-        'RelDate2',
-        'RelDate3',
-        'RelDate4',
-        'RelDate5',
-        'RelDate6',
-        'RelDate7',
-        'RelDate8',
-        'RelDate9',
-        'RelDate10',
-        'changeDate',
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+        'RelDate1' => 'datetime',
+        'RelDate2' => 'datetime',
+        'RelDate3' => 'datetime',
+        'RelDate4' => 'datetime',
+        'RelDate5' => 'datetime',
+        'RelDate6' => 'datetime',
+        'RelDate7' => 'datetime',
+        'RelDate8' => 'datetime',
+        'RelDate9' => 'datetime',
+        'RelDate10' => 'datetime',
+        'changeDate' => 'datetime',
     ];
 
     // The table

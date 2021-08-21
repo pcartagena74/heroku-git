@@ -19,7 +19,9 @@ class TicketOver extends Ticket
     use Purifiable;
 
     protected $table = 'ticketit';
-    protected $dates = ['completed_at'];
+    protected $casts = [
+        'completed_at' => 'datetime',
+    ];
 
     /**
      * List of completed tickets.

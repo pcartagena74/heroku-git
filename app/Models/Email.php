@@ -15,7 +15,10 @@ class Email extends Model
     protected $primaryKey = 'emailID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['createDate', 'deleted_at', 'updateDate'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     public function person()
     {
