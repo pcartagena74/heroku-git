@@ -30,7 +30,6 @@
         "eduardokum/laravel-mail-auto-embed": "^1.0",
         "fedeisas/laravel-mail-css-inliner": "^3.0",
         "fennb/phirehose": "^1.0",
-        "fideloper/proxy": "^4.4",
         "google/recaptcha": "^1.2",
         "graham-campbell/flysystem": "^7.1",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
@@ -41,11 +40,11 @@
         "knplabs/knp-snappy": "^1.1",
         "kordy/ticketit": "dev-master",
         "kriswallsmith/buzz": "^1.1",
-        "laravel/cashier": "^12.15",
+        "laravel/cashier": "^13.4",
         "laravel/dusk": "^6.17",
-        "laravel/framework": "^7.29",
+        "laravel/framework": "^8.55",
         "laravel/socialite": "^5.2",
-        "laravel/telescope": "^3.5",
+        "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.5",
         "laravelcollective/html": "^6.2",
         "league/flysystem": "^1.0",
@@ -65,18 +64,18 @@
         "squizlabs/php_codesniffer": "^3.6",
         "stripe/stripe-php": "^7.94",
         "shanmuga/laravel-entrust": "^2.2",
-        "laravel/ui": "^2.5",
+        "laravel/ui": "^3.3",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
-        "php": "^7.2.5|^8.0"
+        "php": "^7.3|^8.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
-        "mockery/mockery": "^1.3.1",
-        "nunomaduro/collision": "^4.3",
+        "mockery/mockery": "^1.4.2",
+        "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^8.5.8|^9.3.3",
         "fakerphp/faker": "^1.9.1",
-        "facade/ignition": "^2.0"
+        "facade/ignition": "^2.5"
     },
     "extra": {
         "laravel": {
@@ -127,6 +126,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi"
         ]
     }
 }
