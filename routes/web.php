@@ -32,8 +32,8 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\PublicFunctionController;
 use App\Http\Controllers\RegFinanceController;
-use App\Http\Controllers\RegSessionController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\RegSessionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SocialController;
@@ -44,6 +44,7 @@ use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

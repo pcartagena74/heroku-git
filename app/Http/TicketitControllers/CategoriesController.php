@@ -57,7 +57,7 @@ class CategoriesController extends Controller
 
         \Cache::forget('ticketit::categories');
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\CategoriesController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     /**
@@ -108,7 +108,7 @@ class CategoriesController extends Controller
 
         \Cache::forget('ticketit::categories');
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\CategoriesController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     /**
@@ -128,6 +128,6 @@ class CategoriesController extends Controller
 
         \Cache::forget('ticketit::categories');
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\CategoriesController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 }

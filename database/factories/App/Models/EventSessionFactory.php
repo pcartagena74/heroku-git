@@ -4,8 +4,8 @@
 
 namespace Database\Factories\App\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\EventSession;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EventSessionFactory extends Factory
 {

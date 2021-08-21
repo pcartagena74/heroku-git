@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\EmailBlockCategory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class EmailBuilderSeeder extends Seeder
 {

@@ -89,7 +89,7 @@ class ConfigurationsController extends Controller
         Session::flash('configuration', 'Setting saved successfully.');
         \Cache::forget('ticketit::settings'); // refresh cached settings
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\ConfigurationsController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     /**
@@ -139,6 +139,6 @@ class ConfigurationsController extends Controller
         \Cache::forget('ticketit::settings');
         \Cache::forget('ticketit::settings.'.$configuration->slug);
         //return redirect(route('ticketit::admin.configuration.index'));
-        return redirect()->action([\Kordy\Ticketit\Controllers\ConfigurationsController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 }

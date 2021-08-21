@@ -12,7 +12,6 @@ class EmailList extends Model
     // The table
     protected $table = 'email-list';
 
-
     public function org()
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');

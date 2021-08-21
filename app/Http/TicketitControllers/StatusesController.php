@@ -57,7 +57,7 @@ class StatusesController extends Controller
 
         \Cache::forget('ticketit::statuses');
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\StatusesController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     /**
@@ -108,7 +108,7 @@ class StatusesController extends Controller
 
         \Cache::forget('ticketit::statuses');
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\StatusesController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     /**
@@ -128,6 +128,6 @@ class StatusesController extends Controller
 
         \Cache::forget('ticketit::statuses');
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\StatusesController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 }

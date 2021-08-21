@@ -42,7 +42,7 @@ class AgentsController extends Controller
 
         Session::flash('status', trans('ticketit::lang.agents-are-added-to-agents', ['names' => $agents_names]));
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\AgentsController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     public function update($id, Request $request)
@@ -51,7 +51,7 @@ class AgentsController extends Controller
 
         Session::flash('status', trans('ticketit::lang.agents-joined-categories-ok'));
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\AgentsController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     public function destroy($id)
@@ -60,7 +60,7 @@ class AgentsController extends Controller
 
         Session::flash('status', trans('ticketit::lang.agents-is-removed-from-team', ['name' => $agent->name]));
 
-        return redirect()->action([\Kordy\Ticketit\Controllers\AgentsController::class, 'index']);
+        return redirect()->action([self::class, 'index']);
     }
 
     /**

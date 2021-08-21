@@ -4,8 +4,8 @@
 
 namespace Database\Factories\App\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\RegSession;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RegSessionFactory extends Factory
 {
