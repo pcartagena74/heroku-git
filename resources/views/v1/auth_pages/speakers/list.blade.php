@@ -1,7 +1,10 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 7/18/2017
+ *
+ * @var $speakers
+ *
  */
 $topBits = '';
 $header = ['ID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
@@ -23,7 +26,7 @@ foreach($speakers as $speaker){
     }
     array_push($data, [$speaker->personID, $speaker->firstName, $speaker->lastName, $speaker->login, $speaker->count, $html]);
 }
-?>
+@endphp
 
 @extends('v1.layouts.auth')
 
