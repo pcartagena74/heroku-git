@@ -1,16 +1,16 @@
 <?php
 /**
- * Comment: a Two-Button Notification Template originated for Receipt Notifications
- * Created: 2/28/2019
- *
- */
+* Comment: a Two-Button Notification Template originated for Receipt Notifications
+* Created: 2/28/2019
+*
+*/
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
 set_error_handler("var_dump");
 
 if(isset($name)){
-    $greeting = "Hello $name!";
+$greeting = "Hello $name!";
 }
 ?>
 @component('mail::message')
@@ -31,16 +31,16 @@ if(isset($name)){
 {{-- Action Button 1 --}}
 @if (isset($action1))
 <?php
-    switch ($c1) {
-        case 'success':
-            $color = 'green';
-            break;
-        case 'error':
-            $color = 'red';
-            break;
-        default:
-            $color = 'blue';
-    }
+switch ($c1) {
+case 'success':
+$color = 'green';
+break;
+case 'error':
+$color = 'red';
+break;
+default:
+$color = 'blue';
+}
 ?>
 @component('mail::button', ['url' => $url1, 'color' => $color])
 {{ $action1 ?? '' }}
@@ -54,22 +54,22 @@ if(isset($name)){
 {!! $postRegInfo !!}
 @endcomponent
 @endif
-    {{-- Action Button 2 --}}
+{{-- Action Button 2 --}}
 @if (isset($action2))
 <?php
 switch ($c2) {
-    case 'success':
-        $color = 'green';
-        break;
-    case 'error':
-        $color = 'red';
-        break;
-    default:
-        $color = 'blue';
+case 'success':
+$color = 'green';
+break;
+case 'error':
+$color = 'red';
+break;
+default:
+$color = 'blue';
 }
 ?>
 @component('mail::button', ['url' => $url2, 'color' => $color])
-    {{ $action2 ?? '' }}
+{{ $action2 ?? '' }}
 @endcomponent
 @endif
 
