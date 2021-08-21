@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Kordy\Ticketit\Controllers;
+use Illuminate\Support\Facades\Route;
+
 Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddleware()], function () use ($main_route, $main_route_path, $admin_route, $admin_route_path) {
     $ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController';
     $new_tickets_path = \App\Http\TicketitControllers\TicketsControllerOver::class;
@@ -74,9 +77,9 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         //Ticket admin index route (ex. http://url/tickets-admin/)
         Route::get("$admin_route_path/indicator/{indicator_period?}", [
             'as'   => $admin_route.'.dashboard.indicator',
-            'uses' => 'Kordy\Ticketit\Controllers\DashboardController@index',
+            'uses' => [Kordy\Ticketit\Controllers\DashboardController::class, 'index'],
         ]);
-        Route::get($admin_route_path, 'Kordy\Ticketit\Controllers\DashboardController@index');
+        Route::get($admin_route_path, [Kordy\Ticketit\Controllers\DashboardController::class, 'index']);
 
         //Ticket statuses admin routes (ex. http://url/tickets-admin/status)
         Route::resource("$admin_route_path/status", 'Kordy\Ticketit\Controllers\StatusesController', [
@@ -157,6 +160,6 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
 
         //Tickets demo data route (ex. http://url/tickets-admin/demo-seeds/)
-        // Route::get("$admin_route/demo-seeds", 'Kordy\Ticketit\Controllers\InstallController@demoDataSeeder');
+        // Route::get("$admin_route/demo-seeds", [Kordy\Ticketit\Controllers\InstallController::class, 'demoDataSeeder']);
     });
 });

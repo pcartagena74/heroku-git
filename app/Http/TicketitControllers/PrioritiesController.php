@@ -57,7 +57,7 @@ class PrioritiesController extends Controller
 
         \Cache::forget('ticketit::priorities');
 
-        return redirect()->action('\Kordy\Ticketit\Controllers\PrioritiesController@index');
+        return redirect()->action([\Kordy\Ticketit\Controllers\PrioritiesController::class, 'index']);
     }
 
     /**
@@ -108,7 +108,7 @@ class PrioritiesController extends Controller
 
         \Cache::forget('ticketit::priorities');
 
-        return redirect()->action('\Kordy\Ticketit\Controllers\PrioritiesController@index');
+        return redirect()->action([\Kordy\Ticketit\Controllers\PrioritiesController::class, 'index']);
     }
 
     /**
@@ -128,6 +128,6 @@ class PrioritiesController extends Controller
 
         \Cache::forget('ticketit::priorities');
 
-        return redirect()->action('\Kordy\Ticketit\Controllers\PrioritiesController@index');
+        return redirect()->action([\Kordy\Ticketit\Controllers\PrioritiesController::class, 'index']);
     }
 }

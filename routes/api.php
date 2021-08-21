@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\MailGunController;
+use Illuminate\Support\Facades\Route;
+
 use Illuminate\Http\Request;
 
 /*
@@ -17,6 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::middleware('auth:api')->post ('/send', 'MailGunController@send');
+//Route::middleware('auth:api')->post ('/send', [MailGunController::class, 'send']);
 
-Route::post('/send', 'MailGunController@send');
+Route::post('/send', [MailGunController::class, 'send']);
