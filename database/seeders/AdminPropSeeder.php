@@ -4,6 +4,8 @@
  * Created: 3/13/2021
  */
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 
 class AdminPropSeeder extends Seeder

@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Email;
 use App\Models\Org;
 use App\Models\OrgPerson;
