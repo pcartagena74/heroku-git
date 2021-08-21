@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use League\Flysystem\AdapterInterface;
 use Spatie\Activitylog\Traits\LogsActivity;
+use DateTimeInterface;
 
 class Event extends Model
 {
@@ -39,6 +40,11 @@ class Event extends Model
     protected static $submitEmptyLogs = false;
     protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks'];
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function category()
     {

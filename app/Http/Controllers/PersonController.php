@@ -191,7 +191,7 @@ class PersonController extends Controller
                            title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er
 						 WHERE er.personID=p.personID) AS 'cnt'"))
-                ->get();
+                ->cursor();
         });
 
         return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
@@ -231,7 +231,7 @@ class PersonController extends Controller
                 ->select(DB::raw("person.personID, concat(coalesce(`firstName`, ''), ' ', coalesce(`lastName`, '')) AS fullName, op.OrgStat1, op.OrgStat2, compName, 
                            title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
-                ->distinct()->get();
+                ->distinct()->cursor();
 
             return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
         }

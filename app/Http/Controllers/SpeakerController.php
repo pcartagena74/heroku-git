@@ -42,7 +42,7 @@ class SpeakerController extends Controller
             ->where('er.discountCode', '=', 'speaker')
             ->selectRaw("distinct person.personID, person.firstName, person.lastName, person.login, count(*) as 'count'")
             ->groupBy('person.personID', 'person.firstName', 'person.lastName', 'person.login')
-            ->get();
+            ->cursor();
 
         return view('v1.auth_pages.speakers.list', compact('speakers'));
     }
@@ -68,7 +68,7 @@ class SpeakerController extends Controller
            ->where('er.discountCode', '=', 'speaker')
            ->selectRaw("distinct person.personID, person.firstName, person.lastName, person.login, count(*) as 'count', max(`org-event`.eventStartDate) as 'date'")
            ->groupBy('person.personID', 'person.firstName', 'person.lastName', 'person.login')
-           ->get(), true);
+           ->cursor(), true);
 
         return view('v1.auth_pages.speakers.list2', compact('speakers'));
     }

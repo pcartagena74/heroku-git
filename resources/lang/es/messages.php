@@ -151,15 +151,17 @@ return [
         'exists' => 'es-{p}The person record cannot be created to prevent potential duplication.  See details below. <br /> :details|'.
             '{e}The email address entered already exists. <br /> :details|{op}The PMI ID entered already exists. <br /> :details',
         'existing_account' => 'es-Existing account: :f :l with login :e',
-        'html_error' => 'es-An unexpected HTML error occurred while processing your entry.  Check for a trailing &lt;p&gt;&lt;/p&gt; in the code view and remove before saving when you try again.',
-        'no_id' => 'es-There is no :modifier ID: :id.  :errormsg',
-        'no_receipt' => "es-The system cannot produce the PDF receipt at this time. You can find receipts to all upcoming events here:
-                         <a style=\'color:black;\' href='' . env(\'APP_URL\') . '/upcoming'>My Settings -> Future Events</a>.",
-        'no_regs' => 'es-The registration(s) no longer exist.  You can either :startover or :close.',
-        'no_reg1' => 'es-Restart Registration',
-        'no_reg2' => 'es-Goto mCentric Dashboard',
-        'numeric' => 'es-Please enter a value between 1 - 5.',
-        'options' => 'es-Please select an option.',
+        'html_error' => 'Se produjo un error HTML inesperado al procesar su entrada. Compruebe si hay un
+                         &lt;p&gt;&lt;/p&gt; final en la vista de código y elimínelo antes de guardarlo cuando vuelva a intentarlo.',
+        'no_id' => 'No hay :modifier ID: :id.  :errormsg',
+        'no_receipt' => "mCentric no puede producir el recibo en PDF en este momento. Puede buscar, mostrar e imprimir
+                        (con su navegador) recibos de todos sus próximos eventos aquí: 
+                         <a style='color:black;' href='".env('APP_URL')."/upcoming'>Mi Configuración -> Eventos Futuros</a>.",
+        'no_regs' => 'El registro ya no existe. Puede :startover o :close.',
+        'no_reg1' => 'Reiniciar el registro',
+        'no_reg2' => 'Ir al panel de mCentric',
+        'numeric' => 'Introduzca un valor entre 1 y 5.',
+        'options' => 'Por favor seleccione una opción.',
         'refund_failed' => 'es-The attempt to get a refund failed with order: :rest',
         'reg_fail1' => 'es-The registration for :name failed to save.',
         'slug_error' => 'es-The URL you chose is not unique.  Please change and validate it before proceeding.',

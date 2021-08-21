@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetController;
-use App\Http\Controllers\Auth;
+//use App\Http\Controllers\Auth;
 use App\Http\Controllers\AuthCheckinController;
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\CampaignController;
@@ -111,8 +112,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::post('/reportissue', [ErrorController::class, 'reportIssue']);
 
-Route::post('/login', [Auth\LoginController::class, 'login'])->name('login');
-Route::get('/logout', [Auth\LoginController::class, 'logout'])->name('logout');
+Route::post('/login', [AuthAlias\LoginController::class, 'login'])->name('login');
+Route::get('/logout', [AuthAlias\LoginController::class, 'logout'])->name('logout');
 
 Route::get('/policies', function () {
     return view('v1.public_pages.policies');
@@ -136,8 +137,8 @@ Route::get('/pmi_lookup/{org}', [OrgPersonController::class, 'index']);
 Route::post('/pmi_lookup', [OrgPersonController::class, 'find']);
 Route::get('/pmi_account/{person}', [OrgPersonController::class, 'show']);
 
-Route::get('/password/resetmodal', [Auth\ResetPasswordController::class, 'showResetForm_inModal']);
-Route::get('/password/forgotmodal', [Auth\ForgotPasswordController::class, 'showLinkRequestForm_inModal']);
+Route::get('/password/resetmodal', [AuthAlias\ResetPasswordController::class, 'showResetForm_inModal']);
+Route::get('/password/forgotmodal', [AuthAlias\ForgotPasswordController::class, 'showLinkRequestForm_inModal']);
 
 // Public Event-related Routes
 Route::get('/events/{eventslug}/{override?}', [EventController::class, 'show'])->name('display_event');
@@ -386,7 +387,7 @@ Route::get('/list_campaign', [CampaignController::class, 'listCampaign']);
 
 // Email Builder Routes ends
 // ----------------------------------------------------------------------------------
-Route::get('/testlogin', [Auth\LoginController::class, 'showLoginForm']);
+Route::get('/testlogin', [AuthAlias\LoginController::class, 'showLoginForm']);
 //Route::post('/testlogin', [Auth\LoginController::class, 'showLoginForm']);
 Route::get('/mytest', function () {
     $events = App\Models\Event::all();

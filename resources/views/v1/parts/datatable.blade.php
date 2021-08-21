@@ -4,12 +4,12 @@
  *          Third parameter will be sent based on the count to change the ID
  * Created: 2/3/2017
  *
- * @param   $headers    array of text strings for dynamic number of columns
- * @param   $data       array of table data array
- * @param   $scroll     binary: 1 for 'generic_table' or 0 for 'datatable-fixed-header'  overrides
+ * @var   $headers    array of text strings for dynamic number of columns
+ * @var   $data       array of table data array
+ * @var   $scroll     binary: 1 for 'generic_table' or 0 for 'datatable-fixed-header'  overrides
  *
  * Optional override parameters:
- * @param   $id         set a specific ID - good when multiple scrolling tables are needed
+ * @var   $id         set a specific ID - good when multiple scrolling tables are needed
  *
  */
 

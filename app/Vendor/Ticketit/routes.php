@@ -1,7 +1,7 @@
 <?php
 
 Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddleware()], function () use ($main_route, $main_route_path, $admin_route, $admin_route_path) {
-    $ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController';
+    $ori_tickets_path = 'Kordy\Ticketit\Controllers\TicketsController::class';
     $new_tickets_path = \App\Http\TicketitControllers\TicketsControllerOver::class;
     $new_tickets_comment_path = \App\Http\TicketitControllers\CommentsControllerOver::class;
     //Route::group(['middleware' => '', function () use ($main_route) {
@@ -79,7 +79,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         Route::get($admin_route_path, 'Kordy\Ticketit\Controllers\DashboardController@index');
 
         //Ticket statuses admin routes (ex. http://url/tickets-admin/status)
-        Route::resource("$admin_route_path/status", 'Kordy\Ticketit\Controllers\StatusesController', [
+        Route::resource("$admin_route_path/status", 'Kordy\Ticketit\Controllers\StatusesController::class', [
             'names' => [
                 'index'   => "$admin_route.status.index",
                 'store'   => "$admin_route.status.store",
@@ -92,7 +92,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
 
         //Ticket priorities admin routes (ex. http://url/tickets-admin/priority)
-        Route::resource("$admin_route_path/priority", 'Kordy\Ticketit\Controllers\PrioritiesController', [
+        Route::resource("$admin_route_path/priority", 'Kordy\Ticketit\Controllers\PrioritiesController::class', [
             'names' => [
                 'index'   => "$admin_route.priority.index",
                 'store'   => "$admin_route.priority.store",
@@ -105,7 +105,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
 
         //Agents management routes (ex. http://url/tickets-admin/agent)
-        Route::resource("$admin_route_path/agent", 'Kordy\Ticketit\Controllers\AgentsController', [
+        Route::resource("$admin_route_path/agent", 'Kordy\Ticketit\Controllers\AgentsController::class', [
             'names' => [
                 'index'   => "$admin_route.agent.index",
                 'store'   => "$admin_route.agent.store",
@@ -118,7 +118,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
 
         //Agents management routes (ex. http://url/tickets-admin/agent)
-        Route::resource("$admin_route_path/category", 'Kordy\Ticketit\Controllers\CategoriesController', [
+        Route::resource("$admin_route_path/category", 'Kordy\Ticketit\Controllers\CategoriesController::class', [
             'names' => [
                 'index'   => "$admin_route.category.index",
                 'store'   => "$admin_route.category.store",
@@ -131,7 +131,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
 
         //Settings configuration routes (ex. http://url/tickets-admin/configuration)
-        Route::resource("$admin_route_path/configuration", 'Kordy\Ticketit\Controllers\ConfigurationsController', [
+        Route::resource("$admin_route_path/configuration", 'Kordy\Ticketit\Controllers\ConfigurationsController::class', [
             'names' => [
                 'index'   => "$admin_route.configuration.index",
                 'store'   => "$admin_route.configuration.store",
@@ -144,7 +144,7 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
         ]);
 
         //Administrators configuration routes (ex. http://url/tickets-admin/administrators)
-        Route::resource("$admin_route_path/administrator", 'Kordy\Ticketit\Controllers\AdministratorsController', [
+        Route::resource("$admin_route_path/administrator", 'Kordy\Ticketit\Controllers\AdministratorsController::class', [
             'names' => [
                 'index'   => "$admin_route.administrator.index",
                 'store'   => "$admin_route.administrator.store",
