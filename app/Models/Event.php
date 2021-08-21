@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use App\Models\EventSession;
-use App\Other\ics_calendar;
 use App\Models\Person;
+use App\Other\ics_calendar;
 use Carbon\Carbon;
-use Spatie\Activitylog\Traits\LogsActivity;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use League\Flysystem\AdapterInterface;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Event extends Model
 {

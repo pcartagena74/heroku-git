@@ -225,7 +225,6 @@ class ActivityController extends Controller
 
             return redirect()->back();
         } else {
-
             Auth::loginUsingId($new_id, 0);
 
             // Store the old and new IDs

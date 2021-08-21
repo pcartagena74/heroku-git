@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Email;
 use App\Models\EventType;
-use App\Notifications\NewUserAcct;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Permission;
@@ -12,11 +11,12 @@ use App\Models\PermissionRole;
 use App\Models\Person;
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\NewUserAcct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash as Hash;
-use Validator;
 use Illuminate\Support\Facades\Storage;
+use Validator;
 
 class OrgController extends Controller
 {
@@ -49,7 +49,7 @@ class OrgController extends Controller
         if ($currentPerson->orgs->count() > 1) {
             return view('v1.auth_pages.organization.select_organization', compact('org_list', 'orgID'));
         } else {
-            return redirect('/orgsettings/' . $orgID);
+            return redirect('/orgsettings/'.$orgID);
         }
     }
 
@@ -92,7 +92,7 @@ class OrgController extends Controller
     {
         // responds to GET /blah/id
         $person = Person::find(auth()->user()->id);
-        if (!$person->orgs->contains('orgID', $id)) {
+        if (! $person->orgs->contains('orgID', $id)) {
             $request->session()->flash('alert-danger', 'Org id not found');
 
             return redirect('/');
@@ -101,8 +101,8 @@ class OrgController extends Controller
         $topBits = [];
         $cData = DB::table('organization')->select(DB::raw('10-( isnull(OSN1) + isnull(OSN2) + isnull(OSN3) + isnull(OSN4) + isnull(OSN5) + isnull(OSN6) + isnull(OSN7) + isnull(OSN8) + isnull(OSN9) + isnull(OSN10)) as cnt'))->where('orgID', $org->orgID)->first();
         $cDate = DB::table('organization')->select(DB::raw('10-( isnull(ODN1) + isnull(ODN2) + isnull(ODN3) + isnull(ODN4) + isnull(ODN5) + isnull(ODN6) + isnull(ODN7) + isnull(ODN8) + isnull(ODN9) + isnull(ODN10)) as cnt'))->where('orgID', $org->orgID)->first();
-        array_push($topBits, [8, 'Custom Fields', $cData->cnt . '/10', null, '', '', 2]);
-        array_push($topBits, [3, 'Custom Dates', $cDate->cnt . '/10', null, '', '', 2]);
+        array_push($topBits, [8, 'Custom Fields', $cData->cnt.'/10', null, '', '', 2]);
+        array_push($topBits, [3, 'Custom Dates', $cDate->cnt.'/10', null, '', '', 2]);
 
         return view('v1.auth_pages.organization.settings', compact('org', 'topBits'));
     }
@@ -150,7 +150,7 @@ class OrgController extends Controller
         $notify = request()->input('notify');
         $password_confirmation = request()->input('password_confirmation');
 
-        if (!empty($create_user) && $create_user == 1) {
+        if (! empty($create_user) && $create_user == 1) {
             $validation_rules['email'] = 'required|email';
             $validation_rules['firstName'] = 'required|min:3|max:50';
             $validation_rules['lastName'] = 'required|min:3|max:50';
@@ -227,6 +227,7 @@ class OrgController extends Controller
 
         if (Storage::disk(getDefaultDiskFM())->exists($org->orgPath) == true) {
             request()->session()->flash('alert-warning', trans('messages.messages.user_create_fail'));
+
             return redirect('create_organization')
                 ->withErrors($validator)
                 ->withInput();
@@ -305,6 +306,7 @@ class OrgController extends Controller
                 request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
                 request()->session()->flash('alert-warning', $exception->getMessage());
                 DB::rollBack();
+
                 return back()->withInput();
             }
 
@@ -313,8 +315,8 @@ class OrgController extends Controller
             }
 
             request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
-            return back();
 
+            return back();
         } else {
             // Creating the org with an existing user
             $person_id = explode('-', $existing_user);
@@ -336,9 +338,10 @@ class OrgController extends Controller
                 $org->save();
                 $orgID = $org->orgID;
 
-                if (!$id_exist) {
+                if (! $id_exist) {
                     $org->forceDelete();
                     request()->session()->flash('alert-warning', trans('messages.errors.user_not_found'));
+
                     return back()->withInput();
                 }
 
@@ -363,6 +366,7 @@ class OrgController extends Controller
                 request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
                 request()->session()->flash('alert-warning', $exception->getMessage());
                 DB::rollBack();
+
                 return back()->withInput();
             }
         }
@@ -391,6 +395,7 @@ class OrgController extends Controller
         generateDirectoriesForOrg($org);
 
         request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
+
         return back();
     }
 
@@ -408,7 +413,7 @@ class OrgController extends Controller
         $updater = auth()->user()->id;
 
         if ($name == 'anonCats') {
-            $value = implode(',', (array)$value);
+            $value = implode(',', (array) $value);
             $org->anonCats = $value;
         } else {
             // Add logic to change Role information if orgName changes

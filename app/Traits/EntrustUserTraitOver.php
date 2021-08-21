@@ -5,7 +5,8 @@ namespace App\Traits;
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+//use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Shanmuga\LaravelEntrust\Traits\LaravelEntrustUserTrait as EntrustUserTrait;
 
 trait EntrustUserTraitOver
 {

@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
-use App\Models\Address;
-use App\Models\Email;
-use App\Models\Event;
 use App\Imports\MembersImport;
 use App\Jobs\ImportDetailsUpdateJob;
 use App\Jobs\NotifyUserOfCompletedImport;
+use App\Models\Address;
+use App\Models\Email;
+use App\Models\Event;
 use App\Models\ImportDetail;
 use App\Models\OrgPerson;
 use App\Models\Person;

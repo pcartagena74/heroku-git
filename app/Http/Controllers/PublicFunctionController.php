@@ -30,8 +30,9 @@ class PublicFunctionController extends Controller
             if (null !== $p && null !== $p->orgperson) {
                 return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
                 'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
-            } elseif(null !== $p) {
+            } elseif (null !== $p) {
                 $p->load('orgperson');
+
                 return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
                     'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
             }
