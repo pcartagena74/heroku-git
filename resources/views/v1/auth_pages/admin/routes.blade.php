@@ -7,7 +7,7 @@
 
 @endphp
 
-@extends('layouts.app')
+@extends('v1.layouts.no-auth_no-nav_simple')
 
 @section('extra-css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/dataTables.bootstrap4.min.css" />
@@ -38,10 +38,7 @@
                     zeroRecords: "No routes match search criteria"
                 },
                 order: [
-                    [
-                        1,
-                        'asc'
-                    ],
+                    [ 1, 'asc' ],
                 ]
             });
         });
