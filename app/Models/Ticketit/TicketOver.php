@@ -23,6 +23,11 @@ class TicketOver extends Ticket
         'completed_at' => 'datetime',
     ];
 
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
+
     /**
      * List of completed tickets.
      *
