@@ -12,6 +12,7 @@ use Jenssegers\Date\Date;
 use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Traits\ContentEllipse;
 use Kordy\Ticketit\Traits\Purifiable;
+use DateTimeInterface;
 
 class TicketOver extends Ticket
 {

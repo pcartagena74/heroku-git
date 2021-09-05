@@ -1,3 +1,6 @@
+@php
+use Illuminate\Support\Str;
+@endphp
 @extends(config('mail-tracker.admin-template.name'))
 @section(config('mail-tracker.admin-template.section'))
     <div class="container">
