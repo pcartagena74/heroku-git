@@ -1,11 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
+use Kordy\Ticketit\Controllers\StatusesController;
+use Kordy\Ticketit\Controllers\TicketsController;
+#use Kordy\Ticketit\Controllers\DashboardController;
+use \App\Http\TicketitControllers\DashboardController;
+use Kordy\Ticketit\Controllers\PrioritiesController;
+use Kordy\Ticketit\Controllers\CategoriesController;
+use Kordy\Ticketit\Controllers\ConfigurationsController;
+use Kordy\Ticketit\Controllers\AdministratorsController;
+use Kordy\Ticketit\Controllers\AgentsController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetController;
-//use App\Http\Controllers\Auth;
 use App\Http\Controllers\AuthCheckinController;
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\CampaignController;
@@ -45,6 +52,9 @@ use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +86,8 @@ $topBits = '';
 return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
+
+Route::get('/art-rt-lst', [HomeController::class, 'showApplicationRoutes']);
 /**
  * below code is for language route do not update
  */
@@ -112,8 +124,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::post('/reportissue', [ErrorController::class, 'reportIssue']);
 
-Route::post('/login', [AuthAlias\LoginController::class, 'login'])->name('login');
-Route::get('/logout', [AuthAlias\LoginController::class, 'logout'])->name('logout');
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/policies', function () {
     return view('v1.public_pages.policies');
@@ -137,8 +149,8 @@ Route::get('/pmi_lookup/{org}', [OrgPersonController::class, 'index']);
 Route::post('/pmi_lookup', [OrgPersonController::class, 'find']);
 Route::get('/pmi_account/{person}', [OrgPersonController::class, 'show']);
 
-Route::get('/password/resetmodal', [AuthAlias\ResetPasswordController::class, 'showResetForm_inModal']);
-Route::get('/password/forgotmodal', [AuthAlias\ForgotPasswordController::class, 'showLinkRequestForm_inModal']);
+Route::get('/password/resetmodal', [ResetPasswordController::class, 'showResetForm_inModal']);
+Route::get('/password/forgotmodal', [ForgotPasswordController::class, 'showLinkRequestForm_inModal']);
 
 // Public Event-related Routes
 Route::get('/events/{eventslug}/{override?}', [EventController::class, 'show'])->name('display_event');
@@ -162,7 +174,6 @@ Route::post('/record_attendance/{event}', [AuthCheckinController::class, 'store'
 
 Route::get('/storage/events/{filename}', function ($filename) {
     $filePath = Flysystem::connection('awss3')->get($filename);
-
     return redirect($filePath);
 });
 
@@ -182,7 +193,7 @@ Route::post('/event_checkin/{event}/{session?}', [RegSessionController::class, '
 
 Auth::routes();
 Route::get('/ticketit', function () {
-    // return redirect(action([\Kordy\Ticketit\Controllers\TicketsController::class, 'index']));
+    return redirect(action([DashboardController::class, 'index']));
 });
 
 // Private Admin Page Routes
@@ -387,8 +398,8 @@ Route::get('/list_campaign', [CampaignController::class, 'listCampaign']);
 
 // Email Builder Routes ends
 // ----------------------------------------------------------------------------------
-Route::get('/testlogin', [AuthAlias\LoginController::class, 'showLoginForm']);
-//Route::post('/testlogin', [Auth\LoginController::class, 'showLoginForm']);
+Route::get('/testlogin', [LoginController::class, 'showLoginForm']);
+//Route::post('/testlogin', [LoginController::class, 'showLoginForm']);
 Route::get('/mytest', function () {
     $events = App\Models\Event::all();
 

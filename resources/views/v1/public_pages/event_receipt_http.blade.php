@@ -1,10 +1,10 @@
-<?php
+@php
 /**
  * Comment: Template for pages without authentication
  * Created: 2/2/2017
  */
 //<script src='https://www.google.com/recaptcha/api.js'>
-?>
+@endphp
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -14,12 +14,16 @@
         <meta content="Integrated Member Management, Email Marketing, Event Registration, Surveys" name="description"/>
         <meta content="mCentric / Efcico Corporation" name="author"/>
         <meta content="{{ csrf_token() }}" name="csrf-token"/>
-        @if(Auth::user())
+@if(Auth::user())
     @if(!auth()->user()->remember_token)
         <meta content="3600;url={{ str_replace('https', 'http', env('APP_URL')) }}/logout" http-equiv="refresh"/>
-        @endif
+    @endif
 @endif
-        <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric.ico" rel="icon"/>
+@if(env('APP_ENV') == 'local')
+            <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_dev.ico" rel="icon"/>
+@else
+            <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric.ico" rel="icon"/>
+@endif
         <base href="{{ str_replace('https', 'http', env('APP_URL')) }}"/>
         <title>
             mCentric

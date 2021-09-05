@@ -22,5 +22,9 @@
         <meta http-equiv="refresh" content="3600;url={{ env('APP_URL') . "/logout" }}" />
     @endif
 @endif
-<link rel="icon" href="{{ env('APP_URL') }}/images/mCentric.ico">
+@if(env('APP_ENV') == 'local')
+    <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_dev.ico" rel="icon"/>
+@else
+    <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric.ico" rel="icon"/>
+@endif
 <base href="{{ env('APP_URL') }}">

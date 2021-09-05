@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment: Template for pages without authentication
  * Created: 2/2/2017
  */
-?>
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 @include('v1.parts.header')

@@ -8,7 +8,6 @@
 <!DOCTYPE html>
 <html lang="en">
     @include('v1.parts.header_no-auth')
-</html>
 <body class="nav-md footer_fixed">
     <!-- Google Tag Manager (noscript) -->
     <noscript>
@@ -41,3 +40,4 @@
         </div>
     </div>
 </body>
+</html>

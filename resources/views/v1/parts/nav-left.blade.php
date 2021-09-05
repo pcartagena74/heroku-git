@@ -70,52 +70,26 @@ if($currentPerson->avatarURL !== null){
         <br>
             <div class="main_menu_side hidden-print main_menu" id="sidebar-menu">
                 <div class="menu_section">
-                    <h3>
-                    </h3>
+                    <h3> </h3>
                     <ul class="nav side-menu">
-                        <li>
-                            <a class="clear">
-                                <i class="far fa-fw fa-home">
-                                </i>
-                                @lang('messages.nav.my_set')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                        <li> <a class="clear"> <i class="far fa-fw fa-home"></i> @lang('messages.nav.my_set')
+                                <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li>
-                                    <a href="{{ url('dashboard')}}">
-                                        @lang('messages.nav.ms_dash')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('upcoming')}}">
-                                        @lang('messages.nav.ms_fut')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('profile/my')}}">
-                                        @lang('messages.nav.ms_profile')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('dashboard')}}"> @lang('messages.nav.ms_dash') </a> </li>
+                                <li> <a href="{{ url('upcoming')}}"> @lang('messages.nav.ms_fut') </a> </li>
+                                <li> <a href="{{ url('profile/my')}}"> @lang('messages.nav.ms_profile') </a> </li>
                                 @if (count($currentPerson->orgs)>1)
-                                    <li>
-                                        <a href="{{ url('orgs/my')}}">
-                                            @lang('messages.nav.ms_org')
-                                        </a>
-                                    </li>
+                                    <li> <a href="{{ url('orgs/my')}}"> @lang('messages.nav.ms_org') </a> </li>
                                 @endif
                                 @if(showActiveTicketUser())
-                                <li>
-                                    <a href="{{url('tickets')}}">
-                                        @php 
+                                <li> <a href="{{url('tickets')}}">
+                                    @php
                                     $unread_ticket = getActiveTicketCountUser();
-                                @endphp
+                                    @endphp
                                 @lang('messages.nav.active_issue')
                                 @if($unread_ticket > 0)
-                                        <span class="badge bg-green">
-                                            {{$unread_ticket}}
-                                        </span>
-                                        @endif
+                                        <span class="badge bg-green"> {{$unread_ticket}} </span>
+                                @endif
                                     </a>
                                 </li>
                                 @endif
@@ -126,45 +100,17 @@ if($currentPerson->avatarURL !== null){
                         @if(((Entrust::hasRole('Admin') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
-                            <a>
-                                <i class="fas fa-fw fa-lock-alt">
-                                </i>
-                                @lang('messages.nav.admin')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                            <a> <i class="fas fa-fw fa-lock-alt"></i> @lang('messages.nav.admin')
+                                <span class="far fa-pull-right fa-chevron-down"></span> </a>
                             <ul class="nav child_menu">
-                                <li>
-                                    <a href="{{ url('/')}}/become">
-                                        @lang('messages.nav.ms_become')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('/')}}/newuser/create">
-                                        @lang('messages.nav.ad_new')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('/')}}/role_mgmt">
-                                        @lang('messages.nav.o_roles')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('/')}}/become"> @lang('messages.nav.ms_become') </a> </li>
+                                <li> <a href="{{ url('/')}}/newuser/create"> @lang('messages.nav.ad_new') </a> </li>
+                                <li> <a href="{{ url('/')}}/role_mgmt"> @lang('messages.nav.o_roles') </a> </li>
+
                                 @if(Entrust::hasRole('Developer'))
-                                <li>
-                                    <a href="{{ url('create_organization')}}">
-                                        @lang('messages.nav.ad_new_org')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('/')}}/panel">
-                                        @lang('messages.nav.ad_panel')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('/')}}/load_data">
-                                        @lang('messages.nav.o_upload')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('create_organization')}}">@lang('messages.nav.ad_new_org')</a></li>
+                                <li> <a href="{{ url('/')}}/panel">@lang('messages.nav.ad_panel')</a> </li>
+                                <li> <a href="{{ url('/')}}/load_data"> @lang('messages.nav.o_upload') </a> </li>
                                 @endif
                             </ul>
                         </li>
@@ -174,28 +120,16 @@ if($currentPerson->avatarURL !== null){
                           Entrust::can('event-management') || Entrust::can('settings-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
-                            <a>
-                                <i class="far fa-fw fa-university">
-                                </i>
-                                @lang('messages.nav.org_set')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                            <a> <i class="far fa-fw fa-university"></i> @lang('messages.nav.org_set')
+                                <span class="far fa-pull-right fa-chevron-down"></span></a>
+
                             <ul class="nav child_menu">
                                 @if(Entrust::can('settings-management'))
-                                <li>
-                                    <a href="{{ url('orgsettings',$currentOrg)}}">
-                                        @lang('messages.nav.o_labels')
-                                    </a>
-                                </li>
+                                <li><a href="{{ url('orgsettings',$currentOrg)}}">@lang('messages.nav.o_labels')</a></li>
                                 @endif
 
                                 @if(Entrust::can('event-management'))
-                                <li>
-                                    <a href="{{ url('eventdefaults')}}">
-                                        @lang('messages.nav.o_defaults')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('eventdefaults')}}">@lang('messages.nav.o_defaults')</a> </li>
                                 @endif
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 @endif
@@ -206,92 +140,39 @@ if($currentPerson->avatarURL !== null){
                     @if(((Entrust::hasRole('Board')|| Entrust::can('event-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
-                            <a>
-                                <i class="far fa-fw fa-calendar-alt">
-                                </i>
-                                @lang('messages.nav.ev_mgmt')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                            <a> <i class="far fa-fw fa-calendar-alt"></i> @lang('messages.nav.ev_mgmt')
+                                <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li>
-                                    <a href="{{ url('manage_events')}}">
-                                        @lang('messages.nav.ev_manage')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('event/create')}}" id="add">
-                                        @lang('messages.nav.ev_add')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('eventstats')}}">
-                                        @lang('messages.nav.ev_stats')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('locations')}}">
-                                        @lang('messages.nav.ev_loc')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('manage_events/past')}}">
-                                        @lang('messages.nav.ev_old')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('manage_events')}}">@lang('messages.nav.ev_manage')</a></li>
+                                <li> <a href="{{ url('event/create')}}" id="add">@lang('messages.nav.ev_add')</a></li>
+                                <li> <a href="{{ url('eventstats')}}">@lang('messages.nav.ev_stats')</a></li>
+                                <li> <a href="{{ url('locations')}}">@lang('messages.nav.ev_loc')</a></li>
+                                <li> <a href="{{ url('manage_events/past')}}">@lang('messages.nav.ev_old')</a></li>
                             </ul>
                         </li>
                         @endif
 
                     @if(((Entrust::hasRole('Board')|| Entrust::can('member-management')))
                         || Entrust::hasRole('Developer'))
-                        <li>
-                            <a>
-                                <i class="far fa-fw fa-user">
-                                </i>
-                                @lang('messages.nav.mbr_mgmt')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                        <li> <a> <i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')
+                                <span class="far fa-pull-right fa-chevron-down"></span> </a>
                             <ul class="nav child_menu">
-                                <li>
-                                    <a href="{{ url('search')}}">
-                                        @lang('messages.nav.m_sch')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('search')}}"> @lang('messages.nav.m_sch') </a> </li>
+
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-                                <li>
-                                    <a href="{{ url('merge/p')}}">
-                                        @lang('messages.nav.m_merge')
-                                        <span class="label label-danger pull-right">
-                                            @lang('messages.nav.b_admin')
-                                        </span>
-                                    </a>
+                                <li> <a href="{{ url('merge/p')}}"> @lang('messages.nav.m_merge')
+                                        <span class="label label-danger pull-right">@lang('messages.nav.b_admin')</span></a>
                                 </li>
                                 @endif
-                                <li>
-                                    <a href="{{ url('members')}}" id="mem">
-                                        @lang('messages.nav.m_list')
-                                        <span class="label label-warning pull-right">
-                                            @lang('messages.nav.b_slow')
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('mbrreport')}}">
-                                        @lang('messages.nav.m_rpt')
-                                        <span class="label label-success pull-right">
-                                            NEW
-                                        </span>
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('members')}}" id="mem"> @lang('messages.nav.m_list')
+                                        <span class="label label-warning pull-right">@lang('messages.nav.b_slow')</span></a></li>
+                                <li> <a href="{{ url('mbrreport')}}"> @lang('messages.nav.m_rpt')
+                                        <span class="label label-success pull-right"> NEW </span> </a> </li>
+                                {{--
                                 @if(Entrust::hasRole('Deleted') || Entrust::hasRole('Deleted'))
-                                <li>
-                                    <a href="{{ url('force')}}">
-                                        @lang('messages.nav.m_pass')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('force')}}"> @lang('messages.nav.m_pass') </a> </li>
                                 @endif
+                                --}}
                             </ul>
                         </li>
                         @endif
@@ -300,116 +181,49 @@ if($currentPerson->avatarURL !== null){
                             Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Developer'))
                         <li>
-                            <a>
-                                <i class="far fa-fw fa-microphone">
-                                </i>
-                                @lang('messages.nav.spk_mgmt')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                            <a><i class="far fa-fw fa-microphone"></i> @lang('messages.nav.spk_mgmt')
+                                <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li>
-                                    <a href="{{ url('speakers')}}">
-                                        @lang('messages.nav.s_list')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('/')}}#">
-                                        @lang('messages.nav.s_new')
-                                        <span class="label label-success pull-right">
-                                            Define It
-                                        </span>
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('speakers')}}"> @lang('messages.nav.s_list') </a> </li>
+                                <li> <a href="{{ url('/')}}#"> @lang('messages.nav.s_new')
+                                        <span class="label label-success pull-right"> Define It </span></a> </li>
                             </ul>
                         </li>
                         @endif
 
                     @if(Entrust::hasRole('Developer') || Entrust::hasRole('Marketing'))
-                        <li>
-                            <a>
-                                <i class="far fa-fw fa-envelope">
-                                </i>
-                                @lang('messages.nav.em_mktg')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                        <li> <a><i class="far fa-fw fa-envelope"></i> @lang('messages.nav.em_mktg')
+                                <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                <li>
-                                    <a href="{{ url('campaigns')}}">
-                                        @lang('messages.nav.e_camp')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('library')}}">
-                                        @lang('messages.nav.e_asset')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('lists')}}">
-                                        @lang('messages.nav.e_list')
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('reports')}}">
-                                        @lang('messages.nav.e_rpt')
-                                    </a>
-                                </li>
+                                <li> <a href="{{ url('campaigns')}}"> @lang('messages.nav.e_camp') </a> </li>
+                                <li> <a href="{{ url('library')}}"> @lang('messages.nav.e_asset') </a> </li>
+                                <li> <a href="{{ url('lists')}}"> @lang('messages.nav.e_list') </a> </li>
+                                <li> <a href="{{ url('reports')}}"> @lang('messages.nav.e_rpt') </a> </li>
                             </ul>
                         </li>
                         @endif
                         <li style="display: none">
-                            <a href="{{ route('tickets.my-tickets')}}">
-                                <i class="fas fa-fw fa-ticket-alt">
-                                </i>
-                                @lang('messages.nav.my_support')
-                                <span class="far fa-pull-right">
-                                </span>
-                            </a>
+                            <a href="{{ route('tickets.my-tickets')}}"><i class="fas fa-fw fa-ticket-alt"></i>
+                                @lang('messages.nav.my_support') <span class="far fa-pull-right"></span></a>
                         </li>
                         @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
                         <li class="">
-                            <a>
-                                <i class="far fa-fw fa-ticket-alt">
-                                </i>
-                                @lang('messages.nav.help')
-                                <span class="far fa-pull-right fa-chevron-down">
-                                </span>
-                            </a>
+                            <a><i class="far fa-fw fa-ticket-alt"></i>
+                                @lang('messages.nav.help') <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                @if((Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) && auth()->id() == 1)
-                                <li>
-                                    <a href="{{ url('tickets-admin')}}">
-                                        @lang('messages.nav.h_dash')
-                                    </a>
-                                </li>
+                                @if((Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) || auth()->id() == 1)
+                                <li> <a href="{{ url('tickets-admin')}}"> @lang('messages.nav.h_dash') </a> </li>
                                 @endif
                                 <li>
-                                    <a href="{{ url('tickets')}}">
-                                        @lang('messages.nav.h_active')
+                                    <a href="{{ url('tickets')}}"> @lang('messages.nav.h_active')
                                         @php
                                             $ticket_count = getActiveTicketCountAgent();
                                         @endphp
                                         @if($ticket_count > 0)
-                                        <span class="badge bg-green">
-                                            {{$ticket_count }}
-                                        </span>
+                                            <span class="badge bg-green"> {{$ticket_count }} </span>
                                         @endif
                                     </a>
                                 </li>
-                                @php /*
-                                <li style="display: none">
-                                    <a href="{{ url('tickets/create')}}">
-                                        @lang('messages.nav.h_tkt')
-                                    </a>
-                                </li>
-                                <li style="display: none">
-                                    <a href="{{ url('reports')}}">
-                                        @lang('messages.nav.h_rpt')
-                                    </a>
-                                </li>
-                                */
-                                @endphp
                             </ul>
                         </li>
                         @endif
