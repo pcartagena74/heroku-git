@@ -82,19 +82,19 @@ if($currentPerson->avatarURL !== null){
                                     <li> <a href="{{ url('orgs/my')}}"> @lang('messages.nav.ms_org') </a> </li>
                                 @endif
                                 @if(showActiveTicketUser())
-                                <li> <a href="{{url('tickets')}}">
-                                    @php
-                                    $unread_ticket = getActiveTicketCountUser();
-                                    @endphp
-                                @lang('messages.nav.active_issue')
-                                @if($unread_ticket > 0)
-                                        <span class="badge bg-green"> {{$unread_ticket}} </span>
-                                @endif
-                                    </a>
-                                </li>
+                                    <li> <a href="{{ url('tickets') }}">
+                                        @php
+                                        $unread_ticket = getActiveTicketCountUser();
+                                        @endphp
+                                        @lang('messages.nav.active_issue')
+                                        @if($unread_ticket > 0)
+                                            <span class="badge bg-green"> {{$unread_ticket}} </span>
+                                        @endif
+                                        </a>
+                                    </li>
                                 @endif
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-                            @endif
+                                @endif
                             </ul>
                         </li>
                         @if(((Entrust::hasRole('Admin') || Entrust::can('settings-management')))

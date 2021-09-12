@@ -553,6 +553,13 @@ class EventController extends Controller
         $org = Org::find($current_person->defaultOrgID);
         $exLoc = Location::find($event->locationID);
         $page_title = trans('messages.headers.event_edit');
+        if($event->mainSession === null){
+            $es = new EventSession;
+            $es->eventID = $event->eventID;
+            $es->save();
+            $event->mainSession = $es->sessionID;
+            $event->save();
+        }
 
         return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
     }

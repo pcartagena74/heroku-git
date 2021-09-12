@@ -4,22 +4,22 @@
  * Created: 11/8/2018
  *
  * @var $topBits
- * @var $mbr_list
+ * @var $mbr_srch
  *
  */
 
 if($topBits === null){
     $topBits = '';
 }
-if ($mbr_list){
+if ($mbr_srch){
 
     $headers = ['#', trans('messages.fields.name'), trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
         trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.indName'),
         trans('messages.fields.expr'), trans('messages.fields.buttons')];
 
-    count($mbr_list) > 10 ? $scroll = 1 : $scroll = 0;
+    count($mbr_srch) > 10 ? $scroll = 1 : $scroll = 0;
 
-    foreach($mbr_list as $mbr) {
+    foreach($mbr_srch as $mbr) {
 
         $profile_form = "<a target='_new' href='". env('APP_URL') . "/profile/$mbr->personID' type='button' data-toggle='tooltip' data-placement='top'
                      title='" . trans('messages.tooltips.vep') . "' class='btn btn-xs btn-primary'><i class='far fa-fw fa-edit'></i></a>";
@@ -44,10 +44,11 @@ if ($mbr_list){
                         '\');">'. $submit_button . '</button>';
         $become_form .= Form::close();
 
-        $mbr->cnt = $profile_form . $merge_form . $activity_form . $become_form;
+        //$mbr->cnt = $profile_form . $merge_form . $activity_form . $become_form;
+        $mbr->cnt = view('v1.parts.mbr_buttons', ['p' => $mbr->personID, 'c' => $mbr->cnt])->render();
     }
 
-    $data = collect($mbr_list);
+    $data = collect($mbr_srch);
 } else {
     $scroll = 0;
 }
@@ -81,7 +82,7 @@ if ($mbr_list){
 
     @include('v1.parts.end_content')
 
-    @if($mbr_list)
+    @if($mbr_srch)
         @include('v1.parts.start_content', ['header' => trans('messages.headers.person_search') . " " . trans('messages.headers.results'),
                  'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
