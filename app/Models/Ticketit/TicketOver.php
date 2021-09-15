@@ -12,6 +12,7 @@ use Jenssegers\Date\Date;
 use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Traits\ContentEllipse;
 use Kordy\Ticketit\Traits\Purifiable;
+use DateTimeInterface;
 
 class TicketOver extends Ticket
 {
@@ -19,7 +20,14 @@ class TicketOver extends Ticket
     use Purifiable;
 
     protected $table = 'ticketit';
-    protected $dates = ['completed_at'];
+    protected $casts = [
+        'completed_at' => 'datetime',
+    ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     /**
      * List of completed tickets.

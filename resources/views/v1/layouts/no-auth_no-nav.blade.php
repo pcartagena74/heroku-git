@@ -1,16 +1,16 @@
-<?php
+@php
 /**
  * Comment: Template for pages without authentication
  * Created: 2/2/2017
  */
 //<script src='https://www.google.com/recaptcha/api.js'></script>
-?>
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 @include('v1.parts.header_no-auth_no-nav')
 <style>
     body {
-        overflow-y: 0 auto;
+        overflow-y: auto;
     }
 
     footer {

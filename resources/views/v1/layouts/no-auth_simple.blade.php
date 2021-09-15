@@ -1,10 +1,10 @@
-<?php
+@php
 /**
  * Comment: Template for pages without authentication
  * Created: 2/2/2017
  */
 //<script src='https://www.google.com/recaptcha/api.js'></script>
-?>
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 @include('v1.parts.header_simple_no-auth')

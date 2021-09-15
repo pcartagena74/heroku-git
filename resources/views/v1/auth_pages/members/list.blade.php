@@ -1,11 +1,13 @@
-<?php
+@php
 /**
- * Comment:
+ * Comment: Member listing (everyone and slow)
  * Created: 2/9/2017
+ *
+ * @var $mbr_list
+ *
  */
 
-
-$headers = ['#', 'Name', trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
+$headers = ['#', trans('messages.fields.name'), trans('messages.fields.pmi_id'), trans('messages.fields.classification'),
             trans('messages.fields.compName'), trans('messages.fields.title'), trans('messages.fields.indName'),
             trans('messages.fields.expr'), trans('messages.fields.buttons')];
 
@@ -36,7 +38,7 @@ foreach($mbr_list as $mbr) {
 }
 $data = collect($mbr_list);
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')

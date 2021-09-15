@@ -1,11 +1,13 @@
 <?php
 
-namespace Kordy\Ticketit\Controllers;
+namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
-use Kordy\Ticketit\Models\Agent;
+#use Kordy\Ticketit\Models\Agent;
+use App\Models\Ticketit\AgentOver as Agent;
 use Kordy\Ticketit\Models\Category;
-use Kordy\Ticketit\Models\Ticket;
+#use Kordy\Ticketit\Models\Ticket;
+use App\Models\Ticketit\TicketOver as Ticket;
 
 class DashboardController extends Controller
 {
@@ -40,9 +42,11 @@ class DashboardController extends Controller
 
         // Per User
         $users = Agent::users(10);
+        //$users = Agent::users()->has('tickets')->get(10);
+        //dd($users);
 
         // Per Category performance data
-        $ticketController = new TicketsController(new Ticket(), new Agent());
+        $ticketController = new TicketsControllerOver(new Ticket(), new Agent());
         $monthly_performance = $ticketController->monthlyPerfomance($indicator_period);
 
         if (request()->has('cat_page')) {

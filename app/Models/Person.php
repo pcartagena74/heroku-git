@@ -20,7 +20,11 @@ class Person extends Model
 
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+        'lastLoginDate' => 'datetime',
+    ];
     protected $hidden = ['remember_token'];
 
     protected static $logOnlyDirty = true;

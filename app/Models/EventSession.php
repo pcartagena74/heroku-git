@@ -13,7 +13,12 @@ class EventSession extends Model
     protected $primaryKey = 'sessionID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['start', 'end', 'createDate', 'updateDate', 'deleted_at'];
+    protected $casts = [
+        'start' => 'datetime',
+        'end' => 'datetime',
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
     protected $fillable = ['sessionName', 'sessionAbstract', 'eventID', 'start', 'end'];
 
     public function track()

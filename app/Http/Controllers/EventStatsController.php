@@ -52,7 +52,7 @@ class EventStatsController extends Controller
                     },
                 ])
                 ->orderBy('eventStartDate', 'DESC')
-                ->get();
+                ->cursor();
 
             $simple_header = [
                 implode(' ', [trans('messages.fields.event'), trans('messages.fields.name')]),

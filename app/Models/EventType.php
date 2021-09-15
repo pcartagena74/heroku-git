@@ -13,7 +13,10 @@ class EventType extends Model
     protected $primaryKey = 'etID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['createDate', 'updateDate'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     /*
      * Commented out because this doesn't make sense

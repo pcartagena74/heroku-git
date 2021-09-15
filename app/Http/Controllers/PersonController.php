@@ -187,11 +187,11 @@ class PersonController extends Controller
                 ->where([
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
                     ['p.personID', '!=', 1],
-                ])->select(DB::raw("p.personID, concat(firstName, ' ', lastName) AS fullName, OrgStat1, OrgStat2, compName, 
-                           title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
+                ])->select(DB::raw("p.personID, concat(firstName, ' ', lastName) AS fullName, 
+                           OrgStat1, OrgStat2, compName, title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er
-						 WHERE er.personID=p.personID) AS 'cnt'"))
-                ->get();
+						    WHERE er.personID=p.personID) AS 'cnt'"))
+                ->cursor();
         });
 
         return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
@@ -203,12 +203,12 @@ class PersonController extends Controller
     public function index2($query = null)
     {
         $topBits = $this->member_bits();
-        $mbr_list = null;
+        $mbr_srch = null;
         $p = Person::find(auth()->user()->id);
         $orgID = $p->defaultOrgID;
 
         if ($query !== null) {
-            $mbr_list = Person::where('firstName', 'LIKE', "%$query%")
+            $mbr_srch = Person::where('firstName', 'LIKE', "%$query%")
                 ->orWhere('person.personID', 'LIKE', "%$query%")
                 ->orWhere('lastName', 'LIKE', "%$query%")
                 ->orWhere('login', 'LIKE', "%$query%")
@@ -228,15 +228,15 @@ class PersonController extends Controller
                     $join->on('op.personID', '=', 'person.personID')
                         ->where('orgID', $orgID);
                 })
-                ->select(DB::raw("person.personID, concat(coalesce(`firstName`, ''), ' ', coalesce(`lastName`, '')) AS fullName, op.OrgStat1, op.OrgStat2, compName, 
-                           title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
+                ->select(DB::raw("person.personID, concat(coalesce(`firstName`, ''),' ',coalesce(`lastName`, '')) AS fullName,
+                           op.OrgStat1, op.OrgStat2, compName, title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire',
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
                 ->distinct()->get();
 
-            return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
+            return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_srch'));
         }
 
-        return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_list'));
+        return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_srch'));
     }
 
     /**

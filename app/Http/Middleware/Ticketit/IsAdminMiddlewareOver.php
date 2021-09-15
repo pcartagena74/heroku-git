@@ -19,7 +19,7 @@ class IsAdminMiddlewareOver extends IsAdminMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (Agent::isAdmin() && auth()->id() == 1) {
+        if (Agent::isAdmin() || auth()->id() == 1) {
             return $next($request);
         }
 

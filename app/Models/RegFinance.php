@@ -15,7 +15,10 @@ class RegFinance extends Model
     protected $primaryKey = 'regID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'cancelDate';
-    protected $dates = ['createDate', 'cancelDate', 'deleted_at'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'cancelDate' => 'datetime',
+    ];
 
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     //protected static $ignoreChangedAttributes = ['createDate', 'cancelDate'];
