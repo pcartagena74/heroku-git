@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -36,19 +37,32 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontFlash = [
+        'current_password',
         'password',
         'password_confirmation',
     ];
+
+    /**
+     * Register the exception handling callbacks for the application.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->reportable(function (Throwable $e) {
+            //
+        });
+    }
 
     /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param  \Throwable  $exception
      * @return void
      */
-    public function report(Exception|\Throwable $exception)
+    public function report(Throwable $exception)
     {
         if ($this->shouldReport($exception)) {
             //$airbrakeNotifier = \App::make('Airbrake\Notifier');
@@ -62,10 +76,10 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param  \Throwable  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception|\Throwable $exception)
+    public function render($request, Throwable $exception)
     {
         if ($request->hasCookie('locale')) {
             $cookie = $request->cookie('locale');

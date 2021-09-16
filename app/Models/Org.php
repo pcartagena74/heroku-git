@@ -13,7 +13,10 @@ class Org extends Model
     protected $primaryKey = 'orgID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['createDate', 'updateDate'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     public function orgpeople()
     {

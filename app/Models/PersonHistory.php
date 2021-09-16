@@ -9,7 +9,12 @@ class PersonHistory extends Model
     // The table
     protected $table = 'person_history';
     protected $primaryKey = 'revision';
-    protected $dates = ['changeDate', 'createDate', 'deleted_at', 'updateDate', 'lastLoginDate'];
+    protected $casts = [
+        'changeDate' => 'datetime',
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+        'lastLoginDate' => 'datetime',
+    ];
 
     protected $hidden = ['remember_token'];
 

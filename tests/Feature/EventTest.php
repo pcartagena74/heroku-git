@@ -55,7 +55,7 @@ class EventTest extends TestCase
      */
     public function only_authenticated_users_can_create_events()
     {
-        $attributes = factory(\App\Models\Event::class)->raw(['org' => $this->org]);
+        $attributes = \App\Models\Event::factory()->raw(['org' => $this->org]);
         $this->post('/event/create', $attributes)->assertRedirect('login');
     }
 
@@ -80,14 +80,14 @@ class EventTest extends TestCase
 
         $event = $this->person->defaultOrg->events()->create($this->event_attributes);
 
-        $event->tickets()->create(factory(\App\Ticket::class)->raw([
+        $event->tickets()->create(\App\Ticket::factory()->raw([
             'eventID' => $event->eventID,
             'availabilityEndDate' => $event->eventStartDate,
             'memberBasePrice' => 25.00,
             'nonmbrBasePrice' => 35.00,
         ]));
 
-        $session = $event->main_session()->create(factory(\App\Models\EventSession::class)->raw([
+        $session = $event->main_session()->create(\App\Models\EventSession::factory()->raw([
             'eventID' => $event->eventID,
             'start' => $event->eventStartDate,
             'end' => $event->eventEndDate,

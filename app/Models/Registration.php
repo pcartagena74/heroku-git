@@ -20,7 +20,10 @@ class Registration extends Model
     protected $primaryKey = 'regID';
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';
-    protected $dates = ['createDate', 'updateDate', 'deleted_at'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     public function event()
     {

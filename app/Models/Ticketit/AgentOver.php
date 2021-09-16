@@ -128,15 +128,6 @@ class AgentOver extends User
         }
 
         return false;
-        // updated code ends
-        if (isset($id)) {
-            $user = User::find($id);
-            if ($user->ticketit_agent) {
-                return true;
-            }
-
-            return false;
-        }
     }
 
     /**

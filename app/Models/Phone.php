@@ -16,7 +16,10 @@ class Phone extends Model
     protected $primaryKey = 'phoneID';
     const UPDATED_AT = 'updateDate';
     const CREATED_AT = 'createDate';
-    protected $dates = ['createDate', 'updateDate'];
+    protected $casts = [
+        'createDate' => 'datetime',
+        'updateDate' => 'datetime',
+    ];
 
     public function person()
     {

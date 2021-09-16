@@ -5,7 +5,6 @@
      *
      * @var $simple_header
      * @var $simple - simple pre-parsed event data with counts/sums from registration, regfinance,
-     * @var $events - event data with counts/sums from registration, regfinance,
      *
      */
 

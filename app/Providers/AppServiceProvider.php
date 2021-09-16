@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\URL as URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
+
 //use Phirehose;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // Paginator::useBootstrapThree();
+        \Illuminate\Pagination\Paginator::useBootstrap();
 
         $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
 
@@ -58,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
 
-        if ($this->app->environment('local', 'test')) {
+        if ($this->app->environment('local', 'dev', 'test')) {
             $this->app->register(DuskServiceProvider::class);
             //$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
         }
@@ -68,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
         //Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
         //Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
 
-        if ($this->app->environment('local')) {
+        if ($this->app->environment('local', 'test', 'queue')) {
             $this->app->register(\App\Providers\TelescopeServiceProvider::class);
         }
     }

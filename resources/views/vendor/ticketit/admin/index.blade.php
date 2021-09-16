@@ -1,3 +1,7 @@
+@php
+use App\Http\TicketitControllers\DashboardController;
+@endphp
+
 @extends($master)
 
 @section('page')
@@ -68,17 +72,17 @@
                                 </button>
                                 <ul class="dropdown-menu pull-right" role="menu">
                                     <li>
-                                        <a href="{{ action('\Kordy\Ticketit\Controllers\DashboardController@index', 2) }}">
+                                        <a href="{{ action([DashboardController::class, 'index'], 2) }}">
                                             {{ trans('ticketit::admin.index-3-months') }}
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ action('\Kordy\Ticketit\Controllers\DashboardController@index', 5) }}">
+                                        <a href="{{ action([DashboardController::class, 'index'], 5) }}">
                                             {{ trans('ticketit::admin.index-6-months') }}
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ action('\Kordy\Ticketit\Controllers\DashboardController@index', 11) }}">
+                                        <a href="{{ action([DashboardController::class, 'index'], 11) }}">
                                             {{ trans('ticketit::admin.index-12-months') }}
                                         </a>
                                     </li>
@@ -97,7 +101,7 @@
                                 {{ trans('ticketit::admin.index-tickets-share-per-category') }}
                             </div>
                             <div class="panel-body">
-                                <div id="catpiechart" style="width: auto; height: 350;"></div>
+                                <div id="catpiechart" style="width: auto; height: 350px;"></div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +111,7 @@
                                 {{ trans('ticketit::admin.index-tickets-share-per-agent') }}
                             </div>
                             <div class="panel-body">
-                                <div id="agentspiechart" style="width: auto; height: 350;"></div>
+                                <div id="agentspiechart" style="width: auto; height: 350px;"></div>
                             </div>
                         </div>
                     </div>
@@ -239,6 +243,9 @@
 @section('footer')
     @if($tickets_count)
     {{--@include('ticketit::shared.footer')--}}
+    <script>
+    </script>
+
     <script type="text/javascript"
             src="https://www.google.com/jsapi?autoload={
             'modules':[{
@@ -249,6 +256,7 @@
           }"></script>
 
     <script type="text/javascript">
+        google.charts.load('current', {packages: ['corechart']});
         google.setOnLoadCallback(drawChart);
 
         // performance line chart
