@@ -18,7 +18,7 @@ class OrgAdminProp extends Model
     ];
     protected $fillable = ['orgID', 'propID', 'value'];
 
-    protected function setKeysForSaveQuery(Builder $query)
+    protected function setKeysForSaveQuery($query)
     {
         return $query->where('orgID', $this->getAttribute('orgID'))
             ->where('propID', $this->getAttribute('propID'));
