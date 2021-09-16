@@ -8,6 +8,7 @@
  * @var $permissions
  * @var $persons
  * @var $topBits
+ * @var $counter
  */
 
 if($topBits === null){
@@ -55,9 +56,7 @@ $counter = 0;
                 <div class="col-sm-12">
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->name }}</div>
                     <div class="col-sm-3 well-sm {{ $bg }}">{{ $r->display_name }}</div>
-                    <div class="col-sm-6 well-sm {{ $bg }}">{{ $r->description }} <br/>
-                        @lang('messages.headers.perms'):
-                    </div>
+                    <div class="col-sm-6 well-sm {{ $bg }}">{{ $r->description }}</div>
                 </div>
             @endforeach
 
@@ -260,7 +259,7 @@ $counter = 0;
                     <td style="vertical-align: top; text-align: left;">{!! $a . $p->lastName . "</a>" !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->firstName !!}</td>
                     <td style="vertical-align: top; text-align: left;">{!! $p->login !!}</td>
-                    <td style="vertical-align: top; text-align: left;">{!! $p->orgperson->OrgStat1 or '' !!}</td>
+                    <td style="vertical-align: top; text-align: left;">{!! $p->orgperson->OrgStat1 ?? '' !!}</td>
                     <td style="vertical-align: top; text-align: left;">
                         {!! $board !!}
                         {!! $mktg !!}
