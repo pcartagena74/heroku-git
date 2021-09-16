@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(Exception|\Throwable $exception)
     {
         if ($this->shouldReport($exception)) {
             //$airbrakeNotifier = \App::make('Airbrake\Notifier');
@@ -65,7 +65,7 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Exception|\Throwable $exception)
     {
         if ($request->hasCookie('locale')) {
             $cookie = $request->cookie('locale');
