@@ -23,8 +23,10 @@
     @endif
 @endif
 @if(env('APP_ENV') == 'local')
-    <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric_dev.ico" rel="icon"/>
+    <link href="{{ env('APP_URL') }}/images/mCentric_dev.ico" rel="icon"/>
+@elseif(env('APP_ENV') == 'test')
+    <link href="{{ env('APP_URL') }}/images/mCentric_test.ico" rel="icon"/>
 @else
-    <link href="{{ str_replace('https', 'http', env('APP_URL')) }}/images/mCentric.ico" rel="icon"/>
+    <link href="{{ env('APP_URL') }}/images/mCentric.ico" rel="icon"/>
 @endif
 <base href="{{ env('APP_URL') }}">
