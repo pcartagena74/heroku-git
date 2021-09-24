@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: display file upload page
  * Created: 4/29/2017
@@ -10,7 +10,7 @@ if(isset($blah)){
     $count = 0;
 }
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')

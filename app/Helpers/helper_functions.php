@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
 use PHPHtmlParser\Dom;
@@ -25,6 +26,115 @@ use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
 
 // $client = new Client();
+
+/**
+ * Takes a member report type, optional # of days, and optional pagination count
+ *
+ * @param string $which
+ * @param int $days
+ * @param int $page
+ * @return array
+ */
+if (! function_exists('membership_reports')) {
+    function membership_reports($orgID, $which = 'new', $download = 0, $days = 90, $page = 15): array
+    {
+        $today = Carbon::today();
+        $y = $today->year;
+
+        switch ($which) {
+            case 'new':
+                if($download){
+                    // download needs query to terminate in ->get()
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                        $q->whereNotNull('OrgStat1');
+                        $q->whereNotNull('RelDate1');
+                        $q->whereNotNull('RelDate2');
+                        $q->whereNotNull('RelDate3');
+                        $q->whereNotNull('RelDate4');
+                        $q->where('org-person.orgID', '=', $orgID);
+                        $q->whereDate('RelDate2', '>=', $today->subDays($days)->toDateString());
+                    })
+                        ->withCount(['registrations' => function($query){
+                            $query->whereNull('deleted_at');
+                        }, 'registrations as regs_this_year' => function ($query) use ($y) {
+                            $query->whereNull('deleted_at');
+                            $query->whereRaw("year(createDate) = $y");
+                        }])
+                        ->with('orgperson')
+                        ->get();
+                } else {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                        $q->whereNotNull('OrgStat1');
+                        $q->whereNotNull('RelDate1');
+                        $q->whereNotNull('RelDate2');
+                        $q->whereNotNull('RelDate3');
+                        $q->whereNotNull('RelDate4');
+                        $q->where('org-person.orgID', '=', $orgID);
+                        $q->whereDate('RelDate2', '>=', $today->subDays($days)->toDateString());
+                    })
+                        ->withCount(['registrations' => function($query){
+                            $query->whereNull('deleted_at');
+                        }, 'registrations as regs_this_year' => function ($query) use ($y) {
+                            $query->whereNull('deleted_at');
+                            $query->whereRaw("year(createDate) = $y");
+                        }])
+                        ->with('orgperson')
+                        ->paginate($page);
+                }
+
+                $title = trans('messages.headers.profile_vars.new_title',
+                    ['date' => $today->subDays($days)->format('F j, Y')]);
+                break;
+
+            default:
+                if($download){
+                    // download needs query to terminate in ->get()
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                        $q->whereNotNull('OrgStat1');
+                        $q->whereNotNull('RelDate1');
+                        $q->whereNotNull('RelDate2');
+                        $q->whereNotNull('RelDate3');
+                        $q->whereNotNull('RelDate4');
+                        $q->where('org-person.orgID', '=', $orgID);
+                        $q->whereDate('RelDate4', '>', $today->toDateString());
+                        $q->whereDate('RelDate4', '<=', $today->addDays($days)->toDateString());
+                    })
+                        ->withCount(['registrations' => function($query){
+                            $query->whereNull('deleted_at');
+                        }, 'registrations as regs_this_year' => function ($query) use ($y) {
+                            $query->whereNull('deleted_at');
+                            $query->whereRaw("year(createDate) = $y");
+                        }])
+                        ->with('orgperson')
+                        ->get();
+                } else {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                        $q->whereNotNull('OrgStat1');
+                        $q->whereNotNull('RelDate1');
+                        $q->whereNotNull('RelDate2');
+                        $q->whereNotNull('RelDate3');
+                        $q->whereNotNull('RelDate4');
+                        $q->where('org-person.orgID', '=', $orgID);
+                        $q->whereDate('RelDate4', '>', $today->toDateString());
+                        $q->whereDate('RelDate4', '<=', $today->addDays($days)->toDateString());
+                    })
+                        ->withCount(['registrations' => function($query){
+                            $query->whereNull('deleted_at');
+                        }, 'registrations as regs_this_year' => function ($query) use ($y) {
+                            $query->whereNull('deleted_at');
+                            $query->whereRaw("year(createDate) = $y");
+                        }])
+                        ->with('orgperson')
+                        ->paginate($page);
+                }
+
+                $title = trans('messages.headers.profile_vars.exp_title', ['days' => $days]);
+                break;
+        }
+        return [$members, $title];
+    }
+}
+
 
 /**
  * Takes a role id and returns the count of others with that role within the current user's org
