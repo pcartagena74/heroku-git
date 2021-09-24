@@ -158,6 +158,7 @@ if($currentPerson->avatarURL !== null){
                                 <span class="far fa-pull-right fa-chevron-down"></span> </a>
                             <ul class="nav child_menu">
                                 <li> <a href="{{ url('search')}}"> @lang('messages.nav.m_sch') </a> </li>
+                                <li> <a href="{{ url('membership')}}"> @lang('messages.nav.m_new_or_exp') </a> </li>
 
                                 @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 <li> <a href="{{ url('merge/p')}}"> @lang('messages.nav.m_merge')

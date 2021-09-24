@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MembershipController;
 use Kordy\Ticketit\Controllers\StatusesController;
 use Kordy\Ticketit\Controllers\TicketsController;
 #use Kordy\Ticketit\Controllers\DashboardController;
@@ -257,6 +258,7 @@ Route::post('/eventtype/{etID}', [EventTypeController::class, 'update']);    // 
 // Member Routes
 // ---------------------
 Route::get('/members', [PersonController::class, 'index'])->name('manageMembers');
+Route::get('/membership/{which?}/{days?}/{page?}', [MembershipController::class, 'index']);
 Route::get('/merge/{model_code}/{id1?}/{id2?}', [MergeController::class, 'show'])->name('showMergeModel');
 //Route::get('/find', [MergeController::class, 'find'])->name('search');
 Route::get('/mbrreport/{id?}', [ReportController::class, 'show'])->name('member_report');
@@ -337,6 +339,7 @@ Route::get('/show_group_receipt/{rf}', [RegFinanceController::class, 'show_group
 Route::get('/excel/nametags/{event}', [DownloadController::class, 'nametags']);
 Route::get('/excel/pdudata/{event}/{es?}', [DownloadController::class, 'pdu_list']);
 Route::get('/excel/emails/{event}', [DownloadController::class, 'email_list']);
+Route::get('/excel/mbrrpt/{orgID}/{which?}/{days?}', [DownloadController::class, 'mbr_rpt']);
 
 // Ticket & Bundle Routes
 Route::post('/bundle/{id}', [BundleController::class, 'update']); // Ajax
