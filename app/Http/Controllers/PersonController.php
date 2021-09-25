@@ -188,7 +188,7 @@ class PersonController extends Controller
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
                     ['p.personID', '!=', 1],
                 ])
-                ->whereNull('deleted_at')
+                ->whereNull('p.deleted_at')
                 ->select(DB::raw("p.personID, concat(firstName, ' ', lastName) AS fullName, 
                            OrgStat1, OrgStat2, compName, title, indName, date_format(RelDate4, '%l/%d/%Y') AS 'Expire', 
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er

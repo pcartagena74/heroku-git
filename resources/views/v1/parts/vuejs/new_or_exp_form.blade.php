@@ -9,7 +9,8 @@
 <div>
     <template>
         <form action="#" @submit.prevent="onSubmit" method="GET">
-            <div class="col-xs-2 xs-offset-1" style="text-align: right; vertical-align: middle;">
+            <div class="col-xs-1" style="text-align: right; vertical-align: middle;"></div>
+            <div class="col-xs-2" style="text-align: right; vertical-align: middle;">
                 <h1> {{ trans('messages.headers.profile_vars.labels.label') }} </h1>
                 </div>
             <div class="col-xs-2">
