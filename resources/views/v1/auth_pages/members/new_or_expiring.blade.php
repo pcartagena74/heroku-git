@@ -30,6 +30,94 @@ $display = $title;
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
+    <style>
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        table caption {
+            font-size: 1.5em;
+            margin: .5em 0 .75em;
+        }
+
+        table tr {
+        {{--
+        background-color: #f8f8f8;
+        --}}
+            border: 1px solid #ddd;
+            padding: .35em;
+        }
+
+        table th,
+        table td {
+            padding: .625em;
+            text-align: left;
+        }
+
+        {{--
+        table th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+        --}}
+
+        @media screen and (max-width: 600px) {
+            table {
+                border: 0;
+            }
+
+            table caption {
+                font-size: 1.3em;
+            }
+
+            table thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            table tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            table td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: left;
+            }
+
+            table td::before {
+                /*
+                * aria-label has no advantage, it won't be read inside a table
+                content: attr(aria-label);
+                */
+                content: attr(data-label);
+                float: left;
+        {{--
+                font-weight: bold;
+                text-transform: uppercase;
+        --}}
+            }
+
+            table td:last-child {
+                border-bottom: 0;
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -46,16 +134,18 @@ $display = $title;
         @if(count($members)>0)
             <div style="overflow-x:auto;">
             <table style="border-spacing: 1em; width: 100%"
-                   class="jambo_table table-striped table-responsive table-bordered cf">
-                <thead class="cf">
+                   class="table jambo_table table-striped table-responsive">
+                <thead>
                 <tr>
                     <th scope="col">@lang('messages.fields.name')</th>
                     <th scope="col">@lang('messages.fields.email')</th>
                     <th scope="col">@lang('messages.headers.profile_vars.orgstat1')</th>
-                    <th scope="col">@lang('messages.headers.profile_vars.regs')
+                    <th scope="col">
+                        @lang('messages.headers.profile_vars.regs')
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.regs'), 'c' => 'text-warning'])
                     </th>
-                    <th scope="col">@lang('messages.headers.profile_vars.regs_now')
+                    <th scope="col">
+                        @lang('messages.headers.profile_vars.regs_now')
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.regs_now'), 'c' => 'text-warning'])
                     </th>
                     @if($which == 'new')
@@ -68,6 +158,7 @@ $display = $title;
                     @endif
                 </tr>
                 </thead>
+                <tbody>
                 @foreach ($members as $member)
                     <tr>
                         <td scope="row" data-label="{{ trans('messages.fields.name') }}">
@@ -82,7 +173,7 @@ $display = $title;
                         <td data-label="{{ trans('messages.headers.profile_vars.regs') }}">
                             {{ $member->registrations_count }}
                         </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.now_regs') }}">
+                        <td data-label="{{ trans('messages.headers.profile_vars.regs_now') }}">
                             {{ $member->regs_this_year }}
                         </td>
                         @if($which == 'new')
@@ -105,6 +196,7 @@ $display = $title;
                         @endif
                     </tr>
                 @endforeach
+                </tbody>
             </table>
             </div>
         @else
@@ -117,15 +209,14 @@ $display = $title;
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     @include('v1.parts.menu-fix', array('path' => url('membership')))
     <script>
         new Vue({
             el: '#el',
             data: {
-                which: 'new',
-                days: '90',
-                page: '25',
+                which: '{{ $which ?? 'new' }}',
+                days: '{{ $days ?? 90 }}',
+                page: '{{ $page ?? 25 }}',
                 root: '{{ env('APP_URL') }}/membership/'
             },
             methods: {
