@@ -140,8 +140,6 @@ class DownloadController extends Controller
             } else {
                 $nametags[] = [ $mbr->firstName . " " . $mbr->lastName, $mbr->login, $mbr->orgperson->OrgStat1,
                     $mbr->registrations_count, $mbr->regs_this_year, $mbr->orgperson->OrgStat4,
-                    \Carbon\Carbon::parse($mbr->orgperson->RelDate1)->format('F j, Y'),
-                    \Carbon\Carbon::parse($mbr->orgperson->RelDate3)->format('F j, Y'),
                     \Carbon\Carbon::parse($mbr->orgperson->RelDate2)->format('F j, Y'),
                     \Carbon\Carbon::parse($mbr->orgperson->RelDate4)->format('F j, Y')
                 ];

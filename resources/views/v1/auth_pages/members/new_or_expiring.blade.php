@@ -180,8 +180,8 @@ $display = $title;
                         <td data-label="{{ trans('messages.headers.profile_vars.reldate1') }}">
                         {{ \Carbon\Carbon::parse($member->orgperson->RelDate1)->format('F j, Y') }}
                         </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.reldate3') }}">
-                        {{ \Carbon\Carbon::parse($member->orgperson->RelDate3)->format('F j, Y') }}
+                        <td data-label="{{ trans('messages.headers.profile_vars.reldate2') }}">
+                        {{ \Carbon\Carbon::parse($member->orgperson->RelDate2)->format('F j, Y') }}
                         </td>
                         @else
                         <td data-label="{{ trans('messages.headers.profile_vars.orgstat4_short') }}">
