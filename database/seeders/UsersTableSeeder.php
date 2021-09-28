@@ -51,11 +51,11 @@ class UsersTableSeeder extends Seeder
         foreach ($list as $l) {
             DB::beginTransaction();
             $p = new Person;
-            $p->personID = $l->id;
-            $p->firstName = $l->firstName;
-            $p->prefName = $l->firstName;
-            $p->lastName = $l->lastName;
-            $p->login = $l->email;
+            $p->personID = $l['id'];
+            $p->firstName = $l['firstName'];
+            $p->prefName = $l['firstName'];
+            $p->lastName = $l['lastName'];
+            $p->login = $l['email'];
             $p->defaultOrgID = 0;
             $p->creatorID = 0;
             $p->updaterID = 0;
@@ -74,14 +74,14 @@ class UsersTableSeeder extends Seeder
 
             $u = new User;
             $u->id = $p->personID;
-            $u->login = $l->email;
-            $u->name = $l->email;
-            $u->email = $l->email;
+            $u->login = $p->login;
+            $u->name = $p->login;
+            $u->email = $p->login;
             $u->password = bcrypt('password');
             $u->save();
 
             $e = new Email;
-            $e->emailADDR = $l->email;
+            $e->emailADDR = $p->login;
             $e->personID = $p->personID;
             $e->isPrimary = 0;
             $e->creatorID = 0;

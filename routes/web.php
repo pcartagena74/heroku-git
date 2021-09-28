@@ -88,6 +88,7 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
 
+Route::get('/blah', [PersonController::class, 'blah']);
 Route::get('/art-rt-lst', [HomeController::class, 'showApplicationRoutes']);
 /**
  * below code is for language route do not update

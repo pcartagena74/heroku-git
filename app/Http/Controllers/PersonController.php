@@ -25,11 +25,11 @@ class PersonController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['oLookup']]);
+        $this->middleware('auth', ['except' => ['oLookup', 'blah']]);
 
         $this->middleware(function (Request $request, $next) {
             if (auth()) {
-                $this->currentPerson = Person::find(auth()->user()->id);
+                //$this->currentPerson = Person::find(auth()->user()->id);
             }
 
             return $next($request);
@@ -656,6 +656,28 @@ class PersonController extends Controller
                 'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
         } else {
             return json_encode(['status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id]);
+        }
+    }
+
+    public function blah()
+    {
+        $list = [
+            [
+                'id' => '1',
+                'firstName' => 'System',
+                'lastName' => 'Admin',
+                'email' => 'admin@mcentric.org',
+            ],
+            [
+                'id' => '0',
+                'firstName' => 'No',
+                'lastName' => 'Body',
+                'email' => 'nobody@mcentric.org',
+            ],
+        ];
+
+        foreach($list as $l) {
+            dd($l, $l['id']);
         }
     }
 }
