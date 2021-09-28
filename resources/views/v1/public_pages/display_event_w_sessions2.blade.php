@@ -10,6 +10,7 @@ use GrahamCampbell\Flysystem\Facades\Flysystem;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Aws\S3\S3Client;
 use League\Flysystem\Filesystem;
+use Illuminate\Support\Arr;
 
 $category = DB::table('event-category')->where([
     ['orgID', $event->orgID],
