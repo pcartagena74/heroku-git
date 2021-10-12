@@ -11,6 +11,7 @@ use App\Models\PermissionRole;
 use App\Models\Person;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\VolunteerRole;
 use App\Notifications\NewUserAcct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,7 @@ class OrgController extends Controller
 
     public function index()
     {
-        // responds to /blah
+        // responds to /orgs/my
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgID = $this->currentPerson->defaultOrgID;
 
@@ -202,6 +203,14 @@ class OrgController extends Controller
         $org->adminContactStatement = $request->input('adminContactStatement');
         $org->techContactStatement = $request->input('techContactStatement');
         $org->orgPath = $request->input('orgPath');
+        $org->OSN1 = trans('messages.headers.profile_vars.orgstat1');
+        $org->OSN2 = trans('messages.headers.profile_vars.orgstat2');
+        $org->OSN3 = trans('messages.headers.profile_vars.orgstat3');
+        $org->OSN4 = trans('messages.headers.profile_vars.orgstat4');
+        $org->ODN1 = trans('messages.headers.profile_vars.reldate1');
+        $org->ODN2 = trans('messages.headers.profile_vars.reldate2');
+        $org->ODN3 = trans('messages.headers.profile_vars.reldate3');
+        $org->ODN4 = trans('messages.headers.profile_vars.reldate4');
         $org->creatorID = $this->currentPerson->personID;
         $org->updaterID = $this->currentPerson->personID;
 
@@ -301,12 +310,21 @@ class OrgController extends Controller
                 $e->creatorID = $this->currentPerson->personID;
                 $e->updaterID = $this->currentPerson->personID;
                 $e->save();
+
+                // setup orgChart default data
+                $defaultRoles = VolunteerRole::where('orgID', 1)->get();
+                foreach ($defaultRoles as $r){
+                    $new_role = $r->replicate();
+                    $new_role->orgID = $org->orgID;
+                    $new_role->save();
+                }
+
                 DB::commit();
             } catch (\Exception $exception) {
                 request()->session()->flash('alert-danger', trans('messages.messages.user_create_fail'));
                 request()->session()->flash('alert-warning', $exception->getMessage());
-                DB::rollBack();
 
+                DB::rollBack();
                 return back()->withInput();
             }
 
@@ -315,7 +333,6 @@ class OrgController extends Controller
             }
 
             request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
-
             return back();
         } else {
             // Creating the org with an existing user
@@ -359,6 +376,14 @@ class OrgController extends Controller
                 $user = User::find($person->personID);
                 foreach ($all_role as $key => $value) {
                     $user->attachRole($value, ['orgID' => $orgID]);
+                }
+
+                // setup orgChart default data
+                $defaultRoles = VolunteerRole::where('orgID', 1)->get();
+                foreach ($defaultRoles as $r){
+                    $new_role = $r->replicate();
+                    $new_role->orgID = $org->orgID;
+                    $new_role->save();
                 }
 
                 DB::commit();

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\VolunteerRoleController;
 use Kordy\Ticketit\Controllers\StatusesController;
 use Kordy\Ticketit\Controllers\TicketsController;
 #use Kordy\Ticketit\Controllers\DashboardController;
@@ -272,6 +273,11 @@ Route::get('/eventstats', [EventStatsController::class, 'index']);
 
 Route::get('/search/{query?}', [PersonController::class, 'index2']);
 Route::post('/search', [PersonController::class, 'search']);
+
+// VolunteerRole Routes
+// ---------------------
+Route::get('/volunteers', [VolunteerRoleController::class, 'index'])->name('nodes.index');
+Route::post('/volunteers', [VolunteerRoleController::class, 'store'])->name('nodes.store');
 
 // Speaker Routes
 // ---------------------

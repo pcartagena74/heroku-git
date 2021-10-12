@@ -138,6 +138,34 @@ return [
         'on' => '',  // This is purposely blank.  There is no "on" in the context this is being used in English
         'reminder' => 'es-Reminder',
     ],
+
+    'default_roles' => [
+        'add_child' => '&nbsp; Add Role',
+        'dal' => 'Director-at-Large',
+        'dir' => 'Director',
+        'vp' => 'Vice President',
+        'prez' => 'President',
+        'biz' => 'Business Development',
+        'com' => 'Communications',
+        'edu' => 'Education',
+        'evp' => 'Executive Vice President',
+        'fin' => 'Finance',
+        'mktg' => 'Marketing',
+        'mbr' => 'Membership',
+        'ops' => 'Operations',
+        'pd' => 'Professional Development',
+        'ip' => 'President Elect',
+        'pp' => 'Past President',
+        'prg' => 'Programs',
+        'tech' => 'Technology',
+        'vol' => 'Volunteers',
+        'det' => 'Details',
+        'add' => 'Add',
+        'edit' => 'Edit',
+        'rem' => 'Remove',
+        'jd_url' => 'Job Description URL',
+    ],
+
     'directions' => [
         'org' => [
             'fullname' => 'es-Enter complete, formal/corporate name',
@@ -180,6 +208,8 @@ return [
         'empty_template' => 'es-Please select some element in email template',
         'campaign_not_exist' => 'es-Campaign does not exist',
         'import_validation' => 'es-Validation failed, PMI or email address not found.',
+        'campaign_archive_not_send' => 'Only sent campaigns can be archived. Please delete it instead.',
+        'campaign_archive_scheduled_send' => 'This campaign is scheduled for a furture date and cannot yet be archived.',
     ],
     'flashes' => [
         'custom_slug' => 'Establezca una URL personalizada y valídela antes de continuar.',
@@ -412,9 +442,10 @@ return [
         'mbr_report_chart_tooltip' => 'es-Click to remove and merge into category: Other',
         'inclusion_list' => 'es-Inclusion List',
         'exclusion_list' => 'es-Exclusion List',
-        'this_year_event' => 'es-This Year\'s Events',
-        'last_year_event' => 'es-Last Year\'s Events',
-        'all_pd_day_event' => 'es-All PD Day Events',
+        'this_year_event' => "es-This Year's Events",
+        'last_year_event' => "es-Last Year's Events",
+        'all_pd_day_event' => "es-All PD Day Events",
+        'specific_event' => "Specific Events (by date range)",
         'camp_status_draft' => 'es-Draft : :date',
         'camp_status_sent' => 'es-Sent : :date',
         'camp_open_rate' => 'es-Open Rate',
@@ -625,7 +656,7 @@ return [
             'reldate3' => 'PMI Expiry Date',
             'reldate4' => 'Chapter Expiry Date',
             'regs' => 'Eventos',
-            'now_regs' => 'Eventos Recientes'
+            'regs_now' => 'Eventos Recientes'
         ],
         'purchased' => 'Comprado en',
         'purchased_by' => 'Comprado por',
@@ -653,6 +684,7 @@ return [
         'ret_sess_list' => 'es-Return to Session List',
         'revenue' => 'Ingresos',
         'role' => 'es-Role',
+        'role_title' => 'Board Titles',
         'role_ass' => 'es-Role Assignment',
         'roles' => 'es-Roles',
         'roles&perms' => 'es-Role & Permission Management',
@@ -722,6 +754,7 @@ return [
     ],
     'instructions' => [
         'add_speaker' => 'es-to add speakers to this list, register the person to an event using a speaker discount code.',
+        'admin_stmt' => 'This statement will display when users should contact an admin associated with your chapter.',
         'bar_chart' => 'es-Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.',
         'become_instr' => 'es-Find a person by searching for that person\'s first or last name, email address, or PMI ID',
         'become_id' => 'es-Enter the first (left-most) number from the field above. ',
@@ -807,6 +840,7 @@ return [
         'one-at-time' => 'es-The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.',
         'org_disc' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here will be applied to all new events as they are created.'.
             '<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
+        'pdu_stmt' => 'This statement will display if you have a special PDU reporting statement.',
         'pmiID' => 'es-Please enter your PMI Identification Number.',
         'pmiID_found' => 'es-<h2>An mCentric account was found for PMI ID: :pmiID.</h2>'.
             'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
@@ -828,6 +862,7 @@ return [
         'pw_set' => 'es-Set a password',
         'quantity' => 'es-The quantity for at least one ticket must be greater than 0.',
         'reg_sess' => 'es-You can review and/or modify your session registrations below.',
+        'role_title' => "This is the standard title used for your chapter's board members.",
         'role_toggle' => 'es-The role :role was toggled for :person.',
         'role_txt' => 'es-The values in these tables are not editable and are here for informational purposes only.',
         'select_default_organization' => 'es-Select One Organization to make it your default and switch to it',
@@ -836,6 +871,7 @@ return [
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.',
         'sold_out' => 'es-Sold Out! Register to add yourself to the wait list.',
         'sold_out2' => 'es-This ticket is sold out.',
+        'tech_stmt' => 'This statement will be displayed if an mCentric issue occurs.',
         'tkt_setup' => 'es-Creating additional tickets is typically only necessary for Professional Development Day events.',
         'total_caveat' => 'es-Total does NOT reflect updates due to refunds.',
         'tracks' => 'es-Here are this event\'s :n tracks and its sessions from which attendees can choose
@@ -896,6 +932,7 @@ return [
         'please_wait' => 'es-Please wait while this content loads.',
         'org_default_update_success' => 'es-Your default Organization Updated',
         'new_org_created_successfully' => 'es-New Org Created Successfully.',
+        'email_list_created' => 'Email List :name created successfully.',
         'import_file_queued' => 'es-Import is queued. You will be notified via email when its complete.',
         'campaign_copied_successfully' => 'es-Campaign copied successfully.',
         'campaign_created_from_existing' => 'es-New Campaign created successfully from existing.',
@@ -954,6 +991,7 @@ return [
         'ev_manage' => 'Administrar eventos',
         'ev_old' => 'Todos los Eventos Pasados',
         'ev_add' => 'Añadir Evento',
+        'ev_stats' => 'Event Stats',
         'ev_loc' => 'Gestión de la Ubicación',
         'ev_mt' => 'Administrar Entradas para Eventos',
         'ev_rpt' => 'Informe de Eventos',
@@ -968,6 +1006,7 @@ return [
         'm_rpt' => 'Informe de Miembros',
         'm_new_or_exp' => 'Miembros Nuevos o Caducados',
         'm_sch' => 'Búsqueda de Miembros',
+        'm_vol' => 'Administrar Voluntarias',
         'm_pass' => 'Cambia la Contraseña',
         'em_mktg' => 'Email Márketing',
         'e_camp' => 'Campañas',
@@ -1229,6 +1268,7 @@ return [
         'graph_years' => 'es-Year Display',
         'ind_brk' => 'es-Identified Industry Breakdown',
         'select_years' => 'es-Select Years to Display',
+        'person_address' => 'Heat Map',
     ],
     'surveys' => [
         'responses' => [
@@ -1429,6 +1469,13 @@ return [
         'btn_ok' => 'es-Delete',
         'btn_cancel' => 'es-Cancel',
     ],
+    'campaign_delete_popup_success' => [
+        'title' => 'Success',
+        'title_error' => 'Error',
+        'body' => 'Do you want to delete campaign ',
+        'btn_ok' => 'Ok',
+        'btn_cancel' => 'Cancel',
+    ],
     'functions' => [
         'merge' => [
             'assoc_emails' => 'La siguiente dirección de correo electrónico está asociada con cualquier cuenta.
@@ -1442,10 +1489,25 @@ return [
         'btn_ok' => 'Ok',
         'btn_cancel' => 'Cancel',
     ],
+    'email_list_popup' => [
+        'delete' => [
+            'title' => 'Delete Email List',
+            'body' => 'Are you sure you want to delete this list?',
+            'btn_yes' => 'Yes',
+            'btn_no' => 'Cancel',
+        ],
+    ],
+    'campaign_archive_popup' => [
+        'title' => 'Confirm your action',
+        'body' => 'Do you want to archive campaign ',
+        'btn_ok' => 'Archive',
+        'btn_cancel' => 'Cancel',
+    ],
+
     'datatable' => [
         // Datatables
         'table-decimal' => '',
-        'table-empty' => 'No hay data esta tabla',
+        'table-empty' => 'No hay data en esta tabla.',
         'table-info' => 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
         'table-info-empty' => 'Mostrando 0 de 0 a 0 records',
         'table-info-filtered' => '(filtrados de _MAX_ totales)',

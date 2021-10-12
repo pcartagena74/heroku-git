@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             PrefixSeeder::class,
             TimezoneSeeder::class,
             UserRoleSeeder::class,
-            TicketitSeeder::class,
+            AdminPropSeeder::class,
+            VolunteerRoleSeeder::class,
         ]);
 
         $roles = Role::find([9, 8]);

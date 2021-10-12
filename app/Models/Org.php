@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\EventType;
+use App\Models\VolunteerRole;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 
@@ -70,5 +71,10 @@ class Org extends Model
         }
 
         return $u;
+    }
+
+    public function volunteer_roles()
+    {
+        return $this->hasMany(VolunteerRole::class, 'orgID', 'orgID');
     }
 }

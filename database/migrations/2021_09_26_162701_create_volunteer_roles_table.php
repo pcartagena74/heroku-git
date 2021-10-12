@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVolunteerServiceTable extends Migration
+class CreateVolunteerRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateVolunteerServiceTable extends Migration
      */
     public function up()
     {
-        Schema::create('volunteer_service', function (Blueprint $table) {
+        Schema::create('volunteer_roles', function (Blueprint $table) {
             $table->integer('id')->unsigned()->autoIncrement();
-            $table->integer('volunteer_role_id')->unsigned();
-            $table->foreign('volunteer_role_id')->references('id')->on('volunteer_roles');
+            $table->integer('pid')->nullable()->unsigned();
+            $table->foreign('pid')->references('id')->on('volunteer_roles');
             $table->integer('orgID');
             $table->foreign('orgID')->references('orgID')->on('organization');
-            $table->integer('personID')->unsigned();
-            $table->foreign('personID')->references('personID')->on('person');
-            $table->dateTime('roleStartDate')->useCurrent();
-            $table->dateTime('roleEndDate')->nullable();
-            $table->string('title_save')->nullable()->default(null);
+            $table->string('title');
+            $table->string('title_override')->nullable()->default(null);
+            $table->boolean('has_reports')->default(0);
+            $table->string('jd_URL')->nullable()->default(null);
             $table->dateTime('created_at')->default(DB::raw('now()'));
             $table->dateTime('updated_at')->nullable();
         });
@@ -36,6 +35,6 @@ class CreateVolunteerServiceTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('volunteer_service');
+        Schema::dropIfExists('volunteer_roles');
     }
 }

@@ -19,6 +19,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/pcartagena74/ticketit.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/pcartagena74/laravel-find-missing-translations.git"
         }
     ],
     "require": {
@@ -75,7 +79,8 @@
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^8.5.8|^9.3.3",
         "fakerphp/faker": "^1.9.1",
-        "facade/ignition": "^2.5"
+        "facade/ignition": "^2.5",
+        "diglabby/laravel-find-missing-translations": "dev-master"
     },
     "extra": {
         "laravel": {
