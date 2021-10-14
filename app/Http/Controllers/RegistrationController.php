@@ -267,11 +267,11 @@ class RegistrationController extends Controller
                 $query->whereNull('deleted_at');
             })->first();
 
-        // for calculating all the refuned cc and handlefee
+        // for calculating all the refunded cc and handlefee
         if ($refunded->isNotEmpty()) {
             $total_cc_from_refund = 0;
             $total_handling_from_refund = 0;
-            // dd($refunded);
+            
             foreach ($refunded as $key => $value) {
                 $total_cc_from_refund += $value->ccFee;
                 $total_handling_from_refund += $value->handleFee;
@@ -700,23 +700,26 @@ class RegistrationController extends Controller
                     (($person->is_member($event->orgID) && $reg->ticket->memberBasePrice != $reg->subtotal) ||
                         (! $person->is_member($event->orgID) && $reg->ticket->nonmbrBasePrice != $reg->subtotal))
                 ) {
+                    $x = $request->header('user-agent');
                     // Set the debugNote field and adjust the subtotal as needed based on mismatched cost & subtotal
                     if ($reg->ticket->memberBasePrice == $reg->subtotal && $person->is_member($event->orgID)) {
                         // If this registrant is a member and subtotal = expected member price:
-                        $x = $request->header('user-agent');
-                        $reg->debugNotes = "2nd Tkt Fail - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
-                        $reg->origcost = $reg->subtotal;
+                        $reg->debugNotes = "mbr - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
+                        // There was no reason to reset the $reg->origcost
+                        //$reg->origcost = $reg->subtotal;
+                        $subtotal = $reg->subtotal;
+                    } elseif ($reg->ticket->nonmbrBasePrice == $reg->subtotal && !$person->is_member($event->orgID)) {
+                        $reg->debugNotes = "nonmbr - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
+                        // If this registrant is not a member and subtotal = expected non-member price:
                         $subtotal = $reg->subtotal;
                     } elseif ($reg->discountCode == 'N/A') {
-                        $x = $request->header('user-agent');
-                        $reg->debugNotes = "During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
+                        $reg->debugNotes = "no disc - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
                         $reg->subtotal = $reg->origcost;
                         $subtotal = $reg->origcost;
                         if ($rf->cost == 0) {
                             $rf->cost = $subtotal;
                         }
                     } elseif ($dc->percent != 100) {
-                        $x = $request->header('user-agent');
                         $reg->debugNotes = "\$dc->percent fail - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
                         $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
                         $subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
