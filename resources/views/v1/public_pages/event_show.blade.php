@@ -16,7 +16,7 @@
     use League\Flysystem\AwsS3v3\AwsS3Adapter;
     use Aws\S3\S3Client;
     use League\Flysystem\Filesystem;
-    
+    use Illuminate\Support\Arr;
 
     // ['orgID', $event->orgID],     // orgID does not have to be specified because the catID selection in add_event
     // allows for selection from this orgID or the default orgID of 1
