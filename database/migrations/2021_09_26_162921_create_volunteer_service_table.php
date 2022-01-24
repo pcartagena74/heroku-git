@@ -24,7 +24,9 @@ class CreateVolunteerServiceTable extends Migration
             $table->dateTime('roleStartDate')->useCurrent();
             $table->dateTime('roleEndDate')->nullable();
             $table->string('title_save')->nullable()->default(null);
+            $table->integer('creatorID')->default(0);
             $table->dateTime('created_at')->default(DB::raw('now()'));
+            $table->integer('updaterID')->nullable();
             $table->dateTime('updated_at')->nullable();
         });
     }

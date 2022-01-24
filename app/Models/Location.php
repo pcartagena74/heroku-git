@@ -18,6 +18,7 @@ class Location extends Model
         'createDate' => 'datetime',
         'updateDate' => 'datetime',
     ];
+    protected $fillable = ['locName', 'orgID'];
 
     public function event()
     {

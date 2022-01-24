@@ -19,42 +19,42 @@ class VolunteerRoleSeeder extends Seeder
             [
                 'orgID' => 1,
                 'title' => 'prez',
-                'has_reports' => 1
+                'title_override' => 1
             ],
             [
                 'orgID' => 1,
                 'title' => 'evp',
-                'has_reports' => 1
+                'title_override' => 1
             ],
             [
                 'orgID' => 1,
                 'title' => 'fin',
-                'has_reports' => 1
+                'title_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'pd',
-                'has_reports' => 1
+                'title_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'biz',
-                'has_reports' => 1
+                'title_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'mbr',
-                'has_reports' => 1
+                'title_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'mktg',
-                'has_reports' => 1
+                'title_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'tech',
-                'has_reports' => 1
+                'title_override' => 0
             ],
         ];
 
@@ -63,16 +63,16 @@ class VolunteerRoleSeeder extends Seeder
             $vr = new VolunteerRole;
             $vr->orgID = $l['orgID'];
             $vr->title = $l['title'];
-            $vr->has_reports = $l['has_reports'];
+            $vr->title_override = $l['title_override'];
             if (isset($p)) {
-                $vr->reports_to = $p->id;
+                $vr->pid = $p->id;
             }
             $vr->save();
 
             if ($l['title'] == 'prez') {
                 $p = $vr;
-                $p->has_reports = 1;
-                $p->reports_to = $p->id;
+                $p->title_override = 1;
+                $p->pid = null;
                 $p->save();
             }
             DB::commit();

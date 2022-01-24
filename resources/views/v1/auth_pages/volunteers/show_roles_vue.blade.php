@@ -10,115 +10,98 @@
     $topBits = '';  // remove this if this was set in the controller
     $header = '';
 
+//$x = getimagesize($currentPerson->avatarURL);
+
 @endphp
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
-<link href="css/jquery.orgchart.css" media="all" rel="stylesheet" type="text/css" />
-<style type="text/css">
-#orgChart{
-    width: auto;
-    height: auto;
-}
+<link href="/css/jquery.orgchart.css" media="all" rel="stylesheet" type="text/css" />
+<style>
+    #app {
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+    }
 
-p {
-    font-size: 10px;
-}
+    html, body {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        font-family: Helvetica;
+    }
 
-#orgChartContainer{
-    width: 1000px;
-    height: 500px;
-    overflow: auto;
-    background: #eeeeee;
-}
-    </style>
+    #tree {
+        width: 100%;
+        height: 100%;
+    }
+</style>
 @endsection
 
 @section('content')
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
-    <div style="width:100%; height:700px;" id="orgchart"/>
+    <div id="app"> <OrgChart /> </div>
 @endsection
 
 @section('scripts')
-    <script type="text/javascript" src="/js/orgchart.js"></script>
+    <script src="/js/orgchart.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
 
-    var data = {!! $json_roles !!};
-    //console.log(data);
+        require('/js.orgchart.js');
+        require('https://cdn.jsdelivr.net/npm/vue/dist/vue.js');
 
-    var chart = new OrgChart(document.getElementById("orgchart"), {
-        template: 'diva',
-        enableDragDrop: true,
-        nodeMenu:{
-            details: {text:"{{ trans('messages.default_roles.det') }}"},
-            edit: {text:"{{ trans('messages.default_roles.edit') }}"},
-            add: {text:"{{ trans('messages.default_roles.add') }}"},
-            remove: {text:"{{ trans('messages.default_roles.rem') }}"}
-        },
-        nodeBinding: {
-            field_0: "{{ trans('messages.fields.name') }}",
-            field_1: "{{ trans('messages.fields.title') }}",
-        },
-        nodes: data,
-    });
-
-    chart.on('add', function (sender, node) {
-        node.id = new Date().valueOf();
-        node.pid = parseInt(node.pid);
-        //node.jd_URL = parseInt(node.pid);
-        console.log(node);
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        export default {
+            name: 'app',
+            components: {
+                OrgChart,
             }
-        });
-        $.ajax({
-            type:'POST',
-            url:"{{ route('nodes.store') }}",
-            data: node,
-            success:function(data){
-                sender.addNode(node); // node is adding
-            }
-        });
-        return false;
-    });
+        }
 
-    chart.on('edit', function (sender, node) {
-        console.log(node);
-
-    });
-
-    chart.on('remove', function (sender, nodeId) {
-
-        var url = "{{URL('volunteers')}}";
-        var dltUrl = url+"/"+nodeId;
-
-        $.ajax({
-            url: dltUrl,
-            type: "DELETE",
-            cache: false,
-            data:{
-                _token:'{{ csrf_token() }}'
-            },
-            success: function(dataResult){
-                var dataResult = JSON.parse(dataResult);
-                if(dataResult.statusCode==200){
-                    $ele.fadeOut().remove();
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    nodes: [
+                        {!! $json_roles !!}
+                    ]
                 }
+            },
+            computed: {
+            },
+
+            mounted: function () {
+            },
+
+            watch: {
+            },
+
+            methods: {
+                onSubmit() {
+                },
+
+                api_update: function (name, value) {
+
+                    axios.post('/panel/update', {
+                        name: name,
+                        value: value,
+                    })
+                        .catch(error => console.log(error.response));
+                },
+
+
             }
         });
 
-    });
 
-    // just for example purpose
-    function log(text){
-        $('#consoleOutput').append('<p>'+text+'</p>')
-    }
     </script>
+@endsection
+
+@section('modals')
+    @include('v1.modals.dynamic', ['header' => trans('messages.admin.api.example'), 'url' => "eventlist"])
 @endsection

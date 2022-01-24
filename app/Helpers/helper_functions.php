@@ -14,9 +14,11 @@ use App\Models\OrgPerson;
 use App\Models\Person;
 use App\Models\Ticketit\TicketOver;
 use App\Models\User;
+use App\Models\VolunteerRole;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -26,6 +28,161 @@ use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
 
 // $client = new Client();
+
+
+if (! function_exists('volunteer_data')) {
+    function volunteer_data($o, $p) {
+        $option_string = '';
+        $volunteers = Person::whereHas('roles', function ($q) {
+            $q->whereIn('role_id', [1, 3, 4, 6, 7, 8, 10]);
+        })
+            ->select(DB::raw('personID, 
+                                    (CASE
+                                       WHEN prefName is null
+                                         THEN concat (firstName, " ", lastName) 
+                                       ELSE concat(prefName, " ", lastName) 
+                                     END) as name'))
+            ->get();
+
+        $option_string = "{ value: '', text: '' },\n";
+        foreach ($volunteers as $v) {
+            $option_string .= "{ value: '$v->name', text: '$v->name' },\n";
+        }
+
+        $nodes = array();
+
+        if(null === $p) {
+            $json_roles = VolunteerRole::where('volunteer_roles.orgID', $o->orgID)
+                ->join('organization as o', function ($q) {
+                    $q->on('o.orgID', '=', 'volunteer_roles.orgID');
+                })
+                ->leftjoin('volunteer_service as vs', function ($q) {
+                    $q->on([
+                        ['vs.orgID', '=', 'volunteer_roles.orgID'],
+                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id']
+                    ])
+                        ->whereNull('vs.roleEndDate');
+                })
+                ->leftjoin('person as p', function ($q) {
+                    $q->on('p.personID', '=', 'vs.personID');
+                })
+                ->select(DB::raw('volunteer_roles.id, vs.personID,
+                                    (CASE
+                                      WHEN volunteer_roles.prefix_override = 0
+                                        THEN concat("messages.default_roles.", o.orgRoleTitle)
+                                      ELSE null
+                                    END) as prefix,
+                                    (CASE
+                                      WHEN volunteer_roles.title_override IS NOT NULL
+                                        THEN volunteer_roles.title_override
+                                      ELSE concat("messages.default_roles.", volunteer_roles.title)
+                                    END) as "' . trans('messages.fields.title') . '",
+                                    pid,
+                                    (CASE
+                                      WHEN p.avatarURL IS NULL
+                                        THEN "/images/user.png"
+                                      ELSE p.avatarURL  
+                                    END) as img,
+                                    volunteer_roles.jd_URL as "' . trans('messages.default_roles.jd_url') . '",
+                                    (CASE
+                                       WHEN prefName is null
+                                         THEN concat (firstName, " ", lastName) 
+                                       ELSE concat(prefName, " ", lastName) 
+                                     END) as ' . trans('messages.fields.name') . ',
+                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "' . trans('messages.default_roles.start') . '",
+                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "' . trans('messages.default_roles.end') . '"'))
+                ->distinct()
+                ->get();
+        } else {
+
+            $query = "
+                WITH RECURSIVE MyList
+                    as (select vr.id, vr.pid, vr.title, 1 as 'level'
+                        from `volunteer_roles` vr
+                        where vr.id = " . $p->service_role->volunteer_role->id . "
+                            and vr.orgID = $o->orgID
+                
+                union all
+                
+                select child.id, child.pid, child.title, parent.level + 1
+                from `volunteer_roles` child
+                inner join MyList as parent on child.pid = parent.id )
+                select id from MyList;
+                ";
+            $nodes = DB::select($query);
+
+            $node_string = null;
+            foreach ($nodes as $node) {
+                $node_string .= $node->id . ",";
+            }
+            $node_string = rtrim($node_string, ',');
+            $node_array = explode(',', $node_string);
+
+            $json_roles = VolunteerRole::where('volunteer_roles.orgID', $o->orgID)
+                ->whereIn('volunteer_roles.id', $node_array)
+                ->join('organization as o', function ($q) {
+                    $q->on('o.orgID', '=', 'volunteer_roles.orgID');
+                })
+                ->leftjoin('volunteer_service as vs', function ($q) {
+                    $q->on([
+                        ['vs.orgID', '=', 'volunteer_roles.orgID'],
+                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id']
+                    ])
+                        ->whereNull('vs.roleEndDate');
+                })
+                ->leftjoin('person as p', function ($q) {
+                    $q->on('p.personID', '=', 'vs.personID');
+                })
+                ->select(DB::raw('volunteer_roles.id, vs.personID,
+                                    (CASE
+                                      WHEN volunteer_roles.prefix_override = 0
+                                        THEN concat("messages.default_roles.", o.orgRoleTitle)
+                                      ELSE null
+                                    END) as prefix,
+                                    (CASE
+                                      WHEN volunteer_roles.title_override IS NOT NULL
+                                        THEN volunteer_roles.title_override
+                                      ELSE concat("messages.default_roles.", volunteer_roles.title)
+                                    END) as "' . trans('messages.fields.title') . '",
+                                    pid,
+                                    (CASE
+                                      WHEN p.avatarURL IS NULL
+                                        THEN "/images/user.png"
+                                      ELSE p.avatarURL  
+                                    END) as img,
+                                    volunteer_roles.jd_URL as "' . trans('messages.default_roles.jd_url') . '",
+                                    (CASE
+                                       WHEN prefName is null
+                                         THEN concat (firstName, " ", lastName) 
+                                       ELSE concat(prefName, " ", lastName) 
+                                     END) as ' . trans('messages.fields.name') . ',
+                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "' . trans('messages.default_roles.start') . '",
+                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "' . trans('messages.default_roles.end') . '"'))
+                ->distinct()
+                ->get();
+        }
+
+        foreach ($json_roles as $jr) {
+            //$jr->Title = trans('messages.default_roles.'.$jr->Title);
+            if (preg_match('#^messages#', $jr[trans('messages.fields.title')])) {
+                if ($jr->prefix == null) {
+                    $jr[trans('messages.fields.title')] = trans($jr[trans('messages.fields.title')]);
+                } else {
+                    $jr[trans('messages.fields.title')] =
+                        trans($jr->prefix) . trans($jr[trans('messages.fields.title')]);
+                }
+            }
+            if ($jr->pid === null) {
+                unset($jr->pid);
+            }
+            unset($jr->prefix);
+        }
+        $json_roles = json_encode($json_roles);
+
+        return [$json_roles, $option_string];
+    }
+}
+
 
 /**
  * Takes a member report type, optional # of days, and optional pagination count

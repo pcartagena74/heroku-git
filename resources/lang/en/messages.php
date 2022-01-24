@@ -140,10 +140,12 @@ return [
     ],
 
     'default_roles' => [
+        'orgchart' => 'Volunteer Org Chart',
+        'orgdata' => 'Volunteer Data',
         'add_child' => '&nbsp; Add Role',
         'dal' => 'Director-at-Large',
-        'dir' => 'Director',
-        'vp' => 'Vice President',
+        'dir' => 'Dir. ',
+        'vp' => 'VP ',
         'prez' => 'President',
         'biz' => 'Business Development',
         'com' => 'Communications',
@@ -164,6 +166,10 @@ return [
         'edit' => 'Edit',
         'rem' => 'Remove',
         'jd_url' => 'Job Description URL',
+        'role' => 'Role Name',
+        'start' => 'Term Start Date',
+        'end' => 'Term End Date',
+        'empty' => 'Vacant',
     ],
 
     'directions' => [
@@ -357,6 +363,7 @@ return [
         'orgStat1' => 'PMI Member ID',
         'other' => 'Other Comments/Notes',
         'password' => 'Password',
+        'past' => 'Past',
         'past_events' => 'Past Events',
         'pdu_sub' => 'PDU Submission',
         'pmi_id' => 'PMI ID',
@@ -761,7 +768,7 @@ return [
         'customURL' => 'Please enter a custom URL.',
         'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect until ",
         'early_values' => 'Changing the date or discount percent will apply to all associated tickets shown below or created.',
-        'email_list_foundation' => '<p>To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
+        'email_list_foundation' => '<p>To create an email list, you can select a foundation from which to start your list or filter it.<br />You can then choose events from which to include or exclude people.</p>',
         'email_list_foundation_select' => '<p>Selecting a foundation either gives you a starting point for your list or will filter from the event
                     lists you include (below).</p>',
         'email_list_inclusion' => '<p>Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
@@ -887,6 +894,11 @@ return [
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
         ",
         'userid' => 'This has been autopopulated and cannot be edited.',
+        'volunteers' => "Hold the control key to zoom in/out.  Click on white space and drag to scroll.<br />
+                         You may also: <ul>
+                         <li>Click on a role to see and edit volunteer values.</li>
+                         <li>Click on a role and drag it, as appropriate, to change the reporting relationship.</li>
+                         </ul>",
         'waitlist' => 'Registering will secure a spot on the wait list. You will not be charged at this time.|
                    Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
         'zero_att' => 'A 0 in the Attendees column indicates that attendance was, likely, NOT recorded.<br>Surveys cannot be sent if attendance was not recorded.',

@@ -277,7 +277,9 @@ Route::post('/search', [PersonController::class, 'search']);
 // VolunteerRole Routes
 // ---------------------
 Route::get('/volunteers', [VolunteerRoleController::class, 'index'])->name('nodes.index');
+Route::get('/volunteers/{org}', [VolunteerRoleController::class, 'show'])->name('nodes.show');
 Route::post('/volunteers', [VolunteerRoleController::class, 'store'])->name('nodes.store');
+Route::patch('/volunteers/{volunteerRole}/update', [VolunteerRoleController::class, 'update'])->name('nodes.update');
 
 // Speaker Routes
 // ---------------------

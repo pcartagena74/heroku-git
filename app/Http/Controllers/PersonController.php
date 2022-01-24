@@ -43,6 +43,9 @@ class PersonController extends Controller
     {
         $topBits = [];
         $today = Carbon::now();
+        if (auth()) {
+            $this->currentPerson = Person::find(auth()->user()->id);
+        }
 
         $total_people = Cache::get('total_people', function () {
             return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
@@ -204,7 +207,11 @@ class PersonController extends Controller
      */
     public function index2($query = null)
     {
-        $topBits = $this->member_bits();
+        //$topBits = $this->member_bits();
+        if (auth()) {
+            $this->currentPerson = Person::find(auth()->user()->id);
+        }
+        $topBits = null;
         $mbr_srch = null;
         $p = Person::find(auth()->user()->id);
         $orgID = $p->defaultOrgID;
@@ -656,28 +663,6 @@ class PersonController extends Controller
                 'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
         } else {
             return json_encode(['status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id]);
-        }
-    }
-
-    public function blah()
-    {
-        $list = [
-            [
-                'id' => '1',
-                'firstName' => 'System',
-                'lastName' => 'Admin',
-                'email' => 'admin@mcentric.org',
-            ],
-            [
-                'id' => '0',
-                'firstName' => 'No',
-                'lastName' => 'Body',
-                'email' => 'nobody@mcentric.org',
-            ],
-        ];
-
-        foreach($list as $l) {
-            dd($l, $l['id']);
         }
     }
 }

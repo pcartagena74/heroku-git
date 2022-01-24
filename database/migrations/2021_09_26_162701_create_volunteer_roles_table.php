@@ -19,11 +19,13 @@ class CreateVolunteerRolesTable extends Migration
             $table->foreign('pid')->references('id')->on('volunteer_roles');
             $table->integer('orgID');
             $table->foreign('orgID')->references('orgID')->on('organization');
-            $table->string('title');
+            $table->boolean('prefix_override')->default(0);
+            $table->string('title')->default('role');
             $table->string('title_override')->nullable()->default(null);
-            $table->boolean('has_reports')->default(0);
             $table->string('jd_URL')->nullable()->default(null);
+            $table->integer('creatorID')->default(0);
             $table->dateTime('created_at')->default(DB::raw('now()'));
+            $table->integer('updaterID')->nullable();
             $table->dateTime('updated_at')->nullable();
         });
     }

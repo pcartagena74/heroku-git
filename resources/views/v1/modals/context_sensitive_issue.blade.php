@@ -54,7 +54,7 @@
                         </div>
                     </div>
                 </div>
-                <br>
+                <br />
                     <div class="form-inline row">
                         <div class="form-group col-lg-12">
                             {!! CollectiveForm::label('agent_id', trans('ticketit::lang.agent') . trans('ticketit::lang.colon'), [
@@ -72,7 +72,7 @@
                     @endif
                     <div class="error" id="ticket-errors">
                     </div>
-                </br>
+                <br />
             </div>
             <div class="modal-footer">
                 <div class="container">

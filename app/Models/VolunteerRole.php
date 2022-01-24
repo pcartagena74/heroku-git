@@ -19,11 +19,21 @@ class VolunteerRole extends Model
 
     public function org ()
     {
-        $this->belongsTo(Org::class, 'orgID', 'orgID');
+        return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
     public function parent()
     {
-        $this->belongsTo(VolunteerRole::class, 'reports_to', 'id');
+        return $this->belongsTo(VolunteerRole::class, 'reports_to', 'id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(VolunteerRole::class, 'pid', 'id');
+    }
+
+    public function service_role()
+    {
+        //return $this->hasOne()
     }
 }
