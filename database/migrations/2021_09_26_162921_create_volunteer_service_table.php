@@ -19,7 +19,7 @@ class CreateVolunteerServiceTable extends Migration
             $table->foreign('volunteer_role_id')->references('id')->on('volunteer_roles');
             $table->integer('orgID');
             $table->foreign('orgID')->references('orgID')->on('organization');
-            $table->integer('personID')->unsigned();
+            $table->integer('personID');
             $table->foreign('personID')->references('personID')->on('person');
             $table->dateTime('roleStartDate')->useCurrent();
             $table->dateTime('roleEndDate')->nullable();
