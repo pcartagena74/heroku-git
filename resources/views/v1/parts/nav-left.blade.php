@@ -42,7 +42,7 @@ if($currentPerson->avatarURL !== null){
     }
 }
 
-
+//dd( $currentPerson, $currentPerson->service_role );
 @endphp
 <div class="col-md-3 left_col menu_fixed">
     <div class="left_col scroll-view">
@@ -69,7 +69,11 @@ if($currentPerson->avatarURL !== null){
                             <li> <a href="{{ url('dashboard')}}"> @lang('messages.nav.ms_dash') </a> </li>
                             <li> <a href="{{ url('upcoming')}}"> @lang('messages.nav.ms_fut') </a> </li>
                             <li> <a href="{{ url('profile/my')}}"> @lang('messages.nav.ms_profile') </a> </li>
-                            @if(Entrust::hasRole("Developer") ||
+                            {{--
+                            // Only show My Volunteers if Developer AND currentPerson has a service_role and
+                            // volunteer direct reports
+                            --}}
+                            @if(Entrust::hasRole("Developer") &&
                                 (null !== $currentPerson->service_role && count($currentPerson->has_volunteers()) > 0))
                             <li> <a href="{{ url("volunteers/$currentPerson->defaultOrgID")}}">
                                     @lang('messages.nav.ms_vol')

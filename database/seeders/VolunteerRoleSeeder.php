@@ -19,42 +19,42 @@ class VolunteerRoleSeeder extends Seeder
             [
                 'orgID' => 1,
                 'title' => 'prez',
-                'title_override' => 1
+                'prefix_override' => 1
             ],
             [
                 'orgID' => 1,
                 'title' => 'evp',
-                'title_override' => 1
+                'prefix_override' => 1
             ],
             [
                 'orgID' => 1,
                 'title' => 'fin',
-                'title_override' => 0
+                'prefix_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'pd',
-                'title_override' => 0
+                'prefix_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'biz',
-                'title_override' => 0
+                'prefix_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'mbr',
-                'title_override' => 0
+                'prefix_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'mktg',
-                'title_override' => 0
+                'prefix_override' => 0
             ],
             [
                 'orgID' => 1,
                 'title' => 'tech',
-                'title_override' => 0
+                'prefix_override' => 0
             ],
         ];
 
@@ -63,7 +63,7 @@ class VolunteerRoleSeeder extends Seeder
             $vr = new VolunteerRole;
             $vr->orgID = $l['orgID'];
             $vr->title = $l['title'];
-            $vr->title_override = $l['title_override'];
+            $vr->prefix_override = $l['prefix_override'];
             if (isset($p)) {
                 $vr->pid = $p->id;
             }
@@ -71,7 +71,7 @@ class VolunteerRoleSeeder extends Seeder
 
             if ($l['title'] == 'prez') {
                 $p = $vr;
-                $p->title_override = 1;
+                $p->prefix_override = 1;
                 $p->pid = null;
                 $p->save();
             }

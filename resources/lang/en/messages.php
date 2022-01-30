@@ -689,7 +689,7 @@ return [
         'ret_sess_list' => 'Return to Session List',
         'revenue' => 'Revenue',
         'role' => 'Role',
-        'role_title' => 'Board Titles',
+        'role_title' => 'Board Title Prefix',
         'role_ass' => 'Role Assignment',
         'roles' => 'Roles',
         'roles&perms' => 'Role & Permission Management',
