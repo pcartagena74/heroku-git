@@ -150,7 +150,9 @@ if($currentPerson->avatarURL !== null){
                             <li> <a href="{{ url('group')}}" id="grp"> @lang('messages.nav.ev_grp') </a> </li>
                             <li> <a href="{{ url('eventstats')}}">@lang('messages.nav.ev_stats')</a></li>
                             <li> <a href="{{ url('locations')}}">@lang('messages.nav.ev_loc')</a></li>
+                            @if(Entrust::hasRole('Developer'))
                             <li> <a href="{{ url('manage_events/past')}}">@lang('messages.nav.ev_old')</a></li>
+                            @endif
                         </ul>
                     </li>
                     @endif
