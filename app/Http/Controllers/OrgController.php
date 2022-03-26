@@ -235,7 +235,7 @@ class OrgController extends Controller
         }
 
         if (Storage::disk(getDefaultDiskFM())->exists($org->orgPath) == true) {
-            request()->session()->flash('alert-warning', trans('messages.messages.user_create_fail'));
+            request()->session()->flash('alert-warning', trans('messages.messages.user_create_storage_fail'));
 
             return redirect('create_organization')
                 ->withErrors($validator)

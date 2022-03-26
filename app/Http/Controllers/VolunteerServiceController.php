@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VolunteerService;
 use Illuminate\Http\Request;
 
-class VolunteerService extends Controller
+class VolunteerServiceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class VolunteerService extends Controller
      * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
-    public function show(VolunteerService $volunteerService)
+    public function show(VolunteerServiceController $volunteerService)
     {
         //
     }
@@ -55,7 +55,7 @@ class VolunteerService extends Controller
      * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
-    public function edit(VolunteerService $volunteerService)
+    public function edit(VolunteerServiceController $volunteerService)
     {
         //
     }
@@ -67,7 +67,7 @@ class VolunteerService extends Controller
      * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, VolunteerService $volunteerService)
+    public function update(Request $request, VolunteerServiceController $volunteerService)
     {
         //
     }
@@ -78,7 +78,7 @@ class VolunteerService extends Controller
      * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
-    public function destroy(VolunteerService $volunteerService)
+    public function destroy(VolunteerServiceController $volunteerService)
     {
         //
     }

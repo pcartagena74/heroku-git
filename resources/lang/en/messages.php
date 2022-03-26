@@ -940,6 +940,7 @@ return [
         'updated' => 'updated',
         'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
         'user_create_fail' => 'An unknown error occurred during account creation.  ',
+        'user_create_storage_fail' => 'A storage error occurred during account creation.  ',
         'visit_mCentric' => 'Visit mCentric',
         'please_wait' => 'Please wait while this content loads.',
         'org_default_update_success' => 'Your default organization was updated.',

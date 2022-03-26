@@ -81,6 +81,25 @@ class VolunteerRoleController extends Controller
     {
         $p = $this->currentPerson;
 
+        // Check that there are volunteer roles for the current organization
+        $defaultRoles = VolunteerRole::where(
+            ['orgID', '=', $org->orgID],
+            ['title', '!=', 'role']
+        )->get();
+
+        // This is a correction measure to create the data
+        if(null === $defaultRoles){
+            $defaultRoles = VolunteerRole::where(
+                ['orgID', '=', 1],
+                ['title', '!=', 'role']
+            )->get();
+            foreach ($defaultRoles as $r){
+                $new_role = $r->replicate();
+                $new_role->orgID = $org->orgID;
+                $new_role->save();
+            }
+        }
+
         [$json_roles, $option_string] = volunteer_data($org, $p);
 
         return view('v1.auth_pages.volunteers.show_roles', compact('option_string', 'json_roles'));

@@ -35,8 +35,9 @@ if (! function_exists('volunteer_data')) {
         $option_string = '';
 
         // volunteers include anyone who has been assigned a role in the same chapter (same orgID)
-        $volunteers = Person::whereHas('roles', function ($q) {
+        $volunteers = Person::whereHas('roles', function ($q) use ($o) {
             $q->whereIn('role_id', [1, 3, 4, 6, 7, 8, 10]);
+            $q->where('org_id', $o->orgID);
         })
             ->select(DB::raw('personID, 
                                     (CASE
@@ -55,7 +56,7 @@ if (! function_exists('volunteer_data')) {
 
         if(null === $p) {
             // Should pull orgID from 1 and actual orgID, if different
-            $json_roles = VolunteerRole::whereIn('volunteer_roles.orgID', [1, $o->orgID])
+            $json_roles = VolunteerRole::where('volunteer_roles.orgID', $o->orgID)
                 ->join('organization as o', function ($q) {
                     $q->on('o.orgID', '=', 'volunteer_roles.orgID');
                 })
@@ -103,7 +104,7 @@ if (! function_exists('volunteer_data')) {
                     as (select vr.id, vr.pid, vr.title, 1 as 'level'
                         from `volunteer_roles` vr
                         where vr.id = " . $p->service_role->volunteer_role->id . "
-                            and vr.orgID in (1, $o->orgID)
+                            and vr.orgID = $o->orgID
                 
                 union all
                 
