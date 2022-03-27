@@ -1,7 +1,7 @@
 
 
 declare class OrgChart extends OrgChartBase {
-    nodes: { [key: string | number]: OrgChart.node };
+    nodes: { [key in any]: OrgChart.node };
     isVisible: boolean;
 
     /**
@@ -146,12 +146,12 @@ declare class OrgChart extends OrgChartBase {
      * @param callback called when the animation completes
      */
     center(nodeId: string | number, options?: {
-        parentState: unknown,
-        childrenState: unknown,
+        parentState: any,
+        childrenState: any,
         rippleId: string | number,
         vertical: boolean,
         horizontal: boolean
-    }, callback?: () => void): void;
+    } | null, callback?: () => void): void;
     /**
      * Fits the content to the visible area.
      * @param callback called when the animation completes
@@ -171,6 +171,15 @@ declare class OrgChart extends OrgChartBase {
      * @param layout layout type
      * @param lcn lyout config name for the specified sub tree
      */
+
+    /**
+     * Adds new node to the nodes collection, redraws the chart and fires remove event
+     * @param data node data
+     * @param callback called at the end of animation
+     * @param fireEvent indicates if the add event will be called or not
+     */
+    addNode(data: object, callback?: () => void, fireEvent?: boolean): void;  
+
     setLayout(layout: OrgChart.layout | number, lcn?: string): void;
     /**
      * Sets orientation.
@@ -258,6 +267,7 @@ declare class OrgChart extends OrgChartBase {
      * {@link https://balkan.app/OrgChartJS/Docs/Exporting | See doc...}        
      */
     exportPDFProfile(options: OrgChart.exportOptions, callback?: () => void): void;
+    exportPDFPreview(options: OrgChart.exportOptions): void;
     /**
      * Exports the details form to PDF.
      * @param options export options
@@ -341,7 +351,7 @@ declare class OrgChart extends OrgChartBase {
         /**
          * value of the filed, can be changed in the event
          */
-        value: unknown, 
+        value: any, 
         /**
          * svg or html element of the filed, can be changed in the event
          */
@@ -407,7 +417,7 @@ declare class OrgChart extends OrgChartBase {
      * Occurs in the beginning of the export. Extra css styles can be added to the exported document using this event listener or show loading image.
      *  ```typescript     
      * var chart = new OrgChart('#tree', {});
-     * chart.onExporStart(() => {
+     * chart.onExportStart(() => {
      *  args.styles += '<link href="https://fonts.googleapis.com/css?family=Gochi+Hand" rel="stylesheet">';
      *  //return false; to cancel the operation
      * });
@@ -415,7 +425,7 @@ declare class OrgChart extends OrgChartBase {
      * @category Event Listeners
      * @param listener 
      */             
-    onExporStart(listener: (args: 
+    onExportStart(listener: (args: 
         {
         /**
          * the content to be exported
@@ -464,14 +474,14 @@ declare class OrgChart extends OrgChartBase {
      * Occurs in the beginning of the export. Use this event listener to hide loading image or upload exported document to your server using ArrayBuffer argument.
      *  ```typescript     
      * var chart = new OrgChart('#tree', {});
-     * chart.onExporEnd(() => {
+     * chart.onExportEnd(() => {
      *  //return false; to cancel the operation for example id you prefer the exported document to not download
      * });
      * ```
      * @category Event Listeners
      * @param listener 
      */         
-    onExporEnd(listener: (args: 
+    onExportEnd(listener: (args: 
         /**
          * for PDF/PNG
          */
@@ -586,7 +596,7 @@ declare class OrgChart extends OrgChartBase {
      * is null, empty or undefined
      * @param val 
      */
-    static isNEU(val: unknown): boolean;
+    static isNEU(val: any): boolean;
     static gradientCircleForDefs(id: string | number, colors: Array<string> | string, r: number, strokeWidth: number): string;
 
 
@@ -644,9 +654,11 @@ declare class OrgChart extends OrgChartBase {
     };
 
     static events: {
-        on(type: "node-created" | "layout", listener: (args: unknown, args1: unknown, args2: unknown) => void): void
+        on(type: "node-created" | "layout", listener: (args: any, args1: any, args2: any) => void): void
     };
     static state: { clear(stateName: string): void };
+
+    static animate(element: Object, attrStart?: Object, attrEnd?: Object, duration?: number, func?: OrgChart.anim, callback?: Function, tick?: boolean): void;
 
     static VERSION: string;
     /**
@@ -747,9 +759,22 @@ declare class OrgChart extends OrgChartBase {
     * @ignore
     */
     static LAZY_LOADING_FACTOR: number;
+   
+    /**
+     * Hides the Edit Form when the chart is moved with pan
+     */
+    static HIDE_EDIT_FORM_ON_PAN: boolean;
 
+    /**
+    * @ignore
+    */
+    static element: HTMLElement;
 
-
+    static randomId(): any;
+    static searchUI: any;
+    static attr: any;
+    static toolbarUI: any;
+    static elements: any;
 }
 
 declare namespace OrgChart {    
@@ -770,6 +795,7 @@ declare namespace OrgChart {
     const COLLAPSE_SUB_CHILDRENS: number;
 
 
+    var template: object;
 
 
 
@@ -801,8 +827,9 @@ declare namespace OrgChart {
             img_0?: string,
             link_field_0?: string,
             editFormHeaderColor?: string,
-            nodeCircleMenuButton?: string,
-            min?: template
+            nodeCircleMenuButton?: object,
+            min?: template,
+            [name: string]: any
         }
 
     interface editUI {
@@ -817,7 +844,7 @@ declare namespace OrgChart {
          * @param type A case-sensitive string representing the event type to listen for.
          * @param listener The object that receives a notification when an event of the specified type occurs. This must be a JavaScript function. 
          */
-        on(type: "show" | "element-btn-click" | "button-click" | "hide", listener: (sender: editUI, args: unknown, args1: unknown, args2: unknown) => void | boolean): editUI;
+        on(type: "show" | "save" | "cancel" | "element-btn-click" | "button-click" | "hide", listener: (sender: editUI, args: any, args1: any, args2: any) => void | boolean): editUI;
         /**
          * Shows the edit form for the specified node id
          * @param id node id
@@ -845,7 +872,7 @@ declare namespace OrgChart {
          * @param type A case-sensitive string representing the event type to listen for.
          * @param listener The object that receives a notification when an event of the specified type occurs. This must be a JavaScript function. 
          */        
-        on(type: "searchclick", listener: (sender: OrgChart, args: unknown, args1: unknown, args2: unknown) => void | boolean): searchUI;
+        on(type: "searchclick", listener: (sender: OrgChart, args: any, args1: any, args2: any) => void | boolean): searchUI;
         /**
          * Hides the search grid
          */
@@ -866,7 +893,7 @@ declare namespace OrgChart {
          * @param type A case-sensitive string representing the event type to listen for.
          * @param listener The object that receives a notification when an event of the specified type occurs. This must be a JavaScript function. 
          */        
-        on(type: "show", listener: (sender: menuUI, args: unknown, args1: unknown, args2: unknown) => void | boolean): menuUI;
+        on(type: "show", listener: (sender: menuUI, args: any, args1: any, args2: any) => void | boolean): menuUI;
         /**
          * Shows menu next to html element
          * @param stickToElement 
@@ -913,7 +940,7 @@ declare namespace OrgChart {
          * @param type A case-sensitive string representing the event type to listen for.
          * @param listener The object that receives a notification when an event of the specified type occurs. This must be a JavaScript function. 
          */        
-        on(type: "show" | "drag" | "drop" | "mouseenter" | "mouseout", listener: (sender: circleMenuUI, args: unknown, args1: unknown, args2: unknown) => void | boolean): circleMenuUI;
+        on(type: "click" | "show" | "drag" | "drop" | "mouseenter" | "mouseout", listener: (sender: circleMenuUI, args: any, args1: any, args2: any) => void | boolean): circleMenuUI;
     }
 
     interface toolbarUI {
@@ -951,7 +978,9 @@ declare namespace OrgChart {
         format?: "A1" | "A2" | "A3" | "A4" | "A5" | "A4" | "Letter" | "Legal",
         header?: string,
         footer?: string,
-        openInNewTab?: boolean
+        openInNewTab?: boolean,
+        expandChildren?: boolean,
+        nodeId? : number | string
     }
 
     interface linkTemplate {
@@ -964,7 +993,13 @@ declare namespace OrgChart {
         [key: string]: {
             text: string,
             icon?: string,
-            onClick?: Function,
+            onClick?: Function
+        }
+    }
+    interface circleMenu  {
+        [key: string]: {
+            text: string,
+            icon?: string,
             color?: string,
             draggable?: boolean
         }
@@ -973,7 +1008,7 @@ declare namespace OrgChart {
         type?: string,
         label?: string,
         binding?: string,
-        options?: Array<unknown>,
+        options?: Array<any>,
         btn?: string,
         vlidators?: { required?: string, email?: string }
     }
@@ -1282,7 +1317,7 @@ declare namespace OrgChart {
          * ```
          * {@link https://balkan.app/OrgChartJS/Docs/Menus | See doc...}
          */
-        nodeCircleMenu?: OrgChart.menu,
+        nodeCircleMenu?: OrgChart.circleMenu,
         /**
          * Customizable context menu. Also you can define your own node operation.
          * ```typescript     
@@ -1447,7 +1482,7 @@ declare namespace OrgChart {
                 template?: "ana" | "ula" | "olivia" | "belinda" | "rony" | "mery" | "polina" | "mila" | "diva" | "luba" | "isla" | "deborah" | "base" | "group" | "invisibleGroup" | string,
                 subLevels?: number,
                 nodeMenu?: OrgChart.menu,
-                nodeCircleMenu?: OrgChart.menu,
+                nodeCircleMenu?: OrgChart.circleMenu,
                 nodeContextMenu?: OrgChart.menu,
                 subTreeConfig?: {
                     orientation?: OrgChart.orientation,
@@ -1555,7 +1590,7 @@ declare namespace OrgChart {
          * });
          * ```
          */
-        nodes?: Array<string | number>,
+         nodes?: Array<Object>,
         /**
          * Adds curved link.
          * ```typescript     
@@ -1927,10 +1962,13 @@ declare namespace OrgChart {
         editForm?: {
             readOnly?: boolean,
             titleBinding?: string,
-            photoBinding?: string,
+            photoBinding?: string,            
+            focusBinding?: string,
             addMore?: string,
             addMoreBtn?: string,
             addMoreFieldName?: string,
+            saveAndCloseBtn?: string,
+            cancelBtn?: string,
             generateElementsFromFields?: boolean,
             buttons?: {
                 [key: string]: {
@@ -1938,15 +1976,23 @@ declare namespace OrgChart {
                     text?: string,
                     hideIfEditMode?: boolean,
                     hideIfDetailsMode?: boolean
-                }
+                } | null
             },
-            elements?: { [key: string]: OrgChart.editFormElement | Array<OrgChart.editFormElement> }
+           // elements?: { [key: string]: OrgChart.editFormElement | Array<OrgChart.editFormElement> }
+           elements?: Array<OrgChart.editFormElement | Array<OrgChart.editFormElement>>
         }
     }
 }
 
 declare class OrgChartBase {
 
+    /**
+     * Can update link
+     * @param id child id
+     * @param pid parent id
+     */
+    canUpdateLink(id: string | number, pid: string | number): boolean;
+    
     /**
      * Removes specified node from nodes collection, redraws the chart and fires remove event.
      * @param id identification number of the node
@@ -1955,13 +2001,7 @@ declare class OrgChartBase {
      */
     removeNode(id: string | number, callback?: () => void, fireEvent?: boolean): void;
 
-    /**
-     * Adds new node to the nodes collection, redraws the chart and fires remove event
-     * @param data node data
-     * @param callback called at the end of animation
-     * @param fireEvent indicates if the add event will be called or not
-     */
-     addNode(data: object, callback?: () => void, fireEvent?: boolean): void;         
+       
 
     /**
      * The on() method of the OrgChart class sets up a function that will be called whenever the specified event is delivered to the target.     * 
@@ -1969,7 +2009,7 @@ declare class OrgChartBase {
      * @param type A case-sensitive string representing the event type to listen for.
      * @param listener The object that receives a notification when an event of the specified type occurs. This must be a JavaScript function. 
      */
-    on(type: "init" | "field" | "update" | "add" | "remove" | "renderbuttons" | "label" | "render-link" | "drag" | "drop" | "redraw" | "expcollclick" | "exportstart" | "exportend" | "click" | "dbclick" | "slink-click" | "clink-click" | "up-click" | "import" | "adding" | "added" | "updated" | "key-down" | "visibility-change" | "renderdefs" | "render" | "prerender" | "screen-reader-text" | "removed" | "ready" | "ripple", listener: (sender: OrgChart, args?: unknown, args1?: unknown, args2?: unknown) => void | boolean): OrgChart;
+    on(type: "init" | "field" | "update" | "add" | "remove" | "renderbuttons" | "label" | "render-link" | "drag" | "drop" | "redraw" | "expcollclick" | "exportstart" | "exportend" | "click" | "dbclick" | "slink-click" | "clink-click" | "up-click" | "searchclick" | "import" | "adding" | "added" | "updated" | "key-down" | "visibility-change" | "renderdefs" | "render" | "prerender" | "screen-reader-text" | "removed" | "ready" | "ripple", listener: (sender: OrgChart, args?: any, args1?: any, args2?: any) => void | boolean): OrgChart;
 
     /**
      * Occurs when the node data has been updated by updateNode method.
@@ -2014,8 +2054,8 @@ declare class OrgChartBase {
          * parent ids and sub tree parents ids that needs to be updated on the server. For example if you remove a node that has children all chilren nodes will change their pid to the parent node id of the removed node.
          */
         newPidsAndStpidsForIds: {
-            newPidsForIds: { [key: string | number]: string | number },
-            newStpidsForIds: { [key: string | number]: string | number }
+            newPidsForIds: { [key in any]: string | number },
+            newStpidsForIds: { [key in any]: string | number }
         }
     }) => void): OrgChart;
 
