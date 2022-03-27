@@ -32,9 +32,30 @@ class VolunteerRoleController extends Controller
      */
     public function index()
     {
-        $o = Org::where('orgID', $this->currentPerson->defaultOrgID)->first();
+        $org = Org::where('orgID', $this->currentPerson->defaultOrgID)->first();
 
-        [$json_roles, $option_string] = volunteer_data($o, null);
+        // Check that there are volunteer roles for the current organization
+        $defaultRoles = VolunteerRole::where('orgID', $org->orgID)->where('title', '!=', 'role')->get();
+
+        // This is a correction measure to create the data
+        if(count($defaultRoles) == 0 || null === $defaultRoles){
+            $pid = null;
+            $defaultRoles = VolunteerRole::where('orgID', 1)->where('title', '!=', 'role')->get();
+
+            foreach ($defaultRoles as $r){
+                $new_role = $r->replicate();
+                $new_role->orgID = $org->orgID;
+                if (null !== $pid){
+                    $new_role->pid = $pid;
+                }
+                $new_role->save();
+                if(null === $r->pid){
+                    $pid = $new_role->id;
+                }
+            }
+        }
+
+        [$json_roles, $option_string] = volunteer_data($org, null);
 
         return view('v1.auth_pages.volunteers.show_roles', compact('option_string', 'json_roles'));
     }
@@ -82,21 +103,23 @@ class VolunteerRoleController extends Controller
         $p = $this->currentPerson;
 
         // Check that there are volunteer roles for the current organization
-        $defaultRoles = VolunteerRole::where(
-            ['orgID', '=', $org->orgID],
-            ['title', '!=', 'role']
-        )->get();
+        $defaultRoles = VolunteerRole::where('orgID', $org->orgID)->where('title', '!=', 'role')->get();
 
         // This is a correction measure to create the data
-        if(null === $defaultRoles){
-            $defaultRoles = VolunteerRole::where(
-                ['orgID', '=', 1],
-                ['title', '!=', 'role']
-            )->get();
+        if(count($defaultRoles) == 0 || null === $defaultRoles){
+            $pid = null;
+            $defaultRoles = VolunteerRole::where('orgID', 1)->where('title', '!=', 'role')->get();
+
             foreach ($defaultRoles as $r){
                 $new_role = $r->replicate();
                 $new_role->orgID = $org->orgID;
+                if (null !== $pid){
+                    $new_role->pid = $pid;
+                }
                 $new_role->save();
+                if(null === $r->pid){
+                    $pid = $new_role->id;
+                }
             }
         }
 
