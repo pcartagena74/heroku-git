@@ -139,6 +139,11 @@
                         label: '{{ trans('messages.default_roles.end') }}',
                         binding: '{{ trans('messages.default_roles.end') }}',
                     },
+                    {
+                        type: 'textbox',
+                        label: '{{ trans('messages.default_roles.jd_url') }}',
+                        binding: '{{ trans('messages.default_roles.jd_url') }}',
+                    },
                 ],
             },
 
@@ -158,7 +163,7 @@
         chart.on('add', function (sender, node) {
             node.id = new Date().valueOf();
             node.pid = parseInt(node.pid);
-            //node.jd_URL = parseInt(node.pid);
+            node.jd_URL = parseInt(node.pid);
             console.log(node);
 
             $.ajaxSetup({

@@ -49,7 +49,8 @@ if (! function_exists('volunteer_data')) {
 
         $option_string = "{ value: '', text: '' },\n";
         foreach ($volunteers as $v) {
-            $option_string .= "{ value: '$v->name', text: '$v->name' },\n";
+            // $option_string .= "{ value: '$v->name', text: '$v->name' },\n";
+            $option_string .= "{ value: '$v->personID', text: '$v->name' },\n";
         }
 
         $nodes = array();
