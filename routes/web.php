@@ -367,7 +367,7 @@ Route::post('/location/update', [LocationController::class, 'update']); // Ajax
 Route::get('/locations/{id}', [LocationController::class, 'show']);
 
 // Mail Test
-Route::get('/mt', [MailGunController::class, 'testmail']);
+// Route::get('/mt', [MailGunController::class, 'testmail']);
 Route::get('/tb', [MailGunController::class, 'bugsnag']);
 
 // Campaign Management Routes

@@ -744,6 +744,9 @@ class RegistrationController extends Controller
                     $reg->debugNotes .= "Orig changed from: " . $reg->origcost . " to: " . $ocost . "; ";
                     $reg->origcost = $ocost;
                 }
+                $handleFee = number_format(($ocost * .029) + .30, 2, '.', '');
+                if ($handleFee > 5) { $handleFee = 5; }
+                $reg->mcentricFee = $handleFee;
                 $reg->save();
 
                 if (null !== $dupe_check) {
