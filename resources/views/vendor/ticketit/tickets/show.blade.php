@@ -51,4 +51,4 @@
     </script>
     @include('ticketit::tickets.partials.summernote')
 @append
-</br>
+<br />

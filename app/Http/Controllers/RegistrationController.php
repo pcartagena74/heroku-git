@@ -692,6 +692,10 @@ class RegistrationController extends Controller
                 $reg->creatorID = $authorID;
                 $reg->updaterID = $authorID;
 
+
+                /*
+                 * what if all of this bullshit is unnecessary...
+                 *
                 // Check for ticket price error (There is a cost, but subtotal == 0 w/o a discount that should make it 0
                 // Need to also account for scenario where there is a non-member price but member price is $0
                 // AND origcost is > $0 due to 2nd ticket.
@@ -721,13 +725,28 @@ class RegistrationController extends Controller
                         }
                     } elseif ($dc->percent != 100) {
                         $reg->debugNotes = "\$dc->percent fail - During \$reg->store: Orig: $reg->origcost, Subtotal: $reg->subtotal, Code: $reg->discountCode, RF cost: $rf->cost using $x";
-                        $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
-                        $subtotal = $reg->origcost - ($dc->percent * $reg->origcost) - $dc->flatAmt;
+                        $reg->subtotal = $reg->origcost - ($dc->percent * $reg->origcost / 100) - $dc->flatAmt;
+                        $subtotal = $reg->origcost - ($dc->percent * $reg->origcost / 100) - $dc->flatAmt;
                         if ($rf->cost == 0) {
                             $rf->cost = $subtotal;
                         }
                     }
                 }
+                */
+
+                // This is a correction of the original cost within the database for auditing purposes. 4/14/22
+                if($person->is_member($event->orgID)) {
+                    $ocost = $reg->ticket->memberBasePrice;
+                } else {
+                    $ocost = $reg->ticket->nonmbrBasePrice;
+                }
+                if($ocost <> $reg->origcost) {
+                    $reg->debugNotes .= "Orig changed from: " . $reg->origcost . " to: " . $ocost . "; ";
+                    $reg->origcost = $ocost;
+                }
+                $handleFee = number_format(($ocost * .029) + .30, 2, '.', '');
+                if ($handleFee > 5) { $handleFee = 5; }
+                $reg->mcentricFee = $handleFee;
                 $reg->save();
 
                 if (null !== $dupe_check) {

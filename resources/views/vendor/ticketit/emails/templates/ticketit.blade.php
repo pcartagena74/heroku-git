@@ -86,7 +86,7 @@
                                                 <td class="subject">
                                                     <br>
                                                         @yield('subject')
-                                                    </br>
+                                                    <br />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -97,11 +97,7 @@
                                                                 <td align="left" style="margin: 20px; text-align: left color:#187272;">
                                                                     <br>
                                                                         @yield('content')
-                                                                        <br>
-                                                                            <br>
-                                                                            </br>
-                                                                        </br>
-                                                                    </br>
+                                                                        <br />
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -118,11 +114,7 @@
                                                                 <td style="color:#933f24;">
                                                                     <br>
                                                                         @yield('link')
-                                                                        <br>
-                                                                            <br>
-                                                                            </br>
-                                                                        </br>
-                                                                    </br>
+                                                                        <br />
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -130,11 +122,7 @@
                                                                     {{ $setting->grab('email.signoff') }}
                                                                     <br>
                                                                         {{ $setting->grab('email.signature') }}
-                                                                        <br>
-                                                                            <br>
-                                                                            </br>
-                                                                        </br>
-                                                                    </br>
+                                                                        <br />
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -158,10 +146,7 @@
                         </v:roundrect>
                         <![endif]-->
                                                     </div>
-                                                    <br>
-                                                        <br>
-                                                        </br>
-                                                    </br>
+                                                    <br />
                                                 </td>
                                             </tr>
                                             @endif
@@ -186,12 +171,7 @@
                                                                 <img alt="twitter" src="https://www.filepicker.io/api/file/Gvu32apSQDqLMb40pvYe"/>
                                                             </a>
                                                             @endif
-                                                            <br>
-                                                                <br>
-                                                                </br>
-                                                            </br>
-                                                        </br>
-                                                    </br>
+                                                            <br />
                                                 </td>
                                             </tr>
                                             <!-- Not implemented
@@ -207,10 +187,7 @@
                                                     <a href="{{ $setting->grab('email.footer_link') }}">
                                                         {{ $setting->grab('email.footer') }}
                                                     </a>
-                                                    <br>
-                                                        <br>
-                                                        </br>
-                                                    </br>
+                                                    <br />
                                                 </td>
                                             </tr>
                                         </table>
@@ -221,6 +198,6 @@
                     </td>
                 </tr>
             </table>
-        </br>
+        <br />
     </body>
 </html>

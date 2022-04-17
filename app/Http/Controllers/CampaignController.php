@@ -73,7 +73,7 @@ class CampaignController extends Controller
         });
 
         $collection->addColumn('thumb', function ($c) {
-            $str = '<a href="'.url('campaign', [$c->campaignID, 'edit']).'"><img class="img-thumbnail" height="70px" src="'.getEmailTemplateThumbnailURL($c).'" width="70px"></img></a>';
+            $str = '<a href="'.url('campaign', [$c->campaignID, 'edit']).'"><img class="img-thumbnail" height="70px" src="'.getEmailTemplateThumbnailURL($c).'" width="70px" /></a>';
 
             return $str;
         });

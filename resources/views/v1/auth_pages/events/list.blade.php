@@ -98,11 +98,13 @@ if ($past) {
                     @endif
                 </div>
                 <div class="tab-pane fade" id="tab_content2" aria-labelledby="past_events-tab">
-                    @endif
                     <p>&nbsp;</p>
+                    @if(count($past_data) > 0)
                     @include('v1.parts.datatable', ['headers' => $past_headers,
                         'data' => $past_data, 'id' => 'past_events', 'scroll' => $past_scroll])
-                    @if(!$past)
+                    @else
+                        @lang('messages.messages.no_events', ['which' => strtolower(trans('messages.fields.past'))])
+                    @endif
                 </div>
             </div>
         </div>

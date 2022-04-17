@@ -94,7 +94,7 @@ $header = implode(" ", [trans('messages.nav.o_create')]);
     </div>
     <div class="col-xs-4">
         {!! Form::label('orgState', trans('messages.fields.state'), array('class' => 'control-label')) !!}
-                {!! Form::text('orgState', old('orgState'), array('class' => 'form-control input-sm')) !!}
+                {!! Form::text('orgState', old('orgState'), array('class' => 'form-control input-sm', 'maxlength' => '2')) !!}
                 @if ($errors->has('orgState'))
         <span class="help-block red">
             <strong>

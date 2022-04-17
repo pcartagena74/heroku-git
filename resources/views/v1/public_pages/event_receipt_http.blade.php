@@ -202,10 +202,10 @@ $deletion = 0;
                                         </i>
                                         {{ $loc->city }},
                     {{ $loc->state }} {{ $loc->zip }}
-                                    </br>
-                                </br>
+                                    <br />
+                                <br />
                             </div>
-                            <br/>
+                            <br />
                             <b style="color:red;">
                                 @lang('messages.headers.purchased'):
                             </b>
@@ -520,26 +520,22 @@ $deletion = 0;
                                     <tr valign="middle">
                                         <td style="text-align: center;">
                                             <a href="{{ $ics }}" target="_new">
-                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/outlook.jpg" width="50">
-                                                </img>
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/outlook.jpg" width="50" />
                                             </a>
                                         </td>
                                         <td style="text-align: center;">
                                             <a href="{{ $google_url }}" target="_new">
-                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/google.jpg" width="50">
-                                                </img>
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/google.jpg" width="50" />
                                             </a>
                                         </td>
                                         <td style="text-align: center;">
                                             <a href="{{ $yahoo_url }}" target="_new">
-                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/yahoo.jpg" width="50">
-                                                </img>
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/yahoo.jpg" width="50" />
                                             </a>
                                         </td>
                                         <td style="text-align: center;">
                                             <a href="{{ $ics }}" target="_new">
-                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/ical.jpg" width="50">
-                                                </img>
+                                                <img height="50" src="{{ str_replace('https', 'http', env('APP_URL')) }}/images/ical.jpg" width="50" />
                                             </a>
                                         </td>
                                     </tr>

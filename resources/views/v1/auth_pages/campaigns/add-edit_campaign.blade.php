@@ -127,9 +127,8 @@ if(!empty($campaign)){
                 <div class="panel-body">
                     @if(!empty($campaign))
                     <a href="javascript:void(0)" id="show-etb">
-                        <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($campaign)}}" width="70px">
+                        <img class="img-thumbnail" height="100px" src="{{getEmailTemplateThumbnailURL($campaign)}}" width="70px" />
                             {!! $campaign->title !!}
-                        </img>
                     </a>
                     @endif
                     @if(empty($disable))

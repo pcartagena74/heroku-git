@@ -28,8 +28,8 @@ class MailGunController extends Controller
     public function testmail()
     {
         $this->currentPerson = Person::find(auth()->id());
-        $email = 'pcartagena@partners.org';
-        $subject = 'test email2';
+        $email = 'register@fierce.net';
+        $subject = 'test email...';
         $name = 'Phil Cartagena';
         $model = $this->currentPerson;
 

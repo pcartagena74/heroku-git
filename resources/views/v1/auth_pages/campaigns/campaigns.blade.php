@@ -149,8 +149,7 @@ $topBits = '';  // remove this if this was set in the controller
                         <tr class="even pointer campaign-panel-{{$c->campaignID}}">
                             <td class=" ">
                                 <a href="{!! url('campaign',[$c->campaignID,'edit']) !!}">
-                                    <img class="img-thumbnail" height="70px" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px">
-                                    </img>
+                                    <img class="img-thumbnail" height="70px" src="{{getEmailTemplateThumbnailURL($c)}}" width="70px" />
                                 </a>
                             </td>
                             <td>
