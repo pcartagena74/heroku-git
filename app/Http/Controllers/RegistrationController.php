@@ -521,7 +521,7 @@ class RegistrationController extends Controller
             } else {
                 // $person was set from PMI ID; quick check to see if email should be a secondary
 
-                if ($person->login != $login) {
+                if (strtolower($person->login) != strtolower($login)) {
                     $set_secondary_email = 1;
                 }
             }
