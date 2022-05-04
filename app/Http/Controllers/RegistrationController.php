@@ -647,6 +647,7 @@ class RegistrationController extends Controller
                 ['personID', $person->personID],
                 ['eventID', $event->eventID],
                 ['regStatus', 'processed'],
+                ['deleted_at', null]
             ])->first();
 
             try {
@@ -915,6 +916,7 @@ class RegistrationController extends Controller
                             ['personID', $reg_chk->personID],
                             ['eventID', $event->eventID],
                             ['regStatus', 'processed'],
+                            ['deleted_at', null]
                         ])->with('person')->first();
 
                         if (null !== $dupe_check) {
