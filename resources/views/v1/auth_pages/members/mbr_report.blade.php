@@ -15,9 +15,7 @@
     <ul class="nav nav-tabs bar_tabs nav-justified" id="myTab" role="tablist">
         <li class="active">
             <a aria-expanded="true" data-toggle="tab" href="#tab_content1" id="member_tab">
-                <b>
-                    @lang('messages.tabs.mem_demo')
-                </b>
+                <b>@lang('messages.tabs.mem_demo')</b>
             </a>
         </li>
         <li class="">
@@ -27,17 +25,6 @@
                 </b>
             </a>
         </li>
-        {{--
-                    @if(Entrust::hasRole('Speaker'))
-        <li class="">
-            <a aria-expanded="false" data-toggle="tab" href="#tab_content3" id="other-tab">
-                <b>
-                    Third Thing
-                </b>
-            </a>
-        </li>
-        @endif
-        --}}
     </ul>
     <div class="tab-content" id="tab-content">
         <div aria-labelledby="member_tab" class="tab-pane active" id="tab_content1">
@@ -54,6 +41,7 @@
             --}}
             <input class="form-group select2" name="" type="text" value="{{$year_string}}"/>
             <br/>
+
             <div id="canvas">
             </div>
             @include('v1.parts.end_content')
