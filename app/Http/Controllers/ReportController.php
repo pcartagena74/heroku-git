@@ -9,6 +9,7 @@ use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Session;
+use Illuminate\Support\Facades\Lang;
 
 class ReportController extends Controller
 {
@@ -17,7 +18,7 @@ class ReportController extends Controller
         $this->middleware('auth');
     }
 
-    public function show($year_string = null)
+    public function show($id = null, $year_string = null)
     {
         $topBits = '';
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -48,6 +49,7 @@ class ReportController extends Controller
             ->whereIn(DB::raw('year(eventStartDate)'), explode(',', $year_string))
             ->distinct()->orderBy('year', 'asc')->get();
 
+
         $datastring = '';
         $pluses = [];
         $labels = '';
@@ -58,7 +60,13 @@ class ReportController extends Controller
         }
         rtrim($labels, ',');
 
-        $chart = DB::select('call member_report("'.$year_string.'")');
+        if($id) {
+            // when $id = 1, show only member data
+            $chart = DB::select('call true_member_report("'.$year_string.'", '. $orgID .')');
+        } else {
+            // otherwise, show all attendee data
+            $chart = DB::select('call member_report("'.$year_string.'")');
+        }
 
         foreach ($chart as $e) {
             if ($e->numEvent >= 8) {
@@ -69,7 +77,9 @@ class ReportController extends Controller
                     $pluses[$y->year] += $e->{$y->year};
                 }
                 if ($e == last($chart)) {
-                    $datastring .= "{ Events: '8+ Events', '";
+                    $datastring .= "\n{ "
+                        . trans_choice('messages.headers.events',2) . ": '8+ "
+                        . trans_choice('messages.headers.events',$e->numEvent) . "', '";
                     foreach ($years as $y) {
                         if ($e->{$y->year} === null) {
                             $e->{$y->year} = 0;
@@ -87,35 +97,23 @@ class ReportController extends Controller
                 if ($e != reset($chart)) {
                     $datastring .= "\n";
                 }
-                if ($e->numEvent == 1) {
-                    $datastring .= "{ Events: '".$e->numEvent." Event', '";
-                    foreach ($years as $y) {
-                        if ($e->{$y->year} === null) {
-                            $e->{$y->year} = 0;
-                        }
-                        if ($y == $years->last()) {
-                            $datastring .= $y->year."': ".$e->{$y->year};
-                        } else {
-                            $datastring .= $y->year."': ".$e->{$y->year}.", '";
-                        }
+                $datastring .= "{ " .
+                    trans_choice('messages.headers.events',2)
+                    . ": '".$e->numEvent." ".
+                    trans_choice('messages.headers.events',$e->numEvent) .
+                    "', '";
+                foreach ($years as $y) {
+                    if ($e->{$y->year} === null) {
+                        $e->{$y->year} = 0;
                     }
-                    rtrim($datastring, ',');
-                    $datastring .= '},';
-                } else {
-                    $datastring .= "{ Events: '".$e->numEvent." Events', '";
-                    foreach ($years as $y) {
-                        if ($e->{$y->year} === null) {
-                            $e->{$y->year} = 0;
-                        }
-                        if ($y == $years->last()) {
-                            $datastring .= $y->year."': ".$e->{$y->year};
-                        } else {
-                            $datastring .= $y->year."': ".$e->{$y->year}.", '";
-                        }
+                    if ($y == $years->last()) {
+                        $datastring .= $y->year."': ".$e->{$y->year};
+                    } else {
+                        $datastring .= $y->year."': ".$e->{$y->year}.", '";
                     }
-                    rtrim($datastring, ',');
-                    $datastring .= '},';
                 }
+                rtrim($datastring, ',');
+                $datastring .= '},';
             }
         }
 
@@ -217,7 +215,8 @@ class ReportController extends Controller
         }
 
         return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'org',
-            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home', 'heat_map_other', 'heat_map_work', 'org_lat_lng', 'heat_map_work_count', 'heat_map_home_count', 'heat_map_other_count'));
+            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home',
+            'heat_map_other', 'heat_map_work', 'org_lat_lng', 'heat_map_work_count', 'heat_map_home_count', 'heat_map_other_count'));
     }
 
     public function update(Request $request, $id)
