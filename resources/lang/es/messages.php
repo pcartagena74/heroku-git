@@ -1284,7 +1284,9 @@ return [
         'graph_years' => 'Visualización del Año',
         'ind_brk' => 'Industrias Identificadas',
         'select_years' => 'Seleccionar Años para Mostrar',
-        'show_mbr' => 'Mostrar Solo Miembros',
+        'show' => 'Mostrar',
+        'show_all' => 'Todos los Asistentes',
+        'show_mbr' => 'Solo Miembros',
         'person_address' => 'Mapa de Calor',
     ],
     'surveys' => [

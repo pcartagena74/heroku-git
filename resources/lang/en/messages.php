@@ -1280,7 +1280,9 @@ return [
         'graph_years' => 'Year Display',
         'ind_brk' => 'Identified Industry Breakdown',
         'select_years' => 'Select Years to Display',
-        'show_mbr' => 'Show Members Only',
+        'show' => 'Show',
+        'show_all' => 'All Attendees',
+        'show_mbr' => 'Members Only',
         'person_address' => 'Heat Map',
     ],
     'surveys' => [
