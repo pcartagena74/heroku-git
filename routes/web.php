@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\VolunteerRoleController;
 use Kordy\Ticketit\Controllers\StatusesController;
 use Kordy\Ticketit\Controllers\TicketsController;
 #use Kordy\Ticketit\Controllers\DashboardController;
@@ -88,6 +89,7 @@ return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
 });
  */
 
+Route::get('/blah', [PersonController::class, 'blah']);
 Route::get('/art-rt-lst', [HomeController::class, 'showApplicationRoutes']);
 /**
  * below code is for language route do not update
@@ -272,6 +274,13 @@ Route::get('/eventstats', [EventStatsController::class, 'index']);
 Route::get('/search/{query?}', [PersonController::class, 'index2']);
 Route::post('/search', [PersonController::class, 'search']);
 
+// VolunteerRole Routes
+// ---------------------
+Route::get('/volunteers', [VolunteerRoleController::class, 'index'])->name('nodes.index');
+Route::get('/volunteers/{org}', [VolunteerRoleController::class, 'show'])->name('nodes.show');
+Route::post('/volunteers', [VolunteerRoleController::class, 'store'])->name('nodes.store');
+Route::patch('/volunteers/{volunteerRole}/update', [VolunteerRoleController::class, 'update'])->name('nodes.update');
+
 // Speaker Routes
 // ---------------------
 Route::get('/speakers', [SpeakerController::class, 'index'])->name('manageSpeakers');
@@ -358,7 +367,7 @@ Route::post('/location/update', [LocationController::class, 'update']); // Ajax
 Route::get('/locations/{id}', [LocationController::class, 'show']);
 
 // Mail Test
-Route::get('/mt', [MailGunController::class, 'testmail']);
+// Route::get('/mt', [MailGunController::class, 'testmail']);
 Route::get('/tb', [MailGunController::class, 'bugsnag']);
 
 // Campaign Management Routes

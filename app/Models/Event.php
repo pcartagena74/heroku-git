@@ -38,7 +38,8 @@ class Event extends Model
 
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
-    protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks'];
+    protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks',
+                                       'eventStartDate', 'eventEndDate'];
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
 
     protected function serializeDate(DateTimeInterface $date)

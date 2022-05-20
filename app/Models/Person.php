@@ -176,4 +176,16 @@ class Person extends Model
     {
         return $this->hasMany(Email::class, 'personID', 'personID')->where('isPrimary', 1);
     }
+
+    public function service_role()
+    {
+        return $this->hasOne(VolunteerService::class, 'personID', 'personID');
+    }
+
+    public function has_volunteers()
+    {
+        if(null !== $this->service_role) {
+            return $this->service_role->volunteer_role->children;
+        }
+    }
 }

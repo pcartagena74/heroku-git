@@ -138,6 +138,40 @@ return [
         'on' => 'on',
         'reminder' => 'Reminder',
     ],
+
+    'default_roles' => [
+        'orgchart' => 'Volunteer Org Chart',
+        'orgdata' => 'Volunteer Data',
+        'add_child' => '&nbsp; Add Role',
+        'dal' => 'Director-at-Large',
+        'dir' => 'Dir. ',
+        'vp' => 'VP ',
+        'prez' => 'President',
+        'biz' => 'Business Development',
+        'com' => 'Communications',
+        'edu' => 'Education',
+        'evp' => 'Executive Vice President',
+        'fin' => 'Finance',
+        'mktg' => 'Marketing',
+        'mbr' => 'Membership',
+        'ops' => 'Operations',
+        'pd' => 'Professional Development',
+        'ip' => 'President Elect',
+        'pp' => 'Past President',
+        'prg' => 'Programs',
+        'tech' => 'Technology',
+        'vol' => 'Volunteers',
+        'det' => 'Details',
+        'add' => 'Add',
+        'edit' => 'Edit',
+        'rem' => 'Remove',
+        'jd_url' => 'Job Description URL',
+        'role' => 'Role Name',
+        'start' => 'Term Start Date',
+        'end' => 'Term End Date',
+        'empty' => 'Vacant',
+    ],
+
     'directions' => [
         'org' => [
             'fullname' => 'Enter complete, formal/corporate name',
@@ -329,6 +363,7 @@ return [
         'orgStat1' => 'PMI Member ID',
         'other' => 'Other Comments/Notes',
         'password' => 'Password',
+        'past' => 'Past',
         'past_events' => 'Past Events',
         'pdu_sub' => 'PDU Submission',
         'pmi_id' => 'PMI ID',
@@ -411,12 +446,12 @@ return [
         'mbr_report_chart_tooltip' => 'Click to remove and merge into category: Other',
         'inclusion_list' => 'Inclusion List',
         'exclusion_list' => 'Exclusion List',
-        'this_year_event' => 'This Year\'s Events',
-        'last_year_event' => 'Last Year\'s Events',
+        'this_year_event' => "This Year's Events",
+        'last_year_event' => "Last Year's Events",
         'all_pd_day_event' => 'All PD Day Events',
-        'specific_event' => 'Specific Event\'s (by date range)',
-        'camp_status_draft' => 'Draft : :date',
-        'camp_status_sent' => 'Sent : :date',
+        'specific_event' => 'Specific Events (by date range)',
+        'camp_status_draft' => 'Draft: :date',
+        'camp_status_sent' => 'Sent: :date',
         'camp_open_rate' => 'Open Rate',
         'camp_open' => 'Opens',
         'camp_sent' => 'Sent',
@@ -654,6 +689,7 @@ return [
         'ret_sess_list' => 'Return to Session List',
         'revenue' => 'Revenue',
         'role' => 'Role',
+        'role_title' => 'Board Title Prefix',
         'role_ass' => 'Role Assignment',
         'roles' => 'Roles',
         'roles&perms' => 'Role & Permission Management',
@@ -723,6 +759,7 @@ return [
     ],
     'instructions' => [
         'add_speaker' => 'to add speakers to this list, register the person to an event using a speaker discount code.',
+        'admin_stmt' => 'This statement will display when users should contact an admin associated with your chapter.',
         'bar_chart' => 'Green bars indicate those events you registered to attend.  Red bars indicate events for which you did not register.',
         'become_instr' => "Find a person by searching for that person's first or last name, email address, or PMI ID",
         'become_id' => 'Enter the first (left-most) number from the field above. ',
@@ -731,7 +768,7 @@ return [
         'customURL' => 'Please enter a custom URL.',
         'early_bird' => "<span style='color:red;'>Act Now!</span> Early Bird Pricing in Effect until ",
         'early_values' => 'Changing the date or discount percent will apply to all associated tickets shown below or created.',
-        'email_list_foundation' => '<p>To create an email list, you can select a foundation from which to start your list or filter it.</br>You can then choose events from which to include or exclude people.</p>',
+        'email_list_foundation' => '<p>To create an email list, you can select a foundation from which to start your list or filter it.<br />You can then choose events from which to include or exclude people.</p>',
         'email_list_foundation_select' => '<p>Selecting a foundation either gives you a starting point for your list or will filter from the event
                     lists you include (below).</p>',
         'email_list_inclusion' => '<p>Attendees of the checked events in Inclusion list will be included in the Emailing List.If you want to include attents</p>
@@ -809,6 +846,7 @@ return [
         'one-at-time' => 'The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.',
         'org_disc' => "The <b style='color: red;'>non-empty discount codes</b> here will be applied to all new events as they are created.".
             "<br>Changes made here <b class='red'>do not</b> affect existing events.",
+        'pdu_stmt' => 'This statement will display if you have a special PDU reporting statement.',
         'pmiID' => 'Please enter your PMI Identification Number.',
         'pmiID_found' => '<h2>An mCentric account was found for PMI ID: :pmiID.</h2>'.
             "The name on this account (<span class='red'>#:id</span>) is :name with a login of <span class='red'>:login</span>. <br />",
@@ -830,6 +868,7 @@ return [
         'pw_set' => 'Set a password',
         'quantity' => 'The quantity for at least one ticket must be greater than 0.',
         'reg_sess' => 'You can review and/or modify your session registrations below.',
+        'role_title' => "This is the standard title used for your chapter's board members.",
         'role_toggle' => 'The role :role was toggled for :person.',
         'role_txt' => 'The values in these tables are not editable and are here for informational purposes only.',
         'select_default_organization' => 'Select One Organization to make it your default and switch to it',
@@ -838,6 +877,7 @@ return [
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.',
         'sold_out' => 'Sold Out! Register to add yourself to the wait list.',
         'sold_out2' => 'This ticket is sold out.',
+        'tech_stmt' => 'This statement will be displayed if an mCentric issue occurs.',
         'tkt_setup' => 'Creating additional tickets is typically only necessary for Professional Development Day events.',
         'total_caveat' => 'Total does NOT reflect updates due to refunds.',
         'tracks' => "Here are this event's :n tracks and its sessions from which attendees can choose
@@ -854,6 +894,11 @@ return [
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
         ",
         'userid' => 'This has been autopopulated and cannot be edited.',
+        'volunteers' => "Hold the control key to zoom in/out.  Click on white space and drag to scroll.<br />
+                         You may also: <ul>
+                         <li>Click on a role to see and edit volunteer values.</li>
+                         <li>Click on a role and drag it, as appropriate, to change the reporting relationship.</li>
+                         </ul>",
         'waitlist' => 'Registering will secure a spot on the wait list. You will not be charged at this time.|
                    Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
         'zero_att' => 'A 0 in the Attendees column indicates that attendance was, likely, NOT recorded.<br>Surveys cannot be sent if attendance was not recorded.',
@@ -895,6 +940,7 @@ return [
         'updated' => 'updated',
         'user_created' => "The new user was created.  Go to the user's profile. :profile_button",
         'user_create_fail' => 'An unknown error occurred during account creation.  ',
+        'user_create_storage_fail' => 'A storage error occurred during account creation.  ',
         'visit_mCentric' => 'Visit mCentric',
         'please_wait' => 'Please wait while this content loads.',
         'org_default_update_success' => 'Your default organization was updated.',
@@ -971,6 +1017,7 @@ return [
         'm_merge' => 'Merge Members',
         'm_rpt' => 'Member Report',
         'm_sch' => 'Member Search',
+        'm_vol' => 'Manage Volunteers',
         'm_new_or_exp' => 'New/Expiring Members',
         'm_pass' => 'Change Password',
         'em_mktg' => 'Email Marketing',
@@ -1233,6 +1280,9 @@ return [
         'graph_years' => 'Year Display',
         'ind_brk' => 'Identified Industry Breakdown',
         'select_years' => 'Select Years to Display',
+        'show' => 'Showing',
+        'show_all' => 'All Attendees',
+        'show_mbr' => 'Members Only',
         'person_address' => 'Heat Map',
     ],
     'surveys' => [

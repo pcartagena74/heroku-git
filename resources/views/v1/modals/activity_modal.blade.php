@@ -1,11 +1,11 @@
-<?php
+@php
 /**
  * Comment:
  * Date: 5/3/2018
  */
 
 $year = '';
-?>
+@endphp
 
 @foreach($event_list as $e)
     @if($year != $e->eventStartDate->year)

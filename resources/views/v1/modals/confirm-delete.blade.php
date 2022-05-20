@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment: Delete Confirmation Modal
  * Created: 2/18/2017
  */
-?>
+@endphp
 <div class="modal fade" id="formConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

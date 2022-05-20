@@ -602,7 +602,7 @@ var _emailBuilder = $('.editor').emailBuilder({
                     window.location.href = data.redirect_url;
                 } else {
                     $.each(data.errors,function(key,value) {
-                        $('.input-error').append(value+'</br>');
+                        $('.input-error').append(value+'<br />');
                     });
                 }
             },

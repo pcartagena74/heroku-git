@@ -33,11 +33,10 @@ if($currentPerson->avatarURL !== null){
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a aria-expanded="false" class="user-profile dropdown-toggle" data-toggle="dropdown" href="#">
-                        <img alt="{{ trans('messages.alt_txt.avatar') }}" height="29" src="{{ $currentPerson->avatarURL ?? '/images/user.png' }}" width="29">
+                        <img alt="{{ trans('messages.alt_txt.avatar') }}" height="29" src="{{ $currentPerson->avatarURL ?? '/images/user.png' }}" width="29" />
                             {{ $currentPerson->prefName ?? $currentPerson->firstName }}
                             <span class=" fa fa-angle-down">
                             </span>
-                        </img>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
                         <li>

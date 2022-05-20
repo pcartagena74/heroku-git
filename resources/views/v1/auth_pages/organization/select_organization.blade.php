@@ -1,11 +1,11 @@
-<?php
+@php
 /**
  * Comment:
  * Created: 2/9/2017
  */
 
 $topBits = '';  // remove this if this was set in the controller
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')

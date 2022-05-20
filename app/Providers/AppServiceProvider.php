@@ -56,6 +56,18 @@ class AppServiceProvider extends ServiceProvider
         });
         */
 
+        $this->app->singleton('Markdown', function ($app) {
+
+            // Obtain a pre-configured Environment with all the CommonMark parsers/renderers ready-to-go
+            $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
+
+            // Define your configuration:
+            $config = ['html_input' => 'escape'];
+
+            // Create the converter
+            return new \League\CommonMark\CommonMarkConverter($config, $environment);
+        });
+
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
 

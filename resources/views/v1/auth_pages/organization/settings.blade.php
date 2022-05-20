@@ -99,29 +99,56 @@
             <th colspan="1" style="text-align: left;">@lang('messages.fields.heatmapDensity')</th>
         </tr>
         <tr>
-            <td colspan="3" style="text-align: left;"><a href="#" id="linkedinURL"
-                                                         data-value="{{ $org->linkedinURL }}"></a></td>
-            <td colspan="1" style="text-align: left;"><a href="#" id="heatMapZoomLevel"
-                                                         data-value="{{ $org->heatMapZoomLevel }}"></a></td>
-            <td colspan="1" style="text-align: left;"><a href="#" id="heatMapDensity"
-                                                         data-value="{{ $org->heatMapDensity }}"></a></td>
+            <td colspan="3" style="text-align: left;">
+                <a href="#" id="linkedinURL" data-value="{{ $org->linkedinURL }}"></a>
+            </td>
+            <td colspan="1" style="text-align: left;">
+                <a href="#" id="heatMapZoomLevel" data-value="{{ $org->heatMapZoomLevel }}"></a>
+            </td>
+            <td colspan="1" style="text-align: left;">
+                <a href="#" id="heatMapDensity" data-value="{{ $org->heatMapDensity }}"></a>
+            </td>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: left;">@lang('messages.headers.admin_stmt')</th>
+            <th colspan="2" style="text-align: left;">
+                @lang('messages.headers.role_title')
+                @include('v1.parts.tooltip', ['title' => trans('messages.instructions.role_title')])
+            </th>
+            <th colspan="2" style="text-align: left;"> </th>
+            <th colspan="1" style="text-align: left;"> </th>
         </tr>
         <tr>
-            <td colspan="5" style="text-align: left;"><a href="#" id="adminContactStatement"
-                                                         data-value="{{ $org->adminContactStatement }}"></a></td>
+            <td colspan="2" style="text-align: left;">
+                <a href="#" id="orgRoleTitle" data-value="{{ $org->orgRoleTitle }}"></a>
+            </td>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: left;">@lang('messages.headers.tech_stmt')</th>
+            <th colspan="5" style="text-align: left;">
+                @lang('messages.headers.admin_stmt')
+                @include('v1.parts.tooltip', ['title' => trans('messages.instructions.admin_stmt')])
+            </th>
         </tr>
         <tr>
-            <td colspan="5" style="text-align: left;"><a href="#" id="techContactStatement"
-                                                         data-value="{{ $org->techContactStatement }}"></a></td>
+            <td colspan="5" style="text-align: left;">
+                <a href="#" id="adminContactStatement" data-value="{{ $org->adminContactStatement }}"></a>
+            </td>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: left;">@lang('messages.headers.pdu_stmt')</th>
+            <th colspan="5" style="text-align: left;">
+                @lang('messages.headers.tech_stmt')
+                @include('v1.parts.tooltip', ['title' => trans('messages.instructions.tech_stmt')])
+            </th>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align: left;">
+                <a href="#" id="techContactStatement" data-value="{{ $org->techContactStatement }}"></a>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="5" style="text-align: left;">
+                @lang('messages.headers.pdu_stmt')
+                @include('v1.parts.tooltip', ['title' => trans('messages.instructions.pdu_stmt')])
+            </th>
         </tr>
         <tr>
             <td colspan="5" style="text-align: left;"><a href="#" id="chapPDUReportStatement"
@@ -308,6 +335,22 @@
                 type: 'number',
                 url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
                 pk: '{{ $org->heatMapDensity }}'
+            });
+
+            $('#orgRoleTitle').editable({
+                type: 'select',
+                url: '{{ env('APP_URL') }}/orgsettings/{{ $org->orgID }}',
+                pk: '{{ $org->orgRoleTitle }}',
+                source: [
+                    {
+                        value: 'dir',
+                        text: '{!! trans('messages.default_roles.dir') !!}'
+                    },
+                    {
+                        value: 'vp',
+                        text: '{!! trans('messages.default_roles.vp') !!}'
+                    }
+                ]
             });
 
             @if(Entrust::hasRole('Developer'))

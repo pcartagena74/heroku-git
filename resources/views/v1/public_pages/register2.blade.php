@@ -333,7 +333,7 @@ $rfp = $rf->person;
                                         <br /><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
                                                                                          data-pk="{{ $reg->regID }}"
                                                                                          data-value="{{ $reg->cityState }}"
-                                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a></br>
+                                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
                                     @endif
 
                                     @if($reg->specialNeeds)

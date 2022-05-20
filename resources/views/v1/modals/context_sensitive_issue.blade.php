@@ -1,9 +1,9 @@
-<?php
+@php
 /**
  * Comment: A popup for context sensitive issue it will append page url in the end of the content
  * Created on: 12/03/2020
  */
-?>
+@endphp
 <div aria-hidden="true" aria-labelledby="context_issue" class="modal fade" id="context_issue" role="dialog" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -12,9 +12,7 @@
                     {!! trans('ticketit::lang.create-new-ticket') !!}
                 </h5>
                 <button aria-label="Close" class="close pull-right" data-dismiss="modal" type="button">
-                    <span aria-hidden="true">
-                        ×
-                    </span>
+                    <span aria-hidden="true"> × </span>
                 </button>
             </div>
             {!! CollectiveForm::open([
@@ -56,7 +54,7 @@
                         </div>
                     </div>
                 </div>
-                <br>
+                <br />
                     <div class="form-inline row">
                         <div class="form-group col-lg-12">
                             {!! CollectiveForm::label('agent_id', trans('ticketit::lang.agent') . trans('ticketit::lang.colon'), [
@@ -74,7 +72,7 @@
                     @endif
                     <div class="error" id="ticket-errors">
                     </div>
-                </br>
+                <br />
             </div>
             <div class="modal-footer">
                 <div class="container">
