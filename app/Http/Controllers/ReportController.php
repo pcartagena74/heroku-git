@@ -38,9 +38,17 @@ class ReportController extends Controller
 
             $year_string = implode(',', $year_array->toArray());
             $quote_string = "'".implode("','", $year_array->toArray())."'";
+            $arr = $year_array->toArray();
+            asort($arr);
+            $arr = array_reverse($arr);
+            $arr = array_slice($arr, 0, 3);
+            // $limit_string was introduced to show a limited number of years by default w/o losing any data
+            $limit_string = "'".implode("','", $arr)."'";
         } else {
+            // This code never executes because nothing is using cookies for this data via the UI
             $year_string = Session::get('year_string');
             $quote_string = Session::get('quote_string');
+            $limit_string = Session::get('limit_string');
         }
 
         $years = Event::where('orgID', $this->currentPerson->defaultOrgID)
@@ -63,9 +71,41 @@ class ReportController extends Controller
         if($id) {
             // when $id = 1, show only member data
             $chart = DB::select('call true_member_report("'.$year_string.'", '. $orgID .')');
+
+            $total = Person::whereNotNull('indName')
+                ->where('indName', '<>', '')
+                ->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID)
+                ->join('org-person as op', function($q) use($orgID) {
+                    $q->on('op.personID', '=', 'person.personID');
+                    $q->where('op.orgID', '=', $orgID);
+                    $q->where('op.OrgStat1', '>', 0);
+                })
+                ->selectRaw("count('indName') as cnt")->first();
+
+            $indPie = DB::select('select indName, round(count(indName)/?*100, 1) as cnt
+                                 from person p
+                                 join `org-person` op on (op.personID = p.personID and op.OrgStat1 > 0)
+                                 join `organization` o on op.orgID = o.orgID
+                                 where o.orgID = ?
+                                       and indName is not null and indName <> ""
+                                 group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
         } else {
             // otherwise, show all attendee data
             $chart = DB::select('call member_report("'.$year_string.'")');
+
+            $total = Person::whereNotNull('indName')
+                ->where('indName', '<>', '')
+                ->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID)
+                ->selectRaw("count('indName') as cnt")->first();
+            // DB::select('select count(indName) as total from person p where p.defaultOrgID = ? and indName is not null and indName <> "" ', [$this->currentPerson->defaultOrgID]);
+
+            $indPie = DB::select('select indName, round(count(indName)/?*100, 1) as cnt
+                                 from person p
+                                 join `org-person` op on op.personID = p.personID
+                                 join `organization` o on op.orgID = o.orgID
+                                 where o.orgID = ?
+                                       and indName is not null and indName <> ""
+                                 group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
         }
 
         foreach ($chart as $e) {
@@ -117,24 +157,10 @@ class ReportController extends Controller
             }
         }
 
-        $total = Person::whereNotNull('indName')
-            ->where('indName', '<>', '')
-            ->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID)
-            ->selectRaw("count('indName') as cnt")->first();
-        // DB::select('select count(indName) as total from person p where p.defaultOrgID = ? and indName is not null and indName <> "" ', [$this->currentPerson->defaultOrgID]);
-
-        $indPie = DB::select('select indName, round(count(indName)/?*100, 1) as cnt
-                                 from person p
-                                 join `org-person` op on op.personID = p.personID
-                                 join `organization` o on op.orgID = o.orgID
-                                 where o.orgID = ?
-                                       and indName is not null and indName <> ""
-                                 group by indName', [$total->cnt, $this->currentPerson->defaultOrgID]);
-        //in case their is no other for we will add a other with
-        //0 percent to make sure chart work as excepted
+        // Check for existence of "Other" to ensure the chart will work as expected
         $no_other = true;
         foreach ($indPie as $key => $value) {
-            if ($value->indName == 'Other') {
+            if ($value->indName == trans('messages.industries.other')) {
                 $no_other = false;
             }
         }
@@ -215,7 +241,7 @@ class ReportController extends Controller
         }
 
         return view('v1.auth_pages.members.mbr_report', compact('topBits', 'chart', 'years', 'org',
-            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home',
+            'datastring', 'labels', 'indPie', 'year_string', 'quote_string', 'orgID', 'heat_map_home', 'limit_string', 'id',
             'heat_map_other', 'heat_map_work', 'org_lat_lng', 'heat_map_work_count', 'heat_map_home_count', 'heat_map_other_count'));
     }
 
