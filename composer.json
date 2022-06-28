@@ -50,7 +50,7 @@
         "kriswallsmith/buzz": "^1.1",
         "laravel/cashier": "^13.4",
         "laravel/dusk": "^6.17",
-        "laravel/framework": "^8.55",
+        "laravel/framework": "^8.83",
         "laravel/socialite": "^5.2",
         "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.5",
