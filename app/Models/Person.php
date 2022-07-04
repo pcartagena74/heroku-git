@@ -17,6 +17,7 @@ class Person extends Model
     // The table
     protected $table = 'person';
     protected $primaryKey = 'personID';
+    protected $fillable = ['prefix', 'firstName', 'lastName', 'prefName', 'login', 'title', 'compName', 'indName'];
 
     const CREATED_AT = 'createDate';
     const UPDATED_AT = 'updateDate';

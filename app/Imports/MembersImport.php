@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Illuminate\Validation\Rule;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\OrgPerson;
@@ -12,7 +13,6 @@ use App\Traits\ExcelMemberImportTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
@@ -40,6 +40,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     {
         $this->currentPerson = $currentPerson;
         $this->import_detail = $import_detail;
+        $this->em1 = null;
         // requestBin(['in'=>'constructor member import']);
     }
 
@@ -137,12 +138,14 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
             $compName = trim(ucwords($row['company']));
 
             $em1 = trim(strtolower($row['primary_email']));
+            $this->em1 = $em1;
 
             if (strlen($em1) > 0 && strpos($em1, '@')) {
                 $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->withTrashed()->first();
             } else {
                 // The email address in $em1 was not valid so null it all out
                 $em1 = null;
+                $this->em1 = $em1;
                 $emchk1 = null;
             }
             if ($emchk1 !== null) {
@@ -632,9 +635,9 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public function rules(): array
     {
         return [
-            'pmi_id'          => Rule::required(),
-            'primary_email'   => Rule::required(),
-            'alternate_email' => Rule::requiredIf($em1 === null),
+            'pmi_id'          => Rule::requiredIf(1),
+            'primary_email'   => Rule::requiredIf(1),
+            'alternate_email' => Rule::requiredIf($this->em1 === null),
         ];
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
 use App\Traits\InsertOnDuplicateKey;
 
 class PersonStaging extends Model

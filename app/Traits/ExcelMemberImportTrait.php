@@ -67,18 +67,18 @@ trait ExcelMemberImportTrait
         // if found, get $person, $org-person, $email, $address, $phone records and update, else create
         $pmi_id = trim($row['pmi_id']);
 
-        //merging org-person two queies into one as it will be more light weight
+        //merging org-person two queries into one as it will be more light weight
         // $op = DB::table('org-person')->where(['OrgStat1' => $pmi_id])->get();
         // $this->timeMem('1 op query ');
-        $op = new Collection();
+        $op = null;
 
-        // create index on OrgStat1
+        // find any OrgPerson records that might exist with the PMI ID (OrgStat1)
         $any_op = DB::table('org-person')->where('OrgStat1', $pmi_id)->get();
         // $this->timeMem('1 any op query ');
         if ($any_op->isNotEmpty()) {
             foreach ($any_op as $key => $value) {
                 if ($value->orgID == $currentPerson->defaultOrgID) {
-                    $op = new Collection($value);
+                    $op = OrgPerson::find($value->id);
                     break;
                 }
             }
@@ -146,7 +146,7 @@ trait ExcelMemberImportTrait
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
         // $this->timeMem('5 $pchk ');
-        if ($op->isEmpty() && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
+        if ($op === null && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
             // PMI ID, first & last names, and emails are not found so person is likely completely new; create all records
 
@@ -244,15 +244,16 @@ trait ExcelMemberImportTrait
                     // $this->timeMem('9 $pchk_count update 2130');
                 }
             }
-        } elseif ($op->isNotEmpty() || $any_op->isNotEmpty()) {
+        } elseif ($op !== null || $any_op->isNotEmpty()) {
             // There was an org-person record (found by $OrgStat1 == PMI ID) for this chapter/orgID
-            if ($op->isNotEmpty()) {
+            if ($op !== null) {
                 // For modularity, updating the $op record will happen below as there are no dependencies
                 // $p = Person::where(['personID' => $op[0]->personID])->get();
-                $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
+                // $p = DB::table('person')->where(['personID' => $op->get('personID')])->limit(1)->get();
                 // dd($p->first());
                 // $this->timeMem('10 op and any op check 2142');
-                $p = $p->first();
+                // $p = $p->first();
+                $p = Person::find($op->personID);
             } else {
                 $need_op_record = 1;
                 // $p              = Person::where(['personID' => $any_op[0]->personID])->get();
@@ -372,6 +373,10 @@ trait ExcelMemberImportTrait
                 if (empty($p->affiliation)) {
                     $ary['affiliation'] = $currentPerson->affiliation;
                 }
+                if (empty($p->experience)) {
+                    $ary['experience'] = $currentPerson->experience;
+                }
+
 
                 // One day: think about how to auto-populate indName field using compName
 
@@ -394,7 +399,8 @@ trait ExcelMemberImportTrait
             // 1. the member is completely new to the system or
             // 2. the member is in the system but under another chapter/orgID
             $newOP = new OrgPerson;
-            $newOP->orgID = $p->defaultOrgID;
+            //$newOP->orgID = $p->defaultOrgID;
+            $newOP->orgID = $this->currentPerson->defaultOrgID;
             $newOP->personID = $p->personID;
             $newOP->OrgStat1 = $pmi_id;
 
@@ -442,10 +448,9 @@ trait ExcelMemberImportTrait
             }
         } else {
             // We'll update some fields on the off chance they weren't properly filled in a previous creation
-            $op = $op->toArray();
-            if (! empty($op)) {
-                $newOP = (object) $op;
-                // dd($newOP);
+            // $op = $op->toArray();
+            if (! empty($op->toArray())) {
+                $newOP = $op;
                 $ary = [];
                 if ($newOP->OrgStat1 === null) {
                     $ary['OrgStat1'] = $pmi_id;
@@ -472,6 +477,7 @@ trait ExcelMemberImportTrait
                 if (! empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                     if (empty($newOP->RelDate1)) {
                         $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                        //$ary['RelDate1'] = Carbon::createFromFormat('Y-m-d H:i:s', $row['pmi_join_date'])->toDateTimeString();
                     } else {
                         $existing_relDate1 = Carbon::createFromFormat('Y-m-d H:i:s', $newOP->RelDate1);
                         $existing_relDate1 = $existing_relDate1->format('d/m/Y');
@@ -528,6 +534,7 @@ trait ExcelMemberImportTrait
         }
 
         // Add the person-specific records as needed
+        // This logic will only work reliably for chapters in the US given the zip as 5 or 9 digits1F
         if (! empty($p)) {
             $pa = trim(ucwords($row['preferred_address']));
             $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
@@ -657,8 +664,6 @@ trait ExcelMemberImportTrait
         unset($ps);
         unset($row);
 
-        // $this->bulkInsertAll();5863 baki me kuch problem h
-        //
         gc_collect_cycles();
     }
 
@@ -681,26 +686,6 @@ trait ExcelMemberImportTrait
 
     public function insertAddress($personID, $addresstype, $addr1, $city, $state, $zip, $country)
     {
-        //it has creatorID and UpdaterID user auth user id
-        // $addr           = new Address;
-        // $addr->personID = $p->personID;
-        // $addr->addrTYPE = trim(ucwords($row['preferred_address_type']));
-        // $addr->addr1    = trim(ucwords($row['preferred_address']));
-        // $addr->city     = trim(ucwords($row['city']));
-        // $addr->state    = trim(ucwords($row['state']));
-        // $z              = trim($row['zip']);
-        // $addr->zip      = $z;
-
-        // // Need a smarter way to determine country code
-        // $cntry = trim(ucwords($row['country']));
-        // if ($cntry == 'United States') {
-        //     $addr->cntryID = 228;
-        // } elseif ($cntry == 'Canada') {
-        //     $addr->cntryID = 36;
-        // }
-        // $addr->creatorID = $this->currentPerson->personID;
-        // $addr->updaterID = $this->currentPerson->personID;
-        // $addr->save();
         $this->address_master[] = [
             'personID'  => $personID,
             'addrTYPE'  => $addresstype,
@@ -742,15 +727,6 @@ trait ExcelMemberImportTrait
      */
     public function insertEmail($personID, $email, $primary = 0)
     {
-        //it has creatorID and UpdaterID user auth user id
-        // $e            = new Email;
-        //             $e->personID  = $p->personID;
-        //             $e->emailADDR = $em1;
-        //             $e->isPrimary = 1;
-        //             $e->creatorID = $this->currentPerson->personID;
-        //             $e->updaterID = $this->currentPerson->personID;
-        //             $e->save();
-
         //it has creatorID and UpdaterID user auth user id
         $this->email_master[] = [
             'personID'  => $personID,
