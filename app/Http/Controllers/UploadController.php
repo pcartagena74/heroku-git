@@ -118,7 +118,6 @@ class UploadController extends Controller
         $file_name = Str::random(40).'.'.$extension;
         $tmp_path = Storage::disk('s3_temp')->put($file_name, file_get_contents($file->getRealPath()));
         $path = Storage::disk('s3_temp')->path($file_name);
-        // dd(storage_path($file_name));
         $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
@@ -134,10 +133,14 @@ class UploadController extends Controller
                     $import_detail->file_name = $f_ori_name;
                     $import_detail->user_id = $currentPerson->personID;
                     $import_detail->save();
-                    $var = (new MembersImport($currentPerson, $import_detail))->queue($path)
+                    $var = (new MembersImport($currentPerson, $import_detail))->queue($path, 's3_temp')
                         ->chain([
                             new ImportDetailsUpdateJob($import_detail),
                             new NotifyUserOfCompletedImport($currentPerson, $import_detail),
+                            function () use ($path) {
+                                //unlink($path);
+                                Storage::disk('s3_temp')->delete($path);
+                            }
                         ])->onConnection('database')
                         ->onQueue('default');
                     sendGetToWakeUpDyno();

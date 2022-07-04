@@ -22,7 +22,6 @@ class MemeberImportExcelNotification extends Notification
      *
      * @return void
      */
-    // public function __construct(Person $person, $import_detail)
     public function __construct(Person $person, $import_detail)
     {
         $this->person = $person;
@@ -49,7 +48,7 @@ class MemeberImportExcelNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $user = User::where('id', $this->person->personID)->get()->first();
+        $user = User::find('id', $this->person->personID);
         \App::setLocale($user->locale);
         // $o     = Org::find($this->person->defaultOrgID);
         // $name  = $o->orgName;
