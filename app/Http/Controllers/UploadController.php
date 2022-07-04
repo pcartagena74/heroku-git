@@ -116,8 +116,8 @@ class UploadController extends Controller
         $f_ori_name = $file->getClientOriginalName();
         $extension = $file->getClientOriginalExtension();
         $file_name = Str::random(40).'.'.$extension;
-        $tmp_path = Storage::disk('local')->put($file_name, file_get_contents($file->getRealPath()));
-        $path = Storage::disk('local')->path($file_name);
+        $tmp_path = Storage::disk('s3_temp')->put($file_name, file_get_contents($file->getRealPath()));
+        $path = Storage::disk('s3_temp')->path($file_name);
         // dd(storage_path($file_name));
         $eventID = request()->input('eventID');
 
@@ -130,19 +130,6 @@ class UploadController extends Controller
             case 'mbrdata':
                 try {
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
-                    // Excel::queueImport(new MembersImport($currentPerson), $path)->chain([Notification::route('mail', $currentPerson->login)->notify(new MemeberImportExcelNotification())]);
-                    // $import = new MembersImport($currentPerson);
-
-                    // $var = (new TestImport($currentPerson))->queue($file_name, 'local')
-                    // $var = Excel::import(new TestImport($currentPerson), $path)
-                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                    //     ->onConnection('database')
-                    //     ->onQueue('default');
-
-                    // $var    = Excel::queueImport(new MembersImport($currentPerson), $file_name, 'local')
-                    //     ->chain([new NotifyUserOfCompletedImport($currentPerson, 1)])
-                    //     ->onConnection('database')
-                    //     ->onQueue('default');
                     $import_detail = new ImportDetail();
                     $import_detail->file_name = $f_ori_name;
                     $import_detail->user_id = $currentPerson->personID;
@@ -156,15 +143,7 @@ class UploadController extends Controller
                     sendGetToWakeUpDyno();
                     request()->session()->flash('alert-success', trans('messages.messages.import_file_queued'));
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                    // $failures = $e->failures();
-                    //not using this any more
-                    // foreach ($failures as $failure) {
-                    //     // $failure->row(); // row that went wrong
-                    //     // $failure->attribute(); // either heading key (if using heading row concern) or column index
-                    //     // $failure->errors(); // Actual error messages from Laravel validator
-                    //     // $failure->values(); // The values of the row that has failed.
-                    //     request()->session()->flash('alert-warning', $failure->row(), $failure->values());
-                    // }
+                    // do nothing
                 }
 
                 break;
@@ -390,67 +369,6 @@ class UploadController extends Controller
                                     break;
                             }
                         }
-                        //dd(get_defined_vars());
-                        /*
-                        if ($eventID == 97 && ($ticketID == 123 || $ticketID == 126)) {
-                        if (preg_match('/^AGILE/i', $f1)) {
-                        $fs1 = 91;
-                        } elseif (preg_match('/^PORTFOLIO/i', $f1)) {
-                        $fs1 = 92;
-                        } elseif (preg_match('/^RISK/i', $f1)) {
-                        $fs1 = 93;
-                        } else {
-                        $fs1 = null;
-                        }
-                        if (preg_match('/^AGILE/i', $f2)) {
-                        $fs2 = 96;
-                        } elseif (preg_match('/^PORTFOLIO/i', $f2)) {
-                        $fs2 = 97;
-                        } elseif (preg_match('/^RISK/i', $f2)) {
-                        $fs2 = 98;
-                        } else {
-                        $fs2 = null;
-                        }
-                        if (preg_match('/^AGILE/i', $f3)) {
-                        $fs3 = 101;
-                        } elseif (preg_match('/^PORTFOLIO/i', $f3)) {
-                        $fs3 = 102;
-                        } elseif (preg_match('/^RISK/i', $f3)) {
-                        $fs3 = 103;
-                        } else {
-                        $fs3 = null;
-                        }
-                        }
-                        if ($eventID == 97 && ($ticketID == 124 || $ticketID == 126)) {
-                        if (preg_match('/^AGILE/i', $s1)) {
-                        $ss1 = 106;
-                        } elseif (preg_match('/^PORTFOLIO/i', $s1)) {
-                        $ss1 = 107;
-                        } elseif (preg_match('/^RISK/i', $s1)) {
-                        $ss1 = 108;
-                        } else {
-                        $ss1 = null;
-                        }
-                        if (preg_match('/^AGILE/i', $s2)) {
-                        $ss2 = 111;
-                        } elseif (preg_match('/^PORTFOLIO/i', $s2)) {
-                        $ss2 = 112;
-                        } elseif (preg_match('/^RISK/i', $s2)) {
-                        $ss2 = 113;
-                        } else {
-                        $ss2 = null;
-                        }
-                        if (preg_match('/^AGILE/i', $s3)) {
-                        $ss3 = 116;
-                        } elseif (preg_match('/^PORTFOLIO/i', $s3)) {
-                        $ss3 = 117;
-                        } elseif (preg_match('/^RISK/i', $s3)) {
-                        $ss3 = 118;
-                        } else {
-                        $ss3 = null;
-                        }
-                        }
-                         */
 
                         if (! isset($canNtwk)) {
                             $canNtwk = 0;
@@ -854,15 +772,6 @@ class UploadController extends Controller
                  */
                 break;
         }
-        /*
-
-        // Replaced by trans of what below
-        if ($what == 'mbrdata') {
-        $what = 'Member records';
-        } else {
-        $what = 'Event registration records';
-        }
-         */
 
         // request()->session()->flash('alert-success', trans('messages.admin.upload.loaded',
         //                            ['what' => trans('messages.admin.upload.'.$what), 'count' => $this->counter]));

@@ -65,6 +65,15 @@ return [
             'visibility' => 'public',
         ],
 
+        's3_temp' => [
+            'driver' => 's3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET4'),
+            'visibility' => 'public',
+        ],
+
         'events' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),
