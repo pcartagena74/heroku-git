@@ -2005,12 +2005,14 @@ if (! function_exists('sendGetToWakeUpDyno')) {
         if (env('APP_ENV') == 'production') {
             $base_url = env('QUEUE_DYNO_URL_LIVE');
         }
-        $url = $base_url.'/trigger-dyno';
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
-        $output = curl_exec($ch); //contain string
-        curl_close($ch); //close
+        if(strlen($base_url)> 1) {
+            $url = $base_url.'/trigger-dyno';
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
+            $output = curl_exec($ch); //contain string
+            curl_close($ch); //close
+        }
     }
 }
 

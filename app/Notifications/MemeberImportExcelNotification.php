@@ -48,7 +48,7 @@ class MemeberImportExcelNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $user = User::find('id', $this->person->personID);
+        $user = User::find($this->person->personID);
         \App::setLocale($user->locale);
         // $o     = Org::find($this->person->defaultOrgID);
         // $name  = $o->orgName;
