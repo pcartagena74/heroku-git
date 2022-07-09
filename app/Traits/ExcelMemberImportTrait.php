@@ -477,15 +477,22 @@ trait ExcelMemberImportTrait
                 if (! empty($row['pmi_join_date']) && isDate($row['pmi_join_date'])) {
                     if (empty($newOP->RelDate1)) {
                         $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
-                        //$ary['RelDate1'] = Carbon::createFromFormat('Y-m-d H:i:s', $row['pmi_join_date'])->toDateTimeString();
                     } else {
                         $existing_relDate1 = Carbon::createFromFormat('Y-m-d H:i:s', $newOP->RelDate1);
                         $existing_relDate1 = $existing_relDate1->format('d/m/Y');
                         if ($row['pmi_join_date'] != $existing_relDate1) {
+                            // Added to have join date(s) corrected if what PMI provided is an earlier date than what is in DB
+                            $test_date = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                            $msg = '';
+                            if($newOP->RelDate1->gt($test_date)){
+                                $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
+                                $msg = 'Changed pmi_join_date in DB.';
+                            }
                             $rl1 = [
                                 'pmi_id'       => $pmi_id,
                                 'reldate1_new' => $row['pmi_join_date'],
                                 'reldate1_old' => $existing_relDate1,
+                                'msg' => $msg,
                             ];
                         }
                     }
@@ -499,10 +506,19 @@ trait ExcelMemberImportTrait
                         if ($row['chapter_join_date'] != $existing_relDate2) {
                             $reld_update[$pmi_id]['reldate2_new'] = $row['chapter_join_date'];
                             $reld_update[$pmi_id]['reldate2_old'] = $existing_relDate2;
+
+                            // Added to have join date(s) corrected if what PMI provided is an earlier date than what is in DB
+                            $test_date = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
+                            $msg = '';
+                            if($newOP->RelDate1->gt($test_date)){
+                                $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
+                                $msg = 'Changed chapter_join_date in DB.';
+                            }
                             $rl2 = [
                                 'pmi_id'       => $pmi_id,
                                 'reldate2_new' => $row['chapter_join_date'],
                                 'reldate2_old' => $existing_relDate2,
+                                'msg' => $msg,
                             ];
                         }
                     }

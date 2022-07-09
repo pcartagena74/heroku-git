@@ -83,6 +83,8 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
         $this->row_count += $count;
 
         return;
+
+        /*
         // old code not to use
         $currentPerson = Person::find(auth()->user()->id);
         $count = 0;
@@ -610,6 +612,7 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
 
         request()->session()->flash('alert-success', trans('messages.admin.upload.loaded',
             ['what' => trans('messages.admin.upload.mbrdata'), 'count' => $count]));
+        */
     }
 
     public function getProcessedRowCount(): int
