@@ -112,8 +112,8 @@ if($currentPerson->avatarURL !== null){
                             @if(Entrust::hasRole('Developer'))
                             <li> <a href="{{ url('create_organization')}}">@lang('messages.nav.ad_new_org')</a></li>
                             <li> <a href="{{ url('/')}}/panel">@lang('messages.nav.ad_panel')</a> </li>
-                            <li> <a href="{{ url('/')}}/load_data"> @lang('messages.nav.o_upload') </a> </li>
                             @endif
+                            <li> <a href="{{ url('/')}}/load_data"> @lang('messages.nav.o_upload') </a> </li>
                         </ul>
                     </li>
                     @endif
