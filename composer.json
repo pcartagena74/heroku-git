@@ -81,7 +81,9 @@
         "phpunit/phpunit": "^8.5.8|^9.3.3",
         "fakerphp/faker": "^1.9.1",
         "facade/ignition": "^2.5",
-        "diglabby/laravel-find-missing-translations": "dev-master"
+        "diglabby/laravel-find-missing-translations": "dev-master",
+        "jasonmccreary/laravel-test-assertions": "^2.0",
+        "laravel-shift/factory-generator": "dev-master"
     },
     "extra": {
         "laravel": {

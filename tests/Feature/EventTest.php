@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Org;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -14,9 +13,13 @@ class EventTest extends TestCase
     use WithFaker;
 
     protected $event_attributes;
+
     protected $future_date;
+
     protected $org;
+
     protected $user;
+
     protected $person;
 
     protected function setUp(): void
