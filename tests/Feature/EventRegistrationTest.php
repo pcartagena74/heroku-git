@@ -6,8 +6,6 @@ use App\Models\Event;
 use App\Models\Org;
 use App\Models\Person;
 use App\Models\User;
-use Carbon\Carbon;
-use Faker\Generator as Faker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
