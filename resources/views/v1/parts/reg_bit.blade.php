@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: This is a reusable blade file that shows
  *          registrations purchased by someone else
@@ -36,7 +36,7 @@ $client = new S3Client([
 
 $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
 $s3fs = new Filesystem($adapter);
-?>
+@endphp
 
 @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 <div class="col-md-12 col-sm-12 col-xs-12">
@@ -48,7 +48,7 @@ $s3fs = new Filesystem($adapter);
             'subheader' => $reg->event->eventStartDate->format('n/j/Y'), 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
             <div class="col-md-12 col-sm-12 col-xs-12">
 
-<?php
+@php
                 $person = Person::find($reg->personID);
                 $ticket = Ticket::find($reg->ticketID);
                 $event = Event::find($reg->eventID);
@@ -60,7 +60,7 @@ $s3fs = new Filesystem($adapter);
                 $rf    = RegFinance::where('regID', $reg->rfID)->first();
                 $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
                 $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
-?>
+@endphp
                 @include('v1.parts.start_min_content', ['header' => $mem_or_not .  " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() .
                  "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => trans('messages.symbols.cur') .
                  $reg->subtotal, 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])

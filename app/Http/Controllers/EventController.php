@@ -359,21 +359,11 @@ class EventController extends Controller
         $tracks = Track::where('eventID', $event->eventID)->get();
         // $member = '';added for working_regform_show
         // $nonmbr = '';
-        return view(
+
         // 'v1.public_pages.display_event_w_sessions2',
-            'v1.public_pages.event_show',
-            compact(
-                'event',
-                'current_person',
-                'bundles',
-                'tickets',
-                'event_loc',
-                'orgLogoPath',
-                'tracks',
-                'currentOrg',
-                'override'
-            )
-        );
+        return view('v1.public_pages.event_show',
+                    compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath',
+                                     'tracks', 'currentOrg', 'override'));
     }
 
     public function create()

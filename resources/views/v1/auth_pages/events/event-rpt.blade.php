@@ -1,268 +1,268 @@
 @php
-/**
- * Comment: The page to show all Event-related statistics
- * Created: 5/11/2017
- *
- * @var $event
- * @var $tkts
- * @var $nametags
- * @var $regs
- * @var $deadbeats
- * @var $notregs
- * @var $discPie
- * @var $refunds
- * @var $tracks
- * @var $discountCounts
- * @var $format
- *
- * Updated: 2/20/2021 to make function buttons available for Devs even after events are past
- */
+    /**
+     * Comment: The page to show all Event-related statistics
+     * Created: 5/11/2017
+     *
+     * @var $event
+     * @var $tkts
+     * @var $nametags
+     * @var $regs
+     * @var $deadbeats
+     * @var $notregs
+     * @var $discPie
+     * @var $refunds
+     * @var $tracks
+     * @var $discountCounts
+     * @var $format
+     *
+     * Updated: 2/20/2021 to make function buttons available for Devs even after events are past
+     */
 
-use App\Models\Org;
-use App\Models\Person;
-use App\Models\Ticket;
-use App\Models\RegFinance;
-use App\Models\EventSession;
-use App\Models\RegSession;
-use App\Models\RSSurvey;
+    use App\Models\Org;
+    use App\Models\Person;
+    use App\Models\Ticket;
+    use App\Models\RegFinance;
+    use App\Models\EventSession;
+    use App\Models\RegSession;
+    use App\Models\RSSurvey;
 
-/**
- * To Do:
- * 1. Past Event: show a tab that allows for registration confirmations & allows to add registrants (free events only)
- * 2.
- */
+    /**
+     * To Do:
+     * 1. Past Event: show a tab that allows for registration confirmations & allows to add registrants (free events only)
+     * 2.
+     */
 
-$today = \Carbon\Carbon::now();
-$currentOrg = Org::find($event->orgID);
-$topBits = ''; // there should be topBits for this
+    $today = \Carbon\Carbon::now();
+    $currentOrg = Org::find($event->orgID);
+    $topBits = ''; // there should be topBits for this
 
-$post_event = $today->gte($event->eventEndDate);
+    $post_event = $today->gte($event->eventEndDate);
 
 
-function get_survey_comments($session)
-{
-    $surveys = RSSurvey::where('sessionID', '=', $session->sessionID);
-    $ft = trans('messages.surveys.favorite');
-    $faves = $surveys->whereNotNull('favoriteResponse')->selectRaw("concat('<li>', favoriteResponse, '</li>') as 'favoriteResponse'")->pluck('favoriteResponse');
-    $st = trans('messages.surveys.suggestions');
-    $suggest = $surveys->whereNotNull('suggestResponse')->selectRaw("concat('<li>', suggestResponse, '</li>') as 'suggestResponse'")->pluck('suggestResponse');
-    $ct = trans('messages.surveys.contact');
-    $contact = $surveys->whereNotNull('contactResponse')->selectRaw("concat('<li>', contactResponse, '</li>') as 'contactResponse'")->pluck('contactResponse');
-    $content = view('v1.parts.session_comments', ['list' => $faves, 'title' => $ft])->render();
-    $content .= view('v1.parts.session_comments', ['list' => $suggest, 'title' => $st])->render();
-    $content .= view('v1.parts.session_comments', ['list' => $contact, 'title' => $ct])->render();
-    return $content;
-}
-
-$rows = []; $reg_rows = []; $notreg_rows = []; $tag_rows = []; $dead_rows = []; $i = 0;
-if ($event->eventEndDate->gte($today)) {
-    $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'), trans('messages.headers.this'),
-        trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
-    if (Entrust::hasRole('Developer')) {
-        foreach ($tkts as $t) {
-            $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
-                '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
-
-            $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
-                "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
-
-            // $t->regCount, $t->waitCount
-            array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->week_sales(), $rc, $wc]);
-        }
-    } else {
-        foreach ($tkts as $t) {
-            array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->week_sales(), $t->regCount, $t->waitCount]);
-        }
-    }
-} else {
-    $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'),
-        trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
-
-    // This keeps the fields editable, even after the event, for a Developer
-    if (Entrust::hasRole('Developer')) {
-        foreach ($tkts as $t) {
-            $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
-                '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
-
-            $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
-                "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
-
-            // $t->regCount, $t->waitCount
-            array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $rc, $wc]);
-        }
-    } else {
-        foreach ($tkts as $t) {
-            array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
-        }
-    }
-}
-
-$reg_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'), trans('messages.fields.ticket'),
-    trans('messages.headers.disc_code'), trans('messages.headers.reg_date'), trans('messages.headers.cost'), trans('messages.fields.buttons')];
-$dead_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
-    trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
-    trans('messages.headers.cost'), trans('messages.headers.pmt')];
-$notreg_headers = ['RegID', trans('messages.headers.status'), trans('messages.fields.firstName'), trans('messages.fields.lastName'),
-    trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
-    trans('messages.headers.cost'), trans('messages.headers.reg_can')];
-
-if ($event->eventTypeID == 5) {
-    if ($event->hasFood) {
-        $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
-            trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
-            trans('messages.headers.chap'), trans('messages.headers.role'), trans('messages.headers.allergens')];
-    } else {
-        $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
-            trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
-            trans('messages.headers.chap'), trans('messages.headers.role')];
+    function get_survey_comments($session)
+    {
+        $surveys = RSSurvey::where('sessionID', '=', $session->sessionID);
+        $ft = trans('messages.surveys.favorite');
+        $faves = $surveys->whereNotNull('favoriteResponse')->selectRaw("concat('<li>', favoriteResponse, '</li>') as 'favoriteResponse'")->pluck('favoriteResponse');
+        $st = trans('messages.surveys.suggestions');
+        $suggest = $surveys->whereNotNull('suggestResponse')->selectRaw("concat('<li>', suggestResponse, '</li>') as 'suggestResponse'")->pluck('suggestResponse');
+        $ct = trans('messages.surveys.contact');
+        $contact = $surveys->whereNotNull('contactResponse')->selectRaw("concat('<li>', contactResponse, '</li>') as 'contactResponse'")->pluck('contactResponse');
+        $content = view('v1.parts.session_comments', ['list' => $faves, 'title' => $ft])->render();
+        $content .= view('v1.parts.session_comments', ['list' => $suggest, 'title' => $st])->render();
+        $content .= view('v1.parts.session_comments', ['list' => $contact, 'title' => $ct])->render();
+        return $content;
     }
 
-    foreach ($nametags as $r) {
-        $p = Person::find($r->personID);
+    $rows = []; $reg_rows = []; $notreg_rows = []; $tag_rows = []; $dead_rows = []; $i = 0;
+    if ($event->eventEndDate->gte($today)) {
+        $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'), trans('messages.headers.this'),
+            trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
+        if (Entrust::hasRole('Developer')) {
+            foreach ($tkts as $t) {
+                $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
+                    '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
+
+                $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
+                    "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
+
+                // $t->regCount, $t->waitCount
+                array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->week_sales(), $rc, $wc]);
+            }
+        } else {
+            foreach ($tkts as $t) {
+                array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->week_sales(), $t->regCount, $t->waitCount]);
+            }
+        }
+    } else {
+        $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'),
+            trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
+
+        // This keeps the fields editable, even after the event, for a Developer
+        if (Entrust::hasRole('Developer')) {
+            foreach ($tkts as $t) {
+                $rc = '<a href="#" id="regCount-' . $t->ticketID . '" data-name="regCount-' . $t->ticketID . '" data-value="' . $t->regCount .
+                    '" data-url="' . env('APP_URL') . '/ticket/' . $t->ticketID . '" data-pk="' . $t->ticketID . '"></a>';
+
+                $wc = "<a href='#' id='waitCount-$t->ticketID' name='waitCount-$t->ticketID' data-value='$t->waitCount' data-url='" . env('APP_URL') .
+                    "/ticket/$t->ticketID' data-pk='$t->ticketID'></a>";
+
+                // $t->regCount, $t->waitCount
+                array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $rc, $wc]);
+            }
+        } else {
+            foreach ($tkts as $t) {
+                array_push($rows, ['<nobr>' . $t->ticketLabel . '</nobr>', $t->maxAttendees, $t->regCount, $t->waitCount]);
+            }
+        }
+    }
+
+    $reg_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'), trans('messages.fields.ticket'),
+        trans('messages.headers.disc_code'), trans('messages.headers.reg_date'), trans('messages.headers.cost'), trans('messages.fields.buttons')];
+    $dead_headers = ['RegID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
+        trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
+        trans('messages.headers.cost'), trans('messages.headers.pmt')];
+    $notreg_headers = ['RegID', trans('messages.headers.status'), trans('messages.fields.firstName'), trans('messages.fields.lastName'),
+        trans('messages.fields.ticket'), trans('messages.headers.disc_code'), trans('messages.headers.reg_date'),
+        trans('messages.headers.cost'), trans('messages.headers.reg_can')];
+
+    if ($event->eventTypeID == 5) {
         if ($event->hasFood) {
-            if (strpos($p->allergenInfo, 'Other') !== false) {
-                if ($p->allergenNote !== null) {
-                    $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+            $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
+                trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
+                trans('messages.headers.chap'), trans('messages.headers.role'), trans('messages.headers.allergens')];
+        } else {
+            $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
+                trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
+                trans('messages.headers.chap'), trans('messages.headers.role')];
+        }
+
+        foreach ($nametags as $r) {
+            $p = Person::find($r->personID);
+            if ($event->hasFood) {
+                if (strpos($p->allergenInfo, 'Other') !== false) {
+                    if ($p->allergenNote !== null) {
+                        $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+                    } else {
+                        $allergies = $p->allergenInfo;
+                    }
                 } else {
                     $allergies = $p->allergenInfo;
                 }
+                array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                    $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                    $r->ticket->ticketLabel, $r->discountCode, $p->affiliation, $p->chapterRole, $allergies]);
             } else {
-                $allergies = $p->allergenInfo;
+                array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                    $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                    $r->ticket->ticketLabel, $r->discountCode, $p->affiliation, $p->chapterRole]);
             }
-            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
-                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
-                $r->ticket->ticketLabel, $r->discountCode, $p->affiliation, $p->chapterRole, $allergies]);
-        } else {
-            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
-                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
-                $r->ticket->ticketLabel, $r->discountCode, $p->affiliation, $p->chapterRole]);
         }
-    }
-} else {
-    if ($event->hasFood) {
-        $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
-            trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
-            trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind')),
-            trans('messages.headers.allergens')];
     } else {
-        $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
-            trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
-            trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind'))];
-    }
-
-    foreach ($nametags as $r) {
-        $p = Person::find($r->personID);
         if ($event->hasFood) {
-            if (strpos($p->allergenInfo, 'Other') !== false) {
-                if ($p->allergenNote !== null) {
-                    $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+            $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
+                trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
+                trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind')),
+                trans('messages.headers.allergens')];
+        } else {
+            $tag_headers = ['RegID', trans('messages.fields.prefName'), trans('messages.fields.lastName'), trans('messages.headers.isFirst'),
+                trans('messages.headers.email'), trans('messages.fields.ticket'), trans('messages.headers.disc_code'),
+                trans('messages.headers.comp'), trans('messages.fields.title'), ucwords(trans('messages.headers.ind'))];
+        }
+
+        foreach ($nametags as $r) {
+            $p = Person::find($r->personID);
+            if ($event->hasFood) {
+                if (strpos($p->allergenInfo, 'Other') !== false) {
+                    if ($p->allergenNote !== null) {
+                        $allergies = $p->allergenInfo . ": " . $p->allergenNote;
+                    } else {
+                        $allergies = $p->allergenInfo;
+                    }
                 } else {
                     $allergies = $p->allergenInfo;
                 }
+                array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                    $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                    $r->ticket->ticketLabel, $r->discountCode, $p->compName, $p->title, $p->indName, $allergies]);
             } else {
-                $allergies = $p->allergenInfo;
+                array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
+                    $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
+                    $r->ticket->ticketLabel, $r->discountCode, $p->compName, $p->title, $p->indName]);
             }
-            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
-                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
-                $r->ticket->ticketLabel, $r->discountCode, $p->compName, $p->title, $p->indName, $allergies]);
-        } else {
-            array_push($tag_rows, [plink($r->regID, $p->personID), $p->prefName, $p->lastName,
-                $r->isFirstEvent == 1 ? trans('messages.yesno_check.yes') : trans('messages.yesno_check.no'), $p->login,
-                $r->ticket->ticketLabel, $r->discountCode, $p->compName, $p->title, $p->indName]);
         }
     }
-}
 
-$p = null;
+    $p = null;
 
-foreach ($regs as $r) {
-    $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
-    $c = $v->render();
-    array_push($reg_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
-        $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
-}
-
-$c = null;
-
-if (!$post_event) {
-    // These are the buttons that allow for cash/credit processing while at the event
-    foreach ($deadbeats as $r) {
-        $f = '';
-        if ($r->subtotal > 0) {
-            $v = View::make('v1.parts.deadbeat_buttons', ['regID' => $r->regID, 'rfID' => $r->rfID]);
-            $f = $v->render();
-
-            array_push($dead_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-                trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $f]);
-        }
-    }
-}
-
-foreach ($notregs as $r) {
-    if (!$post_event || Entrust::hasRole('Developer')) {
+    foreach ($regs as $r) {
         $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
         $c = $v->render();
-    } else {
-        $c = null;
+        array_push($reg_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode,
+            $r->createDate->format('Y/m/d'), trans('messages.symbols.cur') . number_format($r->subtotal, 2, '.', ''), $c]);
     }
 
-    array_push($notreg_rows, [plink($r->regID, $r->person->personID),
-        trans('messages.reg_status.' . $r->regStatus) ? trans('messages.reg_status.' . $r->regStatus) : $r->regStatus,
-        $r->person->firstName, $r->person->lastName,
-        $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
-        trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
-}
-$c = null;
+    $c = null;
 
-if (count($reg_rows) >= 15) {
-    $scroll = 1;
-} else {
-    $scroll = 0;
-}
+    if (!$post_event) {
+        // These are the buttons that allow for cash/credit processing while at the event
+        foreach ($deadbeats as $r) {
+            $f = '';
+            if ($r->subtotal > 0) {
+                $v = View::make('v1.parts.deadbeat_buttons', ['regID' => $r->regID, 'rfID' => $r->rfID]);
+                $f = $v->render();
 
-if (count($notreg_rows) >= 15) {
-    $notscroll = 1;
-} else {
-    $notscroll = 0;
-}
+                array_push($dead_rows, [plink($r->regID, $r->person->personID), $r->person->firstName, $r->person->lastName, $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+                    trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $f]);
+            }
+        }
+    }
 
-if (count($tag_rows) >= 15) {
-    $tagscroll = 1;
-} else {
-    $tagscroll = 0;
-}
+    foreach ($notregs as $r) {
+        if (!$post_event || Entrust::hasRole('Developer')) {
+            $v = View::make('v1.parts.reg_cancel_button', ['reg' => $r]);
+            $c = $v->render();
+        } else {
+            $c = null;
+        }
 
-$disc_headers = [trans('messages.headers.code'), trans('messages.fields.count'), trans('messages.headers.cost'),
-    trans('messages.headers.ccfee'), trans('messages.headers.handling'), trans('messages.headers.net')];
-$disc_rows = [];
+        array_push($notreg_rows, [plink($r->regID, $r->person->personID),
+            trans('messages.reg_status.' . $r->regStatus) ? trans('messages.reg_status.' . $r->regStatus) : $r->regStatus,
+            $r->person->firstName, $r->person->lastName,
+            $r->ticket->ticketLabel, $r->discountCode, $r->createDate->format('Y/m/d'),
+            trans('messages.symbols.cur') . ' ' . number_format($r->subtotal, 2, '.', ''), $c]);
+    }
+    $c = null;
 
-foreach ($discPie as $d) {
-    array_push($disc_rows, [
-        $d->discountCode, 
-        $d->cnt,
-        trans('messages.symbols.cur') . number_format($d->cost, 2, '.', ','),
-        trans('messages.symbols.cur') . number_format($d->ccFee, 2, '.', ','),
-        trans('messages.symbols.cur') . number_format($d->handleFee, 2, '.', ','),
-        trans('messages.symbols.cur') . number_format($d->orgAmt, 2, '.', ',')
-    ]);
-}
+    if (count($reg_rows) >= 15) {
+        $scroll = 1;
+    } else {
+        $scroll = 0;
+    }
 
-if ($event->hasTracks && $event->isSymmetric) {
-    $columns = ($event->hasTracks * 2) + 1;
-    $width = (integer)85 / $event->hasTracks;
-    $mw = (integer)90 / $event->hasTracks;
-    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') . '</a>';
-} elseif ($event->hasTracks) {
-    $columns = $event->hasTracks * 3;
-    $width = (integer)80 / $event->hasTracks;
-    $mw = (integer)85 / $event->hasTracks;
-    $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') . '</a>';
-} else {
-    $stats = trans('messages.fields.ticket') . " " . trans('messages.headers.stats');
-}
+    if (count($notreg_rows) >= 15) {
+        $notscroll = 1;
+    } else {
+        $notscroll = 0;
+    }
 
-$es = $event->default_session();
-$count = 0;
+    if (count($tag_rows) >= 15) {
+        $tagscroll = 1;
+    } else {
+        $tagscroll = 0;
+    }
+
+    $disc_headers = [trans('messages.headers.code'), trans('messages.fields.count'), trans('messages.headers.cost'),
+        trans('messages.headers.ccfee'), trans('messages.headers.handling'), trans('messages.headers.net')];
+    $disc_rows = [];
+
+    foreach ($discPie as $d) {
+        array_push($disc_rows, [
+            $d->discountCode,
+            $d->cnt,
+            trans('messages.symbols.cur') . number_format($d->cost, 2, '.', ','),
+            trans('messages.symbols.cur') . number_format($d->ccFee, 2, '.', ','),
+            trans('messages.symbols.cur') . number_format($d->handleFee, 2, '.', ','),
+            trans('messages.symbols.cur') . number_format($d->orgAmt, 2, '.', ',')
+        ]);
+    }
+
+    if ($event->hasTracks && $event->isSymmetric) {
+        $columns = ($event->hasTracks * 2) + 1;
+        $width = (integer)85 / $event->hasTracks;
+        $mw = (integer)90 / $event->hasTracks;
+        $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') . '</a>';
+    } elseif ($event->hasTracks) {
+        $columns = $event->hasTracks * 3;
+        $width = (integer)80 / $event->hasTracks;
+        $mw = (integer)85 / $event->hasTracks;
+        $stats = '<a href="' . env('APP_URL') . '/tracks/' . $event->eventID . '">' . trans('messages.fields.ticket') . " " . trans('messages.headers.stats') . '</a>';
+    } else {
+        $stats = trans('messages.fields.ticket') . " " . trans('messages.headers.stats');
+    }
+
+    $es = $event->default_session();
+    $count = 0;
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
@@ -439,11 +439,11 @@ $count = 0;
                             </tr>
                             @for($j=1;$j<=$event->confDays;$j++)
                                 @php
-                                $z = EventSession::where([
-                                    ['confDay', '=', $j],
-                                    ['eventID', '=', $event->eventID]
-                                ])->first();
-                                $y = Ticket::find($z->ticketID);
+                                    $z = EventSession::where([
+                                        ['confDay', '=', $j],
+                                        ['eventID', '=', $event->eventID]
+                                    ])->first();
+                                    $y = Ticket::find($z->ticketID);
                                 @endphp
 
                                 <tr>
@@ -454,14 +454,14 @@ $count = 0;
                                 </tr>
                                 @for($x=1;$x<=5;$x++)
                                     @php
-                                    // Check to see if there are any events for $x (this row)
-                                    $s = EventSession::where([
-                                        ['eventID', $event->eventID],
-                                        ['confDay', $j],
-                                        ['order', $x]
-                                    ])->first();
+                                        // Check to see if there are any events for $x (this row)
+                                        $s = EventSession::where([
+                                            ['eventID', $event->eventID],
+                                            ['confDay', $j],
+                                            ['order', $x]
+                                        ])->first();
 
-                                    // As long as there are any sessions, the row will be displayed
+                                        // As long as there are any sessions, the row will be displayed
                                     @endphp
                                     @if($s !== null)
                                         <tr>
@@ -573,9 +573,9 @@ $count = 0;
                 <div class="tab-pane fade" id="tab_content7" aria-labelledby="checkin-tab">
                     &nbsp;<br/>
 
-                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-                        <div class="col-sm-3 col-xs-offset-2">
-                            @if(count($event->main_reg_sessions()) > 0)
+                    <div class="col-sm-3 col-xs-offset-2">
+                        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                            @if($event->checkin_period() && count($event->main_reg_sessions()) > 0)
                                 @include('v1.parts.url_button', [
                                     'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
                                     'color' => 'btn-warning', 'tooltip' => trans('messages.tooltips.survey'),
@@ -584,17 +584,19 @@ $count = 0;
                                 ])
                                 &nbsp; <br/>
                             @endif
-                        </div>
-                        <div class="col-sm-3">
-                            @if($event->checkin_period() && count($event->main_reg_sessions()) > 0)
+                        @endif
+                    </div>
+                    <div class="col-sm-3">
+                        @if(count($event->main_reg_sessions()) > 0)
+                            @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                                 @include('v1.parts.url_button', [
                                     'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
                                     'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
                                     'text' => trans('messages.buttons.down_PDU_list')
                                 ])
                             @endif
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                     @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es && $event->checkin_period())
                         {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                         {!! Form::hidden('sessionID', $es->sessionID) !!}
@@ -661,7 +663,6 @@ $count = 0;
             </div>
         </div>
     </div>
-
 
 @endsection
 
@@ -795,9 +796,9 @@ include('v1.parts.ajax_console')
 
                     data: [
                         @foreach($discountCounts as $d)
-                        @if($d->discountCode == 'Total')
-                        @else
-                        {{ $d->cnt }},
+                                @if($d->discountCode == 'Total')
+                                @else
+                                {{ $d->cnt }},
                         @endif
                         @endforeach
                     ]
@@ -834,5 +835,5 @@ include('v1.parts.ajax_console')
 @endsection
 
 @section('modals')
-@include('v1.modals.context_sensitive_issue')
+    @include('v1.modals.context_sensitive_issue')
 @endsection

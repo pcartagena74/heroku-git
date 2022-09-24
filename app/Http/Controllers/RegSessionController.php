@@ -12,6 +12,7 @@ use App\Models\RSSurvey;
 use App\Models\Ticket;
 use App\Models\Track;
 use App\Notifications\SendSurvey;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class RegSessionController extends Controller
@@ -352,6 +353,10 @@ class RegSessionController extends Controller
                 $scount++;
             }
         }
+
+        $event->surveyMailDate = Carbon::now();
+        $event->save();
+
         request()->session()->flash('alert-success', trans_choice('messages.notifications.SS.post_mail_msg', $count, ['count' => $count, 'c2' => $scount]));
         //return redirect(env('APP_URL')."/eventreport/$event->slug");
         return redirect()->back();

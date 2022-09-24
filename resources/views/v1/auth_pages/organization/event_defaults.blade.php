@@ -30,9 +30,10 @@ $currentOrg = $currentPerson->defaultOrg;
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
-@if((Entrust::can('settings-management')) || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
 @section('content')
+    @if((Entrust::can('settings-management') && Entrust::can('event-management'))
+         || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
 
     @include('v1.parts.start_content', ['header' => trans('messages.headers.defs') . $org->orgName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 <table class="table table-striped table-condensed" id="demographics">
@@ -251,6 +252,9 @@ $currentOrg = $currentPerson->defaultOrg;
 </button>
 @include('v1.parts.end_content')
 
+    @else
+        @lang("messages.messages.admin_req")
+    @endif
 @endsection
 
 @section('scripts')
@@ -501,5 +505,3 @@ $currentOrg = $currentPerson->defaultOrg;
     </div>
 </div>
 @endsection
-
-@endif

@@ -431,21 +431,21 @@ $mbr_price = 'Member pricing is applied automatically when you 1) are logged in 
                                                         <td data-title="Credit" style="text-align:left;">
                                                             @if($s->leadAmt > 0)
                                                                 <b>{{ $s->leadAmt }}
-                                                                    Leadership
+                                                                    @lang('messages.pdus.lead')
                                                                     {{ $s->event->org->creditLabel }}<?php if ($s->leadAmt != 1) {
                                                                         echo('s');
                                                                     } ?></b><br/>
                                                             @endif
                                                             @if($s->stratAmt > 0)
                                                                 <b>{{ $s->stratAmt }}
-                                                                    Strategy
+                                                                    @lang('messages.pdus.strat')
                                                                     {{ $s->event->org->creditLabel }}<?php if ($s->stratAmt != 1) {
                                                                         echo('s');
                                                                     } ?></b><br/>
                                                             @endif
                                                             @if($s->techAmt > 0)
                                                                 <b>{{ $s->leadAmt }}
-                                                                    Technical Skills
+                                                                    @lang('messages.pdus.tech')
                                                                     {{ $s->event->org->creditLabel }}<?php if ($s->techAmt != 1) {
                                                                         echo('s');
                                                                     } ?></b><br/>

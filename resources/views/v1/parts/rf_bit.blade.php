@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Comment: This is a reusable blade file that shows
  *          registrations based on passed reg-finance collection
@@ -35,13 +35,13 @@ $client = new S3Client([
 
 $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
 $s3fs = new Filesystem($adapter);
-?>
+@endphp
 
 @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 <div class="col-md-12 col-sm-12 col-xs-12">
 
     @foreach($rf_array as $rf)
-        <?php
+        @php
         $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
         $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
 
@@ -53,14 +53,14 @@ $s3fs = new Filesystem($adapter);
         }
 
         $header = $rf->event->eventName . " <small>" . trans_choice('messages.headers.seats', $rf->seats) . ": " . $rf->seats . "</small>";
-        ?>
+        @endphp
         {{-- @if($rf->event->eventEndDate->gte($today)) --}}
         @include('v1.parts.start_min_content', ['header' => $header,
                  'subheader' => $rf->event->eventStartDate->format('n/j/Y'),
                  'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
         <div class="col-md-12 col-sm-12 col-xs-12">
             @foreach($rf->registrations as $reg)
-                <?php
+                @php
                 $person = Person::find($reg->personID);
                 $event = Event::find($reg->eventID);
                 $org = Org::find($event->orgID);
@@ -70,7 +70,7 @@ $s3fs = new Filesystem($adapter);
                 ])->get();
                 $mem_or_not = Lang::has('messages.fields.' . $reg->membership) ? trans('messages.fields.' . $reg->membership) : $reg->membership;
                 //if($reg->regID == 12597) { dd($event->eventStartDate); }
-                ?>
+                @endphp
                 @include('v1.parts.start_min_content', ['header' => $mem_or_not . " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() .
                 "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => trans('messages.symbols.cur').
                 ' ' . number_format($reg->subtotal, 2), 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])

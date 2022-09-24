@@ -504,6 +504,7 @@
                                                                             <b> {{ trans('messages.fields.speakers') }} </b>
                                                                             <br/>
                                                                             {{ $s->show_speakers() }}
+
                                                                         </td>
                                                                     @endif
                                                                 @endforeach
