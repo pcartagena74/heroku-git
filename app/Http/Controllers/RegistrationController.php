@@ -200,7 +200,7 @@ class RegistrationController extends Controller
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee,
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
-            ->whereNull('deleted_at')
+            //->whereNull('deleted_at')
             ->groupBy('discountCode')
             ->orderBy('cnt', 'desc')->get();
 
@@ -212,7 +212,9 @@ class RegistrationController extends Controller
                 $query->where('pmtRecd', '=', 1);
                 $query->withTrashed();
             })
-            ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+            // 9/26/22 - Corrected display of NA (Refunded) Net (only changed first line)
+            //->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt,
+            ->select(DB::raw('discountCode, count(discountCode) as cnt, 0-sum(ccFee)-sum(mcentricFee) as orgAmt,
                                     sum(origcost)-sum(subtotal) as discountAmt, sum(mcentricFee) as handleFee,
                                     sum(ccFee) as ccFee, sum(subtotal) as cost'))
             ->withTrashed()
@@ -222,9 +224,9 @@ class RegistrationController extends Controller
 
         foreach ($refunded as $key => $value) {
             if ($value->discountCode == '' || $value->discountCode === null || $value->discountCode == '0') {
-                $value->discountCode = 'N/A (Refunded)';
+                $value->discountCode = trans('messages.headers.N/A') . '(' . trans('messages.reg_status.refunded') . ')';
             } else {
-                $value->discountCode = $value->discountCode.' (Refunded)';
+                $value->discountCode = $value->discountCode.' (' . trans('messages.reg_status.refunded') . ')';
             }
         }
         $discountCounts = Registration::select(DB::raw('discountCode, count(origcost) as cnt, sum(subtotal) as cost,
@@ -235,6 +237,8 @@ class RegistrationController extends Controller
             ])
             ->groupBy('discountCode')->orderBy('cnt', 'desc')->get();
 
+        // $lessCounts are capturing revenue that would not have been remitted by credit card; mCentric does not pay.
+        // select below may need to start at 0 vs. sum(subtotal) for orgAmt.  Need to test.
         $lessCounts = Registration::where('eventID', '=', $event->eventID)
             ->select(DB::raw('discountCode, count(discountCode) as cnt, sum(subtotal)-sum(ccFee)-sum(mcentricFee) as orgAmt, 0, 0, 0, 0'))
             ->whereHas('regfinance', function ($q) {
@@ -244,7 +248,7 @@ class RegistrationController extends Controller
 
         foreach ($discPie as $d) {
             if ($d->discountCode == '' || $d->discountCode === null || $d->discountCode == '0') {
-                $d->discountCode = 'N/A';
+                $d->discountCode = trans('messages.headers.N/A');
             }
         }
 
