@@ -935,6 +935,8 @@ return [
         'saved' => 'salvado',
         'sess_saved' => 'Sus opciones de sesión para :reg fueron :verb.',
         'survey_confirm' => '¿Está seguro de que desea enviar la encuesta por email a todos los asistentes registrados?',
+        'surveys_no_comments' => "No hubo comentarios de las respuestas de la encuesta.",
+        'surveys_sent' => "Las encuestas se enviaron el :date.",
         'thanks' => 'Gracias por usar mCentric con :orgname.',
         'undo_login' => 'Su login se cambió con éxito de nuevo a :email.  
                          Se ha enviado un email de confirmación a esa dirección.',

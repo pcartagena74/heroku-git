@@ -2,6 +2,7 @@
 /**
  * Created: 10/2/2019
  * Comment: Given a sessionID, provide the stats (registrations or check-ins and any survey results)
+ * @var $event: passed Event object
  * @var $session: session object
  * @var $es: optionally passed EventSession id
  */

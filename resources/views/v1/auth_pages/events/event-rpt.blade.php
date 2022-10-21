@@ -37,25 +37,31 @@
     $topBits = ''; // there should be topBits for this
 
     $post_event = $today->gte($event->eventEndDate);
+    $ok_to_survey = $today->gte($event->eventStartDate);
 
+    $survey_date = \Carbon\Carbon::create($event->surveyMailDate);
 
     function get_survey_comments($session)
     {
         $surveys = RSSurvey::where('sessionID', '=', $session->sessionID);
-        $ft = trans('messages.surveys.favorite');
-        $faves = $surveys->whereNotNull('favoriteResponse')->selectRaw("concat('<li>', favoriteResponse, '</li>') as 'favoriteResponse'")->pluck('favoriteResponse');
-        $st = trans('messages.surveys.suggestions');
-        $suggest = $surveys->whereNotNull('suggestResponse')->selectRaw("concat('<li>', suggestResponse, '</li>') as 'suggestResponse'")->pluck('suggestResponse');
-        $ct = trans('messages.surveys.contact');
-        $contact = $surveys->whereNotNull('contactResponse')->selectRaw("concat('<li>', contactResponse, '</li>') as 'contactResponse'")->pluck('contactResponse');
-        $content = view('v1.parts.session_comments', ['list' => $faves, 'title' => $ft])->render();
-        $content .= view('v1.parts.session_comments', ['list' => $suggest, 'title' => $st])->render();
-        $content .= view('v1.parts.session_comments', ['list' => $contact, 'title' => $ct])->render();
-        return $content;
+        if($surveys !== null) {
+            $ft = trans('messages.surveys.favorite');
+            $faves = $surveys->whereNotNull('favoriteResponse')->selectRaw("concat('<li>', favoriteResponse, '</li>') as 'favoriteResponse'")->pluck('favoriteResponse');
+            $st = trans('messages.surveys.suggestions');
+            $suggest = $surveys->whereNotNull('suggestResponse')->selectRaw("concat('<li>', suggestResponse, '</li>') as 'suggestResponse'")->pluck('suggestResponse');
+            $ct = trans('messages.surveys.contact');
+            $contact = $surveys->whereNotNull('contactResponse')->selectRaw("concat('<li>', contactResponse, '</li>') as 'contactResponse'")->pluck('contactResponse');
+            $content = view('v1.parts.session_comments', ['list' => $faves, 'title' => $ft])->render();
+            $content .= view('v1.parts.session_comments', ['list' => $suggest, 'title' => $st])->render();
+            $content .= view('v1.parts.session_comments', ['list' => $contact, 'title' => $ct])->render();
+            return $content;
+        } else {
+            return null;
+        }
     }
 
     $rows = []; $reg_rows = []; $notreg_rows = []; $tag_rows = []; $dead_rows = []; $i = 0;
-    if ($event->eventEndDate->gte($today)) {
+    if ($ok_to_survey) {
         $headers = [trans('messages.fields.ticket'), trans('messages.headers.att_limit'), trans('messages.headers.this'),
             trans('messages.headers.tot_regs'), trans('messages.headers.wait')];
         if (Entrust::hasRole('Developer')) {
@@ -334,11 +340,8 @@
                                     aria-expanded="false"><b>@lang('messages.tabs.sessions')</b></a></li>
                 @endif
 
-                @if($event->hasTracks == 0)
-                    @if( Entrust::hasRole($currentOrg->orgName) &&
-                            ( Entrust::hasRole('Board')|| Entrust::hasRole('Admin') || Entrust::can('event-management') )
-                        || Entrust::hasRole('Developer'))
-
+                @if($event->hasTracks == 0 && $ok_to_survey)
+                    @if(Entrust::can('event-management') || Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
                         <li class="">
                             <a href="#tab_content7" id="checkin-tab" data-toggle="tab" aria-expanded="false">
                                 <b>@lang('messages.headers.check_tab')</b>
@@ -406,7 +409,6 @@
                     <div class="tab-pane fade" id="tab_content3" aria-labelledby="sessions-tab">
                         <br/>
 
-
                         <table class="table table-bordered jambo_table table-striped">
                             <thead>
                             <tr>
@@ -421,10 +423,12 @@
                                         <td colspan="{{ $columns }}" style="text-align: left;">
                                             <b>{!! $session->sessionName !!}:</b>
                                             @include('v1.parts.session_stats', ['es' => $session->sessionID])
-                                            @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
-                                                     'title' => trans('messages.surveys.popup'),
-                                                     'content' => get_survey_comments($session), 'placement' => 'right',
-                                                     'button_text' => trans('messages.surveys.popup')])
+                                            @if($content = get_survey_comments($session))
+                                                @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
+                                                         'title' => trans('messages.surveys.popup'),
+                                                         'content' => $content, 'placement' => 'right',
+                                                         'button_text' => trans('messages.surveys.popup')])
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -507,11 +511,13 @@
                                                         @if($post_event)
                                                             <b>{!! $s->sessionName !!}:</b>
                                                             @include('v1.parts.session_stats', ['es' => $s->sessionID])
-                                                            @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
-                                                                     'title' => trans('messages.surveys.popup'),
-                                                                     'content' => get_survey_comments($s),
-                                                                     'placement' => $placement,
-                                                                     'button_text' => trans('messages.surveys.popup')])
+                                                            @if($c = get_survey_comments($s))
+                                                                @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
+                                                                         'title' => trans('messages.surveys.popup'),
+                                                                         'content' => $c,
+                                                                         'placement' => $placement,
+                                                                         'button_text' => trans('messages.surveys.popup')])
+                                                            @endif
                                                         @else
                                                             <?php
                                                             // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
@@ -574,7 +580,7 @@
                     &nbsp;<br/>
 
                     <div class="col-sm-3 col-xs-offset-2">
-                        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                        @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin') || Entrust::can('event-management'))
                             @if($event->checkin_period() && count($event->main_reg_sessions()) > 0)
                                 @include('v1.parts.url_button', [
                                     'url' => env('APP_URL')."/mail_surveys/".$event->eventID,
@@ -585,10 +591,13 @@
                                 &nbsp; <br/>
                             @endif
                         @endif
+                        @if($event->surveyMailDate !== null)
+                            @lang('messages.messages.surveys_sent', ['date' => $survey_date->format("m/d/Y")])
+                        @endif
                     </div>
                     <div class="col-sm-3">
                         @if(count($event->main_reg_sessions()) > 0)
-                            @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                            @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin') || Entrust::can('event-management'))
                                 @include('v1.parts.url_button', [
                                     'url' => env('APP_URL')."/excel/pdudata/".$event->eventID,
                                     'color' => 'btn-success', 'tooltip' => trans('messages.buttons.down_PDU_list'),
@@ -597,6 +606,7 @@
                             @endif
                         @endif
                     </div>
+
                     @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es && $event->checkin_period())
                         {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
                         {!! Form::hidden('sessionID', $es->sessionID) !!}
@@ -645,10 +655,12 @@
                         <div class="col-xs-12">
 
                             @include('v1.parts.session_stats', ['es' => $es->sessionID, 'session' => $es])
-                            @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
-                                     'title' => trans('messages.surveys.popup'),
-                                     'content' => get_survey_comments($es), 'placement' => 'right',
-                                     'button_text' => trans('messages.surveys.popup')])
+                            @if($co = get_survey_comments($es))
+                                @include('v1.parts.popup_content_button', ['color' => 'btn-primary',
+                                         'title' => trans('messages.surveys.popup'),
+                                         'content' => $co, 'placement' => 'right',
+                                         'button_text' => trans('messages.surveys.popup')])
+                            @endif
                         </div>
                     @else
                         @lang('messages.instructions.no_regs')

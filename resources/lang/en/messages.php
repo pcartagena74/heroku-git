@@ -936,6 +936,8 @@ return [
         'saved' => 'saved',
         'sess_saved' => 'Your session choices for :reg were :verb.',
         'survey_confirm' => 'Are you sure you want to email all checked in attendees the survey?',
+        'surveys_no_comments' => "There were no comments from the survey responses.",
+        'surveys_sent' => "Surveys were mailed on :date.",
         'thanks' => 'Thank you for using mCentric with :orgname.',
         'undo_login' => 'Your login was successfully changed back to :email.  A confirmation email has been sent to that address.',
         'unknown' => 'Unknown',
