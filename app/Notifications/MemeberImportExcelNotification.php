@@ -100,7 +100,8 @@ class MemeberImportExcelNotification extends Notification
                         if (empty($value->first_name) && empty($value->last_name) && ! empty($value->primary_email)) {
                             $str .= ' Primary Email: '.$value->primary_email;
                         }
-                        if (empty($value->first_name) && empty($value->last_name) && empty($value->primary_email) && ! empty($value->alternate_email)) {
+                        if (empty($value->first_name) && empty($value->last_name)
+                            && empty($value->primary_email) && ! empty($value->alternate_email)) {
                             $str .= ' Alternate Email: '.$value->alternate_email;
                         }
                         if (empty($value->first_name) && empty($value->last_name) && empty($value->primary_email) && empty($value->primary_email) && empty($value->alternate_email)) {
@@ -115,10 +116,10 @@ class MemeberImportExcelNotification extends Notification
                     foreach ($others as $key => $other) {
                         $str = '';
                         if (! empty($other->reldate1_new)) {
-                            $str .= 'PMIJD Old : '.$other->reldate1_old.' New : '.$other->reldate1_new.' ';
+                            $str .= 'PMI-JoinDate Old : '.$other->reldate1_old.' New : '.$other->reldate1_new.' ';
                         }
                         if (! empty($other->reldate2_new)) {
-                            $str .= 'ChapJD Old: '.$other->reldate2_old.' New : '.$other->reldate2_new;
+                            $str .= 'Chap-JoinDate Old: '.$other->reldate2_old.' New : '.$other->reldate2_new;
                         }
                         $mail->line('PMI ID : '.$other->pmi_id.' '.$str);
                     }

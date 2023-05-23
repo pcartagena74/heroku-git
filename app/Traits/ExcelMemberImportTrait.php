@@ -145,7 +145,7 @@ trait ExcelMemberImportTrait
         }
 
         $pchk = Person::where(['firstName' => $first, 'lastName' => $last])->limit(1)->get();
-        // $this->timeMem('5 $pchk ');
+
         if ($op === null && $any_op->isEmpty() && $emchk1->isEmpty() && $emchk2->isEmpty() && $pchk->isEmpty()) {
 
             // PMI ID, first & last names, and emails are not found so person is likely completely new; create all records
@@ -212,19 +212,6 @@ trait ExcelMemberImportTrait
                 // Recheck to see if there's just 1 match
                 // no need to query again as we donot have filter for now
                 $p = $pchk[0];
-
-            // $pchk_count = Person::where([
-                //     ['firstName', '=', $first],
-                //     ['lastName', '=', $last],
-                // ])->get();
-                // $this->timeMem('8 $pchk_count');
-                // if (count($pchk_count) == 1) {
-                //     $p = $pchk;
-                // } else {
-                //     // Would need a way to pick the right one if there's more than 1
-                //     // For now, just taking the first one
-                //     $p = $pchk;
-                // }
             } else {
                 // This is a last resort when there are no email addresses associated with the record
                 // Better to abandon; avoid $p->save();
@@ -262,10 +249,11 @@ trait ExcelMemberImportTrait
                 $p = $p->first();
             }
             if (empty($p->personID)) {
+                // Fail-safe; Shouldn't get here.
                 return;
             }
-            // dd(getType($p));
-            // We have an $org-person record so we should NOT rely on firstName/lastName matching at all
+
+            // We have an $org-person record, so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
 
             // Because we should have found a person record, determine if we should create and associate email records
@@ -277,7 +265,7 @@ trait ExcelMemberImportTrait
                     $emchk1[0]->debugNote = "ugh!  Was: $emchk1[0]->personID; Should be: $p->personID";
                     DB::table('person-email')->where(['personID' => $emchk1[0]->personID])
                         ->update(['personID' => $p->personID, 'debugNote' => $emchk1[0]->debugNote]);
-                    // $emchk1->save();
+                    // Finds and updates proper record, correcting a mismatched personID if appropriate.
                     // $this->timeMem('12 update email 2163');
                 }
             }
@@ -289,7 +277,7 @@ trait ExcelMemberImportTrait
                     $emchk2->personID = $p->personID;
                     DB::table('person-email')->where(['personID' => $emchk2[0]->personID])
                         ->update(['personID' => $p->personID, 'debugNote' => $emchk2[0]->debugNote]);
-                    // $emchk2->save();
+                    // Finds and updates proper record, correcting a mismatched personID if appropriate.
                     // $this->timeMem('13 update email 2173');
                 }
             }
@@ -312,7 +300,7 @@ trait ExcelMemberImportTrait
             } catch (Exception $ex) {
                 // dd([$emchk1, $em1]);
             }
-            // We have an email record match so we should NOT rely on firstName/lastName matching at all
+            // We have an email record match, so we should NOT rely on firstName/lastName matching at all
             $pchk = null;
         } elseif ($emchk2->isNotEmpty() && ! empty($emchk2[0]) && ! empty($em2) && $em2 != '' && $em2 != ' ') {
             $emchk2 = $emchk2[0];
@@ -377,7 +365,6 @@ trait ExcelMemberImportTrait
                     $ary['experience'] = $currentPerson->experience;
                 }
 
-
                 // One day: think about how to auto-populate indName field using compName
 
                 $ary['updaterID'] = $currentPerson->personID;
@@ -399,7 +386,6 @@ trait ExcelMemberImportTrait
             // 1. the member is completely new to the system or
             // 2. the member is in the system but under another chapter/orgID
             $newOP = new OrgPerson;
-            //$newOP->orgID = $p->defaultOrgID;
             $newOP->orgID = $this->currentPerson->defaultOrgID;
             $newOP->personID = $p->personID;
             $newOP->OrgStat1 = $pmi_id;
@@ -447,9 +433,9 @@ trait ExcelMemberImportTrait
                 // $p->save();
             }
         } else {
-            // We'll update some fields on the off chance they weren't properly filled in a previous creation
+            // We'll update some fields on the off chance they weren't properly filled in during a previous creation
             // $op = $op->toArray();
-            if (! empty($op->toArray())) {
+            if (null !== $op) {
                 $newOP = $op;
                 $ary = [];
                 if ($newOP->OrgStat1 === null) {
@@ -510,7 +496,7 @@ trait ExcelMemberImportTrait
                             // Added to have join date(s) corrected if what PMI provided is an earlier date than what is in DB
                             $test_date = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
                             $msg = '';
-                            if($newOP->RelDate1->gt($test_date)){
+                            if($newOP->RelDate2->gt($test_date)){
                                 $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
                                 $msg = 'Changed chapter_join_date in DB.';
                             }
@@ -550,8 +536,8 @@ trait ExcelMemberImportTrait
         }
 
         // Add the person-specific records as needed
-        // This logic will only work reliably for chapters in the US given the zip as 5 or 9 digits1F
-        if (! empty($p)) {
+        // This logic will only work reliably for chapters in the US given the zip as 5 or 9 digits
+        if (null !== $p) {
             $pa = trim(ucwords($row['preferred_address']));
             $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
             // $this->timeMem('22 get address 2367');

@@ -1058,12 +1058,6 @@ return [
             'action' => 'Undo Login Change',
         ],
 
-        // Member Import Complete
-        'member_import' => [
-            'subject' => 'Import Complete',
-            'line1' => ':user, the member import has completed.',
-        ],
-
         // New Registration Account Creation
         'new_reg_acct' => [
             'subject' => 'Your mCentric account with :org',
@@ -1126,22 +1120,24 @@ return [
             'subject' => 'Your mCentric Login',
             'line1' => 'Your mCentric login was changed back to :email.',
         ],
-        //Member import complete
+
+        // Member Import Complete
         'member_import' => [
             'subject' => 'Import Complete',
             'subject_failed' => 'Import Failed',
             'subject_warning' => 'Import Completed with errors',
             'imp_success' => ':user, the member import for file :file_name was successful. Completed on :completed_date',
-            'imp_failed' => ':user, the member import for file :file_name has failed. No records were imported. Please check the file.',
+            'imp_failed' => ':user, the member import for file :file_name has may have failed. No records were imported. Please check the file.',
             'imp_warning' => ':user, the member import for file :file_name had some errors. All records were not processed. Completed on :completed_date',
             'total' => 'Total Records : :total',
             'inserted' => 'Inserted Records : :inserted',
+            'line1' => ':user, the member import has completed.',
             'updated' => 'Updated Records : :updated',
             'failed' => 'Failed Records : :failed',
             'failed_record' => 'Failed Records : :records',
             'no_identifier' => 'No unique identifier found for this row.',
             'nothing_to_update' => 'No update or insert operation was performed.',
-            'rel_update' => 'Records with Mismatch PMI Join Date or Chapter Joining Date',
+            'rel_update' => 'Records with Mismatched PMI Join Date or Chapter Join Date.',
         ],
 
         // Wait List No More

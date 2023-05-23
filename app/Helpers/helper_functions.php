@@ -30,6 +30,13 @@ use Spatie\Image\Manipulations;
 // $client = new Client();
 
 
+/**
+ * Performs hierarchical query to get the list of volunteers for the org chart
+ *
+ * @param string $o organization record
+ * @param int $p    optional person record; shows all volunteers if null
+ * @return array    [$json_roles, $option_string]
+ */
 if (! function_exists('volunteer_data')) {
     function volunteer_data($o, $p) {
         $option_string = '';
@@ -492,6 +499,7 @@ if (! function_exists('et_translate')) {
 
 /**
  * li_print_array: convert an array into a html-formatted list
+ *                 used in RegistrationController
  * @param $array
  * @param $type
  * @return string
@@ -624,12 +632,12 @@ if (! function_exists('location_triage')) {
     }
 }
 
+/**
+ * get ticketit agent list from ticket or from current user
+ * @param  ticket collection $ticket
+ * @return array of agent
+ */
 if (! function_exists('getAgentList')) {
-    /**
-     * get ticketit agent list from ticket or from current user
-     * @param  ticket collection $ticket
-     * @return array of agent
-     */
     function getAgentList($ticket = null)
     {
         $orgId = 0;
@@ -706,11 +714,11 @@ if (! function_exists('getAgentList')) {
     }
 }
 
+/**
+ * get logged in user active ticket count
+ * @return int ticket count
+ */
 if (! function_exists('getActiveTicketCountUser')) {
-    /**
-     * get logged in user active ticket count
-     * @return int ticket count
-     */
     function getActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -734,11 +742,11 @@ if (! function_exists('showActiveTicketUser')) {
     }
 }
 
+/**
+ * mark logged user all open ticket as read
+ * @return bool
+ */
 if (! function_exists('markReadActiveTicketCountUser')) {
-    /**
-     * mark logged user all open ticket as read
-     * @return bool
-     */
     function markReadActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -749,12 +757,12 @@ if (! function_exists('markReadActiveTicketCountUser')) {
     }
 }
 
+/**
+ * make a specific user ticket as unread
+ * @param  int $ticket_id ticket id
+ * @return bool
+ */
 if (! function_exists('markUnreadTicketUser')) {
-    /**
-     * make a specific user ticket as unread
-     * @param  int $ticket_id ticket id
-     * @return bool
-     */
     function markUnreadTicketUser($ticket_id)
     {
         if (empty($ticket_id)) {
@@ -766,11 +774,11 @@ if (! function_exists('markUnreadTicketUser')) {
     }
 }
 
+/**
+ * get all active ticket of loggedin user
+ * @return int count
+ */
 if (! function_exists('getActiveTicketCountAgent')) {
-    /**
-     * get all active ticket of loggedin user
-     * @return int count
-     */
     function getActiveTicketCountAgent()
     {
         $person = Person::find(auth()->user()->id);
@@ -782,11 +790,11 @@ if (! function_exists('getActiveTicketCountAgent')) {
     }
 }
 
+/**
+ * get all active ticket of loggedin user
+ * @return int count
+ */
 if (! function_exists('getTicketCategories')) {
-    /**
-     * get all active ticket of loggedin user
-     * @return int count
-     */
     function getTicketCategories()
     {
         list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
@@ -795,11 +803,11 @@ if (! function_exists('getTicketCategories')) {
     }
 }
 
+/**
+ * get all active ticket of loggedin user
+ * @return int count
+ */
 if (! function_exists('getTicketPriorities')) {
-    /**
-     * get all active ticket of loggedin user
-     * @return int count
-     */
     function getTicketPriorities()
     {
         list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
@@ -808,35 +816,35 @@ if (! function_exists('getTicketPriorities')) {
     }
 }
 
+/**
+ * get template builder block category from database
+ * @return array of email block category
+ */
 if (! function_exists('get_template_builder_blocks_category')) {
-    /**
-     * get template builder block category from database
-     * @return array of email block category
-     */
     function get_template_builder_category()
     {
         return App\Models\EmailBlockCategory::all()->toArray();
     }
 }
 
+/**
+ * get template blocks by category id
+ * @param  int $email_cat_id  email category id
+ * @return array               of category blocks
+ */
 if (! function_exists('get_template_builder_blocks_category')) {
-    /**
-     * get template blocks by category id
-     * @param  int $email_cat_id  email category id
-     * @return array               of category blocks
-     */
     function get_template_builder_block_category($email_cat_id)
     {
         return App\Models\EmailBlock::where(['cat_id' => $email_cat_id, 'is_active' => 1])->get()->toArray();
     }
 }
 
+/**
+ * check if given string is date type
+ * @param  string  $date_str date
+ * @return bool        true/false
+ */
 if (! function_exists('isDate')) {
-    /**
-     * check if given string is date type
-     * @param  string  $date_str date
-     * @return bool        true/false
-     */
     function isDate($date_str)
     {
         if (! $date_str) {
@@ -853,11 +861,11 @@ if (! function_exists('isDate')) {
     }
 }
 
+/**
+ * send data to request bin for queue debug
+ * @param  array $data
+ */
 if (! function_exists('requestBin')) {
-    /**
-     * send data to request bin for queue debug
-     * @param  array $data
-     */
     function requestBin($data)
     {
         return;
@@ -880,15 +888,15 @@ if (! function_exists('requestBin')) {
     }
 }
 
+/**
+ * replace text placeholder with actual data from database
+ * @param  string  $email       user email whose data needed to be replaced by placeholder
+ * @param  object  $campaign    the campaign object
+ * @param  bool $for_preview true if using for preview only false while sending actual email
+ * @param  string  $raw_html    html string used when for_preview is true
+ * @return string               replaced html
+ */
 if (! function_exists('replaceUserDataInEmailTemplate')) {
-    /**
-     * replace text placeholder with actual data from database
-     * @param  string  $email       user email whose data needed to be replaced by placeholder
-     * @param  object  $campaign    the campaign object
-     * @param  bool $for_preview true if using for preview only false while sending actual email
-     * @param  string  $raw_html    html string used when for_preview is true
-     * @return string               replaced html
-     */
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
     {
         // $start = microtime(true);
@@ -991,13 +999,13 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
     }
 }
 
+/**
+ * Generate thumbnail from email html
+ * @param  string $html     email html
+ * @param  object $campaign campaign object for name
+ * @return string           file path
+ */
 if (! function_exists('generateEmailTemplateThumbnail')) {
-    /**
-     * Generate thumbnail from email html
-     * @param  string $html     email html
-     * @param  object $campaign campaign object for name
-     * @return string           file path
-     */
     function generateEmailTemplateThumbnail($html, $campaign)
     {
         if (empty($html) || empty($campaign)) {
@@ -1020,12 +1028,12 @@ if (! function_exists('generateEmailTemplateThumbnail')) {
     }
 }
 
+/**
+ * generate email template thumbnail name
+ * @param  object $campaign campaign object
+ * @return string           template thumbnail name
+ */
 if (! function_exists('generateEmailTemplateThumbnailName')) {
-    /**
-     * generate email template thumbnail name
-     * @param  object $campaign campaign object
-     * @return string           template thumbnail name
-     */
     function generateEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
@@ -1035,12 +1043,12 @@ if (! function_exists('generateEmailTemplateThumbnailName')) {
     }
 }
 
+/**
+ * same as generate just for sake of naming convension
+ * @param  [type] $campaign [description]
+ * @return [type]           [description]
+ */
 if (! function_exists('getEmailTemplateThumbnailName')) {
-    /**
-     * same as generate just for sake of naming convension
-     * @param  [type] $campaign [description]
-     * @return [type]           [description]
-     */
     function getEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
@@ -1050,12 +1058,12 @@ if (! function_exists('getEmailTemplateThumbnailName')) {
     }
 }
 
+/**
+ * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
+ * @param  object $campaign campaign object
+ * @return string           URL for thumbnail
+ */
 if (! function_exists('getEmailTemplateThumbnailURL')) {
-    /**
-     * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
-     * @param  object $campaign campaign object
-     * @return string           URL for thumbnail
-     */
     function getEmailTemplateThumbnailURL($campaign)
     {
         $path = getAllDirectoryPathFM();
@@ -1068,12 +1076,12 @@ if (! function_exists('getEmailTemplateThumbnailURL')) {
     }
 }
 
+/**
+ * all static directory path for filemanger this has a system wide impact
+ * @param  object $org org model if available
+ * @return array      all path that are created
+ */
 if (! function_exists('getAllDirectoryPathFM')) {
-    /**
-     * all static directory path for filemanger this has a system wide impact
-     * @param  object $org org model if available
-     * @return array      all path that are created
-     */
     function getAllDirectoryPathFM($org = null)
     {
         if (empty($org)) {
@@ -1093,12 +1101,12 @@ if (! function_exists('getAllDirectoryPathFM')) {
     }
 }
 
+/**
+ * generate default directory set for new organizations
+ * @param  object $org organization object
+ * @return null
+ */
 if (! function_exists('generateDirectoriesForOrg')) {
-    /**
-     * generate default directory set for new organizations
-     * @param  object $org organization object
-     * @return null
-     */
     function generateDirectoriesForOrg($org)
     {
         $path = getAllDirectoryPathFM($org);
@@ -1113,11 +1121,11 @@ if (! function_exists('generateDirectoriesForOrg')) {
     }
 }
 
+/**
+ * for filemanager config default path for filemanager (do not change)
+ * @return string folder path
+ */
 if (! function_exists('getDefaultPathFM')) {
-    /**
-     * for filemanager config default path for filemanager (do not change)
-     * @return string folder path
-     */
     function getDefaultPathFM()
     {
         $currentPerson = Person::find(auth()->user()->id);
@@ -1127,34 +1135,36 @@ if (! function_exists('getDefaultPathFM')) {
     }
 }
 
+/**
+ * return value of default disk for file manager
+ * @return string diskname
+ */
 if (! function_exists('getDefaultDiskFM')) {
-    /**
-     * return value of default disk for file manager
-     * @return string diskname
-     */
     function getDefaultDiskFM()
     {
         return 's3_media';
     }
 }
+
+/**
+ * return all available disk for file manager
+ * @return array of disk names
+ */
 if (! function_exists('getAllDiskFM')) {
-    /**
-     * return all available disk for file manager
-     * @return array of disk names
-     */
     function getAllDiskFM()
     {
         // return ['public', 's3_receipts', 's3_media', 'events'];
         return ['s3_media'];
     }
 }
+
+/**
+ * get count and email list for selected user org
+ * @param  object  $currentPerson model object
+ * @param  bool $for_select    if needed for dropdown use true
+ * @return array                 either only name and id or complete details
+ */
 if (! function_exists('getEmailList')) {
-    /**
-     * get count and email list for selected user org
-     * @param  object  $currentPerson model object
-     * @param  bool $for_select    if needed for dropdown use true
-     * @return array                 either only name and id or complete details
-     */
     function getEmailList($currentPerson, $for_select = false)
     {
         $rows = [];
@@ -1276,13 +1286,14 @@ if (! function_exists('getEmailList')) {
         }
     }
 }
+
+/**
+ * get default email list (list from efcico corporation)
+ * @param  object  $currentPerson default
+ * @param  bool $for_select    only for dropdown
+ * @return array                  either only name and id or complete details
+ */
 if (! function_exists('getDefaultEmailList')) {
-    /**
-     * get default email list (list from efcico corporation)
-     * @param  object  $currentPerson default
-     * @param  bool $for_select    only for dropdown
-     * @return array                  either only name and id or complete details
-     */
     function getDefaultEmailList($currentPerson, $for_select = false)
     {
         $defaults = EmailList::where('orgID', 1)->get();
@@ -1320,13 +1331,13 @@ if (! function_exists('getDefaultEmailList')) {
     }
 }
 
+/**
+ * get email list from email list management
+ * @param  int $list_id list management id
+ * @param  int $org_id  organization id
+ * @return array        email id list
+ */
 if (! function_exists('getEmailListContact')) {
-    /**
-     * get email list from email list management
-     * @param  int $list_id list management id
-     * @param  int $org_id  organization id
-     * @return array        email id list
-     */
     function getEmailListContact($list_id, $org_id)
     {
         $list = EmailList::whereId($list_id)->get()->first();
@@ -1442,12 +1453,13 @@ if (! function_exists('getEmailListContact')) {
         return $email_list;
     } //function end
 }
+
+/**
+ * convert date to date picker format
+ * @param  string $date_time mysql date string
+ * @return string in datepicker formate (m/d/Y h:i A)
+ */
 if (! function_exists('convertToDatePickerFormat')) {
-    /**
-     * convert date to date picker format
-     * @param  string $date_time mysql date string
-     * @return string in datepicker formate (m/d/Y h:i A)
-     */
     function convertToDatePickerFormat($date_time)
     {
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
@@ -1455,12 +1467,13 @@ if (! function_exists('convertToDatePickerFormat')) {
         return $date->format('m/d/Y h:i A');
     }
 }
+
+/**
+ * delete campaign thumbnail image from s3
+ * @param  object $campaign campaign model
+ * @return bool          true/false
+ */
 if (! function_exists('deleteCampaignThumb')) {
-    /**
-     * delete campaign thumbnail image from s3
-     * @param  object $campaign campaign model
-     * @return bool          true/false
-     */
     function deleteCampaignThumb($campaign)
     {
         $path = getAllDirectoryPathFM();
@@ -1471,13 +1484,13 @@ if (! function_exists('deleteCampaignThumb')) {
     }
 }
 
+/**
+ * generate lat lng for existing address for testing only bunch on 20
+ * @param  string  $type single / all address
+ * @param bool $for_org true if lat lng is needed for organization
+ * @return bool true/false
+ */
 if (! function_exists('generateLatLngForAddress')) {
-    /**
-     * generate lat lng for existing address for testing only bunch on 20
-     * @param  string  $type single / all address
-     * @param bool $for_org true if lat lng is needed for organization
-     * @return bool true/false
-     */
     function generateLatLngForAddress($address, $for_org = false)
     {
         if (! empty($address)) {
@@ -1573,11 +1586,12 @@ if (! function_exists('generateLatLngForAddress')) {
         return false;
     }
 }
+
+/**
+ * store lat long for existing address by zip code
+ * @return void
+ */
 if (! function_exists('storeLatiLongiFormZip')) {
-    /**
-     * store lat long for existing address by zip code
-     * @return void
-     */
     function storeLatiLongiFormZip()
     {
         $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
@@ -1598,13 +1612,13 @@ if (! function_exists('storeLatiLongiFormZip')) {
     }
 }
 
+/**
+ * check if org property exist and return its value if found
+ * @param  object  $org      org object
+ * @param  array  $property template category array
+ * @return boolean/string   bool if not found otherwise string.
+ */
 if (! function_exists('has_org_property')) {
-    /**
-     * check if org property exist and return its value if found
-     * @param  object  $org      org object
-     * @param  array  $property template category array
-     * @return boolean/string   bool if not found otherwise string.
-     */
     function has_org_property($org, $property)
     {
         switch ($property['name']) {
@@ -1757,12 +1771,12 @@ if (! function_exists('has_org_property')) {
     }
 }
 
+/**
+ * get event ids with date and name wise list from event query object.
+ * @param  object $event event model object
+ * @return array        ids, datewithname, min & max dates
+ */
 if (! function_exists('generateEmailListEventArray')) {
-    /**
-     * get event ids with date and name wise list from event query object.
-     * @param  object $event event model object
-     * @return array        ids, datewithname, min & max dates
-     */
     function generateEmailListEventArray($event)
     {
         $ytd_events_date = [];
@@ -1808,12 +1822,13 @@ if (! function_exists('generateEmailListEventArray')) {
         ];
     }
 }
+
+/**
+ * return js compactible date from daterangepicker specific date
+ * @param  string $date m/d/Y style date
+ * @return string       Y-m-d style date
+ */
 if (! function_exists('getJavaScriptDate')) {
-    /**
-     * return js compactible date from daterangepicker specific date
-     * @param  string $date m/d/Y style date
-     * @return string       Y-m-d style date
-     */
     function getJavaScriptDate($date)
     {
         $date = trim($date);
@@ -1829,12 +1844,12 @@ if (! function_exists('getJavaScriptDate')) {
     }
 }
 
+/**
+ * replace address string for email builder footer with org address
+ * @param  array $item category 6 rows
+ * @return array       row data with updated address
+ */
 if (! function_exists('replaceAddressWithOrgAddress')) {
-    /**
-     * replace address string for email builder footer with org address
-     * @param  array $item category 6 rows
-     * @return array       row data with updated address
-     */
     function replaceAddressWithOrgAddress($item)
     {
         $default = 'Your company, Pier 9, San Francisco, CA 12345';
@@ -1894,12 +1909,12 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
     }
 }
 
+/**
+ * replace social icon links with actual links, hides if link is not set.
+ * @param  array $item category 6 rows
+ * @return array       row data with updated links and style
+ */
 if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
-    /**
-     * replace social icon links with actual links, hides if link is not set.
-     * @param  array $item category 6 rows
-     * @return array       row data with updated links and style
-     */
     function replaceSocialLinksWithOrgSocialLinks($item)
     {
         $parsed = new Dom;
@@ -1997,6 +2012,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
         return $item;
     }
 }
+
 if (! function_exists('sendGetToWakeUpDyno')) {
     function sendGetToWakeUpDyno()
     {
@@ -2016,12 +2032,12 @@ if (! function_exists('sendGetToWakeUpDyno')) {
     }
 }
 
+/**
+ * replace social icon links with actual links, hides if link is not set.
+ * @param  array $item category 6 rows
+ * @return array       row data with updated links and style
+ */
 if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
-    /**
-     * replace social icon links with actual links, hides if link is not set.
-     * @param  array $item category 6 rows
-     * @return array       row data with updated links and style
-     */
     function getAllLinksFromCampaignHTML($campaign)
     {
         $parsed = new Dom;

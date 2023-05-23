@@ -1059,11 +1059,6 @@ return [
             'line3' => 'Si no lo hizo, puede volver a cambiarlo usando el botón a continuación.',
             'action' => 'Deshacer Cambio de Login',
         ],
-        // Member Import Complete
-        'member_import' => [
-            'subject' => 'Importación Completada',
-            'line1' => ':user, la importación de miembros se ha completado.',
-        ],
         // New Registration Account Creation
         'new_reg_acct' => [
             'subject' => 'Su cuenta de mCentric con :org',
@@ -1112,32 +1107,25 @@ return [
             'line3' => 'If you do not need to reset your password, you can this delete this email.',
             'action' => 'Reset Password',
         ],
-        // NewUserAcct
-        'new_user_acct' => [
-            'subject' => 'Su cuenta mCentric con :org',
-            'line1' => 'Una cuenta de mCentric fue configurada para usted por :name con :org.',
-            'line2' => 'Su inicio de sesión es la dirección de correo electrónico donde recibe esta notificación.',
-            'line3' => 'La contraseña que se estableció para usted es: \':pass\'',
-        ],
-
-        //Member import complete
+        // Member Import Complete
         'member_import' => [
             'subject' => 'Importación Completada',
-            'line1' => 'es- :name, la importación de miembros ha finalizado.',
-            'subject' => 'es-Import Complete',
             'subject_failed' => 'es-Import Failed',
             'subject_warning' => 'es-Import Completed with errors',
-            'imp_success' => 'es-:user, the member import for file :file_name was successful. Completed on :completed_date',
-            'imp_failed' => 'es-:user, the member import for file :file_name has failed. No records were imported. Please check the file.',
-            'imp_warning' => 'es-:user, the member import for file :file_name had some errors. All records were not processed. Completed on :completed_date',
-            'total' => 'es-Total Records : :total',
-            'inserted' => 'es-Inserted Records : :inserted',
-            'updated' => 'es-Updated Records : :updated',
-            'failed' => 'es-Failed Records : :failed',
-            'failed_record' => 'es-Failed Records : :records',
-            'no_identifier' => 'es-No unique identifier found for this row.',
-            'nothing_to_update' => 'es-No update or insert operation was performed.',
-            'rel_update' => 'Records with Mismatch PMI Join Date or Chapter Joining Date',
+            'imp_success' => 'es-:user, la importación de miembros para el archivo :file_name fue exitosa. Completado en :completed_date',
+            'imp_failed' => 'es-:user, la importación de miembros para el archivo :file_name puede haber fallado. 
+                             No se importaron registros. Por favor revise el archivo.',
+            'imp_warning' => 'es-:user, la importación de miembros para el archivo :file_name tuvo algunos errores. 
+                              Todos los registros no fueron procesados. Completado en :completed_date',
+            'total' => 'Registros totales: :total',
+            'inserted' => 'Registros insertados : :inserted',
+            'line1' => ':user, la importación de miembros se ha completado.',
+            'updated' => 'Registros actualizados: :updated',
+            'failed' => 'Registros fallidos: :failed',
+            'failed_record' => 'Registros fallidos: :records',
+            'no_identifier' => 'No se encontró un identificador único para esta fila.',
+            'nothing_to_update' => 'No se realizó ninguna operación de actualización o inserción.',
+            'rel_update' => 'Registros con fecha de ingreso al PMI o fecha de ingreso al capítulo no coincidentes.',
         ],
         // TicketIt Notification
         'ticketit' => [

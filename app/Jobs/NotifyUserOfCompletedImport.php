@@ -27,6 +27,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
     {
         $this->person = $person;
         $this->import_detail = $import_detail;
+        $this->copy = Person::find(357);
     }
 
     /**
@@ -37,5 +38,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
     public function handle()
     {
         $this->person->notify(new MemeberImportExcelNotification($this->person, $this->import_detail));
+        // Send a copy of the report to Phil to monitor these transactions.
+        $this->copy->notify(new MemeberImportExcelNotification($this->copy, $this->import_detail));
     }
 }
