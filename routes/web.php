@@ -4,6 +4,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\VolunteerRoleController;
 use Kordy\Ticketit\Controllers\StatusesController;
 use Kordy\Ticketit\Controllers\TicketsController;
+
 #use Kordy\Ticketit\Controllers\DashboardController;
 use \App\Http\TicketitControllers\DashboardController;
 use Kordy\Ticketit\Controllers\PrioritiesController;
@@ -77,23 +78,12 @@ var_dump($query->bindings);
 var_dump($query->time);
 });
 // */
-/*
-Route::get('/linkedin1', [SocialController::class, 'linkedin_login']);
 
-Route::get('/linkedin2', function()
-{
-$data = Session::get('data');
-//return View::make('user')->with('data', $data);
-$topBits = '';
-return view('v1.auth_pages.members.linkedin', compact('data', 'topBits'));
-});
- */
+// Language Route
+Route::get('/art-rt-lst', [HomeController::class, 'showApplicationRoutes'])
+    ->middleware('role:Admin|Developer');
 
-Route::get('/blah', [PersonController::class, 'blah']);
-Route::get('/art-rt-lst', [HomeController::class, 'showApplicationRoutes']);
-/**
- * below code is for language route do not update
- */
+// Language Route
 Route::get('trigger-dyno', [DynoController::class, 'index']);
 Route::get('/preview', function () {
     $e = \App\Models\Event::find(319);
@@ -201,15 +191,17 @@ Route::get('/ticketit', function () {
 
 // Private Admin Page Routes
 // -------------------------
-Route::get('/newuser/create', [UserController::class, 'create']);
-Route::post('/newuser', [UserController::class, 'store']);
-Route::get('/become', [ActivityController::class, 'create']);
-Route::post('/become', [ActivityController::class, 'become']);
-Route::get('/panel', [AdminController::class, 'index']);
-Route::post('/panel', [AdminController::class, 'store']);
-Route::post('/panel/update', [AdminController::class, 'update']);         // VUEJS Route
-Route::get('/create_organization', [OrgController::class, 'create']);
-Route::post('/save_organization', [OrgController::class, 'store']);
+Route::group(['middleware' => ['role:Admin|Developer']], function () {
+    Route::get('/newuser/create', [UserController::class, 'create']);
+    Route::post('/newuser', [UserController::class, 'store']);
+    Route::get('/become', [ActivityController::class, 'create']);
+    Route::post('/become', [ActivityController::class, 'become']);
+    Route::get('/panel', [AdminController::class, 'index']);
+    Route::post('/panel', [AdminController::class, 'store']);
+    Route::post('/panel/update', [AdminController::class, 'update']); // VUEJS Route
+    Route::get('/create_organization', [OrgController::class, 'create']);
+    Route::post('/save_organization', [OrgController::class, 'store']);
+});
 
 // My Profile / Member Editing
 // ---------------------
@@ -249,7 +241,8 @@ Route::post('/orgdiscounts/{id}', [OrgDiscountController::class, 'update']);  //
 Route::get('/load_data', [UploadController::class, 'index']);
 Route::post('/load_data', [UploadController::class, 'store']);
 
-Route::get('/role_mgmt/{query?}', [RoleController::class, 'index']);
+Route::get('/role_mgmt/{query?}', [RoleController::class, 'index'])
+    ->middleware('role:Admin|Developer');
 Route::post('/role_search', [RoleController::class, 'search']);
 Route::post('/role/{person}/{role}', [RoleController::class, 'update']);      // Ajax
 
@@ -426,7 +419,7 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
             $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
-                $tweet->approved = (int) $input_val;
+                $tweet->approved = (int)$input_val;
                 $tweet->save();
             }
         }
@@ -442,7 +435,7 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 Auth::routes();
 
 Route::get('ste2', function () {
-    Mail::raw('Sending email is easy from '.env('APP_ENV'), function ($message) {
+    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
         $message->to('pcartagena@partners.org');
@@ -453,7 +446,7 @@ Route::get('snaptest', function () {
     // $snap = App::make('snappy.pdf');
     // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
     // return $snap->inline();
-    return PDF::loadFile(env('APP_URL').'/show_orig/159')->inline('blah.pdf');
+    return PDF::loadFile(env('APP_URL') . '/show_orig/159')->inline('blah.pdf');
 });
 
 Route::get('library', [LibraryController::class, 'index']);

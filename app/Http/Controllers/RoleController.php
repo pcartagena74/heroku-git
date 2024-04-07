@@ -65,18 +65,30 @@ class RoleController extends Controller
         // DB::enableQueryLog();
 
         if ($query !== null) {
-            $persons = Person::orWhere('firstName', 'LIKE', "%$query%")
-                ->orWhere('lastName', 'LIKE', "%$query%")
-                ->orWhere('login', 'LIKE', "%$query%")
-                ->orWhere('personID', 'LIKE', "%$query%")
-                ->orWhereHas('orgperson', function ($q) use ($query) {
-                    $q->where('OrgStat1', 'LIKE', "%$query%");
+            if ($query == "everyone") {
+                $persons = Person::whereHas('roles', function ($q) use ($org) {
+                    $q->whereIn('role_id', [1, 3, 4, 6, 7, 8]);
+                    $q->where('orgId', $org->orgID);
                 })
-                ->orWhereHas('emails', function ($q) use ($query) {
-                    $q->where('emailADDR', 'LIKE', "%$query%");
-                })
-                ->with('roles', 'orgperson')
-                ->get();
+                    ->with('roles', 'orgperson')
+                    ->get();
+            } else {
+                $persons = Person::orWhere('firstName', 'LIKE', "%$query%")
+                    ->orWhere('lastName', 'LIKE', "%$query%")
+                    ->orWhere('login', 'LIKE', "%$query%")
+                    ->orWhere('personID', 'LIKE', "%$query%")
+                    ->orWhereHas('orgperson', function ($q) use ($query) {
+                        $q->where('OrgStat1', 'LIKE', "%$query%");
+                    })
+                    ->orWhereHas('emails', function ($q) use ($query) {
+                        $q->where('emailADDR', 'LIKE', "%$query%");
+                    })
+                    ->orWhereHas('roles', function ($q) use ($query) {
+                        $q->where('name', 'LIKE', "%$query%");
+                    })
+                    ->with('roles', 'orgperson')
+                    ->get();
+            }
         }
 
         return view('v1.auth_pages.organization.role_mgmt_search',
@@ -87,7 +99,7 @@ class RoleController extends Controller
     {
         $string = $request->input('string');
 
-        return redirect('/role_mgmt/'.$string);
+        return redirect('/role_mgmt/' . $string);
     }
 
     public function show($id)
@@ -117,7 +129,8 @@ class RoleController extends Controller
         $orgID_needed = 0;
 
         // toggle the role selected
-        //as toggle does not offer extra parameter to be added like attach does we are removing toggle and manually attaching or detaching it.
+        // As toggle does not offer extra parameter to be added like attach does we are removing toggle and
+        // manually attaching or detaching it.
         $attach = true;
         $admin = Person::find(auth()->user()->id);
         $user_role_pivot = DB::table('role_user')
@@ -138,11 +151,11 @@ class RoleController extends Controller
         //not needed now as orgname role is not needed admin will be the admin of that org
         if (isset($person->org_role_id()->id) && false) {
             // Check to see if a role for the orgName is in the DB...
-            if (! $person->roles->contains('id', $person->org_role_id()->id)) {
+            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
                 $orgID_needed = 1;
             }
             // Remove the orgName role if it's the only one...
-            if (count($person->roles) == 1 && ! $orgID_needed) {
+            if (count($person->roles) == 1 && !$orgID_needed) {
                 $person->roles->forget('id', $person->org_role_id()->id);
             }
 
@@ -166,10 +179,10 @@ class RoleController extends Controller
          */
 
         $message =
-            '<div class="well bg-blue">'.trans(
+            '<div class="well bg-blue">' . trans(
                 'messages.instructions.role_toggle',
                 ['role' => $role->display_name, 'person' => $person->showFullName()]
-            ).'</div>';
+            ) . '</div>';
 
         return json_encode(['status' => 'success', 'message' => $message]);
     }

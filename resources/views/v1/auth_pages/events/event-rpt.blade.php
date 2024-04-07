@@ -354,6 +354,7 @@
                 <li class=""><a href="#tab_content2" id="finances-tab" data-toggle="tab"
                                 aria-expanded="false"><b>@lang('messages.headers.det_fd')</b></a></li>
             @endif
+
         </ul>
 
         <div id="tab-content" class="tab-content">
@@ -668,11 +669,13 @@
 
                 </div>
             @endif
-            <div class="tab-pane {{ $format == 'fin' ? 'active' : 'fade' }}" id="tab_content2"
-                 aria-labelledby="finances-tab">
-                &nbsp;<br/>
-                @include('v1.parts.datatable', ['headers' => $disc_headers, 'data' => $disc_rows, 'scroll' => 0])
-            </div>
+            @if(Entrust::hasRole('Board') || Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                <div class="tab-pane {{ $format == 'fin' ? 'active' : 'fade' }}" id="tab_content2"
+                     aria-labelledby="finances-tab">
+                    &nbsp;<br/>
+                    @include('v1.parts.datatable', ['headers' => $disc_headers, 'data' => $disc_rows, 'scroll' => 0])
+                </div>
+            @endif
         </div>
     </div>
 

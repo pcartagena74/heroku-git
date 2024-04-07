@@ -64,75 +64,109 @@
 @endif
 
 @if(!$past)
-    <!-- div class="col-xs-1" -->
-    <a href='{{ $editURL }}' class='btn btn-primary btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.fields.edit_event') }}'><i class='far fa-fw fa-pencil'></i></a>
-    <!-- /div -->
-
-    <!-- div class="col-xs-1" -->
-    <a href='{{ $eventDiscountURL }}' class='btn btn-success btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') }}'>{!! trans('messages.symbols.cur') !!}</a>
-    <!-- /div -->
-
-    <!-- div class="col-xs-1" -->
-    <a href='{{ $tktURL }}' class='btn btn-info btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.buttons.edit_tkt') }}'><i class='far fa-fw fa-ticket-alt'></i></a>
-    <!-- /div -->
-
-    @if($event->hasTracks)
-        <!-- div class="col-xs-1" -->
-        <a href='{{ $trackURL }}' class='btn btn-brown btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-           title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
-        <!-- /div -->
+    <!-- Edit Event Button -->
+    @if(Entrust::can('event-management'))
+        <a href='{{ $editURL }}' class='btn btn-primary btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.fields.edit_event') }}'><i class='far fa-fw fa-pencil'></i></a>
     @endif
-@elseif(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
-    <a href='{{ $editURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.fields.edit_event') }}'><i class='far fa-fw fa-pencil'></i></a>
-    <a href='{{ $eventDiscountURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') }}'>{!! trans('messages.symbols.cur') !!}</a>
-    <a href='{{ $tktURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.buttons.edit_tkt') }}'><i class='far fa-fw fa-ticket-alt'></i></a>
-    @if($event->hasTracks)
-        <a href='{{ $trackURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-           title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
-    @endif
-@endif
 
-<!-- div class="col-xs-1" -->
-<a href='{{ $rptURL }}' class='btn btn-purple btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-   title='{{ trans('messages.headers.ev_rpt') }}'><i class='far fa-fw fa-chart-bar'></i></a>
-<!-- /div -->
-
-<!-- div class="col-xs-1" -->
-<a href='{{ $copyURL }}' class='btn btn-deep-orange btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-   onclick="return confirm('{{ trans('messages.tooltips.sure_copy') }}');"
-   title='{{ trans('messages.headers.ev_copy') }}'><i class='far fa-fw fa-copy'></i></a>
-<!-- /div -->
-
-@if($event->hasTracks > 0 && $event->checkin_period())
-    <!-- div class="col-xs-1" -->
-    <a href='{{ $recordURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.buttons.rec_att') }}'><i class='far fa-fw fa-check-square'></i></a>
-    <!-- /div -->
-@endif
-
-@if($event->isActive && !$past)
-
-    <a href='{{ $groupURL }}' class='btn btn-success btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-       title='{{ trans('messages.nav.ev_grp') }}'><i class="fas fa-users"></i></a>
-@endif
-
-    @if($event->checkin_time())
-    @if($event->hasTracks > 0)
-        <!-- div class="col-xs-1" -->
-        <a href='{{ $checkinURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
-           title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
-        <!-- /div -->
-    @else
-        <a href='{{ $rptURL }}#tab_content7' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip'
+    <!-- Event Discount Button -->
+    @if(Entrust::can('event-management'))
+        <a href='{{ $eventDiscountURL }}' class='btn btn-success btn-{{ $size }}' data-toggle='tooltip'
            data-placement='top'
-           title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
+           title='{{ trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') }}'>{!! trans('messages.symbols.cur') !!}</a>
     @endif
+
+    <!-- Edit Ticket Button -->
+    @if(Entrust::can('event-management'))
+        <a href='{{ $tktURL }}' class='btn btn-info btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.buttons.edit_tkt') }}'><i class='far fa-fw fa-ticket-alt'></i></a>
+    @endif
+
+    @if(Entrust::can('event-management'))
+        @if($event->hasTracks)
+            <!-- Edit Track Button -->
+            <a href='{{ $trackURL }}' class='btn btn-brown btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+               title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
+        @endif
+    @endif
+
+@elseif(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+
+    <!-- Edit Event Button -->
+    @if(Entrust::can('event-management'))
+        <a href='{{ $editURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.fields.edit_event') }}'><i class='far fa-fw fa-pencil'></i></a>
+    @endif
+
+    <!-- Event Discount Button -->
+    @if(Entrust::can('event-management'))
+        <a href='{{ $eventDiscountURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip'
+           data-placement='top'
+           title='{{ trans('messages.fields.edit_event'). " " . trans('messages.fields.discs') }}'>{!! trans('messages.symbols.cur') !!}</a>
+    @endif
+
+    <!-- Event Discount Button -->
+    @if(Entrust::can('event-management'))
+        <a href='{{ $tktURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.buttons.edit_tkt') }}'><i class='far fa-fw fa-ticket-alt'></i></a>
+    @endif
+
+    <!-- Tracks Button -->
+    @if(Entrust::can('event-management'))
+        @if($event->hasTracks)
+            <a href='{{ $trackURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+               title='{{ trans('messages.buttons.t&s_edit') }}'><i class='far fa-fw fa-container-storage'></i></a>
+        @endif
+    @endif
+
+@endif
+
+<!-- Report Button -->
+@if(Entrust::can('event-management') || Entrust::can('member-management'))
+    <a href='{{ $rptURL }}' class='btn btn-purple btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+       title='{{ trans('messages.headers.ev_rpt') }}'><i class='far fa-fw fa-chart-bar'></i></a>
+@endif
+
+
+<!-- Copy Event Button -->
+@if(Entrust::can('event-management'))
+    <a href='{{ $copyURL }}' class='btn btn-deep-orange btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+       onclick="return confirm('{{ trans('messages.tooltips.sure_copy') }}');"
+       title='{{ trans('messages.headers.ev_copy') }}'><i class='far fa-fw fa-copy'></i></a>
+@endif
+
+<!-- Attendance Tracking -->
+@if(Entrust::can('event-management'))
+    @if($event->hasTracks > 0 && $event->checkin_period())
+        <a href='{{ $recordURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.buttons.rec_att') }}'><i class='far fa-fw fa-check-square'></i></a>
+    @endif
+@endif
+
+<!-- Groups/Invoicing -->
+@if($event->isActive && !$past)
+    @if(Entrust::can('event-management'))
+        <a href='{{ $groupURL }}' class='btn btn-success btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+           title='{{ trans('messages.nav.ev_grp') }}'><i class="fas fa-users"></i></a>
+    @endif
+@endif
+
+<!-- Check-In -->
+@if(Entrust::can('event-management'))
+    @if($event->checkin_time())
+        @if($event->hasTracks > 0)
+            <!-- div class="col-xs-1" -->
+            <a href='{{ $checkinURL }}' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
+               title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
+            <!-- /div -->
+        @else
+            <a href='{{ $rptURL }}#tab_content7' class='btn btn-pink btn-{{ $size }}' data-toggle='tooltip'
+               data-placement='top'
+               title='{{ trans('messages.buttons.chk_vol') }}'><i class='far fa-fw fa-clipboard'></i></a>
+        @endif
+    @endif
+
 @elseif(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
     @if($event->hasTracks > 0)
         <a href='{{ $checkinURL }}' class='btn btn-gray btn-{{ $size }}' data-toggle='tooltip' data-placement='top'
@@ -144,13 +178,13 @@
     @endif
 @endif
 
-@if(!$event->isActive && $event->regCount() == 0)
-    <!-- div class="col-xs-1" -->
+@if(!$event->isActive && $event->regCount() == 0
+    && (Entrust::hasRole('Developer') || Entrust::hasRole('Admin')))
+    <!-- Delete Event -->
     {!! Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) !!}
     <button class="btn btn-danger btn-{{ $size }}" data-toggle="tooltip" data-placement="top"
             onclick="return confirm('{{ trans('messages.tooltips.sure') }}');"
             title="{{ trans('messages.buttons.delete') }}"> {!! trans('messages.symbols.trash') !!}</button>
     <input id="myDelete" type="submit" value="Go" class="hidden"/>
     {!! Form::close() !!}
-    <!-- /div -->
 @endif
