@@ -100,6 +100,8 @@
                             @endif
                         </ul>
                     </li>
+
+                    <!-- Admin Functions Menu -->
                     @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
                         <li>
                             <a> <i class="fas fa-fw fa-lock-alt"></i> @lang('messages.nav.admin')
@@ -121,6 +123,7 @@
                         </li>
                     @endif
 
+                    <!-- Org Settings Menu -->
                     @if (Entrust::hasRole('Board') || Entrust::hasRole('Admin') ||
                         Entrust::hasRole('Developer') || Entrust::can('event-management'))
                         <li>
@@ -142,6 +145,7 @@
                         </li>
                     @endif
 
+                    <!-- Event Management Menu -->
                     @if(Entrust::hasRole('Board') || Entrust::can('speaker-management') ||
                         Entrust::can('event-management') || Entrust::can('member-management')
                         || Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
@@ -166,6 +170,7 @@
                         </li>
                     @endif
 
+                    <!-- Member Management Menu -->
                     @if(((Entrust::hasRole('Board')|| Entrust::can('member-management')))
                         || Entrust::hasRole('Admin') || Entrust::hasRole('Developer') )
                         <li><a> <i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')
@@ -196,6 +201,7 @@
                         </li>
                     @endif
 
+                    <!-- Speaker Management Menu -->
                     @if(((Entrust::hasRole('Board') ||
                             Entrust::can('event-management') || Entrust::can('speaker-management')))
                         || Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
@@ -210,6 +216,7 @@
                         </li>
                     @endif
 
+                    <!-- Email Marketing Menu -->
                     @if(Entrust::hasRole('Developer') || Entrust::hasRole('Marketing'))
                         <li><a><i class="far fa-fw fa-envelope"></i> @lang('messages.nav.em_mktg')
                                 <span class="far fa-pull-right fa-chevron-down"></span></a>
@@ -221,6 +228,8 @@
                             </ul>
                         </li>
                     @endif
+
+                    <!-- Help Desk Menu -->
                     <li style="display: none">
                         <a href="{{ route('tickets.my-tickets')}}"><i class="fas fa-fw fa-ticket-alt"></i>
                             @lang('messages.nav.my_support') <span class="far fa-pull-right"></span></a>

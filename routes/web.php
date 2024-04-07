@@ -194,7 +194,6 @@ Route::get('/ticketit', function () {
 Route::group(['middleware' => ['role:Admin|Developer']], function () {
     Route::get('/newuser/create', [UserController::class, 'create']);
     Route::post('/newuser', [UserController::class, 'store']);
-    Route::get('/become', [ActivityController::class, 'create']);
     Route::post('/become', [ActivityController::class, 'become']);
     Route::get('/panel', [AdminController::class, 'index']);
     Route::post('/panel', [AdminController::class, 'store']);
@@ -202,6 +201,8 @@ Route::group(['middleware' => ['role:Admin|Developer']], function () {
     Route::get('/create_organization', [OrgController::class, 'create']);
     Route::post('/save_organization', [OrgController::class, 'store']);
 });
+// This needs to be outside to that unbecome can work
+Route::get('/become', [ActivityController::class, 'create']);
 
 // My Profile / Member Editing
 // ---------------------
