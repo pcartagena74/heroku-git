@@ -1,58 +1,58 @@
 @php
-/**
- * Comment: This template is used to show a member profile --> either self or, when authorized, others
- * Created: 2/9/2017
- *
- * @var $profile
- * @var $em_cnt
- * @var $ad_cnt
- * @var $prefixes
- *
- */
+    /**
+     * Comment: This template is used to show a member profile --> either self or, when authorized, others
+     * Created: 2/9/2017
+     *
+     * @var $profile
+     * @var $em_cnt
+     * @var $ad_cnt
+     * @var $prefixes
+     *
+     */
 
-use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\DB;
 
-$currentPerson = App\Models\Person::find(auth()->user()->id);
-$string = '';
-$profile_script_url = env('APP_URL') . "/profile/$profile->personID";
-$op_script_url = env('APP_URL') . "/op/$profile->personID";
-$addrURL = env('APP_URL') . "/address/";
-$emailURL = env('APP_URL') . "/email/";
-$phoneURL = env('APP_URL') . "/phone/";
-$ad_cnt = 0;  $em_cnt = 0; $ph_cnt = 0;
+    $currentPerson = App\Models\Person::find(auth()->user()->id);
+    $string = '';
+    $profile_script_url = env('APP_URL') . "/profile/$profile->personID";
+    $op_script_url = env('APP_URL') . "/op/$profile->personID";
+    $addrURL = env('APP_URL') . "/address/";
+    $emailURL = env('APP_URL') . "/email/";
+    $phoneURL = env('APP_URL') . "/phone/";
+    $ad_cnt = 0;  $em_cnt = 0; $ph_cnt = 0;
 
-if(Entrust::hasRole('Admin')){
-    if ($profile->personID == $currentPerson->personID) {
-        $display = '<b style="color:red;">' . trans('messages.headers.your') . "</b>";
+    if(Entrust::hasRole('Admin')){
+        if ($profile->personID == $currentPerson->personID) {
+            $display = '<b style="color:red;">' . trans('messages.headers.your') . "</b>";
+        } else {
+            $display = '<b style="color:red;">' . $profile->firstName . " " . $profile->lastName . "'s</b>";
+        }
     } else {
-        $display = '<b style="color:red;">' . $profile->firstName . " " . $profile->lastName . "'s</b>";
+        if ($profile->personID == $currentPerson->personID) {
+            $display = trans('messages.headers.my');
+        } else {
+            $display = '<b style="color:red;">' . $profile->firstName . " " . $profile->lastName . "'s</b>";
+        }
     }
-} else {
-    if ($profile->personID == $currentPerson->personID) {
-        $display = trans('messages.headers.my');
-    } else {
-        $display = '<b style="color:red;">' . $profile->firstName . " " . $profile->lastName . "'s</b>";
+
+    $address_type = DB::select("select addrType as 'text', addrType as 'value' from `address-type`");
+    $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
+    $email_type = DB::select("select emailType as 'text', emailType as 'value' from `email-type`");
+    $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from countries");
+    $phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from `phone-type`");
+
+    $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
+    $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
+
+    $chapters = DB::table('organization')->where('orgID', $profile->defaultOrgID)->select('regionChapters')->first();
+    $array = explode(',', $chapters->regionChapters);
+
+    $i = 0;
+    foreach ($array as $chap) {
+        $i++;
+        $chap = trim($chap);
+        $affiliation_array[$i] = $chap;
     }
-}
-
-$address_type = DB::select("select addrType as 'text', addrType as 'value' from `address-type`");
-$state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
-$email_type = DB::select("select emailType as 'text', emailType as 'value' from `email-type`");
-$country_list = DB::select("select cntryID as 'value', cntryName as 'text' from countries");
-$phone_type = DB::select("select phoneType as 'text', phoneType as 'value' from `phone-type`");
-
-$allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
-$allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
-
-$chapters = DB::table('organization')->where('orgID', $profile->defaultOrgID)->select('regionChapters')->first();
-$array = explode(',', $chapters->regionChapters);
-
-$i = 0;
-foreach ($array as $chap) {
-    $i++;
-    $chap = trim($chap);
-    $affiliation_array[$i] = $chap;
-}
 
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -73,6 +73,21 @@ foreach ($array as $chap) {
         <div id="tab-content" class="tab-content">
             <div class="tab-pane active" id="tab_content1" aria-labelledby="profile-tab">
                 &nbsp;<br/>
+                @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <b>@lang('messages.headers.profile_vars.lastlog'):</b>
+                        {{ $profile->lastLoginDate }}
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <b>@lang('messages.headers.profile_vars.created'):</b>
+                        {{ $profile->createDate }}
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <b>@lang('messages.headers.profile_vars.updated'):</b>
+                        {{ $profile->updateDate }}
+                    </div>
+
+                @endif
 
                 @include('v1.parts.start_content', ['header' => $display . ' ' . trans('messages.profile.prof_info'),
                          'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
@@ -90,7 +105,8 @@ foreach ($array as $chap) {
                     <tbody>
                     <tr>
                         <td style="text-align: left;">
-                            <a href="#" id="prefix" data-title="{{ trans('messages.fields.prefix') }}">{{ $profile->prefix }}</a>
+                            <a href="#" id="prefix"
+                               data-title="{{ trans('messages.fields.prefix') }}">{{ $profile->prefix }}</a>
                         </td>
                         <td style="text-align: left;">
                             {{-- Check OrgStat1 (PMI ID) to check that PMI provided the first & last name --}}
@@ -107,7 +123,8 @@ foreach ($array as $chap) {
                         </td>
 
                         <td style="text-align: left;">
-                            <a href="#" id="midName" data-title="{{ trans('messages.fields.midName') }}">{{ $profile->midName }}</a>
+                            <a href="#" id="midName"
+                               data-title="{{ trans('messages.fields.midName') }}">{{ $profile->midName }}</a>
                         </td>
                         <td style="text-align: left;">
                             @if($profile->OrgStat1 && !Entrust::hasRole('Admin'))
@@ -122,7 +139,8 @@ foreach ($array as $chap) {
                             @endif
                         </td>
                         <td style="text-align: left;">
-                            <a href="#" id="suffix" data-title="{{ trans('messages.fields.suffix') }}">{{ $profile->suffix }}</a>
+                            <a href="#" id="suffix"
+                               data-title="{{ trans('messages.fields.suffix') }}">{{ $profile->suffix }}</a>
                         </td>
                     </tr>
                     <tr>
@@ -136,11 +154,20 @@ foreach ($array as $chap) {
                         </th>
                     </tr>
                     <tr>
-                        <td style="text-align: left;"><a href="#" id="prefName" data-title="{{ trans('messages.fields.prefName') }}">{{ $profile->prefName }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="indName" data-title="{{ trans('messages.fields.indName') }}">{{ $profile->indName }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="compName" data-title="{{ trans('messages.fields.compName') }}">{{ $profile->compName }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="title" data-title="{{ trans('messages.profile.directions.title') }}">{{ $profile->title }}</a></td>
-                        <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a></td>
+                        <td style="text-align: left;"><a href="#" id="prefName"
+                                                         data-title="{{ trans('messages.fields.prefName') }}">{{ $profile->prefName }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="indName"
+                                                         data-title="{{ trans('messages.fields.indName') }}">{{ $profile->indName }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="compName"
+                                                         data-title="{{ trans('messages.fields.compName') }}">{{ $profile->compName }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="title"
+                                                         data-title="{{ trans('messages.profile.directions.title') }}">{{ $profile->title }}</a>
+                        </td>
+                        <td style="text-align: left;"><a href="#" id="login" data-value="{{ $profile->login }}"></a>
+                        </td>
                     </tr>
                     <tr>
                         <th style="text-align: left;">@lang('messages.fields.experience')</th>
@@ -151,7 +178,8 @@ foreach ($array as $chap) {
                     </tr>
                     <tr>
                         <td style="text-align: left;">
-                            <a href="#" id="experience" data-title="{{ trans('messages.fields.experience') }} ({{ trans('messages.fields.years') }})">
+                            <a href="#" id="experience"
+                               data-title="{{ trans('messages.fields.experience') }} ({{ trans('messages.fields.years') }})">
                                 {{ $profile->experience }}</a>
                         </td>
                         <td style="text-align: left;">
@@ -162,10 +190,12 @@ foreach ($array as $chap) {
                             <a href="#" id="affiliation" data-title="{{ trans('messages.fields.affiliation') }}">
                                 {{ $profile->affiliation }}</a>
                         </td>
-                        <td style="text-align: left;"><a href="#" id="allergenInfo" data-title="{{ trans('messages.fields.diet_res') }}">
+                        <td style="text-align: left;"><a href="#" id="allergenInfo"
+                                                         data-title="{{ trans('messages.fields.diet_res') }}">
                                 {{ $profile->allergenInfo }}</a>
                         </td>
-                        <td style="text-align: left;"><a href="#" id="allergenNote" data-title="{{ trans('messages.fields.diet_com') }}">
+                        <td style="text-align: left;"><a href="#" id="allergenNote"
+                                                         data-title="{{ trans('messages.fields.diet_com') }}">
                                 {{ $profile->allergenNote }}</a>
                         </td>
                     </tr>
@@ -197,7 +227,8 @@ foreach ($array as $chap) {
                                 <tr>
                                     <td style="text-align: left;">{{ $profile->{'ODN'.$i} }}</td>
                                     <td style="text-align: left;">
-                                        <a href="#" id="RelDate{{$i}}" data-value="{!! $profile->{'RelDate'.$i} !!}"></a>
+                                        <a href="#" id="RelDate{{$i}}"
+                                           data-value="{!! $profile->{'RelDate'.$i} !!}"></a>
                                     </td>
                                 </tr>
                             @elseif($i == 1)
@@ -247,10 +278,12 @@ foreach ($array as $chap) {
                             <tr>
                                 <td style="text-align: left;">
                                     @if($email->isPrimary)
-                                        <button class="btn btn-danger btn-xs" disabled>@lang('messages.symbols.trash')</button>
+                                        <button class="btn btn-danger btn-xs"
+                                                disabled>@lang('messages.symbols.trash')</button>
                                         @include('v1.parts.tooltip', ['title' => trans('messages.profile.cant_delete')])
                                     @else
-                                        <form method="post" action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
+                                        <form method="post"
+                                              action="{{ env('APP_URL') . "/email/" . $email->emailID . "/delete" }}">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                             <button class="btn btn-danger btn-xs" data-toggle="tooltip"
@@ -272,7 +305,8 @@ foreach ($array as $chap) {
                                                                  data-url="{{ $emailURL . $email->emailID }}"
                                                                  data-title="{{ trans('messages.profile.addr1') }}">{{ $email->emailADDR }}</a>
                                 </td>
-                                <td style="text-align: left;">@if($email->isPrimary) @lang('messages.yesno_check.yes')
+                                <td style="text-align: left;">@if($email->isPrimary)
+                                        @lang('messages.yesno_check.yes')
                                     @else
                                         @lang('messages.yesno_check.no')
                                     @endif
@@ -301,7 +335,8 @@ foreach ($array as $chap) {
                                 <tr>
                                     <td style="text-align: left;">{{ $profile->{'OSN'.$i} }}</td>
                                     <td style="text-align: left;">
-                                        <a href="#" id="OrgStat{{$i}}" data-value="{!! $profile->{'OrgStat'.$i} !!}"></a>
+                                        <a href="#" id="OrgStat{{$i}}"
+                                           data-value="{!! $profile->{'OrgStat'.$i} !!}"></a>
                                     </td>
                                 </tr>
                             @elseif($i == 1)
@@ -358,7 +393,8 @@ foreach ($array as $chap) {
                                           action="{{ env('APP_URL') . "/address/" . $address->addrID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                        <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
+                                        <button class="btn btn-danger btn-xs" data-toggle="tooltip"
+                                                title="{{ trans('messages.tooltips.delete') }}"
                                                 onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
@@ -370,10 +406,12 @@ foreach ($array as $chap) {
                                        data-value="{{ $address->addrTYPE }}">{{ $address->addrTYPE }}</a></td>
                                 <td><a href="#" id="addr1{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="{{ trans('messages.profile.addr1') }}" data-value="{{ $address->addr1 }}"></a></td>
+                                       data-title="{{ trans('messages.profile.addr1') }}"
+                                       data-value="{{ $address->addr1 }}"></a></td>
                                 <td><a href="#" id="addr2{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="{{ trans('messages.profile.addr2') }}" data-value="{{ $address->addr2 }}"></a></td>
+                                       data-title="{{ trans('messages.profile.addr2') }}"
+                                       data-value="{{ $address->addr2 }}"></a></td>
                                 <td><a href="#" id="city{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-title="{{ trans('messages.profile.city') }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
@@ -388,7 +426,8 @@ foreach ($array as $chap) {
                                        data-value="{{ $address->zip }}"></a></td>
                                 <td><a href="#" id="cntryID{{ $ad_cnt }}" data-pk="{{ $address->addrID }}"
                                        data-url="{{ $addrURL . $address->addrID }}"
-                                       data-title="{{ trans('messages.profile.country') }}" data-value="{{ $address->cntryID }}"></a></td>
+                                       data-title="{{ trans('messages.profile.country') }}"
+                                       data-value="{{ $address->cntryID }}"></a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -417,14 +456,15 @@ foreach ($array as $chap) {
                         </tr>
 
                         @foreach($phones as $phone)
-                            <?php $ph_cnt++; ?>
+                                <?php $ph_cnt++; ?>
                             <tr>
                                 <td style="text-align: left;">
                                     <form id="ph-{{ $ph_cnt }}" method="post"
                                           action="{{ env('APP_URL') . "/phone/" . $phone->phoneID . "/delete" }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
-                                        <button class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ trans('messages.tooltips.delete') }}"
+                                        <button class="btn btn-danger btn-xs" data-toggle="tooltip"
+                                                title="{{ trans('messages.tooltips.delete') }}"
                                                 onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
@@ -546,11 +586,11 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-@php
+                @php
                     if ($profile->experience <> "") {
                         echo("value: '$profile->experience',\n");
                     }
-@endphp
+                @endphp
                 source: [
                     {value: '1-4', text: '1-4 {{ trans('messages.fields.years') }}'},
                     {value: '5-9', text: '5-9 {{ trans('messages.fields.years') }}'},
@@ -565,18 +605,18 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-@php
+                @php
                     if ($profile->prefix <> "") {
                         echo("value: '$profile->prefix', \n");
                     }
-@endphp
+                @endphp
                 source: [
-@php
-                    foreach ($prefixes as $k => $i) {
-                        $string .= "{ value: '" . $k . "' , text: '" . $i . "' },\n";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($prefixes as $k => $i) {
+                            $string .= "{ value: '" . $k . "' , text: '" . $i . "' },\n";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             @if(!$profile->OrgStat1 || Entrust::hasRole('Admin'))
@@ -620,18 +660,18 @@ foreach ($array as $chap) {
                 autotext: 'auto',
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
-@php
+                @php
                     if ($profile->indName <> "") {
                         echo("value: '$profile->indName', \n");
                     }
-@endphp
+                @endphp
                 source: [
-@php
-                    foreach ($industries as $k => $i) {
-                        $string .= "{ value: '" . $k . "' , text: '" . $i . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($industries as $k => $i) {
+                            $string .= "{ value: '" . $k . "' , text: '" . $i . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
 
@@ -652,8 +692,8 @@ foreach ($array as $chap) {
                 url: '{{ $profile_script_url }}',
                 source: [
                     @foreach($emails as $email)
-                    {!! "{ value: '" . $email->emailADDR . "', text: '" . $email->emailADDR . "' }," !!}
-                    @endforeach
+                            {!! "{ value: '" . $email->emailADDR . "', text: '" . $email->emailADDR . "' }," !!}
+                            @endforeach
                 ]
             });
             $('#chapterRole').editable({
@@ -676,12 +716,12 @@ foreach ($array as $chap) {
                 url: '{{ $profile_script_url }}',
                 value: '{{ $profile->affiliation }}',
                 source: [
-@php
-                    for ($j = 1; $j <= count($affiliation_array); $j++) {
-                        $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        for ($j = 1; $j <= count($affiliation_array); $j++) {
+                            $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
 
@@ -691,12 +731,12 @@ foreach ($array as $chap) {
                 url: '{{ $profile_script_url }}',
                 value: '{{ $profile->certifications }}',
                 source: [
-@php
-                    foreach ($cert_array as $x) {
-                        $string .= "{ value: '" . $x->certification . "' , text: '" . $x->certification . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($cert_array as $x) {
+                            $string .= "{ value: '" . $x->certification . "' , text: '" . $x->certification . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ],
             });
 
@@ -705,12 +745,12 @@ foreach ($array as $chap) {
                 pk: '{{ $profile->personID }}',
                 url: '{{ $profile_script_url }}',
                 source: [
-@php
-                    foreach ($allergen_array as $x) {
-                        $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($allergen_array as $x) {
+                            $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
 
@@ -726,12 +766,12 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-@php
-                    foreach ($addrTypes as $row) {
-                        $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($addrTypes as $row) {
+                            $string .= "{ value: '" . $row->addrType . "' , text: '" . $row->addrType . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             $('#addr1{{ $j }}').editable({type: 'text'});
@@ -743,12 +783,12 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-@php
-                    foreach ($countries as $row) {
-                        $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  @php $string = ''; @endphp
+                    @php
+                        foreach ($countries as $row) {
+                            $string .= '{ value: "' . $row->cntryID . '" , text: "' . $row->cntryName . '" },';
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  @php $string = ''; @endphp
                 ]
             });
             @endfor
@@ -758,12 +798,12 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-@php
-                    foreach ($emailTypes as $row) {
-                        $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($emailTypes as $row) {
+                            $string .= "{ value: '" . $row->emailType . "' , text: '" . $row->emailType . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             $('#emailADDR{{ $j }}').editable({type: 'text'});
@@ -774,12 +814,12 @@ foreach ($array as $chap) {
                 type: 'select',
                 autotext: 'auto',
                 source: [
-@php
-                    foreach ($phoneTypes as $row) {
-                        $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                    @php
+                        foreach ($phoneTypes as $row) {
+                            $string .= "{ value: '" . $row->phoneType . "' , text: '" . $row->phoneType . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             $('#phoneNumber{{ $j }}').editable({type: 'text'});
@@ -796,13 +836,13 @@ foreach ($array as $chap) {
                     $('#addr_submit').show();
                     x = "addr" + i + "_row";
                     $('#' + x).show();
-                    $('#addrTYPE-'+i).required = true;
-                    $('#addr1-'+i).required = true;
-                    $('#addr2-'+i).required = true;
-                    $('#city-'+i).required = true;
-                    $('#state-'+i).required = true;
-                    $('#zip-'+i).required = true;
-                    $('#cntryID-'+i).required = true;
+                    $('#addrTYPE-' + i).required = true;
+                    $('#addr1-' + i).required = true;
+                    $('#addr2-' + i).required = true;
+                    $('#city-' + i).required = true;
+                    $('#state-' + i).required = true;
+                    $('#zip-' + i).required = true;
+                    $('#cntryID-' + i).required = true;
                     i++;
                 }
                 if (i >= 3) {
@@ -817,13 +857,13 @@ foreach ($array as $chap) {
                     y = i - 1;
                     x = "addr" + y + "_row";
                     $('#' + x).hide();
-                    $('#addrTYPE-'+i).removeAttr('required');
-                    $('#addr1-'+i).removeAttr('required');
-                    $('#addr2-'+i).removeAttr('required');
-                    $('#city-'+i).removeAttr('required');
-                    $('#state-'+i).removeAttr('required');
-                    $('#zip-'+i).removeAttr('required');
-                    $('#cntryID-'+i).removeAttr('required');
+                    $('#addrTYPE-' + i).removeAttr('required');
+                    $('#addr1-' + i).removeAttr('required');
+                    $('#addr2-' + i).removeAttr('required');
+                    $('#city-' + i).removeAttr('required');
+                    $('#state-' + i).removeAttr('required');
+                    $('#zip-' + i).removeAttr('required');
+                    $('#cntryID-' + i).removeAttr('required');
                     i--;
                     $('#add_row').prop('disabled', false);
                 }
@@ -837,50 +877,50 @@ foreach ($array as $chap) {
     </script>
     <script>
         @if(Entrust::hasRole('Admin'))
-            @for($i=1;$i<=10;$i++)
-                @if(null !== $profile->{'ODN'.$i})
-                    $('#RelDate{{ $i }}').editable({
-                        type: 'combodate',
-                        pk: '{{ $profile->personID }}',
-                        url: '{{ $op_script_url }}',
-                        template: 'MMM DD YYYY',
-                        format: 'YYYY-MM-DD 00:00:00',
-                        viewformat: 'MMM DD, YYYY',
-                        placement: 'left',
-                        //viewformat: 'h:mm A',
-                        combodate: {
-                            //minYear: '{{ date("Y") }}',
-                            maxYear: '{{ date("Y")+3 }}',
-                            minuteStep: 15
-                        },
-                    });
-                @endif
-            @endfor
+        @for($i=1;$i<=10;$i++)
+        @if(null !== $profile->{'ODN'.$i})
+        $('#RelDate{{ $i }}').editable({
+            type: 'combodate',
+            pk: '{{ $profile->personID }}',
+            url: '{{ $op_script_url }}',
+            template: 'MMM DD YYYY',
+            format: 'YYYY-MM-DD 00:00:00',
+            viewformat: 'MMM DD, YYYY',
+            placement: 'left',
+            //viewformat: 'h:mm A',
+            combodate: {
+                //minYear: '{{ date("Y") }}',
+                maxYear: '{{ date("Y")+3 }}',
+                minuteStep: 15
+            },
+        });
+        @endif
+        @endfor
 
-            @for($i=1;$i<=10;$i++)
-                @if(null !== $profile->{'OSN'.$i})
-                    @if($i == 2)
-                $('#OrgStat{{ $i }}').editable({
-                    type: 'select',
-                    source: [
-                        {value: 'Individual', text: 'Individual'},
-                        {value: 'Retiree', text: 'Retiree'},
-                        {value: 'Student', text: 'Student'}
-                    ],
-                    pk: '{{ $profile->personID }}',
-                    url: '{{ $op_script_url }}',
-                    placement: 'left',
-                });
-                    @else
-                $('#OrgStat{{ $i }}').editable({
-                    type: 'text',
-                    pk: '{{ $profile->personID }}',
-                    url: '{{ $op_script_url }}',
-                    placement: 'left',
-                });
-                    @endif
-                @endif
-            @endfor
+        @for($i=1;$i<=10;$i++)
+        @if(null !== $profile->{'OSN'.$i})
+        @if($i == 2)
+        $('#OrgStat{{ $i }}').editable({
+            type: 'select',
+            source: [
+                {value: 'Individual', text: 'Individual'},
+                {value: 'Retiree', text: 'Retiree'},
+                {value: 'Student', text: 'Student'}
+            ],
+            pk: '{{ $profile->personID }}',
+            url: '{{ $op_script_url }}',
+            placement: 'left',
+        });
+        @else
+        $('#OrgStat{{ $i }}').editable({
+            type: 'text',
+            pk: '{{ $profile->personID }}',
+            url: '{{ $op_script_url }}',
+            placement: 'left',
+        });
+        @endif
+        @endif
+        @endfor
         @endif
 
     </script>
@@ -894,8 +934,8 @@ foreach ($array as $chap) {
                     $('#email_submit').show();
                     x = "email" + i + "_row";
                     $('#' + x).show();
-                    $('#emailTYPE-'+i).required = true;
-                    $('#emailADDR-'+i).required = true;
+                    $('#emailTYPE-' + i).required = true;
+                    $('#emailADDR-' + i).required = true;
                     i++;
                 }
                 if (i >= 3) {
@@ -910,8 +950,8 @@ foreach ($array as $chap) {
                     y = i - 1;
                     x = "email" + y + "_row";
                     $('#' + x).hide();
-                    $('#emailTYPE-'+i).removeAttr('required');
-                    $('#emailADDR-'+i).removeAttr('required');
+                    $('#emailTYPE-' + i).removeAttr('required');
+                    $('#emailADDR-' + i).removeAttr('required');
                     i--;
                     $('#add_erow').prop('disabled', false);
                 }
@@ -933,8 +973,8 @@ foreach ($array as $chap) {
                     $('#phone_submit').show();
                     x = "phone" + i + "_row";
                     $('#' + x).show();
-                    $('#phoneTYPE-'+i).required = true;
-                    $('#phoneNumber-'+i).required = true;
+                    $('#phoneTYPE-' + i).required = true;
+                    $('#phoneNumber-' + i).required = true;
                     i++;
                 }
                 if (i >= 3) {
@@ -949,8 +989,8 @@ foreach ($array as $chap) {
                     y = i - 1;
                     x = "phone" + y + "_row";
                     $('#' + x).hide();
-                    $('#phoneTYPE-'+i).removeAttr('required');
-                    $('#phoneNumber-'+i).removeAttr('required');
+                    $('#phoneTYPE-' + i).removeAttr('required');
+                    $('#phoneNumber-' + i).removeAttr('required');
                     i--;
                     $('#add_prow').prop('disabled', false);
                 }
@@ -1001,27 +1041,35 @@ foreach ($array as $chap) {
                                             <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $address_type])
                                         </select></td>
-                                    <td><input name='addr1-{{ $n }}' type='text' placeholder='{{ trans('messages.profile.addr1') }}'
+                                    <td><input name='addr1-{{ $n }}' type='text'
+                                               placeholder='{{ trans('messages.profile.addr1') }}'
                                                class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}>
-                                        <input name='addr2-{{ $n }}' type='text' placeholder='{{ trans('messages.profile.addr2') }}'
+                                        <input name='addr2-{{ $n }}' type='text'
+                                               placeholder='{{ trans('messages.profile.addr2') }}'
                                                class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
-                                    <td><input name='city-{{ $n }}' type='text' placeholder='{{ trans('messages.profile.city') }}'
+                                    <td><input name='city-{{ $n }}' type='text'
+                                               placeholder='{{ trans('messages.profile.city') }}'
                                                class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
                                     <td><select name='state-{{ $n }}'{!! $n == 1 ? " required" : "" !!}>
                                             <option value="">...</option>
-                                    @include('v1.parts.form-option-show', ['array' => $state_list])
-                                    <td><input name='zip-{{ $n }}' type='text' size="5" placeholder='{{ trans('messages.profile.zip') }}'
-                                               style="width: 65px" class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
-                                    <td><select name='cntryID-{{ $n }}' style="width: 50px"{!! $n == 1 ? " required" : "" !!}>
-                                            <option value="">...</option>
-                                            @include('v1.parts.form-option-show', ['array' => $country_list])
-                                        </select></td>
+                                            @include('v1.parts.form-option-show', ['array' => $state_list])
+                                            <td><input name='zip-{{ $n }}' type='text' size="5"
+                                                       placeholder='{{ trans('messages.profile.zip') }}'
+                                                       style="width: 65px"
+                                                       class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}>
+                                            </td>
+                                            <td><select name='cntryID-{{ $n }}'
+                                                        style="width: 50px"{!! $n == 1 ? " required" : "" !!}>
+                                                    <option value="">...</option>
+                                                    @include('v1.parts.form-option-show', ['array' => $country_list])
+                                                </select></td>
                                 </tr>
                             @endfor
                             </tbody>
                         </table>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <button type="button" id="add_row" class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
+                            <button type="button" id="add_row"
+                                    class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
                             <button type="button" style="display: none" id="delete_row" class="btn btn-sm btn-danger">
@@ -1030,8 +1078,10 @@ foreach ($array as $chap) {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
-                        <button type="submit" id="addr_submit" class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_ad', 1) }}</button>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                data-dismiss="modal">@lang('messages.buttons.close')</button>
+                        <button type="submit" id="addr_submit"
+                                class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_ad', 1) }}</button>
                     </div>
                 </form>
             </div>
@@ -1068,7 +1118,8 @@ foreach ($array as $chap) {
                                             <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $address_type])
                                         </select></td>
-                                    <td><input name='emailADDR-{{ $n }}' type='email' placeholder='{{ trans('messages.fields.email') }}'
+                                    <td><input name='emailADDR-{{ $n }}' type='email'
+                                               placeholder='{{ trans('messages.fields.email') }}'
                                                class='form-control input-sm'>
                                 </tr>
 
@@ -1077,7 +1128,8 @@ foreach ($array as $chap) {
                             </tbody>
                         </table>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <button type="button" id="add_erow" class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
+                            <button type="button" id="add_erow"
+                                    class="btn btn-sm btn-warning">@lang('messages.buttons.another')</button>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right">
                             <button type="button" style="display: none" id="delete_erow" class="btn btn-sm btn-danger">
@@ -1086,8 +1138,10 @@ foreach ($array as $chap) {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
-                        <button type="submit" id="email_submit" class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_em', 1) }}</button>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                data-dismiss="modal">@lang('messages.buttons.close')</button>
+                        <button type="submit" id="email_submit"
+                                class="btn btn-sm btn-success">{{ trans_choice('messages.buttons.save_em', 1) }}</button>
                     </div>
                 </form>
             </div>
@@ -1124,7 +1178,8 @@ foreach ($array as $chap) {
                                             <option value="">...</option>
                                             @include('v1.parts.form-option-show', ['array' => $phone_type])
                                         </select></td>
-                                    <td><input name='phoneNumber-{{ $n }}' placeholder='{{ trans_choice('messages.headers.phone_nums', 1) }}'
+                                    <td><input name='phoneNumber-{{ $n }}'
+                                               placeholder='{{ trans_choice('messages.headers.phone_nums', 1) }}'
                                                type='text' class='form-control input-sm'>
                                 </tr>
 

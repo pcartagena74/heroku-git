@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Bundle;
 use App\Models\EventSession;
 use Carbon\Carbon;
+
 //use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,10 +14,11 @@ use Illuminate\Support\Facades\DB;
 class Ticket extends Model
 {
     use SoftDeletes;
+
     //use LogsActivity;
 
     protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
-        'isaBundle', 'ticketLabel', ];
+        'isaBundle', 'ticketLabel',];
     protected static $ignoreChangedAttributes = ['createDate'];
     // The table
     protected $table = 'event-tickets';
@@ -76,7 +78,7 @@ class Ticket extends Model
     public function week_sales()
     {
         $tickets = [$this->ticketID];
-        if (! $this->isaBundle) {
+        if (!$this->isaBundle) {
             $bundles = Bundle::where('ticketID', $this->ticketID)->select('bundleID')->get();
             foreach ($bundles as $b) {
                 array_push($tickets, $b->bundleID);
@@ -212,6 +214,20 @@ class Ticket extends Model
             return $bundle_members->pluck('ticketID')->toArray();
         } else {
             return [$this->ticketID];
+        }
+    }
+
+    /**
+     * available() returns true/false depending on whether tickets are available for purchase
+     */
+    public function available_for_purchase()
+    {
+        if ($this->maxAttendees = 0) return true;
+
+        if ($this->maxAttendees - $this->regCount > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 

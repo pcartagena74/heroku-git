@@ -255,7 +255,7 @@ class PersonController extends Controller
     {
         $string = $request->input('string');
 
-        return redirect(env('APP_URL').'/search/'.$string);
+        return redirect(env('APP_URL') . '/search/' . $string);
     }
 
     /**
@@ -273,7 +273,7 @@ class PersonController extends Controller
             $id = $this->currentPerson->personID;
             if (request()->query() != null) {
                 if ($this->currentPerson->avatarURL === null
-                    && ! $this->currentPerson->socialites->contains('providerName', 'LinkedIN')
+                    && !$this->currentPerson->socialites->contains('providerName', 'LinkedIN')
                 ) {
                     try {
                         $user = Socialite::driver('linkedin')->user();
@@ -307,6 +307,7 @@ class PersonController extends Controller
                                         person.prefName, u.login, person.title, person.compName, person.indName,
                                         person.experience, op.chapterRole, person.defaultOrgID, person.affiliation,
                                         person.allergenInfo, person.allergenNote, person.twitterHandle, person.certifications,
+                                        person.lastLoginDate, person.createDate, person.updateDate,
                     OrgStat1, OrgStat2, OrgStat3, OrgStat4, OrgStat5, OrgStat6, OrgStat7, OrgStat8, OrgStat9, OrgStat10,
                     RelDate1, RelDate2, RelDate3, RelDate4, RelDate5, RelDate6, RelDate7, RelDate8, RelDate9, RelDate10,
                     OSN1, OSN2, OSN3, OSN4, OSN5, OSN6, OSN7, OSN8, OSN9, OSN10, 
@@ -314,14 +315,14 @@ class PersonController extends Controller
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id, 'errormsg' => $exception->getMessage()]));
 
-            return redirect(env('APP_URL').'/profile/my');
+            return redirect(env('APP_URL') . '/profile/my');
         }
 
         if ($profile === null) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id,
-                'modifier' => trans('messages.fields.member'), 'errormsg' => null, ]));
+                'modifier' => trans('messages.fields.member'), 'errormsg' => null,]));
 
-            return redirect(env('APP_URL').'/profile/my');
+            return redirect(env('APP_URL') . '/profile/my');
         }
 
         if ($profile != $this->currentPerson) {
@@ -336,14 +337,14 @@ class PersonController extends Controller
         $prefixes = DB::table('prefixes')->get();
         $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
             $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
-                return trans('messages.fields.prefixes.'.$item);
+                return trans('messages.fields.prefixes.' . $item);
             })->toArray();
         $prefixes = $prefix_array;
 
         $industries = DB::table('industries')->orderBy('industryName')->get();
         $industry_array = ['' => trans('messages.fields.industries.select')] +
             $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
-                return trans('messages.fields.industries.'.$item);
+                return trans('messages.fields.industries.' . $item);
             })->toArray();
         $industries = $industry_array;
 
@@ -444,22 +445,22 @@ class PersonController extends Controller
             } catch (\Exception $exception) {
                 DB::rollBack();
                 $org = $person->defaultOrg;
-                request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err').$org->techContactStatement);
+                request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err') . $org->techContactStatement);
 
-                return redirect(env('APP_URL')."/profile/$personID");
+                return redirect(env('APP_URL') . "/profile/$personID");
             }
         } elseif ($name == 'affiliation') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $person->affiliation = $value;
             $person->updaterID = $updater;
             $person->save();
         } elseif ($name == 'allergenInfo') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $person->allergenInfo = $value;
             $person->updaterID = $updater;
             $person->save();
         } elseif ($name == 'certifications') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $person->certifications = $value;
             $person->updaterID = $updater;
             $person->save();
@@ -660,7 +661,7 @@ class PersonController extends Controller
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
 
             return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
-                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
+                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]),]);
         } else {
             return json_encode(['status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id]);
         }

@@ -15,7 +15,7 @@ return [
      * Set this to false to use the NewRelic default naming
      * scheme, or to set your own in your application.
      */
-    'auto_name_transactions' => env('NEWRELIC_AUTO_NAME_TRANSACTION', true),
+    'auto_name_transactions' => env('NEWRELIC_AUTO_NAME_TRANSACTION', false),
 
     /*
      * Will automatically name queued jobs in NewRelic,
@@ -24,7 +24,7 @@ return [
      * Set this to false to use the NewRelic default naming
      * scheme, or to set your own in your application.
      */
-    'auto_name_jobs' => env('NEWRELIC_AUTO_NAME_JOB', true),
+    'auto_name_jobs' => env('NEWRELIC_AUTO_NAME_JOB', false),
 
     /*
      * Define the name used when automatically naming transactions.

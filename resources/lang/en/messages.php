@@ -649,6 +649,8 @@ return [
                 'exp_mbr' => 'Expiring Members',
                 'go' => 'Load Report'
             ],
+            'created' => 'Create Date',
+            'lastlog' => 'Last Login',
             'new_title' => 'New Members as of :date',
             'exp_title' => 'Expiring Members within :days Days',
             'orgstat1' => 'PMI ID',
@@ -661,7 +663,8 @@ return [
             'reldate3' => 'PMI Expiry Date',
             'reldate4' => 'Chapter Expiry Date',
             'regs' => 'Events',
-            'regs_now' => 'Recent Events'
+            'regs_now' => 'Recent Events',
+            'updated' => 'Update Date',
         ],
         'purchased' => 'Purchased on',
         'purchased_by' => 'Purchased by',
@@ -729,6 +732,7 @@ return [
         'view' => 'View',
         'virtual' => 'Is this a virtual event?',
         'wait' => 'Wait List',
+        'waitList' => 'Enable Wait List Features?',
         'website' => 'Website',
         'your' => 'Your',
         'select_organization' => 'Select Organization',
@@ -754,9 +758,15 @@ return [
         'camp_list_action' => 'Actions',
         'campaign_statics' => 'Statistics',
     ],
+
+    'labels' => [
+        'soldout' => 'Sold Out',
+    ],
+
     'subheaders' => [
         'expand_min' => 'Click the arrow to expand this section.',
     ],
+
     'instructions' => [
         'add_speaker' => 'to add speakers to this list, register the person to an event using a speaker discount code.',
         'admin_stmt' => 'This statement will display when users should contact an admin associated with your chapter.',
@@ -875,7 +885,7 @@ return [
         'select_event' => 'Select the event for registration',
         'survey_instructions' => 'Please provide your objective feedback so that we may continuously improve the value
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.',
-        'sold_out' => 'Sold Out! Register to add yourself to the wait list.',
+        'sold_out' => 'This event is sold out.',
         'sold_out2' => 'This ticket is sold out.',
         'tech_stmt' => 'This statement will be displayed if an mCentric issue occurs.',
         'tkt_setup' => 'Creating additional tickets is typically only necessary for Professional Development Day events.',
@@ -1175,11 +1185,11 @@ return [
         'marketing' => [
             'title' => "<span class='fas fa-tachometer-alt'></span> mCentric-Facilitated Marketing",
             'b1_t' => '<b><i style="color: black;" class="far fa-newspaper"></i> Subscription Management:</b>',
-            'b1' => 'For as many lists as you maintain, members can opt in or out based on interest',
+            'b1' => 'For as many lists as you maintain, members can opt in or out based on interest.',
             'b2_t' => '<b><i style="color: red;" class="fas fa-bell"></i> Scheduled Notifications:</b> ',
             'b2' => 'Setup automatic notifications based on what matters most to your chapter',
             'b3_t' => '<b><i style="color: blue;" class="fas fa-list-ul"></i> Segmentation:</b>',
-            'b3' => 'Create lists based traits or factors important to your chapter',
+            'b3' => 'Create lists based traits or factors important to your chapter.',
         ],
         'mailings' => [
             'title' => "<span class='far fa-envelope'></span> mCentric-Facilitated Mailings",
@@ -1193,20 +1203,20 @@ return [
             'title' => "<span class='far fa-calendar-alt'></span> mCentric-Facilitated Meeting &amp; Event Management",
             'b1_t' => '<b><i style="color: rebeccapurple;" class="far fa-ticket-alt"></i> Complex Ticket Pricing:</b>',
             'b1' => 'Create tickets with member, non-member, early bird, or other complex pricing;<br/>
-                                or bundle tickets together as necessary for particular events',
+                                or bundle tickets together as necessary for particular events.',
             'b2_t' => '<b><i style="color: blue;" class="fas fa-credit-card"></i> Payment Processing:</b>',
-            'b2' => 'Process payments with credit cards or allow attendees to pay at the door with cash or check',
+            'b2' => 'Process payments with credit cards or allow attendees to pay at the door with cash or check.',
             'b3_t' => '<b><i style="color: red;" class="fas fa-chart-bar"></i> Real-Time Reporting:</b>',
-            'b3' => 'Review reports that provide access to registration and session attendance detail',
+            'b3' => 'Review reports that provide access to registration and session attendance detail.',
         ],
         'management' => [
             'title' => "<span class='fas fa-users'></span> mCentric-Facilitated Membership Management",
             'b1_t' => '<b><i style="color: purple;" class="fas fa-chart-bar"></i> Financial Reporting:</b>',
-            'b1' => 'Track and manage event finances, including revenue sharing and other arrangements',
+            'b1' => 'Track and manage event finances, including revenue sharing and other arrangements.',
             'b2_t' => '<b><i style="color: red;" class="fas fa-chart-pie"></i> Engagement Reporting:</b>',
-            'b2' => 'Understand how engaged your members are and increase retention',
+            'b2' => 'Understand how engaged your members are and increase retention.',
             'b3_t' => '<b><i style="color: brown;" class="fas fa-users"></i> Contact Management:</b>',
-            'b3' => 'Track, manage, and connect members and non-members alike',
+            'b3' => 'Track, manage, and connect members and non-members alike.',
         ],
     ],
     'pdus' => [
@@ -1425,7 +1435,7 @@ return [
     'warning' => [
         'dupe_reg' => 'FYI: You have already registered for this event. :names|FYI: The following people appear to have already registered for this event: :names',
         'inactive_event' => '<b>Note:</b> You are previewing an event that is not yet active OR is in the past.',
-        'inactive_unlocked_event' => '<b>Note:</b> This event is no longer active but you have been given permission to register.',
+        'inactive_unlocked_event' => '<b>Note:</b> This event is no longer active, but you have been given permission to register.',
         'inactive_event_url' => "This event's URL is no longer active.",
         'no_switch' => '',
         'slug_event_url' => "This event's URL will be: :url",
@@ -1479,20 +1489,20 @@ return [
     ],
     'campaign_delete_popup' => [
         'title' => 'Confirm your action',
-        'body' => 'Do you want to delete campaign ',
+        'body' => 'Do you want to delete the campaign?',
         'btn_ok' => 'Delete',
         'btn_cancel' => 'Cancel',
     ],
     'campaign_delete_popup_success' => [
         'title' => 'Success',
         'title_error' => 'Error',
-        'body' => 'Do you want to delete campaign ',
+        'body' => 'Do you want to delete the campaign?',
         'btn_ok' => 'Ok',
         'btn_cancel' => 'Cancel',
     ],
     'functions' => [
         'merge' => [
-            'assoc_emails' => 'The following email address are associated with either account.
+            'assoc_emails' => 'The following email address(es) are associated with either account.
                                They will all be associated with <b>"The Keeper"</b> post-merge.',
         ],
     ],
