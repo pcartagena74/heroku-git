@@ -230,6 +230,7 @@
                                                             <ul>
                                                                 @foreach($b_tkts as $tkt)
                                                                     @php
+                                                                        $soldout = 0;
                                                                         if($tkt->available_for_purchase()) {
                                                                             $soldout = 0;
                                                                         } else {

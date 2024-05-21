@@ -222,7 +222,7 @@ class Ticket extends Model
      */
     public function available_for_purchase()
     {
-        if ($this->maxAttendees = 0) return true;
+        if ($this->maxAttendees == 0) return true;
 
         if ($this->maxAttendees - $this->regCount > 0) {
             return true;
