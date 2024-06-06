@@ -285,9 +285,9 @@ class Event extends Model
     public function event_url()
     {
         if ($this->slug) {
-            return "http://www.mCentric.org/events/" . $this->slug;
+            return "/events/" . $this->slug;
         } else {
-            return "http://www.mCentric.org/events/" . $this->eventID;
+            return "/events/" . $this->eventID;
         }
     }
 }

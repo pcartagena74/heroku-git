@@ -193,7 +193,7 @@ class RegFinanceController extends Controller
         foreach ($rf->registrations as $reg) {
             if ($reg->ticket->available_for_purchase() < $rf->seats) {
                 request()->session()->flash('alert-danger',
-                    trans('messages.instructions.sold_out4', ['link' => $event->event_url()]));
+                    trans('messages.instructions.sold_out4', ['url' => $event->event_url()]));
                 return redirect()->back()->withInput();
             }
         }

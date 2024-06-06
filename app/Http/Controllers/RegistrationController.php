@@ -667,7 +667,7 @@ class RegistrationController extends Controller
             $tmp_tkt = Ticket::find($ticketID);
             if ($tmp_tkt !== null && $tmp_tkt->soldout()) {
                 request()->session()->flash('alert-danger',
-                    trans('messages.instructions.sold_out4', ['link' => $event->event_url()]));
+                    trans('messages.instructions.sold_out4', ['url' => $event->event_url()]));
                 return redirect()->back()->withInput();
             }
             try {
