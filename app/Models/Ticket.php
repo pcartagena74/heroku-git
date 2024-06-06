@@ -218,17 +218,57 @@ class Ticket extends Model
     }
 
     /**
-     * available() returns true/false depending on whether tickets are available for purchase
+     * available_for_purchase() returns the number of tickets available for purchase
+     * If there is no maxAttendee value, 9999 is returned
      */
     public function available_for_purchase()
     {
-        if ($this->maxAttendees == 0) return true;
+        if ($this->isaBundle) {
+            if ($this->soldout_bundle()) return 0;
+        } else {
+            if ($this->maxAttendees == 0) return 9999;
+
+            if ($this->maxAttendees - $this->regCount > 0) {
+                return $this->maxAttendees - $this->regCount;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * soldout() returns true/false
+     */
+    public function soldout()
+    {
+        // If the ticket is a bundle, direct to soldout_bundle()
+        if ($this->isaBundle) {
+            return $this->soldout_bundle();
+        }
+
+        // Event cannot sell out if maxAttendees is not set above 0; 0 is default
+        if ($this->maxAttendees == 0) return false;
 
         if ($this->maxAttendees - $this->regCount > 0) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
+    }
+
+
+    /**
+     * soldout_bundle() returns true/false based on any bundle member's soldout state
+     */
+    public function soldout_bundle()
+    {
+        $members = $this->bundle_members();
+
+        foreach ($members as $m) {
+            if ($m->soldout()) return true;
+        }
+
+        return false;
     }
 
     /**

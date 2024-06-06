@@ -86,8 +86,6 @@
     $s3fs = new Filesystem($adapter);
     $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
 
-    $soldout = 0;
-
     $mbr_price = trans('messages.instructions.mbr_price');
 @endphp
 @extends('v1.layouts.no-auth')
@@ -185,13 +183,14 @@
                                                             style="text-align: left;">
                                                             <div class="form-group">
                                                                 <input data-error="{{ trans('messages.errors.numeric') }}"
-                                                                       @if(!$bundle->available_for_purchase())
+                                                                       @if($bundle->soldout())
                                                                            disabled
                                                                        @endif
                                                                        id="q-{{ $bundle->ticketID }}"
                                                                        name="q-{{ $bundle->ticketID }}" pattern="[0-5]"
                                                                        required="" size="2" style="width:30px"
-                                                                       type="number"
+                                                                       type="number" min="1"
+                                                                       max="{!! $bundle->available_for_purchase() !!}"
                                                                        value="0">
                                                                 <div class="help-block with-errors">
                                                                 </div>
@@ -203,54 +202,22 @@
                                                             @include('v1.parts.tooltip',
                                                             ['title' => trans('messages.tooltips.bundles'),
                                                              'c' => 'text-danger'])
-                                                            @php
-                                                                $b_tkts = Ticket::where([
-                                                                    ['event-tickets.eventID', $event->eventID],
-                                                                    ['isaBundle', 0],
-                                                                    ['isSuppressed', 0],
-                                                                    ['availabilityEndDate', '>=', $today],
-                                                                ])
-                                                                ->leftJoin('bundle-ticket', 'event-tickets.ticketID', '=', 'bundle-ticket.ticketID')
-                                                                ->get()->sortByDesc('availabilityEndDate');
 
-                                                            /*
-                                                            // 2024-05-19: Replaced with above code to have valid ticket objects
-                                                                $b_tkts = DB::table('event-tickets')
-                                                                ->join('bundle-ticket', function ($join) use ($bundle) {
-                                                                $join->on('bundle-ticket.ticketID', '=', 'event-tickets.ticketID')
-                                                                ->where('bundle-ticket.bundleID', '=', $bundle->ticketID);
-                                                                })->where([
-                                                                ['event-tickets.eventID', $event->eventID],
-                                                                ['event-tickets.isaBundle', 0],
-                                                                ])->select('event-tickets.ticketID', 'event-tickets.ticketLabel', 'bundle-ticket.ticketID',
-                                                                'event-tickets.maxAttendees', 'event-tickets.regCount')->get();
-                                                                // $b_tkts = DB::select($sql);
-                                                            */
-                                                            @endphp
                                                             <ul>
-                                                                @foreach($b_tkts as $tkt)
-                                                                    @php
-                                                                        $soldout = 0;
-                                                                        if($tkt->available_for_purchase()) {
-                                                                            $soldout = 0;
-                                                                        } else {
-                                                                            $soldout = 1;
-                                                                        }
-                                                                    @endphp
+                                                                @foreach($bundle->bundle_members() as $tkt)
                                                                     <li>
-                                                                        @if($soldout)
+                                                                        @if($tkt->soldout())
                                                                             <b style="color:red;">
                                                                                 @lang('messages.labels.soldout'):</b>
+                                                                        @else
                                                                         @endif
                                                                         {{ $tkt->ticketLabel }}
                                                                     </li>
                                                                 @endforeach
                                                             </ul>
-                                                            @if($soldout)
-                                                                <b class="red">
-                                                                    @lang('messages.instructions.sold_out2')
-                                                                </b>
-                                                            @endif
+                                                            <b class="red">
+                                                                @choice('messages.instructions.sold_out2', $bundle->available_for_purchase())
+                                                            </b>
                                                         </td>
                                                         <td data-title="{{ trans('messages.fields.memprice') }}">
                                                             @lang('messages.symbols.cur')
@@ -295,7 +262,8 @@
                                                                         id="q-{{ $ticket->ticketID }}"
                                                                         name="q-{{ $ticket->ticketID }}" pattern="[0-5]"
                                                                         required="" size="2" style="width:30px"
-                                                                        type="number"
+                                                                        type="number" min="1"
+                                                                        max="{!! $ticket->available_for_purchase() !!}"
                                                                         value="0">
                                                                 <div class="help-block with-errors">
                                                                 </div>
@@ -304,12 +272,10 @@
                                                         </td>
                                                         <td data-title="{{ trans('messages.fields.ticket') }}">
                                                             {{ $ticket->ticketLabel }}
-                                                            @if(!$ticket->available_for_purchase())
-                                                                <br/>
-                                                                <b class="red">
-                                                                    @lang('messages.instructions.sold_out2')
-                                                                </b>
-                                                            @endif
+                                                            <br/>
+                                                            <b class="red">
+                                                                @choice('messages.instructions.sold_out2', $ticket->available_for_purchase())
+                                                            </b>
                                                         </td>
                                                         <td data-title="{{ trans('messages.fields.memprice') }}">
                                                             @lang('messages.symbols.cur')

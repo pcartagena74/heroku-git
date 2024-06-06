@@ -1,102 +1,102 @@
 @php
-/**
- * Comment: Registration form (multiple ticket quantities)
- * Created: 8/24/2017
- * Updated: October 2018 - This is the one in use (not register_new)
- * @var $event
- * @var $tkts
- * @var $certs
- */
+    /**
+     * Comment: Registration form (multiple ticket quantities)
+     * Created: 8/24/2017
+     * Updated: October 2018 - This is the one in use (not register_new)
+     * @var $event
+     * @var $tkts
+     * @var $certs
+     */
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Org;
-use App\Models\Person;
-use App\Models\OrgPerson;
-use App\Models\Location;
-use App\Models\Registration;
-use App\Models\Ticket;
-use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\DB;
+    use App\Models\Org;
+    use App\Models\Person;
+    use App\Models\OrgPerson;
+    use App\Models\Location;
+    use App\Models\Registration;
+    use App\Models\Ticket;
+    use Illuminate\Support\Facades\Auth;
 
-$org = Org::find($event->orgID);
-if (Auth::check()) {
-    $auth = 1;
-    $person = Person::find(auth()->user()->id);
-    $op = OrgPerson::where([
-        ['personID', '=', $person->personID],
-        ['orgID', '=', $org->orgID]
-    ])->first();
-    $registration = new Registration;
-    if ($person->is_member($org->orgID)) {
-        $isMember = 1;
+    $org = Org::find($event->orgID);
+    if (Auth::check()) {
+        $auth = 1;
+        $person = Person::find(auth()->user()->id);
+        $op = OrgPerson::where([
+            ['personID', '=', $person->personID],
+            ['orgID', '=', $org->orgID]
+        ])->first();
+        $registration = new Registration;
+        if ($person->is_member($org->orgID)) {
+            $isMember = 1;
+        } else {
+            $isMember = 0;
+        }
     } else {
+        $auth = 0;
+        $person = new Person;
+        $op = new OrgPerson;
+        $registration = new Registration;
         $isMember = 0;
     }
-} else {
-    $auth = 0;
-    $person = new Person;
-    $op = new OrgPerson;
-    $registration = new Registration;
-    $isMember = 0;
-}
-$loc = Location::find($event->locationID);
+    $loc = Location::find($event->locationID);
 
-$prefixes = DB::table('prefixes')->select('prefix', 'prefix')->get();
-$prefix_array = ['' => trans('messages.fields.prefixes.select')] +
-    $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
-        return trans('messages.fields.prefixes.' . $item);
-    })->toArray();
+    $prefixes = DB::table('prefixes')->select('prefix', 'prefix')->get();
+    $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
+        $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
+            return trans('messages.fields.prefixes.' . $item);
+        })->toArray();
 
-$industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
-$industry_array = ['' => trans('messages.fields.industries.select')] +
-    $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
-        return trans('messages.fields.industries.' . $item);
-    })->toArray();
+    $industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
+    $industry_array = ['' => trans('messages.fields.industries.select')] +
+        $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
+            return trans('messages.fields.industries.' . $item);
+        })->toArray();
 
-$allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
-$allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
+    $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
+    $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-if ($event->eventTypeID == 5) { // This is a regional event so do that instead
-    //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
-    $array = explode(',', $org->regionChapters);
-} else {
-    //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-    $array = explode(',', $org->nearbyChapters);
-}
+    if ($event->eventTypeID == 5) { // This is a regional event so do that instead
+        //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+        $array = explode(',', $org->regionChapters);
+    } else {
+        //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+        $array = explode(',', $org->nearbyChapters);
+    }
 
-if ($org->canSubmitPDU !== null) {
-    $PDU_org_types = explode(',', $org->canSubmitPDU);
-} else {
-    $PDU_org_types = [];
-}
+    if ($org->canSubmitPDU !== null) {
+        $PDU_org_types = explode(',', $org->canSubmitPDU);
+    } else {
+        $PDU_org_types = [];
+    }
 
-$i = 0; $i_cnt = "";
+    $i = 0; $i_cnt = "";
 
-foreach ($array as $chap) {
-    $i++;
-    $chap = trim($chap);
-    $affiliation_array[$chap] = $chap;
-}
+    foreach ($array as $chap) {
+        $i++;
+        $chap = trim($chap);
+        $affiliation_array[$chap] = $chap;
+    }
 
-foreach ($certs as $cert) {
-    $cert = trim($cert->certification);
-    $cert_array[$cert] = $cert;
-}
+    foreach ($certs as $cert) {
+        $cert = trim($cert->certification);
+        $cert_array[$cert] = $cert;
+    }
 
-$today = Carbon\Carbon::now();
+    $today = Carbon\Carbon::now();
 
-$tix_dropdown = $tkts->pluck('ticketLabel', 'ticketID');
+    $tix_dropdown = $tkts->pluck('ticketLabel', 'ticketID');
 
-$experience_choices = [
-    '0' => '0 ' . trans('messages.fields.years'),
-    '1-4' => '1-4 ' . trans('messages.fields.years'),
-    '5-9' => '5-9 ' . trans('messages.fields.years'),
-    '10-14' => '10-14 ' . trans('messages.fields.years'),
-    '15-19' => '15-19 ' . trans('messages.fields.years'),
-    '20+' => '20+ ' . trans('messages.fields.years'),
-];
+    $experience_choices = [
+        '0' => '0 ' . trans('messages.fields.years'),
+        '1-4' => '1-4 ' . trans('messages.fields.years'),
+        '5-9' => '5-9 ' . trans('messages.fields.years'),
+        '10-14' => '10-14 ' . trans('messages.fields.years'),
+        '15-19' => '15-19 ' . trans('messages.fields.years'),
+        '20+' => '20+ ' . trans('messages.fields.years'),
+    ];
 
-//var_dump(Session::all());
-$i = 0;
+    //var_dump(Session::all());
+    $i = 0;
 @endphp
 
 @extends('v1.layouts.no-auth')
@@ -132,22 +132,31 @@ $i = 0;
     {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
     {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
 
+    @php $reduction = 0; @endphp
+
     @foreach($tq as $x)
         @php
+            $q_changed = 0;
 
-        $ticket = Ticket::find($x['t']);
-        $q = $x['q'];
+            $ticket = Ticket::find($x['t']);
+            $q = $x['q'];
 
-        // Determine if Early Bird Pricing should be in effect
-        if ($ticket->valid_earlyBird()) {
-            $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
-            $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
-        } else {
-            $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
-            $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
-        }
+            if($q > $ticket->available_for_purchase()) {
+                $q = $ticket->available_for_purchase();
+                $q_changed = 1;
+                $reduction += $quantity - $q;
+            }
+
+            // Determine if Early Bird Pricing should be in effect
+            if ($ticket->valid_earlyBird()) {
+                $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+                $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+            } else {
+                $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
+                $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
+            }
         @endphp
-        @if($ticket->waitlisting())
+        @if($event->isPrivate && $ticket->waitlisting())
             <div class="clearfix"><p></div>
             <b class="red">
                 {!! trans_choice('messages.instructions.waitlist', $quantity) !!}
@@ -157,8 +166,8 @@ $i = 0;
 
         @for($j=1; $j<=$q; $j++)
             @php
-            $i++;
-            $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+                $i++;
+                $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
             @endphp
             {!! Form::hidden("percent".$i_cnt, 0, array('id' => "i_percent".$i_cnt)) !!}
             {!! Form::hidden("flatamt".$i_cnt, 0, array('id' => "i_flatamt".$i_cnt)) !!}
@@ -170,39 +179,50 @@ $i = 0;
             @endif
 
             <div class="col-md-12">
-                <div style="text-align: left; vertical-align: middle;"
-                     class="col-md-6 col-sm-6 col-xs-12">
-                    #{{ $i }} <span id="ticket_type{{ $i }}">
+                <div style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12"><b>
+                        #{{ $i }} <span id="ticket_type{{ $i }}">
                     @if($i == 1)
-                            @if($isMember)
-                                {{ strtoupper(__('messages.fields.member')) }}
+                                @if($isMember)
+                                    {{ strtoupper(__('messages.fields.member')) }}
+                                @else
+                                    {{ strtoupper(__('messages.fields.nonmbr')) }}
+                                @endif
                             @else
                                 {{ strtoupper(__('messages.fields.nonmbr')) }}
-                            @endif
+                            @endif </span>
+                        {{ strtoupper(__('messages.fields.ticket')) }}:
+                        @if(count($tkts) > 1)
+                            {{ Form::select('ticketID-'.$i, $tix_dropdown, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
+                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
                         @else
-                            {{ strtoupper(__('messages.fields.nonmbr')) }}
-                        @endif </span>
-                    {{ strtoupper(__('messages.fields.ticket')) }}:
-                    @if(count($tkts) > 1)
-                        {{ Form::select('ticketID-'.$i, $tix_dropdown, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
-                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
-                    @else
-                        {{ $ticket->ticketLabel }}
-                        {{ Form::hidden('ticketID-'.$i, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
-                    @endif
-                    <br/>
-                    @if($ticket->waitlisting())
-                        <div id="so-{{ $i }}" class="red" style="visibility: visible;"> &nbsp;
-                            &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
-                    @else
-                        <div id="so-{{ $i }}" class="red" style="visibility: hidden;"> &nbsp;
-                            &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
-                    @endif
+                            {{ $ticket->ticketLabel }}
+                            {{ Form::hidden('ticketID-'.$i, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
+                        @endif
+                        <br/>
+
+                        {{--
+                        @if($event->isPrivate && $ticket->waitlisting())
+                            <div id="so-{{ $i }}" class="red" style="visibility: visible;"> &nbsp;
+                                &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
+                        @else
+                            <div id="so-{{ $i }}" class="red" style="visibility: hidden;"> &nbsp;
+                                &nbsp; {{ trans('messages.instructions.sold_out2') }}</div>
+                        @endif
+                        --}}
+                        <b class="red">
+                            @choice('messages.instructions.sold_out2', $ticket->available_for_purchase())
+                            @if($q_changed)
+                                <br/>
+                                @lang('messages.instructions.sold_out3')
+                                <br/> &nbsp; <br/>
+                            @endif
+                        </b>
+                    </b>
                 </div>
                 <div style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
                     <div class="col-md-12 col-sm-12 col-xs-12" id="adc-{{ $i }}"
                          @if($ticket->waitlisting())
-                         style="visibility: hidden;">
+                             style="visibility: hidden;">
                         @else
                             style="visibility: visible;">
                         @endif
@@ -447,13 +467,13 @@ $i = 0;
                 {!! Form::textarea("eventQuestion$i_cnt", old("eventQuestion$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventQuestion$i_cnt")) !!}
                 <br/>
                 @php
-                if(old("affiliation".$i_cnt)){
-                    $selected = old("affiliation".$i_cnt);
-                } elseif($person->affiliation) {
-                    $selected = explode(',', $person->affiliation);
-                } else {
-                    $selected = reset($affiliation_array);
-                }
+                    if(old("affiliation".$i_cnt)){
+                        $selected = old("affiliation".$i_cnt);
+                    } elseif($person->affiliation) {
+                        $selected = explode(',', $person->affiliation);
+                    } else {
+                        $selected = reset($affiliation_array);
+                    }
                 @endphp
 
                 <label class="control-label" for="affiliation{{ $i_cnt }}">
@@ -472,13 +492,13 @@ $i = 0;
                     <br/>
                     <small>@lang('messages.tooltips.accommodate')</small>
                     @php
-                    if(old("allergenInfo".$i_cnt)){
-                        $selected = old("allergenInfo".$i_cnt);
-                    } elseif($person->allergenInfo) {
-                        $selected = explode(',', $person->allergenInfo);
-                    } else {
-                        $selected = reset($allergen_array);
-                    }
+                        if(old("allergenInfo".$i_cnt)){
+                            $selected = old("allergenInfo".$i_cnt);
+                        } elseif($person->allergenInfo) {
+                            $selected = explode(',', $person->allergenInfo);
+                        } else {
+                            $selected = reset($allergen_array);
+                        }
                     @endphp
                     {!! Form::select("allergenInfo" . $i_cnt .'[]', $allergen_array, $selected,
                         array('required', 'class' => 'form-control input-sm', 'multiple' => 'multiple', 'size' => '3', 'id' => "allergenInfo$i_cnt")) !!}
@@ -510,6 +530,7 @@ $i = 0;
         @endfor
     @endforeach
 
+    {!! Form::hidden('reduction', $reduction, array('id' => 'reduction')) !!}
     <table class="table table-striped">
         <tr>
             <th style="text-align: right; width: 85%; vertical-align: top;">@lang('messages.fields.total')</th>
@@ -630,7 +651,7 @@ $i = 0;
 
             var subtotal = 0;
 
-            @for($i=1;$i<=$quantity; $i++)
+            @for($i=1;$i<=$quantity-$reduction; $i++)
             var tc{{ $i }} = $('#tcost{{ $i }}').text().replace(/,/g, '') * 1;
             var newval{{ $i }} = tc{{ $i }} * 1;
             $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
@@ -645,10 +666,10 @@ $i = 0;
             $('#total').text(subtotal.toFixed(2));
             $('#i_total').val(subtotal.toFixed(2));
 
-                    @for($i=1; $i<=$quantity; $i++)
-                @php
+            @for($i=1; $i<=$quantity-$reduction; $i++)
+            @php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                @endphp
+            @endphp
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
@@ -782,10 +803,10 @@ $i = 0;
                             //console.log(data);
                             var result = eval(data);
                             if (result.status == 'success') {
-                                        {{--
-                                        // prompt user with modal (email addr indicates user x) and ask if that's correct
-                                        // and if they want to auto-populate the form, yes/no.
-                                        --}}
+                                {{--
+                                // prompt user with modal (email addr indicates user x) and ask if that's correct
+                                // and if they want to auto-populate the form, yes/no.
+                                --}}
 
                                 var p = result.p;
 
@@ -822,7 +843,7 @@ $i = 0;
                                         $('#allergenInfo' + which).val(p["allergenInfo"]);
                                         $('#specialNeeds' + which).val(p["specialNeeds"]);
                                         $('#eventNotes' + which).val(p["eventNotes"]);
-                                                @endif
+                                        @endif
                                         var pmi_id = $('#OrgStat1' + which).val();
                                         if (pmi_id > 0) {
                                             $('#firstName' + which).attr('readonly', true);
@@ -870,10 +891,10 @@ $i = 0;
                         success: function (data) {
                             var result = eval(data);
                             if (result.status == 'success') {
-                                        {{--
-                                        // prompt user with modal (email points to user x) and ask if that's correct
-                                        // and if they want to auto-populate the form, yes/no.
-                                        --}}
+                                {{--
+                                // prompt user with modal (email points to user x) and ask if that's correct
+                                // and if they want to auto-populate the form, yes/no.
+                                --}}
                                 var p = result.p;
 
                                 $('#confirm_modal-content').html(result.msg);
@@ -912,7 +933,7 @@ $i = 0;
                                         $('#allergenInfo' + which).val(p["allergenInfo"]);
                                         $('#specialNeeds' + which).val(p["specialNeeds"]);
                                         $('#eventNotes' + which).val(p["eventNotes"]);
-                                                @endif
+                                        @endif
                                         var pmi_id = $('#OrgStat1' + which).val();
                                         if (pmi_id > 0) {
                                             $('#firstName' + which).attr('readonly', true);
@@ -1060,11 +1081,11 @@ $i = 0;
 
             function recalc() {
                 subtotal = 0;
-                @for($i=1; $i<=$quantity; $i++)
-                @php
-                    $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-                @endphp
-                percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
+                @for($i=1; $i<=$quantity-$reduction; $i++)
+                        @php
+                            $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+                        @endphp
+                    percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();
 

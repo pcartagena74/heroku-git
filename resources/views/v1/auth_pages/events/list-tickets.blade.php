@@ -2,6 +2,11 @@
     /**
      * Comment: This is the display page for Ticket Adding, Editing and Deleting for an Individual Event
      * Created: 2/9/2017
+     *
+     * Update: 5/19/2024
+     * Added logic to use isPrivate for Waitlisting.  isPrivate defaults to 0
+     *
+     * @var Event $event
      */
 
     // {!! Form::open(['url'=>'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','class'=>'form-horizontal', 'role'=>'form','onsubmit' => 'return confirm("Are you sure?")'])!!}
@@ -65,13 +70,10 @@
             </tr>
         </table>
     </div>
-    <div class="col-sm-4 col-md-4">&nbsp;</div>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>
+    <div class="col-sm-4 col-md-4 col-xs-12">
         @lang('messages.instructions.bundle_setup')<br/>
         <b style="color:red;">@lang('messages.headers.note'):</b> @lang('messages.instructions.tkt_setup')
-    </p>
+    </div>
 
     <table id="ticket_table" class="table table-striped dataTable">
         <thead>

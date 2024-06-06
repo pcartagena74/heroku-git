@@ -865,7 +865,9 @@ return [
         'survey_instructions' => 'Proporcione sus comentarios objetivos para que podamos mejorar continuamente el valor que brindamos a nuestra membresía. ' .
             '<br> Califique al orador/presentación en las siguientes categorías.',
         'sold_out' => 'Este evento está agotado.',
-        'sold_out2' => 'Este boleto está agotado.',
+        'sold_out2' => '{0} Este boleto está agotado.|[1,5] Solo quedan :count entradas.|[6,*]',
+        'sold_out3' => 'La cantidad de boletos disminuyó debido a la disponibilidad.',
+        'sold_out4' => 'La disponibilidad de boletos cambió durante este intento de compra.  Por favor, <a href=":url">empieza de nuevo</a>.',
         'tech_stmt' => 'Esta declaración se mostrará si ocurre un problema con mCentric.',
         'tkt_setup' => 'Por lo general, crear entradas adicionales solo es necesario para los eventos del Día de Desarrollo Profesional.',
         'total_caveat' => 'El total NO refleja actualizaciones por reembolsos.',

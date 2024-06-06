@@ -1049,7 +1049,9 @@ class EventController extends Controller
         $tix = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isSuppressed', '=', 0],
-        ])->get();
+        ])
+            ->where(fn($q) => $q->where('maxAttendees', '=', 0)->orWhereRaw("maxAttendees - regCount > 0"))
+            ->get();
 
         return json_encode(['status' => 'success', 'tix' => $tix, 'def_tick' => $ticket]);
     }

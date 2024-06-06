@@ -39,7 +39,7 @@ class Event extends Model
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
     protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks',
-                                       'eventStartDate', 'eventEndDate'];
+        'eventStartDate', 'eventEndDate'];
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
 
     protected function serializeDate(DateTimeInterface $date)
@@ -268,7 +268,7 @@ class Event extends Model
     public function create_or_update_event_ics()
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_'.$this->eventID.'.ics';
+        $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
@@ -280,5 +280,14 @@ class Event extends Model
         $ics_file = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET1'), "event_$this->eventID.ics");
 
         return $ics_file;
+    }
+
+    public function event_url()
+    {
+        if ($this->slug) {
+            return "http://www.mCentric.org/events/" . $this->slug;
+        } else {
+            return "http://www.mCentric.org/events/" . $this->eventID;
+        }
     }
 }
