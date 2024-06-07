@@ -886,7 +886,9 @@ return [
         'survey_instructions' => 'Please provide your objective feedback so that we may continuously improve the value
                                   we provide to our membership. <br> Please rate the speaker/presentation in the following categories.',
         'sold_out' => 'This event is sold out.',
-        'sold_out2' => '{0} This ticket is sold out.|[1,5] There are only :count tickets remaining.|[6,*]',
+        'sold_out2' => '{0} This ticket is sold out.|' .
+            '{1} There is only 1 ticket remaining.|' .
+            '[2,5] There are only :count tickets remaining.|[6,*]',
         'sold_out3' => 'Your ticket quantity was decreased due to availability.',
         'sold_out4' => 'Ticket availability changed during this purchase attempt.  Please, <a href=":url">start over</a>.',
         'tech_stmt' => 'This statement will be displayed if an mCentric issue occurs.',
