@@ -35,7 +35,6 @@
         "eduardokum/laravel-mail-auto-embed": "^1.0",
         "fedeisas/laravel-mail-css-inliner": "^3.0",
         "fennb/phirehose": "^1.0",
-        "fruitcake/laravel-cors": "^2.0",
         "google/recaptcha": "^1.2",
         "graham-campbell/flysystem": "^7.1",
         "graham-campbell/markdown": "^13.1",
