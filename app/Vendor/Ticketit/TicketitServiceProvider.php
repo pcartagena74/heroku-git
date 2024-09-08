@@ -100,7 +100,7 @@ class TicketitServiceProvider extends ServiceProvider
             $this->loadViewsFrom($viewsDirectory, 'ticketit');
 
             $this->publishes([$viewsDirectory => base_path('resources/views/vendor/ticketit')], 'views');
-            $this->publishes([__DIR__.'/Translations' => base_path('resources/lang/vendor/ticketit')], 'lang');
+            $this->publishes([__DIR__.'/Translations' => base_path('lang/vendor/ticketit')], 'lang');
             $this->publishes([__DIR__.'/Public' => public_path('vendor/ticketit')], 'public');
             $this->publishes([__DIR__.'/Migrations' => base_path('database/migrations')], 'db');
 
