@@ -417,6 +417,7 @@ Route::post('approve-tweets', function (Illuminate\Http\Request $request) {
             }
         }
     }
+
     return redirect()->back();
 })->middleware('auth');
 

@@ -4,7 +4,6 @@
 
 namespace Database\Factories\App\Models;
 
-use App\Models\OrgPerson;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrgPersonFactory extends Factory
