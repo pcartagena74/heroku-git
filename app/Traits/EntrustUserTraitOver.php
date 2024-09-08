@@ -15,8 +15,8 @@ trait EntrustUserTraitOver
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
-     * @param mixed $role
-     * @param array $extra_data in our case orgID
+     * @param  mixed  $role
+     * @param  array  $extra_data  in our case orgID
      */
     public function attachRole($role, $extra_data = null)
     {

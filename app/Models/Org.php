@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\EventType;
-use App\Models\VolunteerRole;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,9 +9,13 @@ class Org extends Model
 {
     // The table
     protected $table = 'organization';
+
     protected $primaryKey = 'orgID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',

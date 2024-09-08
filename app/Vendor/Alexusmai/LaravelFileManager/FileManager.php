@@ -17,7 +17,7 @@ use Storage;
 
 class FileManager
 {
-    use PathTrait, ContentTrait, CheckTrait;
+    use CheckTrait, ContentTrait, PathTrait;
 
     /**
      * @var ConfigRepository
@@ -26,8 +26,6 @@ class FileManager
 
     /**
      * FileManager constructor.
-     *
-     * @param  ConfigRepository  $configRepository
      */
     public function __construct(ConfigRepository $configRepository)
     {
@@ -45,20 +43,20 @@ class FileManager
         if (! config()->has('file-manager')) {
             return [
                 'result' => [
-                    'status'  => 'danger',
+                    'status' => 'danger',
                     'message' => 'noConfig',
                 ],
             ];
         }
 
         $config = [
-            'acl'           => $this->configRepository->getAcl(),
-            'leftDisk'      => $this->configRepository->getLeftDisk(),
-            'rightDisk'     => $this->configRepository->getRightDisk(),
-            'leftPath'      => $this->configRepository->getLeftPath(),
-            'rightPath'     => $this->configRepository->getRightPath(),
+            'acl' => $this->configRepository->getAcl(),
+            'leftDisk' => $this->configRepository->getLeftDisk(),
+            'rightDisk' => $this->configRepository->getRightDisk(),
+            'leftPath' => $this->configRepository->getLeftPath(),
+            'rightPath' => $this->configRepository->getRightPath(),
             'windowsConfig' => $this->configRepository->getWindowsConfig(),
-            'hiddenFiles'   => $this->configRepository->getHiddenFiles(),
+            'hiddenFiles' => $this->configRepository->getHiddenFiles(),
         ];
 
         // disk list
@@ -75,7 +73,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => null,
             ],
             'config' => $config,
@@ -85,8 +83,6 @@ class FileManager
     /**
      * Get files and directories for the selected path and disk
      *
-     * @param $disk
-     * @param $path
      *
      * @return array
      */
@@ -96,20 +92,18 @@ class FileManager
         $content = $this->getContent($disk, $path);
 
         return [
-            'result'      => [
-                'status'  => 'success',
+            'result' => [
+                'status' => 'success',
                 'message' => null,
             ],
             'directories' => $content['directories'],
-            'files'       => $content['files'],
+            'files' => $content['files'],
         ];
     }
 
     /**
      * Get part of the directory tree
      *
-     * @param $disk
-     * @param $path
      *
      * @return array
      */
@@ -118,8 +112,8 @@ class FileManager
         $directories = $this->getDirectoriesTree($disk, $path);
 
         return [
-            'result'      => [
-                'status'  => 'success',
+            'result' => [
+                'status' => 'success',
                 'message' => null,
             ],
             'directories' => $directories,
@@ -129,10 +123,6 @@ class FileManager
     /**
      * Upload files
      *
-     * @param $disk
-     * @param $path
-     * @param $files
-     * @param $overwrite
      *
      * @return array
      */
@@ -151,7 +141,7 @@ class FileManager
             if ($consumed_storage >= $total_storage) {
                 return [
                     'result' => [
-                        'status'  => 'danger',
+                        'status' => 'danger',
                         'message' => trans('messages.errors.storage_full'),
                     ],
                 ];
@@ -161,7 +151,7 @@ class FileManager
             // skip or overwrite files
             if (! $overwrite
                 && Storage::disk($disk)
-                ->exists($path.'/'.$file->getClientOriginalName())
+                    ->exists($path.'/'.$file->getClientOriginalName())
             ) {
                 continue;
             }
@@ -171,11 +161,13 @@ class FileManager
                 && $file->getClientSize() / 1000 > $this->configRepository->getMaxUploadFileSize()
             ) {
                 $fileNotUploaded = true;
+
                 continue;
             }
             if ($allow_for_dev == false) {
                 if (($consumed_storage + ($file->getClientSize() / 1000)) > $total_storage) {
                     $fileNotUploaded = true;
+
                     continue;
                 }
             }
@@ -187,6 +179,7 @@ class FileManager
                 )
             ) {
                 $fileNotUploaded = true;
+
                 continue;
             }
 
@@ -203,7 +196,7 @@ class FileManager
         if ($fileNotUploaded) {
             return [
                 'result' => [
-                    'status'  => 'warning',
+                    'status' => 'warning',
                     'message' => 'notAllUploaded',
                 ],
             ];
@@ -211,7 +204,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'uploaded',
             ],
         ];
@@ -220,8 +213,6 @@ class FileManager
     /**
      * Delete files and folders
      *
-     * @param $disk
-     * @param $items
      *
      * @return array
      */
@@ -256,7 +247,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'deleted',
             ],
         ];
@@ -265,9 +256,6 @@ class FileManager
     /**
      * Copy / Cut - Files and Directories
      *
-     * @param $disk
-     * @param $path
-     * @param $clipboard
      *
      * @return array
      */
@@ -288,9 +276,6 @@ class FileManager
     /**
      * Rename file or folder
      *
-     * @param $disk
-     * @param $newName
-     * @param $oldName
      *
      * @return array
      */
@@ -300,7 +285,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'renamed',
             ],
         ];
@@ -309,8 +294,6 @@ class FileManager
     /**
      * Download selected file
      *
-     * @param $disk
-     * @param $path
      *
      * @return mixed
      */
@@ -329,10 +312,9 @@ class FileManager
     /**
      * Create thumbnails
      *
-     * @param $disk
-     * @param $path
      *
      * @return \Illuminate\Http\Response|mixed
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function thumbnails($disk, $path)
@@ -359,10 +341,9 @@ class FileManager
     /**
      * Image preview
      *
-     * @param $disk
-     * @param $path
      *
      * @return mixed
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function preview($disk, $path)
@@ -376,8 +357,6 @@ class FileManager
     /**
      * Get file URL
      *
-     * @param $disk
-     * @param $path
      *
      * @return array
      */
@@ -385,19 +364,16 @@ class FileManager
     {
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => null,
             ],
-            'url'    => Storage::disk($disk)->url($path),
+            'url' => Storage::disk($disk)->url($path),
         ];
     }
 
     /**
      * Create new directory
      *
-     * @param $disk
-     * @param $path
-     * @param $name
      *
      * @return array
      */
@@ -410,7 +386,7 @@ class FileManager
         if (Storage::disk($disk)->exists($directoryName)) {
             return [
                 'result' => [
-                    'status'  => 'warning',
+                    'status' => 'warning',
                     'message' => 'dirExist',
                 ],
             ];
@@ -430,21 +406,18 @@ class FileManager
         $tree['props'] = ['hasSubdirectories' => false];
 
         return [
-            'result'    => [
-                'status'  => 'success',
+            'result' => [
+                'status' => 'success',
                 'message' => 'dirCreated',
             ],
             'directory' => $directoryProperties,
-            'tree'      => [$tree],
+            'tree' => [$tree],
         ];
     }
 
     /**
      * Create new file
      *
-     * @param $disk
-     * @param $path
-     * @param $name
      *
      * @return array
      */
@@ -457,7 +430,7 @@ class FileManager
         if (Storage::disk($disk)->exists($path)) {
             return [
                 'result' => [
-                    'status'  => 'warning',
+                    'status' => 'warning',
                     'message' => 'fileExist',
                 ],
             ];
@@ -471,19 +444,16 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'fileCreated',
             ],
-            'file'   => $fileProperties,
+            'file' => $fileProperties,
         ];
     }
 
     /**
      * Update file
      *
-     * @param $disk
-     * @param $path
-     * @param $file
      *
      * @return array
      */
@@ -504,18 +474,16 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'fileUpdated',
             ],
-            'file'   => $fileProperties,
+            'file' => $fileProperties,
         ];
     }
 
     /**
      * Stream file - for audio and video
      *
-     * @param $disk
-     * @param $path
      *
      * @return mixed
      */

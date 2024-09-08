@@ -1,21 +1,13 @@
 <?php
 
-use App\Http\Controllers\MembershipController;
-use App\Http\Controllers\VolunteerRoleController;
-use Kordy\Ticketit\Controllers\StatusesController;
-use Kordy\Ticketit\Controllers\TicketsController;
-
-#use Kordy\Ticketit\Controllers\DashboardController;
-use \App\Http\TicketitControllers\DashboardController;
-use Kordy\Ticketit\Controllers\PrioritiesController;
-use Kordy\Ticketit\Controllers\CategoriesController;
-use Kordy\Ticketit\Controllers\ConfigurationsController;
-use Kordy\Ticketit\Controllers\AdministratorsController;
-use Kordy\Ticketit\Controllers\AgentsController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
+//use Kordy\Ticketit\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\AuthCheckinController;
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\CampaignController;
@@ -35,6 +27,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MailGunController;
+use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MergeController;
 use App\Http\Controllers\OrgController;
 use App\Http\Controllers\OrgDiscountController;
@@ -47,17 +40,15 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\RegSessionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SocialController;
 use App\Http\Controllers\SpeakerController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VolunteerRoleController;
+use App\Http\TicketitControllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -167,6 +158,7 @@ Route::post('/record_attendance/{event}', [AuthCheckinController::class, 'store'
 
 Route::get('/storage/events/{filename}', function ($filename) {
     $filePath = Flysystem::connection('awss3')->get($filename);
+
     return redirect($filePath);
 });
 
@@ -420,7 +412,7 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
             $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
-                $tweet->approved = (int)$input_val;
+                $tweet->approved = (int) $input_val;
                 $tweet->save();
             }
         }
@@ -436,7 +428,7 @@ Route::get('/blank', ['middleware' => 'auth', function () {
 Auth::routes();
 
 Route::get('ste2', function () {
-    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
+    Mail::raw('Sending email is easy from '.env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
         $message->to('pcartagena@partners.org');
@@ -447,7 +439,7 @@ Route::get('snaptest', function () {
     // $snap = App::make('snappy.pdf');
     // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
     // return $snap->inline();
-    return PDF::loadFile(env('APP_URL') . '/show_orig/159')->inline('blah.pdf');
+    return PDF::loadFile(env('APP_URL').'/show_orig/159')->inline('blah.pdf');
 });
 
 Route::get('library', [LibraryController::class, 'index']);

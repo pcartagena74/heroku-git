@@ -2,17 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\EventSession;
-use App\Models\Person;
 use App\Other\ics_calendar;
 use Carbon\Carbon;
+use DateTimeInterface;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use League\Flysystem\AdapterInterface;
 use Spatie\Activitylog\Traits\LogsActivity;
-use DateTimeInterface;
 
 class Event extends Model
 {
@@ -21,8 +18,11 @@ class Event extends Model
 
     // The table
     protected $table = 'org-event';
+
     protected $primaryKey = 'eventID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
 
     protected $casts = [
@@ -37,9 +37,12 @@ class Event extends Model
     protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
 
     protected static $logOnlyDirty = true;
+
     protected static $submitEmptyLogs = false;
+
     protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks',
         'eventStartDate', 'eventEndDate'];
+
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
 
     protected function serializeDate(DateTimeInterface $date)
@@ -268,7 +271,7 @@ class Event extends Model
     public function create_or_update_event_ics()
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_' . $this->eventID . '.ics';
+        $event_filename = 'event_'.$this->eventID.'.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
@@ -285,9 +288,9 @@ class Event extends Model
     public function event_url()
     {
         if ($this->slug) {
-            return "/events/" . $this->slug;
+            return '/events/'.$this->slug;
         } else {
-            return "/events/" . $this->eventID;
+            return '/events/'.$this->eventID;
         }
     }
 }

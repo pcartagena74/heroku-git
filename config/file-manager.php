@@ -12,14 +12,14 @@ return [
      *
      * Default - DefaultConfigRepository get config from this file
      */
-    'configRepository'  => MCConfigRepository::class,
+    'configRepository' => MCConfigRepository::class,
 
     /**
      * ACL rules repository
      *
      * Default - ConfigACLRepository (see rules in - aclRules)
      */
-    'aclRepository'     => MCACLRepository::class,
+    'aclRepository' => MCACLRepository::class,
 
     //********* Default configuration for DefaultConfigRepository **************
 
@@ -27,35 +27,35 @@ return [
      * List of disk names that you want to use
      * (from config/filesystems)
      */
-    'diskList'          => ['s3_media'],
+    'diskList' => ['s3_media'],
 
     /**
      * Default disk for left manager
      *
      * null - auto select the first disk in the disk list
      */
-    'leftDisk'          => null,
+    'leftDisk' => null,
 
     /**
      * Default disk for right manager
      *
      * null - auto select the first disk in the disk list
      */
-    'rightDisk'         => null,
+    'rightDisk' => null,
 
     /**
      * Default path for left manager
      *
      * null - root directory
      */
-    'leftPath'          => null,
+    'leftPath' => null,
 
     /**
      * Default path for right manager
      *
      * null - root directory
      */
-    'rightPath'         => null,
+    'rightPath' => null,
 
     /**
      * Image cache ( Intervention Image Cache )
@@ -63,7 +63,7 @@ return [
      * set null, 0 - if you don't need cache (default)
      * if you want use cache - set the number of minutes for which the value should be cached
      */
-    'cache'             => 3,
+    'cache' => 3,
 
     /**
      * File manager modules configuration
@@ -72,7 +72,7 @@ return [
      * 2 - one file manager window with directories tree module
      * 3 - two file manager windows
      */
-    'windowsConfig'     => 1,
+    'windowsConfig' => 1,
 
     /**
      * File upload - Max file size in KB
@@ -86,12 +86,12 @@ return [
      *
      * [] - no restrictions
      */
-    'allowFileTypes'    => [],
+    'allowFileTypes' => [],
 
     /**
      * Show / Hide system files and folders
      */
-    'hiddenFiles'       => true,
+    'hiddenFiles' => true,
 
     /***************************************************************************
      * Middleware
@@ -99,21 +99,21 @@ return [
      * Add your middleware name to array -> ['web', 'auth', 'admin']
      * !!!! RESTRICT ACCESS FOR NON ADMIN USERS !!!!
      */
-    'middleware'        => ['auth'],
+    'middleware' => ['auth'],
 
     /***************************************************************************
      * ACL mechanism ON/OFF
      *
      * default - false(OFF)
      */
-    'acl'               => true,
+    'acl' => true,
 
     /**
      * Hide files and folders from file-manager if user doesn't have access
      *
      * ACL access level = 0
      */
-    'aclHideFromFM'     => true,
+    'aclHideFromFM' => true,
 
     /**
      * ACL strategy
@@ -122,14 +122,14 @@ return [
      *
      * whitelist - Deny anything(access - 0 - deny), that not allowed by the ACL rules list
      */
-    'aclStrategy'       => 'whitelist',
+    'aclStrategy' => 'whitelist',
 
     /**
      * ACL Rules cache
      *
      * null or value in minutes
      */
-    'aclRulesCache'     => null,
+    'aclRulesCache' => null,
 
     //********* Default configuration for DefaultConfigRepository END **********
 
@@ -151,11 +151,11 @@ return [
      *
      * access: 0 - deny, 1 - read, 2 - read/write
      */
-    'aclRules'          => [
+    'aclRules' => [
         null => [
             //['disk' => 'public', 'path' => '/', 'access' => 2],
         ],
-        1    => [
+        1 => [
             //['disk' => 'public', 'path' => 'images/arch*.jpg', 'access' => 2],
             //['disk' => 'public', 'path' => 'files/*', 'access' => 1],
         ],

@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Models\RegFinance;
 use App\Models\Registration;
 use App\Models\TwitterStream;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\URL as URL;
 use Illuminate\Support\ServiceProvider;

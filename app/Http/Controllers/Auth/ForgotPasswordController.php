@@ -33,6 +33,7 @@ class ForgotPasswordController extends Controller
     public function showLinkRequestForm_inModal()
     {
         $message = view('v1.modals.email')->renderSections()['content'];
+
         //json_encode(array("status" => "success", "message" => $message));
         return json_encode(['status' => 'success', 'message' => $message]);
     }
@@ -40,7 +41,7 @@ class ForgotPasswordController extends Controller
     public function rules()
     {
         return [
-            'email'    => 'required|email|max:255',
+            'email' => 'required|email|max:255',
             'g-recaptcha-response' => 'required|recaptcha',
         ];
     }

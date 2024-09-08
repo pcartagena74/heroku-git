@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event;
-use App\Models\EventSession;
 use App\Models\Person;
-use App\Models\Registration;
 use Illuminate\Http\Request;
 
 class SpeakerController extends Controller
@@ -51,24 +48,24 @@ class SpeakerController extends Controller
     {
         $speakers = json_decode(Person::whereHas('roles', function ($q) {
             $q->where([
-               ['roles.id', '=', '2'],
-           ]);
+                ['roles.id', '=', '2'],
+            ]);
         })
-           ->where('orgID', '=', $this->currentPerson->defaultOrgID)
-           ->join('event-registration as er', function ($q) {
-               $q->on('er.personID', '=', 'person.personID')
-                   ->whereNull('er.deleted_at');
-           })
-           ->join('org-event', 'org-event.eventID', '=', 'er.eventID')
-           ->leftjoin('eventsession_speaker as ss', 'ss.speaker_id', '=', 'er.personID')
-           ->leftjoin('event-sessions as es', function ($q) {
-               $q->on('es.sessionID', '=', 'ss.eventsession_id')
-                   ->on('es.eventID', '=', 'org-event.eventID');
-           })
-           ->where('er.discountCode', '=', 'speaker')
-           ->selectRaw("distinct person.personID, person.firstName, person.lastName, person.login, count(*) as 'count', max(`org-event`.eventStartDate) as 'date'")
-           ->groupBy('person.personID', 'person.firstName', 'person.lastName', 'person.login')
-           ->cursor(), true);
+            ->where('orgID', '=', $this->currentPerson->defaultOrgID)
+            ->join('event-registration as er', function ($q) {
+                $q->on('er.personID', '=', 'person.personID')
+                    ->whereNull('er.deleted_at');
+            })
+            ->join('org-event', 'org-event.eventID', '=', 'er.eventID')
+            ->leftjoin('eventsession_speaker as ss', 'ss.speaker_id', '=', 'er.personID')
+            ->leftjoin('event-sessions as es', function ($q) {
+                $q->on('es.sessionID', '=', 'ss.eventsession_id')
+                    ->on('es.eventID', '=', 'org-event.eventID');
+            })
+            ->where('er.discountCode', '=', 'speaker')
+            ->selectRaw("distinct person.personID, person.firstName, person.lastName, person.login, count(*) as 'count', max(`org-event`.eventStartDate) as 'date'")
+            ->groupBy('person.personID', 'person.firstName', 'person.lastName', 'person.login')
+            ->cursor(), true);
 
         return view('v1.auth_pages.speakers.list2', compact('speakers'));
     }

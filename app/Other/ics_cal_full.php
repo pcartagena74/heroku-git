@@ -16,24 +16,43 @@ use Illuminate\Support\Facades\DB;
 class ics_cal_full
 {
     private $end;
+
     private $html;
+
     private $contact;
+
     private $created;
+
     private $org;
+
     private $o_string;
+
     private $summary;
+
     private $description;
+
     private $location;
+
     private $locale;
+
     private $stamp;
+
     private $start;
+
     private $subject;
+
     private $title;
+
     private $tzid;
+
     private $uid;
+
     private $updated;
+
     private $uri;
+
     private $v_string;
+
     private $venue_uid;
 
     public function __construct(Collection $events)

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\VolunteerService;
 use Illuminate\Http\Request;
 
 class VolunteerServiceController extends Controller
@@ -30,7 +29,6 @@ class VolunteerServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -63,7 +61,6 @@ class VolunteerServiceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */

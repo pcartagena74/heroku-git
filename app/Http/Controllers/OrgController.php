@@ -6,8 +6,6 @@ use App\Models\Email;
 use App\Models\EventType;
 use App\Models\Org;
 use App\Models\OrgPerson;
-use App\Models\Permission;
-use App\Models\PermissionRole;
 use App\Models\Person;
 use App\Models\Role;
 use App\Models\User;
@@ -184,7 +182,7 @@ class OrgController extends Controller
 
         // Setup the org, person, email, etc. structures but DO NOT YET SAVE.
         // Saving will be done within a try/catch block with rollback.
-        $org = new Org();
+        $org = new Org;
         $org->orgName = $request->input('orgName');
         $org->formalName = $request->input('formalName');
         $org->orgAddr1 = $request->input('orgAddr1');
@@ -313,7 +311,7 @@ class OrgController extends Controller
 
                 // setup orgChart default data
                 $defaultRoles = VolunteerRole::where('orgID', 1)->get();
-                foreach ($defaultRoles as $r){
+                foreach ($defaultRoles as $r) {
                     $new_role = $r->replicate();
                     $new_role->orgID = $org->orgID;
                     $new_role->save();
@@ -325,6 +323,7 @@ class OrgController extends Controller
                 request()->session()->flash('alert-warning', $exception->getMessage());
 
                 DB::rollBack();
+
                 return back()->withInput();
             }
 
@@ -333,6 +332,7 @@ class OrgController extends Controller
             }
 
             request()->session()->flash('alert-success', trans('messages.messages.new_org_created_successfully'));
+
             return back();
         } else {
             // Creating the org with an existing user
@@ -363,7 +363,7 @@ class OrgController extends Controller
                 }
 
                 $op = new OrgPerson;
-                if (null !== $person->orgperson && null !== $person->orgperson->OrgStat1) {
+                if ($person->orgperson !== null && $person->orgperson->OrgStat1 !== null) {
                     $op->OrgStat1 = $person->orgperson->OrgStat1;
                 }
                 $op->personID = $person->personID;
@@ -380,7 +380,7 @@ class OrgController extends Controller
 
                 // setup orgChart default data
                 $defaultRoles = VolunteerRole::where('orgID', 1)->get();
-                foreach ($defaultRoles as $r){
+                foreach ($defaultRoles as $r) {
                     $new_role = $r->replicate();
                     $new_role->orgID = $org->orgID;
                     $new_role->save();
@@ -402,7 +402,7 @@ class OrgController extends Controller
             $p1 = Person::find(1)->with('orgperson')->first();
             $u1 = User::find(1);
             $op = new OrgPerson;
-            if (null !== $p1->orgperson->OrgStat1) {
+            if ($p1->orgperson->OrgStat1 !== null) {
                 $op->OrgStat1 = $p1->orgperson->OrgStat1;
             }
             $op->personID = 1;

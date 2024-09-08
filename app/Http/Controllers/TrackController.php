@@ -88,7 +88,7 @@ class TrackController extends Controller
             $name = request()->input('name');
             $value = request()->input($name);
         }
-        list($name, $track, $day, $order) = array_pad(explode('-', request()->input('name'), 4), 4, null);
+        [$name, $track, $day, $order] = array_pad(explode('-', request()->input('name'), 4), 4, null);
         $s = EventSession::withTrashed()->find(request()->input('pk'));
 
         // symmetric schedules need to update start & end together
@@ -180,6 +180,7 @@ class TrackController extends Controller
         $event->isSymmetric = $isSymmetric;
         $event->updaterID = auth()->user()->id;
         $event->save();
+
         //return json_encode(array('status' => 'success', 'message' => 'Did something...' . $isSymmetric, 'blah' => $checked));
         return redirect('/tracks/'.$event->eventID);
     }
@@ -189,7 +190,7 @@ class TrackController extends Controller
         // pass the day of the event in the URL and $value = ticketID
         $value = request()->input('value');
         $ticket = Ticket::find($value);
-        list($name, $day) = array_pad(explode('-', request()->input('name'), 2), 2, null);
+        [$name, $day] = array_pad(explode('-', request()->input('name'), 2), 2, null);
         $sessions = EventSession::where([
             ['confDay', '=', $day],
             ['eventID', '=', $ticket->eventID],

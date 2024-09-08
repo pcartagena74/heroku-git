@@ -8,7 +8,6 @@ use App\Models\Org;
 use App\Models\Person;
 use App\Models\RegFinance;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -17,20 +16,35 @@ class ReceiptNotification extends Notification
     use Queueable;
 
     protected $rf;
+
     protected $event;
+
     protected $org;
+
     protected $person;
+
     protected $loc;
+
     protected $receipt;
+
     public $name;
+
     public $line1;
+
     public $line2;
+
     public $line3;
+
     public $c1;
+
     public $c2;
+
     public $action1;
+
     public $action2;
+
     public $url1;
+
     public $url2;
 
     /**
@@ -52,7 +66,7 @@ class ReceiptNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -63,7 +77,7 @@ class ReceiptNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -108,13 +122,13 @@ class ReceiptNotification extends Notification
                 'orgURL' => $this->org->org_url(),
             ]);
         // ->with($line1, $action1, $url1, $line2, $c1, $action2, $url2, $c2, $line3, $postRegInfo, $name);
-            //->with(compact('line1','action1', 'url1', 'line2', 'c1', 'action2', 'url2', 'c2', 'line3', 'postRegInfo', 'name'));
+        //->with(compact('line1','action1', 'url1', 'line2', 'c1', 'action2', 'url2', 'c2', 'line3', 'postRegInfo', 'name'));
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function toArray($notifiable)

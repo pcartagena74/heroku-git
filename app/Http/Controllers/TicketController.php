@@ -30,9 +30,9 @@ class TicketController extends Controller
         $topBits = '';
 
         $bundles = Ticket::where([
-                ['isaBundle', 1],
-                ['eventID', $event->eventID],
-            ])->get()->sortByDesc('availableEndDate');
+            ['isaBundle', 1],
+            ['eventID', $event->eventID],
+        ])->get()->sortByDesc('availableEndDate');
 
         $tickets = Ticket::where([
             ['isaBundle', 0],
@@ -72,7 +72,7 @@ class TicketController extends Controller
             $non = request()->input($nonmbrBasePrice);
             $max = request()->input($maxAttendees);
             $ebp = request()->input($earlyBirdPercent);
-            null !== request()->input($isaBundle) ? $isa = request()->input($isaBundle) : $isa = 0;
+            request()->input($isaBundle) !== null ? $isa = request()->input($isaBundle) : $isa = 0;
 
             empty($ava) ? $ava = null : $ava = date('Y-m-d H:i:s', strtotime($ava));
             empty($ear) ? $ear = null : $ear = date('Y-m-d H:i:s', strtotime($ear));
@@ -126,7 +126,7 @@ class TicketController extends Controller
 
         // if passed from the event report (and other pages) the $name will have a dash
         if (strpos($name, '-')) {
-            list($name, $field) = array_pad(explode('-', $name, 2), 2, null);
+            [$name, $field] = array_pad(explode('-', $name, 2), 2, null);
         } else {
             // Otherwise, shave off number at the end to match fieldname
             $name = substr(request()->input('name'), 0, -1);

@@ -19,42 +19,42 @@ class VolunteerRoleSeeder extends Seeder
             [
                 'orgID' => 1,
                 'title' => 'prez',
-                'prefix_override' => 1
+                'prefix_override' => 1,
             ],
             [
                 'orgID' => 1,
                 'title' => 'evp',
-                'prefix_override' => 1
+                'prefix_override' => 1,
             ],
             [
                 'orgID' => 1,
                 'title' => 'fin',
-                'prefix_override' => 0
+                'prefix_override' => 0,
             ],
             [
                 'orgID' => 1,
                 'title' => 'pd',
-                'prefix_override' => 0
+                'prefix_override' => 0,
             ],
             [
                 'orgID' => 1,
                 'title' => 'biz',
-                'prefix_override' => 0
+                'prefix_override' => 0,
             ],
             [
                 'orgID' => 1,
                 'title' => 'mbr',
-                'prefix_override' => 0
+                'prefix_override' => 0,
             ],
             [
                 'orgID' => 1,
                 'title' => 'mktg',
-                'prefix_override' => 0
+                'prefix_override' => 0,
             ],
             [
                 'orgID' => 1,
                 'title' => 'tech',
-                'prefix_override' => 0
+                'prefix_override' => 0,
             ],
         ];
 

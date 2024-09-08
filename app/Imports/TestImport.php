@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, SkipsOnFailure, ShouldQueue
+class TestImport implements ShouldQueue, SkipsOnFailure, ToCollection, WithChunkReading, WithHeadingRow, WithValidation
 {
     use Importable, SkipsFailures;
 
@@ -22,9 +22,6 @@ class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, With
         requestBin(['in' => 'constructor test import ']);
     }
 
-    /**
-     * @param Collection $collection
-     */
     public function collection(Collection $collection)
     {
         requestBin(['should execute this']);
@@ -57,8 +54,8 @@ class TestImport implements ToCollection, WithChunkReading, WithHeadingRow, With
     public function rules(): array
     {
         return [
-            'pmi_id'          => Rule::required(),
-            'primary_email'   => Rule::required(),
+            'pmi_id' => Rule::required(),
+            'primary_email' => Rule::required(),
             'alternate_email' => Rule::requiredIf($em1 === null),
         ];
     }

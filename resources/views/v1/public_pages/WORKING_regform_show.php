@@ -156,12 +156,12 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
         @for($j=1; $j<=$q; $j++)
             <?php
             $i++;
-            $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
-            if ($q > 1 && $should_skip) {
-                $orig_q = $q;
-                $q = 1;
-            }
-            ?>
+        $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
+        if ($q > 1 && $should_skip) {
+            $orig_q = $q;
+            $q = 1;
+        }
+        ?>
             {!! Form::hidden("percent".$i_cnt, 0, array('id' => "i_percent".$i_cnt)) !!}
             {!! Form::hidden("flatamt".$i_cnt, 0, array('id' => "i_flatamt".$i_cnt)) !!}
             {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
@@ -343,14 +343,14 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                         Laravel help re: multiple repeating form elements with variable model
                         --}}
                         <?php
-                        if (old('certifications'.$i_cnt)) {
-                            $selected = old('certifications'.$i_cnt);
-                        } elseif ($person->certifications) {
-                            $selected = explode(',', $person->certifications);
-                        } else {
-                            $selected = reset($cert_array);
-                        }
-                        ?>
+                    if (old('certifications'.$i_cnt)) {
+                        $selected = old('certifications'.$i_cnt);
+                    } elseif ($person->certifications) {
+                        $selected = explode(',', $person->certifications);
+                    } else {
+                        $selected = reset($cert_array);
+                    }
+        ?>
                         {!! Form::select("certifications" . $i_cnt . "[]", $cert_array, $selected,
                             array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
                     @endif
@@ -476,7 +476,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                 } else {
                     $selected = reset($affiliation_array);
                 }
-                ?>
+        ?>
 
                 <label class="control-label" for="affiliation{{ $i_cnt }}">
                     @lang('messages.fields.affiliation')<sup class='red'>*</sup></label>
@@ -494,14 +494,14 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                     <br/>
                     <small>@lang('messages.tooltips.accommodate')</small>
                     <?php
-                    if (old('allergenInfo'.$i_cnt)) {
-                        $selected = old('allergenInfo'.$i_cnt);
-                    } elseif ($person->allergenInfo) {
-                        $selected = explode(',', $person->allergenInfo);
-                    } else {
-                        $selected = reset($allergen_array);
-                    }
-                    ?>
+            if (old('allergenInfo'.$i_cnt)) {
+                $selected = old('allergenInfo'.$i_cnt);
+            } elseif ($person->allergenInfo) {
+                $selected = explode(',', $person->allergenInfo);
+            } else {
+                $selected = reset($allergen_array);
+            }
+        ?>
                     {!! Form::select("allergenInfo" . $i_cnt .'[]', $allergen_array, $selected,
                         array('required', 'class' => 'form-control input-sm', 'multiple' => 'multiple', 'size' => '3', 'id' => "allergenInfo$i_cnt")) !!}
                     <br/>
@@ -696,7 +696,7 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                     @for($i=1; $i<=$quantity; $i++)
 <?php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
-?>
+        ?>
             var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
             var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
@@ -1139,8 +1139,8 @@ if (in_array($event->eventTypeID, explode(',', $org->anonCats))) {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
 <?php
-                    $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
-?>
+                            $i > 1 ? $i_cnt = "_$i" : $i_cnt = '';
+        ?>
                     percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
                 flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
                 tc{{ $i }} = $('#tcost{{ $i }}').text();

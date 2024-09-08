@@ -20,7 +20,7 @@ use Throwable;
 
 class ReadChunk implements ShouldQueue
 {
-    use Queueable, HasEventBus;
+    use HasEventBus, Queueable;
 
     /**
      * @var int
@@ -68,13 +68,7 @@ class ReadChunk implements ShouldQueue
     private $chunkSize;
 
     /**
-     * @param  WithChunkReading  $import
-     * @param  IReader  $reader
-     * @param  TemporaryFile  $temporaryFile
-     * @param  string  $sheetName
      * @param  object  $sheetImport
-     * @param  int  $startRow
-     * @param  int  $chunkSize
      */
     public function __construct(WithChunkReading $import, IReader $reader, TemporaryFile $temporaryFile, string $sheetName, $sheetImport, int $startRow, int $chunkSize)
     {
@@ -90,8 +84,6 @@ class ReadChunk implements ShouldQueue
     }
 
     /**
-     * @param  TransactionHandler  $transaction
-     *
      * @throws \Maatwebsite\Excel\Exceptions\SheetNotFoundException
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
@@ -140,9 +132,6 @@ class ReadChunk implements ShouldQueue
         });
     }
 
-    /**
-     * @param  Throwable  $e
-     */
     public function failed(Throwable $e)
     {
         if ($this->import instanceof WithEvents) {

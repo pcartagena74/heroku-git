@@ -8,7 +8,6 @@ use App\Models\VolunteerRole;
 use App\Models\VolunteerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class VolunteerRoleController extends Controller
 {
@@ -38,18 +37,18 @@ class VolunteerRoleController extends Controller
         $defaultRoles = VolunteerRole::where('orgID', $org->orgID)->where('title', '!=', 'role')->get();
 
         // This is a correction measure to create the data
-        if(count($defaultRoles) == 0 || null === $defaultRoles){
+        if (count($defaultRoles) == 0 || $defaultRoles === null) {
             $pid = null;
             $defaultRoles = VolunteerRole::where('orgID', 1)->where('title', '!=', 'role')->get();
 
-            foreach ($defaultRoles as $r){
+            foreach ($defaultRoles as $r) {
                 $new_role = $r->replicate();
                 $new_role->orgID = $org->orgID;
-                if (null !== $pid){
+                if ($pid !== null) {
                     $new_role->pid = $pid;
                 }
                 $new_role->save();
-                if(null === $r->pid){
+                if ($r->pid === null) {
                     $pid = $new_role->id;
                 }
             }
@@ -73,7 +72,6 @@ class VolunteerRoleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -95,7 +93,6 @@ class VolunteerRoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Org $org
      * @return \Illuminate\Http\Response
      */
     public function show(Org $org)
@@ -106,18 +103,18 @@ class VolunteerRoleController extends Controller
         $defaultRoles = VolunteerRole::where('orgID', $org->orgID)->where('title', '!=', 'role')->get();
 
         // This is a correction measure to create the data
-        if(count($defaultRoles) == 0 || null === $defaultRoles){
+        if (count($defaultRoles) == 0 || $defaultRoles === null) {
             $pid = null;
             $defaultRoles = VolunteerRole::where('orgID', 1)->where('title', '!=', 'role')->get();
 
-            foreach ($defaultRoles as $r){
+            foreach ($defaultRoles as $r) {
                 $new_role = $r->replicate();
                 $new_role->orgID = $org->orgID;
-                if (null !== $pid){
+                if ($pid !== null) {
                     $new_role->pid = $pid;
                 }
                 $new_role->save();
-                if(null === $r->pid){
+                if ($r->pid === null) {
                     $pid = $new_role->id;
                 }
             }
@@ -131,7 +128,6 @@ class VolunteerRoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\VolunteerRole $volunteerRole
      * @return \Illuminate\Http\Response
      */
     public function edit(VolunteerRole $volunteerRole)
@@ -142,22 +138,25 @@ class VolunteerRoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\VolunteerRole $volunteerRole
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, VolunteerRole $volunteerRole)
     {
         // Outline all of the possible updates - even when org/position/assignment is fresh
 
-        $return_msg = []; $success = "";
+        $return_msg = [];
+        $success = '';
         $now = Carbon::now();
         $newnode = request()->input('newnode');
         $oldnode = request()->input('oldnode');
         $orgID = $volunteerRole->orgID;
 
         // fields that can be updated as booleans to track updates
-        $name = 0; $title = 0; $start = 0; $end = 0; $job_desc = 0;
+        $name = 0;
+        $title = 0;
+        $start = 0;
+        $end = 0;
+        $job_desc = 0;
         // this is a tracker when personID gets changed as a result of other changes.
         $pID_update = 0;
 
@@ -176,7 +175,7 @@ class VolunteerRoleController extends Controller
 
         // Called when the title is changed.  The title_override field is used when taken as user input
         if ($newnode[trans('messages.fields.title')] != $oldnode[trans('messages.fields.title')]) {
-            $volunteerRole->title_override = $newnode["Title"];
+            $volunteerRole->title_override = $newnode['Title'];
             $success .= 'title updated; ';
         }
 
@@ -188,7 +187,7 @@ class VolunteerRoleController extends Controller
 
         // Called when the name is changed from a previous name.
         if (($newnode[trans('messages.fields.name')] != $oldnode[trans('messages.fields.name')]) &&
-            (null !== $oldnode[trans('messages.fields.name')])) {
+            ($oldnode[trans('messages.fields.name')] !== null)) {
             $now = Carbon::now();
             // If the name of the officer is changed and the oldnode wasn't null,
             // 1. Find the correct VolunteerService record and give it an end date
@@ -198,12 +197,12 @@ class VolunteerRoleController extends Controller
             // ***************
 
             // With a name change, we want to try to determine if it's an edit or role change
-            if (null !== $oldnode['personID']) {
+            if ($oldnode['personID'] !== null) {
                 // Without a personID in oldnode, this would be an edit/update
                 // 1. Look for a stub record or create it.
                 $vs = VolunteerService::where([
                     ['orgID', $orgID],
-                    ['volunteer_role_id', $newnode['id']]
+                    ['volunteer_role_id', $newnode['id']],
                     // ,['personID', $oldnode['personID']]
                 ])
                     ->whereNull('roleEndDate')
@@ -214,7 +213,7 @@ class VolunteerRoleController extends Controller
                 $vs = VolunteerService::where([
                     ['orgID', $orgID],
                     ['volunteer_role_id', $newnode['id']],
-                    ['personID', $oldnode['personID']]
+                    ['personID', $oldnode['personID']],
                 ])
                     ->whereNull('roleEndDate')
                     ->first();
@@ -230,10 +229,10 @@ class VolunteerRoleController extends Controller
 
                     // Since we're closing out the VolunteerService record, save the title
                     // This is just in case titles are restructured in the future, the correct title can be reported.
-                    if (null !== $volunteerRole->title_override) {
+                    if ($volunteerRole->title_override !== null) {
                         $vs->title_save = $volunteerRole->title_override;
                     } else {
-                        $vs->title_save = trans('messages.default_role' . $volunteerRole->title);
+                        $vs->title_save = trans('messages.default_role'.$volunteerRole->title);
                     }
                     $vs->updaterID = $this->currentPerson->personID;
                     $vs->save();
@@ -253,11 +252,11 @@ class VolunteerRoleController extends Controller
         }
 
         // Change of start date
-        if($oldnode[trans('messages.default_roles.start')] != $newnode[trans('messages.default_roles.start')]){
+        if ($oldnode[trans('messages.default_roles.start')] != $newnode[trans('messages.default_roles.start')]) {
             $vs = VolunteerService::where([
                 ['orgID', $orgID],
                 ['volunteer_role_id', $newnode['id']],
-                ['personID', $oldnode['personID']]
+                ['personID', $oldnode['personID']],
             ])
                 ->whereNull('roleEndDate')
                 ->firstOrNew();
@@ -268,13 +267,13 @@ class VolunteerRoleController extends Controller
             $success .= 'enddate updated; ';
         }
         // Change of end date when original was null.
-        if ((null === $oldnode[trans('messages.default_roles.end')]) &&
+        if (($oldnode[trans('messages.default_roles.end')] === null) &&
             ($newnode[trans('messages.default_roles.end')] != $oldnode[trans('messages.default_roles.end')])) {
 
             $vs = VolunteerService::where([
                 ['orgID', $orgID],
                 ['volunteer_role_id', $newnode['id']],
-                ['personID', $oldnode['personID']]
+                ['personID', $oldnode['personID']],
             ])
                 ->whereNull('roleEndDate')
                 ->firstOrNew();
@@ -296,7 +295,6 @@ class VolunteerRoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\VolunteerRole $volunteerRole
      * @return \Illuminate\Http\Response
      */
     public function destroy(VolunteerRole $volunteerRole)

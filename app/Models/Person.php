@@ -11,26 +11,34 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Person extends Model
 {
     use LogsActivity;
-    use SoftDeletes;
     use Notifiable;
+    use SoftDeletes;
 
     // The table
     protected $table = 'person';
+
     protected $primaryKey = 'personID';
+
     protected $fillable = ['prefix', 'firstName', 'lastName', 'prefName', 'login', 'title', 'compName', 'indName'];
 
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',
         'lastLoginDate' => 'datetime',
     ];
+
     protected $hidden = ['remember_token'];
 
     protected static $logOnlyDirty = true;
+
     protected static $submitEmptyLogs = false;
+
     protected static $logAttributes = ['login', 'defaultOrgID',  'defaultOrgPersonID'];
+
     protected static $ignoreChangedAttributes = ['createDate'];
 
     public function roles()
@@ -98,7 +106,7 @@ class Person extends Model
 
     public function orgStat1()
     {
-        if (null !== $this->orgperson) {
+        if ($this->orgperson !== null) {
             return $this->orgperson->OrgStat1;
         } else {
             return null;
@@ -185,7 +193,7 @@ class Person extends Model
 
     public function has_volunteers()
     {
-        if(null !== $this->service_role) {
+        if ($this->service_role !== null) {
             return $this->service_role->volunteer_role->children;
         }
     }

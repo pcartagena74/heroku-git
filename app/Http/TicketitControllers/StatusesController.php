@@ -39,18 +39,17 @@ class StatusesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
+            'name' => 'required',
+            'color' => 'required',
         ]);
 
-        $status = new Status();
+        $status = new Status;
         $status->create(['name' => $request->name, 'color' => $request->color]);
 
         Session::flash('status', trans('ticketit::lang.status-name-has-been-created', ['name' => $request->name]));
@@ -63,8 +62,7 @@ class StatusesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -75,8 +73,7 @@ class StatusesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function edit($id)
@@ -89,16 +86,14 @@ class StatusesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int     $id
-     *
+     * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
+            'name' => 'required',
+            'color' => 'required',
         ]);
 
         $status = Status::findOrFail($id);
@@ -114,8 +109,7 @@ class StatusesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function destroy($id)

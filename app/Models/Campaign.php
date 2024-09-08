@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\EmailCampaignLink;
-use App\Models\EmailCampaignTemplateBlock;
-use App\Models\EmailQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -14,10 +11,13 @@ class Campaign extends Model
 
     // The table
     protected $table = 'org-campaign';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
 
     protected $primaryKey = 'campaignID';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',

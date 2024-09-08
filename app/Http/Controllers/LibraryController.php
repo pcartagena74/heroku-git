@@ -47,7 +47,7 @@ class LibraryController extends Controller
             // $headers = ["Content-Type" => mime_content_type($path)];
             header('Content-Type: '.mime_content_type(Storage::disk(getDefaultDiskFM())->path($path)));
             echo file_get_contents($content);
-        // return response()->file($path, $headers);
+            // return response()->file($path, $headers);
         } else {
             abort(404);
         }

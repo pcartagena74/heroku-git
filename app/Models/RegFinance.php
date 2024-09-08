@@ -9,12 +9,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RegFinance extends Model
 {
     use SoftDeletes;
+
     //use LogsActivity;
     // The table
     protected $table = 'reg-finance';
+
     protected $primaryKey = 'regID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'cancelDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'cancelDate' => 'datetime',

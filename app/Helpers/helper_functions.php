@@ -18,7 +18,6 @@ use App\Models\VolunteerRole;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -29,16 +28,16 @@ use Spatie\Image\Manipulations;
 
 // $client = new Client();
 
-
 /**
  * Performs hierarchical query to get the list of volunteers for the org chart
  *
- * @param string $o organization record
- * @param int $p    optional person record; shows all volunteers if null
- * @return array    [$json_roles, $option_string]
+ * @param  string  $o  organization record
+ * @param  int  $p  optional person record; shows all volunteers if null
+ * @return array [$json_roles, $option_string]
  */
 if (! function_exists('volunteer_data')) {
-    function volunteer_data($o, $p) {
+    function volunteer_data($o, $p)
+    {
         $option_string = '';
 
         // volunteers include anyone who has been assigned a role in the same chapter (same orgID)
@@ -60,9 +59,9 @@ if (! function_exists('volunteer_data')) {
             $option_string .= "{ value: '$v->personID', text: '$v->name' },\n";
         }
 
-        $nodes = array();
+        $nodes = [];
 
-        if(null === $p) {
+        if ($p === null) {
             // Should pull orgID from 1 and actual orgID, if different
             $json_roles = VolunteerRole::where('volunteer_roles.orgID', $o->orgID)
                 ->join('organization as o', function ($q) {
@@ -71,7 +70,7 @@ if (! function_exists('volunteer_data')) {
                 ->leftjoin('volunteer_service as vs', function ($q) {
                     $q->on([
                         ['vs.orgID', '=', 'volunteer_roles.orgID'],
-                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id']
+                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id'],
                     ])
                         ->whereNull('vs.roleEndDate');
                 })
@@ -88,21 +87,21 @@ if (! function_exists('volunteer_data')) {
                                       WHEN volunteer_roles.title_override IS NOT NULL
                                         THEN volunteer_roles.title_override
                                       ELSE concat("messages.default_roles.", volunteer_roles.title)
-                                    END) as "' . trans('messages.fields.title') . '",
+                                    END) as "'.trans('messages.fields.title').'",
                                     pid,
                                     (CASE
                                       WHEN p.avatarURL IS NULL
                                         THEN "/images/user.png"
                                       ELSE p.avatarURL  
                                     END) as img,
-                                    volunteer_roles.jd_URL as "' . trans('messages.default_roles.jd_url') . '",
+                                    volunteer_roles.jd_URL as "'.trans('messages.default_roles.jd_url').'",
                                     (CASE
                                        WHEN prefName is null
                                          THEN concat (firstName, " ", lastName) 
                                        ELSE concat(prefName, " ", lastName) 
-                                     END) as ' . trans('messages.fields.name') . ',
-                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "' . trans('messages.default_roles.start') . '",
-                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "' . trans('messages.default_roles.end') . '"'))
+                                     END) as '.trans('messages.fields.name').',
+                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "'.trans('messages.default_roles.start').'",
+                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "'.trans('messages.default_roles.end').'"'))
                 ->distinct()
                 ->get();
         } else {
@@ -111,7 +110,7 @@ if (! function_exists('volunteer_data')) {
                 WITH RECURSIVE MyList
                     as (select vr.id, vr.pid, vr.title, 1 as 'level'
                         from `volunteer_roles` vr
-                        where vr.id = " . $p->service_role->volunteer_role->id . "
+                        where vr.id = ".$p->service_role->volunteer_role->id."
                             and vr.orgID = $o->orgID
                 
                 union all
@@ -125,7 +124,7 @@ if (! function_exists('volunteer_data')) {
 
             $node_string = null;
             foreach ($nodes as $node) {
-                $node_string .= $node->id . ",";
+                $node_string .= $node->id.',';
             }
             $node_string = rtrim($node_string, ',');
             $node_array = explode(',', $node_string);
@@ -138,7 +137,7 @@ if (! function_exists('volunteer_data')) {
                 ->leftjoin('volunteer_service as vs', function ($q) {
                     $q->on([
                         ['vs.orgID', '=', 'volunteer_roles.orgID'],
-                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id']
+                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id'],
                     ])
                         ->whereNull('vs.roleEndDate');
                 })
@@ -155,21 +154,21 @@ if (! function_exists('volunteer_data')) {
                                       WHEN volunteer_roles.title_override IS NOT NULL
                                         THEN volunteer_roles.title_override
                                       ELSE concat("messages.default_roles.", volunteer_roles.title)
-                                    END) as "' . trans('messages.fields.title') . '",
+                                    END) as "'.trans('messages.fields.title').'",
                                     pid,
                                     (CASE
                                       WHEN p.avatarURL IS NULL
                                         THEN "/images/user.png"
                                       ELSE p.avatarURL  
                                     END) as img,
-                                    volunteer_roles.jd_URL as "' . trans('messages.default_roles.jd_url') . '",
+                                    volunteer_roles.jd_URL as "'.trans('messages.default_roles.jd_url').'",
                                     (CASE
                                        WHEN prefName is null
                                          THEN concat (firstName, " ", lastName) 
                                        ELSE concat(prefName, " ", lastName) 
-                                     END) as ' . trans('messages.fields.name') . ',
-                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "' . trans('messages.default_roles.start') . '",
-                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "' . trans('messages.default_roles.end') . '"'))
+                                     END) as '.trans('messages.fields.name').',
+                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "'.trans('messages.default_roles.start').'",
+                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "'.trans('messages.default_roles.end').'"'))
                 ->distinct()
                 ->get();
         }
@@ -181,7 +180,7 @@ if (! function_exists('volunteer_data')) {
                     $jr[trans('messages.fields.title')] = trans($jr[trans('messages.fields.title')]);
                 } else {
                     $jr[trans('messages.fields.title')] =
-                        trans($jr->prefix) . trans($jr[trans('messages.fields.title')]);
+                        trans($jr->prefix).trans($jr[trans('messages.fields.title')]);
                 }
             }
             if ($jr->pid === null) {
@@ -195,13 +194,12 @@ if (! function_exists('volunteer_data')) {
     }
 }
 
-
 /**
  * Takes a member report type, optional # of days, and optional pagination count
  *
- * @param string $which
- * @param int $days
- * @param int $page
+ * @param  string  $which
+ * @param  int  $days
+ * @param  int  $page
  * @return array
  */
 if (! function_exists('membership_reports')) {
@@ -212,9 +210,9 @@ if (! function_exists('membership_reports')) {
 
         switch ($which) {
             case 'new':
-                if($download){
+                if ($download) {
                     // download needs query to terminate in ->get()
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -223,7 +221,7 @@ if (! function_exists('membership_reports')) {
                         $q->where('org-person.orgID', '=', $orgID);
                         $q->whereDate('RelDate2', '>=', $today->subDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -232,7 +230,7 @@ if (! function_exists('membership_reports')) {
                         ->with('orgperson')
                         ->get();
                 } else {
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -241,7 +239,7 @@ if (! function_exists('membership_reports')) {
                         $q->where('org-person.orgID', '=', $orgID);
                         $q->whereDate('RelDate2', '>=', $today->subDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -256,9 +254,9 @@ if (! function_exists('membership_reports')) {
                 break;
 
             default:
-                if($download){
+                if ($download) {
                     // download needs query to terminate in ->get()
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -268,7 +266,7 @@ if (! function_exists('membership_reports')) {
                         $q->whereDate('RelDate4', '>', $today->toDateString());
                         $q->whereDate('RelDate4', '<=', $today->addDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -277,7 +275,7 @@ if (! function_exists('membership_reports')) {
                         ->with('orgperson')
                         ->get();
                 } else {
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -287,7 +285,7 @@ if (! function_exists('membership_reports')) {
                         $q->whereDate('RelDate4', '>', $today->toDateString());
                         $q->whereDate('RelDate4', '<=', $today->addDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -300,15 +298,15 @@ if (! function_exists('membership_reports')) {
                 $title = trans('messages.headers.profile_vars.exp_title', ['days' => $days]);
                 break;
         }
+
         return [$members, $title];
     }
 }
 
-
 /**
  * Takes a role id and returns the count of others with that role within the current user's org
  *
- * @param int $id
+ * @param  int  $id
  * @return int
  */
 if (! function_exists('count_roles')) {
@@ -319,7 +317,7 @@ if (! function_exists('count_roles')) {
         return Person::leftJoin('person_role', 'user_id', '=', 'person.personID')
             ->whereHas('orgperson', function ($q) use ($p) {
                 $q->where('org-person.orgID', '=', $p->defaultOrgID);
-            })->whereHas('roles', function ($q) use ($p, $id) {
+            })->whereHas('roles', function ($q) use ($id) {
                 $q->where('id', '=', $id);
             })->distinct()->count('personID');
     }
@@ -329,14 +327,14 @@ if (! function_exists('count_roles')) {
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
  *
- * @param $html
- * @param Org $org
+ * @param  $html
+ * @param  Org  $org
  * @return string
  */
 if (! function_exists('extract_images')) {
     function extract_images($html, $orgID)
     {
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         $org = Org::find($orgID);
         $updated = 0;
 
@@ -391,12 +389,12 @@ if (! function_exists('extract_images')) {
 /**
  * Takes a model indicator and an array of variables, usually just 1, and performs a rudimentary existence check
  *
- * @param $model        Values: p for Person, e for Email, op for OrgPerson
- * @param $doFlash          1 if flash message should be set
- * @param $var_array    Contents:
- *                      + p:  firstName, lastName, login
- *                      + e:  login
- *                      + op: PMI ID
+ * @param  $model  Values: p for Person, e for Email, op for OrgPerson
+ * @param  $doFlash  1 if flash message should be set
+ * @param  $var_array  Contents:
+ *                    + p:  firstName, lastName, login
+ *                    + e:  login
+ *                    + op: PMI ID
  */
 if (! function_exists('check_exists')) {
     function check_exists($model, $doFlash, $var_array)
@@ -404,7 +402,7 @@ if (! function_exists('check_exists')) {
         $details = '<ul>';
         switch ($model) {
             case 'p':
-                list($first, $last, $login) = $var_array;
+                [$first, $last, $login] = $var_array;
                 $p = Person::where([
                     ['firstName', '=', $first],
                     ['lastName', '=', $last],
@@ -429,9 +427,9 @@ if (! function_exists('check_exists')) {
                 }
                 break;
             case 'e':
-                list($email) = $var_array;
+                [$email] = $var_array;
                 $e = Email::where('emailADDR', '=', $email)->first();
-                if (null !== $e) {
+                if ($e !== null) {
                     $p = Person::find($e->personID);
                     $details .= '<li>'.$email.'</li>';
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
@@ -445,10 +443,10 @@ if (! function_exists('check_exists')) {
                 }
                 break;
             case 'op':
-                list($pmiID) = $var_array;
+                [$pmiID] = $var_array;
                 if ($pmiID !== null) {
                     $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
-                    if (null !== $op) {
+                    if ($op !== null) {
                         $p = Person::find($op->personID);
                         $details .= '<li>'.$op->OrgStat1.'</li>';
                         $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
@@ -471,8 +469,8 @@ if (! function_exists('check_exists')) {
 /**
  * pLink: (profileLink) returns a URL string to a profile on the registration ID
  *
- * @param $regID
- * @param $personID
+ * @param  $regID
+ * @param  $personID
  * @return string
  */
 if (! function_exists('pLink')) {
@@ -500,8 +498,9 @@ if (! function_exists('et_translate')) {
 /**
  * li_print_array: convert an array into a html-formatted list
  *                 used in RegistrationController
- * @param $array
- * @param $type
+ *
+ * @param  $array
+ * @param  $type
  * @return string
  */
 if (! function_exists('li_print_array')) {
@@ -535,15 +534,16 @@ if (! function_exists('li_print_array')) {
 
 /**
  * assoc_email returns 0 or 1 based on whether the $email address is associated with Person $p
- * @param $email
- * @param $p
+ *
+ * @param  $email
+ * @param  $p
  * @return bool
  */
 if (! function_exists('assoc_email')) {
     function assoc_email($email, $p)
     {
         $e = Email::where('emailADDR', '=', $email)->first();
-        if (null === $e || $e->personID != $p->personID) {
+        if ($e === null || $e->personID != $p->personID) {
             return 0;
         } else {
             return 1;
@@ -552,9 +552,9 @@ if (! function_exists('assoc_email')) {
 }
 
 /**
- * @param Request $request
- * @param Event $event
- * @param Person $current_person
+ * @param  Request  $request
+ * @param  Event  $event
+ * @param  Person  $current_person
  * @return Location | null
  *
  * location_triage evaluates location data entered while creating/updating event by:
@@ -593,7 +593,7 @@ if (! function_exists('location_triage')) {
                 $loc = Location::firstOrNew(
                     [
                         'locName' => $locName,
-                        'orgID'   => $orgID,
+                        'orgID' => $orgID,
                     ]
                 );
                 break;
@@ -634,6 +634,7 @@ if (! function_exists('location_triage')) {
 
 /**
  * get ticketit agent list from ticket or from current user
+ *
  * @param  ticket collection $ticket
  * @return array of agent
  */
@@ -716,6 +717,7 @@ if (! function_exists('getAgentList')) {
 
 /**
  * get logged in user active ticket count
+ *
  * @return int ticket count
  */
 if (! function_exists('getActiveTicketCountUser')) {
@@ -744,6 +746,7 @@ if (! function_exists('showActiveTicketUser')) {
 
 /**
  * mark logged user all open ticket as read
+ *
  * @return bool
  */
 if (! function_exists('markReadActiveTicketCountUser')) {
@@ -759,7 +762,8 @@ if (! function_exists('markReadActiveTicketCountUser')) {
 
 /**
  * make a specific user ticket as unread
- * @param  int $ticket_id ticket id
+ *
+ * @param  int  $ticket_id  ticket id
  * @return bool
  */
 if (! function_exists('markUnreadTicketUser')) {
@@ -776,6 +780,7 @@ if (! function_exists('markUnreadTicketUser')) {
 
 /**
  * get all active ticket of loggedin user
+ *
  * @return int count
  */
 if (! function_exists('getActiveTicketCountAgent')) {
@@ -792,12 +797,13 @@ if (! function_exists('getActiveTicketCountAgent')) {
 
 /**
  * get all active ticket of loggedin user
+ *
  * @return int count
  */
 if (! function_exists('getTicketCategories')) {
     function getTicketCategories()
     {
-        list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+        [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
 
         return $categories;
     }
@@ -805,12 +811,13 @@ if (! function_exists('getTicketCategories')) {
 
 /**
  * get all active ticket of loggedin user
+ *
  * @return int count
  */
 if (! function_exists('getTicketPriorities')) {
     function getTicketPriorities()
     {
-        list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+        [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
 
         return $priorities;
     }
@@ -818,6 +825,7 @@ if (! function_exists('getTicketPriorities')) {
 
 /**
  * get template builder block category from database
+ *
  * @return array of email block category
  */
 if (! function_exists('get_template_builder_blocks_category')) {
@@ -829,8 +837,9 @@ if (! function_exists('get_template_builder_blocks_category')) {
 
 /**
  * get template blocks by category id
- * @param  int $email_cat_id  email category id
- * @return array               of category blocks
+ *
+ * @param  int  $email_cat_id  email category id
+ * @return array of category blocks
  */
 if (! function_exists('get_template_builder_blocks_category')) {
     function get_template_builder_block_category($email_cat_id)
@@ -841,8 +850,9 @@ if (! function_exists('get_template_builder_blocks_category')) {
 
 /**
  * check if given string is date type
- * @param  string  $date_str date
- * @return bool        true/false
+ *
+ * @param  string  $date_str  date
+ * @return bool true/false
  */
 if (! function_exists('isDate')) {
     function isDate($date_str)
@@ -863,7 +873,8 @@ if (! function_exists('isDate')) {
 
 /**
  * send data to request bin for queue debug
- * @param  array $data
+ *
+ * @param  array  $data
  */
 if (! function_exists('requestBin')) {
     function requestBin($data)
@@ -890,11 +901,12 @@ if (! function_exists('requestBin')) {
 
 /**
  * replace text placeholder with actual data from database
- * @param  string  $email       user email whose data needed to be replaced by placeholder
- * @param  object  $campaign    the campaign object
- * @param  bool $for_preview true if using for preview only false while sending actual email
- * @param  string  $raw_html    html string used when for_preview is true
- * @return string               replaced html
+ *
+ * @param  string  $email  user email whose data needed to be replaced by placeholder
+ * @param  object  $campaign  the campaign object
+ * @param  bool  $for_preview  true if using for preview only false while sending actual email
+ * @param  string  $raw_html  html string used when for_preview is true
+ * @return string replaced html
  */
 if (! function_exists('replaceUserDataInEmailTemplate')) {
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
@@ -953,45 +965,46 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
             $org_name = $organization->orgName;
         }
         $mapping = [
-            '[PREFIX]'           => $person->prefix,
-            '[FIRSTNAME]'        => $person->firstName,
-            '[MIDDLENAME]'       => $person->midName,
-            '[LASTNAME]'         => $person->lastName,
-            '[SUFFIX]'           => $person->suffix,
-            '[PREFNAME]'         => $person->prefName,
-            '[LOGINEMAIL]'       => $person->login,
+            '[PREFIX]' => $person->prefix,
+            '[FIRSTNAME]' => $person->firstName,
+            '[MIDDLENAME]' => $person->midName,
+            '[LASTNAME]' => $person->lastName,
+            '[SUFFIX]' => $person->suffix,
+            '[PREFNAME]' => $person->prefName,
+            '[LOGINEMAIL]' => $person->login,
             '[ORGANIZATIONNAME]' => $org_name,
-            '[TITLE]'            => $person->title,
-            '[COMPANYNAME]'      => $person->compName,
-            '[INDUSTRY]'         => $person->indName,
-            '[EXPERINCE]'        => $person->experience,
-            '[ALLERGENNOTE]'     => $person->allergenNote,
-            '[SPECIALNEEDS]'     => $person->specialNeeds,
-            '[CHAPTERROLE]'      => $person->chapterRole,
-            '[AFFILIATION]'      => $person->affiliation,
-            '[TWITTERHANDLE]'    => $person->twitterHandle,
-            '[CERTIFICATIONS]'   => $person->certifications,
-            '[OSN1]'             => $person->orgperson->OrgStat1,
-            '[OSN2]'             => $person->orgperson->OrgStat2,
-            '[OSN3]'             => $person->orgperson->OrgStat3,
-            '[OSN4]'             => $person->orgperson->OrgStat4,
-            '[OSN5]'             => $person->orgperson->OrgStat5,
-            '[OSN6]'             => $person->orgperson->OrgStat6,
-            '[OSN7]'             => $person->orgperson->OrgStat7,
-            '[OSN8]'             => $person->orgperson->OrgStat8,
-            '[OSN9]'             => $person->orgperson->OrgStat9,
-            '[OSN10]'            => $person->orgperson->OrgStat10,
-            '[ODN1]'             => $person->orgperson->RelDate1,
-            '[ODN2]'             => $person->orgperson->RelDate2,
-            '[ODN3]'             => $person->orgperson->RelDate3,
-            '[ODN4]'             => $person->orgperson->RelDate4,
-            '[ODN5]'             => $person->orgperson->RelDate5,
-            '[ODN6]'             => $person->orgperson->RelDate6,
-            '[ODN7]'             => $person->orgperson->RelDate7,
-            '[ODN8]'             => $person->orgperson->RelDate8,
-            '[ODN9]'             => $person->orgperson->RelDate9,
-            '[ODN10]'            => $person->orgperson->RelDate10,
+            '[TITLE]' => $person->title,
+            '[COMPANYNAME]' => $person->compName,
+            '[INDUSTRY]' => $person->indName,
+            '[EXPERINCE]' => $person->experience,
+            '[ALLERGENNOTE]' => $person->allergenNote,
+            '[SPECIALNEEDS]' => $person->specialNeeds,
+            '[CHAPTERROLE]' => $person->chapterRole,
+            '[AFFILIATION]' => $person->affiliation,
+            '[TWITTERHANDLE]' => $person->twitterHandle,
+            '[CERTIFICATIONS]' => $person->certifications,
+            '[OSN1]' => $person->orgperson->OrgStat1,
+            '[OSN2]' => $person->orgperson->OrgStat2,
+            '[OSN3]' => $person->orgperson->OrgStat3,
+            '[OSN4]' => $person->orgperson->OrgStat4,
+            '[OSN5]' => $person->orgperson->OrgStat5,
+            '[OSN6]' => $person->orgperson->OrgStat6,
+            '[OSN7]' => $person->orgperson->OrgStat7,
+            '[OSN8]' => $person->orgperson->OrgStat8,
+            '[OSN9]' => $person->orgperson->OrgStat9,
+            '[OSN10]' => $person->orgperson->OrgStat10,
+            '[ODN1]' => $person->orgperson->RelDate1,
+            '[ODN2]' => $person->orgperson->RelDate2,
+            '[ODN3]' => $person->orgperson->RelDate3,
+            '[ODN4]' => $person->orgperson->RelDate4,
+            '[ODN5]' => $person->orgperson->RelDate5,
+            '[ODN6]' => $person->orgperson->RelDate6,
+            '[ODN7]' => $person->orgperson->RelDate7,
+            '[ODN8]' => $person->orgperson->RelDate8,
+            '[ODN9]' => $person->orgperson->RelDate9,
+            '[ODN10]' => $person->orgperson->RelDate10,
         ];
+
         // $rep = str_replace(array_keys($mapping), $mapping, $raw_html);
         // $test = (microtime(true) - $start) . "Seconds";
         // dd($test);
@@ -1001,9 +1014,10 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
 
 /**
  * Generate thumbnail from email html
- * @param  string $html     email html
- * @param  object $campaign campaign object for name
- * @return string           file path
+ *
+ * @param  string  $html  email html
+ * @param  object  $campaign  campaign object for name
+ * @return string file path
  */
 if (! function_exists('generateEmailTemplateThumbnail')) {
     function generateEmailTemplateThumbnail($html, $campaign)
@@ -1030,8 +1044,9 @@ if (! function_exists('generateEmailTemplateThumbnail')) {
 
 /**
  * generate email template thumbnail name
- * @param  object $campaign campaign object
- * @return string           template thumbnail name
+ *
+ * @param  object  $campaign  campaign object
+ * @return string template thumbnail name
  */
 if (! function_exists('generateEmailTemplateThumbnailName')) {
     function generateEmailTemplateThumbnailName($campaign)
@@ -1045,6 +1060,7 @@ if (! function_exists('generateEmailTemplateThumbnailName')) {
 
 /**
  * same as generate just for sake of naming convension
+ *
  * @param  [type] $campaign [description]
  * @return [type]           [description]
  */
@@ -1060,8 +1076,9 @@ if (! function_exists('getEmailTemplateThumbnailName')) {
 
 /**
  * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
- * @param  object $campaign campaign object
- * @return string           URL for thumbnail
+ *
+ * @param  object  $campaign  campaign object
+ * @return string URL for thumbnail
  */
 if (! function_exists('getEmailTemplateThumbnailURL')) {
     function getEmailTemplateThumbnailURL($campaign)
@@ -1078,8 +1095,9 @@ if (! function_exists('getEmailTemplateThumbnailURL')) {
 
 /**
  * all static directory path for filemanger this has a system wide impact
- * @param  object $org org model if available
- * @return array      all path that are created
+ *
+ * @param  object  $org  org model if available
+ * @return array all path that are created
  */
 if (! function_exists('getAllDirectoryPathFM')) {
     function getAllDirectoryPathFM($org = null)
@@ -1103,7 +1121,8 @@ if (! function_exists('getAllDirectoryPathFM')) {
 
 /**
  * generate default directory set for new organizations
- * @param  object $org organization object
+ *
+ * @param  object  $org  organization object
  * @return null
  */
 if (! function_exists('generateDirectoriesForOrg')) {
@@ -1123,6 +1142,7 @@ if (! function_exists('generateDirectoriesForOrg')) {
 
 /**
  * for filemanager config default path for filemanager (do not change)
+ *
  * @return string folder path
  */
 if (! function_exists('getDefaultPathFM')) {
@@ -1137,6 +1157,7 @@ if (! function_exists('getDefaultPathFM')) {
 
 /**
  * return value of default disk for file manager
+ *
  * @return string diskname
  */
 if (! function_exists('getDefaultDiskFM')) {
@@ -1148,6 +1169,7 @@ if (! function_exists('getDefaultDiskFM')) {
 
 /**
  * return all available disk for file manager
+ *
  * @return array of disk names
  */
 if (! function_exists('getAllDiskFM')) {
@@ -1160,9 +1182,10 @@ if (! function_exists('getAllDiskFM')) {
 
 /**
  * get count and email list for selected user org
- * @param  object  $currentPerson model object
- * @param  bool $for_select    if needed for dropdown use true
- * @return array                 either only name and id or complete details
+ *
+ * @param  object  $currentPerson  model object
+ * @param  bool  $for_select  if needed for dropdown use true
+ * @return array either only name and id or complete details
  */
 if (! function_exists('getEmailList')) {
     function getEmailList($currentPerson, $for_select = false)
@@ -1230,7 +1253,7 @@ if (! function_exists('getEmailList')) {
                 // $included === null
                 switch ($foundation) {
                     case 'none':
-                    // none with a null $included is not possible
+                        // none with a null $included is not possible
                     case 'everyone':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
@@ -1249,7 +1272,7 @@ if (! function_exists('getEmailList')) {
                             ->whereHas('registrations', function ($q) use ($excluded) {
                                 $q->whereNotIn('eventID', $excluded);
                             })
-                            ->whereHas('orgperson', function ($q) use ($today) {
+                            ->whereHas('orgperson', function ($q) {
                                 $q->whereNotNull('OrgStat1');
                             })
                             ->distinct()
@@ -1289,9 +1312,10 @@ if (! function_exists('getEmailList')) {
 
 /**
  * get default email list (list from efcico corporation)
- * @param  object  $currentPerson default
- * @param  bool $for_select    only for dropdown
- * @return array                  either only name and id or complete details
+ *
+ * @param  object  $currentPerson  default
+ * @param  bool  $for_select  only for dropdown
+ * @return array either only name and id or complete details
  */
 if (! function_exists('getDefaultEmailList')) {
     function getDefaultEmailList($currentPerson, $for_select = false)
@@ -1333,9 +1357,10 @@ if (! function_exists('getDefaultEmailList')) {
 
 /**
  * get email list from email list management
- * @param  int $list_id list management id
- * @param  int $org_id  organization id
- * @return array        email id list
+ *
+ * @param  int  $list_id  list management id
+ * @param  int  $org_id  organization id
+ * @return array email id list
  */
 if (! function_exists('getEmailListContact')) {
     function getEmailListContact($list_id, $org_id)
@@ -1398,7 +1423,7 @@ if (! function_exists('getEmailListContact')) {
             // $included === null
             switch ($foundation) {
                 case 'none':
-                // none with a null $included is not possible
+                    // none with a null $included is not possible
                 case 'everyone':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
@@ -1417,7 +1442,7 @@ if (! function_exists('getEmailListContact')) {
                         ->whereHas('registrations', function ($q) use ($excluded) {
                             $q->whereNotIn('eventID', $excluded);
                         })
-                        ->whereHas('orgperson', function ($q) use ($today) {
+                        ->whereHas('orgperson', function ($q) {
                             $q->whereNotNull('OrgStat1');
                         })
                         ->distinct()
@@ -1456,7 +1481,8 @@ if (! function_exists('getEmailListContact')) {
 
 /**
  * convert date to date picker format
- * @param  string $date_time mysql date string
+ *
+ * @param  string  $date_time  mysql date string
  * @return string in datepicker formate (m/d/Y h:i A)
  */
 if (! function_exists('convertToDatePickerFormat')) {
@@ -1470,8 +1496,9 @@ if (! function_exists('convertToDatePickerFormat')) {
 
 /**
  * delete campaign thumbnail image from s3
- * @param  object $campaign campaign model
- * @return bool          true/false
+ *
+ * @param  object  $campaign  campaign model
+ * @return bool true/false
  */
 if (! function_exists('deleteCampaignThumb')) {
     function deleteCampaignThumb($campaign)
@@ -1486,8 +1513,9 @@ if (! function_exists('deleteCampaignThumb')) {
 
 /**
  * generate lat lng for existing address for testing only bunch on 20
- * @param  string  $type single / all address
- * @param bool $for_org true if lat lng is needed for organization
+ *
+ * @param  string  $type  single / all address
+ * @param  bool  $for_org  true if lat lng is needed for organization
  * @return bool true/false
  */
 if (! function_exists('generateLatLngForAddress')) {
@@ -1589,6 +1617,7 @@ if (! function_exists('generateLatLngForAddress')) {
 
 /**
  * store lat long for existing address by zip code
+ *
  * @return void
  */
 if (! function_exists('storeLatiLongiFormZip')) {
@@ -1605,6 +1634,7 @@ if (! function_exists('storeLatiLongiFormZip')) {
                     $address->lati = $zip_lat_lng->lat;
                     $address->longi = $zip_lat_lng->lng;
                     $address->save();
+
                     continue;
                 }
             }
@@ -1614,8 +1644,9 @@ if (! function_exists('storeLatiLongiFormZip')) {
 
 /**
  * check if org property exist and return its value if found
- * @param  object  $org      org object
- * @param  array  $property template category array
+ *
+ * @param  object  $org  org object
+ * @param  array  $property  template category array
  * @return boolean/string   bool if not found otherwise string.
  */
 if (! function_exists('has_org_property')) {
@@ -1773,8 +1804,9 @@ if (! function_exists('has_org_property')) {
 
 /**
  * get event ids with date and name wise list from event query object.
- * @param  object $event event model object
- * @return array        ids, datewithname, min & max dates
+ *
+ * @param  object  $event  event model object
+ * @return array ids, datewithname, min & max dates
  */
 if (! function_exists('generateEmailListEventArray')) {
     function generateEmailListEventArray($event)
@@ -1817,16 +1849,17 @@ if (! function_exists('generateEmailListEventArray')) {
 
         return [
             'events_with_date' => $ytd_events_date,
-            'ids'              => $ids,
-            'min_max_date'     => ['min' => $min, 'max' => $max],
+            'ids' => $ids,
+            'min_max_date' => ['min' => $min, 'max' => $max],
         ];
     }
 }
 
 /**
  * return js compactible date from daterangepicker specific date
- * @param  string $date m/d/Y style date
- * @return string       Y-m-d style date
+ *
+ * @param  string  $date  m/d/Y style date
+ * @return string Y-m-d style date
  */
 if (! function_exists('getJavaScriptDate')) {
     function getJavaScriptDate($date)
@@ -1846,8 +1879,9 @@ if (! function_exists('getJavaScriptDate')) {
 
 /**
  * replace address string for email builder footer with org address
- * @param  array $item category 6 rows
- * @return array       row data with updated address
+ *
+ * @param  array  $item  category 6 rows
+ * @return array row data with updated address
  */
 if (! function_exists('replaceAddressWithOrgAddress')) {
     function replaceAddressWithOrgAddress($item)
@@ -1911,8 +1945,9 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
 
 /**
  * replace social icon links with actual links, hides if link is not set.
- * @param  array $item category 6 rows
- * @return array       row data with updated links and style
+ *
+ * @param  array  $item  category 6 rows
+ * @return array row data with updated links and style
  */
 if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
     function replaceSocialLinksWithOrgSocialLinks($item)
@@ -2021,7 +2056,7 @@ if (! function_exists('sendGetToWakeUpDyno')) {
         if (env('APP_ENV') == 'production') {
             $base_url = env('QUEUE_DYNO_URL_LIVE');
         }
-        if(strlen($base_url)> 1) {
+        if (strlen($base_url) > 1) {
             $url = $base_url.'/trigger-dyno';
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -2034,8 +2069,9 @@ if (! function_exists('sendGetToWakeUpDyno')) {
 
 /**
  * replace social icon links with actual links, hides if link is not set.
- * @param  array $item category 6 rows
- * @return array       row data with updated links and style
+ *
+ * @param  array  $item  category 6 rows
+ * @return array row data with updated links and style
  */
 if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
     function getAllLinksFromCampaignHTML($campaign)

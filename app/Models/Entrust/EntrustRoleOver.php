@@ -22,8 +22,6 @@ class EntrustRoleOver extends Model implements EntrustRoleInterface
 
     /**
      * Creates a new instance of the model.
-     *
-     * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {

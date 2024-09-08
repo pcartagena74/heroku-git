@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\RegSession;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,11 +14,16 @@ class Registration extends Model
     //protected static $ignoreChangedAttributes = ['createDate'];
 
     use SoftDeletes;
+
     // The table
     protected $table = 'event-registration';
+
     protected $primaryKey = 'regID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',
@@ -52,7 +56,7 @@ class Registration extends Model
 
     public function checkin($sessionID = null)
     {
-        if (null === $sessionID) {
+        if ($sessionID === null) {
             $sessionID = $this->event->default_session()->sessionID;
         }
 

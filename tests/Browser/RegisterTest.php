@@ -3,7 +3,6 @@
 namespace Tests\Browser;
 
 use App\Models\Event;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
@@ -13,6 +12,7 @@ class RegisterTest extends DuskTestCase
      * A basic browser test example.
      *
      * @return void
+     *
      * @throws \Throwable
      */
 
@@ -31,6 +31,7 @@ class RegisterTest extends DuskTestCase
      * @test A basic browser test for registration.
      *
      * @return void
+     *
      * @throws \Throwable
      */
     public function RegistrationPageTest()

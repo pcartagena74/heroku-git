@@ -6,9 +6,8 @@ use App\Models\Person;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
+
 //use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class LogSuccessfulLogin
 {
@@ -27,7 +26,6 @@ class LogSuccessfulLogin
     /**
      * Handle the event.
      *
-     * @param  Login  $event
      * @return void
      */
     public function handle(Login $event)

@@ -65,7 +65,7 @@ class RoleController extends Controller
         // DB::enableQueryLog();
 
         if ($query !== null) {
-            if ($query == "everyone") {
+            if ($query == 'everyone') {
                 $persons = Person::whereHas('roles', function ($q) use ($org) {
                     $q->whereIn('role_id', [1, 3, 4, 6, 7, 8]);
                     $q->where('orgId', $org->orgID);
@@ -99,7 +99,7 @@ class RoleController extends Controller
     {
         $string = $request->input('string');
 
-        return redirect('/role_mgmt/' . $string);
+        return redirect('/role_mgmt/'.$string);
     }
 
     public function show($id)
@@ -151,11 +151,11 @@ class RoleController extends Controller
         //not needed now as orgname role is not needed admin will be the admin of that org
         if (isset($person->org_role_id()->id) && false) {
             // Check to see if a role for the orgName is in the DB...
-            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
+            if (! $person->roles->contains('id', $person->org_role_id()->id)) {
                 $orgID_needed = 1;
             }
             // Remove the orgName role if it's the only one...
-            if (count($person->roles) == 1 && !$orgID_needed) {
+            if (count($person->roles) == 1 && ! $orgID_needed) {
                 $person->roles->forget('id', $person->org_role_id()->id);
             }
 
@@ -179,10 +179,10 @@ class RoleController extends Controller
          */
 
         $message =
-            '<div class="well bg-blue">' . trans(
+            '<div class="well bg-blue">'.trans(
                 'messages.instructions.role_toggle',
                 ['role' => $role->display_name, 'person' => $person->showFullName()]
-            ) . '</div>';
+            ).'</div>';
 
         return json_encode(['status' => 'success', 'message' => $message]);
     }

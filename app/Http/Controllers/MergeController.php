@@ -8,7 +8,6 @@ use App\Models\Event;
 use App\Models\Location;
 use App\Models\OrgPerson;
 use App\Models\Person;
-use App\Models\PersonSocialite;
 use App\Models\Phone;
 use App\Models\RegFinance;
 use App\Models\Registration;
@@ -18,7 +17,6 @@ use App\Notifications\AccountMerge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Kordy\Ticketit\Models\Ticket;
-use Laravel\Socialite\Facades\Socialite;
 
 class MergeController extends Controller
 {
@@ -38,9 +36,9 @@ class MergeController extends Controller
 
     /**
      * show function
-     * @param $letter
-     * @param null $id1
-     * @param null $id2
+     *
+     * @param  null  $id1
+     * @param  null  $id2
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      *
      * 1. If no $id given, give a way to select one (by PMI ID, or personID, lastName
@@ -95,8 +93,9 @@ class MergeController extends Controller
     /**
      * getModel: gets model(s) specified by $letter -> class
      *           This is used to build the merge form that is displayed for whatever models will be merged.
-     * @param Request $request
+     *
      * @param: $class as represented by $letter
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector : $string
      */
     public function getmodel(Request $request, $letter)
@@ -107,13 +106,13 @@ class MergeController extends Controller
         $model2 = request()->input('model2');
 
         if (isset($model1) && ! is_numeric($model1)) {
-            list($id1, $field) = array_pad(explode('-', $model1, 2), 2, null);
+            [$id1, $field] = array_pad(explode('-', $model1, 2), 2, null);
         } else {
             $id1 = $model1;
         }
 
         if (isset($model2) && ! is_numeric($model2)) {
-            list($id2, $field) = array_pad(explode('-', $model2, 2), 2, null);
+            [$id2, $field] = array_pad(explode('-', $model2, 2), 2, null);
         } else {
             $id2 = $model2;
         }
@@ -162,16 +161,18 @@ class MergeController extends Controller
 
     /**
      * Just like getmodel, for the group-registration page
+     *
      * @param: string
+     *
      * @return: json entry
      */
     public function getperson(Request $request)
     {
         $string = request()->input('string');
-        list($personID, $field) = array_pad(explode('-', $string, 2), 2, null);
+        [$personID, $field] = array_pad(explode('-', $string, 2), 2, null);
         $person = Person::with('orgperson')->find($personID);
 
-        if (null !== $person) {
+        if ($person !== null) {
             return json_encode(['status' => 'success',
                 'p' => $person,
                 'personID' => $person->personID,
@@ -185,9 +186,13 @@ class MergeController extends Controller
 
     /**
      * store function for surviving model.  Should probably be update
+     *
      * @param: $letter
+     *
      * @param: $model1
+     *
      * @param: $model2
+     *
      * @param: $ignore_array
      *
      * 1. $model1 survives;
@@ -408,7 +413,7 @@ class MergeController extends Controller
 
     /**
      * query function - the function that drives the typeahead field search/response
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function query(Request $request)

@@ -9,7 +9,6 @@ use App\Models\Person;
 use App\Models\Registration;
 use App\Models\RegSession;
 use App\Models\RSSurvey;
-use App\Models\Ticket;
 use App\Models\Track;
 use App\Notifications\SendSurvey;
 use Carbon\Carbon;
@@ -40,8 +39,8 @@ class RegSessionController extends Controller
         // Given an event's sessionID, display a form for a person to enter their $regID
         try {
             $event = Event::where('eventID', '=', $param)
-                          ->orWhere('slug', '=', $param)
-                          ->firstOrFail();
+                ->orWhere('slug', '=', $param)
+                ->firstOrFail();
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.instructions.no_event'));
 
@@ -165,7 +164,7 @@ class RegSessionController extends Controller
         // Then, cycle through all p-#-# registrants to enter record
         foreach ($request->all() as $key => $value) {
             if (preg_match('/^p-/', $key)) {
-                list($field, $personID, $regID) = array_pad(explode('-', $key, 3), 3, null);
+                [$field, $personID, $regID] = array_pad(explode('-', $key, 3), 3, null);
                 $reg = Registration::find($regID);
                 $reg->checkin();
                 $count++;
@@ -197,7 +196,7 @@ class RegSessionController extends Controller
             $verb = trans('messages.messages.updated');
             foreach ($rs as $s) {
                 $e = EventSession::find($s->sessionID);
-                if (null !== $e && $e->regCount > 0) {
+                if ($e !== null && $e->regCount > 0) {
                     $e->regCount--;
                     $e->save();
                 }
@@ -252,7 +251,7 @@ class RegSessionController extends Controller
             ['sessionID', '=', $session->sessionID],
         ])->first();
 
-        if (null === $rs) {
+        if ($rs === null) {
             // Create the RegSession
             $reg = Registration::find($regID);
             $rs = new RegSession;
@@ -323,11 +322,11 @@ class RegSessionController extends Controller
         return view('v1.public_pages.thanks', compact('message'));
     }
 
-    public function send_surveys(Event $event, EventSession $es = null)
+    public function send_surveys(Event $event, ?EventSession $es = null)
     {
         $count = 0;
         $scount = 0;
-        if (null === $es) {
+        if ($es === null) {
             $es = $event->default_session();
         }
         foreach ($event->registrations as $reg) {
@@ -345,11 +344,11 @@ class RegSessionController extends Controller
             ])->first();
 
             // YES this person attended the session and NO there is no survey yet
-            if (null !== $rs && $rss === null) {
+            if ($rs !== null && $rss === null) {
                 $p = Person::find($reg->personID);
                 $p->notify(new SendSurvey($p, $event, $rs));
                 $count++;
-            } elseif (null !== $rs) {
+            } elseif ($rs !== null) {
                 $scount++;
             }
         }
@@ -358,6 +357,7 @@ class RegSessionController extends Controller
         $event->save();
 
         request()->session()->flash('alert-success', trans_choice('messages.notifications.SS.post_mail_msg', $count, ['count' => $count, 'c2' => $scount]));
+
         //return redirect(env('APP_URL')."/eventreport/$event->slug");
         return redirect()->back();
     }

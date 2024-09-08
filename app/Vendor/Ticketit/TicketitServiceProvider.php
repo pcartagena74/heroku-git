@@ -29,7 +29,7 @@ class TicketitServiceProvider extends ServiceProvider
             // Database isn't installed yet.
             return;
         }
-        $installer = new InstallController();
+        $installer = new InstallController;
         // if a migration or new setting is missing scape to the installation
         // updated the migration file path for installcontroller it will only pick migration from current migration directory
         if (empty($installer->inactiveMigrations()) && ! $installer->inactiveSettings()) {
@@ -56,7 +56,7 @@ class TicketitServiceProvider extends ServiceProvider
             // Send notification when new comment is added
             Comment::creating(function ($comment) {
                 if (Setting::grab('comment_notification')) {
-                    $notification = new NotificationsController();
+                    $notification = new NotificationsController;
                     $notification->newComment($comment);
                 }
             });
@@ -65,14 +65,14 @@ class TicketitServiceProvider extends ServiceProvider
                 if (Setting::grab('status_notification')) {
                     $original_ticket = Ticket::find($modified_ticket->id);
                     if ($original_ticket->status_id != $modified_ticket->status_id || $original_ticket->completed_at != $modified_ticket->completed_at) {
-                        $notification = new NotificationsController();
+                        $notification = new NotificationsController;
                         $notification->ticketStatusUpdated($modified_ticket, $original_ticket);
                     }
                 }
                 if (Setting::grab('assigned_notification')) {
                     $original_ticket = Ticket::find($modified_ticket->id);
                     if ($original_ticket->agent->id != $modified_ticket->agent->id) {
-                        $notification = new NotificationsController();
+                        $notification = new NotificationsController;
                         $notification->ticketAgentUpdated($modified_ticket, $original_ticket);
                     }
                 }
@@ -83,7 +83,7 @@ class TicketitServiceProvider extends ServiceProvider
             // Send notification when ticket status is modified
             Ticket::created(function ($ticket) {
                 if (Setting::grab('assigned_notification')) {
-                    $notification = new NotificationsController();
+                    $notification = new NotificationsController;
                     $notification->newTicketNotifyAgent($ticket);
                 }
 
@@ -130,18 +130,18 @@ class TicketitServiceProvider extends ServiceProvider
 
             Route::get('/tickets-install', [
                 'middleware' => $authMiddleware,
-                'as'         => 'tickets.install.index',
-                'uses'       => 'Kordy\Ticketit\Controllers\InstallController@index',
+                'as' => 'tickets.install.index',
+                'uses' => 'Kordy\Ticketit\Controllers\InstallController@index',
             ]);
             Route::post('/tickets-install', [
                 'middleware' => $authMiddleware,
-                'as'         => 'tickets.install.setup',
-                'uses'       => 'Kordy\Ticketit\Controllers\InstallController@setup',
+                'as' => 'tickets.install.setup',
+                'uses' => 'Kordy\Ticketit\Controllers\InstallController@setup',
             ]);
             Route::get('/tickets-upgrade', [
                 'middleware' => $authMiddleware,
-                'as'         => 'tickets.install.upgrade',
-                'uses'       => 'Kordy\Ticketit\Controllers\InstallController@upgrade',
+                'as' => 'tickets.install.upgrade',
+                'uses' => 'Kordy\Ticketit\Controllers\InstallController@upgrade',
             ]);
             Route::get('/tickets', function () {
                 return redirect()->route('tickets.install.index');
@@ -183,7 +183,7 @@ class TicketitServiceProvider extends ServiceProvider
          */
 
         $this->app->singleton('command.kordy.ticketit.htmlify', function ($app) {
-            return new Htmlify();
+            return new Htmlify;
         });
         $this->commands('command.kordy.ticketit.htmlify');
     }

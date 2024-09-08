@@ -1,4 +1,5 @@
 <?php
+
 // 2024-05-18: `org-event`.isPrivate = 1 will be used to account for wait list features being active
 
 namespace App\Http\Controllers;
@@ -15,7 +16,6 @@ use App\Models\Person;
 use App\Models\ReferLink;
 use App\Models\Ticket;
 use App\Models\Track;
-use App\Models\User;
 use App\Other\ics_cal_full;
 use App\Other\ics_calendar;
 use Auth;
@@ -42,7 +42,7 @@ class EventController extends Controller
         $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        $upcoming = trans('messages.fields.up') . ' ';
+        $upcoming = trans('messages.fields.up').' ';
         $rtw = trans('messages.headers.regs_this_week');
 
         $ch_mtg = Cache::get('future_cm', function () use ($today) {
@@ -136,11 +136,11 @@ class EventController extends Controller
         $which = trans_choice('messages.var_words.time_period', 0);
         $ae_label = trans('messages.codes.etID99', ['which' => $which]);
 
-        array_push($topBits, [3, $upcoming . $cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $rt_label, count($roundtables), $rt_count, $rtw, $rt_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $so_label, count($socials), $so_count, $rtw, $so_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $pd_label, count($pddays), $pd_count, $rtw, $pd_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $jf_label, count($jobs), $jf_count, $rtw, $jf_count > 0 ? 1 : -1, 2]);
+        array_push($topBits, [3, $upcoming.$cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count > 0 ? 1 : -1, 2]);
+        array_push($topBits, [3, $upcoming.$rt_label, count($roundtables), $rt_count, $rtw, $rt_count > 0 ? 1 : -1, 2]);
+        array_push($topBits, [3, $upcoming.$so_label, count($socials), $so_count, $rtw, $so_count > 0 ? 1 : -1, 2]);
+        array_push($topBits, [3, $upcoming.$pd_label, count($pddays), $pd_count, $rtw, $pd_count > 0 ? 1 : -1, 2]);
+        array_push($topBits, [3, $upcoming.$jf_label, count($jobs), $jf_count, $rtw, $jf_count > 0 ? 1 : -1, 2]);
         array_push($topBits, [3, $ae_label, count($all), $ae_count, $rtw, $ae_count > 0 ? 1 : -1, 2]);
 
         return $topBits;
@@ -154,7 +154,7 @@ class EventController extends Controller
         $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
-        if (null === $past) {
+        if ($past === null) {
             // Function called was "Manage Events" so there should be future events and limited past events"
             // Get a list of current events, showing events that have not yet ended.
             $current_events = Event::with('registrations', 'event_type', 'location')
@@ -222,7 +222,7 @@ class EventController extends Controller
         }
 
         $e = $event->replicate();
-        $e->slug = 'temp_' . rand();
+        $e->slug = 'temp_'.rand();
         $e->isActive = 0;
         $e->eventStartDate = $today;
         $e->eventEndDate = $today;
@@ -272,7 +272,7 @@ class EventController extends Controller
 
         // A copied event should always get the discount codes.
         $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
-            ['discountCODE', '<>', ''],])->get();
+            ['discountCODE', '<>', ''], ])->get();
 
         // CHANGE: decide if original event's EventDiscounts should be copied instead.
         foreach ($orgDiscounts as $od) {
@@ -287,7 +287,7 @@ class EventController extends Controller
         }
 
         //return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc'));
-        return redirect('/event/' . $event->eventID . '/edit');
+        return redirect('/event/'.$event->eventID.'/edit');
     }
 
     public function show($param, $override = null)
@@ -471,7 +471,7 @@ class EventController extends Controller
             $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for ($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
                 $track = new Track;
-                $track->trackName = 'Track' . $i;
+                $track->trackName = 'Track'.$i;
                 $track->eventID = $event->eventID;
                 $track->save();
             }
@@ -511,7 +511,7 @@ class EventController extends Controller
 
         if ($event->eventStartDate > $today) {
             $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
-                ['discountCODE', '<>', ''],])->get();
+                ['discountCODE', '<>', ''], ])->get();
 
             foreach ($orgDiscounts as $od) {
                 $ed = new EventDiscount;
@@ -526,13 +526,13 @@ class EventController extends Controller
         }
 
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_' . $event->eventID . '.ics';
+        $event_filename = 'event_'.$event->eventID.'.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
         $event->create_or_update_event_ics();
 
-        return redirect('/event-tickets/' . $event->eventID);
+        return redirect('/event-tickets/'.$event->eventID);
     }
 
     public function edit(Event $event)
@@ -560,19 +560,19 @@ class EventController extends Controller
         $slug = request()->input('slug');
         if ($id == 0) {
             if (Event::whereSlug($slug)->withTrashed()->exists()) {
-                $message = $slug . ' is <b style="color:red;">NOT</b> available';
-//            } elseif (Event::whereSlug($slug)->exists()) {
+                $message = $slug.' is <b style="color:red;">NOT</b> available';
+                //            } elseif (Event::whereSlug($slug)->exists()) {
                 //                $message = $slug . ' is available';
             } else {
-                $message = $slug . ' is available';
+                $message = $slug.' is available';
             }
         } else {
             if (Event::whereSlug($slug)->withTrashed()->where('eventID', '!=', $id)->exists()) {
-                $message = $slug . ' is <b style="color:red;">NOT</b> available';
-//            } elseif (Event::whereSlug($slug)->exists()) {
+                $message = $slug.' is <b style="color:red;">NOT</b> available';
+                //            } elseif (Event::whereSlug($slug)->exists()) {
                 //                $message = $slug . ' is available';
             } else {
-                $message = $slug . ' is available';
+                $message = $slug.' is available';
             }
         }
 
@@ -653,7 +653,7 @@ class EventController extends Controller
             $count = DB::table('event-tracks')->where('eventID', $event->eventID)->count();
             for ($i = 1 + $count; $i <= request()->input('hasTracks'); $i++) {
                 $track = new Track;
-                $track->trackName = 'Track' . $i;
+                $track->trackName = 'Track'.$i;
                 $track->eventID = $event->eventID;
                 $track->save();
             }
@@ -673,10 +673,10 @@ class EventController extends Controller
         }
 
         $event_discounts = EventDiscount::where('eventID', $event->eventID)->get();
-        if ($event->eventStartDate > $today && !$event_discounts) {
+        if ($event->eventStartDate > $today && ! $event_discounts) {
             $orgDiscounts = OrgDiscount::where([
                 ['orgID', $this->currentPerson->defaultOrgID],
-                ['discountCODE', '<>', ''],])
+                ['discountCODE', '<>', ''], ])
                 ->orWhere('discountCODE', '!=', 0)
                 ->whereNotNull('discountCODE')->get();
 
@@ -732,7 +732,7 @@ class EventController extends Controller
         }
 
         // Make and overwrite the event_{id}.ics file
-        $event_filename = 'event_' . $event->eventID . '.ics';
+        $event_filename = 'event_'.$event->eventID.'.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents);
@@ -742,9 +742,9 @@ class EventController extends Controller
         // Maybe catch the auto-created tickets when events are copied
 
         if ($skip === null) {
-            return redirect(env('APP_URL') . '/event-tickets/' . $event->eventID);
+            return redirect(env('APP_URL').'/event-tickets/'.$event->eventID);
         } else {
-            return redirect(env('APP_URL') . '/manage_events');
+            return redirect(env('APP_URL').'/manage_events');
         }
     }
 
@@ -781,8 +781,6 @@ class EventController extends Controller
      * This function allows the quick update of the Early Bird End Date and Percent Discount
      * associated with eventID $id from /event-tickets/{id}
      *
-     * @param Request $request
-     * @param Event $event
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector
      */
     public function ajax_update(Request $request, Event $event)
@@ -822,7 +820,7 @@ class EventController extends Controller
             }
         }
 
-        return redirect('/event-tickets/' . $event->eventID);
+        return redirect('/event-tickets/'.$event->eventID);
     }
 
     public function showGroup($event = null, $override = null)
@@ -831,7 +829,7 @@ class EventController extends Controller
         $today = Carbon::now();
         $this->currentPerson = Person::find(auth()->user()->id);
 
-        if (!isset($event)) {
+        if (! isset($event)) {
             if (Auth::user()->hasRole('Developer')) {
                 $e = Event::where([
                     ['orgID', '=', $this->currentPerson->defaultOrgID],
@@ -862,7 +860,7 @@ class EventController extends Controller
             // Cannot pass object as reference so need to set here
             $event = Event::find($event);
             $override ? $check = 1 : $check = 0;
-            $title = $title . ": $event->eventName";
+            $title = $title.": $event->eventName";
             $t = Ticket::where('eventID', '=', $event->eventID)->get();
             if (count($t) > 1) {
                 $a = $t->pluck('ticketLabel', 'ticketID');
@@ -903,7 +901,7 @@ class EventController extends Controller
             $etID_array = explode(',', $etID);
             $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
             $tag = array_map('et_translate', $tag);
-            $tag = implode(' or ', (array)$tag);
+            $tag = implode(' or ', (array) $tag);
 
             $events = Event::where([
                 ['orgID', $orgID],
@@ -916,8 +914,8 @@ class EventController extends Controller
                 ->get();
         } else {
             $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
-            if (Lang::has('messages.event_types' . $tag->etName)) {
-                $tag->etName = trans_choice('messages.event_types.' . $tag->etName, 1);
+            if (Lang::has('messages.event_types'.$tag->etName)) {
+                $tag->etName = trans_choice('messages.event_types.'.$tag->etName, 1);
             } else {
                 // $tag = $tag->etName;
             }
@@ -1044,13 +1042,13 @@ class EventController extends Controller
     /*
      * get_tix: AJAX - returns the tickets for an event
      */
-    public function get_tix(Event $event, Ticket $ticket = null)
+    public function get_tix(Event $event, ?Ticket $ticket = null)
     {
         $tix = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isSuppressed', '=', 0],
         ])
-            ->where(fn($q) => $q->where('maxAttendees', '=', 0)->orWhereRaw("maxAttendees - regCount > 0"))
+            ->where(fn ($q) => $q->where('maxAttendees', '=', 0)->orWhereRaw('maxAttendees - regCount > 0'))
             ->get();
 
         return json_encode(['status' => 'success', 'tix' => $tix, 'def_tick' => $ticket]);

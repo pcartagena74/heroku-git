@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Model;
 
 class VolunteerService extends Model
@@ -11,8 +10,11 @@ class VolunteerService extends Model
     use HasFactory;
 
     protected $table = 'volunteer_service';
+
     protected $primaryKey = 'id';
+
     protected static $logAttributes = ['roleStartDate', 'roleEndDate'];
+
     protected static $ignoreChangedAttributes = ['created_at', 'updated_at'];
 
     public function volunteer_role()

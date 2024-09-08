@@ -45,9 +45,9 @@ class OrgPersonController extends Controller
             })->first();
         }
 
-        if (null !== $who && null !== $who->myperson && $pmiID) {
+        if ($who !== null && $who->myperson !== null && $pmiID) {
             return redirect(env('APP_URL').'/pmi_account/'.$who->myperson->personID);
-        } elseif (null !== $who && null !== $who->myperson && $email) {
+        } elseif ($who !== null && $who->myperson !== null && $email) {
             return redirect(env('APP_URL').'/pmi_account/'.$who->personID);
         } else {
             if ($pmiID > 0) {
@@ -87,7 +87,6 @@ class OrgPersonController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -109,7 +108,6 @@ class OrgPersonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */

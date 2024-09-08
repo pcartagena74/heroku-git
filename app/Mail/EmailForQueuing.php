@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class EmailForQueuing extends Mailable
 {
     use Queueable, SerializesModels;
+
     protected $email_queue;
 
     /**

@@ -14,9 +14,7 @@ class TwitterController extends Controller
         //$this->middleware('guest');
     }
 
-    public function index()
-    {
-    }
+    public function index() {}
 
     public function show(Event $event)
     {

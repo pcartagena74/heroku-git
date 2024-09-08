@@ -33,9 +33,13 @@ use Validator;
 class UploadController extends Controller
 {
     public $starttime;
+
     public $phone_master;
+
     public $email_master;
+
     public $address_master;
+
     public $person_staging_master;
 
     public function __construct()
@@ -95,11 +99,11 @@ class UploadController extends Controller
         $validate = Validator::make(
             [
                 'data_type' => $request->input('data_type'),
-                'filename'  => $request->file('filename'),
+                'filename' => $request->file('filename'),
                 'extension' => strtolower($request->file('filename')->getClientOriginalExtension()),
             ],
             [
-                'filename'  => 'required',
+                'filename' => 'required',
                 'extension' => 'required|in:xlsx,ods,csv',
                 'data_type' => 'required',
             ],
@@ -129,7 +133,7 @@ class UploadController extends Controller
             case 'mbrdata':
                 try {
                     $currentPerson = Person::where('personID', auth()->user()->id)->get()->first();
-                    $import_detail = new ImportDetail();
+                    $import_detail = new ImportDetail;
                     $import_detail->file_name = $f_ori_name;
                     $import_detail->user_id = $currentPerson->personID;
                     $import_detail->save();
@@ -140,7 +144,7 @@ class UploadController extends Controller
                             function () use ($path) {
                                 //unlink($path);
                                 Storage::disk('s3_temp')->delete($path);
-                            }
+                            },
                         ])->onConnection('database')
                         ->onQueue('default');
                     sendGetToWakeUpDyno();
@@ -802,7 +806,7 @@ class UploadController extends Controller
 
         switch ($what) {
             case 'mbrdata':
-//                try {
+                //                try {
                 DB::transaction(function () {
                     $filename = $_FILES['filename']['tmp_name'];
                     Excel::load($filename, function ($reader) {
@@ -892,7 +896,7 @@ class UploadController extends Controller
                                     $e->updaterID = auth()->user()->id;
                                     $e->save();
 
-                                // Otherwise, try with email #2
+                                    // Otherwise, try with email #2
                                 } elseif ($em2 !== null && $em2 != '' && $em2 != ' ') {
                                     $p->login = $em2;
                                     $p->save();
@@ -1116,7 +1120,7 @@ class UploadController extends Controller
                 break;
 
             case 'evtdata':
-//                try {
+                //                try {
                 //                    DB::transaction(function () {
                 $filename = $_FILES['filename']['tmp_name'];
                 Excel::load($filename, function ($reader) {

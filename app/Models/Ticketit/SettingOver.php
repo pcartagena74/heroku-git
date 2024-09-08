@@ -14,6 +14,7 @@ class SettingOver extends Model
      * @var array
      */
     protected $fillable = ['lang', 'slug', 'value', 'default'];
+
     /**
      * @var string
      */
@@ -23,8 +24,6 @@ class SettingOver extends Model
      * Returns one of three columns by slug.
      * Priority: lang, value, default.
      *
-     * @param $query
-     * @param $slug
      *
      * @return mixed
      */
@@ -37,7 +36,6 @@ class SettingOver extends Model
      * Grab a setting from cached Settings table by slug.
      * Cache lifetime: 60 minutes.
      *
-     * @param $slug
      *
      * @return mixed
      */
@@ -80,8 +78,6 @@ class SettingOver extends Model
      * Check if a parameter under Value or Default columns
      * is serialized.
      *
-     * @param $data
-     * @param $strict
      *
      * @return bool
      */
@@ -92,34 +88,34 @@ class SettingOver extends Model
             return false;
         }
         $data = trim($data);
-        if ('N;' == $data) {
+        if ($data == 'N;') {
             return true;
         }
         if (strlen($data) < 4) {
             return false;
         }
-        if (':' !== $data[1]) {
+        if ($data[1] !== ':') {
             return false;
         }
         if ($strict) {
             $lastc = substr($data, -1);
-            if (';' !== $lastc && '}' !== $lastc) {
+            if ($lastc !== ';' && $lastc !== '}') {
                 return false;
             }
         } else {
             $semicolon = strpos($data, ';');
             $brace = strpos($data, '}');
             // Either ; or } must exist.
-            if (false === $semicolon && false === $brace) {
+            if ($semicolon === false && $brace === false) {
                 return false;
             }
 
             // But neither must be in the first X characters.
-            if (false !== $semicolon && $semicolon < 3) {
+            if ($semicolon !== false && $semicolon < 3) {
                 return false;
             }
 
-            if (false !== $brace && $brace < 4) {
+            if ($brace !== false && $brace < 4) {
                 return false;
             }
         }
@@ -127,13 +123,13 @@ class SettingOver extends Model
         switch ($token) {
             case 's':
                 if ($strict) {
-                    if ('"' !== substr($data, -2, 1)) {
+                    if (substr($data, -2, 1) !== '"') {
                         return false;
                     }
-                } elseif (false === strpos($data, '"')) {
+                } elseif (strpos($data, '"') === false) {
                     return false;
                 }
-            // or else fall through
+                // or else fall through
             case 'a':
             case 'O':
                 return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);

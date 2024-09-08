@@ -66,7 +66,6 @@ class AgentsController extends Controller
     /**
      * Assign users as agents.
      *
-     * @param $user_ids
      *
      * @return array
      */
@@ -85,7 +84,6 @@ class AgentsController extends Controller
     /**
      * Remove user from the agents.
      *
-     * @param $id
      *
      * @return mixed
      */
@@ -109,9 +107,6 @@ class AgentsController extends Controller
 
     /**
      * Sync Agent categories with the selected categories got from update form.
-     *
-     * @param $id
-     * @param Request $request
      */
     public function syncAgentCategories($id, Request $request)
     {

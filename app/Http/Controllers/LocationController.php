@@ -19,19 +19,19 @@ class LocationController extends Controller
         // responds to GET /locations
         $this->currentPerson = Person::find(auth()->user()->id);
         $locations = DB::table('event-location')->where('orgID', $this->currentPerson->defaultOrgID)
-                                 ->whereNull('deleted_at')
-                                 ->orderBy('locName')
-                                 ->select(
-                                     'locID',
-                                     'locName',
-                                     'addr1',
-                                     'addr2',
-                                     'city',
-                                     'state',
-                                     'zip',
-                                     DB::raw('(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt'),
-                                     'locNote'
-                                 )->get();
+            ->whereNull('deleted_at')
+            ->orderBy('locName')
+            ->select(
+                'locID',
+                'locName',
+                'addr1',
+                'addr2',
+                'city',
+                'state',
+                'zip',
+                DB::raw('(select count(*) from `org-event` oe where oe.locationID = `event-location`.locID) as cnt'),
+                'locNote'
+            )->get();
 
         $topBits = '';
 

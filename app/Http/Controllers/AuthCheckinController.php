@@ -49,7 +49,7 @@ class AuthCheckinController extends Controller
         }
 
         return view('v1.auth_pages.events.record_attendance',
-                          compact('event', 'def_sesses', 'currentOrg', 'tracks'));
+            compact('event', 'def_sesses', 'currentOrg', 'tracks'));
     }
 
     public function show(EventSession $es)
@@ -57,7 +57,7 @@ class AuthCheckinController extends Controller
         $url = 'record_attendance';
         $html = view('v1.parts.session_checkin', compact('es', 'url'))->render();
 
-        return json_encode(['html'=>$html]);
+        return json_encode(['html' => $html]);
     }
 
     public function store(Request $request, Event $event)
@@ -82,7 +82,7 @@ class AuthCheckinController extends Controller
         // Then, cycle through all p-#-# registrants to enter record
         foreach ($request->all() as $key => $value) {
             if (preg_match('/^p-/', $key)) {
-                list($field, $personID, $regID) = array_pad(explode('-', $key, 3), 3, null);
+                [$field, $personID, $regID] = array_pad(explode('-', $key, 3), 3, null);
                 $reg = Registration::find($regID);
                 $reg->checkin($esID);
                 $count++;

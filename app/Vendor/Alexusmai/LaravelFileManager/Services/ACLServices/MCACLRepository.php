@@ -25,8 +25,6 @@ class MCACLRepository implements ACLRepository
 
     /**
      * Get rules from file-manger.php config file
-     *
-     * @return array
      */
     public function getRules(): array
     {

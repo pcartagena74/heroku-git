@@ -71,7 +71,7 @@ class UsersTableSeeder extends Seeder
             $p->updaterID = 0;
             $p->save();
 
-            if($l['id'] == 0){
+            if ($l['id'] == 0) {
                 $p->personID = 0;
                 $p->save();
             }

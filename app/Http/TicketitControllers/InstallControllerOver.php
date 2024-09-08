@@ -35,7 +35,7 @@ class InstallControllerOver extends Controller
         if ($public !== $assets) {
             Artisan::call('vendor:publish', [
                 '--provider' => 'Kordy\\Ticketit\\TicketitServiceProvider',
-                '--tag'      => ['public'],
+                '--tag' => ['public'],
             ]);
         }
     }
@@ -125,7 +125,7 @@ class InstallControllerOver extends Controller
             // If a migration is missing, do the migrate
             Artisan::call('vendor:publish', [
                 '--provider' => 'Kordy\\Ticketit\\TicketitServiceProvider',
-                '--tag'      => ['db'],
+                '--tag' => ['db'],
             ]);
             Artisan::call('migrate');
 
@@ -147,7 +147,7 @@ class InstallControllerOver extends Controller
     /**
      * Run the settings table seeder.
      *
-     * @param string $master
+     * @param  string  $master
      */
     public function settingsSeeder($master = false)
     {
@@ -164,7 +164,7 @@ class InstallControllerOver extends Controller
             $config_settings = include $settings_file_path;
             File::move($settings_file_path, $settings_file_path.'.backup');
         }
-        $seeder = new SettingsTableSeeder();
+        $seeder = new SettingsTableSeeder;
         if ($master) {
             $config_settings['master_template'] = $master;
         }
@@ -247,7 +247,7 @@ class InstallControllerOver extends Controller
      */
     public function inactiveSettings()
     {
-        $seeder = new SettingsTableSeeder();
+        $seeder = new SettingsTableSeeder;
 
         // Package Settings
         // if Laravel v5.2 or 5.3
@@ -281,7 +281,7 @@ class InstallControllerOver extends Controller
      */
     public function demoDataSeeder()
     {
-        $seeder = new TicketitTableSeeder();
+        $seeder = new TicketitTableSeeder;
         $seeder->run();
         session()->flash('status', 'Demo tickets, users, and agents are seeded!');
 

@@ -2,14 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Bundle;
-use App\Models\EventSession;
 use Carbon\Carbon;
-
 //use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 class Ticket extends Model
 {
@@ -18,13 +14,19 @@ class Ticket extends Model
     //use LogsActivity;
 
     protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
-        'isaBundle', 'ticketLabel',];
+        'isaBundle', 'ticketLabel', ];
+
     protected static $ignoreChangedAttributes = ['createDate'];
+
     // The table
     protected $table = 'event-tickets';
+
     protected $primaryKey = 'ticketID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'availabilityEndDate' => 'datetime',
         'earlyBirdEndDate' => 'datetime',
@@ -78,7 +80,7 @@ class Ticket extends Model
     public function week_sales()
     {
         $tickets = [$this->ticketID];
-        if (!$this->isaBundle) {
+        if (! $this->isaBundle) {
             $bundles = Bundle::where('ticketID', $this->ticketID)->select('bundleID')->get();
             foreach ($bundles as $b) {
                 array_push($tickets, $b->bundleID);
@@ -145,7 +147,9 @@ class Ticket extends Model
     /**
      * update_count Increment / Decrement Function for Ticket Counts
      *              count is updated for bundle member tickets OR the ticket itself
+     *
      * @param:  $amt is the amount passed to update the count - allows for +1 and -1
+     *
      * @param:  $waitlist is a boolean indicating whether this should adjust the waitlist count or not
      */
     public function update_count($amt, $waitlist = 0)
@@ -224,9 +228,13 @@ class Ticket extends Model
     public function available_for_purchase()
     {
         if ($this->isaBundle) {
-            if ($this->soldout_bundle()) return 0;
+            if ($this->soldout_bundle()) {
+                return 0;
+            }
         } else {
-            if ($this->maxAttendees == 0) return 9999;
+            if ($this->maxAttendees == 0) {
+                return 9999;
+            }
 
             if ($this->maxAttendees - $this->regCount > 0) {
                 return $this->maxAttendees - $this->regCount;
@@ -247,7 +255,9 @@ class Ticket extends Model
         }
 
         // Event cannot sell out if maxAttendees is not set above 0; 0 is default
-        if ($this->maxAttendees == 0) return false;
+        if ($this->maxAttendees == 0) {
+            return false;
+        }
 
         if ($this->maxAttendees - $this->regCount > 0) {
             return false;
@@ -255,7 +265,6 @@ class Ticket extends Model
             return true;
         }
     }
-
 
     /**
      * soldout_bundle() returns true/false based on any bundle member's soldout state
@@ -265,7 +274,9 @@ class Ticket extends Model
         $members = $this->bundle_members();
 
         foreach ($members as $m) {
-            if ($m->soldout()) return true;
+            if ($m->soldout()) {
+                return true;
+            }
         }
 
         return false;

@@ -10,22 +10,23 @@ return [
     /**
      * @link    https://github.com/GaretJax/phpbrowscap
      */
-    'hisorange\BrowserDetect\Plugin\Browscap'   => [
+    'hisorange\BrowserDetect\Plugin\Browscap' => [
         /**
          * Location of the browscap.ini file.
          * If set to 'null' it will use the BrowserDetect package's cache directory.
          *
          * @see https://github.com/GaretJax/phpbrowscap
+         *
          * @var string|null
          */
-        'cacheDir'      => null,
+        'cacheDir' => null,
 
         /**
          * Where to store the downloaded ini file.
          *
          * @var string
          */
-        'iniFilename'   => 'browscap.ini',
+        'iniFilename' => 'browscap.ini',
 
         /**
          * Where to store the cached PHP arrays.
@@ -39,14 +40,14 @@ return [
          *
          * @var bool
          */
-        'doAutoUpdate'  => true,
+        'doAutoUpdate' => true,
 
         /**
          * The update interval in seconds.
          *
          * @var int
          */
-        'updateInterval'=> 432000, // 5 days
+        'updateInterval' => 432000, // 5 days
 
         /**
          * The next update interval in seconds in case of an error.
@@ -60,14 +61,14 @@ return [
          *
          * @var mixed
          */
-        'updateMethod'  => null,
+        'updateMethod' => null,
 
         /**
          * The timeout for the requests, when downloading th browscap.ini.
          *
          * @var int
          */
-        'timeout'       => 5,
+        'timeout' => 5,
 
     ],
 
@@ -93,7 +94,7 @@ return [
          *
          * @var array
          */
-        'fake_headers'  => [
+        'fake_headers' => [
             'HTTP_FAKE_HEADER' => 'HiSoRange\Browser',
         ],
     ],

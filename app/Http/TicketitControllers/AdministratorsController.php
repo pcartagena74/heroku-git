@@ -55,7 +55,6 @@ class AdministratorsController extends Controller
     /**
      * Assign users as administrators.
      *
-     * @param $user_ids
      *
      * @return array
      */
@@ -74,7 +73,6 @@ class AdministratorsController extends Controller
     /**
      * Remove user from the administrators.
      *
-     * @param $id
      *
      * @return mixed
      */
@@ -98,9 +96,6 @@ class AdministratorsController extends Controller
 
     /**
      * Sync Administrator categories with the selected categories got from update form.
-     *
-     * @param $id
-     * @param Request $request
      */
     public function syncAdministratorCategories($id, Request $request)
     {

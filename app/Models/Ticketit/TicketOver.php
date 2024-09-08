@@ -6,13 +6,13 @@ use App\Models\Person;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\CategoryOver as Category;
 use App\Models\User;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Date\Date;
 use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Traits\ContentEllipse;
 use Kordy\Ticketit\Traits\Purifiable;
-use DateTimeInterface;
 
 class TicketOver extends Ticket
 {
@@ -20,6 +20,7 @@ class TicketOver extends Ticket
     use Purifiable;
 
     protected $table = 'ticketit';
+
     protected $casts = [
         'completed_at' => 'datetime',
     ];
@@ -154,7 +155,7 @@ class TicketOver extends Ticket
         return $this->hasMany('Kordy\Ticketit\Models\Comment', 'ticket_id');
     }
 
-//    /**
+    //    /**
     //     * Get Ticket audits
     //     *
     //     * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -170,7 +171,7 @@ class TicketOver extends Ticket
      */
     public function freshTimestamp()
     {
-        return new Date();
+        return new Date;
     }
 
     /**
@@ -194,8 +195,6 @@ class TicketOver extends Ticket
     /**
      * Get all user tickets.
      *
-     * @param $query
-     * @param $id
      *
      * @return mixed
      */
@@ -207,8 +206,6 @@ class TicketOver extends Ticket
     /**
      * Get all agent tickets.
      *
-     * @param $query
-     * @param $id
      *
      * @return mixed
      */
@@ -220,8 +217,6 @@ class TicketOver extends Ticket
     /**
      * Get all agent tickets.
      *
-     * @param $query
-     * @param $id
      *
      * @return mixed
      */
@@ -230,7 +225,7 @@ class TicketOver extends Ticket
         //added admin check for agent
         $user = User::where('id', $id)->get()->first();
         if ($user->hasRole(['Admin'])) {
-            return $query->where(function ($subquery) use ($id) {
+            return $query->where(function ($subquery) {
                 // remove so all admin can see that org tickets
                 // $subquery->where('agent_ids', $id)->orWhere('user_id', $id);
             });
@@ -273,7 +268,7 @@ class TicketOver extends Ticket
                     ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
                     ->where('roles.name', 'Admin')
                     ->where('roles.orgId', $orgId);
-            })->whereNotIn('personID', function ($q) use ($orgId) {
+            })->whereNotIn('personID', function ($q) {
                 $q->select('user_id')
                     ->from('role_user')
                     ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
@@ -281,7 +276,7 @@ class TicketOver extends Ticket
             })->get();
         } else {
             // assign to developer only
-            $agents = Person::whereIn('personID', function ($q) use ($orgId) {
+            $agents = Person::whereIn('personID', function ($q) {
                 $q->select('user_id')
                     ->from('role_user')
                     ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')

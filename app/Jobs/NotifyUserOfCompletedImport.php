@@ -16,6 +16,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $person;
+
     public $import_detail;
 
     /**

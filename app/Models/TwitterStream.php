@@ -7,7 +7,6 @@
 namespace App\Models;
 
 use App\Jobs\ProcessTweet;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 //use OauthPhirehose;
@@ -19,7 +18,7 @@ class TwitterStream // extends OauthPhirehose
     /**
      * Enqueue each status
      *
-     * @param string $status
+     * @param  string  $status
      */
     public function enqueueStatus($status)
     {

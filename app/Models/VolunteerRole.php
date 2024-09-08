@@ -10,14 +10,18 @@ class VolunteerRole extends Model
     use HasFactory;
 
     protected $table = 'volunteer_roles';
+
     protected $primaryKey = 'id';
+
     protected static $logAttributes = ['title_override', 'reports_to', 'has_reports'];
+
     protected static $ignoreChangedAttributes = ['created_at'];
+
     protected $fillable = [
-        'id', 'reports_to'
+        'id', 'reports_to',
     ];
 
-    public function org ()
+    public function org()
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }

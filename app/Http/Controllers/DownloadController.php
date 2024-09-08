@@ -10,7 +10,6 @@ use App\Models\Person;
 use App\Models\Registration;
 use App\Models\RegSession;
 use Excel;
-use Illuminate\Http\Request;
 
 class DownloadController extends Controller
 {
@@ -66,12 +65,12 @@ class DownloadController extends Controller
         return Excel::download(new DataExport($tag_headers, $nametags), 'email_data.csv');
     }
 
-    public function pdu_list(Event $event, EventSession $es = null)
+    public function pdu_list(Event $event, ?EventSession $es = null)
     {
         $nametags = [];
         $org = Org::find($event->orgID);
 
-        if (null === $es) {
+        if ($es === null) {
             $regs = RegSession::where('eventID', '=', $event->eventID)
                 ->whereHas('registration', function ($q) {
                     $q->whereNull('deleted_at');
@@ -111,37 +110,37 @@ class DownloadController extends Controller
     public function mbr_rpt(int $orgID, string $which, int $days)
     {
         $nametags = [];
-        if($which == 'new') {
-            $filename = "new_mbrs.csv";
-            $tag_headers = [ trans('messages.fields.name'), trans('messages.fields.email'),
+        if ($which == 'new') {
+            $filename = 'new_mbrs.csv';
+            $tag_headers = [trans('messages.fields.name'), trans('messages.fields.email'),
                 trans('messages.headers.profile_vars.orgstat1'),
                 trans('messages.headers.profile_vars.regs'), trans('messages.headers.profile_vars.regs_now'),
-                trans('messages.headers.profile_vars.reldate1'), trans('messages.headers.profile_vars.reldate2')
+                trans('messages.headers.profile_vars.reldate1'), trans('messages.headers.profile_vars.reldate2'),
             ];
         } else {
-            $filename = "mbr_expiry_in_$days" . "_days.csv";
-            $tag_headers = [ trans('messages.fields.name'), trans('messages.fields.email'),
+            $filename = "mbr_expiry_in_$days".'_days.csv';
+            $tag_headers = [trans('messages.fields.name'), trans('messages.fields.email'),
                 trans('messages.headers.profile_vars.orgstat1'),
                 trans('messages.headers.profile_vars.regs'), trans('messages.headers.profile_vars.regs_now'),
                 trans('messages.headers.profile_vars.orgstat4_short'),
-                trans('messages.headers.profile_vars.reldate2'), trans('messages.headers.profile_vars.reldate4')
+                trans('messages.headers.profile_vars.reldate2'), trans('messages.headers.profile_vars.reldate4'),
             ];
         }
 
-    [$members, $title] = membership_reports($orgID, $which, 1, $days, null);
+        [$members, $title] = membership_reports($orgID, $which, 1, $days, null);
 
         foreach ($members as $mbr) {
-            if($which == 'new'){
-                $nametags[] = [ $mbr->firstName . " " . $mbr->lastName, $mbr->login, $mbr->orgperson->OrgStat1,
+            if ($which == 'new') {
+                $nametags[] = [$mbr->firstName.' '.$mbr->lastName, $mbr->login, $mbr->orgperson->OrgStat1,
                     $mbr->registrations_count, $mbr->regs_this_year,
                     \Carbon\Carbon::parse($mbr->orgperson->RelDate1)->format('F j, Y'),
-                    \Carbon\Carbon::parse($mbr->orgperson->RelDate2)->format('F j, Y')
+                    \Carbon\Carbon::parse($mbr->orgperson->RelDate2)->format('F j, Y'),
                 ];
             } else {
-                $nametags[] = [ $mbr->firstName . " " . $mbr->lastName, $mbr->login, $mbr->orgperson->OrgStat1,
+                $nametags[] = [$mbr->firstName.' '.$mbr->lastName, $mbr->login, $mbr->orgperson->OrgStat1,
                     $mbr->registrations_count, $mbr->regs_this_year, $mbr->orgperson->OrgStat4,
                     \Carbon\Carbon::parse($mbr->orgperson->RelDate2)->format('F j, Y'),
-                    \Carbon\Carbon::parse($mbr->orgperson->RelDate4)->format('F j, Y')
+                    \Carbon\Carbon::parse($mbr->orgperson->RelDate4)->format('F j, Y'),
                 ];
             }
         }

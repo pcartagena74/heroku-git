@@ -35,7 +35,6 @@ class EventAPIController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return void
      */
     public function store(Request $request)
@@ -46,16 +45,17 @@ class EventAPIController extends Controller
     /**
      * Display the events for the specified Organization $orgID
      *
-     * @param int $orgID
-     * @param int $past
-     * @param int $etID
+     * @param  int  $orgID
+     * @param  int  $past
+     * @param  int  $etID
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     *
      * @throws \Throwable
      */
     public function show($orgID, $past, $cal = 0, $etID = null, $override = null)
     {
         $org = Org::find($orgID);
-        if (null === $org) {
+        if ($org === null) {
             $message = trans('messages.instructions.no_org');
 
             return view('v1.public_pages.error_display', compact('message'));
@@ -106,7 +106,7 @@ class EventAPIController extends Controller
                     ->with('location', 'event_type', 'main_session', 'category', 'tickets')
                     ->orderBy('eventStartDate')
                     ->get();
-            } elseif (null !== $etID) {
+            } elseif ($etID !== null) {
                 $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
                 $etID_array = explode(',', $etID);
                 if (Lang::has('messages.event_types'.$tag->etName)) {
@@ -170,8 +170,8 @@ class EventAPIController extends Controller
 
         if ($override) {
             $view = view('v1.modals.eventlist_popup',
-                    compact('events', 'cnt', 'etID', 'org', 'tag', 'past', 'cal', 'admin_props'))
-                    ->render();
+                compact('events', 'cnt', 'etID', 'org', 'tag', 'past', 'cal', 'admin_props'))
+                ->render();
             $view = trim(preg_replace('/\r\n/', ' ', $view));
 
             return json_encode(['status' => 'success', 'html' => $view]);
@@ -183,7 +183,6 @@ class EventAPIController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Event $event
      * @return \Illuminate\Http\Response
      */
     public function edit(Event $event)
@@ -194,8 +193,6 @@ class EventAPIController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param Event $event
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Event $event)
@@ -206,7 +203,6 @@ class EventAPIController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Event $event
      * @return \Illuminate\Http\Response
      */
     public function destroy(Event $event)

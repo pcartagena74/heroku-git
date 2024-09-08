@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OPHistory extends Model
 {
     use SoftDeletes;
+
     protected $primaryKey = 'revision';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',

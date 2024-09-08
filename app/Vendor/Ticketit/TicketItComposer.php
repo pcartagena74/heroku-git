@@ -18,7 +18,7 @@ class TicketItComposer
                 }
                 $view->with('u', $u);
             }
-            $setting = new Setting();
+            $setting = new Setting;
             $view->with('setting', $setting);
         });
     }
@@ -27,7 +27,7 @@ class TicketItComposer
     {
         // Passing to views the master view value from the setting file
         view()->composer('ticketit::*', function ($view) {
-            $tools = new ToolsController();
+            $tools = new ToolsController;
             $master = Setting::grab('master_template');
             $email = Setting::grab('email.template');
             $view->with(compact('master', 'email', 'tools'));
