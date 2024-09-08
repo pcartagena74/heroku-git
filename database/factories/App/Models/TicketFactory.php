@@ -24,7 +24,7 @@ class TicketFactory extends Factory
     public function definition()
     {
         return [
-            'ticketLabel' => $this->faker->word,
+            'ticketLabel' => $this->faker->word(),
 
         ];
     }

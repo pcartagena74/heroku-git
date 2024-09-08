@@ -47,7 +47,7 @@ class UserFactory extends Factory
                 'remember_token' => Str::random(10),
             ];
         } else {
-            $e = $this->faker->unique()->safeEmail;
+            $e = $this->faker->unique()->safeEmail();
 
             return [
                 'name' => $e,

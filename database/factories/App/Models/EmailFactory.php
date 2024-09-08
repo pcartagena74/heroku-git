@@ -33,12 +33,12 @@ class EmailFactory extends Factory
 
         if ($person !== null) {
             return [
-                'emailADDR' => $this->faker->unique()->safeEmail,
+                'emailADDR' => $this->faker->unique()->safeEmail(),
             ];
         } else {
             return [
                 'personID' => $personID,
-                'emailADDR' => $this->faker->unique()->safeEmail,
+                'emailADDR' => $this->faker->unique()->safeEmail(),
             ];
         }
     }

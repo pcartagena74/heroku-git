@@ -35,12 +35,12 @@ class EventFactory extends Factory
 
         return [
             'eventName' => $this->faker->sentence(4),
-            'eventDescription' => $this->faker->paragraph,
+            'eventDescription' => $this->faker->paragraph(),
             'eventStartDate' => $future_date,
             'eventEndDate' => $future_date->addHour(1),
             'eventTimeZone' => $tz,
             'eventTypeID' => 1,
-            'slug' => $this->faker->unique()->word,
+            'slug' => $this->faker->unique()->word(),
             'locationID' => 1,
         ];
     }
