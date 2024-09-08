@@ -183,7 +183,7 @@ Route::get('/ticketit', function () {
 
 // Private Admin Page Routes
 // -------------------------
-Route::group(['middleware' => ['role:Admin|Developer']], function () {
+Route::middleware('role:Admin|Developer')->group(function () {
     Route::get('/newuser/create', [UserController::class, 'create']);
     Route::post('/newuser', [UserController::class, 'store']);
     Route::get('/become', [ActivityController::class, 'create']);
@@ -406,7 +406,7 @@ Route::get('/mytest', function () {
 
 Route::get('/twitter/{event}', [TwitterController::class, 'show']);
 
-Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http\Request $request) {
+Route::post('approve-tweets', function (Illuminate\Http\Request $request) {
     foreach ($request->all() as $input_key => $input_val) {
         if (strpos($input_key, 'approval-status-') === 0) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
@@ -417,13 +417,12 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
             }
         }
     }
-
     return redirect()->back();
-}]);
+})->middleware('auth');
 
-Route::get('/blank', ['middleware' => 'auth', function () {
+Route::get('/blank', function () {
     return view('v1.auth_pages.page-tmp');
-}]);
+})->middleware('auth');
 
 Auth::routes();
 

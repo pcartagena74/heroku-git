@@ -128,21 +128,9 @@ class TicketitServiceProvider extends ServiceProvider
 
             $authMiddleware = Helpers\LaravelVersion::authMiddleware();
 
-            Route::get('/tickets-install', [
-                'middleware' => $authMiddleware,
-                'as' => 'tickets.install.index',
-                'uses' => 'Kordy\Ticketit\Controllers\InstallController@index',
-            ]);
-            Route::post('/tickets-install', [
-                'middleware' => $authMiddleware,
-                'as' => 'tickets.install.setup',
-                'uses' => 'Kordy\Ticketit\Controllers\InstallController@setup',
-            ]);
-            Route::get('/tickets-upgrade', [
-                'middleware' => $authMiddleware,
-                'as' => 'tickets.install.upgrade',
-                'uses' => 'Kordy\Ticketit\Controllers\InstallController@upgrade',
-            ]);
+            Route::get('/tickets-install', 'Kordy\Ticketit\Controllers\InstallController@index')->middleware($authMiddleware)->name('tickets.install.index');
+            Route::post('/tickets-install', 'Kordy\Ticketit\Controllers\InstallController@setup')->middleware($authMiddleware)->name('tickets.install.setup');
+            Route::get('/tickets-upgrade', 'Kordy\Ticketit\Controllers\InstallController@upgrade')->middleware($authMiddleware)->name('tickets.install.upgrade');
             Route::get('/tickets', function () {
                 return redirect()->route('tickets.install.index');
             });

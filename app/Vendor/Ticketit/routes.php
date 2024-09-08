@@ -17,8 +17,7 @@ use Kordy\Ticketit\Controllers\PrioritiesController;
 use Kordy\Ticketit\Controllers\StatusesController;
 use Kordy\Ticketit\Controllers\TicketsController;
 
-Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddleware()],
-    function () use ($main_route, $main_route_path, $admin_route, $admin_route_path) {
+Route::middleware(\Kordy\Ticketit\Helpers\LaravelVersion::authMiddleware())->group(function () use ($main_route, $main_route_path, $admin_route, $admin_route_path) {
 
         $ori_tickets_path = TicketsController::class;
         $new_tickets_path = \App\Http\TicketitControllers\TicketsControllerOver::class;
@@ -77,21 +76,15 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
             ->name("$main_route.reopen");
         //});
 
-        Route::group(['middleware' => \App\Http\Middleware\Ticketit\IsAgentMiddlewareOver::class], function () use ($main_route, $main_route_path, $new_tickets_path) {
+        Route::middleware(\App\Http\Middleware\Ticketit\IsAgentMiddlewareOver::class)->group(function () use ($main_route, $main_route_path, $new_tickets_path) {
 
             //API return list of agents in particular category
-            Route::get("$main_route_path/agents/list/{category_id?}/{ticket_id?}", [
-                'as' => $main_route.'agentselectlist',
-                'uses' => $new_tickets_path.'@agentSelectList',
-            ]);
+            Route::get("$main_route_path/agents/list/{category_id?}/{ticket_id?}", $new_tickets_path . '@agentSelectList')->name($main_route . 'agentselectlist');
         });
 
-        Route::group(['middleware' => \App\Http\Middleware\Ticketit\IsAdminMiddlewareOver::class], function () use ($admin_route, $admin_route_path) {
+        Route::middleware(\App\Http\Middleware\Ticketit\IsAdminMiddlewareOver::class)->group(function () use ($admin_route, $admin_route_path) {
             //Ticket admin index route (ex. http://url/tickets-admin/)
-            Route::get("$admin_route_path/indicator/{indicator_period?}", [
-                'as' => $admin_route.'.dashboard.indicator',
-                'uses' => [DashboardController::class, 'index'],
-            ]);
+            Route::get("$admin_route_path/indicator/{indicator_period?}", [DashboardController::class, 'index'])->name($admin_route . '.dashboard.indicator');
             Route::get($admin_route_path, [DashboardController::class, 'index']);
 
             //Ticket statuses admin routes (ex. http://url/tickets-admin/status)
