@@ -2,6 +2,7 @@
 
 namespace Kordy\Ticketit;
 
+use App\Http\Controllers\Kordy;
 use App\Http\TicketitControllers\InstallControllerOver as InstallController;
 use App\Http\TicketitControllers\NotificationsControllerOver as NotificationsController;
 use App\Models\Ticketit\TicketOver as Ticket;
@@ -128,9 +129,9 @@ class TicketitServiceProvider extends ServiceProvider
 
             $authMiddleware = Helpers\LaravelVersion::authMiddleware();
 
-            Route::get('/tickets-install', 'Kordy\Ticketit\Controllers\InstallController@index')->middleware($authMiddleware)->name('tickets.install.index');
-            Route::post('/tickets-install', 'Kordy\Ticketit\Controllers\InstallController@setup')->middleware($authMiddleware)->name('tickets.install.setup');
-            Route::get('/tickets-upgrade', 'Kordy\Ticketit\Controllers\InstallController@upgrade')->middleware($authMiddleware)->name('tickets.install.upgrade');
+            Route::get('/tickets-install', [Kordy\Ticketit\Controllers\InstallController::class, 'index'])->middleware($authMiddleware)->name('tickets.install.index');
+            Route::post('/tickets-install', [Kordy\Ticketit\Controllers\InstallController::class, 'setup'])->middleware($authMiddleware)->name('tickets.install.setup');
+            Route::get('/tickets-upgrade', [Kordy\Ticketit\Controllers\InstallController::class, 'upgrade'])->middleware($authMiddleware)->name('tickets.install.upgrade');
             Route::get('/tickets', function () {
                 return redirect()->route('tickets.install.index');
             });
