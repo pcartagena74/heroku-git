@@ -1,6 +1,6 @@
 <?php
 
-namespace Kordy\Ticketit\ViewComposers;
+namespace App\Vendor\Ticketit;
 
 use App\Models\Ticketit\AgentOver as Agent;
 use Kordy\Ticketit\Controllers\ToolsController;
