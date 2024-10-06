@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\TicketitControllers;
+
 namespace Kordy\Ticketit\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +14,8 @@ class ToolsController extends Controller
      * Sorting array of associative arrays - multiple row sorting using a closure.
      * See also: http://the-art-of-web.com/php/sortarray/.
      *
-     * @param  array  $data  input-array
-     * @param  string  $type
+     * @param array $data input-array
+     * @param string $type
      * @return array
      *
      * @internal param array|string $fields array-keys
@@ -40,7 +42,7 @@ class ToolsController extends Controller
     /**
      * Determine if the current request URL and query string matches a pattern.
      *
-     * @param  mixed  string
+     * @param mixed  string
      * @return bool
      */
     public function fullUrlIs($match)
