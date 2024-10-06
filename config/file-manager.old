@@ -2,8 +2,9 @@
 
 // use Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository;
 // use Alexusmai\LaravelFileManager\Services\ConfigService\DefaultConfigRepository;
-use App\Vendor\Alexusmai\LaravelFileManager\Services\ACLServices\MCACLRepository;
-use App\Vendor\Alexusmai\LaravelFileManager\Services\ConfigServices\MCConfigRepository;
+
+ use App\Vendor\Alexusmai\LaravelFileManager\Services\ACLServices\MCACLRepository;
+ use App\Vendor\Alexusmai\LaravelFileManager\Services\ConfigServices\MCConfigRepository;
 
 return [
 
