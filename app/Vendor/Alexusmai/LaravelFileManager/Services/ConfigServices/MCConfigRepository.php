@@ -194,4 +194,9 @@ class MCConfigRepository implements ConfigRepository
     {
         return config('file-manager.routePrefix');
     }
+
+    public function getSlugifyNames(): ?bool
+    {
+        // TODO: Implement getSlugifyNames() method.
+    }
 }
