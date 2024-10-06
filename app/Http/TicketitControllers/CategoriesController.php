@@ -1,6 +1,6 @@
 <?php
 
-namespace Kordy\TicketitControllers;
+namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

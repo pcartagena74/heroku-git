@@ -2,8 +2,6 @@
 
 namespace App\Http\TicketitControllers;
 
-namespace Kordy\Ticketit\Controllers;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
