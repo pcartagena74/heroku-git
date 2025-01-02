@@ -4,14 +4,12 @@
  *          available via API for display on non-mCentric sites
  * Created: 11/29/2017; Updated 10/13/2024 for Laravel 9.x
  * @var $event ;
+ * @var $orgLogoPath ;
  */
 
-//use GrahamCampbell\Flysystem\Facades\Flysystem;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use Aws\S3\S3Client;
 use League\Flysystem\Filesystem;
-
-//use League\Flysystem\AdapterInterface;
 
 $category = DB::table('event-category')->where([
     ['orgID', $event->orgID],
