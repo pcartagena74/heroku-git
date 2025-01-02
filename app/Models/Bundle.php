@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Bundle extends Model
@@ -39,5 +40,10 @@ class Bundle extends Model
     public function ticket()
     {
         return $this->hasOne(Ticket::class, 'ticketID', 'ticketID');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }

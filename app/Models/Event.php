@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Other\ics_calendar;
 use Carbon\Carbon;
 use DateTimeInterface;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use League\Flysystem\AdapterInterface;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Event extends Model
@@ -128,7 +129,7 @@ class Event extends Model
         }
     }
 
-    public function ok_to_display()
+    public function ok_to_display(): int
     {
         if ($this->isActive) {
             return 1;
@@ -142,7 +143,7 @@ class Event extends Model
      *
      * @return bool
      */
-    public function checkin_time()
+    public function checkin_time(): bool|int
     {
         $today = Carbon::now();
         if (($this->eventStartDate->diffInDays($today) <= 1
@@ -160,7 +161,7 @@ class Event extends Model
      *
      * @return bool
      */
-    public function checkin_period()
+    public function checkin_period(): bool|int
     {
         $today = Carbon::now();
         if ($this->orgID > 0) {
@@ -268,10 +269,10 @@ class Event extends Model
         return $out;
     }
 
-    public function create_or_update_event_ics()
+    public function create_or_update_event_ics(): void
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_'.$this->eventID.'.ics';
+        $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
@@ -285,12 +286,17 @@ class Event extends Model
         return $ics_file;
     }
 
-    public function event_url()
+    public function event_url(): string
     {
         if ($this->slug) {
-            return '/events/'.$this->slug;
+            return '/events/' . $this->slug;
         } else {
-            return '/events/'.$this->eventID;
+            return '/events/' . $this->eventID;
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }

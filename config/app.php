@@ -53,7 +53,7 @@ return [
     |
      */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://localhost:8000'),
 
     /*
     |--------------------------------------------------------------------------
@@ -179,7 +179,8 @@ return [
         /*
          * Package Service Providers...
          */
-        Kordy\Ticketit\TicketitServiceProvider::class,
+        //Kordy\Ticketit\TicketitServiceProvider::class,
+        App\Vendor\Ticketit\TicketitServiceProvider::class,
         Shanmuga\LaravelEntrust\LaravelEntrustServiceProvider::class,
 
         // Laravel\Cashier\CashierServiceProvider::class,

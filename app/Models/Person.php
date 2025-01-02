@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Person extends Model
@@ -37,7 +38,7 @@ class Person extends Model
 
     protected static $submitEmptyLogs = false;
 
-    protected static $logAttributes = ['login', 'defaultOrgID',  'defaultOrgPersonID'];
+    protected static $logAttributes = ['login', 'defaultOrgID', 'defaultOrgPersonID'];
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
@@ -125,9 +126,9 @@ class Person extends Model
     public function showFullName()
     {
         if ($this->prefName) {
-            return $this->prefName.' '.$this->lastName;
+            return $this->prefName . ' ' . $this->lastName;
         } else {
-            return $this->firstName.' '.$this->lastName;
+            return $this->firstName . ' ' . $this->lastName;
         }
     }
 
@@ -165,7 +166,7 @@ class Person extends Model
     {
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
-        if (! $this->roles->contains('id', $speaker_role)) {
+        if (!$this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role, ['org_id' => $this->defaultOrgID]);
         }
         /*
@@ -196,5 +197,10 @@ class Person extends Model
         if ($this->service_role !== null) {
             return $this->service_role->volunteer_role->children;
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }

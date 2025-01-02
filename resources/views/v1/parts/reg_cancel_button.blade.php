@@ -1,57 +1,64 @@
 @php
-/**
- * Comment: Template for registration cancel/refund button that can be reused
- * Created: 10/23/2018
- *
- * @var $reg : the regID concerned
- * @var $wait : will be set to 1 if wait list button needed
- *
- */
+    /**
+     * Comment: Template for registration cancel/refund button that can be reused
+     * Created: 10/23/2018; Updated 10/12/2024 for Laravel 9.x
+     *
+     * @var $reg : the regID concerned
+     * @var $wait : will be set to 1 if wait list button needed
+     *
+     */
 
-use Aws\S3\S3Client;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
-use League\Flysystem\Filesystem;
+    use Aws\S3\S3Client;
+    use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
+    use League\Flysystem\Filesystem;
 
-$wait_tooltip = trans('messages.tooltips.wait_cnv');
-$wait_confirm = trans('messages.tooltips.sure');
+    $wait_tooltip = trans('messages.tooltips.wait_cnv');
+    $wait_confirm = trans('messages.tooltips.sure');
 
-$today = \Carbon\Carbon::now();
-$post_event = $today->gte($reg->event->eventEndDate);
+    $today = \Carbon\Carbon::now();
+    $post_event = $today->gte($reg->event->eventEndDate);
 
-$client = new S3Client([
-    'credentials' => [
-        'key' => env('AWS_KEY'),
-        'secret' => env('AWS_SECRET')
-    ],
-    'region' => env('AWS_REGION'),
-    'version' => 'latest',
-]);
+    $client = new S3Client([
+        'credentials' => [
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET')
+        ],
+        'region' => env('AWS_REGION'),
+        'version' => 'latest',
+    ]);
 
-$adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-$s3fs = new Filesystem($adapter);
-$rf = $reg->regfinance;
+    $rf = $reg->regfinance;
+    $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
 
-$receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
-$receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+    try {
+        if(Storage::disk('s3_receipts')->exists($receipt_filename)){
+            $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+        }
+    } catch(Exception $e) {
+        $receipt_url = '';
+    }
 
-if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
-    // currency symbol
-    $button_symbol = trans('messages.symbols.cur');
-    $confirm_msg = trans('messages.tooltips.sure_refund');
-} else {
-    // trash can (for delete) in lieu of currency symbol
-    $button_symbol = trans('messages.symbols.trash');
-    $confirm_msg = trans('messages.tooltips.sure_cancel');
-}
+    // $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+    // $receipt_url = $s3fs->publicUrl($receipt_filename);
 
-if (Entrust::hasRole('Admin')) {
-    $button_class = "btn-danger";
-    $button_tooltip = trans('messages.tooltips.click_cancel_reg');
-} else {
-    $confirm_msg = "";
-    $button_class = "btn-secondary";
-    $button_tooltip = trans('messages.tooltips.cant_cancel_reg');
-}
+    if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
+        // currency symbol
+        $button_symbol = trans('messages.symbols.cur');
+        $confirm_msg = trans('messages.tooltips.sure_refund');
+    } else {
+        // trash can (for delete) in lieu of currency symbol
+        $button_symbol = trans('messages.symbols.trash');
+        $confirm_msg = trans('messages.tooltips.sure_cancel');
+    }
+
+    if (Entrust::hasRole('Admin')) {
+        $button_class = "btn-danger";
+        $button_tooltip = trans('messages.tooltips.click_cancel_reg');
+    } else {
+        $confirm_msg = "";
+        $button_class = "btn-secondary";
+        $button_tooltip = trans('messages.tooltips.cant_cancel_reg');
+    }
 @endphp
 @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
 
@@ -87,9 +94,9 @@ if (Entrust::hasRole('Admin')) {
 
 @else
     @if(!$post_event)
-    <button class="btn {{ $button_class }}btn-sm" data-toggle="tooltip" title="{{ $button_tooltip }}">
-        {!! $button_symbol !!}
-    </button>
+        <button class="btn {{ $button_class }}btn-sm" data-toggle="tooltip" title="{{ $button_tooltip }}">
+            {!! $button_symbol !!}
+        </button>
     @endif
 @endif
 

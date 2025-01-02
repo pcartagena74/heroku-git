@@ -1,21 +1,22 @@
 @php
     /**
      * Comment: Event Display with Tabs to see Session Information
-     * Created: 5/5/2017
+     * Created: 5/5/2017; Updated 10/13/2024 for Laravel 9.x - AWS S3 V3
      * Modified: 6/10/2019 to be more mobile-friendly
      *
      * @var Event $event
      * @var Ticket $bundles
      * @var Ticket $tickets
      * @var Track $tracks
+     * @var Array $orgLogoPath
      */
 
     use App\Models\EventSession;
     use App\Models\Ticket;
-    use GrahamCampbell\Flysystem\Facades\Flysystem;
-    use League\Flysystem\AwsS3v3\AwsS3Adapter;
-    use Aws\S3\S3Client;
+//    use GrahamCampbell\Flysystem\Facades\Flysystem;
     use League\Flysystem\Filesystem;
+    use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
+    use Aws\S3\S3Client;
     use Illuminate\Support\Arr;
 
     // ['orgID', $event->orgID],     // orgID does not have to be specified because the catID selection in add_event
@@ -73,6 +74,8 @@
         }
     }
 
+/*
+    $client = Storage::disk('s3_media')->getClient();
     $client = new S3Client([
         'credentials' => [
             'key' => env('AWS_KEY'),
@@ -81,10 +84,17 @@
         'region' => env('AWS_REGION'),
         'version' => 'latest',
     ]);
-
-    $adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
+    $adapter = new AwsS3V3Adapter($client, env('AWS_BUCKET3'));
     $s3fs = new Filesystem($adapter);
-    $logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
+*/
+    $logoFilePath = $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo;
+    try {
+        if(Storage::disk('s3_media')->exists($logoFilePath)){
+            $logo = Storage::disk('s3_media')->url($logoFilePath);
+        }
+    } catch(Exception $e) {
+        $logo = '';
+    }
 
     $mbr_price = trans('messages.instructions.mbr_price');
 @endphp
@@ -98,7 +108,7 @@
                 max-width: 50%;
             }
         </style>
-        @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
+        @include('v1.parts.start_content', ['header' => $event->eventName, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
         @include('v1.parts.start_content', ['header' => trans('messages.fields.org'), 'subheader' => '', 'w1' => '0', 'w2' => '12',
                                             'class' => 'hidden-lg hidden-md hidden-sm ', 'r1' => 0, 'r2' => 0, 'r3' => 0])
