@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Email;
 use App\Models\Event;
 use App\Models\EventDiscount;
@@ -121,7 +123,7 @@ class RegFinanceController extends Controller
         }
     }
 
-    public function show_receipt(RegFinance $rf)
+    public function show_receipt(RegFinance $rf): View
     {
         $event = Event::find($rf->eventID);
         $quantity = $rf->seats;
@@ -135,7 +137,7 @@ class RegFinanceController extends Controller
             compact('event', 'quantity', 'loc', 'rf', 'person', 'org', 'layout'));
     }
 
-    public function show_receipt_orig(RegFinance $rf)
+    public function show_receipt_orig(RegFinance $rf): View
     {
         $event = Event::find($rf->eventID);
         $quantity = $rf->seats;
@@ -160,7 +162,7 @@ class RegFinanceController extends Controller
         dd(request()->all());
     }
 
-    public function edit($id)
+    public function edit($id): View
     {
         // responds to GET /groupreg/rfID and shows the group_reg1 page
         $rf = RegFinance::where('regID', '=', $id)->with('registrations')->first();
@@ -499,7 +501,7 @@ class RegFinanceController extends Controller
         return redirect(env('APP_URL').'/show_receipt/'.$rf->regID);
     }
 
-    public function update_payment(Request $request, Registration $reg, RegFinance $rf)
+    public function update_payment(Request $request, Registration $reg, RegFinance $rf): RedirectResponse
     {
         $now = Carbon::now();
         if ($request->input('Cash')) {
@@ -525,7 +527,7 @@ class RegFinanceController extends Controller
         return Redirect::back();
     }
 
-    public function group_reg1(Request $request)
+    public function group_reg1(Request $request): RedirectResponse
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $eventID = request()->input('eventID');
@@ -707,7 +709,7 @@ class RegFinanceController extends Controller
         return redirect('/groupreg/'.$rf->regID);
     }
 
-    public function group_reg2(Request $request, $id)
+    public function group_reg2(Request $request, $id): RedirectResponse
     {
         // responds to PATCH /group_reg2/{rf}
 
@@ -863,7 +865,7 @@ class RegFinanceController extends Controller
         return redirect('/show_receipt/'.$rf->regID);
     }
 
-    public function show_group_receipt(RegFinance $rf)
+    public function show_group_receipt(RegFinance $rf): View
     {
         $quantity = $rf->seats;
         $event = Event::find($rf->eventID);
@@ -881,7 +883,7 @@ class RegFinanceController extends Controller
         // responds to DELETE /blah/id
     }
 
-    public function generate_receipt(RegFinance $rf)
+    public function generate_receipt(RegFinance $rf): RedirectResponse
     {
         $receipt_filename = $rf->eventID.'/'.$rf->confirmation.'.pdf';
         $quantity = $rf->seats;

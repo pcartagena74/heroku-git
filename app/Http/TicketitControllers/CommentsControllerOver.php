@@ -2,6 +2,7 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\CommentsController as CommentsController;
 use Kordy\Ticketit\Models;
@@ -19,7 +20,7 @@ class CommentsControllerOver extends CommentsController
      *
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         //
     }
@@ -29,7 +30,7 @@ class CommentsControllerOver extends CommentsController
      *
      * @return Response
      */
-    public function create()
+    public function create(): Response
     {
         //
     }
@@ -40,7 +41,7 @@ class CommentsControllerOver extends CommentsController
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'ticket_id' => 'required|exists:ticketit,id',
@@ -75,7 +76,7 @@ class CommentsControllerOver extends CommentsController
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show(int $id): Response
     {
         //
     }
@@ -86,7 +87,7 @@ class CommentsControllerOver extends CommentsController
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(int $id): Response
     {
         //
     }
@@ -97,7 +98,7 @@ class CommentsControllerOver extends CommentsController
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): Response
     {
         //
     }
@@ -108,7 +109,7 @@ class CommentsControllerOver extends CommentsController
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(int $id): Response
     {
         //
     }

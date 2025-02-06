@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Email;
 use App\Models\Event;
 use App\Models\EventDiscount;
@@ -39,7 +41,7 @@ class RegistrationController extends Controller
         // responds to /blah
     }
 
-    public function processRegForm(Request $request, Event $event)
+    public function processRegForm(Request $request, Event $event): RedirectResponse
     {
         // called by POST /regstep1/{event}
         // Initiating registration for an event from GET /event/{id}
@@ -82,7 +84,7 @@ class RegistrationController extends Controller
      * @param  null  $discount_code
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showRegForm(Event $event, $quantity, $discount_code = null)
+    public function showRegForm(Event $event, $quantity, $discount_code = null): View
     {
         // 2-part form so that login popup can redirect->back() without going to dashboard
         // requires use of Session to pass the request object along
@@ -847,7 +849,7 @@ class RegistrationController extends Controller
         $reg->save();
     }
 
-    public function promote(Registration $reg)
+    public function promote(Registration $reg): RedirectResponse
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $event = Event::find($reg->eventID);
@@ -869,7 +871,7 @@ class RegistrationController extends Controller
         return redirect(env('APP_URL')."/eventreport/$event->slug");
     }
 
-    public function destroy(Registration $reg, RegFinance $rf)
+    public function destroy(Registration $reg, RegFinance $rf): RedirectResponse
     {
         // responds to DELETE /cancel_registration/{reg}/{rf}
         // 1. Takes $reg->regID and $rf->regID

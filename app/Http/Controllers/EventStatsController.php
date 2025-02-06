@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Event;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -20,7 +21,7 @@ class EventStatsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $today = Carbon::now();

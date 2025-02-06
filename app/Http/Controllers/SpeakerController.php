@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Person;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class SpeakerController extends Controller
         });
     }
 
-    public function index()
+    public function index(): View
     {
         $speakers = Person::whereHas('roles', function ($q) {
             $q->where('roles.id', '=', '2');
@@ -44,7 +45,7 @@ class SpeakerController extends Controller
         return view('v1.auth_pages.speakers.list', compact('speakers'));
     }
 
-    public function index2()
+    public function index2(): View
     {
         $speakers = json_decode(Person::whereHas('roles', function ($q) {
             $q->where([

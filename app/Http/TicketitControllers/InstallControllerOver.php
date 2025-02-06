@@ -2,6 +2,7 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -81,7 +82,7 @@ class InstallControllerOver extends Controller
      * Do all pre-requested setup
      */
 
-    public function setup(Request $request)
+    public function setup(Request $request): RedirectResponse
     {
         $master = $request->master;
         if ($master == 'another') {
@@ -102,7 +103,7 @@ class InstallControllerOver extends Controller
      * Do version upgrade
      */
 
-    public function upgrade()
+    public function upgrade(): RedirectResponse
     {
         if (Agent::isAdmin()) {
             $this->initialSettings();
@@ -149,7 +150,7 @@ class InstallControllerOver extends Controller
      *
      * @param  string  $master
      */
-    public function settingsSeeder($master = false)
+    public function settingsSeeder(string $master = false)
     {
         $cli_path = 'config/ticketit.php'; // if seeder run from cli, use the cli path
         $provider_path = '../config/ticketit.php'; // if seeder run from provider, use the provider path
@@ -279,7 +280,7 @@ class InstallControllerOver extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function demoDataSeeder()
+    public function demoDataSeeder(): RedirectResponse
     {
         $seeder = new TicketitTableSeeder;
         $seeder->run();

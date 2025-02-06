@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\EventSession;
 use App\Models\Org;
@@ -60,7 +61,7 @@ class AuthCheckinController extends Controller
         return json_encode(['html' => $html]);
     }
 
-    public function store(Request $request, Event $event)
+    public function store(Request $request, Event $event): RedirectResponse
     {
         // called by POST /event_checkin/{eventID}
         $esID = $request->input('sessionID');

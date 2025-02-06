@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Address;
 use App\Models\Event;
 use App\Models\Org;
@@ -17,7 +18,7 @@ class ReportController extends Controller
         $this->middleware('auth');
     }
 
-    public function show($id = null, $year_string = null)
+    public function show($id = null, $year_string = null): View
     {
         $topBits = '';
         $this->currentPerson = Person::find(auth()->user()->id);

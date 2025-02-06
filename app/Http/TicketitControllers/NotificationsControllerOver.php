@@ -78,7 +78,7 @@ class NotificationsControllerOver extends Controller
      * @param  object  $ticket
      * @param  object  $notification_owner
      */
-    public function sendNotification($template, $data, $ticket, $notification_owner, $subject, $type)
+    public function sendNotification(string $template, array $data, object $ticket, object $notification_owner, $subject, $type)
     {
         /**
          * @var User

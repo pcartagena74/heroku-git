@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\OrgPerson;
@@ -57,7 +58,7 @@ class MembersImport implements ShouldQueue, SkipsOnFailure, ToCollection, WithCh
      *                            Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function collection(Collection $rows)
+    public function collection(Collection $rows): ?Model
     {
         $user = User::where('id', $this->currentPerson->personID)->get()->first();
         \App::setLocale($user->locale);

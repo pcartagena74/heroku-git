@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
+use Illuminate\View\View;
 use App\Imports\MembersImport;
 use App\Jobs\ImportDetailsUpdateJob;
 use App\Jobs\NotifyUserOfCompletedImport;
@@ -48,7 +49,7 @@ class UploadController extends Controller
         $this->starttime = microtime(true);
     }
 
-    public function index()
+    public function index(): View
     {
         // displays the data upload form
 

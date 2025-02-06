@@ -2,6 +2,8 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -15,7 +17,7 @@ class StatusesController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         // seconds expected for L5.8<=, minutes before that
         $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
@@ -31,7 +33,7 @@ class StatusesController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(): View
     {
         return view('ticketit::admin.status.create');
     }
@@ -42,7 +44,7 @@ class StatusesController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
@@ -65,7 +67,7 @@ class StatusesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show(int $id): Response
     {
         return trans('ticketit::lang.status-all-tickets-here');
     }
@@ -76,7 +78,7 @@ class StatusesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
         $status = Status::findOrFail($id);
 
@@ -89,7 +91,7 @@ class StatusesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
@@ -112,7 +114,7 @@ class StatusesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $status = Status::findOrFail($id);
         $name = $status->name;

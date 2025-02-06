@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Org;
 use App\Models\Person;
 use App\Models\VolunteerRole;
@@ -29,7 +30,7 @@ class VolunteerRoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $org = Org::where('orgID', $this->currentPerson->defaultOrgID)->first();
 
@@ -95,7 +96,7 @@ class VolunteerRoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Org $org)
+    public function show(Org $org): View
     {
         $p = $this->currentPerson;
 

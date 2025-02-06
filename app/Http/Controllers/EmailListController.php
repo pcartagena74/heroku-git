@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Models\EmailList;
 use App\Models\Event;
 use App\Models\Person;
@@ -21,7 +23,7 @@ class EmailListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $this->currentPerson = Person::find(auth()->id());
         $rows = [];
@@ -203,7 +205,7 @@ class EmailListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(EmailList $emailList)
+    public function show(EmailList $emailList): View
     {
         $this->currentPerson = Person::find(auth()->id());
         $rows = [];
@@ -443,7 +445,7 @@ class EmailListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         //
     }
@@ -453,7 +455,7 @@ class EmailListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request): JsonResponse
     {
         // responds to POST /list
         $this->currentPerson = Person::find(auth()->id());
@@ -559,7 +561,7 @@ class EmailListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:email-list,id',

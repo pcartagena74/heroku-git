@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Models\Person;
 use App\Models\Ticketit\TicketOver as Ticket;
 use App\Rules\GoogleCaptcha;
@@ -24,7 +26,7 @@ class ErrorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         return view('v1.public_pages.home-login');
     }
@@ -36,7 +38,7 @@ class ErrorController extends Controller
         dd($request);
     }
 
-    public function reportIssue(Request $request)
+    public function reportIssue(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'g-recaptcha' => ['required', new GoogleCaptcha],

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\Person;
 use App\Models\RegFinance;
@@ -23,7 +25,7 @@ class ActivityController extends Controller
         $this->middleware('auth');
     }
 
-    public function future_index()
+    public function future_index(): View
     {
         // responds to GET /upcoming
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -95,7 +97,7 @@ class ActivityController extends Controller
         return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits', 'wait'));
     }
 
-    public function index()
+    public function index(): View
     {
 
         // responds to /dashboard:  This is the dashboard
@@ -204,13 +206,13 @@ class ActivityController extends Controller
         return json_encode(['event' => $eventName, 'data' => $er->toArray()]);
     }
 
-    public function create()
+    public function create(): View
     {
         // triggered by GET /become
         return view('v1.auth_pages.members.become');
     }
 
-    public function become(Request $request)
+    public function become(Request $request): RedirectResponse
     {
         // triggered by POST /become
 

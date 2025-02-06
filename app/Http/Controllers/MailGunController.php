@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use App\Models\Person;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use RuntimeException;
 
 class MailGunController extends Controller
 {
-    public function send(Request $request)
+    public function send(Request $request): JsonResponse
     {
         $title = $request->input('title');
         $content = $request->input('content');

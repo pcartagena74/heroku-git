@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\OrgPerson;
@@ -205,7 +207,7 @@ class PersonController extends Controller
     /**
      *  index2: placeholder for member search function
      */
-    public function index2($query = null)
+    public function index2($query = null): View
     {
         //$topBits = $this->member_bits();
         if (auth()) {
@@ -251,7 +253,7 @@ class PersonController extends Controller
     /**
      *  search: display for member search function
      */
-    public function search(Request $request)
+    public function search(Request $request): RedirectResponse
     {
         $string = $request->input('string');
 
@@ -503,7 +505,7 @@ class PersonController extends Controller
         return json_encode(['status' => 'success', 'name' => $name, 'value' => $value, 'pk' => $personID]);
     }
 
-    public function undo_login(Person $person, $string)
+    public function undo_login(Person $person, $string): View
     {
         $email = decrypt($string);
         $user = User::find($person->personID);
@@ -577,7 +579,7 @@ class PersonController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show_force()
+    public function show_force(): View
     {
         $topBits = $this->member_bits();
 
@@ -589,7 +591,7 @@ class PersonController extends Controller
      *
      * @return Response
      */
-    public function force_password_change(Request $request)
+    public function force_password_change(Request $request): Response
     {
         $password = request()->input('password');
         $userid = request()->input('userid');
@@ -625,7 +627,7 @@ class PersonController extends Controller
      *
      * @return Response
      */
-    public function redirectToLinkedIn()
+    public function redirectToLinkedIn(): Response
     {
         return Socialite::driver('linkedin')->redirect();
     }
@@ -635,7 +637,7 @@ class PersonController extends Controller
      *
      * @return Response
      */
-    public function handleLinkedInCallback()
+    public function handleLinkedInCallback(): Response
     {
         try {
             $user = Socialite::driver('linkedin')->user();

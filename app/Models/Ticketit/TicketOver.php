@@ -37,7 +37,7 @@ class TicketOver extends Ticket
      *
      * @return bool
      */
-    public function hasComments()
+    public function hasComments(): bool
     {
         return (bool) count($this->comments);
     }
@@ -52,7 +52,7 @@ class TicketOver extends Ticket
      *
      * @return Collection
      */
-    public function scopeComplete($query)
+    public function scopeComplete($query): Collection
     {
         //static to allow phil to see all records
         if (auth()->user()->id == 1) {
@@ -77,7 +77,7 @@ class TicketOver extends Ticket
      *
      * @return Collection
      */
-    public function scopeActive($query)
+    public function scopeActive($query): Collection
     {
         //static to allow phil to see all records
         if (auth()->user()->id == 1) {
@@ -252,7 +252,7 @@ class TicketOver extends Ticket
      *
      * @return Ticket
      */
-    public function autoSelectAgent($dev = false)
+    public function autoSelectAgent($dev = false): Ticket
     {
         $cat_id = $this->category_id;
         $orgId = $this->orgId;

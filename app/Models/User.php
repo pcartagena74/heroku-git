@@ -55,7 +55,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
      *
      * @return the email address/login for the user
      */
-    public function routeNotificationForMail()
+    public function routeNotificationForMail(): the
     {
         return $this->email;
     }
