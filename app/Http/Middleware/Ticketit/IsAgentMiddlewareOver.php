@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware\Ticketit;
 
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\SettingOver as Setting;
 use Closure;
@@ -15,7 +17,7 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (Agent::isAgent() || Agent::isAdmin() || auth()->id() == 1) {
             return $next($request);

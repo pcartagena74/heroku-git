@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,22 +25,22 @@ class Org extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function orgpeople()
+    public function orgpeople(): HasManyThrough
     {
         return $this->hasManyThrough(Person::class, OrgPerson::class, 'orgID', 'personID', 'orgID', 'personID');
     }
 
-    public function discounts()
+    public function discounts(): HasMany
     {
         return $this->hasMany(OrgDiscount::class, 'orgID', 'orgID');
     }
 
-    public function orgperson()
+    public function orgperson(): BelongsTo
     {
         return $this->belongsTo(OrgPerson::class, 'orgID', 'orgID');
     }
 
-    public function defaultPerson()
+    public function defaultPerson(): BelongsToMany
     {
         return $this->belongsToMany(Person::class, 'org-person', 'orgID', 'personID');
     }
@@ -47,12 +51,12 @@ class Org extends Model
         return EventType::whereIn('orgID', [1, $this->orgID])->get();
     }
 
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class, 'orgID', 'orgID');
     }
 
-    public function admin_props()
+    public function admin_props(): HasMany
     {
         return $this->hasMany(OrgAdminProp::class, 'orgID', 'orgID');
     }
@@ -75,7 +79,7 @@ class Org extends Model
         return $u;
     }
 
-    public function volunteer_roles()
+    public function volunteer_roles(): HasMany
     {
         return $this->hasMany(VolunteerRole::class, 'orgID', 'orgID');
     }

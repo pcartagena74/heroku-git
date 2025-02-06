@@ -11,7 +11,7 @@ class TicketitViewComposerOverProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->app->bind('Vendor\kordy\ticketit\src\ViewComposers\TicketItComposer', \App\Vendor\Ticketit\TicketItComposer::class);
     }
@@ -21,7 +21,7 @@ class TicketitViewComposerOverProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }

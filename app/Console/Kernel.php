@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function schedule(Schedule $schedule)
+    protected function schedule(Schedule $schedule): void
     {
         // Heroku supports only 10 mins we will take care of reset from job itself
         $schedule->job(new SendCampaignEmail)->everyThirtyMinutes();
@@ -35,7 +35,7 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
+    protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
         require base_path('routes/console.php');

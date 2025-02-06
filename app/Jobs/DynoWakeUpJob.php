@@ -27,7 +27,7 @@ class DynoWakeUpJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         sleep(2);
         echo 'This should Do';

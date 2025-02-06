@@ -24,7 +24,7 @@ class TicketitServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         if (! Schema::hasTable('migrations')) {
             // Database isn't installed yet.
@@ -146,7 +146,7 @@ class TicketitServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         /*
          * Register the service provider for the dependency.

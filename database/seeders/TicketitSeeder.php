@@ -42,7 +42,7 @@ class TicketitSeeder extends Seeder
     /**
      * Seed the Plans table.
      */
-    public function run()
+    public function run(): void
     {
         $defaults = [];
 

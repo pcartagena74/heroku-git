@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -23,7 +24,7 @@ class PersonSocialite extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID', 'id');
     }

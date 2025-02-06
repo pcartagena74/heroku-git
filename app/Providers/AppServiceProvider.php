@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         if (env('APP_ENV') != 'local') {
             URL::forceRootUrl(\Config::get('app.url'));
@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         /*
         $this->app->bind(TwitterStream::class, function ($app) {

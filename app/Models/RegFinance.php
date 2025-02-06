@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,17 +30,17 @@ class RegFinance extends Model
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     //protected static $ignoreChangedAttributes = ['createDate', 'cancelDate'];
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'rfID', 'regID');
     }

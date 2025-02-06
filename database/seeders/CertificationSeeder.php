@@ -12,7 +12,7 @@ class CertificationSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sql = "INSERT INTO `certifications` VALUES
                     (1,'PMP'),(2,'ACP'),(3,'RMP'),(4,'SP'),(5,'PBA'),(6,'PgMP'),(7,'PfMP'),(8,'CAPM'), (10,'N/A');";

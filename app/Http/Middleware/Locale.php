@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 use App;
 use Closure;
 use Config;
@@ -17,7 +19,7 @@ class Locale
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
             if (empty(Auth::user()->locale)) {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class RegSession extends Model
@@ -24,22 +25,22 @@ class RegSession extends Model
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function session()
+    public function session(): BelongsTo
     {
         return $this->belongsTo(EventSession::class, 'sessionID', 'sessionID');
     }
 
-    public function registration()
+    public function registration(): BelongsTo
     {
         return $this->belongsTo(Registration::class, 'regID', 'regID');
     }
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }

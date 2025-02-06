@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 
 class UserHistory extends Model
@@ -21,7 +22,7 @@ class UserHistory extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function person()
+    public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'personID');
     }

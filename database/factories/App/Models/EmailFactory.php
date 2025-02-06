@@ -13,7 +13,7 @@ class EmailFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         try {
             $person = $params['person'];

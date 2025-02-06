@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class OrgDiscount extends Model
@@ -20,7 +21,7 @@ class OrgDiscount extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function org()
+    public function org(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID');
     }

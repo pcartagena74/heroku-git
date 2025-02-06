@@ -13,7 +13,7 @@ class EventSessionFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'sessionName' => $this->faker->word(rand(3, 5)),
