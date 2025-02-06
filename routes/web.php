@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
-
 //use Kordy\Ticketit\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetController;
@@ -413,7 +412,7 @@ Route::post('approve-tweets', function (Illuminate\Http\Request $request) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
             $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
-                $tweet->approved = (int)$input_val;
+                $tweet->approved = (int) $input_val;
                 $tweet->save();
             }
         }
@@ -430,7 +429,7 @@ Route::get('/blank', function () {
 Auth::routes();
 
 Route::get('ste2', function () {
-    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
+    Mail::raw('Sending email is easy from '.env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
         $message->to('pcartagena@partners.org');
@@ -441,7 +440,7 @@ Route::get('snaptest', function () {
     // $snap = App::make('snappy.pdf');
     // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
     // return $snap->inline();
-    return PDF::loadFile(env('APP_URL') . '/show_orig/159')->inline('blah.pdf');
+    return PDF::loadFile(env('APP_URL').'/show_orig/159')->inline('blah.pdf');
 });
 
 Route::get('library', [LibraryController::class, 'index']);
