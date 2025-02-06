@@ -22,8 +22,6 @@ class HomeController extends Controller
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(): View
     {
@@ -41,8 +39,6 @@ class HomeController extends Controller
      * Show application routes.
      *
      * Forbidden in production environment.
-     *
-     * @return \Illuminate\View\View
      */
     public function showApplicationRoutes(): View
     {
@@ -76,9 +72,6 @@ class HomeController extends Controller
 
     /**
      * Get route middleware.
-     *
-     * @param  \Illuminate\Routing\Route  $route
-     * @return string
      */
     protected function getRouteMiddleware(\Illuminate\Routing\Route $route): string
     {

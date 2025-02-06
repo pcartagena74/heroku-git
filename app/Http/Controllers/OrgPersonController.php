@@ -19,8 +19,6 @@ class OrgPersonController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(Org $org): View
     {
@@ -66,7 +64,6 @@ class OrgPersonController extends Controller
      * Display the specified resource.
      *
      * @param  \App\OrgPerson  $orgperson
-     * @return \Illuminate\Http\Response
      */
     public function show(Person $person): View
     {
@@ -99,7 +96,6 @@ class OrgPersonController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
     public function edit(OrgPerson $orgperson)
@@ -110,7 +106,6 @@ class OrgPersonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, OrgPerson $orgperson)
@@ -121,7 +116,6 @@ class OrgPersonController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
     public function destroy(OrgPerson $orgperson)

@@ -101,9 +101,6 @@ class TicketitSeeder extends Seeder
 
     /**
      * Takes config/ticketit.php, merge with package defaults, and returns serialized array.
-     *
-     *
-     * @return array
      */
     public function cleanupAndMerge($defaults, $config): array
     {

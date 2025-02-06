@@ -30,7 +30,6 @@ class RegisterTest extends DuskTestCase
     /**
      * @test A basic browser test for registration.
      *
-     * @return void
      *
      * @throws \Throwable
      */

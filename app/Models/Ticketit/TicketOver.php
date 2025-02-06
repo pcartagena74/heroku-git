@@ -34,8 +34,6 @@ class TicketOver extends Ticket
 
     /**
      * List of completed tickets.
-     *
-     * @return bool
      */
     public function hasComments(): bool
     {
@@ -49,8 +47,6 @@ class TicketOver extends Ticket
 
     /**
      * List of completed tickets.
-     *
-     * @return Collection
      */
     public function scopeComplete($query): Collection
     {
@@ -74,8 +70,6 @@ class TicketOver extends Ticket
 
     /**
      * List of active tickets.
-     *
-     * @return Collection
      */
     public function scopeActive($query): Collection
     {
@@ -99,8 +93,6 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket status.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function status(): BelongsTo
     {
@@ -109,8 +101,6 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket priority.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function priority(): BelongsTo
     {
@@ -119,8 +109,6 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket category.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function category(): BelongsTo
     {
@@ -129,8 +117,6 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket owner.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -139,8 +125,6 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket agent.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function agent(): BelongsTo
     {
@@ -149,8 +133,6 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket comments.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function comments(): HasMany
     {
@@ -249,8 +231,6 @@ class TicketOver extends Ticket
 
     /**
      * Sets the agent with the lowest tickets assigned in specific category.
-     *
-     * @return Ticket
      */
     public function autoSelectAgent($dev = false): Ticket
     {

@@ -20,8 +20,6 @@ class EmailListController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(): View
     {
@@ -203,7 +201,6 @@ class EmailListController extends Controller
      * as well, redirecting to appropriate tab
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show(EmailList $emailList): View
     {
@@ -442,7 +439,6 @@ class EmailListController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(int $id)
@@ -452,8 +448,6 @@ class EmailListController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request): JsonResponse
     {
@@ -559,7 +553,6 @@ class EmailListController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request): JsonResponse
     {

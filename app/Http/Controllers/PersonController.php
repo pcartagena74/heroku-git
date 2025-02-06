@@ -588,8 +588,6 @@ class PersonController extends Controller
 
     /**
      * This is just like the above but it doesn't ask for the prior password
-     *
-     * @return Response
      */
     public function force_password_change(Request $request): Response
     {
@@ -624,8 +622,6 @@ class PersonController extends Controller
 
     /**
      * Redirect the user to the LinkedIn authentication page.
-     *
-     * @return Response
      */
     public function redirectToLinkedIn(): Response
     {
@@ -634,8 +630,6 @@ class PersonController extends Controller
 
     /**
      * Obtain the user information from LinkedIn
-     *
-     * @return Response
      */
     public function handleLinkedInCallback(): Response
     {

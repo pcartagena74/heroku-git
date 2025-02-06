@@ -16,8 +16,6 @@ class ConfigurationsController extends Controller
 {
     /**
      * Display a listing of the Setting.
-     *
-     * @return Response
      */
     public function index(): View
     {
@@ -60,8 +58,6 @@ class ConfigurationsController extends Controller
 
     /**
      * Show the form for creating a new Setting.
-     *
-     * @return Response
      */
     public function create(): View
     {
@@ -70,9 +66,6 @@ class ConfigurationsController extends Controller
 
     /**
      * Store a newly created Configuration in storage.
-     *
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -95,9 +88,6 @@ class ConfigurationsController extends Controller
 
     /**
      * Show the form for editing the specified Configuration.
-     *
-     * @param  int  $id
-     * @return Response
      */
     public function edit(int $id): View
     {
@@ -111,7 +101,6 @@ class ConfigurationsController extends Controller
     /**
      * Update the specified Configuration in storage.
      *
-     * @param  int  $id
      * @return $this|\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, int $id)

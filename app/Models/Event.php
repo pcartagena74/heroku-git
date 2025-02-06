@@ -144,8 +144,6 @@ class Event extends Model
 
     /**
      * checkin_time returns true when within 1 day of start or 2 days after the end of the event
-     *
-     * @return bool
      */
     public function checkin_time(): bool|int
     {
@@ -162,8 +160,6 @@ class Event extends Model
 
     /**
      * checkin_period returns true when within 1 day of start or within $postEventEndDays after the end of the event
-     *
-     * @return bool
      */
     public function checkin_period(): bool|int
     {

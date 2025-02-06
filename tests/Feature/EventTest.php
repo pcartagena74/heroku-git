@@ -64,8 +64,6 @@ class EventTest extends TestCase
 
     /**
      * @test - Event Creation Test
-     *
-     * @return void
      */
     public function an_event_can_be_created(): void
     {

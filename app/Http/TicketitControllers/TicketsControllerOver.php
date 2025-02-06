@@ -162,8 +162,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Display a listing of active tickets related to user.
-     *
-     * @return Response
      */
     public function index(): Response
     {
@@ -174,8 +172,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Display a listing of completed tickets related to user.
-     *
-     * @return Response
      */
     public function indexComplete(): Response
     {
@@ -187,8 +183,6 @@ class TicketsControllerOver extends TicketController
     /**
      * Returns priorities, categories and statuses lists in this order
      * Decouple it with list().
-     *
-     * @return array
      */
     public function PCS(): array
     {
@@ -216,8 +210,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Response
      */
     public function create(): Response
     {
@@ -228,9 +220,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Store a newly created ticket and auto assign an agent for it.
-     *
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -267,8 +256,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * store new ticket via ajax agent auto assigned
-     *
-     * @return json
      */
     public function storeAjax(Request $request): json
     {
@@ -337,9 +324,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
      */
     public function show(int $id): Response
     {
@@ -370,9 +354,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
      */
     public function update(Request $request, int $id): Response
     {
@@ -415,9 +396,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
      */
     public function destroy(int $id): Response
     {
@@ -432,9 +410,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Mark ticket as complete.
-     *
-     * @param  int  $id
-     * @return Response
      */
     public function complete(int $id): Response
     {
@@ -460,9 +435,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Reopen ticket from complete status.
-     *
-     * @param  int  $id
-     * @return Response
      */
     public function reopen(int $id): Response
     {
@@ -514,9 +486,6 @@ class TicketsControllerOver extends TicketController
         return $select;
     }
 
-    /**
-     * @return bool
-     */
     public function permToClose($id): bool
     {
         $close_ticket_perm = Setting::grab('close_ticket_perm');
@@ -534,9 +503,6 @@ class TicketsControllerOver extends TicketController
         return 'no';
     }
 
-    /**
-     * @return bool
-     */
     public function permToReopen($id): bool
     {
         $reopen_ticket_perm = Setting::grab('reopen_ticket_perm');
@@ -554,7 +520,6 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate average closing period of days per category for number of months.
      *
-     * @param  int  $period
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function monthlyPerfomance(int $period = 2)
@@ -584,7 +549,6 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate the date length it took to solve a ticket.
      *
-     * @param  Ticket  $ticket
      * @return int|false
      */
     public function ticketPerformance(Ticket $ticket)
@@ -602,9 +566,6 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Calculate the average date length it took to solve tickets within date period.
-     *
-     *
-     * @return int
      */
     public function intervalPerformance($from, $to, $cat_id = false): int
     {

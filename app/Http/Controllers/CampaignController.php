@@ -164,8 +164,6 @@ class CampaignController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(): View
     {
@@ -184,8 +182,6 @@ class CampaignController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create(): View
     {
@@ -280,8 +276,6 @@ class CampaignController extends Controller
 
     /**
      * create campiagn and store template
-     *
-     * @return json
      */
     public function storeEmailTemplate(Request $request): JsonResponse
     {
@@ -297,8 +291,6 @@ class CampaignController extends Controller
 
     /**
      * update campaign
-     *
-     * @return json
      */
     public function updateEmailTemplate(Request $request): JsonResponse
     {
@@ -353,8 +345,6 @@ class CampaignController extends Controller
 
     /**
      * store email template html for preview
-     *
-     * @return json
      */
     public function storeEmailTemplateForPreview(Request $request): JsonResponse
     {
@@ -382,9 +372,6 @@ class CampaignController extends Controller
 
     /**
      * preview saved template
-     *
-     * @param  string  $filename
-     * @return json
      */
     public function previewEmailTemplate(Request $request, string $filename): json
     {
@@ -397,9 +384,6 @@ class CampaignController extends Controller
 
     /**
      * show thumbnail image
-     *
-     * @param  string  $filename
-     * @return json
      */
     public function getemailTemplateThumbnailImage(Request $request, string $filename): BinaryFileResponse
     {
@@ -431,8 +415,6 @@ class CampaignController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -485,9 +467,6 @@ class CampaignController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show(int $id): View
     {
@@ -511,7 +490,6 @@ class CampaignController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function edit(Campaign $campaign): View
     {
@@ -548,7 +526,6 @@ class CampaignController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, int $id)
@@ -559,7 +536,6 @@ class CampaignController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(int $id)

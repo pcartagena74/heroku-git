@@ -86,8 +86,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Static function for getting table name.
-     *
-     * @return string
      */
     public static function getTableName(): string
     {
@@ -98,8 +96,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Static function for getting connection name
-     *
-     * @return string
      */
     public static function getModelConnectionName(): string
     {
@@ -110,8 +106,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Get the table prefix.
-     *
-     * @return string
      */
     public static function getTablePrefix(): string
     {
@@ -120,8 +114,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Static function for getting the primary key.
-     *
-     * @return string
      */
     public static function getPrimaryKey(): string
     {
@@ -133,9 +125,6 @@ trait InsertOnDuplicateKey
     /**
      * Build the question mark placeholder.  Helper function for insertOnDuplicateKeyUpdate().
      * Helper function for insertOnDuplicateKeyUpdate().
-     *
-     *
-     * @return string
      */
     protected static function buildQuestionMarks($data): string
     {
@@ -171,9 +160,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Build a value list.
-     *
-     *
-     * @return string
      */
     protected static function getColumnList(array $first): string
     {
@@ -186,9 +172,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Build a value list.
-     *
-     *
-     * @return string
      */
     protected static function buildValuesList(array $updatedColumns): string
     {
@@ -207,9 +190,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Inline a multiple dimensions array.
-     *
-     *
-     * @return array
      */
     protected static function inLineArray(array $data): array
     {
@@ -218,9 +198,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Build the INSERT ON DUPLICATE KEY sql statement.
-     *
-     *
-     * @return string
      */
     protected static function buildInsertOnDuplicateSql(array $data, ?array $updateColumns = null): string
     {
@@ -241,9 +218,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Build the INSERT IGNORE sql statement.
-     *
-     *
-     * @return string
      */
     protected static function buildInsertIgnoreSql(array $data): string
     {
@@ -257,9 +231,6 @@ trait InsertOnDuplicateKey
 
     /**
      * Build REPLACE sql statement.
-     *
-     *
-     * @return string
      */
     protected static function buildReplaceSql(array $data): string
     {

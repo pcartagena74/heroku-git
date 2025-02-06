@@ -13,9 +13,6 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
 {
     /**
      * Run the request filter.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
     public function handle(Request $request, Closure $next): Response
     {

@@ -45,9 +45,6 @@ class EventAPIController extends Controller
     /**
      * Display the events for the specified Organization $orgID
      *
-     * @param  int  $orgID
-     * @param  int  $past
-     * @param  int  $etID
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      *
      * @throws \Throwable

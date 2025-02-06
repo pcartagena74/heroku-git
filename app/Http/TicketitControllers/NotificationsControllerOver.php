@@ -72,11 +72,6 @@ class NotificationsControllerOver extends Controller
 
     /**
      * Send email notifications from the action owner to other involved users.
-     *
-     * @param  string  $template
-     * @param  array  $data
-     * @param  object  $ticket
-     * @param  object  $notification_owner
      */
     public function sendNotification(string $template, array $data, object $ticket, object $notification_owner, $subject, $type)
     {

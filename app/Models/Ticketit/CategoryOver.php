@@ -21,8 +21,6 @@ class CategoryOver extends Model
 
     /**
      * Get related tickets.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function tickets(): HasMany
     {
@@ -31,8 +29,6 @@ class CategoryOver extends Model
 
     /**
      * Get related agents.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function agents(): BelongsToMany
     {

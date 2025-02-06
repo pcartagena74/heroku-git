@@ -13,7 +13,6 @@ class ToolsController extends Controller
      * See also: http://the-art-of-web.com/php/sortarray/.
      *
      * @param  array  $data  input-array
-     * @param  string  $type
      * @return array
      *
      * @internal param array|string $fields array-keys
