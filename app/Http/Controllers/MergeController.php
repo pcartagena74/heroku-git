@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\Event;
@@ -17,8 +14,11 @@ use App\Models\Registration;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\AccountMerge;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Kordy\Ticketit\Models\Ticket;
 
 class MergeController extends Controller

@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware\Ticketit;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\SettingOver as Setting;
 use Closure;
+use Illuminate\Http\Request;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Middleware\ResAccessMiddleware as ResAccessMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 class ResAccessMiddlewareOver extends ResAccessMiddleware
 {

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\Models\Email;
 use App\Models\EventType;
 use App\Models\Org;
@@ -13,10 +11,12 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\VolunteerRole;
 use App\Notifications\NewUserAcct;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash as Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Validator;
 
 class OrgController extends Controller

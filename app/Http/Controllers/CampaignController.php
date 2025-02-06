@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Jobs\SendCampaignEmail;
 use App\Models\Campaign;
 use App\Models\EmailCampaignLink;
@@ -15,13 +11,17 @@ use App\Models\EmailQueueLink;
 use App\Models\Org;
 use App\Models\Person;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Mail;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Validator;
 
 class CampaignController extends Controller

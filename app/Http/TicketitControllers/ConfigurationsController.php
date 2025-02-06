@@ -2,13 +2,13 @@
 
 namespace App\Http\TicketitControllers;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 use Kordy\Ticketit\Models\Configuration;
 use Kordy\Ticketit\Models\Setting;
 

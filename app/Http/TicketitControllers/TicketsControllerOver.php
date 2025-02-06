@@ -2,13 +2,13 @@
 
 namespace App\Http\TicketitControllers;
 
-use Illuminate\Http\RedirectResponse;
 use App\Models\Person;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\TicketOver as Ticket;
 use Cache;
 use Carbon\Carbon;
 use Entrust;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Helpers\LaravelVersion;

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\EventSession;
 use App\Models\Org;
@@ -14,7 +12,9 @@ use App\Models\RSSurvey;
 use App\Models\Track;
 use App\Notifications\SendSurvey;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class RegSessionController extends Controller
 {

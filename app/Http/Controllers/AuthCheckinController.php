@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\EventSession;
 use App\Models\Org;
 use App\Models\Registration;
 use App\Models\RegSession;
 use App\Models\Track;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 set_time_limit(0);

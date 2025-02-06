@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\EventDiscount;
 use App\Models\Org;
 use App\Models\OrgDiscount;
 use App\Models\Person;
 use App\Models\RegFinance;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class EventDiscountController extends Controller
 {

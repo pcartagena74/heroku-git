@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Models\Person;
 use App\Models\Ticketit\TicketOver as Ticket;
 use App\Rules\GoogleCaptcha;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Kordy\Ticketit\Models\Setting;
 use Validator;
 

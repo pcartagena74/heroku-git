@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\Person;
 use App\Models\RegFinance;
 use App\Models\Registration;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Session;
 use Spatie\Activitylog\Models\Activity;
 

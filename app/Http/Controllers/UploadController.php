@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
-use Illuminate\View\View;
 use App\Imports\MembersImport;
 use App\Jobs\ImportDetailsUpdateJob;
 use App\Jobs\NotifyUserOfCompletedImport;
@@ -28,6 +27,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Validator;
 

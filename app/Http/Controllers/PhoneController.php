@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use App\Models\Person;
 use App\Models\Phone;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller

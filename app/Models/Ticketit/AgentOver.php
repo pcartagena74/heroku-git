@@ -2,11 +2,11 @@
 
 namespace App\Models\Ticketit;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Ticketit\TicketOver as Ticketit;
 use Auth;
 use Entrust;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Kordy\Ticketit\Models\Agent as User;
 

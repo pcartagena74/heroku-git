@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\EventSession;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class EventSessionController extends Controller
