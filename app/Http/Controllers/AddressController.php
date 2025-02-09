@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\Person;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class AddressController extends Controller
@@ -28,7 +29,7 @@ class AddressController extends Controller
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /blah and creates, adds, stores the event
         //dd(request()->all());
@@ -94,7 +95,7 @@ class AddressController extends Controller
         generateLatLngForAddress($address);
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);

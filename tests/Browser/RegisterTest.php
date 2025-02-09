@@ -11,7 +11,6 @@ class RegisterTest extends DuskTestCase
     /**
      * A basic browser test example.
      *
-     * @return void
      *
      * @throws \Throwable
      */
@@ -30,11 +29,9 @@ class RegisterTest extends DuskTestCase
     /**
      * @test A basic browser test for registration.
      *
-     * @return void
-     *
      * @throws \Throwable
      */
-    public function RegistrationPageTest()
+    public function RegistrationPageTest(): void
     {
         $event = Event::all()->random(1)->first();
 

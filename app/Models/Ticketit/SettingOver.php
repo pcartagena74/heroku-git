@@ -77,11 +77,8 @@ class SettingOver extends Model
     /**
      * Check if a parameter under Value or Default columns
      * is serialized.
-     *
-     *
-     * @return bool
      */
-    public static function is_serialized($data, $strict = true)
+    public static function is_serialized($data, $strict = true): bool
     {
         // if it isn't a string, it isn't serialized.
         if (! is_string($data)) {

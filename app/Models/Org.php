@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Exception;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Storage;
 
 class Org extends Model
@@ -23,22 +26,22 @@ class Org extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function orgpeople()
+    public function orgpeople(): HasManyThrough
     {
         return $this->hasManyThrough(Person::class, OrgPerson::class, 'orgID', 'personID', 'orgID', 'personID');
     }
 
-    public function discounts()
+    public function discounts(): HasMany
     {
         return $this->hasMany(OrgDiscount::class, 'orgID', 'orgID');
     }
 
-    public function orgperson()
+    public function orgperson(): BelongsTo
     {
         return $this->belongsTo(OrgPerson::class, 'orgID', 'orgID');
     }
 
-    public function defaultPerson()
+    public function defaultPerson(): BelongsToMany
     {
         return $this->belongsToMany(Person::class, 'org-person', 'orgID', 'personID');
     }
@@ -49,19 +52,19 @@ class Org extends Model
         return EventType::whereIn('orgID', [1, $this->orgID])->get();
     }
 
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class, 'orgID', 'orgID');
     }
 
-    public function admin_props()
+    public function admin_props(): HasMany
     {
         return $this->hasMany(OrgAdminProp::class, 'orgID', 'orgID');
     }
 
     public function logo_path()
     {
-        $logo_filename = $this->orgPath . '/' . $this->orgLogo;
+        $logo_filename = $this->orgPath.'/'.$this->orgLogo;
 
         try {
             if (Storage::disk('s3_media')->exists($logo_filename)) {
@@ -70,20 +73,21 @@ class Org extends Model
         } catch (Exception $e) {
             $logopath = '#';
         }
+
         return $logopath;
     }
 
     public function org_URL()
     {
         $u = $this->orgURL;
-        if (!preg_match('#^https?://#', $u)) {
-            $u = 'http://' . $u;
+        if (! preg_match('#^https?://#', $u)) {
+            $u = 'http://'.$u;
         }
 
         return $u;
     }
 
-    public function volunteer_roles()
+    public function volunteer_roles(): HasMany
     {
         return $this->hasMany(VolunteerRole::class, 'orgID', 'orgID');
     }

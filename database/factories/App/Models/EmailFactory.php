@@ -10,10 +10,8 @@ class EmailFactory extends Factory
 {
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         try {
             $person = $params['person'];

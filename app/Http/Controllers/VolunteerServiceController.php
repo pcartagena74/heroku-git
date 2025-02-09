@@ -39,7 +39,6 @@ class VolunteerServiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
     public function show(VolunteerServiceController $volunteerService)
@@ -50,7 +49,6 @@ class VolunteerServiceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
     public function edit(VolunteerServiceController $volunteerService)
@@ -61,7 +59,6 @@ class VolunteerServiceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, VolunteerServiceController $volunteerService)
@@ -72,7 +69,6 @@ class VolunteerServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\VolunteerService  $volunteerService
      * @return \Illuminate\Http\Response
      */
     public function destroy(VolunteerServiceController $volunteerService)

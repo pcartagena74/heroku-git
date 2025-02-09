@@ -11,10 +11,12 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\VolunteerRole;
 use App\Notifications\NewUserAcct;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash as Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Validator;
 
 class OrgController extends Controller
@@ -52,7 +54,7 @@ class OrgController extends Controller
         }
     }
 
-    public function updateDefaultOrg(Request $request)
+    public function updateDefaultOrg(Request $request): RedirectResponse
     {
         $org = request()->input('org');
         $person = Person::find(auth()->user()->id);
@@ -68,7 +70,7 @@ class OrgController extends Controller
         return redirect("/orgsettings/$org");
     }
 
-    public function event_defaults()
+    public function event_defaults(): View
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
@@ -106,7 +108,7 @@ class OrgController extends Controller
         return view('v1.auth_pages.organization.settings', compact('org', 'topBits'));
     }
 
-    public function create()
+    public function create(): View
     {
         // refactored - previously in AdminController
         return view('v1.auth_pages.organization.create_organization');

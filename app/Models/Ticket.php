@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-//use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+//use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
@@ -54,22 +56,22 @@ class Ticket extends Model
         }
     }
 
-    public function bundle()
+    public function bundle(): BelongsTo
     {
         return $this->belongsTo(Bundle::class, 'ticketID', 'ticketID', self::class);
     }
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID');
     }
 
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'ticketID');
     }
 
-    public function regfinances()
+    public function regfinances(): HasMany
     {
         return $this->hasMany(RegFinance::class, 'ticketID');
     }

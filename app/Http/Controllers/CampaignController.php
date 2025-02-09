@@ -11,13 +11,17 @@ use App\Models\EmailQueueLink;
 use App\Models\Org;
 use App\Models\Person;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Mail;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Validator;
 
 class CampaignController extends Controller
@@ -160,10 +164,8 @@ class CampaignController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         //->with('emails', 'emails.urls', 'email_count', 'emails.url_count')
 
@@ -180,10 +182,8 @@ class CampaignController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): View
     {
         $this->currentPerson = Person::find(auth()->id());
         $org = Org::find($this->currentPerson->defaultOrgID);
@@ -276,10 +276,8 @@ class CampaignController extends Controller
 
     /**
      * create campiagn and store template
-     *
-     * @return json
      */
-    public function storeEmailTemplate(Request $request)
+    public function storeEmailTemplate(Request $request): JsonResponse
     {
         $content = $request->input('contentArr');
         if (empty($content)) {
@@ -293,10 +291,8 @@ class CampaignController extends Controller
 
     /**
      * update campaign
-     *
-     * @return json
      */
-    public function updateEmailTemplate(Request $request)
+    public function updateEmailTemplate(Request $request): JsonResponse
     {
         $campaign_id = $request->input('id');
         $campaign = Campaign::find($campaign_id);
@@ -333,7 +329,7 @@ class CampaignController extends Controller
      *
      * @return json with pagination html
      */
-    public function getEmailTemplates(Request $request)
+    public function getEmailTemplates(Request $request): JsonResponse
     {
         $campaigns = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
             ->orWhere('orgID', 1)
@@ -349,10 +345,8 @@ class CampaignController extends Controller
 
     /**
      * store email template html for preview
-     *
-     * @return json
      */
-    public function storeEmailTemplateForPreview(Request $request)
+    public function storeEmailTemplateForPreview(Request $request): JsonResponse
     {
         $html = $request->input('html');
         $campaign = $request->input('campaign');
@@ -378,11 +372,8 @@ class CampaignController extends Controller
 
     /**
      * preview saved template
-     *
-     * @param  string  $filename
-     * @return json
      */
-    public function previewEmailTemplate(Request $request, $filename)
+    public function previewEmailTemplate(Request $request, string $filename): json
     {
         if (Storage::disk('local')->exists($filename)) {
             return Storage::disk('local')->get($filename);
@@ -393,11 +384,8 @@ class CampaignController extends Controller
 
     /**
      * show thumbnail image
-     *
-     * @param  string  $filename
-     * @return json
      */
-    public function getemailTemplateThumbnailImage(Request $request, $filename)
+    public function getemailTemplateThumbnailImage(Request $request, string $filename): BinaryFileResponse
     {
         if (Storage::disk('local')->exists($filename)) {
             $path = Storage::disk('local')->path($filename);
@@ -415,7 +403,7 @@ class CampaignController extends Controller
      * @param  Request  $request  [description]
      * @return [type]           [description]
      */
-    public function getEmailTemplateBlocks(Request $request)
+    public function getEmailTemplateBlocks(Request $request): JsonResponse
     {
         $campaign = Campaign::find($request->input('id'));
         if (empty($campaign)) {
@@ -427,10 +415,8 @@ class CampaignController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //dd(request()->all());
         $this->currentPerson = Person::find(auth()->id());
@@ -481,11 +467,8 @@ class CampaignController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id): View
     {
         $campaign = Campaign::findOrFail($id);
         $this->currentPerson = Person::find(auth()->id());
@@ -496,7 +479,7 @@ class CampaignController extends Controller
         return view('v1.auth_pages.campaigns.add-edit_campaign', compact('org', 'campaign', 'list_dp', 'current_datetime'));
     }
 
-    public function show_campaign(Campaign $campaign)
+    public function show_campaign(Campaign $campaign): View
     {
         $content = $campaign->content;
 
@@ -507,9 +490,8 @@ class CampaignController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function edit(Campaign $campaign)
+    public function edit(Campaign $campaign): View
     {
         $campaign->load('mailgun');
         $campaign->load('campaign_links');
@@ -544,10 +526,9 @@ class CampaignController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         //
     }
@@ -555,10 +536,9 @@ class CampaignController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         //
     }
@@ -569,7 +549,7 @@ class CampaignController extends Controller
      * @param  Request  $request  [description]
      * @return [type]           [description]
      */
-    public function sendTestEmail(Request $request)
+    public function sendTestEmail(Request $request): JsonResponse
     {
         $currentPerson = $this->currentPerson;
         $email_1 = $request->input('email1');
@@ -631,7 +611,7 @@ class CampaignController extends Controller
         }
     }
 
-    public function copy(Request $request, $campaign_id)
+    public function copy(Request $request, $campaign_id): RedirectResponse
     {
         $campaign = Campaign::findOrFail($campaign_id);
         $campaign_name_count = Campaign::where('orgID', $this->currentPerson->defaultOrgID)
@@ -667,7 +647,7 @@ class CampaignController extends Controller
         return redirect(url('campaign', $new_campaign->campaignID, 'edit'));
     }
 
-    public function sendCampaign(Request $request)
+    public function sendCampaign(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'schedule' => 'nullable|date',
@@ -744,7 +724,7 @@ class CampaignController extends Controller
         }
     }
 
-    public function deleteCampaign(Request $request)
+    public function deleteCampaign(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'campaign' => 'required|exists:org-campaign,campaignID',
@@ -777,7 +757,7 @@ class CampaignController extends Controller
         }
     }
 
-    public function mailgunWebhook(Request $request)
+    public function mailgunWebhook(Request $request): JsonResponse
     {
         //https://mcentric-test.herokuapp.com/email_webhook
         $response = $request->all();
@@ -866,7 +846,7 @@ class CampaignController extends Controller
         return response()->json(['success' => true, 'message' => 'Web-hook triggered']);
     }
 
-    public function archiveCampaign(Request $request)
+    public function archiveCampaign(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'campaign' => 'required|exists:org-campaign,campaignID',
@@ -897,7 +877,7 @@ class CampaignController extends Controller
         return response()->json(['success' => true, 'message' => trans('messages.messages.campaign_deleted')]);
     }
 
-    public function urlClickedEmailList(Request $request)
+    public function urlClickedEmailList(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'campaign' => 'required|exists:org-campaign,campaignID',

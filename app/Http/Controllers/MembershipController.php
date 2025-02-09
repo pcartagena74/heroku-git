@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Person;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class MembershipController extends Controller
 {
@@ -24,9 +25,8 @@ class MembershipController extends Controller
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function index($which = 'new', $days = 90, $page = 25)
+    public function index($which = 'new', $days = 90, $page = 25): View
     {
         $orgID = $this->currentPerson->defaultOrgID;
         [$members, $title] = membership_reports($orgID, $which, 0, $days, $page);

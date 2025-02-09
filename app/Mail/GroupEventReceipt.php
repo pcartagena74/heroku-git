@@ -47,10 +47,8 @@ class GroupEventReceipt extends Mailable
 
     /**
      * Build the message.
-     *
-     * @return $this
      */
-    public function build()
+    public function build(): static
     {
         $orgName = $this->org->orgName;
 

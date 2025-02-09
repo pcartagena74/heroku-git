@@ -5,17 +5,16 @@ namespace App\Http\Middleware\Ticketit;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\SettingOver as Setting;
 use Closure;
+use Illuminate\Http\Request;
 use Kordy\Ticketit\Middleware\IsAdminMiddleware as IsAdminMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 class IsAdminMiddlewareOver extends IsAdminMiddleware
 {
     /**
      * Run the request filter.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (Agent::isAdmin() || auth()->id() == 1) {
             return $next($request);

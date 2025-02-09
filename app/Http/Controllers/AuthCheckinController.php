@@ -8,6 +8,7 @@ use App\Models\Org;
 use App\Models\Registration;
 use App\Models\RegSession;
 use App\Models\Track;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 set_time_limit(0);
@@ -60,7 +61,7 @@ class AuthCheckinController extends Controller
         return json_encode(['html' => $html]);
     }
 
-    public function store(Request $request, Event $event)
+    public function store(Request $request, Event $event): RedirectResponse
     {
         // called by POST /event_checkin/{eventID}
         $esID = $request->input('sessionID');

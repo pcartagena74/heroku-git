@@ -10,10 +10,8 @@ class EmailBuilderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         EmailBlockCategory::insert([
             ['id' => 1, 'name' => 'Typography'],

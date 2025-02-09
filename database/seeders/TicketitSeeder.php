@@ -42,7 +42,7 @@ class TicketitSeeder extends Seeder
     /**
      * Seed the Plans table.
      */
-    public function run()
+    public function run(): void
     {
         $defaults = [];
 
@@ -101,11 +101,8 @@ class TicketitSeeder extends Seeder
 
     /**
      * Takes config/ticketit.php, merge with package defaults, and returns serialized array.
-     *
-     *
-     * @return array
      */
-    public function cleanupAndMerge($defaults, $config)
+    public function cleanupAndMerge($defaults, $config): array
     {
         $merged = array_merge($defaults, $config);
 

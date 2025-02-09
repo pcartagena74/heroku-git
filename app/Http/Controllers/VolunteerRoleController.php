@@ -8,6 +8,7 @@ use App\Models\VolunteerRole;
 use App\Models\VolunteerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class VolunteerRoleController extends Controller
 {
@@ -26,10 +27,8 @@ class VolunteerRoleController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $org = Org::where('orgID', $this->currentPerson->defaultOrgID)->first();
 
@@ -92,10 +91,8 @@ class VolunteerRoleController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function show(Org $org)
+    public function show(Org $org): View
     {
         $p = $this->currentPerson;
 

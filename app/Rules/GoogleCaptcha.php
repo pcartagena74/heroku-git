@@ -20,11 +20,9 @@ class GoogleCaptcha implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes(string $attribute, $value): bool
     {
         $client = new Client;
         $response = $client->post(
@@ -43,10 +41,8 @@ class GoogleCaptcha implements Rule
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return trans('messages.errors.google_recaptcha');
     }

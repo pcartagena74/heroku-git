@@ -7,6 +7,7 @@ use App\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class EventStatsController extends Controller
 {
@@ -17,10 +18,8 @@ class EventStatsController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $today = Carbon::now();

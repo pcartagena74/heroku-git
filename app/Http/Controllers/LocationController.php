@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use App\Models\Person;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class LocationController extends Controller
 {
@@ -14,7 +16,7 @@ class LocationController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(): View
     {
         // responds to GET /locations
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -51,7 +53,7 @@ class LocationController extends Controller
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /locations/create and creates, adds, stores the event
         $this->currentPerson = Person::find(auth()->user()->id);

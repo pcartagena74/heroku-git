@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Traits\EntrustUserTraitOver;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Notifications\Notifiable;
@@ -52,7 +55,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
      *
      * @return the email address/login for the user
      */
-    public function routeNotificationForMail()
+    public function routeNotificationForMail(): the
     {
         return $this->email;
     }
@@ -60,7 +63,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne relationship with Person
      */
-    public function person()
+    public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'personID', 'id');
     }
@@ -68,7 +71,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany relationship with Roles
      */
-    public function roles()
+    public function roles(): BelongsToMany
     {
         // we need to get default person org id so running another query to fetch same
         $person = Person::find(auth()->user()->id);
@@ -76,7 +79,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgID', $person->defaultOrgID);
     }
 
-    public function tickets()
+    public function tickets(): HasMany
     {
         return $this->hasMany(\Kordy\Ticketit\Models\Ticket::class, 'user_id', 'id');
     }

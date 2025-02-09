@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Person;
 use App\Models\Registration;
 use App\Models\Ticket;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -75,7 +76,7 @@ class BundleController extends Controller
         return json_encode(['status' => 'success', 'message' => print_r(request()->all(), true)]);
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);

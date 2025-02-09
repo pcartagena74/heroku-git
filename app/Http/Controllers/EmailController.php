@@ -6,6 +6,7 @@ use App\Models\Email;
 use App\Models\Person;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class EmailController extends Controller
@@ -15,7 +16,7 @@ class EmailController extends Controller
         $this->middleware('auth', ['except' => ['show']]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /blah and creates, adds, stores the event
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -67,7 +68,7 @@ class EmailController extends Controller
         $email->save();
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         // responds to DELETE /blah/id
         $now = Carbon::now()->format('Ymd\TH:i:s.uP');

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Speaker extends Model
 {
@@ -19,12 +21,12 @@ class Speaker extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function eventsessions()
+    public function eventsessions(): BelongsToMany
     {
         return $this->belongsToMany(EventSession::class, 'eventsession_speaker', 'speaker_id', 'eventsession_id');
     }
 
-    public function person()
+    public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'personID', 'id');
     }

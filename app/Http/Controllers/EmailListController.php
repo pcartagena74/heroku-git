@@ -6,7 +6,9 @@ use App\Models\EmailList;
 use App\Models\Event;
 use App\Models\Person;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Validator;
 
 class EmailListController extends Controller
@@ -18,10 +20,8 @@ class EmailListController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $this->currentPerson = Person::find(auth()->id());
         $rows = [];
@@ -201,9 +201,8 @@ class EmailListController extends Controller
      * as well, redirecting to appropriate tab
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show(EmailList $emailList)
+    public function show(EmailList $emailList): View
     {
         $this->currentPerson = Person::find(auth()->id());
         $rows = [];
@@ -440,20 +439,17 @@ class EmailListController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         //
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request): JsonResponse
     {
         // responds to POST /list
         $this->currentPerson = Person::find(auth()->id());
@@ -557,9 +553,8 @@ class EmailListController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:email-list,id',

@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class VolunteerRole extends Model
 {
@@ -21,22 +24,22 @@ class VolunteerRole extends Model
         'id', 'reports_to',
     ];
 
-    public function org()
+    public function org(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(VolunteerRole::class, 'reports_to', 'id');
     }
 
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(VolunteerRole::class, 'pid', 'id');
     }
 
-    public function service_role()
+    public function service_role(): HasOne
     {
         //return $this->hasOne()
     }

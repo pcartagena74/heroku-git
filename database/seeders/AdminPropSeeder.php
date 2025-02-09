@@ -13,10 +13,8 @@ class AdminPropSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sql = 'INSERT INTO `admin_group` (`id`, `name`, `order`, `viewname`)
                 VALUES

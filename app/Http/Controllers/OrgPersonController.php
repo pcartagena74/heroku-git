@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Person;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class OrgPersonController extends Controller
 {
@@ -17,17 +19,15 @@ class OrgPersonController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index(Org $org)
+    public function index(Org $org): View
     {
         $person = null;
 
         return view('v1.public_pages.pmiID_lookup', compact('org', 'person'));
     }
 
-    public function find(Request $request)
+    public function find(Request $request): RedirectResponse
     {
         $orgID = $request->input('orgID');
         $pmiID = $request->input('pmiID');
@@ -64,9 +64,8 @@ class OrgPersonController extends Controller
      * Display the specified resource.
      *
      * @param  \App\OrgPerson  $orgperson
-     * @return \Illuminate\Http\Response
      */
-    public function show(Person $person)
+    public function show(Person $person): View
     {
         $person = $person->load('emails', 'user', 'orgperson');
         $org = Org::find($person->defaultOrgID);
@@ -97,7 +96,6 @@ class OrgPersonController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
     public function edit(OrgPerson $orgperson)
@@ -108,7 +106,6 @@ class OrgPersonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, OrgPerson $orgperson)
@@ -119,7 +116,6 @@ class OrgPersonController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
     public function destroy(OrgPerson $orgperson)

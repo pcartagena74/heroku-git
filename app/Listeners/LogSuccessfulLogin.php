@@ -25,10 +25,8 @@ class LogSuccessfulLogin
 
     /**
      * Handle the event.
-     *
-     * @return void
      */
-    public function handle(Login $event)
+    public function handle(Login $event): void
     {
         $event->user->last_login = date('Y-m-d H:i:s');
         $login = $event->user->email;

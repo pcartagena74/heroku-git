@@ -9,10 +9,8 @@ class EventTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sql = "INSERT INTO `org-event_types`
                 VALUES 

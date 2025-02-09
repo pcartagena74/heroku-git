@@ -56,7 +56,7 @@ class EventTest extends TestCase
     /**
      * @test
      */
-    public function only_authenticated_users_can_create_events()
+    public function only_authenticated_users_can_create_events(): void
     {
         $attributes = \App\Models\Event::factory()->raw(['org' => $this->org]);
         $this->post('/event/create', $attributes)->assertRedirect('login');
@@ -64,10 +64,8 @@ class EventTest extends TestCase
 
     /**
      * @test - Event Creation Test
-     *
-     * @return void
      */
-    public function an_event_can_be_created()
+    public function an_event_can_be_created(): void
     {
         // Useful function -->  Carbon::setTestNow($datetime);
         //                 -->  Carbon::setTestNow() to reset for subsequent test

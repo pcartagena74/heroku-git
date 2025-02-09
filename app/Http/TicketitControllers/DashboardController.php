@@ -3,15 +3,16 @@
 namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
-//use Kordy\Ticketit\Models\Agent;
 use App\Models\Ticketit\AgentOver as Agent;
+//use Kordy\Ticketit\Models\Agent;
 use App\Models\Ticketit\TicketOver as Ticket;
+use Illuminate\View\View;
 //use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Models\Category;
 
 class DashboardController extends Controller
 {
-    public function index($indicator_period = 2)
+    public function index($indicator_period = 2): View
     {
         $tickets_count = Ticket::count();
         $open_tickets_count = Ticket::whereNull('completed_at')->count();

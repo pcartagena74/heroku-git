@@ -8,6 +8,7 @@ use App\Models\Org;
 use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Session;
 
 class ReportController extends Controller
@@ -17,7 +18,7 @@ class ReportController extends Controller
         $this->middleware('auth');
     }
 
-    public function show($id = null, $year_string = null)
+    public function show($id = null, $year_string = null): View
     {
         $topBits = '';
         $this->currentPerson = Person::find(auth()->user()->id);

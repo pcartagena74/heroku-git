@@ -2,6 +2,8 @@
 
 namespace App\Models\Ticketit;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Kordy\Ticketit\Models\Category as Model;
 
 class CategoryOver extends Model
@@ -19,20 +21,16 @@ class CategoryOver extends Model
 
     /**
      * Get related tickets.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function tickets()
+    public function tickets(): HasMany
     {
         return $this->hasMany(\App\Models\Ticketit\TicketOver::class, 'category_id');
     }
 
     /**
      * Get related agents.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function agents()
+    public function agents(): BelongsToMany
     {
         return $this->belongsToMany(\App\Models\Ticketit\AgentOver::class, 'ticketit_categories_users', 'category_id', 'user_id');
     }

@@ -12,7 +12,9 @@ use App\Models\RSSurvey;
 use App\Models\Track;
 use App\Notifications\SendSurvey;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class RegSessionController extends Controller
 {
@@ -21,7 +23,7 @@ class RegSessionController extends Controller
         $this->middleware('web', ['except' => ['record_attendance']]);
     }
 
-    public function show(EventSession $session)
+    public function show(EventSession $session): View
     {
         // Called with GET /rs/{session}
         // Given a event's sessionID, display a form for a person to enter their $regID
@@ -67,7 +69,7 @@ class RegSessionController extends Controller
         return view('v1.auth_pages.events.checkin_attendee', compact('session', 'event', 'tracks', 'org'));
     }
 
-    public function process_checkin(Request $request)
+    public function process_checkin(Request $request): RedirectResponse
     {
         // Called as /process_checkin post;  Need to:
         // 1. check if hasTracks > 0 and give options and buttons to re-trigger
@@ -180,7 +182,7 @@ class RegSessionController extends Controller
         }
     }
 
-    public function update_sessions(Request $request, Registration $reg)
+    public function update_sessions(Request $request, Registration $reg): RedirectResponse
     {
         // Update or create session records, set a display message, and re-display list
         $event = Event::find($reg->eventID);
@@ -236,7 +238,7 @@ class RegSessionController extends Controller
         return redirect('/upcoming');
     }
 
-    public function store_session(Request $request, EventSession $session)
+    public function store_session(Request $request, EventSession $session): RedirectResponse
     {
         // 1) Receive the check-in with $regID
         // 2) Update the RegSession instance,
@@ -268,7 +270,7 @@ class RegSessionController extends Controller
         return redirect('/rs_survey/'.$rs->id);
     }
 
-    public function show_session_survey(RegSession $rs)
+    public function show_session_survey(RegSession $rs): View
     {
         $event = Event::find($rs->eventID);
         $org = Org::find($event->orgID);
@@ -277,7 +279,7 @@ class RegSessionController extends Controller
         return view('v1.public_pages.session_survey', compact('rs', 'session', 'event', 'org'));
     }
 
-    public function store_survey(Request $request)
+    public function store_survey(Request $request): View
     {
         // Response from /rs_survey post
 
@@ -322,7 +324,7 @@ class RegSessionController extends Controller
         return view('v1.public_pages.thanks', compact('message'));
     }
 
-    public function send_surveys(Event $event, ?EventSession $es = null)
+    public function send_surveys(Event $event, ?EventSession $es = null): RedirectResponse
     {
         $count = 0;
         $scount = 0;

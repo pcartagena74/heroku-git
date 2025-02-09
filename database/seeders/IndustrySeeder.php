@@ -9,10 +9,8 @@ class IndustrySeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sql = "INSERT INTO `industries` VALUES
                     (1,'Aerospace'),(2,'Agriculture'),(3,'Automotive'),(4,'Construction'),(5,'Consulting'),(7,'Defense'),

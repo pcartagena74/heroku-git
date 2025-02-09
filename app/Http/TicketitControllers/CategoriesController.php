@@ -3,8 +3,10 @@
 namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models\Category;
 
@@ -12,10 +14,8 @@ class CategoriesController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         // seconds expected for L5.8<=, minutes before that
         $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
@@ -28,21 +28,16 @@ class CategoriesController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Response
      */
-    public function create()
+    public function create(): View
     {
         return view('ticketit::admin.category.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     *
-     * @return Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
@@ -61,22 +56,16 @@ class CategoriesController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param int $id
-     * @return Response
      */
-    public function show($id)
+    public function show(int $id): Response
     {
         return 'All category related agents here';
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return Response
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
         $category = Category::findOrFail($id);
 
@@ -85,11 +74,8 @@ class CategoriesController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
@@ -108,11 +94,8 @@ class CategoriesController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return Response
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);
         $name = $category->name;

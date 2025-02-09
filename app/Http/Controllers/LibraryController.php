@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LibraryController extends Controller
 {
@@ -13,7 +15,7 @@ class LibraryController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         return view('v1.auth_pages.library.index');
     }
@@ -36,7 +38,7 @@ class LibraryController extends Controller
         return response()->json(['success' => true, 'files' => $file_list_url]);
     }
 
-    public function getFile(Request $request, $org_path, $folder_name, $file_name)
+    public function getFile(Request $request, $org_path, $folder_name, $file_name): BinaryFileResponse
     {
         if (empty($org_path) || empty($folder_name) || empty($file_name)) {
             abort(404);

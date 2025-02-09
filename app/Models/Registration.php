@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
@@ -29,27 +32,27 @@ class Registration extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function ticket()
+    public function ticket(): HasOne
     {
         return $this->hasOne(Ticket::class, 'ticketID', 'ticketID');
     }
 
-    public function regfinance()
+    public function regfinance(): BelongsTo
     {
         return $this->belongsTo(RegFinance::class, 'rfID', 'regID');
     }
 
-    public function regsessions()
+    public function regsessions(): HasMany
     {
         return $this->hasMany(RegSession::class, 'regID', 'regID');
     }

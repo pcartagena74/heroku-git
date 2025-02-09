@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrgAdminProp extends Model
 {
@@ -27,12 +28,12 @@ class OrgAdminProp extends Model
             ->where('propID', $this->getAttribute('propID'));
     }
 
-    public function org()
+    public function org(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
-    public function prop()
+    public function prop(): BelongsTo
     {
         return $this->belongsTo(AdminProp::class, 'propID', 'id');
         //return $this->hasOne(AdminProp::class, 'id', 'propID');

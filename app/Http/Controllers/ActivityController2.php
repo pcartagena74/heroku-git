@@ -10,9 +10,11 @@ use App\Models\RegFinance;
 use App\Models\Registration;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Session;
 
 class ActivityController2 extends Controller
@@ -22,7 +24,7 @@ class ActivityController2 extends Controller
         $this->middleware('auth');
     }
 
-    public function future_index()
+    public function future_index(): View
     {
         // responds to GET /upcoming
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -133,7 +135,7 @@ class ActivityController2 extends Controller
         return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits', 'wait'));
     }
 
-    public function index()
+    public function index(): View
     {
         // responds to /dashboard:  This is the dashboard
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -241,13 +243,13 @@ class ActivityController2 extends Controller
         return json_encode(['event' => $eventName, 'data' => $er->toArray()]);
     }
 
-    public function create()
+    public function create(): View
     {
         // triggered by GET /become
         return view('v1.auth_pages.members.become');
     }
 
-    public function become(Request $request)
+    public function become(Request $request): RedirectResponse
     {
         // triggered by POST /become
 

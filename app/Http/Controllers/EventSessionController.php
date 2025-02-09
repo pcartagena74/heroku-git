@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSession;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class EventSessionController extends Controller
@@ -17,7 +18,7 @@ class EventSessionController extends Controller
      * @param  EventSession  $es
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         $es = EventSession::withTrashed()->find($id);
         $function = request()->input('function');
@@ -59,7 +60,7 @@ class EventSessionController extends Controller
      *
      * Sessions get destroyed when removed via the session editing screen
      */
-    public function destroy(EventSession $es)
+    public function destroy(EventSession $es): RedirectResponse
     {
         $event = Event::find($es->eventID);
 

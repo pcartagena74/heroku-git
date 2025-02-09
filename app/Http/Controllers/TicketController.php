@@ -8,8 +8,10 @@ use App\Models\Person;
 use App\Models\Registration;
 use App\Models\RegSession;
 use App\Models\Ticket;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class TicketController extends Controller
 {
@@ -23,7 +25,7 @@ class TicketController extends Controller
         // responds to /blah
     }
 
-    public function show($id)
+    public function show($id): View
     {
         // responds to GET /blah/id
         $event = Event::find($id);
@@ -47,7 +49,7 @@ class TicketController extends Controller
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /blah and creates, adds, stores the event
         //dd(request()->all());
@@ -144,7 +146,7 @@ class TicketController extends Controller
         return json_encode(['status' => 'success', 'msg' => $name, 'val' => $value]);
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);

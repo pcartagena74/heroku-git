@@ -8,6 +8,8 @@ use App\Models\Ticketit\CategoryOver as Category;
 use App\Models\User;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Date\Date;
 use Kordy\Ticketit\Models\Ticket;
@@ -32,10 +34,8 @@ class TicketOver extends Ticket
 
     /**
      * List of completed tickets.
-     *
-     * @return bool
      */
-    public function hasComments()
+    public function hasComments(): bool
     {
         return (bool) count($this->comments);
     }
@@ -47,10 +47,8 @@ class TicketOver extends Ticket
 
     /**
      * List of completed tickets.
-     *
-     * @return Collection
      */
-    public function scopeComplete($query)
+    public function scopeComplete($query): Collection
     {
         //static to allow phil to see all records
         if (auth()->user()->id == 1) {
@@ -72,10 +70,8 @@ class TicketOver extends Ticket
 
     /**
      * List of active tickets.
-     *
-     * @return Collection
      */
-    public function scopeActive($query)
+    public function scopeActive($query): Collection
     {
         //static to allow phil to see all records
         if (auth()->user()->id == 1) {
@@ -97,60 +93,48 @@ class TicketOver extends Ticket
 
     /**
      * Get Ticket status.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Status', 'status_id');
     }
 
     /**
      * Get Ticket priority.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function priority()
+    public function priority(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Priority', 'priority_id');
     }
 
     /**
      * Get Ticket category.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Category', 'category_id');
     }
 
     /**
      * Get Ticket owner.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
     /**
      * Get Ticket agent.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function agent()
+    public function agent(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Agent', 'agent_id');
     }
 
     /**
      * Get Ticket comments.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany('Kordy\Ticketit\Models\Comment', 'ticket_id');
     }
@@ -247,10 +231,8 @@ class TicketOver extends Ticket
 
     /**
      * Sets the agent with the lowest tickets assigned in specific category.
-     *
-     * @return Ticket
      */
-    public function autoSelectAgent($dev = false)
+    public function autoSelectAgent($dev = false): Ticket
     {
         $cat_id = $this->category_id;
         $orgId = $this->orgId;

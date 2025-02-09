@@ -6,11 +6,13 @@ use App\Other\ics_calendar;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Exception;
-use Illuminate\Support\Facades\Storage;
-use League\Flysystem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use League\Flysystem\AdapterInterface;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -53,62 +55,62 @@ class Event extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function category()
+    public function category(): HasOne
     {
         return $this->hasOne(Category::class, 'catID', 'catID');
     }
 
-    public function location()
+    public function location(): HasOne
     {
         return $this->hasOne(Location::class, 'locID', 'locationID');
     }
 
-    public function tickets()
+    public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
     }
 
-    public function event_type()
+    public function event_type(): BelongsTo
     {
         return $this->belongsTo(EventType::class, 'eventTypeID', 'etID');
     }
 
-    public function bundles()
+    public function bundles(): HasMany
     {
         return $this->hasMany(Bundle::class, 'eventID', 'eventID');
     }
 
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'eventID', 'eventID');
     }
 
-    public function regfinances()
+    public function regfinances(): HasMany
     {
         return $this->hasMany(RegFinance::class, 'eventID', 'eventID');
     }
 
-    public function org()
+    public function org(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
-    public function sessions()
+    public function sessions(): HasMany
     {
         return $this->hasMany(EventSession::class, 'eventID', 'eventID');
     }
 
-    public function regsessions()
+    public function regsessions(): HasMany
     {
         return $this->hasMany(RegSession::class, 'eventID', 'eventID');
     }
 
-    public function main_session()
+    public function main_session(): HasOne
     {
         return $this->hasOne(EventSession::class, 'sessionID', 'mainSession');
     }
 
-    public function surveys()
+    public function surveys(): HasManyThrough
     {
         return $this->hasManyThrough(RSSurvey::class, EventSession::class, 'eventID', 'sessionID', 'eventID', 'sessionID');
     }
@@ -142,8 +144,6 @@ class Event extends Model
 
     /**
      * checkin_time returns true when within 1 day of start or 2 days after the end of the event
-     *
-     * @return bool
      */
     public function checkin_time(): bool|int
     {
@@ -160,8 +160,6 @@ class Event extends Model
 
     /**
      * checkin_period returns true when within 1 day of start or within $postEventEndDays after the end of the event
-     *
-     * @return bool
      */
     public function checkin_period(): bool|int
     {
@@ -274,7 +272,7 @@ class Event extends Model
     public function create_or_update_event_ics(): void
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_' . $this->eventID . '.ics';
+        $event_filename = 'event_'.$this->eventID.'.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         \Storage::disk('events')->put($event_filename, $contents, 'public');
@@ -291,15 +289,16 @@ class Event extends Model
         } catch (Exception $e) {
             $ics_file = '#';
         }
+
         return $ics_file;
     }
 
     public function event_url(): string
     {
         if ($this->slug) {
-            return '/events/' . $this->slug;
+            return '/events/'.$this->slug;
         } else {
-            return '/events/' . $this->eventID;
+            return '/events/'.$this->eventID;
         }
     }
 

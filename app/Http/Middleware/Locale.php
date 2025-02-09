@@ -6,18 +6,17 @@ use App;
 use Closure;
 use Config;
 use Cookie;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 // Symfony\Component\HttpFoundation\Cookie
 class Locale
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
             if (empty(Auth::user()->locale)) {

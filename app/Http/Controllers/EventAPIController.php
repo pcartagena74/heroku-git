@@ -45,14 +45,11 @@ class EventAPIController extends Controller
     /**
      * Display the events for the specified Organization $orgID
      *
-     * @param  int  $orgID
-     * @param  int  $past
-     * @param  int  $etID
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      *
      * @throws \Throwable
      */
-    public function show($orgID, $past, $cal = 0, $etID = null, $override = null)
+    public function show(int $orgID, int $past, $cal = 0, ?int $etID = null, $override = null)
     {
         $org = Org::find($orgID);
         if ($org === null) {

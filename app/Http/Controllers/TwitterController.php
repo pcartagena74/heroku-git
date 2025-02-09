@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class TwitterController extends Controller
 {
@@ -16,7 +17,7 @@ class TwitterController extends Controller
 
     public function index() {}
 
-    public function show(Event $event)
+    public function show(Event $event): View
     {
         // responds to GET /blah/id
         // $event = Event::find($id);

@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel as Excel;
 use Validator;
 
@@ -48,7 +49,7 @@ class UploadController extends Controller
         $this->starttime = microtime(true);
     }
 
-    public function index()
+    public function index(): View
     {
         // displays the data upload form
 

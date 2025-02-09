@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UrlClick extends Model
 {
@@ -16,7 +17,7 @@ class UrlClick extends Model
         'clicks',
     ];
 
-    public function email()
+    public function email(): BelongsTo
     {
         return $this->belongsTo(EmailSent::class);
     }

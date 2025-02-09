@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Traits\ExcelMemberImportTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -55,9 +56,8 @@ class MembersImport implements ShouldQueue, SkipsOnFailure, ToCollection, WithCh
     /**
      * @param  Collection  $rows
      *                            Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
-     * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function collection(Collection $rows)
+    public function collection(Collection $rows): ?Model
     {
         $user = User::where('id', $this->currentPerson->personID)->get()->first();
         \App::setLocale($user->locale);

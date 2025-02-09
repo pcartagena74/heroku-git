@@ -5,18 +5,17 @@ namespace App\Http\Middleware\Ticketit;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\SettingOver as Setting;
 use Closure;
+use Illuminate\Http\Request;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Middleware\ResAccessMiddleware as ResAccessMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 class ResAccessMiddlewareOver extends ResAccessMiddleware
 {
     /**
      * Run the request filter.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (Agent::isAdmin()) {
             return $next($request);

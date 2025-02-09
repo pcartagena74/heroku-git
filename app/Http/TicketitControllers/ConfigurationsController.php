@@ -3,10 +3,12 @@
 namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 use Kordy\Ticketit\Models\Configuration;
 use Kordy\Ticketit\Models\Setting;
 
@@ -14,10 +16,8 @@ class ConfigurationsController extends Controller
 {
     /**
      * Display a listing of the Setting.
-     *
-     * @return Response
      */
-    public function index()
+    public function index(): View
     {
         $configurations = Configuration::all();
         $configurations_by_sections = ['init' => [], 'email' => [], 'tickets' => [], 'perms' => [], 'editor' => [], 'other' => []];
@@ -26,11 +26,11 @@ class ConfigurationsController extends Controller
             'email.template', 'email.header', 'email.signoff', 'email.signature', 'email.dashboard',
             'email.google_plus_link', 'email.facebook_link', 'email.twitter_link', 'email.footer', 'email.footer_link',
             'email.color_body_bg', 'email.color_header_bg', 'email.color_content_bg', 'email.color_footer_bg',
-            'email.color_button_bg',];
+            'email.color_button_bg', ];
         $tickets_section = ['default_status_id', 'default_close_status_id', 'default_reopen_status_id', 'paginate_items'];
         $perms_section = ['agent_restrict', 'close_ticket_perm', 'reopen_ticket_perm'];
         $editor_section = ['editor_enabled', 'include_font_awesome', 'editor_html_highlighter', 'codemirror_theme',
-            'summernote_locale', 'summernote_options_json_file', 'purifier_config',];
+            'summernote_locale', 'summernote_options_json_file', 'purifier_config', ];
 
         // Split them into configurations sections for tabs
         foreach ($configurations as $config_item) {
@@ -58,21 +58,16 @@ class ConfigurationsController extends Controller
 
     /**
      * Show the form for creating a new Setting.
-     *
-     * @return Response
      */
-    public function create()
+    public function create(): View
     {
         return view('ticketit::admin.configuration.create');
     }
 
     /**
      * Store a newly created Configuration in storage.
-     *
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'slug' => 'required',
@@ -93,11 +88,8 @@ class ConfigurationsController extends Controller
 
     /**
      * Show the form for editing the specified Configuration.
-     *
-     * @param int $id
-     * @return Response
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
         $configuration = Configuration::findOrFail($id);
         $should_serialize = Setting::is_serialized($configuration->value);
@@ -109,10 +101,9 @@ class ConfigurationsController extends Controller
     /**
      * Update the specified Configuration in storage.
      *
-     * @param int $id
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $configuration = Configuration::findOrFail($id);
 
@@ -120,10 +111,10 @@ class ConfigurationsController extends Controller
 
         if ($request->serialize) {
             //if(!Hash::check($request->password, Auth::user()->password)){
-            if (!Auth::attempt($request->only('password'), false, false)) {
+            if (! Auth::attempt($request->only('password'), false, false)) {
                 return back()->withErrors([trans('ticketit::admin.config-edit-auth-failed')]);
             }
-            if (eval('$value = serialize(' . $value . ');') === false) {
+            if (eval('$value = serialize('.$value.');') === false) {
                 return back()->withErrors([trans('ticketit::admin.config-edit-eval-error')]);
             }
         }
@@ -133,7 +124,7 @@ class ConfigurationsController extends Controller
         Session::flash('configuration', trans('ticketit::lang.configuration-name-has-been-modified', ['name' => $request->name]));
         // refresh cached settings
         \Cache::forget('ticketit::settings');
-        \Cache::forget('ticketit::settings.' . $configuration->slug);
+        \Cache::forget('ticketit::settings.'.$configuration->slug);
 
         //return redirect(route('ticketit::admin.configuration.index'));
         return redirect()->action([self::class, 'index']);

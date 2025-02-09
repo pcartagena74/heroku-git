@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RSSurvey extends Model
 {
@@ -24,17 +25,17 @@ class RSSurvey extends Model
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     //protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function session()
+    public function session(): BelongsTo
     {
         return $this->belongsTo(EventSession::class, 'sessionID', 'sessionID');
     }
 
-    public function registration()
+    public function registration(): BelongsTo
     {
         return $this->belongsTo(Registration::class, 'regID', 'regID');
     }

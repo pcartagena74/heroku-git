@@ -28,10 +28,8 @@ class ImportDetailsUpdateJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->import_detail->refresh();
         $this->import_detail->completed_at = Carbon::now();

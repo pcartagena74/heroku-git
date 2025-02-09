@@ -8,6 +8,7 @@ use App\Models\Ticketit\TicketOver as Ticket;
 use Cache;
 use Carbon\Carbon;
 use Entrust;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Helpers\LaravelVersion;
@@ -161,10 +162,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Display a listing of active tickets related to user.
-     *
-     * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $complete = false;
 
@@ -173,10 +172,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Display a listing of completed tickets related to user.
-     *
-     * @return Response
      */
-    public function indexComplete()
+    public function indexComplete(): Response
     {
         $complete = true;
 
@@ -186,10 +183,8 @@ class TicketsControllerOver extends TicketController
     /**
      * Returns priorities, categories and statuses lists in this order
      * Decouple it with list().
-     *
-     * @return array
      */
-    public function PCS()
+    public function PCS(): array
     {
         // seconds expected for L5.8<=, minutes before that
         $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
@@ -215,10 +210,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Response
      */
-    public function create()
+    public function create(): Response
     {
         [$priorities, $categories] = $this->PCS();
 
@@ -227,11 +220,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Store a newly created ticket and auto assign an agent for it.
-     *
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'subject' => 'required|min:3',
@@ -266,10 +256,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * store new ticket via ajax agent auto assigned
-     *
-     * @return json
      */
-    public function storeAjax(Request $request)
+    public function storeAjax(Request $request): json
     {
         if (Agent::isAdmin() || Agent::isAgent()) {
             $validator = Validator::make($request->all(), [
@@ -336,11 +324,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
      */
-    public function show($id)
+    public function show(int $id): Response
     {
         $ticket = $this->tickets->findOrFail($id);
 
@@ -369,11 +354,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): Response
     {
         $this->validate($request, [
             'subject' => 'required|min:3',
@@ -414,11 +396,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
      */
-    public function destroy($id)
+    public function destroy(int $id): Response
     {
         $ticket = $this->tickets->findOrFail($id);
         $subject = $ticket->subject;
@@ -431,11 +410,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Mark ticket as complete.
-     *
-     * @param  int  $id
-     * @return Response
      */
-    public function complete($id)
+    public function complete(int $id): Response
     {
         if ($this->permToClose($id) == 'yes') {
             $ticket = $this->tickets->findOrFail($id);
@@ -459,11 +435,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Reopen ticket from complete status.
-     *
-     * @param  int  $id
-     * @return Response
      */
-    public function reopen($id)
+    public function reopen(int $id): Response
     {
         if ($this->permToReopen($id) == 'yes') {
             $ticket = $this->tickets->findOrFail($id);
@@ -513,10 +486,7 @@ class TicketsControllerOver extends TicketController
         return $select;
     }
 
-    /**
-     * @return bool
-     */
-    public function permToClose($id)
+    public function permToClose($id): bool
     {
         $close_ticket_perm = Setting::grab('close_ticket_perm');
 
@@ -533,10 +503,7 @@ class TicketsControllerOver extends TicketController
         return 'no';
     }
 
-    /**
-     * @return bool
-     */
-    public function permToReopen($id)
+    public function permToReopen($id): bool
     {
         $reopen_ticket_perm = Setting::grab('reopen_ticket_perm');
         if ($this->agent->isAdmin() && $reopen_ticket_perm['admin'] == 'yes') {
@@ -553,10 +520,9 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate average closing period of days per category for number of months.
      *
-     * @param  int  $period
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function monthlyPerfomance($period = 2)
+    public function monthlyPerfomance(int $period = 2)
     {
         $categories = Category::all();
         foreach ($categories as $cat) {
@@ -583,10 +549,9 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate the date length it took to solve a ticket.
      *
-     * @param  Ticket  $ticket
      * @return int|false
      */
-    public function ticketPerformance($ticket)
+    public function ticketPerformance(Ticket $ticket)
     {
         if ($ticket->completed_at == null) {
             return false;
@@ -601,11 +566,8 @@ class TicketsControllerOver extends TicketController
 
     /**
      * Calculate the average date length it took to solve tickets within date period.
-     *
-     *
-     * @return int
      */
-    public function intervalPerformance($from, $to, $cat_id = false)
+    public function intervalPerformance($from, $to, $cat_id = false): int
     {
         if ($cat_id) {
             $tickets = Ticket::where('category_id', $cat_id)->whereBetween('completed_at', [$from, $to])->get();

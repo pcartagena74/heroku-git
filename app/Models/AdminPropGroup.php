@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AdminPropGroup extends Model
 {
@@ -20,7 +21,7 @@ class AdminPropGroup extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function props()
+    public function props(): HasMany
     {
         return $this->hasMany(AdminProp::class, 'groupID');
     }

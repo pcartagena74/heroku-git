@@ -8,8 +8,10 @@ use App\Models\Org;
 use App\Models\OrgDiscount;
 use App\Models\Person;
 use App\Models\RegFinance;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class EventDiscountController extends Controller
 {
@@ -23,7 +25,7 @@ class EventDiscountController extends Controller
         // responds to /blah
     }
 
-    public function show(Event $event)
+    public function show(Event $event): View
     {
         // responds to GET /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -85,7 +87,7 @@ class EventDiscountController extends Controller
         // responds to /blah/create and shows add/edit form
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /blah and creates, adds, stores the eventDiscount
 
@@ -120,7 +122,7 @@ class EventDiscountController extends Controller
         return redirect("/eventdiscount/$event->eventID");
     }
 
-    public function fix_defaults(Event $event)
+    public function fix_defaults(Event $event): RedirectResponse
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $orgDiscounts = OrgDiscount::where([['orgID', $event->orgID],
@@ -168,7 +170,7 @@ class EventDiscountController extends Controller
         $discount->save();
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         // responds to DELETE /blah/id
         $this->currentPerson = Person::find(auth()->user()->id);

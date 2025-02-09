@@ -713,7 +713,7 @@ trait ExcelMemberImportTrait
      * @param  string  $phoneType  [home work mobile]
      * @return null
      */
-    public function insertPhone($personID, $phoneNumber, $phoneType)
+    public function insertPhone(int $personID, numeric $phoneNumber, string $phoneType)
     {
         //it has creatorID and UpdaterID user auth user id
         $this->phone_master[] = [
@@ -728,12 +728,9 @@ trait ExcelMemberImportTrait
     /**
      * create bulk insert array for email
      *
-     * @param  int  $personID
-     * @param  string  $email
-     * @param  int  $primary
      * @return [type]
      */
-    public function insertEmail($personID, $email, $primary = 0)
+    public function insertEmail(int $personID, string $email, int $primary = 0)
     {
         //it has creatorID and UpdaterID user auth user id
         $this->email_master[] = [

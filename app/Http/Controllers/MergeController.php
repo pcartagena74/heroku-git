@@ -14,8 +14,11 @@ use App\Models\Registration;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\AccountMerge;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Kordy\Ticketit\Models\Ticket;
 
 class MergeController extends Controller
@@ -47,7 +50,7 @@ class MergeController extends Controller
      *    think about potentially different merge scenarios
      * 4. Also merge the associated user records
      */
-    public function show($letter, $id1 = null, $id2 = null)
+    public function show($letter, $id1 = null, $id2 = null): View
     {
         $collection = null;
         $model1 = null;
@@ -98,7 +101,7 @@ class MergeController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector : $string
      */
-    public function getmodel(Request $request, $letter)
+    public function getmodel(Request $request, $letter): RedirectResponse
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $class = 'App\\Models\\'.$this->models[$letter];
@@ -406,17 +409,15 @@ class MergeController extends Controller
         return redirect('/merge/'.$letter.'/'.$return_model);
     }
 
-    public function index()
+    public function index(): View
     {
         return view('v1.auth_pages.organization.merge');
     }
 
     /**
      * query function - the function that drives the typeahead field search/response
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function query(Request $request)
+    public function query(Request $request): JsonResponse
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $query = $request->q;

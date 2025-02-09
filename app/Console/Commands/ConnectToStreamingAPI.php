@@ -36,10 +36,8 @@ class ConnectToStreamingAPI extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $twitter_consumer_key = env('TWITTER_CONSUMER_KEY', '');
         $twitter_consumer_secret = env('TWITTER_CONSUMER_SECRET', '');

@@ -9,10 +9,8 @@ class LocationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $stmt = "SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'";
 

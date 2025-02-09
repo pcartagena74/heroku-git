@@ -28,7 +28,7 @@ class EventRegistrationTest extends TestCase
      * @test - Member Creation Test
      *         Member defined as org-person.OrgStat1 is not null
      */
-    public function a_member_can_be_created()
+    public function a_member_can_be_created(): void
     {
         //$this->withoutExceptionHandling();
         $this->actingAs($this->user);
@@ -83,7 +83,7 @@ class EventRegistrationTest extends TestCase
      * @test - Non-Member Creation Test
      *         Non-Member defined as org-person.OrgStat1 is null
      */
-    public function a_nonmember_can_be_created()
+    public function a_nonmember_can_be_created(): void
     {
         //$this->withoutExceptionHandling();
         $this->actingAs($this->user);

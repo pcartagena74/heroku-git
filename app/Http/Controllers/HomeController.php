@@ -6,6 +6,7 @@ use Closure;
 use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
@@ -21,10 +22,8 @@ class HomeController extends Controller
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         return view('v1.public_pages.home-login');
     }
@@ -40,10 +39,8 @@ class HomeController extends Controller
      * Show application routes.
      *
      * Forbidden in production environment.
-     *
-     * @return \Illuminate\View\View
      */
-    public function showApplicationRoutes()
+    public function showApplicationRoutes(): View
     {
         /*
         if (config('app.log_level') == 'production') {
@@ -75,11 +72,8 @@ class HomeController extends Controller
 
     /**
      * Get route middleware.
-     *
-     * @param  \Illuminate\Routing\Route  $route
-     * @return string
      */
-    protected function getRouteMiddleware($route)
+    protected function getRouteMiddleware(\Illuminate\Routing\Route $route): string
     {
         return collect($route->gatherMiddleware())->map(function ($middleware) {
             return $middleware instanceof Closure ? 'Closure' : $middleware;

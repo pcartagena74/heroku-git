@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OPHistory extends Model
@@ -34,22 +36,22 @@ class OPHistory extends Model
     // The table
     protected $table = 'org-person_history';
 
-    public function myperson()
+    public function myperson(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'orgID');
     }
 
-    public function myorg()
+    public function myorg(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID');
     }
 
-    public function people()
+    public function people(): HasMany
     {
         return $this->hasMany(Person::class, 'personID');
     }
 
-    public function orgs()
+    public function orgs(): HasMany
     {
         return $this->hasMany(Org::class, 'orgID');
     }

@@ -12,6 +12,7 @@ use App\Models\Person;
 use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class EventCopyController extends Controller
 {
@@ -54,9 +55,8 @@ class EventCopyController extends Controller
      * Response to GET /eventcopy/{$slug}
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show($param)
+    public function show($param): View
     {
         $this->currentPerson = Person::find(auth()->user()->id);
 
@@ -138,10 +138,9 @@ class EventCopyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         //
     }
@@ -149,10 +148,9 @@ class EventCopyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         //
     }
@@ -160,10 +158,9 @@ class EventCopyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         //
     }

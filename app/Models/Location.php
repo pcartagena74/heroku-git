@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
@@ -25,7 +26,7 @@ class Location extends Model
 
     protected $fillable = ['locName', 'orgID'];
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
