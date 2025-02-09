@@ -157,9 +157,8 @@ Route::get('/record_attendance/{event}', [AuthCheckinController::class, 'index']
 Route::get('/show_record_attendance/{es}', [AuthCheckinController::class, 'show']);
 Route::post('/record_attendance/{event}', [AuthCheckinController::class, 'store']);
 
-Route::get('/storage/events/{filename}', function ($filename) {
-    $filePath = Flysystem::connection('awss3')->get($filename);
-
+Route::get('/storage/events/{filename}/{disk?}', function ($filename, $disk) {
+    $filePath = \Storage::disk($disk)->url($filename);
     return redirect($filePath);
 });
 

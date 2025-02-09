@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Other\ics_calendar;
 use Carbon\Carbon;
 use DateTimeInterface;
+use Exception;
+use Illuminate\Support\Facades\Storage;
 use League\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -275,14 +277,20 @@ class Event extends Model
         $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
-        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        \Storage::disk('events')->put($event_filename, $contents, 'public');
     }
 
     public function event_ics_url()
     {
-        $s3m = Flysystem::connection('s3_events');
-        $ics_file = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET1'), "event_$this->eventID.ics");
+        $ics_filename = "event_$this->eventID.ics";
 
+        try {
+            if (Storage::disk('events')->exists($ics_filename)) {
+                $ics_file = Storage::disk('events')->url($ics_filename);
+            }
+        } catch (Exception $e) {
+            $ics_file = '#';
+        }
         return $ics_file;
     }
 

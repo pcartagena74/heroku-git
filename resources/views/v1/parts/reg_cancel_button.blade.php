@@ -18,15 +18,6 @@
     $today = \Carbon\Carbon::now();
     $post_event = $today->gte($reg->event->eventEndDate);
 
-    $client = new S3Client([
-        'credentials' => [
-            'key' => env('AWS_KEY'),
-            'secret' => env('AWS_SECRET')
-        ],
-        'region' => env('AWS_REGION'),
-        'version' => 'latest',
-    ]);
-
     $rf = $reg->regfinance;
     $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
 
@@ -37,9 +28,6 @@
     } catch(Exception $e) {
         $receipt_url = '';
     }
-
-    // $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
-    // $receipt_url = $s3fs->publicUrl($receipt_filename);
 
     if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
         // currency symbol

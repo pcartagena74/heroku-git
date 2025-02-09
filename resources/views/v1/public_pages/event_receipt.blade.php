@@ -1,94 +1,90 @@
-<?php
-/**
- * Comment: Event Receipt
- * Created: 3/26/17 and updated on 10/25/2019
- *
- * Literal COPY of group_receipt.blade.php
- */
+@php
+    /**
+     * Comment: Event Receipt
+     * Created: 3/26/17 and updated on 10/25/2019
+     *
+     * Literal COPY of group_receipt.blade.php
+     * @var $rf: regFinance object
+     * @var $event: event object
+     */
 
-use App\Models\RegSession;
-use App\Models\EventSession;
-use Aws\S3\S3Client;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
-use League\Flysystem\Filesystem;
-use App\Models\Registration;
-use App\Models\Person;
-use App\Models\Ticket;
+    use App\Models\RegSession;
+    use App\Models\EventSession;
+    use League\Flysystem\Filesystem;
+    use App\Models\Registration;
+    use App\Models\Person;
+    use App\Models\Ticket;
 
-$tcount = 0;
-$today = Carbon\Carbon::now();
+    $tcount = 0;
+    $today = Carbon\Carbon::now();
 
-// For discount comparison.  Need to see if $today > ticket->earlyBirdEndDate
-// Also need to show the "Early Bird" based on whether it was true when purchased -- BUT also need catch
-// the potential continued purchases after the end (or change from At Door to credit but allowing it)
-$compareDate = $today;
+    // For discount comparison.  Need to see if $today > ticket->earlyBirdEndDate
+    // Also need to show the "Early Bird" based on whether it was true when purchased -- BUT also need catch
+    // the potential continued purchases after the end (or change from At Door to credit but allowing it)
+    $compareDate = $today;
 
-$string = '';
+    $string = '';
 
-$allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
-$allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
+    $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
+    $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-if($event->eventTypeID == 5){ // This is a regional event so do that instead
-    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
-    $array    = explode(',', $chapters->regionChapters);
-} else {
-    $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-    $array    = explode(',', $chapters->nearbyChapters);
-}
+    if($event->eventTypeID == 5){ // This is a regional event so do that instead
+        $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+        $array    = explode(',', $chapters->regionChapters);
+    } else {
+        $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+        $array    = explode(',', $chapters->nearbyChapters);
+    }
 
-$i = 0;
-foreach($array as $chap) {
-    $i++; $chap = trim($chap);
-    $affiliation_array[$i] = $chap;
-}
+    $i = 0;
+    foreach($array as $chap) {
+        $i++; $chap = trim($chap);
+        $affiliation_array[$i] = $chap;
+    }
 
-// must use $etype->etName to get the text embedded here
-$etype = DB::table('org-event_types')->where('etID', $event->eventTypeID)->select('etName')->first();
-// etName is now the value of $etype post et_translate function
-$etype = et_translate($etype->etName);
+    // must use $etype->etName to get the text embedded here
+    $etype = DB::table('org-event_types')->where('etID', $event->eventTypeID)->select('etName')->first();
+    // etName is now the value of $etype post et_translate function
+    $etype = et_translate($etype->etName);
 
-// Find out how to embed the correct TZ in front of this since not using UTC
-$est = $event->eventStartDate->format('Ymd\THis'); // $event->eventTimeZone;
-$eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
+    // Find out how to embed the correct TZ in front of this since not using UTC
+    $est = $event->eventStartDate->format('Ymd\THis'); // $event->eventTimeZone;
+    $eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
 
-$dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
+    $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
 
-$event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
-$yahoo_url =
-    "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
-$google_url =
-    "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
-$event_filename = 'event_' . $event->eventID . '.ics';
+    $event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
+    $yahoo_url =
+        "https://calendar.yahoo.com/?v=60&TITLE=$event->eventName&DESC=$org->orgName $etype&ST=$est&DUR=$dur&URL=$event_url&in_loc=$loc->locName&in_st=$loc->addr1 $loc->addr2&in_csz=$loc->city, $loc->state $loc->zip";
+    $google_url =
+        "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
+    $event_filename = 'event_' . $event->eventID . '.ics';
 
-$client = new S3Client([
-    'credentials' => [
-        'key'    => env('AWS_KEY'),
-        'secret' => env('AWS_SECRET')
-    ],
-    'region' => env('AWS_REGION'),
-    'version' => 'latest',
-]);
+    try {
+        if(Storage::disk('events')->exists($event_filename)){
+            $ics = Storage::disk('events')->url($event_filename);
+        }
+    } catch(Exception $e) {
+        $ics = '';
+    }
 
-$adapter = new AwsS3Adapter($client, env('AWS_BUCKET1'));
-$s3fs = new Filesystem($adapter);
-$ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET1'), $event_filename);
+    /* Links to share
+    http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=http://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
+    http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect_uri=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message=I+am+going+to+this+event.
+    http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru.com%2Fevents%2FAPR2017CM%2Fcode%2CY0YFBmUErN%2Ftype%2Cl%2F&title=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&summary=I+am+going+to+this+event&source=MyEventGuru
+    an email url to a form
+    */
 
-/* Links to share
-http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=http://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
-http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect_uri=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link=http://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message=I+am+going+to+this+event.
-http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.myeventguru.com%2Fevents%2FAPR2017CM%2Fcode%2CY0YFBmUErN%2Ftype%2Cl%2F&title=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&summary=I+am+going+to+this+event&source=MyEventGuru
-an email url to a form
-*/
+    $header = trans('messages.headers.reg') . " ";
+    if($rf->pmtRecd){
+        $header .= trans('messages.headers.receipt');
+    } else {
+        $header .= trans('messages.headers.invoice');
+    }
+    // To track whether there were any parts of the registration canceled/refunded
+    $deletion = 0;
+@endphp
 
-$header = trans('messages.headers.reg') . " ";
-if($rf->pmtRecd){
-    $header .= trans('messages.headers.receipt');
-} else {
-    $header .= trans('messages.headers.invoice');
-}
-// To track whether there were any parts of the registration canceled/refunded
-$deletion = 0;
-?>
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
@@ -110,7 +106,7 @@ $deletion = 0;
                     {{ $loc->addr1 }} <i class="fas fa-circle fa-xs"></i> {{ $loc->city }},
                     {{ $loc->state }} {{ $loc->zip }}
                 </div>
-                <br />
+                <br/>
                 <b style="color:red;">@lang('messages.headers.purchased'): </b> {{ $rf->createDate->format('n/j/Y') }}
                 <b style="color:red;">@lang('messages.headers.at') </b> {{ $rf->createDate->format('g:i A') }}
                 @if($rf->cost > 0 && $rf->pmtRecd == 0)
@@ -122,11 +118,11 @@ $deletion = 0;
         </div>
 
         @foreach($rf->registrations as $reg)
-            <?php
-            $tcount++;
-            $person = Person::find($reg->personID);
-            $ticket = Ticket::find($reg->ticketID);
-            ?>
+            @php
+                $tcount++;
+                $person = Person::find($reg->personID);
+                $ticket = Ticket::find($reg->ticketID);
+            @endphp
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">
                     @if($reg->deleted_at)
@@ -182,7 +178,8 @@ $deletion = 0;
 
                             @if(($ticket->earlyBirdEndDate !== null) && $ticket->earlyBirdEndDate->gt($compareDate))
                                 @if($reg->discountCode)
-                                    <td style="text-align: left;">@lang('messages.headers.earlybird'), {{ $reg->discountCode }}</td>
+                                    <td style="text-align: left;">@lang('messages.headers.earlybird')
+                                        , {{ $reg->discountCode }}</td>
                                 @else
                                     <td style="text-align: left;">@lang('messages.headers.earlybird')</td>
                                 @endif
@@ -198,8 +195,10 @@ $deletion = 0;
                             </td>
                         </tr>
                         <tr>
-                            <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.att_info')</th>
-                            <th colspan="2" style="width: 50%; text-align: left;">@lang('messages.headers.event_info')</th>
+                            <th colspan="2"
+                                style="width: 50%; text-align: left;">@lang('messages.headers.att_info')</th>
+                            <th colspan="2"
+                                style="width: 50%; text-align: left;">@lang('messages.headers.event_info')</th>
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align: left;">
@@ -218,11 +217,11 @@ $deletion = 0;
                                     {{ $person->suffix }}
                                 @endif
                                 <nobr>[ {{ $person->login }} ]</nobr>
-                                    @if($person->orgperson->OrgStat1)
-                                        <br />
-                                        {{ $org->OSN1 }}: {{ $person->orgperson->OrgStat1 }}
-                                    @endif
-                                <br />
+                                @if($person->orgperson->OrgStat1)
+                                    <br/>
+                                    {{ $org->OSN1 }}: {{ $person->orgperson->OrgStat1 }}
+                                @endif
+                                <br/>
                                 @if($person->compName)
                                     @if($person->title)
                                         {{ $person->title }}
@@ -238,28 +237,29 @@ $deletion = 0;
                                     @endif
                                 @endif
                                 @if($person->indName !== null)
-                                    @lang('messages.headers.inthe') {{ $person->indName }} @lang('messages.headers.ind') <br />
+                                    @lang('messages.headers.inthe') {{ $person->indName }} @lang('messages.headers.ind')
+                                    <br/>
                                 @endif
 
                                 @if($person->affiliation)
-                                    <br />@lang('messages.headers.aff_with'): {{ $person->affiliation }}
+                                    <br/>@lang('messages.headers.aff_with'): {{ $person->affiliation }}
                                 @endif
                             </td>
                             <td colspan="2" style="text-align: left;">
 
                                 <b>@lang('messages.headers.roster_add'):</b> {{ $reg->canNetwork
                                                                             ? trans('messages.yesno_check.yes')
-                                                                            : trans('messages.yesno_check.no') }}<br />
+                                                                            : trans('messages.yesno_check.no') }}<br/>
 
-                                <b>@lang('messages.headers.certs'):</b>: {{ $person->certifications }} <br />
+                                <b>@lang('messages.headers.certs'):</b>: {{ $person->certifications }} <br/>
 
                                 <b>@lang('messages.fields.pdu_sub'):</b> {{ $reg->isAuthPDU
                                                                             ? trans('messages.yesno_check.yes')
-                                                                            : trans('messages.yesno_check.no') }}<br />
+                                                                            : trans('messages.yesno_check.no') }}<br/>
                                 @if($reg->allergenInfo)
-                                    <b>@lang('messages.fields.diet_info'):</b> {{ $reg->allergenInfo }}<br />
+                                    <b>@lang('messages.fields.diet_info'):</b> {{ $reg->allergenInfo }}<br/>
                                     @if($reg->eventNotes)
-                                        {{ $reg->eventNotes }}<br />
+                                        {{ $reg->eventNotes }}<br/>
                                     @endif
                                 @endif
                             </td>
@@ -281,7 +281,8 @@ $deletion = 0;
             </div>
             <div class="col-md-7 col-sm-7">
                 @if($deletion)
-                    <p class="red"><b>@lang('messages.headers.note'):</b> @lang('messages.instructions.total_caveat') </p>
+                    <p class="red"><b>@lang('messages.headers.note'):</b> @lang('messages.instructions.total_caveat')
+                    </p>
                 @else
                     &nbsp;
                 @endif

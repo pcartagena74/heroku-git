@@ -26,17 +26,6 @@
     $tcount = 0;
     $today = \Carbon\Carbon::now();
 
-    $client = new S3Client([
-        'credentials' => [
-            'key' => env('AWS_KEY'),
-            'secret' => env('AWS_SECRET')
-        ],
-        'region' => env('AWS_REGION'),
-        'version' => 'latest',
-    ]);
-
-    $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-    $s3fs = new Filesystem($adapter);
 @endphp
 
 @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
@@ -60,7 +49,14 @@
                     $mem_or_not = Lang::has('messages.fields.'.$reg->membership) ? trans('messages.fields.'.$reg->membership) : $reg->membership;
                     $rf    = RegFinance::where('regID', $reg->rfID)->first();
                     $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
-                    $receipt_url = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+
+                    try {
+                        if(Storage::disk('s3_receipts')->exists($receipt_filename)){
+                            $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+                        }
+                    } catch (Exception $e) {
+                            $receipt_url = '#';
+                    }
                 @endphp
                 @include('v1.parts.start_min_content', ['header' => $mem_or_not .  " " . trans('messages.fields.ticket') . " (" .  $person->showFullName() .
                  "): " . $reg->ticket->ticketLabel . " (" . $reg->regID . '-' . $reg->ticket->ticketID . ")", 'subheader' => trans('messages.symbols.cur') .

@@ -13,7 +13,7 @@
     use App\Models\RegSession;
     use App\Models\EventSession;
     use Aws\S3\S3Client;
-    use League\Flysystem\AwsS3v3\AwsS3Adapter;
+    use League\Flysystem\AwsS3v3\AwsS3V3Adapter;
     use League\Flysystem\Filesystem;
     use App\Models\Registration;
     use App\Models\Person;
@@ -62,19 +62,13 @@
         "https://www.google.com/calendar/event?action=TEMPLATE&text=$org->orgName $etype->etName&dates=$est/$eet&name=$event->eventName&details=$event_url&location=$loc->locName $loc->addr1 $loc->addr2 $loc->city, $loc->state $loc->zip";
     $event_filename = 'event_' . $event->eventID . '.ics';
 
-    $client = new S3Client([
-        'credentials' => [
-            'key'    => env('AWS_KEY'),
-            'secret' => env('AWS_SECRET')
-        ],
-        'region' => env('AWS_REGION'),
-        'version' => 'latest',
-    ]);
-
-    $adapter = new AwsS3Adapter($client, env('AWS_BUCKET1'));
-    $s3fs = new Filesystem($adapter);
-    $ics = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET1'), $event_filename);
-
+    try {
+        if(Storage::disk('events')->exists($event_filename)){
+            $ics = Storage::disk('events')->url($event_filename);
+        }
+    } catch(Exception $e) {
+        $ics = '';
+    }
     /* Links to share
     http://twitter.com/share?text=I%20am%20going%20to%20this%20event%20April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&url=https://www.myeventguru.com/events/APR2017CM/code,qqu6IrJoPg/type,t/&via=myeventguru
     http://www.facebook.com/dialog/feed?app_id=138870902790834&redirect_uri=https://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&link=https://www.myeventguru.com/events/APR2017CM/code,SjlMpA8qoY/type,f/&description=April+2017+Chapter+Meeting+-+Leading+projects+in+the+digital+age&message=I+am+going+to+this+event.
@@ -134,9 +128,9 @@
 
         @foreach($rf->registrations as $reg)
             @php
-            $tcount++;
-            $person = Person::find($reg->personID);
-            $ticket = Ticket::find($reg->ticketID);
+                $tcount++;
+                $person = Person::find($reg->personID);
+                $ticket = Ticket::find($reg->ticketID);
             @endphp
             <div class="myrow col-md-12 col-sm-12">
                 <div class="col-md-2 col-sm-2" style="text-align:center;">

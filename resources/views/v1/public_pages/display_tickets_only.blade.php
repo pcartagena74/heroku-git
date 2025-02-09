@@ -23,22 +23,19 @@ $category = DB::table('event-category')->where([
 // Early Bird-ism
 // 1. Get today's date
 // 2. Compare to early bird dates per ticket
-// 3. Calculate new pri
+// 3. Calculate new price
 
 $today = Carbon\Carbon::now();
 
-$client = new S3Client([
-    'credentials' => [
-        'key' => env('AWS_KEY'),
-        'secret' => env('AWS_SECRET')
-    ],
-    'region' => env('AWS_REGION'),
-    'version' => 'latest',
-]);
+$logo_filename = $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo;
 
-$adapter = new AwsS3Adapter($client, env('AWS_BUCKET3'));
-$s3fs = new Filesystem($adapter);
-$logo = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET3'), $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo);
+try {
+    if (Storage::disk('s3_media')->exists($logo_filename)) {
+        $logo = Storage::disk('s3_media')->url($logo_filename);
+    }
+} catch (Exception $e) {
+    $logo = '#';
+}
 ?>
 @extends('v1.layouts.no-auth_no-nav_simple')
 

@@ -1,45 +1,50 @@
-<?php
-/**
- * Comment: a No-Auth way to mark session attendance
- * Created: 7/5/2017
- *
- * Consider the following:
- *  - what if the sessionID is somehow incorrect... show options?
- *
- */
+@php
+    /**
+     * Comment: a No-Auth way to mark session attendance
+     * Created: 7/5/2017
+     *
+     * Consider the following:
+     *  - what if the sessionID is somehow incorrect... show options?
+     *
+     * @var $org: Org object
+     * @var $person: Person object
+     */
 
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+    use League\Flysystem;
 
-$logo = '';
-try {
-    if ($org->orgLogo !== null) {
-        $s3m = Flysystem::connection('s3_media');
-        $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
-    }
-} catch (\League\Flysystem\Exception $exception) {
     $logo = '';
-}
+    $logo_filename = $org->orgPath . "/" . $org->orgLogo;
 
-if($person){
-    $person->user->password === null ? $set_pass = 1: $set_pass = 0;
-
-    if(count($person->emails) > 0){
-        $x = '';
-        foreach($person->emails as $e){
-            $x .= "<li>$e->emailADDR</li>";
+    try {
+        if ($org->orgLogo !== null) {
+            if (Storage::disk('s3_media')->exists($logo_filename)) {
+                $logo = Storage::disk('s3_media')->url($logo_filename);
+            }
         }
-        $email_list = trans('messages.instructions.pmi_emails', ['emails' => $x, 'pmiID' => $person->orgperson->OrgStat1, 'admin_email' => $org->adminEmail]);
+    } catch (Exception $e) {
+        $logo = '';
     }
-}
+    if($person){
+        $person->user->password === null ? $set_pass = 1: $set_pass = 0;
 
-?>
+        if(count($person->emails) > 0){
+            $x = '';
+            foreach($person->emails as $e){
+                $x .= "<li>$e->emailADDR</li>";
+            }
+            $email_list = trans('messages.instructions.pmi_emails', ['emails' => $x, 'pmiID' => $person->orgperson->OrgStat1, 'admin_email' => $org->adminEmail]);
+        }
+    }
+
+@endphp
+
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
     @include('v1.parts.start_content', ['header' => trans('messages.headers.acc_lookup'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @if($logo)
-        <img src="{{ $logo }}" height="50">
+        <img src="{{ $logo }}" height="50" alt="logo">
     @endif
 
     <p>&nbsp;</p>
@@ -74,6 +79,5 @@ if($person){
         {!! Form::close() !!}
     @endif
     @include('v1.parts.end_content')
-
 
 @endsection

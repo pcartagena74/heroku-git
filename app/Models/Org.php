@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Exception;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Org extends Model
 {
@@ -59,17 +61,23 @@ class Org extends Model
 
     public function logo_path()
     {
-        $s3m = Flysystem::connection('s3_media');
-        $logopath = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $this->orgPath.'/'.$this->orgLogo);
+        $logo_filename = $this->orgPath . '/' . $this->orgLogo;
 
+        try {
+            if (Storage::disk('s3_media')->exists($logo_filename)) {
+                $logopath = Storage::disk('s3_media')->url($logo_filename);
+            }
+        } catch (Exception $e) {
+            $logopath = '#';
+        }
         return $logopath;
     }
 
     public function org_URL()
     {
         $u = $this->orgURL;
-        if (! preg_match('#^https?://#', $u)) {
-            $u = 'http://'.$u;
+        if (!preg_match('#^https?://#', $u)) {
+            $u = 'http://' . $u;
         }
 
         return $u;

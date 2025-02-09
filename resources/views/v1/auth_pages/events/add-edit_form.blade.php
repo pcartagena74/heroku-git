@@ -31,6 +31,7 @@
         $eventEndDate = date($dateFormat, strtotime(old('eventEndDate')));
         $event          = new Event;
         $exLoc          = new Location;
+        $session        = new EventSession;
     } else {
         $event          = new Event;
         $exLoc          = new Location;
