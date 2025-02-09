@@ -19,6 +19,7 @@
     use App\Models\Ticket;
 
     $tcount = 0;
+    $ics = '';
     $today = Carbon\Carbon::now();
 
     // For discount comparison.  Need to see if $today > ticket->earlyBirdEndDate
