@@ -6,11 +6,9 @@ use App\Other\ics_calendar;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Exception;
-use Illuminate\Support\Facades\Storage;
-use League\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use League\Flysystem\AdapterInterface;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -274,7 +272,7 @@ class Event extends Model
     public function create_or_update_event_ics(): void
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_' . $this->eventID . '.ics';
+        $event_filename = 'event_'.$this->eventID.'.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         \Storage::disk('events')->put($event_filename, $contents, 'public');
@@ -291,15 +289,16 @@ class Event extends Model
         } catch (Exception $e) {
             $ics_file = '#';
         }
+
         return $ics_file;
     }
 
     public function event_url(): string
     {
         if ($this->slug) {
-            return '/events/' . $this->slug;
+            return '/events/'.$this->slug;
         } else {
-            return '/events/' . $this->eventID;
+            return '/events/'.$this->eventID;
         }
     }
 

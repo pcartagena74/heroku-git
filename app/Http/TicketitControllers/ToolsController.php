@@ -12,8 +12,8 @@ class ToolsController extends Controller
      * Sorting array of associative arrays - multiple row sorting using a closure.
      * See also: http://the-art-of-web.com/php/sortarray/.
      *
-     * @param array $data input-array
-     * @param string $type
+     * @param  array  $data  input-array
+     * @param  string  $type
      * @return array
      *
      * @internal param array|string $fields array-keys

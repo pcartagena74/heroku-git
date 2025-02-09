@@ -126,9 +126,9 @@ class Person extends Model
     public function showFullName()
     {
         if ($this->prefName) {
-            return $this->prefName . ' ' . $this->lastName;
+            return $this->prefName.' '.$this->lastName;
         } else {
-            return $this->firstName . ' ' . $this->lastName;
+            return $this->firstName.' '.$this->lastName;
         }
     }
 
@@ -166,7 +166,7 @@ class Person extends Model
     {
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
-        if (!$this->roles->contains('id', $speaker_role)) {
+        if (! $this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role, ['org_id' => $this->defaultOrgID]);
         }
         /*

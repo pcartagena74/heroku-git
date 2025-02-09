@@ -6,16 +6,15 @@
  * @var $admin_route_path
  */
 
-use Kordy\Ticketit\Controllers;
-use Kordy\Ticketit\Controllers\StatusesController;
-use Kordy\Ticketit\Controllers\TicketsController;
-use Kordy\Ticketit\Controllers\DashboardController;
-use Kordy\Ticketit\Controllers\PrioritiesController;
-use Kordy\Ticketit\Controllers\CategoriesController;
-use Kordy\Ticketit\Controllers\ConfigurationsController;
+use Illuminate\Support\Facades\Route;
 use Kordy\Ticketit\Controllers\AdministratorsController;
 use Kordy\Ticketit\Controllers\AgentsController;
-use Illuminate\Support\Facades\Route;
+use Kordy\Ticketit\Controllers\CategoriesController;
+use Kordy\Ticketit\Controllers\ConfigurationsController;
+use Kordy\Ticketit\Controllers\DashboardController;
+use Kordy\Ticketit\Controllers\PrioritiesController;
+use Kordy\Ticketit\Controllers\StatusesController;
+use Kordy\Ticketit\Controllers\TicketsController;
 
 Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddleware()],
     function () use ($main_route, $main_route_path, $admin_route, $admin_route_path) {
@@ -41,13 +40,13 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
 
         Route::resource($main_route_path, $new_tickets_path)
             ->names([
-                'index' => $main_route . '.index',
-                'store' => $main_route . '.store',
-                'create' => $main_route . '.create',
-                'update' => $main_route . '.update',
-                'show' => $main_route . '.show',
-                'destroy' => $main_route . '.destroy',
-                'edit' => $main_route . '.edit',
+                'index' => $main_route.'.index',
+                'store' => $main_route.'.store',
+                'create' => $main_route.'.create',
+                'update' => $main_route.'.update',
+                'show' => $main_route.'.show',
+                'destroy' => $main_route.'.destroy',
+                'edit' => $main_route.'.edit',
             ])->parameters([
                 $field_name => 'ticket',
             ]);
@@ -81,15 +80,15 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
 
             //API return list of agents in particular category
             Route::get("$main_route_path/agents/list/{category_id?}/{ticket_id?}", [
-                'as' => $main_route . 'agentselectlist',
-                'uses' => $new_tickets_path . '@agentSelectList',
+                'as' => $main_route.'agentselectlist',
+                'uses' => $new_tickets_path.'@agentSelectList',
             ]);
         });
 
         Route::group(['middleware' => \App\Http\Middleware\Ticketit\IsAdminMiddlewareOver::class], function () use ($admin_route, $admin_route_path) {
             //Ticket admin index route (ex. http://url/tickets-admin/)
             Route::get("$admin_route_path/indicator/{indicator_period?}", [
-                'as' => $admin_route . '.dashboard.indicator',
+                'as' => $admin_route.'.dashboard.indicator',
                 'uses' => [DashboardController::class, 'index'],
             ]);
             Route::get($admin_route_path, [DashboardController::class, 'index']);

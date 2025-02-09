@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Exception;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -59,6 +58,7 @@ class RegFinance extends Model
         } catch (Exception $e) {
             $receipt_url = '#';
         }
+
         return $receipt_url;
     }
 }
