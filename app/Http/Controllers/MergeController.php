@@ -416,8 +416,6 @@ class MergeController extends Controller
 
     /**
      * query function - the function that drives the typeahead field search/response
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function query(Request $request): JsonResponse
     {

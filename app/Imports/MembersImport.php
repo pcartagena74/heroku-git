@@ -56,7 +56,6 @@ class MembersImport implements ShouldQueue, SkipsOnFailure, ToCollection, WithCh
     /**
      * @param  Collection  $rows
      *                            Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
-     * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function collection(Collection $rows): ?Model
     {

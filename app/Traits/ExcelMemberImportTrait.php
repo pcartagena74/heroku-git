@@ -728,9 +728,6 @@ trait ExcelMemberImportTrait
     /**
      * create bulk insert array for email
      *
-     * @param  int  $personID
-     * @param  string  $email
-     * @param  int  $primary
      * @return [type]
      */
     public function insertEmail(int $personID, string $email, int $primary = 0)

@@ -147,8 +147,6 @@ class InstallControllerOver extends Controller
 
     /**
      * Run the settings table seeder.
-     *
-     * @param  string  $master
      */
     public function settingsSeeder(string $master = false)
     {
@@ -277,8 +275,6 @@ class InstallControllerOver extends Controller
 
     /**
      * Generate demo users, agents, and tickets.
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function demoDataSeeder(): RedirectResponse
     {

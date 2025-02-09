@@ -17,8 +17,6 @@ class AgentOver extends User
     /**
      * list of all agents and returning collection.
      *
-     * @param  bool  $paginate
-     * @return bool
      *
      * @internal param int $cat_id
      */
@@ -37,8 +35,6 @@ class AgentOver extends User
     /**
      * list of all admins and returning collection.
      *
-     * @param  bool  $paginate
-     * @return bool
      *
      * @internal param int $cat_id
      */
@@ -57,8 +53,6 @@ class AgentOver extends User
     /**
      * list of all agents and returning collection.
      *
-     * @param  bool  $paginate
-     * @return bool
      *
      * @internal param int $cat_id
      */
@@ -75,7 +69,6 @@ class AgentOver extends User
      * list of all agents and returning lists array of id and name.
      *
      *
-     * @return bool
      *
      * @internal param int $cat_id
      */
@@ -91,8 +84,6 @@ class AgentOver extends User
 
     /**
      * Check if user is agent.
-     *
-     * @return bool
      */
     public static function isAgent($id = null): bool
     {
@@ -127,8 +118,6 @@ class AgentOver extends User
 
     /**
      * Check if user is admin.
-     *
-     * @return bool
      */
     public static function isAdmin(): bool
     {
@@ -139,7 +128,6 @@ class AgentOver extends User
      * Check if user is the assigned agent for a ticket.
      *
      * @param  int  $id  ticket id
-     * @return bool
      */
     public static function isAssignedAgent(int $id): bool
     {
@@ -152,7 +140,6 @@ class AgentOver extends User
      * Check if user is the owner for a ticket.
      *
      * @param  int  $id  ticket id
-     * @return bool
      */
     public static function isTicketOwner(int $id): bool
     {
@@ -164,8 +151,6 @@ class AgentOver extends User
 
     /**
      * Get related categories.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function categories(): BelongsToMany
     {
@@ -186,8 +171,6 @@ class AgentOver extends User
 
     /**
      * Get related user tickets (To be deprecated).
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function userTickets($complete = false): HasMany
     {
@@ -282,7 +265,6 @@ class AgentOver extends User
     /**
      * check if given user is a developer
      *
-     * @param  int  $user_id
      * @return bool true/false
      */
     protected static function checkUserIsDeveloper(int $user_id): bool

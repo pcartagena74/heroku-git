@@ -55,7 +55,6 @@ class EventCopyController extends Controller
      * Response to GET /eventcopy/{$slug}
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($param): View
     {
@@ -139,7 +138,6 @@ class EventCopyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(int $id)
@@ -150,7 +148,6 @@ class EventCopyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, int $id)
@@ -161,7 +158,6 @@ class EventCopyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(int $id)
