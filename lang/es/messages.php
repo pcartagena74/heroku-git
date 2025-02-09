@@ -1244,7 +1244,7 @@ return [
         'canceled' => 'es-Canceled',
         'disc_exempt' => 'es-This ticket cannot be discounted.',
         'door' => 'es-At Door',
-        'mail_broken' => 'Email no funciona en este momento.  :org le enviará un recibo por correo electrónico. Véalo ahora yendo a: <a style="color:yellow;" href="' . env('APP_URL') . ' / upcoming">Mi Configuración -> Mis Eventos Futuro</a>.',
+        'mail_broken' => 'Email no funciona en este momento.  :org no le enviará un recibo por correo electrónico. Véalo ahora yendo a: <a style="color:yellow;" href="' . env('APP_URL') . ' / upcoming">Mi Configuración -> Mis Eventos Futuro</a>.',
         'free' => 'Sin cargo',
         'inactive' => 'Inactivo',
         'msg_status' => 'El registro con id: :id ha sido :verb',

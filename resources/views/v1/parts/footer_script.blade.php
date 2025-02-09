@@ -1,9 +1,9 @@
-<?php
-/**
- * Comment: Standard javascript/jquery inclusion
- * Created: 2/2/2017
- */
-?>
+@php
+    /**
+     * Comment: Standard javascript/jquery inclusion
+     * Created: 2/2/2017
+     */
+@endphp
 {{--
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/js/jquery.tabledit.min.js"></script>
