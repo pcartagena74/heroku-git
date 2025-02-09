@@ -20,10 +20,13 @@ class Phone extends Model
 
     const CREATED_AT = 'createDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function person(): BelongsTo
     {

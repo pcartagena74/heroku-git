@@ -22,13 +22,16 @@ class Campaign extends Model
 
     protected $primaryKey = 'campaignID';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'sendDate' => 'datetime',
-    ];
-
     protected $with = ['template_blocks'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'sendDate' => 'datetime',
+        ];
+    }
 
     public function org(): BelongsTo
     {

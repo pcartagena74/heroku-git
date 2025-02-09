@@ -23,16 +23,19 @@ class PersonStaging extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'lastLoginDate' => 'datetime',
-    ];
-
     //protected static $logAttributes = ['prefName', 'login', 'defaultOrgID', 'title', 'compName', 'indName', 'allergenInfo', 'affiliation'];
     //protected static $ignoreChangedAttributes = ['createDate'];
 
     protected $hidden = ['remember_token'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'lastLoginDate' => 'datetime',
+        ];
+    }
 
     public function emails(): HasMany
     {
