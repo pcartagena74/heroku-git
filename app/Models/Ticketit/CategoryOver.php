@@ -2,8 +2,8 @@
 
 namespace App\Models\Ticketit;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Kordy\Ticketit\Models\Category as Model;
 
 class CategoryOver extends Model

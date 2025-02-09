@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
 use App\Models\Event;
 use App\Models\EventDiscount;
 use App\Models\EventSession;
@@ -13,6 +12,7 @@ use App\Models\Person;
 use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class EventCopyController extends Controller
 {

@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\OrgPerson;
@@ -12,6 +11,7 @@ use App\Models\User;
 use App\Traits\ExcelMemberImportTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\Importable;

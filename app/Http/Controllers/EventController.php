@@ -6,9 +6,6 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use Illuminate\Http\Response;
 use App\Models\Event;
 use App\Models\EventDiscount;
 use App\Models\EventSession;
@@ -23,10 +20,13 @@ use App\Other\ics_cal_full;
 use App\Other\ics_calendar;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\View\View;
 use Spatie\Referer\Referer;
 
 class EventController extends Controller

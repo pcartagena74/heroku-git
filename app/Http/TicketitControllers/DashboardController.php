@@ -2,11 +2,11 @@
 
 namespace App\Http\TicketitControllers;
 
-use Illuminate\View\View;
 use App\Http\Controllers\Controller;
-//use Kordy\Ticketit\Models\Agent;
 use App\Models\Ticketit\AgentOver as Agent;
+//use Kordy\Ticketit\Models\Agent;
 use App\Models\Ticketit\TicketOver as Ticket;
+use Illuminate\View\View;
 //use Kordy\Ticketit\Models\Ticket;
 use Kordy\Ticketit\Models\Category;
 

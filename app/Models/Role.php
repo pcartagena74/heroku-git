@@ -6,8 +6,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Entrust\EntrustRoleOver as EntrustRole;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
 
