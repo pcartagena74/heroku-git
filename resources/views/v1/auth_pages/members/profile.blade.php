@@ -840,7 +840,7 @@
                     $('#' + x).show();
                     $('#addrTYPE-' + i).required = true;
                     $('#addr1-' + i).required = true;
-                    $('#addr2-' + i).required = true;
+                    $('#addr2-' + i).required = false;
                     $('#city-' + i).required = true;
                     $('#state-' + i).required = true;
                     $('#zip-' + i).required = true;
@@ -1048,7 +1048,7 @@
                                                class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}>
                                         <input name='addr2-{{ $n }}' type='text'
                                                placeholder='{{ trans('messages.profile.addr2') }}'
-                                               class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
+                                               class='form-control input-sm'{!! $n == 1 ? " " : "" !!}></td>
                                     <td><input name='city-{{ $n }}' type='text'
                                                placeholder='{{ trans('messages.profile.city') }}'
                                                class='form-control input-sm'{!! $n == 1 ? " required" : "" !!}></td>
