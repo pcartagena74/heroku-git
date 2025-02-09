@@ -5,7 +5,11 @@ namespace App\Providers;
 use App\Models\RegFinance;
 use App\Models\Registration;
 use App\Models\TwitterStream;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL as URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
@@ -14,6 +18,15 @@ use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * The path to your application's "home" route.
+     *
+     * Typically, users are redirected here after authentication.
+     *
+     * @var string
+     */
+    public const HOME = '/home';
+
     /**
      * Bootstrap any application services.
      */
@@ -35,6 +48,8 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('trans_choice', function ($expression) {
             return "<?php trans_choice({$expression}); ?>";
         });
+
+        $this->bootRoute();
     }
 
     /**
@@ -79,5 +94,14 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('local', 'test', 'queue')) {
             $this->app->register(\App\Providers\TelescopeServiceProvider::class);
         }
+    }
+
+    public function bootRoute(): void
+    {
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+
     }
 }

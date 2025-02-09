@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Providers\AppServiceProvider;
 use App;
 use Closure;
 use Config;
@@ -29,7 +30,7 @@ class Locale
                 $locale = Auth::user()->locale;
                 session(['locale' => $locale]);
             }
-            // return redirect(RouteServiceProvider::HOME);
+            // return redirect(AppServiceProvider::HOME);
         } else {
             $locale = Cookie::get('locale');
             if (! empty($locale)) {
