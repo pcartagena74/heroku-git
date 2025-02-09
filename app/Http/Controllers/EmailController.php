@@ -91,15 +91,15 @@ class EmailController extends Controller
     {
         $e = Email::where('emailADDR', '=', $email)->first();
 
-        if (null !== $e) {
+        if ($e !== null) {
             $u = User::where('id', '=', $e->personID)->first();
             $p = Person::with('orgperson')->where('personID', '=', $e->personID)->first();
-            if (null === $p->orgperson) {
+            if ($p->orgperson === null) {
                 $p->load('orgperson');
             }
 
             return json_encode(['status' => 'success', 'p' => $p, 'pass' => $u->password ? 1 : 0,
-                               'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()]), ]);
+                'msg' => trans('messages.modals.confirm', ['fullname' => $p->showFullName()]), ]);
         } else {
             return json_encode(['status' => 'error', 'p' => null, 'e' => $e, 'email' => $email]);
         }

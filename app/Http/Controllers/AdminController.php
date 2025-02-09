@@ -4,21 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminProp;
 use App\Models\AdminPropGroup;
-use App\Models\Email;
-use App\Models\Org;
 use App\Models\OrgAdminProp;
-use App\Models\OrgPerson;
-use App\Models\Permission;
-use App\Models\PermissionRole;
 use App\Models\Person;
-use App\Models\Role;
-use App\Models\User;
-use App\Notifications\NewUserAcct;
-use DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash as Hash;
 use Response;
-use Validator;
 
 class AdminController extends Controller
 {
@@ -65,7 +54,7 @@ class AdminController extends Controller
         $groups = AdminPropGroup::whereIn('id', $group_list)->get();
 
         return Response::view('v1.auth_pages.admin.panel',
-                compact('currentPerson', 'currentOrg', 'prop_list', 'groups', 'admin_props', 'admin_props_json'))
+            compact('currentPerson', 'currentOrg', 'prop_list', 'groups', 'admin_props', 'admin_props_json'))
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -74,14 +63,11 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -92,7 +78,7 @@ class AdminController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -103,7 +89,7 @@ class AdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -114,8 +100,7 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      *
      * POST /panel/update (Axios submitted)
@@ -153,7 +138,7 @@ class AdminController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

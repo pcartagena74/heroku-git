@@ -12,9 +12,7 @@ class IsAdminMiddlewareOver extends IsAdminMiddleware
     /**
      * Run the request filter.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)

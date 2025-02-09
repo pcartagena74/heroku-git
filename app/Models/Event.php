@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\EventSession;
-use App\Models\Person;
 use App\Other\ics_calendar;
 use Carbon\Carbon;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+use DateTimeInterface;
+use Exception;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use League\Flysystem\AdapterInterface;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
-use DateTimeInterface;
 
 class Event extends Model
 {
@@ -21,8 +21,11 @@ class Event extends Model
 
     // The table
     protected $table = 'org-event';
+
     protected $primaryKey = 'eventID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
 
     protected $casts = [
@@ -37,9 +40,12 @@ class Event extends Model
     protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
 
     protected static $logOnlyDirty = true;
+
     protected static $submitEmptyLogs = false;
+
     protected static $logAttributes = ['eventName', 'locationID', 'isActive', 'slug', 'hasTracks',
         'eventStartDate', 'eventEndDate'];
+
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
 
     protected function serializeDate(DateTimeInterface $date)
@@ -125,7 +131,7 @@ class Event extends Model
         }
     }
 
-    public function ok_to_display()
+    public function ok_to_display(): int
     {
         if ($this->isActive) {
             return 1;
@@ -139,7 +145,7 @@ class Event extends Model
      *
      * @return bool
      */
-    public function checkin_time()
+    public function checkin_time(): bool|int
     {
         $today = Carbon::now();
         if (($this->eventStartDate->diffInDays($today) <= 1
@@ -157,7 +163,7 @@ class Event extends Model
      *
      * @return bool
      */
-    public function checkin_period()
+    public function checkin_period(): bool|int
     {
         $today = Carbon::now();
         if ($this->orgID > 0) {
@@ -265,29 +271,40 @@ class Event extends Model
         return $out;
     }
 
-    public function create_or_update_event_ics()
+    public function create_or_update_event_ics(): void
     {
         // Make the event_{id}.ics file if it doesn't exist
         $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
-        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        \Storage::disk('events')->put($event_filename, $contents, 'public');
     }
 
     public function event_ics_url()
     {
-        $s3m = Flysystem::connection('s3_events');
-        $ics_file = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET1'), "event_$this->eventID.ics");
+        $ics_filename = "event_$this->eventID.ics";
 
+        try {
+            if (Storage::disk('events')->exists($ics_filename)) {
+                $ics_file = Storage::disk('events')->url($ics_filename);
+            }
+        } catch (Exception $e) {
+            $ics_file = '#';
+        }
         return $ics_file;
     }
 
-    public function event_url()
+    public function event_url(): string
     {
         if ($this->slug) {
-            return "/events/" . $this->slug;
+            return '/events/' . $this->slug;
         } else {
-            return "/events/" . $this->eventID;
+            return '/events/' . $this->eventID;
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }

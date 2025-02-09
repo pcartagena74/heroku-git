@@ -4,18 +4,10 @@
 
 namespace Database\Factories\App\Models;
 
-use App\Models\Person;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PersonFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Person::class;
-
     /**
      * Define the model's default state.
      *
@@ -24,10 +16,10 @@ class PersonFactory extends Factory
     public function definition()
     {
         return [
-            'firstName' => $this->faker->firstName,
-            'lastName' => $this->faker->lastName,
-            'login' => $this->faker->unique()->safeEmail,
-            'prefName' => $this->faker->firstName,
+            'firstName' => $this->faker->firstName(),
+            'lastName' => $this->faker->lastName(),
+            'login' => $this->faker->unique()->safeEmail(),
+            'prefName' => $this->faker->firstName(),
         ];
     }
 }

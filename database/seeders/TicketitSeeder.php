@@ -11,29 +11,32 @@ class TicketitSeeder extends Seeder
     public $config = [];
 
     public $update_setting = [
-        'routes'            => '/app/routes/ticketit.php',
-        'email.footer'      => 'Powered by mCentric',
-        'master_template'   => 'v1.auth_pages.page-tmp',
-        'email.signoff'     => 'Thank you for your patience.',
-        'agent_restrict'    => 'no',
+        'routes' => '/app/routes/ticketit.php',
+        'email.footer' => 'Powered by mCentric',
+        'master_template' => 'v1.auth_pages.page-tmp',
+        'email.signoff' => 'Thank you for your patience.',
+        'agent_restrict' => 'no',
         'email.footer_link' => 'https://www.mcentric.org',
     ];
+
     public $categories = [
-        'Bug Report'          => '#FF0000',
+        'Bug Report' => '#FF0000',
         'Enhancement Request' => '#0000FF',
-        'Account Inquiry'     => '#008000',
-        'Other Question'      => '#000000',
+        'Account Inquiry' => '#008000',
+        'Other Question' => '#000000',
     ];
+
     public $statuses = [
-        'New'              => 'Gray',
-        'In Progress'      => 'Green',
-        'On Hold'          => '#ff8040',
+        'New' => 'Gray',
+        'In Progress' => 'Green',
+        'On Hold' => '#ff8040',
         'Ready for review' => '#008000',
     ];
+
     public $priorities = [
-        'High'   => 'Red',
+        'High' => 'Red',
         'Medium' => 'Orange',
-        'Low'    => 'Green',
+        'Low' => 'Green',
     ];
 
     /**
@@ -50,7 +53,7 @@ class TicketitSeeder extends Seeder
         // create tickets statuses
         foreach ($this->statuses as $name => $color) {
             $status = \Kordy\Ticketit\Models\Status::create([
-                'name'  => $name,
+                'name' => $name,
                 'color' => $color,
             ]);
         }
@@ -59,7 +62,7 @@ class TicketitSeeder extends Seeder
         // create tickets statuses
         foreach ($this->categories as $name => $color) {
             $category = \Kordy\Ticketit\Models\Category::create([
-                'name'  => $name,
+                'name' => $name,
                 'color' => $color,
             ]);
             $counter++;
@@ -68,7 +71,7 @@ class TicketitSeeder extends Seeder
         // create tickets statuses
         foreach ($this->priorities as $name => $color) {
             $priority = \Kordy\Ticketit\Models\Priority::create([
-                'name'  => $name,
+                'name' => $name,
                 'color' => $color,
             ]);
         }
@@ -87,9 +90,9 @@ class TicketitSeeder extends Seeder
                     $col_value = $this->update_setting[$slug];
                 }
                 Setting::create([
-                    'lang'    => null,
-                    'slug'    => $slug,
-                    'value'   => $col_value,
+                    'lang' => null,
+                    'slug' => $slug,
+                    'value' => $col_value,
                     'default' => $column,
                 ]);
             }
@@ -99,8 +102,6 @@ class TicketitSeeder extends Seeder
     /**
      * Takes config/ticketit.php, merge with package defaults, and returns serialized array.
      *
-     * @param $defaults
-     * @param $config
      *
      * @return array
      */
@@ -143,123 +144,123 @@ class TicketitSeeder extends Seeder
              * Ticketit main route: Where to load the ticket system (ex. http://url/tickets)
              * Default: /ticket
              */
-            'main_route'                   => 'tickets',
-            'main_route_path'              => 'tickets',
+            'main_route' => 'tickets',
+            'main_route_path' => 'tickets',
             /*
              * Ticketit admin route: Where to load the ticket administration dashboard (ex. http://url/tickets-admin)
              * Default: /ticket
              */
-            'admin_route'                  => 'tickets-admin',
-            'admin_route_path'             => 'tickets-admin',
+            'admin_route' => 'tickets-admin',
+            'admin_route_path' => 'tickets-admin',
             /*
              * Template adherence: The master blade template to be extended
              * Default: resources/views/master.blade.php
              */
-            'master_template'              => 'master',
+            'master_template' => 'master',
 
             /*
              * Switches between bootstrap 3 and 4
              * Default: 3 for <L5.6, 4 for >=L5.6
              */
-            'bootstrap_version'            => LaravelVersion::min('5.6') ? '4' : '3',
+            'bootstrap_version' => LaravelVersion::min('5.6') ? '4' : '3',
 
             /*
              * Template adherence: The email blade template to be extended
              * Default: ticketit::emails.templates.ticketit
              */
-            'email.template'               => 'ticketit::emails.templates.ticketit',
+            'email.template' => 'ticketit::emails.templates.ticketit',
             // resources/views/emails/templates/ticketit.blade.php
-            'email.header'                 => 'Ticket Update',
-            'email.signoff'                => 'Thank you for your patience!',
-            'email.signature'              => 'Your friends',
-            'email.dashboard'              => 'My Dashboard',
-            'email.google_plus_link'       => '#', // Toogle icon link: false or string
-            'email.facebook_link'          => '#', // Toogle icon link: false or string
-            'email.twitter_link'           => '#', // Toogle icon link: false or string
-            'email.footer'                 => 'Powered by Ticketit',
-            'email.footer_link'            => 'https://github.com/thekordy/ticketit',
-            'email.color_body_bg'          => '#FFFFFF',
-            'email.color_header_bg'        => '#44B7B7',
-            'email.color_content_bg'       => '#F46B45',
-            'email.color_footer_bg'        => '#414141',
-            'email.color_button_bg'        => '#AC4D2F',
+            'email.header' => 'Ticket Update',
+            'email.signoff' => 'Thank you for your patience!',
+            'email.signature' => 'Your friends',
+            'email.dashboard' => 'My Dashboard',
+            'email.google_plus_link' => '#', // Toogle icon link: false or string
+            'email.facebook_link' => '#', // Toogle icon link: false or string
+            'email.twitter_link' => '#', // Toogle icon link: false or string
+            'email.footer' => 'Powered by Ticketit',
+            'email.footer_link' => 'https://github.com/thekordy/ticketit',
+            'email.color_body_bg' => '#FFFFFF',
+            'email.color_header_bg' => '#44B7B7',
+            'email.color_content_bg' => '#F46B45',
+            'email.color_footer_bg' => '#414141',
+            'email.color_button_bg' => '#AC4D2F',
             /*
              * The default status for new created tickets
              * Default: 1
              */
-            'default_status_id'            => 1,
+            'default_status_id' => 1,
             /*
              * The default closing status
              * Default: false
              */
-            'default_close_status_id'      => false,
+            'default_close_status_id' => false,
             /*
              * The default reopening status
              * Default: false
              */
-            'default_reopen_status_id'     => false,
+            'default_reopen_status_id' => false,
             /*
              * [Deprecated] User ids who are members of admin role
              * Default: 1
              */
-//            'admin_ids' => [1],
+            //            'admin_ids' => [1],
             /*
              * Pagination length: For standard pagination.
              * Default: 1
              */
-            'paginate_items'               => 10,
+            'paginate_items' => 10,
             /*
              * Pagination length: For tickets table.
              * Default: 1
              */
-            'length_menu'                  => [[10, 50, 100], [10, 50, 100]],
+            'length_menu' => [[10, 50, 100], [10, 50, 100]],
             /*
              * Status notification: send email notification to ticket owner/Agent when ticket status is changed
              * Default is send notification: 'yes'
              * Do not send notification: 'no'
              */
-            'status_notification'          => 'yes',
+            'status_notification' => 'yes',
             /*
              * Comment notification: Send notification when new comment is posted
              * Default is send notification: 'yes'
              * Do not send notification: 'no'
              */
-            'comment_notification'         => 'yes',
+            'comment_notification' => 'yes',
             /*
              * Use Queue method when sending emails (Mail::queue instead of Mail::send). Note that Mail::queue needs to be
              * configured first http://laravel.com/docs/5.1/queues
              * Default is to not use queue: 'no'
              * use queue: 'yes'
              */
-            'queue_emails'                 => 'no',
+            'queue_emails' => 'no',
             /*
              * Agent notify: To notify assigned agent (either auto or manual assignment) of new assigned or transferred tickets
              * Default: 'yes'
              * not to notify agent: 'no'
              */
-            'assigned_notification'        => 'yes',
+            'assigned_notification' => 'yes',
             /*
              * Agent restrict: Restrict agents access to only their assigned tickets
              * Default: 'no'
              * Agent access only assigned tickets: 'yes'
              */
-            'agent_restrict'               => 'no',
+            'agent_restrict' => 'no',
             /*
              * Close Ticket Perm: Who has a permission to close tickets
              * Default: ['owner' => 'yes', 'agent' => 'yes', 'admin' => 'yes']
              */
-            'close_ticket_perm'            => ['owner' => 'yes', 'agent' => 'yes', 'admin' => 'yes'],
+            'close_ticket_perm' => ['owner' => 'yes', 'agent' => 'yes', 'admin' => 'yes'],
             /*
              * Reopen Ticket Perm: Who has a permission to reopen tickets
              * Default: ['owner' => 'yes', 'agent' => 'yes', 'admin' => 'yes']
              */
-            'reopen_ticket_perm'           => ['owner' => 'yes', 'agent' => 'yes', 'admin' => 'yes'],
+            'reopen_ticket_perm' => ['owner' => 'yes', 'agent' => 'yes', 'admin' => 'yes'],
             /*
              * Delete Confirmation: Choose which confirmation message type to use when confirming a deleting
              * Default: builtin
              * Options: builtin, modal
              */
-            'delete_modal_type'            => 'builtin',
+            'delete_modal_type' => 'builtin',
 
             /* ------------------ JS EDITOR ------------------ */
 
@@ -267,13 +268,13 @@ class TicketitSeeder extends Seeder
              * Enable summernote editor on textareas
              * Default: yes
              */
-            'editor_enabled'               => 'yes',
+            'editor_enabled' => 'yes',
 
             /*
              * If Font-awesome css is included outside ticketit, this should be set to 'no'
              * Default: 'yes'
              */
-            'include_font_awesome'         => 'yes',
+            'include_font_awesome' => 'yes',
 
             /*
              * Which language should summernote js texteditor use
@@ -285,7 +286,7 @@ class TicketitSeeder extends Seeder
              *
              * Default: 'en'
              */
-            'summernote_locale'            => 'en',
+            'summernote_locale' => 'en',
 
             /*
              * Whether include codemirror sytax highlighter or not
@@ -294,7 +295,7 @@ class TicketitSeeder extends Seeder
              * Default: 'yes'
              */
 
-            'editor_html_highlighter'      => 'yes',
+            'editor_html_highlighter' => 'yes',
 
             /*
              * Theme for sytax highlighter
@@ -303,7 +304,7 @@ class TicketitSeeder extends Seeder
              *
              * Default: 'monikai'
              */
-            'codemirror_theme'             => 'monokai',
+            'codemirror_theme' => 'monokai',
 
             /*
              * Init values for summernote js texteditor in JSON
@@ -322,10 +323,10 @@ class TicketitSeeder extends Seeder
              * Full docs: http://htmlpurifier.org/docs
              */
 
-            'purifier_config'              => [
-                'HTML.SafeIframe'      => 'true',
+            'purifier_config' => [
+                'HTML.SafeIframe' => 'true',
                 'URI.SafeIframeRegexp' => '%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/)%',
-                'URI.AllowedSchemes'   => ['data' => true, 'http' => true, 'https' => true, 'mailto' => true, 'ftp' => true],
+                'URI.AllowedSchemes' => ['data' => true, 'http' => true, 'https' => true, 'mailto' => true, 'ftp' => true],
             ],
 
             /*
@@ -335,7 +336,7 @@ class TicketitSeeder extends Seeder
              *
              * Default: __DIR__.'/routes.php'
              */
-            'routes'                       => base_path('vendor/kordy/ticketit/src').'/routes.php',
+            'routes' => base_path('vendor/kordy/ticketit/src').'/routes.php',
 
         ];
     }

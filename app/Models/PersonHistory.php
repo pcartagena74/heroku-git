@@ -8,7 +8,9 @@ class PersonHistory extends Model
 {
     // The table
     protected $table = 'person_history';
+
     protected $primaryKey = 'revision';
+
     protected $casts = [
         'changeDate' => 'datetime',
         'createDate' => 'datetime',

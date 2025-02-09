@@ -13,6 +13,6 @@ class DynoController extends Controller
 
     public function index()
     {
-        dispatch(new DynoWakeUpJob());
+        dispatch(new DynoWakeUpJob);
     }
 }

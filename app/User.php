@@ -8,6 +8,4 @@ namespace App;
 
 use App\Models\User as UserModel;
 
-class User extends UserModel
-{
-}
+class User extends UserModel {}

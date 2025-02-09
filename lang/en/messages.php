@@ -647,7 +647,7 @@ return [
                 'days_select' => 'Select or Type Days',
                 'new_mbr' => 'New Members',
                 'exp_mbr' => 'Expiring Members',
-                'go' => 'Load Report'
+                'go' => 'Load Report',
             ],
             'created' => 'Create Date',
             'lastlog' => 'Last Login',
@@ -908,11 +908,11 @@ return [
             <li>Leave Session Occupancy at 0 if there are no hard limits for registration.</li>
         ",
         'userid' => 'This has been autopopulated and cannot be edited.',
-        'volunteers' => "Hold the control key to zoom in/out.  Click on white space and drag to scroll.<br />
+        'volunteers' => 'Hold the control key to zoom in/out.  Click on white space and drag to scroll.<br />
                          You may also: <ul>
                          <li>Click on a role to see and edit volunteer values.</li>
                          <li>Click on a role and drag it, as appropriate, to change the reporting relationship.</li>
-                         </ul>",
+                         </ul>',
         'waitlist' => 'Registering will secure a spot on the wait list. You will not be charged at this time.|
                    Registering will secure up to :count spots on the wait list. You will not be charged for sold out tickets at this time.',
         'zero_att' => 'A 0 in the Attendees column indicates that attendance was, likely, NOT recorded.<br>Surveys cannot be sent if attendance was not recorded.',
@@ -950,8 +950,8 @@ return [
         'saved' => 'saved',
         'sess_saved' => 'Your session choices for :reg were :verb.',
         'survey_confirm' => 'Are you sure you want to email all checked in attendees the survey?',
-        'surveys_no_comments' => "There were no comments from the survey responses.",
-        'surveys_sent' => "Surveys were mailed on :date.",
+        'surveys_no_comments' => 'There were no comments from the survey responses.',
+        'surveys_sent' => 'Surveys were mailed on :date.',
         'thanks' => 'Thank you for using mCentric with :orgname.',
         'undo_login' => 'Your login was successfully changed back to :email.  A confirmation email has been sent to that address.',
         'unknown' => 'Unknown',
@@ -1255,9 +1255,10 @@ return [
             'zip' => 'Enter zip',
         ],
         'ed_ad' => 'Editable for Admins',
-        'emails' => '{0} There are no emails associated with this profile.|[1,Inf] The following email addresses are associated with this profile.',
+        'emails' => '{0}There are no emails associated with this profile.|[1,Inf] The following email addresses are associated with this profile.',
         'no_id' => 'If this is empty, this profile does not have an associated PMI ID.',
         'no_phone' => 'There are no phone numbers associated with this profile.',
+        'phones' => '{0}There are no phone numbers associated with this profile.|[1,Inf] The following phone numbers are associated with this profile.',
         'pass' => ' Password',
         'pass_cur' => 'Current Password',
         'pass_mgmt' => 'Password Management',
@@ -1275,8 +1276,8 @@ return [
         'canceled' => 'Canceled',
         'disc_exempt' => 'This ticket cannot be discounted.',
         'door' => 'At Door',
-        'mail_broken' => "Mail is not working at the moment.  :org will email you a receipt.
-                          See it now by going to: <a style='color:yellow;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
+        'mail_broken' => "Mail is not working at the moment.  :org cannot email you a receipt.
+                          You can see it by visiting to: <a style='color:yellow;' href='" . env('APP_URL') . "/upcoming'>My Settings -> Future Events</a>.",
         'free' => 'No Charge',
         'inactive' => 'Inactive',
         'msg_status' => 'The registration with id: :id has been :verb',

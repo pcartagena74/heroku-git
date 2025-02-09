@@ -220,7 +220,7 @@ class ActivityController extends Controller
 
         // "Become" by logging in the $new_id
         $u = User::find($new_id);
-        if (null === $u) {
+        if ($u === null) {
             request()->session()->flash('alert-warning', trans('messages.errors.become_error', ['id' => $new_id]));
 
             return redirect()->back();

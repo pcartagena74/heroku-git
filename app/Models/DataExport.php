@@ -6,7 +6,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -16,6 +15,7 @@ class DataExport implements FromCollection, WithHeadings
     use Exportable;
 
     protected $header_array;
+
     protected $data_array;
 
     public function __construct($header, $data)

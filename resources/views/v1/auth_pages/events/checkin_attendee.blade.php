@@ -1,28 +1,34 @@
-<?php
-/**
- * Comment: a No-Auth way to mark session attendance (by Volunteer) on behalf of attendee
- * Created: 7/5/2017
- *
- * Consider the following:
- *  - what if the sessionID is somehow incorrect... show options?
- *
- */
-use App\Models\EventSession;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+@php
+    /**
+     * Comment: a No-Auth way to mark session attendance (by Volunteer) on behalf of attendee
+     * Created: 7/5/2017
+     *
+     * Consider the following:
+     *  - what if the sessionID is somehow incorrect... show options?
+     *
+     * @var $org: Org object
+     */
+    use App\Models\EventSession;
+    use League\Flysystem;
 
-//use hisorange\BrowserDetect\Provider\BrowserDetectService;
-//ini_set('memory_limit', '256M');
+    //use hisorange\BrowserDetect\Provider\BrowserDetectService;
+    //ini_set('memory_limit', '256M');
 
-try {
-    if ($event->showLogo && $org->orgLogo !== null) {
-        $s3m = Flysystem::connection('s3_media');
-        $logo_url = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
-    }
-} catch (\League\Flysystem\Exception $exception) {
     $logo_url = '';
-}
+    $logo_filename = $org->orgPath . "/" . $org->orgLogo;
 
-?>
+    try {
+        if ($org->orgLogo !== null) {
+            if (Storage::disk('s3_media')->exists($logo_filename)) {
+                $logo_url = Storage::disk('s3_media')->url($logo_filename);
+            }
+        }
+    } catch (Exception $e) {
+        $logo_url = '';
+    }
+
+@endphp
+
 @extends('v1.layouts.no-auth_simple')
 
 @section('content')
@@ -43,7 +49,7 @@ try {
             <div class="col-sm-12 col-xs-12">
                 <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
                    style="white-space: normal;" class="btn btn-primary btn-sm">
-                   {{ $s->sessionName }}
+                    {{ $s->sessionName }}
                 </a>
             </div>
         @endforeach
@@ -58,30 +64,31 @@ try {
 
         @for($i=1;$i<=$event->confDays;$i++)
             <div class="form-group col-sm-12 col-xs-12">
-                <div style="background-color:#2a3f54; color:yellow;" class="col-sm-{{ 3 * count($tracks) }} col-xs-{{ 3 * count($tracks) }}">
+                <div style="background-color:#2a3f54; color:yellow;"
+                     class="col-sm-{{ 3 * count($tracks) }} col-xs-{{ 3 * count($tracks) }}">
                     @lang('messages.headers.day') {{ $i }} @lang('messages.fields.sessions')
                 </div>
             </div>
 
             @for($x=1;$x<=5;$x++)
-<?php
-                $s = EventSession::where([
-                    ['eventID', $event->eventID],
-                    ['confDay', $i],
-                    ['order', $x]
-                ])->first();
-?>
+                    <?php
+                    $s = EventSession::where([
+                        ['eventID', $event->eventID],
+                        ['confDay', $i],
+                        ['order', $x]
+                    ])->first();
+                    ?>
                 @if($s !== null)
                     <div class="form-group col-sm-12 col-xs-12">
                         @foreach($tracks as $t)
-<?php
-                            $s = EventSession::where([
-                                ['trackID', $t->trackID],
-                                ['eventID', $event->eventID],
-                                ['confDay', $i],
-                                ['order', $x]
-                            ])->first();
-?>
+                                <?php
+                                $s = EventSession::where([
+                                    ['trackID', $t->trackID],
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $i],
+                                    ['order', $x]
+                                ])->first();
+                                ?>
                             @if($s !== null)
                                 <div class="col-sm-3 col-xs-3">
                                     <a href="/checkin/{{ $event->eventID}}/{{ $s->sessionID }}"
@@ -106,8 +113,8 @@ try {
         {!! Form::hidden('orgID', $org->orgID) !!}
         {!! Form::hidden('sessionID', $session->sessionID) !!}
         @if($session->sessionName != 'def_sess')
-        <b>Session: {{ $session->sessionName }}</b>
-        <p>&nbsp;</p>
+            <b>Session: {{ $session->sessionName }}</b>
+            <p>&nbsp;</p>
         @endif
         <div class="form-group has-feedback col-md-12 col-xs-12">
             {!! Form::label('regID', trans('messages.headers.regID'), array('class' => 'control-label')) !!}

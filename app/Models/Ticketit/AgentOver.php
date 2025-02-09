@@ -15,9 +15,7 @@ class AgentOver extends User
     /**
      * list of all agents and returning collection.
      *
-     * @param $query
-     * @param bool $paginate
-     *
+     * @param  bool  $paginate
      * @return bool
      *
      * @internal param int $cat_id
@@ -37,9 +35,7 @@ class AgentOver extends User
     /**
      * list of all admins and returning collection.
      *
-     * @param $query
-     * @param bool $paginate
-     *
+     * @param  bool  $paginate
      * @return bool
      *
      * @internal param int $cat_id
@@ -59,9 +55,7 @@ class AgentOver extends User
     /**
      * list of all agents and returning collection.
      *
-     * @param $query
-     * @param bool $paginate
-     *
+     * @param  bool  $paginate
      * @return bool
      *
      * @internal param int $cat_id
@@ -78,7 +72,6 @@ class AgentOver extends User
     /**
      * list of all agents and returning lists array of id and name.
      *
-     * @param $query
      *
      * @return bool
      *
@@ -143,8 +136,7 @@ class AgentOver extends User
     /**
      * Check if user is the assigned agent for a ticket.
      *
-     * @param int $id ticket id
-     *
+     * @param  int  $id  ticket id
      * @return bool
      */
     public static function isAssignedAgent($id)
@@ -157,8 +149,7 @@ class AgentOver extends User
     /**
      * Check if user is the owner for a ticket.
      *
-     * @param int $id ticket id
-     *
+     * @param  int  $id  ticket id
      * @return bool
      */
     public static function isTicketOwner($id)
@@ -288,7 +279,8 @@ class AgentOver extends User
 
     /**
      * check if given user is a developer
-     * @param  int $user_id
+     *
+     * @param  int  $user_id
      * @return bool true/false
      */
     protected static function checkUserIsDeveloper($user_id)

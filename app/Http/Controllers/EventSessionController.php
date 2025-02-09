@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSession;
-use App\Models\Track;
 use Illuminate\Http\Request;
 
 class EventSessionController extends Controller
@@ -15,8 +14,7 @@ class EventSessionController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param EventSession $es
+     * @param  EventSession  $es
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $id)
@@ -28,7 +26,7 @@ class EventSessionController extends Controller
 
         switch ($function) {
             case 'restore_session':
-                if (null !== $es) {
+                if ($es !== null) {
                     $es->deleted_at = null;
                     $es->updaterID = $updaterID;
                     $es->save();
@@ -55,8 +53,8 @@ class EventSessionController extends Controller
     }
 
     /**
-     * @param EventSession $es
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
      * @throws \Exception
      *
      * Sessions get destroyed when removed via the session editing screen

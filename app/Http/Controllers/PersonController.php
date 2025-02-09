@@ -260,13 +260,13 @@ class PersonController extends Controller
 
     /**
      * Shows profile information for chosen person (or self)
-     * @param $id
+     *
      * @param null $modal
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function show($id, $modal = null)
     {
-        // responds to GET /profile/{id}
+        // responds to GET /profile/{id}/{modal?}
         $this->currentPerson = Person::where('personID', '=', auth()->user()->id)->with('socialites')->first();
         if ($id == 'my') {
             // set $id to the logged in Person, otherwise keep the $id given
@@ -383,8 +383,6 @@ class PersonController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $id
      * @return false|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
      */
     public function update(Request $request, $id)
@@ -395,7 +393,7 @@ class PersonController extends Controller
         $name = request()->input('name');
         if (strpos($name, '-')) {
             // if passed from the registration receipt, the $name will have a dash
-            list($name, $field) = array_pad(explode('-', $name, 2), 2, null);
+            [$name, $field] = array_pad(explode('-', $name, 2), 2, null);
         }
         $value = request()->input('value');
         $person = Person::find($personID);
@@ -482,6 +480,7 @@ class PersonController extends Controller
 
     public function update_op(Request $request, $id)
     {
+        // Consider for refactoring
         // responds to POST /op/{id} and is an AJAX call
         $personID = request()->input('pk');
         $updater = auth()->user()->id;
@@ -489,7 +488,7 @@ class PersonController extends Controller
         $name = request()->input('name');
         if (strpos($name, '-')) {
             // if passed from the registration receipt, the $name will have a dash
-            list($name, $field) = array_pad(explode('-', $name, 2), 2, null);
+            [$name, $field] = array_pad(explode('-', $name, 2), 2, null);
         }
         $value = request()->input('value');
         $person = Person::find($personID);
@@ -535,6 +534,7 @@ class PersonController extends Controller
 
     public function change_password(Request $request)
     {
+        // Consider for refactoring
         $curPass = request()->input('curPass');
         $password = request()->input('password');
 
@@ -581,6 +581,7 @@ class PersonController extends Controller
      */
     public function show_force()
     {
+        // Consider for refactoring
         $topBits = $this->member_bits();
 
         return view('v1.auth_pages.members.force_pass_change', compact('topBits'));
@@ -593,6 +594,7 @@ class PersonController extends Controller
      */
     public function force_password_change(Request $request)
     {
+        // Consider for refactoring
         $password = request()->input('password');
         $userid = request()->input('userid');
 
@@ -651,9 +653,9 @@ class PersonController extends Controller
     {
         $op = OrgPerson::where('OrgStat1', '=', $pmi_id)->first();
 
-        if (null !== $op) {
+        if ($op !== null) {
             $u = User::where('id', '=', $op->personID)->first();
-            if (null !== $u) {
+            if ($u !== null) {
                 $x = $u->password ? 1 : 0;
             } else {
                 $x = 1;

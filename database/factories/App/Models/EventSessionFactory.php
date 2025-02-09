@@ -4,18 +4,10 @@
 
 namespace Database\Factories\App\Models;
 
-use App\Models\EventSession;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EventSessionFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = EventSession::class;
-
     /**
      * Define the model's default state.
      *

@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use Illuminate\Validation\Rule;
 use App\Models\Address;
 use App\Models\Email;
 use App\Models\OrgPerson;
@@ -13,6 +12,7 @@ use App\Traits\ExcelMemberImportTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
@@ -21,19 +21,27 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, WithValidation, SkipsOnFailure, ShouldQueue
+class MembersImport implements ShouldQueue, SkipsOnFailure, ToCollection, WithChunkReading, WithHeadingRow, WithValidation
 {
     // WithBatchInserts only works with toModel concern
-    use Importable, SkipsFailures, ExcelMemberImportTrait;
+    use ExcelMemberImportTrait, Importable, SkipsFailures;
+
     public $starttime;
+
     public $phone_master;
+
     public $email_master;
+
     public $address_master;
+
     public $person_staging_master;
+
     public $row_count = 0;
+
     public $currentPerson;
 
     protected $tries = 3;
+
     protected $timeout = 160;
 
     public function __construct($currentPerson, $import_detail)
@@ -45,8 +53,8 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     }
 
     /**
-     * @param Collection $rows
-     * Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
+     * @param  Collection  $rows
+     *                            Member data consists of demographic data -> person / orgperson / user as well as email, address, and phone
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function collection(Collection $rows)
@@ -64,11 +72,11 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
             } else {
                 $this->import_detail->increment('failed');
                 $reason = ['reason' => trans('messages.errors.import_validation'),
-                    'pmi_id'            => $row['pmi_id'],
-                    'first_name'        => $row['first_name'],
-                    'last_name'         => $row['last_name'],
-                    'primary_email'     => $row['primary_email'],
-                    'alternate_email'   => $row['alternate_email'],
+                    'pmi_id' => $row['pmi_id'],
+                    'first_name' => $row['first_name'],
+                    'last_name' => $row['last_name'],
+                    'primary_email' => $row['primary_email'],
+                    'alternate_email' => $row['alternate_email'],
                 ];
                 if (! empty($this->import_detail->failed_records)) {
                     $json = json_decode($this->import_detail->failed_records);
@@ -81,8 +89,6 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
             }
         }
         $this->row_count += $count;
-
-        return;
 
         /*
         // old code not to use
@@ -638,8 +644,8 @@ class MembersImport implements ToCollection, WithChunkReading, WithHeadingRow, W
     public function rules(): array
     {
         return [
-            'pmi_id'          => Rule::requiredIf(1),
-            'primary_email'   => Rule::requiredIf(1),
+            'pmi_id' => Rule::requiredIf(1),
+            'primary_email' => Rule::requiredIf(1),
             'alternate_email' => Rule::requiredIf($this->em1 === null),
         ];
     }

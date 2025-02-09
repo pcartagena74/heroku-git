@@ -222,15 +222,15 @@ class CampaignController extends Controller
             if (isset($value['id'])) {
                 EmailCampaignTemplateBlock::create([
                     'campaign_id' => $campaign->campaignID,
-                    'block_id'    => $value['id'],
-                    'content'     => $value['content'],
+                    'block_id' => $value['id'],
+                    'content' => $value['content'],
                 ]);
                 $raw_html .= $value['content'];
             } else {
                 EmailCampaignTemplateBlock::create([
                     'campaign_id' => $campaign->campaignID,
-                    'block_id'    => 0,
-                    'content'     => $value['content'],
+                    'block_id' => 0,
+                    'content' => $value['content'],
                 ]);
                 $raw_html .= $value['content'];
             }
@@ -265,8 +265,8 @@ class CampaignController extends Controller
                     $raw_html .= $value['content'];
                     EmailCampaignTemplateBlock::create([
                         'campaign_id' => $campaign->campaignID,
-                        'block_id'    => $value['id'],
-                        'content'     => $value['content'],
+                        'block_id' => $value['id'],
+                        'content' => $value['content'],
                     ]);
                 }
             }
@@ -276,7 +276,7 @@ class CampaignController extends Controller
 
     /**
      * create campiagn and store template
-     * @param  Request $request
+     *
      * @return json
      */
     public function storeEmailTemplate(Request $request)
@@ -286,13 +286,14 @@ class CampaignController extends Controller
             return response()->json(['success' => false, 'errors' => ['Template Empty please some elements']]);
         }
         $campaign = $this->storeCampaignEmailTemplate($request);
+
         // generateEmailTemplateThumbnail($html = $campaign->content, $campaign = $content, $currentPerson = $this->currentPerson);
         return response()->json(['success' => true, 'message' => 'Template Saved', 'redirect_url' => url('campaign', $campaign->campaignID)]);
     }
 
     /**
      * update campaign
-     * @param  Request $request
+     *
      * @return json
      */
     public function updateEmailTemplate(Request $request)
@@ -329,7 +330,7 @@ class CampaignController extends Controller
 
     /**
      * get email template list for popup with pagination
-     * @param  Request $request
+     *
      * @return json with pagination html
      */
     public function getEmailTemplates(Request $request)
@@ -348,7 +349,7 @@ class CampaignController extends Controller
 
     /**
      * store email template html for preview
-     * @param  Request $request
+     *
      * @return json
      */
     public function storeEmailTemplateForPreview(Request $request)
@@ -377,7 +378,7 @@ class CampaignController extends Controller
 
     /**
      * preview saved template
-     * @param  Request $request
+     *
      * @param  string  $filename
      * @return json
      */
@@ -392,7 +393,7 @@ class CampaignController extends Controller
 
     /**
      * show thumbnail image
-     * @param  Request $request
+     *
      * @param  string  $filename
      * @return json
      */
@@ -410,7 +411,8 @@ class CampaignController extends Controller
 
     /**
      * get only blocks of email template used after loading  popup
-     * @param  Request $request [description]
+     *
+     * @param  Request  $request  [description]
      * @return [type]           [description]
      */
     public function getEmailTemplateBlocks(Request $request)
@@ -426,7 +428,6 @@ class CampaignController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -481,7 +482,7 @@ class CampaignController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -505,7 +506,7 @@ class CampaignController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Campaign $campaign)
@@ -543,8 +544,7 @@ class CampaignController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int                      $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -555,7 +555,7 @@ class CampaignController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -565,7 +565,8 @@ class CampaignController extends Controller
 
     /**
      * test method to check variable parsing
-     * @param  Request $request [description]
+     *
+     * @param  Request  $request  [description]
      * @return [type]           [description]
      */
     public function sendTestEmail(Request $request)
@@ -616,7 +617,7 @@ class CampaignController extends Controller
         $html = replaceUserDataInEmailTemplate(null, null, true, $html);
         try {
             $mail = Mail::send('v1.auth_pages.campaigns.email_template_with_note', ['html' => $html, 'note' => $note],
-                function ($message) use ($currentPerson, $valid_email, $subject, $from_email) {
+                function ($message) use ($valid_email, $subject, $from_email) {
                     $message->from($from_email);
                     $message->sender($from_email);
                     $message->to($valid_email);
@@ -669,12 +670,12 @@ class CampaignController extends Controller
     public function sendCampaign(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'schedule'   => 'nullable|date',
-            'campaign'   => 'required|exists:org-campaign,campaignID',
-            'from_name'  => 'required|max:255|min:3',
+            'schedule' => 'nullable|date',
+            'campaign' => 'required|exists:org-campaign,campaignID',
+            'from_name' => 'required|max:255|min:3',
             'from_email' => 'required|email',
-            'subject'    => 'required|max:255|min:3',
-            'preheader'  => 'nullable|max:255|min:3',
+            'subject' => 'required|max:255|min:3',
+            'preheader' => 'nullable|max:255|min:3',
             'email_list' => 'required|exists:email-list,id',
         ]);
         if ($validator->fails()) {
@@ -727,7 +728,7 @@ class CampaignController extends Controller
             foreach ($links as $key => $value) {
                 $url[] = [
                     'campaign_id' => $campaign_id,
-                    'url'         => $value,
+                    'url' => $value,
                 ];
             }
             EmailCampaignLink::insert($url);
@@ -735,7 +736,7 @@ class CampaignController extends Controller
         if ($var) {
             $campaign->sendDate = Carbon::now(); // remove for testing only
             $campaign->save();
-            dispatch(new SendCampaignEmail());
+            dispatch(new SendCampaignEmail);
             sendGetToWakeUpDyno();
             request()->session()->flash('alert-success', trans('messages.messages.campaign_send'));
 
@@ -802,12 +803,12 @@ class CampaignController extends Controller
                         $url = $response['event-data']['url'];
                         $link = EmailCampaignLink::where([
                             'campaign_id' => $email_db->campaign_id,
-                            'url'         => $url,
+                            'url' => $url,
                         ])->get()->first();
                         if (! empty($link)) {
                             $row = [
                                 'email_campaign_links_id' => $link->id,
-                                'email_queue_id'          => $email_db->id,
+                                'email_queue_id' => $email_db->id,
                             ];
                             $queue_link = EmailQueueLink::where($row)->get()->first();
                             if (empty($queue_link)) {
@@ -900,7 +901,7 @@ class CampaignController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'campaign' => 'required|exists:org-campaign,campaignID',
-            'url_id'   => 'required|numeric',
+            'url_id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             $error = $validator->errors();

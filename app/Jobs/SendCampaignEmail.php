@@ -16,8 +16,11 @@ use Mailgun\Mailgun;
 class SendCampaignEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public $tries = 1;
+
     public $timeout = 120;
+
     public $display_name = 'Campaign Email';
 
     /**
@@ -66,14 +69,15 @@ class SendCampaignEmail implements ShouldQueue
                         $value->open = rand(0, 1);
                         $value->click = rand(0, 1);
                         $value->save();
+
                         continue;
                     }
 
                     $response = $mg->messages()->send(env('MAILGUN_DOMAIN'), [
-                        'from'    => $campaign->fromEmail,
-                        'to'      => $value->email_id,
+                        'from' => $campaign->fromEmail,
+                        'to' => $value->email_id,
                         'subject' => $campaign->subject,
-                        'html'    => $html,
+                        'html' => $html,
                     ]);
                     if (empty($response->getId())) {
                         $value->failed = true;

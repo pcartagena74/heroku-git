@@ -31,12 +31,12 @@ class EventDiscountController extends Controller
         $org = Org::find($event->orgID);
 
         $discount_codes = EventDiscount::where([
-                                ['orgID', $org->orgID],
-                                ['eventID', $event->eventID],
-                            ])
-                            ->select('discountID', 'discountCODE', 'percent', 'flatAmt')
-                            ->orderBy('discountID', 'DESC')
-                            ->get();
+            ['orgID', $org->orgID],
+            ['eventID', $event->eventID],
+        ])
+            ->select('discountID', 'discountCODE', 'percent', 'flatAmt')
+            ->orderBy('discountID', 'DESC')
+            ->get();
 
         return view('v1.auth_pages.events.event_discounts', compact('org', 'event', 'current_person', 'discount_codes'));
     }

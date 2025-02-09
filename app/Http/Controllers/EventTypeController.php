@@ -31,7 +31,6 @@ class EventTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -45,7 +44,7 @@ class EventTypeController extends Controller
 
             $type = request()->input($eventType);
             if (isset($type)) {
-                $newET = new EventType();
+                $newET = new EventType;
                 $newET->orgID = $orgID;
                 $newET->creatorID = $this->currentPerson->personID;
                 $newET->etName = $type;
@@ -59,7 +58,6 @@ class EventTypeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
     public function show(EventType $eventType)
@@ -70,7 +68,6 @@ class EventTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
     public function edit(EventType $eventType)
@@ -81,8 +78,7 @@ class EventTypeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -93,7 +89,7 @@ class EventTypeController extends Controller
         $name = request()->input('name');
         if (strpos($name, '-')) {
             // if passed from the registration receipt, the $name will have a dash
-            list($name, $field) = array_pad(explode('-', $name, 2), 2, null);
+            [$name, $field] = array_pad(explode('-', $name, 2), 2, null);
         }
         $value = request()->input('value');
 

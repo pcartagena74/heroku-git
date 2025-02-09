@@ -1,6 +1,6 @@
 <?php
 
-namespace Kordy\Ticketit\Controllers;
+namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Request;
@@ -13,9 +13,7 @@ class ToolsController extends Controller
      * See also: http://the-art-of-web.com/php/sortarray/.
      *
      * @param array $data input-array
-     * @param $field
      * @param string $type
-     *
      * @return array
      *
      * @internal param array|string $fields array-keys
@@ -42,8 +40,7 @@ class ToolsController extends Controller
     /**
      * Determine if the current request URL and query string matches a pattern.
      *
-     * @param  mixed  string
-     *
+     * @param mixed  string
      * @return bool
      */
     public function fullUrlIs($match)

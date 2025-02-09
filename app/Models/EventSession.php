@@ -10,15 +10,20 @@ class EventSession extends Model
     use SoftDeletes;
 
     protected $table = 'event-sessions';
+
     protected $primaryKey = 'sessionID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'start' => 'datetime',
         'end' => 'datetime',
         'createDate' => 'datetime',
         'updateDate' => 'datetime',
     ];
+
     protected $fillable = ['sessionName', 'sessionAbstract', 'eventID', 'start', 'end'];
 
     public function track()

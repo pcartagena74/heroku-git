@@ -1,4 +1,5 @@
 <?php
+
 // 2024-05-18: `org-event`.isPrivate = 1 will be used to account for wait list features being active
 
 namespace App\Http\Controllers;
@@ -15,17 +16,15 @@ use App\Models\Person;
 use App\Models\ReferLink;
 use App\Models\Ticket;
 use App\Models\Track;
-use App\Models\User;
 use App\Other\ics_cal_full;
 use App\Other\ics_calendar;
 use Auth;
 use Carbon\Carbon;
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+use League\Flysystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
-use League\Flysystem\AdapterInterface;
 use Spatie\Referer\Referer;
 
 class EventController extends Controller
@@ -154,7 +153,7 @@ class EventController extends Controller
         $today = Carbon::now();
         $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
-        if (null === $past) {
+        if ($past === null) {
             // Function called was "Manage Events" so there should be future events and limited past events"
             // Get a list of current events, showing events that have not yet ended.
             $current_events = Event::with('registrations', 'event_type', 'location')
@@ -529,7 +528,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        Flysystem::connection('s3_events')->put($event_filename, $contents, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
+        \Storage::disk('events')->put($event_filename, $contents, 'public');
         $event->create_or_update_event_ics();
 
         return redirect('/event-tickets/' . $event->eventID);
@@ -561,7 +560,7 @@ class EventController extends Controller
         if ($id == 0) {
             if (Event::whereSlug($slug)->withTrashed()->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
-//            } elseif (Event::whereSlug($slug)->exists()) {
+                //            } elseif (Event::whereSlug($slug)->exists()) {
                 //                $message = $slug . ' is available';
             } else {
                 $message = $slug . ' is available';
@@ -569,7 +568,7 @@ class EventController extends Controller
         } else {
             if (Event::whereSlug($slug)->withTrashed()->where('eventID', '!=', $id)->exists()) {
                 $message = $slug . ' is <b style="color:red;">NOT</b> available';
-//            } elseif (Event::whereSlug($slug)->exists()) {
+                //            } elseif (Event::whereSlug($slug)->exists()) {
                 //                $message = $slug . ' is available';
             } else {
                 $message = $slug . ' is available';
@@ -735,7 +734,7 @@ class EventController extends Controller
         $event_filename = 'event_' . $event->eventID . '.ics';
         $ical = new ics_calendar($event);
         $contents = $ical->get();
-        Flysystem::connection('s3_events')->put($event_filename, $contents);
+        \Storage::disk('events')->put($event_filename, $contents, 'public');
         $event->create_or_update_event_ics();
 
         // Think about whether ticket modification should be done here.
@@ -781,8 +780,6 @@ class EventController extends Controller
      * This function allows the quick update of the Early Bird End Date and Percent Discount
      * associated with eventID $id from /event-tickets/{id}
      *
-     * @param Request $request
-     * @param Event $event
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector
      */
     public function ajax_update(Request $request, Event $event)
@@ -1044,13 +1041,13 @@ class EventController extends Controller
     /*
      * get_tix: AJAX - returns the tickets for an event
      */
-    public function get_tix(Event $event, Ticket $ticket = null)
+    public function get_tix(Event $event, ?Ticket $ticket = null)
     {
         $tix = Ticket::where([
             ['eventID', '=', $event->eventID],
             ['isSuppressed', '=', 0],
         ])
-            ->where(fn($q) => $q->where('maxAttendees', '=', 0)->orWhereRaw("maxAttendees - regCount > 0"))
+            ->where(fn($q) => $q->where('maxAttendees', '=', 0)->orWhereRaw('maxAttendees - regCount > 0'))
             ->get();
 
         return json_encode(['status' => 'success', 'tix' => $tix, 'def_tick' => $ticket]);

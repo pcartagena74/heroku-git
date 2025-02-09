@@ -6,31 +6,40 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Person extends Model
 {
     use LogsActivity;
-    use SoftDeletes;
     use Notifiable;
+    use SoftDeletes;
 
     // The table
     protected $table = 'person';
+
     protected $primaryKey = 'personID';
+
     protected $fillable = ['prefix', 'firstName', 'lastName', 'prefName', 'login', 'title', 'compName', 'indName'];
 
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',
         'lastLoginDate' => 'datetime',
     ];
+
     protected $hidden = ['remember_token'];
 
     protected static $logOnlyDirty = true;
+
     protected static $submitEmptyLogs = false;
-    protected static $logAttributes = ['login', 'defaultOrgID',  'defaultOrgPersonID'];
+
+    protected static $logAttributes = ['login', 'defaultOrgID', 'defaultOrgPersonID'];
+
     protected static $ignoreChangedAttributes = ['createDate'];
 
     public function roles()
@@ -98,7 +107,7 @@ class Person extends Model
 
     public function orgStat1()
     {
-        if (null !== $this->orgperson) {
+        if ($this->orgperson !== null) {
             return $this->orgperson->OrgStat1;
         } else {
             return null;
@@ -117,9 +126,9 @@ class Person extends Model
     public function showFullName()
     {
         if ($this->prefName) {
-            return $this->prefName.' '.$this->lastName;
+            return $this->prefName . ' ' . $this->lastName;
         } else {
-            return $this->firstName.' '.$this->lastName;
+            return $this->firstName . ' ' . $this->lastName;
         }
     }
 
@@ -157,7 +166,7 @@ class Person extends Model
     {
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
-        if (! $this->roles->contains('id', $speaker_role)) {
+        if (!$this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role, ['org_id' => $this->defaultOrgID]);
         }
         /*
@@ -185,8 +194,13 @@ class Person extends Model
 
     public function has_volunteers()
     {
-        if(null !== $this->service_role) {
+        if ($this->service_role !== null) {
             return $this->service_role->volunteer_role->children;
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }

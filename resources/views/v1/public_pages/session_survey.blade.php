@@ -1,30 +1,31 @@
 @php
-/**
- * Comment: after registering for a session, show the session form
- * Created: 7/6/2017
- *
- * @var $session
- * @var $org
- *
- * Consider the following:
- *  -
- *
- */
+    /**
+     * Comment: after registering for a session, show the session form
+     * Created: 7/6/2017
+     *
+     * @var $session
+     * @var $org
+     *
+     * Consider the following:
+     *  -
+     *
+     */
 
-use GrahamCampbell\Flysystem\Facades\Flysystem;
+    use League\Flysystem;
 
-try {
-    if ($org->orgLogo !== null) {
-        $s3m = Flysystem::connection('s3_media');
-        $logo = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $org->orgPath . "/" . $org->orgLogo);
-    } else {
+    $logo = '';
+    $logo_filename = $org->orgPath . "/" . $org->orgLogo;
+
+    try {
+        if ($org->orgLogo !== null) {
+            if (Storage::disk('s3_media')->exists($logo_filename)) {
+                $logo = Storage::disk('s3_media')->url($logo_filename);
+            }
+        }
+    } catch (Exception $e) {
         $logo = '';
     }
-} catch (\League\Flysystem\Exception $exception) {
-    $logo = '';
-}
-
-$speakers = $session->show_speakers();
+    $speakers = $session->show_speakers();
 
 @endphp
 @extends('v1.layouts.no-auth_simple')
@@ -37,7 +38,7 @@ $speakers = $session->show_speakers();
     @endif
     <h2>@lang('messages.fields.event'): {{ $event->eventName }}</h2>
     @if($session->sessionName != "def_sess")
-        <b>@lang('messages.fields.session'):</b> {{ $session->sessionName }} <br />
+        <b>@lang('messages.fields.session'):</b> {{ $session->sessionName }} <br/>
     @endif
     @if($speakers)
         <b>@lang('messages.fields.speakers'):</b> {{ $speakers }}
@@ -54,16 +55,16 @@ $speakers = $session->show_speakers();
     {!! Form::hidden('personID', $rs->personID) !!}
     {!! Form::hidden('sessionID', $rs->sessionID) !!}
 
-    <h2>{!! trans('messages.surveys.q1') !!}<SUP style="color:red;">*</SUP> </h2><br/>
+    <h2>{!! trans('messages.surveys.q1') !!}<SUP style="color:red;">*</SUP></h2><br/>
     @include('v1.parts.survey_buttons', ['button_name' => 'engageResponse'])
 
-    <h2>{!! trans('messages.surveys.q2') !!}<SUP style="color:red;">*</SUP> </h2><br/>
+    <h2>{!! trans('messages.surveys.q2') !!}<SUP style="color:red;">*</SUP></h2><br/>
     @include('v1.parts.survey_buttons', ['button_name' => 'takeResponse'])
 
-    <h2>{!! trans('messages.surveys.q3') !!}<SUP style="color:red;">*</SUP> </h2><br/>
+    <h2>{!! trans('messages.surveys.q3') !!}<SUP style="color:red;">*</SUP></h2><br/>
     @include('v1.parts.survey_buttons', ['button_name' => 'contentResponse'])
 
-    <h2>{!! trans('messages.surveys.q4') !!}<SUP style="color:red;">*</SUP> </h2><br/>
+    <h2>{!! trans('messages.surveys.q4') !!}<SUP style="color:red;">*</SUP></h2><br/>
     @include('v1.parts.survey_buttons', ['button_name' => 'styleResponse'])
 
     <h2><b>{!! trans('messages.surveys.q5') !!}</b></h2><br/>
@@ -83,10 +84,10 @@ $speakers = $session->show_speakers();
     <h2><b>{!! trans('messages.surveys.q7') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
         <div style="text-align:center;" class="form-group col-xs-2">
-                {!! Form::checkbox('wantsContact', 'wantsContact', false, $attributes = array('class' => 'form-control')) !!}
+            {!! Form::checkbox('wantsContact', 'wantsContact', false, $attributes = array('class' => 'form-control')) !!}
         </div>
         <div style="text-align:center;" class="form-group col-xs-10">
-                {!! Form::textarea('contactResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
+            {!! Form::textarea('contactResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
         </div>
     </div>
 

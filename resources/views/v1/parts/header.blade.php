@@ -1,4 +1,7 @@
 <head>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Khula:700);
+    </style>
     @include('v1.parts.header_meta')
 
     <title>mCentric: Members, Marketing, Messaging &amp; More...</title>
@@ -34,7 +37,8 @@
     <link href="https://vitalets.github.io/x-editable/assets/select2/select2.css" rel="stylesheet">
     <link href="https://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css"
           rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css"
+          rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/switchery.min.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/starrr.css" rel="stylesheet">
     <link href="{{ env('APP_URL') }}/css/daterangepicker.css" rel="stylesheet">

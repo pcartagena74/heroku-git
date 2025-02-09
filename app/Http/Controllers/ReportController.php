@@ -9,7 +9,6 @@ use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Session;
-use Illuminate\Support\Facades\Lang;
 
 class ReportController extends Controller
 {
@@ -26,11 +25,11 @@ class ReportController extends Controller
         $org = Org::find($orgID);
         $quote_string = Session::get('quote_string');
 
-        if ($quote_string == "''" && null !== $year_string) {
+        if ($quote_string == "''" && $year_string !== null) {
             $year_string = null;
         }
 
-        if (null === $year_string) {
+        if ($year_string === null) {
             $year_array = Event::where('orgID', $this->currentPerson->defaultOrgID)
                 ->join('event-registration', 'org-event.eventID', '=', 'event-registration.eventID')
                 ->select(DB::raw("year(eventStartDate) as 'year'"))
@@ -57,7 +56,6 @@ class ReportController extends Controller
             ->whereIn(DB::raw('year(eventStartDate)'), explode(',', $year_string))
             ->distinct()->orderBy('year', 'asc')->get();
 
-
         $datastring = '';
         $pluses = [];
         $labels = '';
@@ -68,14 +66,14 @@ class ReportController extends Controller
         }
         rtrim($labels, ',');
 
-        if($id) {
+        if ($id) {
             // when $id = 1, show only member data
-            $chart = DB::select('call true_member_report("'.$year_string.'", '. $orgID .')');
+            $chart = DB::select('call true_member_report("'.$year_string.'", '.$orgID.')');
 
             $total = Person::whereNotNull('indName')
                 ->where('indName', '<>', '')
                 ->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID)
-                ->join('org-person as op', function($q) use($orgID) {
+                ->join('org-person as op', function ($q) use ($orgID) {
                     $q->on('op.personID', '=', 'person.personID');
                     $q->where('op.orgID', '=', $orgID);
                     $q->where('op.OrgStat1', '>', 0);
@@ -118,8 +116,8 @@ class ReportController extends Controller
                 }
                 if ($e == last($chart)) {
                     $datastring .= "\n{ "
-                        . trans_choice('messages.headers.events',2) . ": '8+ "
-                        . trans_choice('messages.headers.events',$e->numEvent) . "', '";
+                        .trans_choice('messages.headers.events', 2).": '8+ "
+                        .trans_choice('messages.headers.events', $e->numEvent)."', '";
                     foreach ($years as $y) {
                         if ($e->{$y->year} === null) {
                             $e->{$y->year} = 0;
@@ -137,10 +135,10 @@ class ReportController extends Controller
                 if ($e != reset($chart)) {
                     $datastring .= "\n";
                 }
-                $datastring .= "{ " .
-                    trans_choice('messages.headers.events',2)
-                    . ": '".$e->numEvent." ".
-                    trans_choice('messages.headers.events',$e->numEvent) .
+                $datastring .= '{ '.
+                    trans_choice('messages.headers.events', 2)
+                    .": '".$e->numEvent.' '.
+                    trans_choice('messages.headers.events', $e->numEvent).
                     "', '";
                 foreach ($years as $y) {
                     if ($e->{$y->year} === null) {
@@ -174,14 +172,14 @@ class ReportController extends Controller
             ->where('longi', '!=', '0')
             ->groupby(['lati', 'longi'])
             ->having(DB::raw('count(lati)'), '>', $org->heatMapDensity)
-            ->whereHas('person', function ($query) use ($cp) {
+            ->whereHas('person', function ($query) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->toArray();
         $heat_map_work_count = Address::select(['lati', 'longi'])
             ->where('addrType', 'Work')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
-            ->whereHas('person', function ($query) use ($cp) {
+            ->whereHas('person', function ($query) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->count();
         $heat_map_home = Address::select(['lati', 'longi'])
@@ -190,14 +188,14 @@ class ReportController extends Controller
             ->where('longi', '!=', '0')
             ->groupby(['lati', 'longi'])
             ->having(DB::raw('count(lati)'), '>', $org->heatMapDensity)
-            ->whereHas('person', function ($query) use ($cp) {
+            ->whereHas('person', function ($query) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->toArray();
         $heat_map_home_count = Address::select(['lati', 'longi'])
             ->where('addrType', 'Home')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
-            ->whereHas('person', function ($query) use ($cp) {
+            ->whereHas('person', function ($query) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->count();
         $heat_map_other = Address::select(['lati', 'longi'])
@@ -207,7 +205,7 @@ class ReportController extends Controller
             ->where('longi', '!=', '0')
             ->groupby(['lati', 'longi'])
             ->having(DB::raw('count(lati)'), '>', $org->heatMapDensity)
-            ->whereHas('person', function ($query) use ($cp) {
+            ->whereHas('person', function ($query) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->toArray();
         $heat_map_other_count = Address::select(['lati', 'longi'])
@@ -215,7 +213,7 @@ class ReportController extends Controller
             ->where('addrType', '!=', 'Home')
             ->where('lati', '!=', '0')
             ->where('longi', '!=', '0')
-            ->whereHas('person', function ($query) use ($cp) {
+            ->whereHas('person', function ($query) {
                 $query->where('defaultOrgID', '=', $this->currentPerson->defaultOrgID);
             })->get()->count();
         $org_lat_lng = ['lati' => 42.4072, 'longi' => -71.3824]; //Massachusetts lat lng default

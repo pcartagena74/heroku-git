@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Org;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -14,9 +13,13 @@ class EventTest extends TestCase
     use WithFaker;
 
     protected $event_attributes;
+
     protected $future_date;
+
     protected $org;
+
     protected $user;
+
     protected $person;
 
     protected function setUp(): void
@@ -37,7 +40,7 @@ class EventTest extends TestCase
 
         $this->event_attributes = [
             'eventName' => $this->faker->sentence(4),
-            'eventDescription' => $this->faker->paragraph,
+            'eventDescription' => $this->faker->paragraph(),
             'eventStartDate' => $this->future_date,
             'eventEndDate' => $this->future_date->addHour(1),
             'eventTimeZone' => $this->org->orgZone,
@@ -45,7 +48,7 @@ class EventTest extends TestCase
             // for eventTypeID, think about making it random based on orgID ?
             // Or possibly vary with different tests based on eventTypeID differences
             'eventTypeID' => 1,
-            'slug' => $this->faker->word,
+            'slug' => $this->faker->word(),
             'locationID' => 1,
         ];
     }

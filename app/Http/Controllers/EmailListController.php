@@ -101,14 +101,11 @@ class EmailListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -118,7 +115,7 @@ class EmailListController extends Controller
         $include_string = '';
         $exclude_string = '';
         $validator = Validator::make($request->all(), [
-            'name'        => 'required|max:255',
+            'name' => 'required|max:255',
             'description' => 'nullable|min:3',
         ]);
         if ($validator->fails()) {
@@ -203,7 +200,7 @@ class EmailListController extends Controller
      * Display the specified resource and process index()
      * as well, redirecting to appropriate tab
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(EmailList $emailList)
@@ -315,7 +312,7 @@ class EmailListController extends Controller
                 // $included === null
                 switch ($foundation) {
                     case 'none':
-                    // none with a null $included is not possible
+                        // none with a null $included is not possible
                     case 'everyone':
                         $c = Person::whereHas('orgs', function ($q) {
                             $q->where('organization.orgID', $this->currentPerson->defaultOrgID);
@@ -334,7 +331,7 @@ class EmailListController extends Controller
                             ->whereHas('registrations', function ($q) use ($excluded) {
                                 $q->whereNotIn('eventID', $excluded);
                             })
-                            ->whereHas('orgperson', function ($q) use ($today) {
+                            ->whereHas('orgperson', function ($q) {
                                 $q->whereNotNull('OrgStat1');
                             })
                             ->distinct()
@@ -443,7 +440,7 @@ class EmailListController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -454,7 +451,6 @@ class EmailListController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
@@ -464,9 +460,9 @@ class EmailListController extends Controller
         $include_string = '';
         $exclude_string = '';
         $validator = Validator::make($request->all(), [
-            'name'        => 'required|max:255',
+            'name' => 'required|max:255',
             'description' => 'nullable|min:3',
-            'id'          => 'required|exists:email-list,id',
+            'id' => 'required|exists:email-list,id',
         ]);
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors_validation' => $validator->errors()]);
@@ -489,7 +485,7 @@ class EmailListController extends Controller
                     $list = str_replace('this-year#', '', $event_id);
                     $list = array_flip(explode(',', $list));
                     $include_list = array_replace($include_list, $list);
-                // dd($list,$include_list);
+                    // dd($list,$include_list);
                 } elseif (strpos($event_id, 'last-year#') === 0) {
                     $list = str_replace('last-year#', '', $event_id);
                     $list = array_flip(explode(',', $list));
@@ -560,7 +556,7 @@ class EmailListController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request)

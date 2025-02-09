@@ -4,18 +4,10 @@
 
 namespace Database\Factories\App\Models;
 
-use App\Models\Email;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EmailFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Email::class;
-
     /**
      * Define the model's default state.
      *
@@ -33,12 +25,12 @@ class EmailFactory extends Factory
 
         if ($person !== null) {
             return [
-                'emailADDR' => $this->faker->unique()->safeEmail,
+                'emailADDR' => $this->faker->unique()->safeEmail(),
             ];
         } else {
             return [
                 'personID' => $personID,
-                'emailADDR' => $this->faker->unique()->safeEmail,
+                'emailADDR' => $this->faker->unique()->safeEmail(),
             ];
         }
     }

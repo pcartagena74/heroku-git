@@ -19,7 +19,9 @@ use Validator;
 class TicketsControllerOver extends TicketController
 {
     protected $tickets;
+
     protected $agent;
+
     protected $currentPerson;
 
     public function __construct(Ticket $tickets, Agent $agent)
@@ -218,7 +220,7 @@ class TicketsControllerOver extends TicketController
      */
     public function create()
     {
-        list($priorities, $categories) = $this->PCS();
+        [$priorities, $categories] = $this->PCS();
 
         return view('ticketit::tickets.create', compact('priorities', 'categories'));
     }
@@ -226,20 +228,19 @@ class TicketsControllerOver extends TicketController
     /**
      * Store a newly created ticket and auto assign an agent for it.
      *
-     * @param Request $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'subject'     => 'required|min:3',
-            'content'     => 'required|min:6',
+            'subject' => 'required|min:3',
+            'content' => 'required|min:6',
             'priority_id' => 'required|exists:ticketit_priorities,id',
             'category_id' => 'required|exists:ticketit_categories,id',
         ]);
 
-        $ticket = new Ticket();
+        $ticket = new Ticket;
 
         $ticket->subject = $request->subject;
 
@@ -265,18 +266,18 @@ class TicketsControllerOver extends TicketController
 
     /**
      * store new ticket via ajax agent auto assigned
-     * @param  Request $request
+     *
      * @return json
      */
     public function storeAjax(Request $request)
     {
         if (Agent::isAdmin() || Agent::isAgent()) {
             $validator = Validator::make($request->all(), [
-                'subject'     => 'required|min:3',
-                'content'     => 'required|min:6',
+                'subject' => 'required|min:3',
+                'content' => 'required|min:6',
                 'priority_id' => 'required|exists:ticketit_priorities,id',
                 'category_id' => 'required|exists:ticketit_categories,id',
-                'url'         => 'required',
+                'url' => 'required',
             ]);
             if (! $validator->passes()) {
                 return response()->json(['success' => false, 'errors' => $validator->errors()]);
@@ -285,14 +286,14 @@ class TicketsControllerOver extends TicketController
             $validator = Validator::make($request->all(), [
                 'subject' => 'required|min:3',
                 'content' => 'required|min:6',
-                'url'     => 'required',
+                'url' => 'required',
             ]);
             if (! $validator->passes()) {
                 return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
         }
 
-        $ticket = new Ticket();
+        $ticket = new Ticket;
         $page_url = $request->input('url');
         $referrer = $request->headers->get('referer');
         if ($referrer != $request->input('url')) {
@@ -336,15 +337,14 @@ class TicketsControllerOver extends TicketController
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
     {
         $ticket = $this->tickets->findOrFail($id);
 
-        list($priority_lists, $category_lists, $status_lists) = $this->PCS();
+        [$priority_lists, $category_lists, $status_lists] = $this->PCS();
 
         $close_perm = $this->permToClose($id);
         $reopen_perm = $this->permToReopen($id);
@@ -370,20 +370,18 @@ class TicketsControllerOver extends TicketController
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int     $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'subject'     => 'required|min:3',
-            'content'     => 'required|min:6',
+            'subject' => 'required|min:3',
+            'content' => 'required|min:6',
             'priority_id' => 'required|exists:ticketit_priorities,id',
             'category_id' => 'required|exists:ticketit_categories,id',
-            'status_id'   => 'required|exists:ticketit_statuses,id',
-            'agent_id'    => 'required',
+            'status_id' => 'required|exists:ticketit_statuses,id',
+            'agent_id' => 'required',
         ]);
 
         $ticket = $this->tickets->findOrFail($id);
@@ -417,8 +415,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function destroy($id)
@@ -435,8 +432,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Mark ticket as complete.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function complete($id)
@@ -464,8 +460,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Reopen ticket from complete status.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function reopen($id)
@@ -519,8 +514,6 @@ class TicketsControllerOver extends TicketController
     }
 
     /**
-     * @param $id
-     *
      * @return bool
      */
     public function permToClose($id)
@@ -541,8 +534,6 @@ class TicketsControllerOver extends TicketController
     }
 
     /**
-     * @param $id
-     *
      * @return bool
      */
     public function permToReopen($id)
@@ -562,8 +553,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate average closing period of days per category for number of months.
      *
-     * @param int $period
-     *
+     * @param  int  $period
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function monthlyPerfomance($period = 2)
@@ -593,8 +583,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate the date length it took to solve a ticket.
      *
-     * @param Ticket $ticket
-     *
+     * @param  Ticket  $ticket
      * @return int|false
      */
     public function ticketPerformance($ticket)
@@ -613,8 +602,6 @@ class TicketsControllerOver extends TicketController
     /**
      * Calculate the average date length it took to solve tickets within date period.
      *
-     * @param $from
-     * @param $to
      *
      * @return int
      */

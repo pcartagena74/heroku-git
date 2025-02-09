@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', 0);
 
 use App\Models\Event;
-use App\Models\Org;
 use App\Models\Person;
 use App\Models\RegFinance;
 use App\Models\Registration;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -110,7 +108,7 @@ class ActivityController2 extends Controller
         $pending = RegFinance::whereHas(
             'event', function ($q) {
                 $q->where('eventEndDate', '>=', Carbon::now())
-                ->orderBy('eventStartDate');
+                    ->orderBy('eventStartDate');
             })
             ->with('event', 'person', 'registrations')
             ->where('personID', '=', $this->currentPerson->personID)
@@ -259,7 +257,7 @@ class ActivityController2 extends Controller
 
         // "Become" by logging in the $new_id
         $u = User::find($new_id);
-        if (null === $u) {
+        if ($u === null) {
             request()->session()->flash('alert-warning', trans('messages.errors.become_error', ['id' => $new_id]));
 
             return redirect()->back();

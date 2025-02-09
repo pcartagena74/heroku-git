@@ -1,6 +1,6 @@
 <?php
 
-namespace Kordy\Ticketit\Controllers;
+namespace App\Http\TicketitControllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -39,18 +39,17 @@ class CategoriesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      *
      * @return Response
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
+            'name' => 'required',
+            'color' => 'required',
         ]);
 
-        $category = new Category();
+        $category = new Category;
         $category->create(['name' => $request->name, 'color' => $request->color]);
 
         Session::flash('status', trans('ticketit::lang.category-name-has-been-created', ['name' => $request->name]));
@@ -64,7 +63,6 @@ class CategoriesController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     *
      * @return Response
      */
     public function show($id)
@@ -76,7 +74,6 @@ class CategoriesController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     *
      * @return Response
      */
     public function edit($id)
@@ -89,16 +86,14 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int     $id
-     *
+     * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
+            'name' => 'required',
+            'color' => 'required',
         ]);
 
         $category = Category::findOrFail($id);
@@ -115,7 +110,6 @@ class CategoriesController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     *
      * @return Response
      */
     public function destroy($id)

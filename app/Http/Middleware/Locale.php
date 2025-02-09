@@ -7,7 +7,6 @@ use Closure;
 use Config;
 use Cookie;
 use Illuminate\Support\Facades\Auth;
-use Session;
 
 // Symfony\Component\HttpFoundation\Cookie
 class Locale
@@ -16,7 +15,6 @@ class Locale
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

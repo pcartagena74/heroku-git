@@ -3,18 +3,23 @@
 namespace App\Models;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\InsertOnDuplicateKey;
+use Illuminate\Database\Eloquent\Model;
 
 class PersonStaging extends Model
 {
     //use LogsActivity;
     use InsertOnDuplicateKey;
+
     // The table
     protected $table = 'person-staging';
+
     protected $primaryKey = 'personID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'updateDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'updateDate' => 'datetime',

@@ -8,7 +8,6 @@ use App\Models\Org;
 use App\Models\RegFinance;
 use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -17,11 +16,17 @@ class EventReceipt extends Mailable
     use Queueable, SerializesModels;
 
     public $rf;
+
     public $event;
+
     public $org;
+
     public $loc;
+
     public $tkt;
+
     public $array;
+
     public $attachment;
 
     /**
@@ -48,6 +53,7 @@ class EventReceipt extends Mailable
     public function build()
     {
         $orgName = $this->org->orgName;
+
         //dd($this->array);
         return $this
             ->subject("$orgName Event Registration Confirmation")

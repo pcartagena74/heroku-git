@@ -19,13 +19,6 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = \App\Models\User::class;
-
-    /**
      * Define the model's default state.
      *
      * @return array
@@ -47,7 +40,7 @@ class UserFactory extends Factory
                 'remember_token' => Str::random(10),
             ];
         } else {
-            $e = $this->faker->unique()->safeEmail;
+            $e = $this->faker->unique()->safeEmail();
 
             return [
                 'name' => $e,

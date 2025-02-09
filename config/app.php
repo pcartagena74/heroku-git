@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+
 return [
 
     /*
@@ -12,7 +14,7 @@ return [
     | any other location as required by the application or its packages.
      */
 
-    'name'            => env('APP_NAME', 'mCentric'),
+    'name' => env('APP_NAME', 'mCentric'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,7 +27,7 @@ return [
     |
      */
 
-    'env'             => env('APP_ENV', 'local'),
+    'env' => env('APP_ENV', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +40,7 @@ return [
     |
      */
 
-    'debug'           => env('APP_DEBUG', false),
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +53,7 @@ return [
     |
      */
 
-    'url'             => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://localhost:8000'),
 
     /*
     |--------------------------------------------------------------------------
@@ -63,7 +65,7 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
      */
-    'timezone'        => 'America/New_York',
+    'timezone' => 'America/New_York',
 
     /*'timezone'        => 'Asia/Kolkata', //for localtesting only*/
 
@@ -78,8 +80,8 @@ return [
     |
      */
 
-    'locale'          => 'en',
-    'locales'         => ['en', 'es'],
+    'locale' => 'en',
+    'locales' => ['en', 'es'],
 
     /*
     |--------------------------------------------------------------------------
@@ -105,9 +107,9 @@ return [
     |
      */
 
-    'key'             => env('APP_KEY'),
+    'key' => env('APP_KEY'),
 
-    'cipher'          => 'AES-256-CBC',
+    'cipher' => 'AES-256-CBC',
 
     /*
     |--------------------------------------------------------------------------
@@ -122,11 +124,11 @@ return [
     |
      */
 
-    'log'             => env('APP_LOG', 'daily'),
+    'log' => env('APP_LOG', 'daily'),
 
-    'log_level'       => env('APP_LOG_LEVEL', 'debug'),
+    'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
-    'log_max_files'   => 10,
+    'log_max_files' => 10,
 
     /*
     |--------------------------------------------------------------------------
@@ -139,7 +141,7 @@ return [
     |
      */
 
-    'providers'       => [
+    'providers' => [
 
         /*
          * Laravel Framework Service Providers...
@@ -177,7 +179,8 @@ return [
         /*
          * Package Service Providers...
          */
-        Kordy\Ticketit\TicketitServiceProvider::class,
+        //Kordy\Ticketit\TicketitServiceProvider::class,
+        App\Vendor\Ticketit\TicketitServiceProvider::class,
         Shanmuga\LaravelEntrust\LaravelEntrustServiceProvider::class,
 
         // Laravel\Cashier\CashierServiceProvider::class,
@@ -204,49 +207,13 @@ return [
     |
      */
 
-    'aliases'         => [
-
-        'Agent'        => Jenssegers\Agent\Facades\Agent::class,
-        'App'          => Illuminate\Support\Facades\App::class,
-        'Artisan'      => Illuminate\Support\Facades\Artisan::class,
-        'Auth'         => Illuminate\Support\Facades\Auth::class,
-        'Blade'        => Illuminate\Support\Facades\Blade::class,
-        'Broadcast'    => Illuminate\Support\Facades\Broadcast::class,
-        'Bugsnag'      => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
-        'Bus'          => Illuminate\Support\Facades\Bus::class,
-        'Cache'        => Illuminate\Support\Facades\Cache::class,
-        'Config'       => Illuminate\Support\Facades\Config::class,
-        'Cookie'       => Illuminate\Support\Facades\Cookie::class,
-        'Crypt'        => Illuminate\Support\Facades\Crypt::class,
-        'DB'           => Illuminate\Support\Facades\DB::class,
-        'Eloquent'     => Illuminate\Database\Eloquent\Model::class,
-        //'Entrust'      => Zizaco\Entrust\EntrustFacade::class,
-        'Entrust'      => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
-        'Event'        => Illuminate\Support\Facades\Event::class,
-        'File'         => Illuminate\Support\Facades\File::class,
-        'Form'         => Collective\Html\FormFacade::class,
-        'Gate'         => Illuminate\Support\Facades\Gate::class,
-        'Hash'         => Illuminate\Support\Facades\Hash::class,
-        'Html'         => Collective\Html\HtmlFacade::class,
-        'Lang'         => Illuminate\Support\Facades\Lang::class,
-        'Log'          => Illuminate\Support\Facades\Log::class,
-        'Mail'         => Illuminate\Support\Facades\Mail::class,
-        //'Newrelic'     => Intouch\LaravelNewrelic\Facades\Newrelic::class,
-        'Notification' => Illuminate\Support\Facades\Notification::class,
-        'Password'     => Illuminate\Support\Facades\Password::class,
-        'Queue'        => Illuminate\Support\Facades\Queue::class,
-        'Redirect'     => Illuminate\Support\Facades\Redirect::class,
-        'Redis'        => Illuminate\Support\Facades\Redis::class,
-        'Request'      => Illuminate\Support\Facades\Request::class,
-        'Response'     => Illuminate\Support\Facades\Response::class,
-        'Route'        => Illuminate\Support\Facades\Route::class,
-        'Schema'       => Illuminate\Support\Facades\Schema::class,
-        'Session'      => Illuminate\Support\Facades\Session::class,
-        'Storage'      => Illuminate\Support\Facades\Storage::class,
-        'URL'          => Illuminate\Support\Facades\URL::class,
-        'Validator'    => Illuminate\Support\Facades\Validator::class,
-        'View'         => Illuminate\Support\Facades\View::class,
-
-    ],
+    'aliases' => Facade::defaultAliases()->merge([
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
+        'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'Entrust' => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
+        'Redis' => Illuminate\Support\Facades\Redis::class,
+    ])->toArray(),
 
 ];

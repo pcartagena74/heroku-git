@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Closure;
 use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Closure;
 
 class HomeController extends Controller
 {
@@ -68,6 +68,7 @@ class HomeController extends Controller
             return view('v1.auth_pages.admin.routes', compact('routes'));
         } else {
             request()->session()->flash('alert-warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
+
             return back();
         }
     }
@@ -75,8 +76,7 @@ class HomeController extends Controller
     /**
      * Get route middleware.
      *
-     * @param \Illuminate\Routing\Route $route
-     *
+     * @param  \Illuminate\Routing\Route  $route
      * @return string
      */
     protected function getRouteMiddleware($route)

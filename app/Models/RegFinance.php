@@ -2,19 +2,26 @@
 
 namespace App\Models;
 
+use Exception;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class RegFinance extends Model
 {
     use SoftDeletes;
+
     //use LogsActivity;
     // The table
     protected $table = 'reg-finance';
+
     protected $primaryKey = 'regID';
+
     const CREATED_AT = 'createDate';
+
     const UPDATED_AT = 'cancelDate';
+
     protected $casts = [
         'createDate' => 'datetime',
         'cancelDate' => 'datetime',
@@ -43,9 +50,15 @@ class RegFinance extends Model
      */
     public function receipt_url()
     {
-        $s3m = Flysystem::connection('s3_media');
-        $receipt = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET2'), "$this->eventID/$this->confirmation.pdf");
+        $receipt_filename = "$this->eventID/$this->confirmation.pdf";
 
-        return $receipt;
+        try {
+            if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
+                $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+            }
+        } catch (Exception $e) {
+            $receipt_url = '#';
+        }
+        return $receipt_url;
     }
 }

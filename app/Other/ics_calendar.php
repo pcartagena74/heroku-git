@@ -15,21 +15,37 @@ use Illuminate\Support\Facades\DB;
 class ics_calendar
 {
     private $end;
+
     private $html;
+
     private $contact;
+
     private $created;
+
     private $org;
+
     private $o_string;
+
     private $summary;
+
     private $description;
+
     private $location;
+
     private $stamp;
+
     private $start;
+
     private $title;
+
     private $tzid;
+
     private $uid;
+
     private $updated;
+
     private $uri;
+
     private $event;
 
     public function __construct(Event $event)

@@ -12,12 +12,14 @@ use Mail;
 class SendEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     /**
      * The number of times the job may be attempted.
      *
      * @var int
      */
     public $tries = 3;
+
     /**
      * The number of seconds the job can run before timing out.
      *
@@ -29,9 +31,13 @@ class SendEmailJob implements ShouldQueue
      * user defined varaibles
      */
     protected $user;
+
     protected $from_email;
+
     protected $to_email;
+
     protected $subject;
+
     protected $details;
 
     /**

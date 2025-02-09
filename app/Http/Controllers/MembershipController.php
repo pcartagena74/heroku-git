@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Person;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class MembershipController extends Controller
 {
@@ -17,6 +15,7 @@ class MembershipController extends Controller
             if (auth()) {
                 $this->currentPerson = Person::find(auth()->user()->id);
             }
+
             return $next($request);
         });
     }
@@ -24,7 +23,7 @@ class MembershipController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index($which = 'new', $days = 90, $page = 25)
@@ -33,6 +32,6 @@ class MembershipController extends Controller
         [$members, $title] = membership_reports($orgID, $which, 0, $days, $page);
 
         return view('v1.auth_pages.members.new_or_expiring',
-                compact('members', 'title', 'orgID', 'which', 'days'));
+            compact('members', 'title', 'orgID', 'which', 'days'));
     }
 }

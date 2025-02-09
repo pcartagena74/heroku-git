@@ -1,25 +1,25 @@
 @php
-/**
- * Comment: Navigation bar across top-right
- * Created: 2/2/2017
- *
- * May need to revisit once sessions and globals are decided post laravel authorization
- */
+    /**
+     * Comment: Navigation bar across top-right
+     * Created: 2/2/2017
+     *
+     * May need to revisit once sessions and globals are decided post laravel authorization
+     */
 
-$currentPerson = App\Models\Person::find(auth()->user()->id);
+    $currentPerson = App\Models\Person::find(auth()->user()->id);
 
-if($currentPerson->avatarURL !== null){
-    try{
-        $x = getimagesize($currentPerson->avatarURL);
-        $badge_color = "bg-success";
-    } catch (Exception $exception) {
-        $currentPerson->avatarURL = null;
+    if($currentPerson->avatarURL !== null){
+        try{
+            $x = getimagesize($currentPerson->avatarURL);
+            $badge_color = "bg-success";
+        } catch (Exception $exception) {
+            $currentPerson->avatarURL = null;
+            $badge_color = "bg-red";
+            $currentPerson->save();
+        }
+    } else {
         $badge_color = "bg-red";
-        $currentPerson->save();
     }
-} else {
-    $badge_color = "bg-red";
-}
 @endphp
 <div class="top_nav">
     <div class="nav_menu">
@@ -33,9 +33,10 @@ if($currentPerson->avatarURL !== null){
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a aria-expanded="false" class="user-profile dropdown-toggle" data-toggle="dropdown" href="#">
-                        <img alt="{{ trans('messages.alt_txt.avatar') }}" height="29" src="{{ $currentPerson->avatarURL ?? '/images/user.png' }}" width="29" />
-                            {{ $currentPerson->prefName ?? $currentPerson->firstName }}
-                            <span class=" fa fa-angle-down">
+                        <img alt="{{ trans('messages.alt_txt.avatar') }}" height="29"
+                             src="{{ $currentPerson->avatarURL ?? '/images/user.png' }}" width="29"/>
+                        {{ $currentPerson->prefName ?? $currentPerson->firstName }}
+                        <span class=" fa fa-angle-down">
                             </span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -70,15 +71,16 @@ if($currentPerson->avatarURL !== null){
                     </ul>
                 </li>
                 @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
-                <li class="nav-item dropdown">
-                    <a aria-expanded="false" class="dropdown-toggle info-number" href="{{route('tickets.index')}}" id="navbarDropdown1">
-                        <i class="far fa-fw fa-ticket-alt" style="white-space:nowrap;">
-                        </i>
-                        <span class="badge bg-green">
+                    <li class="nav-item dropdown">
+                        <a aria-expanded="false" class="dropdown-toggle info-number" href="{{route('tickets.index')}}"
+                           id="navbarDropdown1">
+                            <i class="far fa-fw fa-ticket-alt" style="white-space:nowrap;">
+                            </i>
+                            <span class="badge bg-green">
                             {{getActiveTicketCountAgent()}}
                         </span>
-                    </a>
-                </li>
+                        </a>
+                    </li>
                 @endif
                 @include('v1.parts.locale',['member'=>true])
             </ul>

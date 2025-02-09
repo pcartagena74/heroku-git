@@ -21,10 +21,12 @@ use App\Notifications\ReceiptNotification;
 use Aws\S3\S3Client;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
+use Exception;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
@@ -194,6 +196,7 @@ class RegFinanceController extends Controller
             if ($reg->ticket->available_for_purchase() < $rf->seats) {
                 request()->session()->flash('alert-danger',
                     trans('messages.instructions.sold_out4', ['url' => $event->event_url()]));
+
                 return redirect()->back()->withInput();
             }
         }
@@ -215,7 +218,6 @@ class RegFinanceController extends Controller
 
             $person->notify(new AccountCreation($person, $event));
         }
-
 
         //$discount_code = $rf->discountCode;
         // $ticket = Ticket::find($rf->ticketID);
@@ -441,7 +443,7 @@ class RegFinanceController extends Controller
                             $rs->save();
 
                             $e = EventSession::find($sess_id);
-                            if (null !== $e) {
+                            if ($e !== null) {
                                 $e->regCount++;
                                 $e->save();
                             }
@@ -463,12 +465,7 @@ class RegFinanceController extends Controller
         if (!preg_match('/pending/i', $receipt_filename)) {
             try {
                 $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
-
-                Flysystem::connection('s3_receipts')->put(
-                    $receipt_filename,
-                    $pdf->output(),
-                    ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
-                );
+                \Storage::disk('events')->put($receipt_filename, $pdf->output(), 'public');
             } catch (\Exception $exception) {
                 // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
                 // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
@@ -483,9 +480,13 @@ class RegFinanceController extends Controller
                 'version' => 'latest',
             ]);
 
-            $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-            $s3fs = new Filesystem($adapter);
-            $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+            try {
+                if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
+                    $event_pdf = Storage::disk('s3_receipts')->url($receipt_filename);
+                }
+            } catch (Exception $e) {
+                $event_pdf = '#';
+            }
 
             try {
                 // Consider turning this into a notification instead for reliability.
@@ -667,9 +668,9 @@ class RegFinanceController extends Controller
                         ['eventID', $eventID],
                         ['discountCODE', $code],
                     ])->first();
-                    if (null !== $dCode && $dCode->percent > 0) {
+                    if ($dCode !== null && $dCode->percent > 0) {
                         $reg->subtotal = $reg->subtotal - ($reg->subtotal * $dCode->percent / 100);
-                    } elseif (null != $dCode && $dCode->flatAmt > 0) {
+                    } elseif ($dCode != null && $dCode->flatAmt > 0) {
                         $reg->subtotal = $reg->subtotal - $dCode->flatAmt;
                     }
                     if ($reg->subtotal < 0) {
@@ -834,22 +835,13 @@ class RegFinanceController extends Controller
             ->setOption('no-stop-slow-scripts', true);
         */
 
-        //Storage::put($receipt_filename, $pdf->output());
-        Flysystem::connection('s3_receipts')->put($receipt_filename, $pdf->output(), ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
-
-        $client = new S3Client([
-            'credentials' => [
-                'key' => env('AWS_KEY'),
-                'secret' => env('AWS_SECRET'),
-            ],
-            'region' => env('AWS_REGION'),
-            'version' => 'latest',
-        ]);
-
-        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-        $s3fs = new Filesystem($adapter);
-        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
-
+        try {
+            if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
+                $event_pdf = Storage::disk('s3_receipts')->url($receipt_filename);
+            }
+        } catch (Exception $e) {
+            $event_pdf = '#';
+        }
         // Mail will need to INSTEAD go to each of the persons attached to Registration records
         try {
             $person->notify(new ReceiptNotification($rf, $event_pdf));
@@ -893,30 +885,19 @@ class RegFinanceController extends Controller
         $x = compact('event', 'quantity', 'loc', 'rf', 'person', 'org');
         try {
             $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
-
-            Flysystem::connection('s3_receipts')->put(
-                $receipt_filename,
-                $pdf->output(),
-                ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
-            );
+            \Storage::disk('events')->put($receipt_filename, $pdf->output(), 'public');
         } catch (\Exception $exception) {
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
-
             return redirect()->back();
         }
 
-        $client = new S3Client([
-            'credentials' => [
-                'key' => env('AWS_KEY'),
-                'secret' => env('AWS_SECRET'),
-            ],
-            'region' => env('AWS_REGION'),
-            'version' => 'latest',
-        ]);
-
-        $adapter = new AwsS3Adapter($client, env('AWS_BUCKET2'));
-        $s3fs = new Filesystem($adapter);
-        $event_pdf = $s3fs->getAdapter()->getClient()->getObjectUrl(env('AWS_BUCKET2'), $receipt_filename);
+        try {
+            if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
+                $event_pdf = Storage::disk('s3_receipts')->url($receipt_filename);
+            }
+        } catch (Exception $e) {
+            $event_pdf = '#';
+        }
 
         try {
             $person->notify(new ReceiptNotification($rf, $event_pdf));

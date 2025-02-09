@@ -51,7 +51,7 @@ class BundleController extends Controller
 
         // $name is passed as eventID-{bundleID]-{ticketID} so it needs to be split
         $name = request()->input('name');
-        list($field1, $field2, $ticketID) = array_pad(explode('-', $name, 3), 3, null);
+        [$field1, $field2, $ticketID] = array_pad(explode('-', $name, 3), 3, null);
 
         $value = request()->input('value');
         // pk is the bundleID.  Yes. Redundancy above done for editable_jQ_uniqueness

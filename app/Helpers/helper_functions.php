@@ -18,7 +18,6 @@ use App\Models\VolunteerRole;
 use Carbon\Carbon;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -29,16 +28,16 @@ use Spatie\Image\Manipulations;
 
 // $client = new Client();
 
-
 /**
  * Performs hierarchical query to get the list of volunteers for the org chart
  *
  * @param string $o organization record
- * @param int $p    optional person record; shows all volunteers if null
- * @return array    [$json_roles, $option_string]
+ * @param int $p optional person record; shows all volunteers if null
+ * @return array [$json_roles, $option_string]
  */
-if (! function_exists('volunteer_data')) {
-    function volunteer_data($o, $p) {
+if (!function_exists('volunteer_data')) {
+    function volunteer_data($o, $p)
+    {
         $option_string = '';
 
         // volunteers include anyone who has been assigned a role in the same chapter (same orgID)
@@ -60,9 +59,9 @@ if (! function_exists('volunteer_data')) {
             $option_string .= "{ value: '$v->personID', text: '$v->name' },\n";
         }
 
-        $nodes = array();
+        $nodes = [];
 
-        if(null === $p) {
+        if ($p === null) {
             // Should pull orgID from 1 and actual orgID, if different
             $json_roles = VolunteerRole::where('volunteer_roles.orgID', $o->orgID)
                 ->join('organization as o', function ($q) {
@@ -71,7 +70,7 @@ if (! function_exists('volunteer_data')) {
                 ->leftjoin('volunteer_service as vs', function ($q) {
                     $q->on([
                         ['vs.orgID', '=', 'volunteer_roles.orgID'],
-                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id']
+                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id'],
                     ])
                         ->whereNull('vs.roleEndDate');
                 })
@@ -125,7 +124,7 @@ if (! function_exists('volunteer_data')) {
 
             $node_string = null;
             foreach ($nodes as $node) {
-                $node_string .= $node->id . ",";
+                $node_string .= $node->id . ',';
             }
             $node_string = rtrim($node_string, ',');
             $node_array = explode(',', $node_string);
@@ -138,7 +137,7 @@ if (! function_exists('volunteer_data')) {
                 ->leftjoin('volunteer_service as vs', function ($q) {
                     $q->on([
                         ['vs.orgID', '=', 'volunteer_roles.orgID'],
-                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id']
+                        ['vs.volunteer_role_id', '=', 'volunteer_roles.id'],
                     ])
                         ->whereNull('vs.roleEndDate');
                 })
@@ -195,7 +194,6 @@ if (! function_exists('volunteer_data')) {
     }
 }
 
-
 /**
  * Takes a member report type, optional # of days, and optional pagination count
  *
@@ -204,7 +202,7 @@ if (! function_exists('volunteer_data')) {
  * @param int $page
  * @return array
  */
-if (! function_exists('membership_reports')) {
+if (!function_exists('membership_reports')) {
     function membership_reports($orgID, $which = 'new', $download = 0, $days = 90, $page = 15): array
     {
         $today = Carbon::today();
@@ -212,9 +210,9 @@ if (! function_exists('membership_reports')) {
 
         switch ($which) {
             case 'new':
-                if($download){
+                if ($download) {
                     // download needs query to terminate in ->get()
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -223,7 +221,7 @@ if (! function_exists('membership_reports')) {
                         $q->where('org-person.orgID', '=', $orgID);
                         $q->whereDate('RelDate2', '>=', $today->subDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -232,7 +230,7 @@ if (! function_exists('membership_reports')) {
                         ->with('orgperson')
                         ->get();
                 } else {
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -241,7 +239,7 @@ if (! function_exists('membership_reports')) {
                         $q->where('org-person.orgID', '=', $orgID);
                         $q->whereDate('RelDate2', '>=', $today->subDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -256,9 +254,9 @@ if (! function_exists('membership_reports')) {
                 break;
 
             default:
-                if($download){
+                if ($download) {
                     // download needs query to terminate in ->get()
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -268,7 +266,7 @@ if (! function_exists('membership_reports')) {
                         $q->whereDate('RelDate4', '>', $today->toDateString());
                         $q->whereDate('RelDate4', '<=', $today->addDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -277,7 +275,7 @@ if (! function_exists('membership_reports')) {
                         ->with('orgperson')
                         ->get();
                 } else {
-                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days, $y) {
+                    $members = Person::whereHas('orgperson', function ($q) use ($orgID, $today, $days) {
                         $q->whereNotNull('OrgStat1');
                         $q->whereNotNull('RelDate1');
                         $q->whereNotNull('RelDate2');
@@ -287,7 +285,7 @@ if (! function_exists('membership_reports')) {
                         $q->whereDate('RelDate4', '>', $today->toDateString());
                         $q->whereDate('RelDate4', '<=', $today->addDays($days)->toDateString());
                     })
-                        ->withCount(['registrations' => function($query){
+                        ->withCount(['registrations' => function ($query) {
                             $query->whereNull('deleted_at');
                         }, 'registrations as regs_this_year' => function ($query) use ($y) {
                             $query->whereNull('deleted_at');
@@ -300,10 +298,10 @@ if (! function_exists('membership_reports')) {
                 $title = trans('messages.headers.profile_vars.exp_title', ['days' => $days]);
                 break;
         }
+
         return [$members, $title];
     }
 }
-
 
 /**
  * Takes a role id and returns the count of others with that role within the current user's org
@@ -311,7 +309,7 @@ if (! function_exists('membership_reports')) {
  * @param int $id
  * @return int
  */
-if (! function_exists('count_roles')) {
+if (!function_exists('count_roles')) {
     function count_roles($id)
     {
         $p = Person::find(auth()->user()->id);
@@ -319,7 +317,7 @@ if (! function_exists('count_roles')) {
         return Person::leftJoin('person_role', 'user_id', '=', 'person.personID')
             ->whereHas('orgperson', function ($q) use ($p) {
                 $q->where('org-person.orgID', '=', $p->defaultOrgID);
-            })->whereHas('roles', function ($q) use ($p, $id) {
+            })->whereHas('roles', function ($q) use ($id) {
                 $q->where('id', '=', $id);
             })->distinct()->count('personID');
     }
@@ -329,14 +327,14 @@ if (! function_exists('count_roles')) {
  * Takes the html contents from the summernote input field and parses out uploaded images for
  * storage in AWS media area associated with Org and updates the html to reference image URLs
  *
- * @param $html
+ * @param  $html
  * @param Org $org
  * @return string
  */
-if (! function_exists('extract_images')) {
+if (!function_exists('extract_images')) {
     function extract_images($html, $orgID)
     {
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         $org = Org::find($orgID);
         $updated = 0;
 
@@ -360,15 +358,17 @@ if (! function_exists('extract_images')) {
 
                     // @see http://image.intervention.io/api/
                     $image = Image::make($src)
-                    // resize if required
-                    /* ->resize(300, 200) */
+                        // resize if required
+                        /* ->resize(300, 200) */
                         ->encode($mimetype, 100); // encode file to the specified mimetype
 
-                    //Flysystem::connection('s3_media')->put($event_filename, $contents);
-                    $s3m = Flysystem::connection('s3_media');
-                    //$s3m->put($filename, $image, ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]);
-                    $s3m->put($filepath, $image->__toString());
-                    $new_src = $s3m->getAdapter()->getClient()->getObjectURL(env('AWS_BUCKET3'), $filepath);
+                    try {
+                        if (Storage::disk('s3_media')->exists($filepath)) {
+                            $new_src = Storage::disk('s3_media')->url($filepath);
+                        }
+                    } catch (Exception $e) {
+                        $new_src = '#';
+                    }
 
                     $img->removeAttribute('src');
                     $img->removeAttribute('data-filename');
@@ -381,7 +381,7 @@ if (! function_exists('extract_images')) {
                 return $html;
             }
         } catch (Exception $exception) {
-            request()->session()->flash('alert-danger', trans('messages.errors.html_error')."<br /><pre>$exception</pre>");
+            request()->session()->flash('alert-danger', trans('messages.errors.html_error') . "<br /><pre>$exception</pre>");
 
             return $html;
         }
@@ -391,20 +391,20 @@ if (! function_exists('extract_images')) {
 /**
  * Takes a model indicator and an array of variables, usually just 1, and performs a rudimentary existence check
  *
- * @param $model        Values: p for Person, e for Email, op for OrgPerson
- * @param $doFlash          1 if flash message should be set
- * @param $var_array    Contents:
- *                      + p:  firstName, lastName, login
- *                      + e:  login
- *                      + op: PMI ID
+ * @param  $model  Values: p for Person, e for Email, op for OrgPerson
+ * @param  $doFlash 1 if flash message should be set
+ * @param  $var_array  Contents:
+ *                    + p:  firstName, lastName, login
+ *                    + e:  login
+ *                    + op: PMI ID
  */
-if (! function_exists('check_exists')) {
+if (!function_exists('check_exists')) {
     function check_exists($model, $doFlash, $var_array)
     {
         $details = '<ul>';
         switch ($model) {
             case 'p':
-                list($first, $last, $login) = $var_array;
+                [$first, $last, $login] = $var_array;
                 $p = Person::where([
                     ['firstName', '=', $first],
                     ['lastName', '=', $last],
@@ -429,11 +429,11 @@ if (! function_exists('check_exists')) {
                 }
                 break;
             case 'e':
-                list($email) = $var_array;
+                [$email] = $var_array;
                 $e = Email::where('emailADDR', '=', $email)->first();
-                if (null !== $e) {
+                if ($e !== null) {
                     $p = Person::find($e->personID);
-                    $details .= '<li>'.$email.'</li>';
+                    $details .= '<li>' . $email . '</li>';
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                     $details .= "<li>$existing</li>";
                     $details .= '</ul>';
@@ -445,12 +445,12 @@ if (! function_exists('check_exists')) {
                 }
                 break;
             case 'op':
-                list($pmiID) = $var_array;
+                [$pmiID] = $var_array;
                 if ($pmiID !== null) {
                     $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
-                    if (null !== $op) {
+                    if ($op !== null) {
                         $p = Person::find($op->personID);
-                        $details .= '<li>'.$op->OrgStat1.'</li>';
+                        $details .= '<li>' . $op->OrgStat1 . '</li>';
                         $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                         $details .= "<li>$existing</li>";
                         $details .= '</ul>';
@@ -471,26 +471,26 @@ if (! function_exists('check_exists')) {
 /**
  * pLink: (profileLink) returns a URL string to a profile on the registration ID
  *
- * @param $regID
- * @param $personID
+ * @param  $regID
+ * @param  $personID
  * @return string
  */
-if (! function_exists('pLink')) {
+if (!function_exists('pLink')) {
     function plink($regID, $personID)
     {
-        return '<a href="'.env('APP_URL').'/profile/'.$personID.'">'.$regID.'</a>';
+        return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . '</a>';
     }
 }
 
 /**
  * et_translate: array_map function to apply a trans_choice if a translation exists for the term
  */
-if (! function_exists('et_translate')) {
+if (!function_exists('et_translate')) {
     function et_translate($term)
     {
         $x = 'messages.event_types.';
-        if (Lang::has($x.$term)) {
-            return trans_choice($x.$term, 1);
+        if (Lang::has($x . $term)) {
+            return trans_choice($x . $term, 1);
         } else {
             return $term;
         }
@@ -500,11 +500,12 @@ if (! function_exists('et_translate')) {
 /**
  * li_print_array: convert an array into a html-formatted list
  *                 used in RegistrationController
- * @param $array
- * @param $type
+ *
+ * @param  $array
+ * @param  $type
  * @return string
  */
-if (! function_exists('li_print_array')) {
+if (!function_exists('li_print_array')) {
     function li_print_array($array, $type)
     {
         //dd($array);
@@ -535,15 +536,16 @@ if (! function_exists('li_print_array')) {
 
 /**
  * assoc_email returns 0 or 1 based on whether the $email address is associated with Person $p
- * @param $email
- * @param $p
+ *
+ * @param  $email
+ * @param  $p
  * @return bool
  */
-if (! function_exists('assoc_email')) {
+if (!function_exists('assoc_email')) {
     function assoc_email($email, $p)
     {
         $e = Email::where('emailADDR', '=', $email)->first();
-        if (null === $e || $e->personID != $p->personID) {
+        if ($e === null || $e->personID != $p->personID) {
             return 0;
         } else {
             return 1;
@@ -562,7 +564,7 @@ if (! function_exists('assoc_email')) {
  * 2. Checking whether data was entered into visible form fields
  * 3. Checking if there are any discrepancies (changes) to data in the form fields indicating the need to update
  */
-if (! function_exists('location_triage')) {
+if (!function_exists('location_triage')) {
     function location_triage(Request $request, Event $event, Person $current_person)
     {
         //$loc = null;
@@ -593,7 +595,7 @@ if (! function_exists('location_triage')) {
                 $loc = Location::firstOrNew(
                     [
                         'locName' => $locName,
-                        'orgID'   => $orgID,
+                        'orgID' => $orgID,
                     ]
                 );
                 break;
@@ -603,7 +605,7 @@ if (! function_exists('location_triage')) {
                 $loc = Location::find($event->locationID);
                 break;
 
-            case ! empty($locationID):
+            case !empty($locationID):
                 // If the selected locationID does not match one already associated with the event, change association
                 // Update location fields unless orgID=1
                 $loc = Location::find($locationID);
@@ -634,10 +636,11 @@ if (! function_exists('location_triage')) {
 
 /**
  * get ticketit agent list from ticket or from current user
- * @param  ticket collection $ticket
+ *
+ * @param ticket collection $ticket
  * @return array of agent
  */
-if (! function_exists('getAgentList')) {
+if (!function_exists('getAgentList')) {
     function getAgentList($ticket = null)
     {
         $orgId = 0;
@@ -651,7 +654,7 @@ if (! function_exists('getAgentList')) {
 
         $user = User::where('id', auth()->user()->id)->get()->first();
         //get list of admins only for use with admin role
-        if ($user->hasRole(['Admin']) && ! $user->hasRole(['Developer'])) {
+        if ($user->hasRole(['Admin']) && !$user->hasRole(['Developer'])) {
             $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
                 $q->select('user_id')
                     ->from('person_role')
@@ -691,7 +694,7 @@ if (! function_exists('getAgentList')) {
         })->get()->pluck('login', 'personID')->toArray();
 
         $dev_agents = array_map(function ($value) {
-            return $value.'(Developer)';
+            return $value . '(Developer)';
         }, $dev_agents);
 
         $agent_lists['auto_dev'] = 'Developer Queue';
@@ -703,9 +706,9 @@ if (! function_exists('getAgentList')) {
         if (is_array($admin_agents)) {
             foreach ($admin_agents as $key => $value) {
                 if (array_key_exists($key, $agent_lists)) {
-                    $agent_lists[$key] = $value.' (Admin and Developer)';
+                    $agent_lists[$key] = $value . ' (Admin and Developer)';
                 } else {
-                    $agent_lists[$key] = $value.' (Admin)';
+                    $agent_lists[$key] = $value . ' (Admin)';
                 }
             }
         }
@@ -716,9 +719,10 @@ if (! function_exists('getAgentList')) {
 
 /**
  * get logged in user active ticket count
+ *
  * @return int ticket count
  */
-if (! function_exists('getActiveTicketCountUser')) {
+if (!function_exists('getActiveTicketCountUser')) {
     function getActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -730,7 +734,7 @@ if (! function_exists('getActiveTicketCountUser')) {
     }
 }
 
-if (! function_exists('showActiveTicketUser')) {
+if (!function_exists('showActiveTicketUser')) {
     function showActiveTicketUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -744,9 +748,10 @@ if (! function_exists('showActiveTicketUser')) {
 
 /**
  * mark logged user all open ticket as read
+ *
  * @return bool
  */
-if (! function_exists('markReadActiveTicketCountUser')) {
+if (!function_exists('markReadActiveTicketCountUser')) {
     function markReadActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -759,10 +764,11 @@ if (! function_exists('markReadActiveTicketCountUser')) {
 
 /**
  * make a specific user ticket as unread
- * @param  int $ticket_id ticket id
+ *
+ * @param int $ticket_id ticket id
  * @return bool
  */
-if (! function_exists('markUnreadTicketUser')) {
+if (!function_exists('markUnreadTicketUser')) {
     function markUnreadTicketUser($ticket_id)
     {
         if (empty($ticket_id)) {
@@ -776,9 +782,10 @@ if (! function_exists('markUnreadTicketUser')) {
 
 /**
  * get all active ticket of loggedin user
+ *
  * @return int count
  */
-if (! function_exists('getActiveTicketCountAgent')) {
+if (!function_exists('getActiveTicketCountAgent')) {
     function getActiveTicketCountAgent()
     {
         $person = Person::find(auth()->user()->id);
@@ -792,12 +799,13 @@ if (! function_exists('getActiveTicketCountAgent')) {
 
 /**
  * get all active ticket of loggedin user
+ *
  * @return int count
  */
-if (! function_exists('getTicketCategories')) {
+if (!function_exists('getTicketCategories')) {
     function getTicketCategories()
     {
-        list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+        [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
 
         return $categories;
     }
@@ -805,12 +813,13 @@ if (! function_exists('getTicketCategories')) {
 
 /**
  * get all active ticket of loggedin user
+ *
  * @return int count
  */
-if (! function_exists('getTicketPriorities')) {
+if (!function_exists('getTicketPriorities')) {
     function getTicketPriorities()
     {
-        list($priorities, $categories) = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
+        [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
 
         return $priorities;
     }
@@ -818,9 +827,10 @@ if (! function_exists('getTicketPriorities')) {
 
 /**
  * get template builder block category from database
+ *
  * @return array of email block category
  */
-if (! function_exists('get_template_builder_blocks_category')) {
+if (!function_exists('get_template_builder_blocks_category')) {
     function get_template_builder_category()
     {
         return App\Models\EmailBlockCategory::all()->toArray();
@@ -829,10 +839,11 @@ if (! function_exists('get_template_builder_blocks_category')) {
 
 /**
  * get template blocks by category id
- * @param  int $email_cat_id  email category id
- * @return array               of category blocks
+ *
+ * @param int $email_cat_id email category id
+ * @return array of category blocks
  */
-if (! function_exists('get_template_builder_blocks_category')) {
+if (!function_exists('get_template_builder_blocks_category')) {
     function get_template_builder_block_category($email_cat_id)
     {
         return App\Models\EmailBlock::where(['cat_id' => $email_cat_id, 'is_active' => 1])->get()->toArray();
@@ -841,13 +852,14 @@ if (! function_exists('get_template_builder_blocks_category')) {
 
 /**
  * check if given string is date type
- * @param  string  $date_str date
- * @return bool        true/false
+ *
+ * @param string $date_str date
+ * @return bool true/false
  */
-if (! function_exists('isDate')) {
+if (!function_exists('isDate')) {
     function isDate($date_str)
     {
-        if (! $date_str) {
+        if (!$date_str) {
             return false;
         } else {
             // $date = date_parse($date_str);
@@ -863,9 +875,10 @@ if (! function_exists('isDate')) {
 
 /**
  * send data to request bin for queue debug
- * @param  array $data
+ *
+ * @param array $data
  */
-if (! function_exists('requestBin')) {
+if (!function_exists('requestBin')) {
     function requestBin($data)
     {
         return;
@@ -890,13 +903,14 @@ if (! function_exists('requestBin')) {
 
 /**
  * replace text placeholder with actual data from database
- * @param  string  $email       user email whose data needed to be replaced by placeholder
- * @param  object  $campaign    the campaign object
- * @param  bool $for_preview true if using for preview only false while sending actual email
- * @param  string  $raw_html    html string used when for_preview is true
- * @return string               replaced html
+ *
+ * @param string $email user email whose data needed to be replaced by placeholder
+ * @param object $campaign the campaign object
+ * @param bool $for_preview true if using for preview only false while sending actual email
+ * @param string $raw_html html string used when for_preview is true
+ * @return string replaced html
  */
-if (! function_exists('replaceUserDataInEmailTemplate')) {
+if (!function_exists('replaceUserDataInEmailTemplate')) {
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
     {
         // $start = microtime(true);
@@ -916,13 +930,13 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
                 </tbody>
             </table></div></td></tr></tbody></table>';
         if ($for_preview) {
-            if (! empty($raw_html)) {
+            if (!empty($raw_html)) {
                 $person = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
                 $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
-                if (! empty($campaign)) {
-                    if (! empty($campaign->preheader)) {
+                if (!empty($campaign)) {
+                    if (!empty($campaign->preheader)) {
                         $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
-                        $raw_html = $preheader_html.$raw_html;
+                        $raw_html = $preheader_html . $raw_html;
                     }
                 }
             } else {
@@ -936,9 +950,9 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
                     $raw_html .= $value->content;
                 }
             } else {
-                if (! empty($campaign->preheader)) {
+                if (!empty($campaign->preheader)) {
                     $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
-                    $raw_html = $preheader_html.$campaign->content;
+                    $raw_html = $preheader_html . $campaign->content;
                 } else {
                     $raw_html = $campaign->content;
                 }
@@ -949,49 +963,50 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
         if (empty($person) || empty($organization)) {
             return $raw_html;
         }
-        if (! empty($organization)) {
+        if (!empty($organization)) {
             $org_name = $organization->orgName;
         }
         $mapping = [
-            '[PREFIX]'           => $person->prefix,
-            '[FIRSTNAME]'        => $person->firstName,
-            '[MIDDLENAME]'       => $person->midName,
-            '[LASTNAME]'         => $person->lastName,
-            '[SUFFIX]'           => $person->suffix,
-            '[PREFNAME]'         => $person->prefName,
-            '[LOGINEMAIL]'       => $person->login,
+            '[PREFIX]' => $person->prefix,
+            '[FIRSTNAME]' => $person->firstName,
+            '[MIDDLENAME]' => $person->midName,
+            '[LASTNAME]' => $person->lastName,
+            '[SUFFIX]' => $person->suffix,
+            '[PREFNAME]' => $person->prefName,
+            '[LOGINEMAIL]' => $person->login,
             '[ORGANIZATIONNAME]' => $org_name,
-            '[TITLE]'            => $person->title,
-            '[COMPANYNAME]'      => $person->compName,
-            '[INDUSTRY]'         => $person->indName,
-            '[EXPERINCE]'        => $person->experience,
-            '[ALLERGENNOTE]'     => $person->allergenNote,
-            '[SPECIALNEEDS]'     => $person->specialNeeds,
-            '[CHAPTERROLE]'      => $person->chapterRole,
-            '[AFFILIATION]'      => $person->affiliation,
-            '[TWITTERHANDLE]'    => $person->twitterHandle,
-            '[CERTIFICATIONS]'   => $person->certifications,
-            '[OSN1]'             => $person->orgperson->OrgStat1,
-            '[OSN2]'             => $person->orgperson->OrgStat2,
-            '[OSN3]'             => $person->orgperson->OrgStat3,
-            '[OSN4]'             => $person->orgperson->OrgStat4,
-            '[OSN5]'             => $person->orgperson->OrgStat5,
-            '[OSN6]'             => $person->orgperson->OrgStat6,
-            '[OSN7]'             => $person->orgperson->OrgStat7,
-            '[OSN8]'             => $person->orgperson->OrgStat8,
-            '[OSN9]'             => $person->orgperson->OrgStat9,
-            '[OSN10]'            => $person->orgperson->OrgStat10,
-            '[ODN1]'             => $person->orgperson->RelDate1,
-            '[ODN2]'             => $person->orgperson->RelDate2,
-            '[ODN3]'             => $person->orgperson->RelDate3,
-            '[ODN4]'             => $person->orgperson->RelDate4,
-            '[ODN5]'             => $person->orgperson->RelDate5,
-            '[ODN6]'             => $person->orgperson->RelDate6,
-            '[ODN7]'             => $person->orgperson->RelDate7,
-            '[ODN8]'             => $person->orgperson->RelDate8,
-            '[ODN9]'             => $person->orgperson->RelDate9,
-            '[ODN10]'            => $person->orgperson->RelDate10,
+            '[TITLE]' => $person->title,
+            '[COMPANYNAME]' => $person->compName,
+            '[INDUSTRY]' => $person->indName,
+            '[EXPERINCE]' => $person->experience,
+            '[ALLERGENNOTE]' => $person->allergenNote,
+            '[SPECIALNEEDS]' => $person->specialNeeds,
+            '[CHAPTERROLE]' => $person->chapterRole,
+            '[AFFILIATION]' => $person->affiliation,
+            '[TWITTERHANDLE]' => $person->twitterHandle,
+            '[CERTIFICATIONS]' => $person->certifications,
+            '[OSN1]' => $person->orgperson->OrgStat1,
+            '[OSN2]' => $person->orgperson->OrgStat2,
+            '[OSN3]' => $person->orgperson->OrgStat3,
+            '[OSN4]' => $person->orgperson->OrgStat4,
+            '[OSN5]' => $person->orgperson->OrgStat5,
+            '[OSN6]' => $person->orgperson->OrgStat6,
+            '[OSN7]' => $person->orgperson->OrgStat7,
+            '[OSN8]' => $person->orgperson->OrgStat8,
+            '[OSN9]' => $person->orgperson->OrgStat9,
+            '[OSN10]' => $person->orgperson->OrgStat10,
+            '[ODN1]' => $person->orgperson->RelDate1,
+            '[ODN2]' => $person->orgperson->RelDate2,
+            '[ODN3]' => $person->orgperson->RelDate3,
+            '[ODN4]' => $person->orgperson->RelDate4,
+            '[ODN5]' => $person->orgperson->RelDate5,
+            '[ODN6]' => $person->orgperson->RelDate6,
+            '[ODN7]' => $person->orgperson->RelDate7,
+            '[ODN8]' => $person->orgperson->RelDate8,
+            '[ODN9]' => $person->orgperson->RelDate9,
+            '[ODN10]' => $person->orgperson->RelDate10,
         ];
+
         // $rep = str_replace(array_keys($mapping), $mapping, $raw_html);
         // $test = (microtime(true) - $start) . "Seconds";
         // dd($test);
@@ -1001,11 +1016,12 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
 
 /**
  * Generate thumbnail from email html
- * @param  string $html     email html
- * @param  object $campaign campaign object for name
- * @return string           file path
+ *
+ * @param string $html email html
+ * @param object $campaign campaign object for name
+ * @return string file path
  */
-if (! function_exists('generateEmailTemplateThumbnail')) {
+if (!function_exists('generateEmailTemplateThumbnail')) {
     function generateEmailTemplateThumbnail($html, $campaign)
     {
         if (empty($html) || empty($campaign)) {
@@ -1015,7 +1031,7 @@ if (! function_exists('generateEmailTemplateThumbnail')) {
         $html = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
         $org = Org::where('orgID', $campaign->orgID)->get()->first();
         $path = getAllDirectoryPathFM($org);
-        $full_path = $path['campaign'].'/thumb/'.$file_name;
+        $full_path = $path['campaign'] . '/thumb/' . $file_name;
         $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 70, 120)
@@ -1030,46 +1046,49 @@ if (! function_exists('generateEmailTemplateThumbnail')) {
 
 /**
  * generate email template thumbnail name
- * @param  object $campaign campaign object
- * @return string           template thumbnail name
+ *
+ * @param object $campaign campaign object
+ * @return string template thumbnail name
  */
-if (! function_exists('generateEmailTemplateThumbnailName')) {
+if (!function_exists('generateEmailTemplateThumbnailName')) {
     function generateEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
 
-        return $campaign->orgID.'-'.$campaign->campaignID.'-'.$date->timestamp.'.png';
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
     }
 }
 
 /**
  * same as generate just for sake of naming convension
+ *
  * @param  [type] $campaign [description]
  * @return [type]           [description]
  */
-if (! function_exists('getEmailTemplateThumbnailName')) {
+if (!function_exists('getEmailTemplateThumbnailName')) {
     function getEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
 
-        return $campaign->orgID.'-'.$campaign->campaignID.'-'.$date->timestamp.'.png';
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
     }
 }
 
 /**
  * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
- * @param  object $campaign campaign object
- * @return string           URL for thumbnail
+ *
+ * @param object $campaign campaign object
+ * @return string URL for thumbnail
  */
-if (! function_exists('getEmailTemplateThumbnailURL')) {
+if (!function_exists('getEmailTemplateThumbnailURL')) {
     function getEmailTemplateThumbnailURL($campaign)
     {
         $path = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'].'/thumb/'.$file_name)) {
-            return Storage::disk(getDefaultDiskFM())->url($path['campaign'].'/thumb/'.$file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->url($path['campaign'] . '/thumb/' . $file_name);
         } else {
             return url('images/mCentric_square.png');
         }
@@ -1078,10 +1097,11 @@ if (! function_exists('getEmailTemplateThumbnailURL')) {
 
 /**
  * all static directory path for filemanger this has a system wide impact
- * @param  object $org org model if available
- * @return array      all path that are created
+ *
+ * @param object $org org model if available
+ * @return array all path that are created
  */
-if (! function_exists('getAllDirectoryPathFM')) {
+if (!function_exists('getAllDirectoryPathFM')) {
     function getAllDirectoryPathFM($org = null)
     {
         if (empty($org)) {
@@ -1089,13 +1109,13 @@ if (! function_exists('getAllDirectoryPathFM')) {
             $org = $currentPerson->defaultOrg;
         }
         // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
-        $base_path = $org->orgPath.'/filemanager/';
+        $base_path = $org->orgPath . '/filemanager/';
         // $base_path              = $org->orgPath . '/';
-        $path['event'] = Storage::disk(getDefaultDiskFM())->path($base_path.'events_files');
-        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path.'campaign_files');
-        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path.'campaign_files/thumb');
+        $path['event'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
+        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
+        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files/thumb');
         $path['orgPath'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
-        $path['orgPathFM'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+        $path['orgPathFM'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
 
         return $path;
     }
@@ -1103,10 +1123,11 @@ if (! function_exists('getAllDirectoryPathFM')) {
 
 /**
  * generate default directory set for new organizations
- * @param  object $org organization object
+ *
+ * @param object $org organization object
  * @return null
  */
-if (! function_exists('generateDirectoriesForOrg')) {
+if (!function_exists('generateDirectoriesForOrg')) {
     function generateDirectoriesForOrg($org)
     {
         $path = getAllDirectoryPathFM($org);
@@ -1123,23 +1144,25 @@ if (! function_exists('generateDirectoriesForOrg')) {
 
 /**
  * for filemanager config default path for filemanager (do not change)
+ *
  * @return string folder path
  */
-if (! function_exists('getDefaultPathFM')) {
+if (!function_exists('getDefaultPathFM')) {
     function getDefaultPathFM()
     {
         $currentPerson = Person::find(auth()->user()->id);
         $org = $currentPerson->defaultOrg;
 
-        return Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+        return Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
     }
 }
 
 /**
  * return value of default disk for file manager
+ *
  * @return string diskname
  */
-if (! function_exists('getDefaultDiskFM')) {
+if (!function_exists('getDefaultDiskFM')) {
     function getDefaultDiskFM()
     {
         return 's3_media';
@@ -1148,9 +1171,10 @@ if (! function_exists('getDefaultDiskFM')) {
 
 /**
  * return all available disk for file manager
+ *
  * @return array of disk names
  */
-if (! function_exists('getAllDiskFM')) {
+if (!function_exists('getAllDiskFM')) {
     function getAllDiskFM()
     {
         // return ['public', 's3_receipts', 's3_media', 'events'];
@@ -1160,11 +1184,12 @@ if (! function_exists('getAllDiskFM')) {
 
 /**
  * get count and email list for selected user org
- * @param  object  $currentPerson model object
- * @param  bool $for_select    if needed for dropdown use true
- * @return array                 either only name and id or complete details
+ *
+ * @param object $currentPerson model object
+ * @param bool $for_select if needed for dropdown use true
+ * @return array either only name and id or complete details
  */
-if (! function_exists('getEmailList')) {
+if (!function_exists('getEmailList')) {
     function getEmailList($currentPerson, $for_select = false)
     {
         $rows = [];
@@ -1230,7 +1255,7 @@ if (! function_exists('getEmailList')) {
                 // $included === null
                 switch ($foundation) {
                     case 'none':
-                    // none with a null $included is not possible
+                        // none with a null $included is not possible
                     case 'everyone':
                         $c = Person::whereHas('orgs', function ($q) use ($currentPerson) {
                             $q->where('organization.orgID', $currentPerson->defaultOrgID);
@@ -1249,7 +1274,7 @@ if (! function_exists('getEmailList')) {
                             ->whereHas('registrations', function ($q) use ($excluded) {
                                 $q->whereNotIn('eventID', $excluded);
                             })
-                            ->whereHas('orgperson', function ($q) use ($today) {
+                            ->whereHas('orgperson', function ($q) {
                                 $q->whereNotNull('OrgStat1');
                             })
                             ->distinct()
@@ -1273,9 +1298,9 @@ if (! function_exists('getEmailList')) {
                         break;
                 }
             }
-            $edit_link = '<a href="'.url('list', $l->id).'"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
-            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete('.$l->id.')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
-            $links = $edit_link.' | '.$delete_link;
+            $edit_link = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
+            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete(' . $l->id . ')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
+            $links = $edit_link . ' | ' . $delete_link;
             array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $links]);
             array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
         }
@@ -1289,11 +1314,12 @@ if (! function_exists('getEmailList')) {
 
 /**
  * get default email list (list from efcico corporation)
- * @param  object  $currentPerson default
- * @param  bool $for_select    only for dropdown
- * @return array                  either only name and id or complete details
+ *
+ * @param object $currentPerson default
+ * @param bool $for_select only for dropdown
+ * @return array either only name and id or complete details
  */
-if (! function_exists('getDefaultEmailList')) {
+if (!function_exists('getDefaultEmailList')) {
     function getDefaultEmailList($currentPerson, $for_select = false)
     {
         $defaults = EmailList::where('orgID', 1)->get();
@@ -1333,11 +1359,12 @@ if (! function_exists('getDefaultEmailList')) {
 
 /**
  * get email list from email list management
- * @param  int $list_id list management id
- * @param  int $org_id  organization id
- * @return array        email id list
+ *
+ * @param int $list_id list management id
+ * @param int $org_id organization id
+ * @return array email id list
  */
-if (! function_exists('getEmailListContact')) {
+if (!function_exists('getEmailListContact')) {
     function getEmailListContact($list_id, $org_id)
     {
         $list = EmailList::whereId($list_id)->get()->first();
@@ -1398,7 +1425,7 @@ if (! function_exists('getEmailListContact')) {
             // $included === null
             switch ($foundation) {
                 case 'none':
-                // none with a null $included is not possible
+                    // none with a null $included is not possible
                 case 'everyone':
                     $c = Person::whereHas('orgs', function ($q) use ($org_id) {
                         $q->where('organization.orgID', $org_id);
@@ -1417,7 +1444,7 @@ if (! function_exists('getEmailListContact')) {
                         ->whereHas('registrations', function ($q) use ($excluded) {
                             $q->whereNotIn('eventID', $excluded);
                         })
-                        ->whereHas('orgperson', function ($q) use ($today) {
+                        ->whereHas('orgperson', function ($q) {
                             $q->whereNotNull('OrgStat1');
                         })
                         ->distinct()
@@ -1443,7 +1470,7 @@ if (! function_exists('getEmailListContact')) {
         } //else end
         $email_list = [];
         foreach ($c as $key => $value) {
-            if (! empty($value->email[0])) {
+            if (!empty($value->email[0])) {
                 $email_list[] = $value->email[0]->emailADDR;
             } else {
                 $email_list[] = $value->login;
@@ -1456,10 +1483,11 @@ if (! function_exists('getEmailListContact')) {
 
 /**
  * convert date to date picker format
- * @param  string $date_time mysql date string
+ *
+ * @param string $date_time mysql date string
  * @return string in datepicker formate (m/d/Y h:i A)
  */
-if (! function_exists('convertToDatePickerFormat')) {
+if (!function_exists('convertToDatePickerFormat')) {
     function convertToDatePickerFormat($date_time)
     {
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
@@ -1470,31 +1498,33 @@ if (! function_exists('convertToDatePickerFormat')) {
 
 /**
  * delete campaign thumbnail image from s3
- * @param  object $campaign campaign model
- * @return bool          true/false
+ *
+ * @param object $campaign campaign model
+ * @return bool true/false
  */
-if (! function_exists('deleteCampaignThumb')) {
+if (!function_exists('deleteCampaignThumb')) {
     function deleteCampaignThumb($campaign)
     {
         $path = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'].'/thumb/'.$file_name)) {
-            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'].'/thumb/'.$file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'] . '/thumb/' . $file_name);
         }
     }
 }
 
 /**
  * generate lat lng for existing address for testing only bunch on 20
- * @param  string  $type single / all address
+ *
+ * @param string $type single / all address
  * @param bool $for_org true if lat lng is needed for organization
  * @return bool true/false
  */
-if (! function_exists('generateLatLngForAddress')) {
+if (!function_exists('generateLatLngForAddress')) {
     function generateLatLngForAddress($address, $for_org = false)
     {
-        if (! empty($address)) {
-            if (! empty($address->zip)) {
+        if (!empty($address)) {
+            if (!empty($address->zip)) {
                 $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
                     ->orWhere('zip', ltrim($address->zip, '0'))->get()->first();
                 if (empty($zip_lat_lng)) {
@@ -1509,37 +1539,37 @@ if (! function_exists('generateLatLngForAddress')) {
             }
             $add_str = '';
             if ($for_org == false) {
-                $add_str = $address->addr1.', ';
-                if (! empty($address->addr2)) {
-                    $add_str .= $address->addr2.', ';
+                $add_str = $address->addr1 . ', ';
+                if (!empty($address->addr2)) {
+                    $add_str .= $address->addr2 . ', ';
                 }
-                $add_str .= $address->city.', ';
-                if (! empty($address->zip)) {
+                $add_str .= $address->city . ', ';
+                if (!empty($address->zip)) {
                     $add_str .= $address->state;
-                    $add_str .= $address->zip.', ';
+                    $add_str .= $address->zip . ', ';
                 } else {
-                    $add_str .= $address->state.', ';
+                    $add_str .= $address->state . ', ';
                 }
                 if ($address->cntryID == 228) {
                     //as majority of request will be from this country it will help us reduce query
                     $add_str .= 'United States';
                 } else {
                     $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
-                    if (! empty($country)) {
+                    if (!empty($country)) {
                         $add_str .= $country->cntryName;
                     }
                 }
             } else {
-                $add_str = $address->orgAddr1.', ';
-                if (! empty($address->orgAddr2)) {
-                    $add_str .= $address->orgAddr2.', ';
+                $add_str = $address->orgAddr1 . ', ';
+                if (!empty($address->orgAddr2)) {
+                    $add_str .= $address->orgAddr2 . ', ';
                 }
-                $add_str .= $address->orgCity.', ';
-                if (! empty($address->orgZip)) {
+                $add_str .= $address->orgCity . ', ';
+                if (!empty($address->orgZip)) {
                     $add_str .= $address->orgState;
-                    $add_str .= $address->orgZip.', ';
+                    $add_str .= $address->orgZip . ', ';
                 } else {
-                    $add_str .= $address->State.', ';
+                    $add_str .= $address->State . ', ';
                 }
                 $add_str .= 'United States'; // as currently org does not have any country field
                 // if ($address->cntryID == 228) {
@@ -1589,14 +1619,15 @@ if (! function_exists('generateLatLngForAddress')) {
 
 /**
  * store lat long for existing address by zip code
+ *
  * @return void
  */
-if (! function_exists('storeLatiLongiFormZip')) {
+if (!function_exists('storeLatiLongiFormZip')) {
     function storeLatiLongiFormZip()
     {
         $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
         foreach ($person_address as $key => $address) {
-            if (! empty($address->zip)) {
+            if (!empty($address->zip)) {
                 $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
                     ->orWhere('zip', ltrim($address->zip, '0'))->get()->first();
                 if (empty($zip_lat_lng)) {
@@ -1605,6 +1636,7 @@ if (! function_exists('storeLatiLongiFormZip')) {
                     $address->lati = $zip_lat_lng->lat;
                     $address->longi = $zip_lat_lng->lng;
                     $address->save();
+
                     continue;
                 }
             }
@@ -1614,11 +1646,12 @@ if (! function_exists('storeLatiLongiFormZip')) {
 
 /**
  * check if org property exist and return its value if found
- * @param  object  $org      org object
- * @param  array  $property template category array
+ *
+ * @param object $org org object
+ * @param array $property template category array
  * @return boolean/string   bool if not found otherwise string.
  */
-if (! function_exists('has_org_property')) {
+if (!function_exists('has_org_property')) {
     function has_org_property($org, $property)
     {
         switch ($property['name']) {
@@ -1773,10 +1806,11 @@ if (! function_exists('has_org_property')) {
 
 /**
  * get event ids with date and name wise list from event query object.
- * @param  object $event event model object
- * @return array        ids, datewithname, min & max dates
+ *
+ * @param object $event event model object
+ * @return array ids, datewithname, min & max dates
  */
-if (! function_exists('generateEmailListEventArray')) {
+if (!function_exists('generateEmailListEventArray')) {
     function generateEmailListEventArray($event)
     {
         $ytd_events_date = [];
@@ -1785,7 +1819,7 @@ if (! function_exists('generateEmailListEventArray')) {
         foreach ($event as $id) {
             array_push($ids, $id->eventID);
             $event_type_name = 'NA';
-            if (! empty($id->event_type->etName)) {
+            if (!empty($id->event_type->etName)) {
                 $event_type_name = $id->event_type->etName;
             }
             $date = $id->eventStartDate->format('Y-m-d');
@@ -1795,7 +1829,7 @@ if (! function_exists('generateEmailListEventArray')) {
                 $name .= '...';
             }
             $display_date = $id->eventStartDate->format(trans('messages.app_params.date_format'));
-            $list_name = $event_type_name.': '.$name.' - '.$display_date;
+            $list_name = $event_type_name . ': ' . $name . ' - ' . $display_date;
             $encoding = mb_detect_encoding($list_name, 'UTF-8, ISO-8859-1, WINDOWS-1252, WINDOWS-1251', true);
             if ($encoding != 'UTF-8') {
                 $list_name = iconv($encoding, 'UTF-8//IGNORE', $list_name);
@@ -1817,18 +1851,19 @@ if (! function_exists('generateEmailListEventArray')) {
 
         return [
             'events_with_date' => $ytd_events_date,
-            'ids'              => $ids,
-            'min_max_date'     => ['min' => $min, 'max' => $max],
+            'ids' => $ids,
+            'min_max_date' => ['min' => $min, 'max' => $max],
         ];
     }
 }
 
 /**
  * return js compactible date from daterangepicker specific date
- * @param  string $date m/d/Y style date
- * @return string       Y-m-d style date
+ *
+ * @param string $date m/d/Y style date
+ * @return string Y-m-d style date
  */
-if (! function_exists('getJavaScriptDate')) {
+if (!function_exists('getJavaScriptDate')) {
     function getJavaScriptDate($date)
     {
         $date = trim($date);
@@ -1846,10 +1881,11 @@ if (! function_exists('getJavaScriptDate')) {
 
 /**
  * replace address string for email builder footer with org address
- * @param  array $item category 6 rows
- * @return array       row data with updated address
+ *
+ * @param array $item category 6 rows
+ * @return array row data with updated address
  */
-if (! function_exists('replaceAddressWithOrgAddress')) {
+if (!function_exists('replaceAddressWithOrgAddress')) {
     function replaceAddressWithOrgAddress($item)
     {
         $default = 'Your company, Pier 9, San Francisco, CA 12345';
@@ -1860,16 +1896,16 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
         if (strpos($item['html'], $default) !== false) {
             $currentPerson = Person::find(auth()->user()->id);
             $org = $currentPerson->defaultOrg;
-            $add_str = $org->orgAddr1.', ';
-            if (! empty($org->orgAddr2)) {
-                $add_str .= $org->orgAddr2.', ';
+            $add_str = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
             }
-            $add_str .= $org->orgCity.', ';
-            if (! empty($org->orgZip)) {
+            $add_str .= $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
                 $add_str .= $org->orgState;
-                $add_str .= $org->orgZip.', ';
+                $add_str .= $org->orgZip . ', ';
             } else {
-                $add_str .= $org->State.', ';
+                $add_str .= $org->State . ', ';
             }
             $add_str = rtrim($add_str, ', ');
             $item['html'] = str_replace($default, $add_str, $item['html']);
@@ -1879,17 +1915,17 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
             // for multiline address first finding if exist then replacing it line by line
             $currentPerson = Person::find(auth()->user()->id);
             $org = $currentPerson->defaultOrg;
-            $add_str = $org->orgAddr1.', ';
-            if (! empty($org->orgAddr2)) {
-                $add_str .= $org->orgAddr2.', ';
+            $add_str = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
             }
             $line1 = $add_str;
-            $add_str = $org->orgCity.', ';
-            if (! empty($org->orgZip)) {
+            $add_str = $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
                 $add_str .= $org->orgState;
-                $add_str .= $org->orgZip.', ';
+                $add_str .= $org->orgZip . ', ';
             } else {
-                $add_str .= $org->State.', ';
+                $add_str .= $org->State . ', ';
             }
             $add_str = rtrim($add_str, ', ');
             $line2 = $add_str;
@@ -1911,10 +1947,11 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
 
 /**
  * replace social icon links with actual links, hides if link is not set.
- * @param  array $item category 6 rows
- * @return array       row data with updated links and style
+ *
+ * @param array $item category 6 rows
+ * @return array row data with updated links and style
  */
-if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
+if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
     function replaceSocialLinksWithOrgSocialLinks($item)
     {
         $parsed = new Dom;
@@ -1945,7 +1982,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'google-plus':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->googleURL)) {
+                    if (!empty($org->googleURL)) {
                         $tag->setAttribute('href', $org->googleURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -1956,7 +1993,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'facebook':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->facebookURL)) {
+                    if (!empty($org->facebookURL)) {
                         $tag->setAttribute('href', $org->facebookURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -1967,8 +2004,8 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'twitter':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->orgHandle)) {
-                        $tag->setAttribute('href', 'https://twitter.com/'.str_replace('@', '', $org->orgHandle));
+                    if (!empty($org->orgHandle)) {
+                        $tag->setAttribute('href', 'https://twitter.com/' . str_replace('@', '', $org->orgHandle));
                     } else {
                         $style = $tag->getAttribute('style');
                         $style = $style['value'];
@@ -1978,7 +2015,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'linkedin':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->linkedinURL)) {
+                    if (!empty($org->linkedinURL)) {
                         $tag->setAttribute('href', $org->linkedinURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -2013,7 +2050,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
     }
 }
 
-if (! function_exists('sendGetToWakeUpDyno')) {
+if (!function_exists('sendGetToWakeUpDyno')) {
     function sendGetToWakeUpDyno()
     {
         // API URL
@@ -2021,8 +2058,8 @@ if (! function_exists('sendGetToWakeUpDyno')) {
         if (env('APP_ENV') == 'production') {
             $base_url = env('QUEUE_DYNO_URL_LIVE');
         }
-        if(strlen($base_url)> 1) {
-            $url = $base_url.'/trigger-dyno';
+        if (strlen($base_url) > 1) {
+            $url = $base_url . '/trigger-dyno';
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
@@ -2034,10 +2071,11 @@ if (! function_exists('sendGetToWakeUpDyno')) {
 
 /**
  * replace social icon links with actual links, hides if link is not set.
- * @param  array $item category 6 rows
- * @return array       row data with updated links and style
+ *
+ * @param array $item category 6 rows
+ * @return array row data with updated links and style
  */
-if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
+if (!function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
     function getAllLinksFromCampaignHTML($campaign)
     {
         $parsed = new Dom;
@@ -2052,9 +2090,9 @@ if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
             // $class = $class['value'];
         } //foreach end
         $links = [];
-        if (! empty($link_list)) {
+        if (!empty($link_list)) {
             foreach ($link_list as $key => $value) {
-                if ($value['value'] == '#' || ! filter_var($value['value'], FILTER_VALIDATE_URL)) {
+                if ($value['value'] == '#' || !filter_var($value['value'], FILTER_VALIDATE_URL)) {
                     continue;
                 }
                 $links[$value['value']] = $value['value'];

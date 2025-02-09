@@ -1,21 +1,14 @@
 <?php
 
-use App\Http\Controllers\MembershipController;
-use App\Http\Controllers\VolunteerRoleController;
-use Kordy\Ticketit\Controllers\StatusesController;
-use Kordy\Ticketit\Controllers\TicketsController;
-
-#use Kordy\Ticketit\Controllers\DashboardController;
-use \App\Http\TicketitControllers\DashboardController;
-use Kordy\Ticketit\Controllers\PrioritiesController;
-use Kordy\Ticketit\Controllers\CategoriesController;
-use Kordy\Ticketit\Controllers\ConfigurationsController;
-use Kordy\Ticketit\Controllers\AdministratorsController;
-use Kordy\Ticketit\Controllers\AgentsController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
+
+//use Kordy\Ticketit\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\AuthCheckinController;
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\CampaignController;
@@ -35,6 +28,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MailGunController;
+use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MergeController;
 use App\Http\Controllers\OrgController;
 use App\Http\Controllers\OrgDiscountController;
@@ -47,17 +41,15 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\RegSessionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SocialController;
 use App\Http\Controllers\SpeakerController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VolunteerRoleController;
+use App\Http\TicketitControllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,8 +157,8 @@ Route::get('/record_attendance/{event}', [AuthCheckinController::class, 'index']
 Route::get('/show_record_attendance/{es}', [AuthCheckinController::class, 'show']);
 Route::post('/record_attendance/{event}', [AuthCheckinController::class, 'store']);
 
-Route::get('/storage/events/{filename}', function ($filename) {
-    $filePath = Flysystem::connection('awss3')->get($filename);
+Route::get('/storage/events/{filename}/{disk?}', function ($filename, $disk) {
+    $filePath = \Storage::disk($disk)->url($filename);
     return redirect($filePath);
 });
 
@@ -191,7 +183,7 @@ Route::get('/ticketit', function () {
 
 // Private Admin Page Routes
 // -------------------------
-Route::group(['middleware' => ['role:Admin|Developer']], function () {
+Route::middleware('role:Admin|Developer')->group(function () {
     Route::get('/newuser/create', [UserController::class, 'create']);
     Route::post('/newuser', [UserController::class, 'store']);
     Route::get('/become', [ActivityController::class, 'create']);
@@ -414,7 +406,7 @@ Route::get('/mytest', function () {
 
 Route::get('/twitter/{event}', [TwitterController::class, 'show']);
 
-Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http\Request $request) {
+Route::post('approve-tweets', function (Illuminate\Http\Request $request) {
     foreach ($request->all() as $input_key => $input_val) {
         if (strpos($input_key, 'approval-status-') === 0) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
@@ -427,11 +419,12 @@ Route::post('approve-tweets', ['middleware' => 'auth', function (Illuminate\Http
     }
 
     return redirect()->back();
-}]);
-
-Route::get('/blank', ['middleware' => 'auth', function () {
+})->middleware('auth');
+/*
+Route::get('/blank', function () {
     return view('v1.auth_pages.page-tmp');
-}]);
+})->middleware('auth');
+*/
 
 Auth::routes();
 

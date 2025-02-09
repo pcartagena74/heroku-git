@@ -35,8 +35,8 @@ class EmailSent extends Model
     public function url_count()
     {
         return $this->hasOne(UrlClick::class, 'sent_email_id', 'id')
-                    ->selectRaw('sent_email_id, count(*) as count')
-                    ->groupBy('sent_email_id');
+            ->selectRaw('sent_email_id, count(*) as count')
+            ->groupBy('sent_email_id');
     }
 
     public function click_count()

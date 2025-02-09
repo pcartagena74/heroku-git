@@ -11,12 +11,19 @@ use Illuminate\Notifications\Notification;
 class TicketItNotification extends Notification
 {
     use Queueable;
+
     private $to;
+
     private $notification_owner;
+
     private $template;
+
     private $data;
+
     private $subject;
+
     private $type;
+
     public $name;
 
     /**
@@ -69,11 +76,11 @@ class TicketItNotification extends Notification
                 $category = $ticket->category->name;
                 $comment_short = $comment->getShortContent();
                 $content = trans('ticketit::email/comment.data', [
-                    'name'     => $comment->user->name,
-                    'subject'  => $ticket->subject,
-                    'status'   => $ticket->status->name,
+                    'name' => $comment->user->name,
+                    'subject' => $ticket->subject,
+                    'status' => $ticket->status->name,
                     'category' => $ticket->category->name,
-                    'comment'  => $comment->getShortContent(),
+                    'comment' => $comment->getShortContent(),
                 ]);
                 break;
             case 'status':
@@ -82,8 +89,8 @@ class TicketItNotification extends Notification
                 $ticket = unserialize($this->data['ticket']);
 
                 $content = trans('ticketit::email/status.data', [
-                    'name'       => $notification_owner->name,
-                    'subject'    => $ticket->subject,
+                    'name' => $notification_owner->name,
+                    'subject' => $ticket->subject,
                     'old_status' => $original_ticket->status->name,
                     'new_status' => $ticket->status->name,
                 ]);
@@ -94,9 +101,9 @@ class TicketItNotification extends Notification
                     $notification_owner = unserialize($this->data['notification_owner']);
                     $ticket = unserialize($this->data['ticket']);
                     $content = trans('ticketit::email/assigned.data', [
-                        'name'     => $notification_owner->name,
-                        'subject'  => $ticket->subject,
-                        'status'   => $ticket->status->name,
+                        'name' => $notification_owner->name,
+                        'subject' => $ticket->subject,
+                        'status' => $ticket->status->name,
                         'category' => $ticket->category->name,
                     ]);
                 } else {
@@ -104,10 +111,10 @@ class TicketItNotification extends Notification
                     $ticket = unserialize($this->data['ticket']);
                     $original_ticket = unserialize($this->data['original_ticket']);
                     $content = trans('ticketit::email/transfer.data', [
-                        'name'         => $notification_owner->name,
-                        'subject'      => $ticket->subject,
-                        'status'       => $ticket->status->name,
-                        'agent'        => $original_ticket->agent->name,
+                        'name' => $notification_owner->name,
+                        'subject' => $ticket->subject,
+                        'status' => $ticket->status->name,
+                        'agent' => $original_ticket->agent->name,
                         'old_category' => $original_ticket->category->name,
                         'new_category' => $ticket->category->name,
                     ]);
@@ -118,7 +125,7 @@ class TicketItNotification extends Notification
 
         return $mail->line($content)
             ->action(trans('messages.notifications.ticketit.action'),
-                     route(SettingOver::grab('main_route').'.show', $ticket->id));
+                route(SettingOver::grab('main_route').'.show', $ticket->id));
     }
 
     /**

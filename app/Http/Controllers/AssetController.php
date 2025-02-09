@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Aws\S3\S3Client;
 use Illuminate\Http\Request;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
-use League\Flysystem\Filesystem;
 
 class AssetController extends Controller
 {
@@ -32,7 +29,6 @@ class AssetController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -43,7 +39,6 @@ class AssetController extends Controller
     /**
      * Store an uploaded image, via summernote, to media storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function ajax_store(Request $request)
@@ -76,7 +71,6 @@ class AssetController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

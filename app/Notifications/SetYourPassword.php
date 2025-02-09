@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Models\Org;
 use App\Models\Person;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -14,7 +13,9 @@ class SetYourPassword extends Notification
     use Queueable;
 
     protected $person;
+
     protected $o;
+
     public $name;
 
     /**

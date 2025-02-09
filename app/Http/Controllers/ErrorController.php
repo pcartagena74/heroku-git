@@ -17,9 +17,7 @@ class ErrorController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Show the application dashboard.
@@ -41,15 +39,15 @@ class ErrorController extends Controller
     public function reportIssue(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'g-recaptcha' => ['required', new GoogleCaptcha()],
-            'subject'     => 'required|min:3',
-            'content'     => 'required|min:6',
+            'g-recaptcha' => ['required', new GoogleCaptcha],
+            'subject' => 'required|min:3',
+            'content' => 'required|min:6',
         ], ['g-recaptcha' => ['required' => trans('messages.errors.google_recaptcha_required')]]);
         if (! $validator->passes()) {
             return response()->json(['error' => $validator->errors()]);
         }
         if (Auth::check()) {
-            $ticket = new Ticket();
+            $ticket = new Ticket;
 
             $ticket->subject = $request->subject;
 

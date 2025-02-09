@@ -8,7 +8,6 @@ use App\Models\Org;
 use App\Models\RegFinance;
 use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -17,11 +16,17 @@ class GroupEventReceipt extends Mailable
     use Queueable, SerializesModels;
 
     public $rf;
+
     public $event;
+
     public $org;
+
     public $loc;
+
     public $tkt;
+
     public $array;
+
     public $attachment;
 
     /**
@@ -48,13 +53,14 @@ class GroupEventReceipt extends Mailable
     public function build()
     {
         $orgName = $this->org->orgName;
+
         //dd($this->array);
         return $this
             ->subject("$orgName Group Registration Confirmation")
             ->view('v1.auth_pages.events.registration.group_receipt')
             ->with([
                 'event' => $this->array['event'], 'quantity' => $this->array['quantity'],
-                 'loc' => $this->array['loc'],
+                'loc' => $this->array['loc'],
                 'rf' => $this->rf, 'person' => $this->array['person'], 'org' => $this->array['org'],
             ])->attach($this->attachment);
     }

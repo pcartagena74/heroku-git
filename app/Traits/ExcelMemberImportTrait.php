@@ -12,15 +12,19 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 trait ExcelMemberImportTrait
 {
     public $starttime;
+
     public $phone_master;
+
     public $email_master;
+
     public $address_master;
+
     public $person_staging_master;
+
     public $currentPerson;
 
     public function timeMem($msg = null)
@@ -108,8 +112,8 @@ trait ExcelMemberImportTrait
 
         $em1 = trim(strtolower($row['primary_email']));
         $em2 = trim(strtolower($row['alternate_email']));
-        $emchk1 = new Collection();
-        $emchk2 = new Collection();
+        $emchk1 = new Collection;
+        $emchk2 = new Collection;
 
         if (filter_var($em1, FILTER_VALIDATE_EMAIL) && filter_var($em2, FILTER_VALIDATE_EMAIL)) {
             $email_check = Email::whereRaw('lower(emailADDR) = ?', [$em1])
@@ -118,10 +122,10 @@ trait ExcelMemberImportTrait
             if ($email_check->isNotEmpty()) {
                 foreach ($email_check as $key => $value) {
                     if ($value->emailADDR == $em1) {
-                        $emchk1 = new collection();
+                        $emchk1 = new collection;
                         $emchk1->push($value);
                     } elseif ($value->emailADDR == $em2) {
-                        $emchk2 = new collection();
+                        $emchk2 = new collection;
                         $emchk2->push($value);
                     }
                 }
@@ -155,17 +159,17 @@ trait ExcelMemberImportTrait
             $u = '';
 
             $p_array = [
-                'prefix'       => $prefix,
-                'firstName'    => $first,
-                'prefName'     => $first,
-                'midName'      => $midName,
-                'lastName'     => $last,
-                'suffix'       => $suffix,
-                'title'        => $title,
-                'compName'     => $compName,
-                'creatorID'    => $currentPerson->personID,
+                'prefix' => $prefix,
+                'firstName' => $first,
+                'prefName' => $first,
+                'midName' => $midName,
+                'lastName' => $last,
+                'suffix' => $suffix,
+                'title' => $title,
+                'compName' => $compName,
+                'creatorID' => $currentPerson->personID,
                 'defaultOrgID' => $currentPerson->defaultOrgID,
-                'affiliation'  => $currentPerson->affiliation,
+                'affiliation' => $currentPerson->affiliation,
             ];
             $update_existing_record = 0;
             // If email1 is not null or blank, use it as primary to login, etc.
@@ -177,25 +181,25 @@ trait ExcelMemberImportTrait
                 // $p->login = $em1;
                 // $p->save();
                 $u_array = [
-                    'id'    => $p->personID,
+                    'id' => $p->personID,
                     'login' => $em1,
-                    'name'  => $em1,
+                    'name' => $em1,
                     'email' => $em1,
                 ];
                 $u = User::create($u_array);
                 // $this->timeMem('7 u insert');
                 $this->insertEmail($personID = $p->personID, $email = $em1, $primary = 1);
 
-            // Otherwise, try with email #2
+                // Otherwise, try with email #2
             } elseif ($em2 !== null && $em2 != '' && $em2 != ' ' && empty($p_array['login'])) {
                 $p_array['login'] = $em2;
                 $p = Person::create($p_array);
                 $has_insert = true;
 
                 $u_array = [
-                    'id'    => $p->personID,
+                    'id' => $p->personID,
                     'login' => $em2,
-                    'name'  => $em2,
+                    'name' => $em2,
                     'email' => $em2,
                 ];
                 $u = User::create($u_array);
@@ -435,7 +439,7 @@ trait ExcelMemberImportTrait
         } else {
             // We'll update some fields on the off chance they weren't properly filled in during a previous creation
             // $op = $op->toArray();
-            if (null !== $op) {
+            if ($op !== null) {
                 $newOP = $op;
                 $ary = [];
                 if ($newOP->OrgStat1 === null) {
@@ -470,12 +474,12 @@ trait ExcelMemberImportTrait
                             // Added to have join date(s) corrected if what PMI provided is an earlier date than what is in DB
                             $test_date = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
                             $msg = '';
-                            if($newOP->RelDate1->gt($test_date)){
+                            if ($newOP->RelDate1->gt($test_date)) {
                                 $ary['RelDate1'] = Carbon::createFromFormat('d/m/Y', $row['pmi_join_date'])->toDateTimeString();
                                 $msg = 'Changed pmi_join_date in DB.';
                             }
                             $rl1 = [
-                                'pmi_id'       => $pmi_id,
+                                'pmi_id' => $pmi_id,
                                 'reldate1_new' => $row['pmi_join_date'],
                                 'reldate1_old' => $existing_relDate1,
                                 'msg' => $msg,
@@ -496,12 +500,12 @@ trait ExcelMemberImportTrait
                             // Added to have join date(s) corrected if what PMI provided is an earlier date than what is in DB
                             $test_date = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
                             $msg = '';
-                            if($newOP->RelDate2->gt($test_date)){
+                            if ($newOP->RelDate2->gt($test_date)) {
                                 $ary['RelDate2'] = Carbon::createFromFormat('d/m/Y', $row['chapter_join_date'])->toDateTimeString();
                                 $msg = 'Changed chapter_join_date in DB.';
                             }
                             $rl2 = [
-                                'pmi_id'       => $pmi_id,
+                                'pmi_id' => $pmi_id,
                                 'reldate2_new' => $row['chapter_join_date'],
                                 'reldate2_old' => $existing_relDate2,
                                 'msg' => $msg,
@@ -537,7 +541,7 @@ trait ExcelMemberImportTrait
 
         // Add the person-specific records as needed
         // This logic will only work reliably for chapters in the US given the zip as 5 or 9 digits
-        if (null !== $p) {
+        if ($p !== null) {
             $pa = trim(ucwords($row['preferred_address']));
             $addr = Address::where(['addr1' => $pa, 'personId' => $p->personID])->limit(1)->get();
             // $this->timeMem('22 get address 2367');
@@ -598,7 +602,7 @@ trait ExcelMemberImportTrait
                         if ($value->phoneID == $p->personID) {
                             $ary = [
                                 'debugNote' => "ugh!  Was: $value->personID; Should be: $p->personID",
-                                'personID'  => $p->personID,
+                                'personID' => $p->personID,
                             ];
                             DB::table('person-phone')->where('id', $value->phoneID)->update($ary);
                         }
@@ -632,11 +636,11 @@ trait ExcelMemberImportTrait
             if (! empty($import_detail->failed_records)) {
                 $json = json_decode($import_detail->failed_records);
                 $data = [
-                    'reason'                => trans('messages.notifications.member_import.nothing_to_update'),
-                    'pmi_id'                => $pmi_id,
-                    'first_name'            => $first,
-                    'last_name'             => $last,
-                    'primary_email'         => $em1,
+                    'reason' => trans('messages.notifications.member_import.nothing_to_update'),
+                    'pmi_id' => $pmi_id,
+                    'first_name' => $first,
+                    'last_name' => $last,
+                    'primary_email' => $em1,
                     'alternate_email_email' => $em2, ];
                 $json[] = $data;
                 $import_detail->failed_records = json_encode($json);
@@ -672,30 +676,30 @@ trait ExcelMemberImportTrait
     public function insertPersonStaging($personID, $prefix, $first, $midName, $lastname, $suffix, $login, $title, $compName, $default_org)
     {
         $this->person_staging_master[] = [
-            'personID'     => $personID,
-            'prefix'       => $prefix,
-            'firstName'    => $first,
-            'midName'      => $midName,
-            'lastName'     => $lastname,
-            'suffix'       => $suffix,
-            'login'        => $login,
-            'title'        => $title,
-            'compName'     => $compName,
+            'personID' => $personID,
+            'prefix' => $prefix,
+            'firstName' => $first,
+            'midName' => $midName,
+            'lastName' => $lastname,
+            'suffix' => $suffix,
+            'login' => $login,
+            'title' => $title,
+            'compName' => $compName,
             'defaultOrgID' => $default_org,
-            'creatorID'    => $this->currentPerson->personID,
+            'creatorID' => $this->currentPerson->personID,
         ];
     }
 
     public function insertAddress($personID, $addresstype, $addr1, $city, $state, $zip, $country)
     {
         $this->address_master[] = [
-            'personID'  => $personID,
-            'addrTYPE'  => $addresstype,
-            'addr1'     => $addr1,
-            'city'      => $city,
-            'state'     => $state,
-            'zip'       => $zip,
-            'cntryID'   => $country,
+            'personID' => $personID,
+            'addrTYPE' => $addresstype,
+            'addr1' => $addr1,
+            'city' => $city,
+            'state' => $state,
+            'zip' => $zip,
+            'cntryID' => $country,
             'creatorID' => $this->currentPerson->personID,
             'updaterID' => $this->currentPerson->personID,
         ];
@@ -703,35 +707,37 @@ trait ExcelMemberImportTrait
 
     /**
      * create bulk array for phone number insertion
-     * @param  int $personID    [person id]
-     * @param  numeric $phoneNumber [phone number]
-     * @param  string $phoneType   [home work mobile]
+     *
+     * @param  int  $personID  [person id]
+     * @param  numeric  $phoneNumber  [phone number]
+     * @param  string  $phoneType  [home work mobile]
      * @return null
      */
     public function insertPhone($personID, $phoneNumber, $phoneType)
     {
         //it has creatorID and UpdaterID user auth user id
         $this->phone_master[] = [
-            'personID'    => $personID,
+            'personID' => $personID,
             'phoneNumber' => $phoneNumber,
-            'phoneType'   => $phoneType,
-            'creatorID'   => $this->currentPerson->personID,
-            'updaterID'   => $this->currentPerson->personID,
+            'phoneType' => $phoneType,
+            'creatorID' => $this->currentPerson->personID,
+            'updaterID' => $this->currentPerson->personID,
         ];
     }
 
     /**
      * create bulk insert array for email
+     *
      * @param  int  $personID
      * @param  string  $email
-     * @param  int $primary
+     * @param  int  $primary
      * @return [type]
      */
     public function insertEmail($personID, $email, $primary = 0)
     {
         //it has creatorID and UpdaterID user auth user id
         $this->email_master[] = [
-            'personID'  => $personID,
+            'personID' => $personID,
             'emailADDR' => $email,
             'isPrimary' => $primary,
             'creatorID' => $this->currentPerson->personID,

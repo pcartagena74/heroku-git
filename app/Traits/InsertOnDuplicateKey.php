@@ -6,6 +6,7 @@ trait InsertOnDuplicateKey
 {
     /**
      * Insert using mysql ON DUPLICATE KEY UPDATE.
+     *
      * @link http://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html
      *
      * Example:  $data = [
@@ -13,12 +14,11 @@ trait InsertOnDuplicateKey
      *     ['id' => 2, 'name' => 'Mike'],
      * ];
      *
-     * @param array $data is an array of array.
-     * @param array $updateColumns NULL or [] means update all columns
-     *
+     * @param  array  $data  is an array of array.
+     * @param  array  $updateColumns  NULL or [] means update all columns
      * @return int 0 if row is not changed, 1 if row is inserted, 2 if row is updated
      */
-    public static function insertOnDuplicateKey(array $data, array $updateColumns = null)
+    public static function insertOnDuplicateKey(array $data, ?array $updateColumns = null)
     {
         if (empty($data)) {
             return false;
@@ -39,7 +39,6 @@ trait InsertOnDuplicateKey
     /**
      * Insert using mysql INSERT IGNORE INTO.
      *
-     * @param array $data
      *
      * @return int 0 if row is ignored, 1 if row is inserted
      */
@@ -64,7 +63,6 @@ trait InsertOnDuplicateKey
     /**
      * Insert using mysql REPLACE INTO.
      *
-     * @param array $data
      *
      * @return int 1 if row is inserted without replacements, greater than 1 if rows were replaced
      */
@@ -95,7 +93,7 @@ trait InsertOnDuplicateKey
     {
         $class = get_called_class();
 
-        return (new $class())->getTable();
+        return (new $class)->getTable();
     }
 
     /**
@@ -107,7 +105,7 @@ trait InsertOnDuplicateKey
     {
         $class = get_called_class();
 
-        return (new $class())->getConnection();
+        return (new $class)->getConnection();
     }
 
     /**
@@ -129,14 +127,13 @@ trait InsertOnDuplicateKey
     {
         $class = get_called_class();
 
-        return (new $class())->getKeyName();
+        return (new $class)->getKeyName();
     }
 
     /**
      * Build the question mark placeholder.  Helper function for insertOnDuplicateKeyUpdate().
      * Helper function for insertOnDuplicateKeyUpdate().
      *
-     * @param $data
      *
      * @return string
      */
@@ -154,7 +151,6 @@ trait InsertOnDuplicateKey
     /**
      * Get the first row of the $data array.
      *
-     * @param array $data
      *
      * @return mixed
      */
@@ -164,7 +160,7 @@ trait InsertOnDuplicateKey
             throw new \InvalidArgumentException('Empty data.');
         }
 
-        list($first) = $data;
+        [$first] = $data;
 
         if (! is_array($first)) {
             throw new \InvalidArgumentException('$data is not an array of array.');
@@ -176,7 +172,6 @@ trait InsertOnDuplicateKey
     /**
      * Build a value list.
      *
-     * @param array $first
      *
      * @return string
      */
@@ -192,7 +187,6 @@ trait InsertOnDuplicateKey
     /**
      * Build a value list.
      *
-     * @param array $updatedColumns
      *
      * @return string
      */
@@ -214,7 +208,6 @@ trait InsertOnDuplicateKey
     /**
      * Inline a multiple dimensions array.
      *
-     * @param $data
      *
      * @return array
      */
@@ -226,12 +219,10 @@ trait InsertOnDuplicateKey
     /**
      * Build the INSERT ON DUPLICATE KEY sql statement.
      *
-     * @param array $data
-     * @param array $updateColumns
      *
      * @return string
      */
-    protected static function buildInsertOnDuplicateSql(array $data, array $updateColumns = null)
+    protected static function buildInsertOnDuplicateSql(array $data, ?array $updateColumns = null)
     {
         $first = static::getFirstRow($data);
 
@@ -251,7 +242,6 @@ trait InsertOnDuplicateKey
     /**
      * Build the INSERT IGNORE sql statement.
      *
-     * @param array $data
      *
      * @return string
      */
@@ -268,7 +258,6 @@ trait InsertOnDuplicateKey
     /**
      * Build REPLACE sql statement.
      *
-     * @param array $data
      *
      * @return string
      */

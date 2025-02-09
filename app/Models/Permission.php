@@ -6,7 +6,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 //use Zizaco\Entrust\EntrustPermission;
 use Shanmuga\LaravelEntrust\Models\EntrustPermission;
 
@@ -16,6 +15,7 @@ class Permission extends EntrustPermission
 {
     //use LogsActivity;
     protected static $logAttributes = ['name', 'display_name', 'description'];
+
     protected static $ignoreChangedAttributes = ['created_at'];
 
     public function roles()
