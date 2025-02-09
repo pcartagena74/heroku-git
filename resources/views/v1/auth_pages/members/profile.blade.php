@@ -4,8 +4,9 @@
      * Created: 2/9/2017
      *
      * @var $profile
-     * @var $em_cnt
-     * @var $ad_cnt
+     * @var $em_cnt: email count
+     * @var $ad_cnt: address count
+     * @var $ph_cnt: phone count
      * @var $prefixes
      *
      */
@@ -216,7 +217,6 @@
                 </table>
                 @include('v1.parts.end_content')
 
-
                 @if(Entrust::hasRole('Admin'))
                     @include('v1.parts.start_content', ['header' => trans('messages.profile.date_f'),
                              'subheader' => '<b class="red">(' . trans('messages.profile.ed_ad') . ')</b>',
@@ -367,14 +367,15 @@
                 @include('v1.parts.start_min_content', ['header' => trans_choice('messages.profile.addr', 2),
                          'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
+                {{ trans_choice('messages.profile.addrs', $addresses) }}
+                <br/>
                 @if(count($addresses) == 0)
-                    {{ trans_choice('messages.profile.addrs', 1) }}
                 @else
                     <table id="address_fields" class="table table-striped table-condensed">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th style="width: 10%">@lang('messages.profile.type')</th>
+                            <th style="width: 5%"></th>
+                            <th style="width: 5%">@lang('messages.profile.type')</th>
                             <th style="width: 20%">@lang('messages.profile.addr1')</th>
                             <th style="width: 20%">@lang('messages.profile.addr2')</th>
                             <th style="width: 20%">@lang('messages.profile.city')</th>
@@ -445,8 +446,9 @@
                 @include('v1.parts.start_min_content', ['header' => trans_choice('messages.headers.phone_nums', 2),
                          'subheader' => '', 'w1' => '4', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
+                {{ trans_choice('messages.profile.phones', $phones) }} <br/>
+
                 @if(count($phones) == 0)
-                    @lang('messages.profile.no_phone')
                 @else
 
                     <table id="phone_fields" class="table table-striped table-condensed">
@@ -465,7 +467,7 @@
                                         <input type="hidden" name="personID" value="{{ $profile->personID }}">
                                         <button class="btn btn-danger btn-xs" data-toggle="tooltip"
                                                 title="{{ trans('messages.tooltips.delete') }}"
-                                                onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
+                                                onclick="return confirm('{{ trans('messages.tooltips.sure_del') }}');">
                                             @lang('messages.symbols.trash')
                                         </button>
                                     </form>

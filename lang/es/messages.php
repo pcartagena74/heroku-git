@@ -183,7 +183,7 @@ return [
         'become_error' => 'es-The id entered, :id, is invalid.',
         'corruption' => 'es-Something funky happened with the math. Corruption occurred. subtotal: :total, validation: :check',
         'event' => 'es-Please select an event.',
-        'exists' => 'es-{p}The person record cannot be created to prevent potential duplication.  See details below. <br /> :details|'.
+        'exists' => 'es-{p}The person record cannot be created to prevent potential duplication.  See details below. <br /> :details|' .
             '{e}The email address entered already exists. <br /> :details|{op}The PMI ID entered already exists. <br /> :details',
         'existing_account' => 'es-Existing account: :f :l with login :e',
         'html_error' => 'Se produjo un error HTML inesperado al procesar su entrada. Compruebe si hay un
@@ -191,7 +191,7 @@ return [
         'no_id' => 'No hay :modifier ID: :id.  :errormsg',
         'no_receipt' => "mCentric no puede producir el recibo en PDF en este momento. Puede buscar, mostrar e imprimir
                         (con su navegador) recibos de todos sus próximos eventos aquí: 
-                         <a style='color:black;' href='".env('APP_URL')."/upcoming'>Mi Configuración -> Eventos Futuros</a>.",
+                         <a style='color:black;' href='" . env('APP_URL') . "/upcoming'>Mi Configuración -> Eventos Futuros</a>.",
         'no_regs' => 'El registro ya no existe. Puede :startover o :close.',
         'no_reg1' => 'Reiniciar el registro',
         'no_reg2' => 'Ir al panel de mCentric',
@@ -785,7 +785,7 @@ return [
         'email_list_general' => '<p>es-<b>This year\'s Events, Last Year\'s Events and All PD Day Events</b> are group of events. If you check any of those all the event in the group will be added in Inclusion List. You can also remove any particular event from that group via checking them in Exclusion list. <br> <b>Specific Event\'s(by date range)</b> will allow to add events fall into the seleted date range. To remove any simply uncheck them.</b></p>',
         'email_list_exclusion' => '<p>es-Attendees of all the event in this list will be excluded from the Emailing List. If you want to revert, Drag event back to Inclusion list.</p>',
         'ev_defaults' => 'es-Default values for this event only.',
-        'ev_discounts' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here are active for this event.<br>'.
+        'ev_discounts' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here are active for this event.<br>' .
             'Each code may have <b>EITHER</b> a Discount Percent or Amount.  If you give 1 a value, the other will be zeroed out.',
         'ev_loc' => 'es-This is a listing of locations used for all of the events that have been entered.
                     <ul>
@@ -819,11 +819,11 @@ return [
                      mCentric has emailed you instructions to set your password if necessary.<br /> If you do not receive the email: :admin',
         'max_reached' => 'es-Maximum attendees reached. You can request a session change at the conference if there is space.',
         'mbr_price' => 'es-Member pricing is applied automatically when you 1) are logged in and 2) have a PMI ID associated with your account.',
-        'mbr_search' => 'es-<ol><li>Escriba 3+ caracteres de nombre o apellido, dirección de correo electrónico o ID de PMI.<br>'.
-            'O escriba <b style="color:red;">"everyone"</b> para buscar todos los usuarios con roles asignados '.
+        'mbr_search' => 'es-<ol><li>Escriba 3+ caracteres de nombre o apellido, dirección de correo electrónico o ID de PMI.<br>' .
+            'O escriba <b style="color:red;">"everyone"</b> para buscar todos los usuarios con roles asignados ' .
             '(excepto los Oradores).</li><li>Presione Intro o haga clic en el botón para mostrar todos los resultados.</li></ol>',
         'merge_dupe' => 'es-{p}Type the name, email or PMI ID of a duplicate record.|{l}Type the name or address of a duplicate location.',
-        'merge_notes' => 'es-{p}<b class=\'red\'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should '.'keep <b>UNLESS</b> you know for a fact the record from PMI is wrong. <p></p><b>Note:</b> '.'Keep in mind that the first name, last name and PMI ID number must match PMI\'s records for PDU reconciliation.'.'|{l}<b class=\'red\'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.',
+        'merge_notes' => 'es-{p}<b class=\'red\'>Note:</b> Records with a PMI Type are <b>ALWAYS</b> the one you should ' . 'keep <b>UNLESS</b> you know for a fact the record from PMI is wrong. <p></p><b>Note:</b> ' . 'Keep in mind that the first name, last name and PMI ID number must match PMI\'s records for PDU reconciliation.' . '|{l}<b class=\'red\'>Note:</b> Deleted records should <b>NEVER</b> be made to be The Keeper record.',
         'merge_overwrite' => 'es-If there are values in the <b>Merge Candidate</b> you wish to overwrite, select its radio button before submitting.', 'merge_survive' => 'es-{p}Type the name, email or PMI ID of the record that should survive.|{l}Type the name or address of a location that should survive.', 'name_change' => 'es-You need to contact PMI directly to change this data.',
         'name_change_ok' => 'es-You are able to edit these fields as an Admin.  Please only do so if you know PMI\'s records reflect the change.',
         'need_to_login' => 'es-An mCentric account was found for you. <b style=\'color:red;\'>You must login to proceed.</b><br>Dismiss this popup and click the login button above.',
@@ -834,7 +834,7 @@ return [
         'no_fut_events' => 'es-You have not registered for any upcoming events.',
         'no_org' => 'es-The requested organization does not exist.',
         'no_org_disc' => 'es-<b style=\'color: darkorange;\'>WARNING:</b><br />No organizational discounts have been added to this event.  If you wish to add them, do it now via the button below.',
-        'no_password' => 'es-An mCentric account was found for you and its password has not been set. '.'You will need to set it and login to complete your registration. '.'Click to <a style="color: red;" href="'.env('APP_URL').' /password/reset">reset it now.</a>',
+        'no_password' => 'es-An mCentric account was found for you and its password has not been set. ' . 'You will need to set it and login to complete your registration. ' . 'Click to <a style="color: red;" href="' . env('APP_URL') . ' /password/reset">reset it now.</a>',
         'no_pmiID' => 'es-Or, if you do not have a PMI ID, enter your email address.',
         'no_pmiID_zero' => 'es-Enter 0 if you are not a PMI member',
         'no_reg_sess' => 'es-You have not yet registered for sessions. You can do so below.',
@@ -844,13 +844,13 @@ return [
         'no_waits' => 'es-There are no interrupted or wait listed registrations for this event at this time.',
         'not_self' => 'es-If you are not logged in, and do not already have an account, this first ticket must be for you.',
         'one-at-time' => 'es-The button below will launch a pop-up window where you can check in attendees.<br />Bolded lines indicate pre-registration.',
-        'org_disc' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here will be applied to all new events as they are created.'.'<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
+        'org_disc' => 'es-The <b style=\'color: red;\'>non-empty discount codes</b> here will be applied to all new events as they are created.' . '<br>Changes made here <b class=\'red\'>do not</b> affect existing events.',
         'pdu_stmt' => 'This statement will display if you have a special PDU reporting statement.',
         'pmiID' => 'es-Please enter your PMI Identification Number.',
-        'pmiID_found' => 'es-<h2>An mCentric account was found for PMI ID: :pmiID.</h2>'.'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
-        'pmi_pass' => 'es-{0}<p>The acccount password has been set. <br />'.'If you don\'t remember your password, you can <a class=\'red\' href=\'/password/reset\'>reset</a> it.  Otherwise, <a class=\'red\' href=\'/login\'>login</a>.<br />'.'<a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Reset Password</a> &nbsp; <a class=\'btn btn-success btn-xs\' href=\'/login\'>Login</a> </p>'.'|{1}<p>The account password has <b class=\'red\'>not</b> been set. <br />'.'If you have access to the login email, you can <a class=\'red\' href=\'/password/reset\'>begin</a> the password setting process now.<br /> <a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Set Password</a></p>'.'<p>If you do not receive an email with a link to set your password, check your spam folder and/or email :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>',
-        'pmi_emails' => 'es-The following email address(es) are associated with this account: <ul>:emails</ul><p></p>'.'If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email',
-        'pmiID_not_found' => 'es-{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|'.'[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.',
+        'pmiID_found' => 'es-<h2>An mCentric account was found for PMI ID: :pmiID.</h2>' . 'The name on this account (<span class=\'red\'>#:id</span>) is :name with a login of <span class=\'red\'>:login</span>. <br />',
+        'pmi_pass' => 'es-{0}<p>The acccount password has been set. <br />' . 'If you don\'t remember your password, you can <a class=\'red\' href=\'/password/reset\'>reset</a> it.  Otherwise, <a class=\'red\' href=\'/login\'>login</a>.<br />' . '<a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Reset Password</a> &nbsp; <a class=\'btn btn-success btn-xs\' href=\'/login\'>Login</a> </p>' . '|{1}<p>The account password has <b class=\'red\'>not</b> been set. <br />' . 'If you have access to the login email, you can <a class=\'red\' href=\'/password/reset\'>begin</a> the password setting process now.<br /> <a class=\'btn btn-primary btn-xs\' href=\'/password/reset\'>Set Password</a></p>' . '<p>If you do not receive an email with a link to set your password, check your spam folder and/or email :admin_email with the account id# and your preferred login email and someone can set a temporary password for you.</p>',
+        'pmi_emails' => 'es-The following email address(es) are associated with this account: <ul>:emails</ul><p></p>' . 'If you no longer have access to the login address listed above, email the account id# and your preferred login email to :admin_email',
+        'pmiID_not_found' => 'es-{0}There is no mCentric Account associated with :email.<br />You can create one when you register for any upcoming event.|' . '[1,*]There is no mCentric account associated with PMI ID: :pmiID.<br /> You can create one when you register for any upcoming event.',
         'postRegInfo' => 'es-Anything added here will be displayed and emailed to attendees AFTER they\'ve registered.',
         'pro_change_err' => 'es-There was an error while attempting to change your profile.',
         'pw_conf' => 'es-Confirm your password',
@@ -862,26 +862,26 @@ return [
         'role_txt' => 'es-The values in these tables are not editable and are here for informational purposes only.',
         'select_default_organization' => 'es-Select One Organization to make it your default and switch to it',
         'select_event' => 'es-Select the event for registration',
-        'survey_instructions' => 'Proporcione sus comentarios objetivos para que podamos mejorar continuamente el valor que brindamos a nuestra membresía. '.
+        'survey_instructions' => 'Proporcione sus comentarios objetivos para que podamos mejorar continuamente el valor que brindamos a nuestra membresía. ' .
             '<br> Califique al orador/presentación en las siguientes categorías.',
         'sold_out' => 'Este evento está agotado.',
-        'sold_out2' => '{0} Este boleto está agotado.|'.
-            '{1} Sólo queda 1 billete.|'.
+        'sold_out2' => '{0} Este boleto está agotado.|' .
+            '{1} Sólo queda 1 billete.|' .
             '[1,5] Sólo quedan :count entradas.|[6,*]',
         'sold_out3' => 'La cantidad de boletos disminuyó debido a la disponibilidad.',
         'sold_out4' => 'La disponibilidad de boletos cambió durante este intento de compra.  Por favor, <a href=":url">empieza de nuevo</a>.',
         'tech_stmt' => 'Esta declaración se mostrará si ocurre un problema con mCentric.',
         'tkt_setup' => 'Por lo general, crear entradas adicionales solo es necesario para los eventos del Día de Desarrollo Profesional.',
         'total_caveat' => 'El total NO refleja actualizaciones por reembolsos.',
-        'tracks' => 'Aquí están las pistas :n de este evento y sus sesiones entre las que los asistentes pueden elegir participar.'.
+        'tracks' => 'Aquí están las pistas :n de este evento y sus sesiones entre las que los asistentes pueden elegir participar.' .
             '<br/> Esto no muestra ninguna presentación magistral de grupo completo, ni sesiones de almuerzo o tarde.',
-        'track_setup' => '<li>Si la mayoría de tus tiempos son estándar para las pistas del evento, elige Sí para comenzar.'.
-            ' <br/> Puede cambiar esto más tarde para editar los tiempos únicos de la pista/sesión.</li>'.
-            '<li>Edite la cantidad de días que se ejecutará el evento.</li>'.
-            '<li>Edite los horarios y otra información para cada sesión donde los asistentes puedan elegir. '.
-            '<b class=\'red\'>No</b> participe en conferencias magistrales, almuerzos, etc. ya que este no es un programa completo. '.
-            'Elimine las sesiones innecesarias cuando finalice.</li>'.
-            '<li>Los valores de PDU se calculan en función de la fecha/hora de finalización y la fecha/hora de inicio.</li>'.
+        'track_setup' => '<li>Si la mayoría de tus tiempos son estándar para las pistas del evento, elige Sí para comenzar.' .
+            ' <br/> Puede cambiar esto más tarde para editar los tiempos únicos de la pista/sesión.</li>' .
+            '<li>Edite la cantidad de días que se ejecutará el evento.</li>' .
+            '<li>Edite los horarios y otra información para cada sesión donde los asistentes puedan elegir. ' .
+            '<b class=\'red\'>No</b> participe en conferencias magistrales, almuerzos, etc. ya que este no es un programa completo. ' .
+            'Elimine las sesiones innecesarias cuando finalice.</li>' .
+            '<li>Los valores de PDU se calculan en función de la fecha/hora de finalización y la fecha/hora de inicio.</li>' .
             '<li>Deje la ocupación de sesión en 0 si no hay límites estrictos para el registro.</li> ',
         'userid' => 'Esto se ha completado automáticamente y no se puede editar.',
         'volunteers' => 'Mantenga presionada la tecla de control para acercar / alejar.  Haga clic en el espacio en blanco y arrastre para desplazarse. <br /> También puede: <ul> <li>Hacer clic en un rol para ver y editar los valores de los voluntarios.</li> <li>Hacer clic en un rol y arrástrelo, según corresponda, para cambiar la relación de informes.</li> </ul>',
@@ -946,7 +946,7 @@ return [
         'email_list_updated' => 'Lista de email :name actualizada con éxito.',
         'email_list_deleted' => 'Lista de email :name eliminada con éxito.',
         'campaign_archive' => 'Campaña archivada con éxito.',
-        'campaign_archive_scheduled_send' => 'Esta campaña está programada para una fecha futura y no se puede archivar.'.'Por favor, elimínelo en su lugar.',
+        'campaign_archive_scheduled_send' => 'Esta campaña está programada para una fecha futura y no se puede archivar.' . 'Por favor, elimínelo en su lugar.',
         'test_email_sent_failed' => 'Ocurrió un error al enviar el email.',
     ],
 
@@ -955,7 +955,7 @@ return [
         'default' => 'es-Default Title',
         'confirm' => 'es-The email entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
         'confirm2' => 'es-The PMI ID entered belongs to <b>:fullname</b>.  Please confirm that is your intended attendee.',
-        'login_msg' => 'es-If registering resulted in mCentric telling you that an account exists for you, login or '.'click on the \'Forgot Your Password?\' link above and enter the email you used to register.<br>'.'If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.',
+        'login_msg' => 'es-If registering resulted in mCentric telling you that an account exists for you, login or ' . 'click on the \'Forgot Your Password?\' link above and enter the email you used to register.<br>' . 'If this is your first time using mCentric, click <b>Close</b>, fill in the form, and an account will be created for you.',
         'login_msg2' => 'es-If you have an account, login now and the form will auto-fill.<br> If you do not have one, one will be created for you during registration.',
         'loginform' => 'es-Login Form',
         'remember' => 'es-Remember Me',
@@ -1083,7 +1083,7 @@ return [
             'line2' => 'es-Please spend 5 minutes to give us your feedback on the event and its speaker(s).',
             'line3' => 'es-This survey is for the PDC session named:  :name',
             'action' => 'es-Take Survey',
-            'post_mail_msg' => 'es-:count survey email sent to the attendee.  :c2 survey was already completed.|'.':count survey emails sent to the attendees. :c2 surveys were already completed',
+            'post_mail_msg' => 'es-:count survey email sent to the attendee.  :c2 survey was already completed.|' . ':count survey emails sent to the attendees. :c2 surveys were already completed',
         ],
 
         // Set Your Password
@@ -1138,15 +1138,15 @@ return [
             'home' => 'Home',
             'imm' => 'Gestión Integrada de Miembros',
             'mktg' => 'Marketing',
-            'mktg_msg' => '<p>mCentric agrega los datos que usted conserva sobre sus miembros actuales y potenciales.'.
-                'Segmentar a sus miembros en función de los rasgos evidentes en sus datos permite una mejor orientación de sus campañas.</p>'.
+            'mktg_msg' => '<p>mCentric agrega los datos que usted conserva sobre sus miembros actuales y potenciales.' .
+                'Segmentar a sus miembros en función de los rasgos evidentes en sus datos permite una mejor orientación de sus campañas.</p>' .
                 '<p>¿Necesita ver la lista de miembros que vencen este mes? ¿Próximo mes?</p>',
             'mail' => 'Envíos',
-            'mail_msg' => '<p>Con una mejor capacidad de segmentación y orientación, utilice las capacidades de correo electrónico integradas de mCentric para ejecutar campañas específicas y mantener el contacto con sus electores.</p>'.
+            'mail_msg' => '<p>Con una mejor capacidad de segmentación y orientación, utilice las capacidades de correo electrónico integradas de mCentric para ejecutar campañas específicas y mantener el contacto con sus electores.</p>' .
                 '<p>¿Por qué debería ser tan difícil mantener listas de miembros?</p>',
             'meet' => 'Reuniones',
-            'meet_msg' => '<p>¿Necesita anunciar reuniones o eventos independientemente de las tarifas de entrada? '.
-                'mCentric puede ayudarle a configurar, anunciar y vender entradas para sus eventos.</p>'.
+            'meet_msg' => '<p>¿Necesita anunciar reuniones o eventos independientemente de las tarifas de entrada? ' .
+                'mCentric puede ayudarle a configurar, anunciar y vender entradas para sus eventos.</p>' .
                 '<p>Si está organizando un evento sin costo y aún necesita estos servicios, mCentric puede acomodar eventos sin costo que no afectarán sus resultados.</p>',
             'open1' => 'mCentric se creó teniendo en cuenta la personalización específica para organizaciones como los capítulos del Project Management Institute<sup>&reg;</sup> (PMI).',
             'open2' => 'Ya sea que su organización realice eventos o quiera medir la participación de los miembros, mCentric puede ayudarlo.',
@@ -1174,7 +1174,7 @@ return [
         'meetings' => [
             'title' => 'es-<span class="far fa-calendar-alt"></span> Gestión de Eventos y Reuniones facilitada por mCentric',
             'b1_t' => 'es-<b><i style=\'color: rebeccapurple;\' class=\'far fa-ticket-alt\'></i> Precios de entradas complejos:</b>',
-            'b1' => 'Cree boletos con precios para miembros, no miembros, madrugadores u otros precios complejos;<br/>'.
+            'b1' => 'Cree boletos con precios para miembros, no miembros, madrugadores u otros precios complejos;<br/>' .
                 ' o agrupar boletos según sea necesario para eventos particulares. ',
             'b2_t' => '<b><i style=\'color: blue;\' class=\'fas fa-credit-card\'></i> Procesando Pago:</b>',
             'b2' => 'Procese pagos con tarjetas de crédito o permita que los asistentes paguen en la puerta en efectivo o con cheque.',
@@ -1226,6 +1226,7 @@ return [
         'emails' => '{0} No hay emails asociados a este perfil.|[1,Inf] Las siguientes emails están asociadas con este perfil.',
         'no_id' => 'Si está vacío, este perfil no tiene una ID de PMI asociada.',
         'no_phone' => 'No hay números de teléfono asociados con este perfil.',
+        'phones' => '{0}No hay números de teléfono asociadas con este perfil.|[1,Inf] Las siguientes números de teléfono están asociadas con este perfil.',
         'pass' => 'Contraseña',
         'pass_cur' => 'Contraseña Actual',
         'pass_mgmt' => 'Gestión de Contraseña',
@@ -1243,7 +1244,7 @@ return [
         'canceled' => 'es-Canceled',
         'disc_exempt' => 'es-This ticket cannot be discounted.',
         'door' => 'es-At Door',
-        'mail_broken' => 'Email no funciona en este momento.  :org le enviará un recibo por correo electrónico. Véalo ahora yendo a: <a style="color:yellow;" href="'.env('APP_URL').' / upcoming">Mi Configuración -> Mis Eventos Futuro</a>.',
+        'mail_broken' => 'Email no funciona en este momento.  :org le enviará un recibo por correo electrónico. Véalo ahora yendo a: <a style="color:yellow;" href="' . env('APP_URL') . ' / upcoming">Mi Configuración -> Mis Eventos Futuro</a>.',
         'free' => 'Sin cargo',
         'inactive' => 'Inactivo',
         'msg_status' => 'El registro con id: :id ha sido :verb',
@@ -1315,10 +1316,10 @@ return [
     'tooltips' => [
         'accept_cash' => 'es-Keep in mind that allowing attendees to pay at the door increases the odds of no-shows.',
         'accommodate' => 'es-We will do our best to accommodate you.',
-        'addl_ticket' => 'es-If you are attempting to buy any tickets for members, they will need to purchase their ticket '.'separately to benefit from the member discount.',
+        'addl_ticket' => 'es-If you are attempting to buy any tickets for members, they will need to purchase their ticket ' . 'separately to benefit from the member discount.',
         'affiliation_tip' => 'es-Ctrl-Click to select more than one affiliation.',
         'allergenInfo_tip' => 'es-Ctrl-Click to select more than one dietary restriction.',
-        'anoncat' => 'es-These are the event categories where multiple tickets, if an attendee wishes to buy multiple'.' tickets, can be purchased without requiring the identification for every individual ticket.',
+        'anoncat' => 'es-These are the event categories where multiple tickets, if an attendee wishes to buy multiple' . ' tickets, can be purchased without requiring the identification for every individual ticket.',
         'bundle_include' => 'es-Change to "Yes" to add each corresponding ticket to this bundle.',
         'bundles' => 'es-Bundles include multiple tickets so you do not have to manually purchase them. They may also have pricing incentives.',
         'cant_cancel_reg' => 'es-You cannot cancel this registration. Find an admin.',
@@ -1349,7 +1350,7 @@ return [
         'near_chap' => 'es-These are the most likely chapters of attendees of your events.  Put your chapter first, followed by other chapters, and end with \'Other\' and \'None of the above.\'',
         'no_auth' => 'es-You must be authorized to perform this function.',
         'no_discount' => 'es-Change to \'Yes\' to prevent ALL discount codes from affecting this ticket\'s price.  Early Bird pricing will still be possible.',
-        'no_switch' => 'es-For events with sessions, if you prohibit session switching for a given session, this message would be displayed if an attendee attempts to '.'checkin to a session for which they have not already registered.',
+        'no_switch' => 'es-For events with sessions, if you prohibit session switching for a given session, this message would be displayed if an attendee attempts to ' . 'checkin to a session for which they have not already registered.',
         'nope' => 'es-This value cannot be edited or removed.',
         'not_new' => 'es-Adding a new field label here does NOT introduce new data for your members.  Work with mCentric to incorporate new data.',
         'orgName' => 'es-You can change the organization\'s display name. Ensure that it fits above.  Click name to edit.',
