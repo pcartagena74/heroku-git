@@ -17,24 +17,27 @@ class OPHistory extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'RelDate1' => 'datetime',
-        'RelDate2' => 'datetime',
-        'RelDate3' => 'datetime',
-        'RelDate4' => 'datetime',
-        'RelDate5' => 'datetime',
-        'RelDate6' => 'datetime',
-        'RelDate7' => 'datetime',
-        'RelDate8' => 'datetime',
-        'RelDate9' => 'datetime',
-        'RelDate10' => 'datetime',
-        'changeDate' => 'datetime',
-    ];
-
     // The table
     protected $table = 'org-person_history';
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'RelDate1' => 'datetime',
+            'RelDate2' => 'datetime',
+            'RelDate3' => 'datetime',
+            'RelDate4' => 'datetime',
+            'RelDate5' => 'datetime',
+            'RelDate6' => 'datetime',
+            'RelDate7' => 'datetime',
+            'RelDate8' => 'datetime',
+            'RelDate9' => 'datetime',
+            'RelDate10' => 'datetime',
+            'changeDate' => 'datetime',
+        ];
+    }
 
     public function myperson(): BelongsTo
     {

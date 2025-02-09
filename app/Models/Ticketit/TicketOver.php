@@ -23,9 +23,12 @@ class TicketOver extends Ticket
 
     protected $table = 'ticketit';
 
-    protected $casts = [
-        'completed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'completed_at' => 'datetime',
+        ];
+    }
 
     protected function serializeDate(DateTimeInterface $date)
     {

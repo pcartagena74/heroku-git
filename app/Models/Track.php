@@ -18,10 +18,13 @@ class Track extends Model
 
     protected $primaryKey = 'trackID';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function event(): BelongsTo
     {

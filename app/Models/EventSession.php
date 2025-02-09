@@ -20,14 +20,17 @@ class EventSession extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'start' => 'datetime',
-        'end' => 'datetime',
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
-
     protected $fillable = ['sessionName', 'sessionAbstract', 'eventID', 'start', 'end'];
+
+    protected function casts(): array
+    {
+        return [
+            'start' => 'datetime',
+            'end' => 'datetime',
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function track(): BelongsTo
     {

@@ -17,13 +17,16 @@ class RegSession extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
-
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     protected static $ignoreChangedAttributes = ['createDate'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function event(): BelongsTo
     {

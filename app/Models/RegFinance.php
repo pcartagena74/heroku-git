@@ -23,10 +23,13 @@ class RegFinance extends Model
 
     const UPDATED_AT = 'cancelDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'cancelDate' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'cancelDate' => 'datetime',
+        ];
+    }
 
     //protected static $logAttributes = ['confirmation', 'pmtRecd', 'status', 'cost'];
     //protected static $ignoreChangedAttributes = ['createDate', 'cancelDate'];

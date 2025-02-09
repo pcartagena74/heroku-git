@@ -16,10 +16,13 @@ class Activity extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function person(): BelongsTo
     {

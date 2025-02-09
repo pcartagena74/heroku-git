@@ -21,11 +21,6 @@ class Bundle extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
-
     protected static $logOnlyDirty = true;
 
     protected static $submitEmptyLogs = false;
@@ -33,6 +28,14 @@ class Bundle extends Model
     protected static $logAttributes = ['ticketID', 'bundleID'];
 
     protected static $ignoreChangedAttributes = ['createDate'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function event(): BelongsTo
     {

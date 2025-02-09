@@ -29,14 +29,17 @@ class Ticket extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'availabilityEndDate' => 'datetime',
-        'earlyBirdEndDate' => 'datetime',
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
-
     protected $appends = ['eb_mbr_price', 'eb_non_price'];
+
+    protected function casts(): array
+    {
+        return [
+            'availabilityEndDate' => 'datetime',
+            'earlyBirdEndDate' => 'datetime',
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function getEbMbrPriceAttribute()
     {

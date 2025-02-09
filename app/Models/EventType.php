@@ -18,11 +18,6 @@ class EventType extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
-
     /*
      * Commented out because this doesn't make sense
     public function event()
@@ -30,4 +25,12 @@ class EventType extends Model
         return $this->belongsTo(Event::class, 'eventTypeID', 'eventID');
     }
     */
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 }

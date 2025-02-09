@@ -15,12 +15,15 @@ class UserHistory extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'changeDate' => 'datetime',
-        'createDate' => 'datetime',
-        'last_login' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'changeDate' => 'datetime',
+            'createDate' => 'datetime',
+            'last_login' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function person(): HasOne
     {
