@@ -38,7 +38,7 @@ class SendCampaignEmail implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $email_queue = EmailQueue::where(['sent' => 0, 'failed' => 0])->where(function ($q) {
             $q->orWhereDate('scheduled_datetime', '<=', Carbon::now()->toDateTimeString());

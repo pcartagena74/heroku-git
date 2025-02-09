@@ -34,7 +34,7 @@ class RegisterTest extends DuskTestCase
      *
      * @throws \Throwable
      */
-    public function RegistrationPageTest()
+    public function RegistrationPageTest(): void
     {
         $event = Event::all()->random(1)->first();
 

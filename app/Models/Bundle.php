@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -32,12 +34,12 @@ class Bundle extends Model
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'ticketID');
     }
 
-    public function ticket()
+    public function ticket(): HasOne
     {
         return $this->hasOne(Ticket::class, 'ticketID', 'ticketID');
     }

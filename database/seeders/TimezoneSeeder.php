@@ -12,7 +12,7 @@ class TimezoneSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sql = "INSERT INTO `timezone`
                 VALUES 

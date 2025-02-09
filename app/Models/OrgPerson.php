@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -42,12 +43,12 @@ class OrgPerson extends Model
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function myperson()
+    public function myperson(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID', 'personID');
     }
 
-    public function myorg()
+    public function myorg(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }

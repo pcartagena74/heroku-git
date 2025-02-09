@@ -30,7 +30,7 @@ class ProcessTweet implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $tweet = json_decode($this->tweet, true);
         $tweet_text = isset($tweet['text']) ? $tweet['text'] : null;

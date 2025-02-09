@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class AdminProp extends Model
@@ -20,7 +21,7 @@ class AdminProp extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(AdminPropGroup::class, 'groupID', 'id');
         // return $this->hasOne(AdminPropGroup::class, 'id', 'groupID');

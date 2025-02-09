@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model
@@ -20,12 +21,12 @@ class Activity extends Model
         'updateDate' => 'datetime',
     ];
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'personID');
     }
 
-    public function org()
+    public function org(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID');
     }

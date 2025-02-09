@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Other\ics_calendar;
 use Carbon\Carbon;
 use DateTimeInterface;
@@ -51,62 +55,62 @@ class Event extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function category()
+    public function category(): HasOne
     {
         return $this->hasOne(Category::class, 'catID', 'catID');
     }
 
-    public function location()
+    public function location(): HasOne
     {
         return $this->hasOne(Location::class, 'locID', 'locationID');
     }
 
-    public function tickets()
+    public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
     }
 
-    public function event_type()
+    public function event_type(): BelongsTo
     {
         return $this->belongsTo(EventType::class, 'eventTypeID', 'etID');
     }
 
-    public function bundles()
+    public function bundles(): HasMany
     {
         return $this->hasMany(Bundle::class, 'eventID', 'eventID');
     }
 
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'eventID', 'eventID');
     }
 
-    public function regfinances()
+    public function regfinances(): HasMany
     {
         return $this->hasMany(RegFinance::class, 'eventID', 'eventID');
     }
 
-    public function org()
+    public function org(): BelongsTo
     {
         return $this->belongsTo(Org::class, 'orgID', 'orgID');
     }
 
-    public function sessions()
+    public function sessions(): HasMany
     {
         return $this->hasMany(EventSession::class, 'eventID', 'eventID');
     }
 
-    public function regsessions()
+    public function regsessions(): HasMany
     {
         return $this->hasMany(RegSession::class, 'eventID', 'eventID');
     }
 
-    public function main_session()
+    public function main_session(): HasOne
     {
         return $this->hasOne(EventSession::class, 'sessionID', 'mainSession');
     }
 
-    public function surveys()
+    public function surveys(): HasManyThrough
     {
         return $this->hasManyThrough(RSSurvey::class, EventSession::class, 'eventID', 'sessionID', 'eventID', 'sessionID');
     }

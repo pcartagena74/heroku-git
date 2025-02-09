@@ -3,6 +3,9 @@
 namespace App\Models;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Traits\InsertOnDuplicateKey;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,27 +34,27 @@ class PersonStaging extends Model
 
     protected $hidden = ['remember_token'];
 
-    public function emails()
+    public function emails(): HasMany
     {
         return $this->hasMany(Email::class, 'emailID');
     }
 
-    public function addresses()
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class, 'addrID');
     }
 
-    public function orgperson()
+    public function orgperson(): BelongsTo
     {
         return $this->belongsTo(OrgPerson::class, 'personID');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id');
     }
 
-    public function defaultOrg()
+    public function defaultOrg(): HasOne
     {
         return $this->hasOne(Org::class, 'orgID', 'defaultOrgID');
     }

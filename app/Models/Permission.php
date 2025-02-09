@@ -7,6 +7,7 @@
 namespace App\Models;
 
 //use Zizaco\Entrust\EntrustPermission;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Shanmuga\LaravelEntrust\Models\EntrustPermission;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
@@ -18,7 +19,7 @@ class Permission extends EntrustPermission
 
     protected static $ignoreChangedAttributes = ['created_at'];
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }

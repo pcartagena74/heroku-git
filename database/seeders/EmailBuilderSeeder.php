@@ -13,7 +13,7 @@ class EmailBuilderSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         EmailBlockCategory::insert([
             ['id' => 1, 'name' => 'Typography'],

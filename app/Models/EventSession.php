@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -26,32 +29,32 @@ class EventSession extends Model
 
     protected $fillable = ['sessionName', 'sessionAbstract', 'eventID', 'start', 'end'];
 
-    public function track()
+    public function track(): BelongsTo
     {
         return $this->belongsTo(Track::class, 'trackID', 'trackID');
     }
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
     }
 
-    public function ticket()
+    public function ticket(): BelongsTo
     {
         return $this->belongsTo(Ticket::class, 'ticketID', 'ticketID');
     }
 
-    public function speakers()
+    public function speakers(): BelongsToMany
     {
         return $this->belongsToMany(Speaker::class, 'eventsession_speaker', 'eventsession_id', 'speaker_id');
     }
 
-    public function regsessions()
+    public function regsessions(): HasMany
     {
         return $this->hasMany(RegSession::class, 'sessionID', 'sessionID');
     }
 
-    public function surveys()
+    public function surveys(): HasMany
     {
         return $this->hasMany(RSSurvey::class, 'sessionID', 'sessionID');
     }

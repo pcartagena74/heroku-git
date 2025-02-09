@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Entrust\EntrustRoleOver as EntrustRole;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
@@ -19,17 +20,17 @@ class Role extends EntrustRole
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function people()
+    public function people(): BelongsToMany
     {
         return $this->belongsToMany(Person::class, 'person_role', 'role_id', 'user_id');
     }
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'person_role', 'role_id', 'user_id');
     }
 
-    public function permissions()
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class);
     }

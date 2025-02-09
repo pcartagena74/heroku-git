@@ -36,7 +36,7 @@ class NotifyUserOfCompletedImport implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->person->notify(new MemeberImportExcelNotification($this->person, $this->import_detail));
         // Send a copy of the report to Phil to monitor these transactions.

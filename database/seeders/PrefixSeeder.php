@@ -12,7 +12,7 @@ class PrefixSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sql = "INSERT INTO `prefixes` VALUES (1,'Dr'),(2,'Mr'),(3,'Mrs'),(4,'Ms'),(5,'Prof'),(6,'Rev');";
 

@@ -55,7 +55,7 @@ class SendEmailJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // $email = new EmailForQueuing();
         $c = $this->details;

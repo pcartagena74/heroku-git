@@ -2,6 +2,8 @@
 
 namespace App\Models\Ticketit;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Person;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\CategoryOver as Category;
@@ -100,7 +102,7 @@ class TicketOver extends Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Status', 'status_id');
     }
@@ -110,7 +112,7 @@ class TicketOver extends Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function priority()
+    public function priority(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Priority', 'priority_id');
     }
@@ -120,7 +122,7 @@ class TicketOver extends Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Category', 'category_id');
     }
@@ -130,7 +132,7 @@ class TicketOver extends Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
@@ -140,7 +142,7 @@ class TicketOver extends Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function agent()
+    public function agent(): BelongsTo
     {
         return $this->belongsTo('Kordy\Ticketit\Models\Agent', 'agent_id');
     }
@@ -150,7 +152,7 @@ class TicketOver extends Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany('Kordy\Ticketit\Models\Comment', 'ticket_id');
     }

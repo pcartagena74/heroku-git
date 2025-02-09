@@ -17,7 +17,7 @@ class UsersTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // $user = DB::table('users')->insert([
         //     'name'     => Str::random(10),

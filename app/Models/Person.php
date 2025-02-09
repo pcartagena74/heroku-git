@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -42,7 +46,7 @@ class Person extends Model
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         // we need to get default person org id so running another query to fetch same
         // $person = Person::find(auth()->user()->id);
@@ -53,52 +57,52 @@ class Person extends Model
         //->where('person_role.org_id', $this->defaultOrgID);
     }
 
-    public function orgs()
+    public function orgs(): BelongsToMany
     {
         return $this->belongsToMany(Org::class, 'org-person', 'personID', 'orgID');
     }
 
-    public function emails()
+    public function emails(): HasMany
     {
         return $this->hasMany(Email::class, 'personID', 'personID');
     }
 
-    public function phones()
+    public function phones(): HasMany
     {
         return $this->hasMany(Phone::class, 'personID', 'personID');
     }
 
-    public function addresses()
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class, 'personID', 'personID');
     }
 
-    public function socialites()
+    public function socialites(): HasMany
     {
         return $this->hasMany(PersonSocialite::class, 'personID', 'personID');
     }
 
-    public function orgperson()
+    public function orgperson(): HasOne
     {
         return $this->hasOne(OrgPerson::class, 'id', 'defaultOrgPersonID');
     }
 
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'personID', 'personID');
     }
 
-    public function regfinances()
+    public function regfinances(): HasMany
     {
         return $this->hasMany(RegFinance::class, 'personID', 'personID');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'personID', 'id');
     }
 
-    public function defaultOrg()
+    public function defaultOrg(): BelongsTo
     {
         // Alternate approach to getting the default organization
         // return $this->orgs()->where('org-person.orgID', $this->defaultOrgID);
@@ -182,12 +186,12 @@ class Person extends Model
         }
     }
 
-    public function email()
+    public function email(): HasMany
     {
         return $this->hasMany(Email::class, 'personID', 'personID')->where('isPrimary', 1);
     }
 
-    public function service_role()
+    public function service_role(): HasOne
     {
         return $this->hasOne(VolunteerService::class, 'personID', 'personID');
     }

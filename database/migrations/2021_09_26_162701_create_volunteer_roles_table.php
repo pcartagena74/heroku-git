@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('volunteer_roles', function (Blueprint $table) {
             $table->integer('id')->unsigned()->autoIncrement();
@@ -35,7 +35,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('volunteer_roles');
     }

@@ -2,6 +2,8 @@
 
 namespace App\Models\Ticketit;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Ticketit\TicketOver as Ticketit;
 use Auth;
 use Entrust;
@@ -165,7 +167,7 @@ class AgentOver extends User
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany('Kordy\Ticketit\Models\Category', 'ticketit_categories_users', 'user_id', 'category_id');
     }
@@ -173,7 +175,7 @@ class AgentOver extends User
     /**
      * Get related agent tickets (To be deprecated).
      */
-    public function agentTickets($complete = false)
+    public function agentTickets($complete = false): HasMany
     {
         if ($complete) {
             return $this->hasMany(Ticketit::class, 'agent_id')->whereNotNull('completed_at');
@@ -187,7 +189,7 @@ class AgentOver extends User
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function userTickets($complete = false)
+    public function userTickets($complete = false): HasMany
     {
         if ($complete) {
             return $this->hasMany(Ticketit::class, 'user_id')->whereNotNull('completed_at');
@@ -196,7 +198,7 @@ class AgentOver extends User
         }
     }
 
-    public function tickets($complete = false)
+    public function tickets($complete = false): HasMany
     {
         if ($complete) {
             return $this->hasMany(Ticketit::class, 'user_id')->whereNotNull('completed_at');
@@ -232,7 +234,7 @@ class AgentOver extends User
     /**
      * Get related agent total tickets.
      */
-    public function agentTotalTickets()
+    public function agentTotalTickets(): HasMany
     {
         return $this->hasMany(Ticketit::class, 'agent_id');
     }
@@ -240,7 +242,7 @@ class AgentOver extends User
     /**
      * Get related agent Completed tickets.
      */
-    public function agentCompleteTickets()
+    public function agentCompleteTickets(): HasMany
     {
         return $this->hasMany(Ticketit::class, 'agent_id')->whereNotNull('completed_at');
     }
@@ -248,7 +250,7 @@ class AgentOver extends User
     /**
      * Get related agent tickets.
      */
-    public function agentOpenTickets()
+    public function agentOpenTickets(): HasMany
     {
         return $this->hasMany(Ticketit::class, 'agent_id')->whereNull('completed_at');
     }
@@ -256,7 +258,7 @@ class AgentOver extends User
     /**
      * Get related user total tickets.
      */
-    public function userTotalTickets()
+    public function userTotalTickets(): HasMany
     {
         return $this->hasMany(Ticketit::class, 'user_id');
     }
@@ -264,7 +266,7 @@ class AgentOver extends User
     /**
      * Get related user Completed tickets.
      */
-    public function userCompleteTickets()
+    public function userCompleteTickets(): HasMany
     {
         return $this->hasMany(Ticketit::class, 'user_id')->whereNotNull('completed_at');
     }
@@ -272,7 +274,7 @@ class AgentOver extends User
     /**
      * Get related user tickets.
      */
-    public function userOpenTickets()
+    public function userOpenTickets(): HasMany
     {
         return $this->hasMany(Ticketit::class, 'user_id')->whereNull('completed_at');
     }
