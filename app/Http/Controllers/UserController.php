@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Email;
 use App\Models\Org;
 use App\Models\OrgPerson;
@@ -45,7 +46,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): View
     {
         // responds to GET /newuser
         $org = Org::find($this->currentPerson->defaultOrgID);

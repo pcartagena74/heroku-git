@@ -2,6 +2,8 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,7 @@ class ConfigurationsController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(): View
     {
         $configurations = Configuration::all();
         $configurations_by_sections = ['init' => [], 'email' => [], 'tickets' => [], 'perms' => [], 'editor' => [], 'other' => []];
@@ -61,7 +63,7 @@ class ConfigurationsController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(): View
     {
         return view('ticketit::admin.configuration.create');
     }
@@ -72,7 +74,7 @@ class ConfigurationsController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'slug' => 'required',
@@ -97,7 +99,7 @@ class ConfigurationsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
         $configuration = Configuration::findOrFail($id);
         $should_serialize = Setting::is_serialized($configuration->value);
@@ -112,7 +114,7 @@ class ConfigurationsController extends Controller
      * @param  int  $id
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $configuration = Configuration::findOrFail($id);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use Closure;
 use Entrust;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         return view('v1.public_pages.home-login');
     }
@@ -43,7 +44,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function showApplicationRoutes()
+    public function showApplicationRoutes(): View
     {
         /*
         if (config('app.log_level') == 'production') {
@@ -79,7 +80,7 @@ class HomeController extends Controller
      * @param  \Illuminate\Routing\Route  $route
      * @return string
      */
-    protected function getRouteMiddleware($route)
+    protected function getRouteMiddleware(\Illuminate\Routing\Route $route): string
     {
         return collect($route->gatherMiddleware())->map(function ($middleware) {
             return $middleware instanceof Closure ? 'Closure' : $middleware;

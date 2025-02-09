@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Event;
 use App\Models\EventDiscount;
 use App\Models\EventSession;
@@ -56,7 +57,7 @@ class EventCopyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($param)
+    public function show($param): View
     {
         $this->currentPerson = Person::find(auth()->user()->id);
 
@@ -141,7 +142,7 @@ class EventCopyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         //
     }
@@ -152,7 +153,7 @@ class EventCopyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         //
     }
@@ -163,7 +164,7 @@ class EventCopyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         //
     }

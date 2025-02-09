@@ -28,7 +28,7 @@ class EmailForQueuing extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): static
     {
         try {
             $campaign = Campaign::where('campaignID', $this->email_queue->campaign_id)->get()->first();

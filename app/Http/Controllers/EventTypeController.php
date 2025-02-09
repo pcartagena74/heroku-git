@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\EventType;
 use App\Models\Person;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class EventTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /eventtype/create and creates, adds, stores the event
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -81,7 +82,7 @@ class EventTypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         // responds to POST /eventType/id
         $etID = request()->input('pk');
@@ -105,7 +106,7 @@ class EventTypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         // responds to DELETE /eventtype/id/delete
         $this->currentPerson = Person::find(auth()->user()->id);

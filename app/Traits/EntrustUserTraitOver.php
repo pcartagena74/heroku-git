@@ -18,7 +18,7 @@ trait EntrustUserTraitOver
      * @param  mixed  $role
      * @param  array  $extra_data  in our case orgID
      */
-    public function attachRole($role, $extra_data = null)
+    public function attachRole($role, array $extra_data = null)
     {
         if (is_object($role)) {
             $role = $role->getKey();

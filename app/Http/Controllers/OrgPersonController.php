@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Person;
@@ -20,14 +22,14 @@ class OrgPersonController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Org $org)
+    public function index(Org $org): View
     {
         $person = null;
 
         return view('v1.public_pages.pmiID_lookup', compact('org', 'person'));
     }
 
-    public function find(Request $request)
+    public function find(Request $request): RedirectResponse
     {
         $orgID = $request->input('orgID');
         $pmiID = $request->input('pmiID');
@@ -66,7 +68,7 @@ class OrgPersonController extends Controller
      * @param  \App\OrgPerson  $orgperson
      * @return \Illuminate\Http\Response
      */
-    public function show(Person $person)
+    public function show(Person $person): View
     {
         $person = $person->load('emails', 'user', 'orgperson');
         $org = Org::find($person->defaultOrgID);

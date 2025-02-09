@@ -81,7 +81,7 @@ class SettingOver extends Model
      *
      * @return bool
      */
-    public static function is_serialized($data, $strict = true)
+    public static function is_serialized($data, $strict = true): bool
     {
         // if it isn't a string, it isn't serialized.
         if (! is_string($data)) {

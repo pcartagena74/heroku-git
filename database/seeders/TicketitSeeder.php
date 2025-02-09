@@ -105,7 +105,7 @@ class TicketitSeeder extends Seeder
      *
      * @return array
      */
-    public function cleanupAndMerge($defaults, $config)
+    public function cleanupAndMerge($defaults, $config): array
     {
         $merged = array_merge($defaults, $config);
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Org;
 use App\Models\Permission;
 use App\Models\Person;
@@ -47,7 +49,7 @@ class RoleController extends Controller
         return $topBits;
     }
 
-    public function index($query = null)
+    public function index($query = null): View
     {
         // responds to GET /role_mgmt
         $topBits = $this->role_bits();
@@ -95,7 +97,7 @@ class RoleController extends Controller
             compact('org', 'roles', 'permissions', 'persons', 'topBits'));
     }
 
-    public function search(Request $request)
+    public function search(Request $request): RedirectResponse
     {
         $string = $request->input('string');
 

@@ -6,6 +6,9 @@ namespace App\Http\Controllers;
 
 ini_set('max_execution_time', 0);
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Illuminate\Http\Response;
 use App\Models\Event;
 use App\Models\EventDiscount;
 use App\Models\EventSession;
@@ -144,7 +147,7 @@ class EventController extends Controller
         return $topBits;
     }
 
-    public function index($past = null)
+    public function index($past = null): View
     {
         // responds to GET /manage_events
         $topBits = $this->event_bits();
@@ -365,7 +368,7 @@ class EventController extends Controller
                 'tracks', 'currentOrg', 'override'));
     }
 
-    public function create()
+    public function create(): View
     {
         // responds to /events/create and shows add/edit form
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -533,7 +536,7 @@ class EventController extends Controller
         return redirect('/event-tickets/'.$event->eventID);
     }
 
-    public function edit(Event $event)
+    public function edit(Event $event): View
     {
         // responds to GET /events/id/edit and shows the add/edit form
         //$event               = Event::find($id);
@@ -746,7 +749,7 @@ class EventController extends Controller
         }
     }
 
-    public function destroy(Event $event)
+    public function destroy(Event $event): RedirectResponse
     {
         // responds to DELETE /events/id
 
@@ -781,7 +784,7 @@ class EventController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Laravel\Lumen\Http\Redirector
      */
-    public function ajax_update(Request $request, Event $event)
+    public function ajax_update(Request $request, Event $event): RedirectResponse
     {
         //$event               = Event::find($id);
         $this->currentPerson = Person::find(auth()->user()->id);
@@ -821,7 +824,7 @@ class EventController extends Controller
         return redirect('/event-tickets/'.$event->eventID);
     }
 
-    public function showGroup($event = null, $override = null)
+    public function showGroup($event = null, $override = null): View
     {
         $title = trans('messages.headers.group_reg');
         $today = Carbon::now();
@@ -1019,7 +1022,7 @@ class EventController extends Controller
         );
     }
 
-    public function ics_listing($orgID, $etID = null, $override = null)
+    public function ics_listing($orgID, $etID = null, $override = null): Response
     {
         $events = Event::where([
             ['orgID', '=', $orgID],

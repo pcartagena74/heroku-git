@@ -18,7 +18,7 @@ trait InsertOnDuplicateKey
      * @param  array  $updateColumns  NULL or [] means update all columns
      * @return int 0 if row is not changed, 1 if row is inserted, 2 if row is updated
      */
-    public static function insertOnDuplicateKey(array $data, ?array $updateColumns = null)
+    public static function insertOnDuplicateKey(array $data, ?array $updateColumns = null): int
     {
         if (empty($data)) {
             return false;
@@ -42,7 +42,7 @@ trait InsertOnDuplicateKey
      *
      * @return int 0 if row is ignored, 1 if row is inserted
      */
-    public static function insertIgnore(array $data)
+    public static function insertIgnore(array $data): int
     {
         if (empty($data)) {
             return false;
@@ -66,7 +66,7 @@ trait InsertOnDuplicateKey
      *
      * @return int 1 if row is inserted without replacements, greater than 1 if rows were replaced
      */
-    public static function replace(array $data)
+    public static function replace(array $data): int
     {
         if (empty($data)) {
             return false;
@@ -89,7 +89,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    public static function getTableName()
+    public static function getTableName(): string
     {
         $class = get_called_class();
 
@@ -101,7 +101,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    public static function getModelConnectionName()
+    public static function getModelConnectionName(): string
     {
         $class = get_called_class();
 
@@ -113,7 +113,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    public static function getTablePrefix()
+    public static function getTablePrefix(): string
     {
         return self::getModelConnectionName()->getTablePrefix();
     }
@@ -123,7 +123,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    public static function getPrimaryKey()
+    public static function getPrimaryKey(): string
     {
         $class = get_called_class();
 
@@ -137,7 +137,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    protected static function buildQuestionMarks($data)
+    protected static function buildQuestionMarks($data): string
     {
         $row = self::getFirstRow($data);
         $questionMarks = array_fill(0, count($row), '?');
@@ -175,7 +175,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    protected static function getColumnList(array $first)
+    protected static function getColumnList(array $first): string
     {
         if (empty($first)) {
             throw new \InvalidArgumentException('Empty array.');
@@ -190,7 +190,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    protected static function buildValuesList(array $updatedColumns)
+    protected static function buildValuesList(array $updatedColumns): string
     {
         $out = [];
 
@@ -211,7 +211,7 @@ trait InsertOnDuplicateKey
      *
      * @return array
      */
-    protected static function inLineArray(array $data)
+    protected static function inLineArray(array $data): array
     {
         return call_user_func_array('array_merge', array_map('array_values', $data));
     }
@@ -222,7 +222,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    protected static function buildInsertOnDuplicateSql(array $data, ?array $updateColumns = null)
+    protected static function buildInsertOnDuplicateSql(array $data, ?array $updateColumns = null): string
     {
         $first = static::getFirstRow($data);
 
@@ -245,7 +245,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    protected static function buildInsertIgnoreSql(array $data)
+    protected static function buildInsertIgnoreSql(array $data): string
     {
         $first = static::getFirstRow($data);
 
@@ -261,7 +261,7 @@ trait InsertOnDuplicateKey
      *
      * @return string
      */
-    protected static function buildReplaceSql(array $data)
+    protected static function buildReplaceSql(array $data): string
     {
         $first = static::getFirstRow($data);
 

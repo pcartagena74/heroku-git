@@ -2,6 +2,7 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Person;
 use App\Models\Ticketit\AgentOver as Agent;
 use App\Models\Ticketit\TicketOver as Ticket;
@@ -164,7 +165,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $complete = false;
 
@@ -176,7 +177,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return Response
      */
-    public function indexComplete()
+    public function indexComplete(): Response
     {
         $complete = true;
 
@@ -189,7 +190,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return array
      */
-    public function PCS()
+    public function PCS(): array
     {
         // seconds expected for L5.8<=, minutes before that
         $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
@@ -218,7 +219,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return Response
      */
-    public function create()
+    public function create(): Response
     {
         [$priorities, $categories] = $this->PCS();
 
@@ -231,7 +232,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'subject' => 'required|min:3',
@@ -269,7 +270,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return json
      */
-    public function storeAjax(Request $request)
+    public function storeAjax(Request $request): json
     {
         if (Agent::isAdmin() || Agent::isAgent()) {
             $validator = Validator::make($request->all(), [
@@ -340,7 +341,7 @@ class TicketsControllerOver extends TicketController
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show(int $id): Response
     {
         $ticket = $this->tickets->findOrFail($id);
 
@@ -373,7 +374,7 @@ class TicketsControllerOver extends TicketController
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): Response
     {
         $this->validate($request, [
             'subject' => 'required|min:3',
@@ -418,7 +419,7 @@ class TicketsControllerOver extends TicketController
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(int $id): Response
     {
         $ticket = $this->tickets->findOrFail($id);
         $subject = $ticket->subject;
@@ -435,7 +436,7 @@ class TicketsControllerOver extends TicketController
      * @param  int  $id
      * @return Response
      */
-    public function complete($id)
+    public function complete(int $id): Response
     {
         if ($this->permToClose($id) == 'yes') {
             $ticket = $this->tickets->findOrFail($id);
@@ -463,7 +464,7 @@ class TicketsControllerOver extends TicketController
      * @param  int  $id
      * @return Response
      */
-    public function reopen($id)
+    public function reopen(int $id): Response
     {
         if ($this->permToReopen($id) == 'yes') {
             $ticket = $this->tickets->findOrFail($id);
@@ -516,7 +517,7 @@ class TicketsControllerOver extends TicketController
     /**
      * @return bool
      */
-    public function permToClose($id)
+    public function permToClose($id): bool
     {
         $close_ticket_perm = Setting::grab('close_ticket_perm');
 
@@ -536,7 +537,7 @@ class TicketsControllerOver extends TicketController
     /**
      * @return bool
      */
-    public function permToReopen($id)
+    public function permToReopen($id): bool
     {
         $reopen_ticket_perm = Setting::grab('reopen_ticket_perm');
         if ($this->agent->isAdmin() && $reopen_ticket_perm['admin'] == 'yes') {
@@ -556,7 +557,7 @@ class TicketsControllerOver extends TicketController
      * @param  int  $period
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function monthlyPerfomance($period = 2)
+    public function monthlyPerfomance(int $period = 2)
     {
         $categories = Category::all();
         foreach ($categories as $cat) {
@@ -586,7 +587,7 @@ class TicketsControllerOver extends TicketController
      * @param  Ticket  $ticket
      * @return int|false
      */
-    public function ticketPerformance($ticket)
+    public function ticketPerformance(Ticket $ticket)
     {
         if ($ticket->completed_at == null) {
             return false;
@@ -605,7 +606,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return int
      */
-    public function intervalPerformance($from, $to, $cat_id = false)
+    public function intervalPerformance($from, $to, $cat_id = false): int
     {
         if ($cat_id) {
             $tickets = Ticket::where('category_id', $cat_id)->whereBetween('completed_at', [$from, $to])->get();

@@ -2,6 +2,8 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -11,21 +13,21 @@ use Kordy\Ticketit\Models\Setting;
 
 class AgentsController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $agents = Agent::agents()->get();
 
         return view('ticketit::admin.agent.index', compact('agents'));
     }
 
-    public function create()
+    public function create(): View
     {
         $users = Agent::paginate(Setting::grab('paginate_items'));
 
         return view('ticketit::admin.agent.create', compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $rules = [
             'agents' => 'required|array|min:1',
@@ -45,7 +47,7 @@ class AgentsController extends Controller
         return redirect()->action([self::class, 'index']);
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $this->syncAgentCategories($id, $request);
 
@@ -54,7 +56,7 @@ class AgentsController extends Controller
         return redirect()->action([self::class, 'index']);
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $agent = $this->removeAgent($id);
 

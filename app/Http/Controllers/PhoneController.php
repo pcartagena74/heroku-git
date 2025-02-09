@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Person;
 use App\Models\Phone;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class PhoneController extends Controller
         $this->middleware('auth');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // responds to POST to /phones/create and creates, adds, stores the phone number
         // properly takes into account whether user is changing their own info or another user's info
@@ -65,7 +66,7 @@ class PhoneController extends Controller
         $email->save();
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         // responds to POST /phone/id/delete
         $personID = request()->input('personID');

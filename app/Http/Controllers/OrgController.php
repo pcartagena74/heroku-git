@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Models\Email;
 use App\Models\EventType;
 use App\Models\Org;
@@ -52,7 +54,7 @@ class OrgController extends Controller
         }
     }
 
-    public function updateDefaultOrg(Request $request)
+    public function updateDefaultOrg(Request $request): RedirectResponse
     {
         $org = request()->input('org');
         $person = Person::find(auth()->user()->id);
@@ -68,7 +70,7 @@ class OrgController extends Controller
         return redirect("/orgsettings/$org");
     }
 
-    public function event_defaults()
+    public function event_defaults(): View
     {
         $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
@@ -106,7 +108,7 @@ class OrgController extends Controller
         return view('v1.auth_pages.organization.settings', compact('org', 'topBits'));
     }
 
-    public function create()
+    public function create(): View
     {
         // refactored - previously in AdminController
         return view('v1.auth_pages.organization.create_organization');

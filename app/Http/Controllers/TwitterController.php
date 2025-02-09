@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Event;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class TwitterController extends Controller
 
     public function index() {}
 
-    public function show(Event $event)
+    public function show(Event $event): View
     {
         // responds to GET /blah/id
         // $event = Event::find($id);

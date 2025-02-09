@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
@@ -39,7 +40,7 @@ class ResetPasswordController extends Controller
         $this->middleware('guest');
     }
 
-    public function showResetForm_inModal(Request $request, $token = null)
+    public function showResetForm_inModal(Request $request, $token = null): View
     {
         return view('auth.passwords.reset')->with(
             ['token' => $token, 'email' => $request->email]

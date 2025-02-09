@@ -22,7 +22,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeAgents($query, $paginate = false)
+    public function scopeAgents($query, bool $paginate = false): bool
     {
         $user = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['Admin']);
@@ -42,7 +42,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeAdmins($query, $paginate = false, $withOrg = false)
+    public function scopeAdmins($query, bool $paginate = false, $withOrg = false): bool
     {
         if ($withOrg !== false) {
             return $query->where('ticketit_admin', '1')->paginate($paginate, ['*'], 'admins_page');
@@ -62,7 +62,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeUsers($query, $paginate = false)
+    public function scopeUsers($query, bool $paginate = false): bool
     {
         if ($paginate) {
             return $query->where('ticketit_agent', '0')->paginate($paginate, ['*'], 'users_page');
@@ -79,7 +79,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeAgentsLists($query)
+    public function scopeAgentsLists($query): bool
     {
         if (version_compare(app()->version(), '5.2.0', '>=')) {
             return $query->where('ticketit_agent', '1')->pluck('name', 'id')->toArray();
@@ -94,7 +94,7 @@ class AgentOver extends User
      *
      * @return bool
      */
-    public static function isAgent($id = null)
+    public static function isAgent($id = null): bool
     {
         //as we want to have agent who are admin of particular org we can use entrust. we have already
         //updated entrust to check org id for all roles.
@@ -130,7 +130,7 @@ class AgentOver extends User
      *
      * @return bool
      */
-    public static function isAdmin()
+    public static function isAdmin(): bool
     {
         return auth()->check() && auth()->user()->ticketit_admin;
     }
@@ -141,7 +141,7 @@ class AgentOver extends User
      * @param  int  $id  ticket id
      * @return bool
      */
-    public static function isAssignedAgent($id)
+    public static function isAssignedAgent(int $id): bool
     {
         $is_admin = Entrust::hasRole('Admin');
 
@@ -154,7 +154,7 @@ class AgentOver extends User
      * @param  int  $id  ticket id
      * @return bool
      */
-    public static function isTicketOwner($id)
+    public static function isTicketOwner(int $id): bool
     {
         $ticket = TicketOver::find($id);
 
@@ -285,7 +285,7 @@ class AgentOver extends User
      * @param  int  $user_id
      * @return bool true/false
      */
-    protected static function checkUserIsDeveloper($user_id)
+    protected static function checkUserIsDeveloper(int $user_id): bool
     {
         $role = DB::table('role_user')
             ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')

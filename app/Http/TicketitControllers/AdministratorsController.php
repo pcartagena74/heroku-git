@@ -2,6 +2,8 @@
 
 namespace App\Http\TicketitControllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -10,21 +12,21 @@ use Kordy\Ticketit\Models\Setting;
 
 class AdministratorsController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $administrators = Agent::admins();
 
         return view('ticketit::admin.administrator.index', compact('administrators'));
     }
 
-    public function create()
+    public function create(): View
     {
         $users = Agent::paginate(Setting::grab('paginate_items'));
 
         return view('ticketit::admin.administrator.create', compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $administrators_list = $this->addAdministrators($request->input('administrators'));
         $administrators_names = implode(',', $administrators_list);
@@ -34,7 +36,7 @@ class AdministratorsController extends Controller
         return redirect()->action([self::class, 'index']);
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $this->syncAdministratorCategories($id, $request);
 
@@ -43,7 +45,7 @@ class AdministratorsController extends Controller
         return redirect()->action([self::class, 'index']);
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $administrator = $this->removeAdministrator($id);
 

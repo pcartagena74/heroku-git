@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Event;
 use App\Models\EventSession;
 use App\Models\Ticket;
@@ -15,7 +17,7 @@ class TrackController extends Controller
         $this->middleware('auth');
     }
 
-    public function show(Event $event)
+    public function show(Event $event): View
     {
         $tracks = Track::where('eventID', $event->eventID)->get();
         $spk_list = $event->registered_speakers();
@@ -170,7 +172,7 @@ class TrackController extends Controller
             'pk' => request()->input('pk'), 'blah' => $name, 'val' => $value, 's' => $s, ]);
     }
 
-    public function updateSymmetry(Request $request, Event $event)
+    public function updateSymmetry(Request $request, Event $event): RedirectResponse
     {
         if (request()->input('isSymmetric') === null) {
             $isSymmetric = 0;

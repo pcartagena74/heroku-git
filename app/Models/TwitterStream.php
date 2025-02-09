@@ -20,7 +20,7 @@ class TwitterStream // extends OauthPhirehose
      *
      * @param  string  $status
      */
-    public function enqueueStatus($status)
+    public function enqueueStatus(string $status)
     {
         $this->dispatch(new ProcessTweet($status));
     }
