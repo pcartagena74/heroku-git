@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Providers\AppServiceProvider;
 use App;
+use App\Providers\AppServiceProvider;
 use Closure;
 use Config;
 use Cookie;

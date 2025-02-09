@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\ServiceProvider;
 
 return [
 
@@ -12,7 +11,6 @@ return [
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
     'log_max_files' => 10,
-
 
     'aliases' => Facade::defaultAliases()->merge([
         'Agent' => Jenssegers\Agent\Facades\Agent::class,

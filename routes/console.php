@@ -9,6 +9,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-
 // Heroku supports only 10 mins we will take care of reset from job itself
 Schedule::job(new SendCampaignEmail)->everyThirtyMinutes();
