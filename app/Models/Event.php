@@ -151,10 +151,10 @@ class Event extends Model
     public function checkin_time(): bool|int
     {
         $today = Carbon::now();
-        if (($this->eventStartDate->diffInDays($today) <= 1
-                && $this->eventStartDate->diffInDays($today) >= 0) ||
+        if (((int)$this->eventStartDate->diffInDays($today) <= 1
+                && (int)$this->eventStartDate->diffInDays($today) >= 0) ||
             ($today->gt($this->eventStartDate) && $today->lt($this->eventEndDate))
-            || $today->diffInDays($this->eventEndDate) <= 2) {
+            || (int)$today->diffInDays($this->eventEndDate) <= 2) {
             return 1;
         } else {
             return 0;
@@ -174,10 +174,10 @@ class Event extends Model
             $org = Org::find($e->orgID);
         }
 
-        if (($this->eventStartDate->diffInDays($today) <= 1
-                && $this->eventStartDate->diffInDays($today) >= 0) ||
+        if (((int)$this->eventStartDate->diffInDays($today) <= 1
+                && (int)$this->eventStartDate->diffInDays($today) >= 0) ||
             ($today->gt($this->eventStartDate) && $today->lt($this->eventEndDate)) ||
-            $today->diffInDays($this->eventEndDate) <= $org->postEventEditDays) {
+            (int)$today->diffInDays($this->eventEndDate) <= $org->postEventEditDays) {
             return 1;
         } else {
             return 0;
@@ -275,7 +275,7 @@ class Event extends Model
     public function create_or_update_event_ics(): void
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_'.$this->eventID.'.ics';
+        $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
         \Storage::disk('events')->put($event_filename, $contents, 'public');
@@ -299,9 +299,9 @@ class Event extends Model
     public function event_url(): string
     {
         if ($this->slug) {
-            return '/events/'.$this->slug;
+            return '/events/' . $this->slug;
         } else {
-            return '/events/'.$this->eventID;
+            return '/events/' . $this->eventID;
         }
     }
 

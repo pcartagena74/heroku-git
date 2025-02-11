@@ -216,7 +216,7 @@ class VolunteerRoleController extends Controller
                     ->first();
 
                 // 2. Check if the time in role is > 30 days.  Makes it less likely to be a correction.
-                if ($now->diffInDays($vs->roleStartDate) < 30) {
+                if ((int)$now->diffInDays($vs->roleStartDate) < 30) {
                     // This is just a name change
                     $vs->updaterID = $this->currentPerson->personID;
                     $vs->save();
@@ -229,7 +229,7 @@ class VolunteerRoleController extends Controller
                     if ($volunteerRole->title_override !== null) {
                         $vs->title_save = $volunteerRole->title_override;
                     } else {
-                        $vs->title_save = trans('messages.default_role'.$volunteerRole->title);
+                        $vs->title_save = trans('messages.default_role' . $volunteerRole->title);
                     }
                     $vs->updaterID = $this->currentPerson->personID;
                     $vs->save();

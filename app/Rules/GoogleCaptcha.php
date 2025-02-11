@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Validation\Rule;
 
 class GoogleCaptcha implements Rule
@@ -20,7 +21,8 @@ class GoogleCaptcha implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     * @throws GuzzleException
      */
     public function passes(string $attribute, $value): bool
     {
@@ -34,7 +36,7 @@ class GoogleCaptcha implements Rule
             ]
         );
 
-        $body = json_decode((string) $response->getBody());
+        $body = json_decode((string)$response->getBody());
 
         return $body->success;
     }

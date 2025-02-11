@@ -51,7 +51,7 @@
     $est = $event->eventStartDate->format('Ymd\THis'); // $event->eventTimeZone;
     $eet = $event->eventEndDate->format('Ymd\THis'); // $event->eventTimeZone;
 
-    $dur = sprintf("%02d", $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
+    $dur = sprintf("%02d", (int) $event->eventEndDate->diffInHours($event->eventStartDate)) . "00";
 
     $event_url = trans('messages.email_txt.for_det_visit') . ": " . env('APP_URL') . "/events/$event->slug";
     $yahoo_url =
