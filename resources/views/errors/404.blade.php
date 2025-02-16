@@ -26,7 +26,7 @@
                         <h3>
                             @lang("messages.page_generic_exception.report_issue")
                         </h3>
-                        {{ Form::open(['url' => url('reportissue'), 'method' => 'post']) }}
+                        {{ html()->form('POST', url('reportissue'))->open() }}
                         <div class="g-recaptcha" data-sitekey="{{env('RECAPTCHA_PUBLIC_KEY')}}">
                         </div>
                         {{-- Add Captcha --}}
@@ -48,7 +48,7 @@
                                 </span>
                             </div>
                         </div>
-                        {{ Form::close() }}
+                        {{ html()->form()->close() }}
                         <span class="error" id="error_member">
                         </span>
                         <span class="success" id="success">

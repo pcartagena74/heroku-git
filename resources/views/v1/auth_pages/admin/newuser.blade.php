@@ -22,12 +22,12 @@ $currentOrg = $org;
         @include('v1.parts.start_content', ['header' => $header, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
         @lang('messages.instructions.new_user')
-        {!! Form::open(array('url' => env('APP_URL').'/newuser', 'method' => 'post')) !!}
+        {{ html()->form('POST', env('APP_URL') . '/newuser')->open() }}
 
         <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
             <div class="col-xs-12">
-            {!! Form::label('email', trans('messages.fields.email'), array('class' => 'control-label')) !!}
-            {!! Form::text('email', old('email'), array('class' => 'form-control input-sm', 'required', 'autofocus')) !!}
+            {{ html()->label(trans('messages.fields.email'), 'email')->class('control-label') }}
+            {{ html()->text('email', old('email'))->class('form-control input-sm')->required()->autofocus() }}
                 @if ($errors->has('email'))
                     <span class="help-block red"><strong>{{ $errors->first('email') }}</strong></span>
                 @endif
@@ -36,15 +36,15 @@ $currentOrg = $org;
 
         <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
             <div class="col-xs-6">
-            {!! Form::label('firstName', trans('messages.fields.firstName'), array('class' => 'control-label')) !!}
-            {!! Form::text('firstName', old('firstName'), array('class' => 'form-control input-sm', 'required')) !!}
+            {{ html()->label(trans('messages.fields.firstName'), 'firstName')->class('control-label') }}
+            {{ html()->text('firstName', old('firstName'))->class('form-control input-sm')->required() }}
                 @if ($errors->has('firstName'))
                     <span class="help-block red"><strong>{{ $errors->first('firstName') }}</strong></span>
                 @endif
             </div>
             <div class="col-xs-6">
-                {!! Form::label('lastName', trans('messages.fields.lastName'), array('class' => 'control-label')) !!}
-                {!! Form::text('lastName', old('lastName'), array('class' => 'form-control input-sm', 'required')) !!}
+                {{ html()->label(trans('messages.fields.lastName'), 'lastName')->class('control-label') }}
+                {{ html()->text('lastName', old('lastName'))->class('form-control input-sm')->required() }}
                 @if ($errors->has('lastName'))
                     <span class="help-block red"><strong>{{ $errors->first('lastName') }}</strong></span>
                 @endif
@@ -53,22 +53,22 @@ $currentOrg = $org;
 
         <div class="form-group col-xs-12{{ $errors->has('password') ? ' has-error' : '' }}">
             <div class="col-xs-6">
-                {!! Form::label('password', trans('messages.fields.password'), array('class' => 'control-label')) !!}
-                {!! Form::text('password', null, array('class' => 'form-control input-sm', 'required')) !!}
+                {{ html()->label(trans('messages.fields.password'), 'password')->class('control-label') }}
+                {{ html()->text('password')->class('form-control input-sm')->required() }}
                 @if ($errors->has('password'))
                     <span class="help-block red"><strong>{{ $errors->first('password') }}</strong></span>
                 @endif
             </div>
             <div class="col-xs-6">
-                {!! Form::label('password_confirmation', trans('messages.headers.pass_ver'), array('class' => 'control-label')) !!}
-                {!! Form::text('password_confirmation', null, array('class' => 'form-control input-sm', 'required')) !!}
+                {{ html()->label(trans('messages.headers.pass_ver'), 'password_confirmation')->class('control-label') }}
+                {{ html()->text('password_confirmation')->class('form-control input-sm')->required() }}
             </div>
         </div>
 
         <div class="form-group col-xs-12{{ $errors->has('email') ? ' has-error' : '' }}">
             <div class="col-xs-12">
-                {!! Form::label('pmiID', trans('messages.fields.pmi_id'), array('class' => 'control-label')) !!}
-                {!! Form::text('pmiID', old('pmiID'), array('class' => 'form-control input-sm', 'placeholder' => trans('messages.headers.opt'))) !!}
+                {{ html()->label(trans('messages.fields.pmi_id'), 'pmiID')->class('control-label') }}
+                {{ html()->text('pmiID', old('pmiID'))->class('form-control input-sm')->placeholder(trans('messages.headers.opt')) }}
                 @if ($errors->has('pmiID'))
                     <span class="help-block red"><strong>{{ $errors->first('pmiID') }}</strong></span>
                 @endif
@@ -77,17 +77,17 @@ $currentOrg = $org;
 
         <div class="form-group col-xs-12">
             <div class="col-xs-3">
-                {!! Form::label('notify', trans('messages.headers.notify_user'), array('class' => 'control-label')) !!}<br />
-                {!! Form::checkbox('notify', 1, false, ['class' => 'form-control flat input-sm']) !!}
+                {{ html()->label(trans('messages.headers.notify_user'), 'notify')->class('control-label') }}<br />
+                {{ html()->checkbox('notify', false, 1)->class('form-control flat input-sm') }}
             </div>
         </div>
 
         <div class="form-group col-xs-12">
             <div class="col-xs-3">
-                {!! Form::submit(trans('messages.nav.ad_new'), array('class' => 'btn btn-primary', 'name' => 'sub_changes')) !!}
+                {{ html()->submit(trans('messages.nav.ad_new'))->class('btn btn-primary')->name('sub_changes') }}
             </div>
         </div>
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
 
         @include('v1.parts.end_content')
     @endif

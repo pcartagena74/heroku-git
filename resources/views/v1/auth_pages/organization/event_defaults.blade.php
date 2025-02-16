@@ -212,13 +212,13 @@ $currentOrg = $currentPerson->defaultOrg;
         <tr>
             @if($et->orgID != 1)
             <td style="text-align: left; width: 15px;">
-                {!! Form::open(array('url' => env('APP_URL')."/eventtype/" . $et->etID . "/delete", 'method' => 'delete')) !!}
+                {{ html()->form('DELETE', env('APP_URL') . "/eventtype/" . $et->etID . "/delete")->open() }}
                 <input name="personID" type="hidden" value="{{ $current_person->personID }}">
                     <button class="btn btn-danger btn-sm" data-btn-cancel-class="btn-danger btn-sm" data-btn-cancel-icon="glyphicon glyphicon-ban-circle" data-btn-cancel-label="Stop!" data-btn-ok-class="btn-success btn-sm" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-label="Continue" data-content="This cannot be undone." data-title="Are you sure?">
                         <i class="far fa-trash-alt fa-fw">
                         </i>
                     </button>
-                    {{ Form::close() }}
+                    {{ html()->form()->close() }}
                 </input>
             </td>
             <td style="text-align: left;">

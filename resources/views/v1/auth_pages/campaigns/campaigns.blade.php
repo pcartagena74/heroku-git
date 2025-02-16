@@ -425,7 +425,7 @@ $topBits = '';  // remove this if this was set in the controller
                 </h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(array('url' =>env('APP_URL')."/campaign", 'method' => 'get')) !!}
+                {{ html()->form('GET', env('APP_URL') . "/campaign")->open() }}
                 <div class="col-md-3 col-sm-3 col-xs-12">
                     <button class="btn btn-sm btn-warning" id="add_row" type="button">
                         Add Another

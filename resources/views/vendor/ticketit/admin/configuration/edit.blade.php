@@ -10,17 +10,9 @@
       <div class="panel-heading">
         <h3>{{ trans('ticketit::admin.config-edit-title') }}
           <div class="panel-nav pull-right" style="margin-top: -7px;">          
-              {!! link_to_route(
-                  $setting->grab('admin_route').'.configuration.index',
-                  trans('ticketit::admin.btn-back'), null,
-                  ['class' => 'btn btn-default'])
-              !!}
+              {{ html()->a($setting->grab('admin_route') . '.configuration.index', trans('ticketit::admin.btn-back'))->class('btn btn-default') }}
               {{--
-              {!! link_to_route(
-                  $setting->grab('admin_route').'.configuration.create',
-                  trans('ticketit::admin.btn-create-new-config'), null,
-                  ['class' => 'btn btn-primary'])
-              !!}
+              {{ html()->a($setting->grab('admin_route') . '.configuration.create', trans('ticketit::admin.btn-create-new-config'))->class('btn btn-primary') }}
               --}}
           </div>
         </h3>  

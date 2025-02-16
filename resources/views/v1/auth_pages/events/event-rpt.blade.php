@@ -609,13 +609,13 @@
                     </div>
 
                     @if(count($nametags)>0 && $event->hasTracks == 0 && null !== $es && $event->checkin_period())
-                        {!! Form::open(array('url' => '/event_checkin/'.$event->eventID, 'method' => 'post')) !!}
-                        {!! Form::hidden('sessionID', $es->sessionID) !!}
-                        {!! Form::hidden('eventID', $event->eventID) !!}
+                        {{ html()->form('POST', url('/event_checkin/' . $event->eventID))->open() }}
+                        {{ html()->hidden('sessionID', $es->sessionID) }}
+                        {{ html()->hidden('eventID', $event->eventID) }}
                         <div class="col-xs-12">
                             <div class="col-xs-2" style="text-align: right;">
                                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.select_all')])
-                                {!! Form::checkbox('', 1, 0, array('id' => 'select_all')) !!}
+                                {{ html()->checkbox('', null, 1)->id('select_all') }}
                             </div>
                             <div class="col-xs-2">
                                 <b>@lang('messages.fields.pmi_id')</b>
@@ -635,7 +635,7 @@
                                         }
                                     }
                                     ?>
-                                    {!! Form::checkbox('p-'.$row->person->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked => $checked)) !!}
+                                    {{ html()->checkbox('p-' . $row->person->personID . '-' . $row->regID, null, 1)->class('allcheckbox') }}
                                 </div>
                                 <div class="col-xs-2">
                                     {{ $row->person->orgperson->OrgStat1 ?? 'N/A' }}
@@ -646,10 +646,10 @@
                             </div>
                         @endforeach
                         <div class="col-xs-10 col-xs-offset-2 form-group">
-                            {!! Form::submit(trans('messages.buttons.chk_att'), ["class" => "btn btn-success btn-sm", 'name' => 'chk_att']) !!}
-                            {!! Form::submit(trans('messages.buttons.chk_walk'), ["class" => "btn btn-primary btn-sm", 'name' => 'chk_walk']) !!}
+                            {{ html()->submit(trans('messages.buttons.chk_att'))->class("btn btn-success btn-sm")->name('chk_att') }}
+                            {{ html()->submit(trans('messages.buttons.chk_walk'))->class("btn btn-primary btn-sm")->name('chk_walk') }}
                         </div>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
 
                     @elseif(count($nametags)>0 && $event->hasTracks == 0 && null !== $es)
 

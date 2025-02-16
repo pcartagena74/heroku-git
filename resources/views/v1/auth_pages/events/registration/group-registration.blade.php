@@ -27,10 +27,10 @@ $topBits = '';  // remove this if this was set in the controller
 
         @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         @if(count($events) != 0)
-            {!! Form::open(array('url' => env('APP_URL')."/group", 'method' => 'POST')) !!}
-            {!! Form::label('eventID', trans('messages.instructions.select_event').':', array('class' => 'control-label')) !!}
-            {!! Form::select('eventID', $events, old('$event->eventTypeID'), array('id' => 'eventID', 'class' =>'form-control')) !!}
-            {!! Form::close() !!}
+            {{ html()->form('POST', env('APP_URL') . "/group")->open() }}
+            {{ html()->label(trans('messages.instructions.select_event') . ':', 'eventID')->class('control-label') }}
+            {{ html()->select('eventID', $events, old('$event->eventTypeID'))->id('eventID')->class('form-control') }}
+            {{ html()->form()->close() }}
         @else
             <b>@lang('messages.instructions.no_events')</b>
         @endif
@@ -40,65 +40,65 @@ $topBits = '';  // remove this if this was set in the controller
 
         @lang('messages.instructions.group_reg')
 
-        {!! Form::open(array('url' => env('APP_URL')."/group-reg1", 'id' => 'grpreg')) !!}
-        {!! Form::hidden('eventID', $event->eventID) !!}
+        {{ html()->form('POST', env('APP_URL') . "/group-reg1")->id('grpreg')->open() }}
+        {{ html()->hidden('eventID', $event->eventID) }}
 
         @for($i=1;$i<=15;$i++)
 
             <div id="custom-template" class="form-group col-sm-12">
                 <div class="col-sm-2">
                     <a data-toggle="tooltip" title="{{ trans('messages.instructions.group_reg_search') }}">
-                {!! Form::label('helper-'.$i, trans('messages.headers.search4p').':') !!}
+                {{ html()->label(trans('messages.headers.search4p') . ':', 'helper-' . $i) }}
                     </a><br />
-                {!! Form::text('helper-'.$i, null, array('id' => 'helper-'.$i, 'class' => 'typeahead input-xs')) !!}<br />
+                {{ html()->text('helper-' . $i)->id('helper-' . $i)->class('typeahead input-xs') }}<br />
                     <a id="pop-{{ $i }}" onclick="populate({{ $i }});" class="btn btn-primary btn-xs">@lang('messages.buttons.pop_row')</a>
                     <a id="clr-{{ $i }}" onclick="go_clear({{ $i }});" class="btn btn-danger btn-xs invisible">@lang('messages.buttons.clr_row')</a>
                 <div id="search-results"></div>
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('firstName-'.$i, trans('messages.fields.firstName')) !!}<b class="red">*</b><br/>
-                    {!! Form::text('firstName-'.$i, null, array('id' => 'firstName-'.$i, 'class' => 'input-xs', 'onblur' => 'require('. $i .');')) !!}<br />
+                    {{ html()->label(trans('messages.fields.firstName'), 'firstName-' . $i) }}<b class="red">*</b><br/>
+                    {{ html()->text('firstName-' . $i)->id('firstName-' . $i)->class('input-xs')->attribute('onblur', 'require(' . $i . ');') }}<br />
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('lastName-'.$i, trans('messages.fields.lastName')) !!}<b class="red">*</b><br/>
-                    {!! Form::text('lastName-'.$i, null, array('id' => 'lastName-'.$i, 'class' => 'input-xs')) !!}<br />
+                    {{ html()->label(trans('messages.fields.lastName'), 'lastName-' . $i) }}<b class="red">*</b><br/>
+                    {{ html()->text('lastName-' . $i)->id('lastName-' . $i)->class('input-xs') }}<br />
                 </div>
                 <div class="col-sm-2">
-                    {!! Form::label('email-'.$i, trans('messages.headers.email')) !!}<b class="red">*</b><br/>
-                    {!! Form::text('email-'.$i, null, array('id' => 'email-'.$i, 'class' => 'input-xs')) !!}<br />
+                    {{ html()->label(trans('messages.headers.email'), 'email-' . $i) }}<b class="red">*</b><br/>
+                    {{ html()->text('email-' . $i)->id('email-' . $i)->class('input-xs') }}<br />
                 </div>
                 @if(is_numeric($tickets))
-                    {!! Form::hidden('ticketID-'.$i, $tickets) !!}
+                    {{ html()->hidden('ticketID-' . $i, $tickets) }}
                 @else
                     <div class="col-sm-1">
-                        {!! Form::label('ticketID-'.$i, trans('messages.fields.ticket')) !!}<br/>
-                        {!! Form::select('ticketID-'.$i, $tickets, old('ticketID-'.$i), array('id' => 'ticketID-'.$i, 'class' =>'input-sm', 'style' => 'width:75px;')) !!}
+                        {{ html()->label(trans('messages.fields.ticket'), 'ticketID-' . $i) }}<br/>
+                        {{ html()->select('ticketID-' . $i, $tickets, old('ticketID-' . $i))->id('ticketID-' . $i)->class('input-sm')->style('width:75px;') }}
                     </div>
                 @endif
 
                 @if(0)
-                    {!! Form::hidden('override-'.$i, 0) !!}
+                    {{ html()->hidden('override-' . $i, 0) }}
                 @else
                     <div class="col-sm-1">
-                        {!! Form::label('override-'.$i, trans('messages.headers.override')) !!}
+                        {{ html()->label(trans('messages.headers.override'), 'override-' . $i) }}
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.group_reg')])
                         <br/>
-                        {!! Form::number('override-'.$i, null, array('id' => 'override-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
+                        {{ html()->number('override-' . $i)->id('override-' . $i)->class('input-xs')->style('width:75px;') }}<br />
                     </div>
                 @endif
                 <div class="col-sm-1">
-                    {!! Form::label('pmiid-'.$i, trans('messages.fields.pmi_id')) !!}<br/>
-                    {!! Form::number('pmiid-'.$i, null, array('id' => 'pmiid-'.$i, 'class' => 'input-xs', 'style' => 'width:75px;')) !!}<br />
+                    {{ html()->label(trans('messages.fields.pmi_id'), 'pmiid-' . $i) }}<br/>
+                    {{ html()->number('pmiid-' . $i)->id('pmiid-' . $i)->class('input-xs')->style('width:75px;') }}<br />
                 </div>
                 <div class="col-sm-1">
-                    {!! Form::label('code-'.$i, trans('messages.fields.disc')) !!}<br/>
-                    {!! Form::select('code-'.$i, $discounts, array('id' => 'code-'.$i, 'class' => 'input-sm', 'style' => 'width:75px')) !!}<br />
+                    {{ html()->label(trans('messages.fields.disc'), 'code-' . $i) }}<br/>
+                    {{ html()->select('code-' . $i, $discounts, array('id' => 'code-' . $i, 'class' => 'input-sm', 'style' => 'width:75px')) }}<br />
                 </div>
                 @if($check)
                 <div class="col-sm-1">
-                    {!! Form::label('checkin-'.$i, trans('messages.buttons.chk_in')) !!}<br/>
-                    {!! Form::checkbox('checkin-'.$i, 1, ['checked']) !!}
-                    {!! Form::hidden('check', 1) !!}
+                    {{ html()->label(trans('messages.buttons.chk_in'), 'checkin-' . $i) }}<br/>
+                    {{ html()->checkbox('checkin-' . $i, ['checked'], 1) }}
+                    {{ html()->hidden('check', 1) }}
                 </div>
                 @endif
                 {{--
@@ -110,9 +110,9 @@ $topBits = '';  // remove this if this was set in the controller
 
         @endfor
 
-        {!! Form::submit('Submit', array('class' => 'btn btn-primary btn-sm')) !!}
+        {{ html()->submit('Submit')->class('btn btn-primary btn-sm') }}
         <div id="validation"></div>
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
 
     @endif
     @include('v1.parts.end_content')
