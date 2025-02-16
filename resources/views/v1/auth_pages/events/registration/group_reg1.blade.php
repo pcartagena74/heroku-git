@@ -48,7 +48,7 @@ if($event->isSymmetric && $event->hasTracks) {
 
 @section('content')
     @include('v1.parts.start_content', ['header' => "Group Registration Confirmation", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    {!! Form::open(['url' => env('APP_URL').'/group_reg2/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    {{ html()->form('PATCH', env('APP_URL') . '/group_reg2/' . $rf->regID)->id('complete_registration')->data('toggle', 'validator')->open() }}
 
     <div class="whole">
 
@@ -280,7 +280,7 @@ if($event->isSymmetric && $event->hasTracks) {
         </div>
         {{--        </div>  --}}
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
     @include('v1.parts.end_content')
 @endsection
 

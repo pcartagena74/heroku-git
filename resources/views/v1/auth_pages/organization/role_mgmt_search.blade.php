@@ -99,20 +99,20 @@ $counter = 0;
     @include('v1.parts.start_content', ['header' => trans('messages.headers.person_search'),
          'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-    {!! Form::open(array('url' => env('APP_URL')."/role_search", 'method' => 'POST')) !!}
+    {{ html()->form('POST', env('APP_URL') . "/role_search")->open() }}
     <div id="custom-template" class="col-sm-12 form-group">
         <b>{!! trans('messages.instructions.mbr_search') !!}</b>
         <div class="col-xs-2">
-            {!! Form::text('string', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}<br />
+            {{ html()->text('string')->id('helper')->class('typeahead input-xs') }}<br />
         </div>
         <div id="search-results"></div>
     </div>
     <div class="col-sm-12">
         <div class="col-xs-2">
-            {!! Form::submit(trans('messages.headers.person_search'), array('class' => 'btn btn-primary btn-xs form-control')) !!}
+            {{ html()->submit(trans('messages.headers.person_search'))->class('btn btn-primary btn-xs form-control') }}
         </div>
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
 
     @include('v1.parts.end_content')
 

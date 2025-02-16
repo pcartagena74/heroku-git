@@ -9,7 +9,7 @@
      * @var Event $event
      */
 
-    // {!! Form::open(['url'=>'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','class'=>'form-horizontal', 'role'=>'form','onsubmit' => 'return confirm("Are you sure?")'])!!}
+    // {{ html()->form('DELETE', url('/ticket/' . $ticket->ticketID . '/delete'))->class('form-horizontal')->attribute('role', 'form')->attribute('onsubmit', 'return confirm("Are you sure?")')->open() }}
 
     // <form method="post" action="{{ "/ticket/" . $ticket->ticketID . "/delete" }}">
     use App\Models\Org;
@@ -120,15 +120,14 @@
                             @lang('messages.symbols.trash')
                         </a>
                     @else
-                        {!! Form::open(['url'=>env('APP_URL').'/ticket/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form']) !!}
+                        {{ html()->form('DELETE', env('APP_URL') . '/ticket/' . $ticket->ticketID . '/delete')->id("formConfirm-{$ticket->ticketID}")->class('form-horizontal')->attribute('role', 'form')->open() }}
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
                         <input type="hidden" name="function" value="delete">
                         <button class="btn btn-danger btn-xs" id="launchConfirm"
                                 onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
                             @lang('messages.symbols.trash')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
                 </td>
                 <td><a href="#" id="ticketLabel-{{ $tc }}" data-value="{{ $ticket->ticketLabel }}"
@@ -212,8 +211,7 @@
                     <?php $bc++; ?>
                 <tr>
                     <td>
-                        {!! Form::open(['url'=>env('APP_URL').'/bundle/'.$ticket->ticketID.'/delete','method'=>'DELETE','id'=>"formConfirm-$ticket->ticketID",
-                                'class'=>'form-horizontal', 'role'=>'form']) !!}
+                        {{ html()->form('DELETE', env('APP_URL') . '/bundle/' . $ticket->ticketID . '/delete')->id("formConfirm-{$ticket->ticketID}")->class('form-horizontal')->attribute('role', 'form')->open() }}
 
                         <button class="btn btn-danger btn-xs" id="launchConfirm"
                                 onclick="return confirm('{{ trans('messages.tooltips.sure') }}');">
@@ -221,7 +219,7 @@
                         </button>
                         <input type="hidden" name="pk" value="{{ $ticket->ticketID }}">
                         <input id="myDelete" type="submit" value="Go" class="hidden"/>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     </td>
                     <td><a href="#" id="ticketLabel-{{ $tc+$bc }}" data-value="{{ $ticket->ticketLabel }}"
                            data-url="{{ env('APP_URL') }}/ticket/{{ $ticket->ticketID }}"

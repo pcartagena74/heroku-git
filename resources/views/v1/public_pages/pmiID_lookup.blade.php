@@ -58,25 +58,25 @@
             {!! $email_list !!}
         </div>
     @else
-        {!! Form::open((['url' => env('APP_URL').'/pmi_lookup/', 'method' => 'post', 'id' => 'pmiID_Lookup', 'data-toggle' => 'validator'])) !!}
+        {{ html()->form('POST', env('APP_URL') . '/pmi_lookup/')->id('pmiID_Lookup')->data('toggle', 'validator')->open() }}
 
-        {!! Form::hidden('orgID', $org->orgID) !!}
+        {{ html()->hidden('orgID', $org->orgID) }}
 
         <div class="form-group has-feedback col-md-12 col-xs-12">
-            {!! Form::label('pmiID', trans('messages.instructions.pmiID'), array('class' => 'control-label')) !!}
-            {!! Form::number('pmiID', '', $attributes = array('class'=>'form-control has-feedback-left', 'required', 'placeholder' => trans('messages.instructions.no_pmiID_zero'))) !!}
+            {{ html()->label(trans('messages.instructions.pmiID'), 'pmiID')->class('control-label') }}
+            {{ html()->number('pmiID', '')->attributes($attributes = array('class'=>'form-control has-feedback-left', 'required', 'placeholder' => trans('messages.instructions.no_pmiID_zero'))) }}
             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
         </div>
         <div class="form-group has-feedback col-md-12 col-xs-12">
-            {!! Form::label('email', trans('messages.instructions.no_pmiID'), array('class' => 'control-label')) !!}
-            {!! Form::text('email', '', $attributes = array('class'=>'form-control has-feedback-left')) !!}
+            {{ html()->label(trans('messages.instructions.no_pmiID'), 'email')->class('control-label') }}
+            {{ html()->text('email', '')->attributes($attributes = array('class'=>'form-control has-feedback-left')) }}
             <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
         </div>
         <div class="form-group col-md-12 col-xs-12">
-            {!! Form::submit(trans('messages.headers.acc_lookup'), array('class' => 'btn btn-primary')) !!}
+            {{ html()->submit(trans('messages.headers.acc_lookup'))->class('btn btn-primary') }}
         </div>
 
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
     @endif
     @include('v1.parts.end_content')
 

@@ -77,12 +77,11 @@
                     @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
                         {{-- Payment received and able to display a refund button --}}
 
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_ref')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                     @if($rf->pmtRecd == 1)
@@ -109,12 +108,11 @@
                         @endif
 
                         {{-- Cancel button is always OK to show --}}
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_can')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                 @else
@@ -123,12 +121,11 @@
                     @if($rf->pmtRecd == 1)
                         {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
 
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_can')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
 
                         {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
                         <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
@@ -146,12 +143,11 @@
                         @endif
 
                         {{-- Cancel button is always OK to show --}}
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_can')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                 @endif

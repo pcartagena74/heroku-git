@@ -183,33 +183,33 @@ if(!empty($emailList->metadata)){
         <div aria-labelledby="create-tab" class="tab-pane {{ $emailList != null ? 'active':'fade'}}" id="tab_content2">
             @include('v1.parts.start_content', ['header' => trans('messages.headers.email_list_new'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
                 @if($emailList === null)
-                    {!! Form::open(array('url' => env('APP_URL')."/list", 'method' => 'post','id'=>'create_email_list_form')) !!}
+                    {{ html()->form('POST', env('APP_URL') . "/list")->id('create_email_list_form')->open() }}
                 @else
-                    {!! Form::model($emailList, array('url' => env('APP_URL')."/list/".$emailList->id, 'method' => 'patch','id'=>'update_email_list_form')) !!}
+                    {{ html()->modelForm($emailList, 'PATCH', env('APP_URL') . "/list/" . $emailList->id)->id('update_email_list_form')->open() }}
                 @endif
 
                 @if($emailList === null)
-                    {!! Form::button(trans('messages.buttons.create_list'), array('style' => 'float:right;', 'class' => 'btn btn-primary btn-sm','onclick'=>'createList(this)')) !!}
+                    {{ html()->button(trans('messages.buttons.create_list'), 'button')->style('float:right;')->class('btn btn-primary btn-sm')->attribute('onclick', 'createList(this)') }}
                 @else
-                    {!! Form::button(trans('messages.buttons.edit_list'), array('style' => 'float:right;', 'class' => 'btn btn-primary btn-sm','onclick'=>'updateList(this)')) !!}
+                    {{ html()->button(trans('messages.buttons.edit_list'), 'button')->style('float:right;')->class('btn btn-primary btn-sm')->attribute('onclick', 'updateList(this)') }}
                 @endif
 
                 {!! trans('messages.instructions.email_list_foundation') !!}
             <div class="form-group">
                 <div class="col-sm-6">
-                    {!! Form::label('name', "Name*") !!}
+                    {{ html()->label("Name*", 'name') }}
                         @if($emailList === null)
-                            {!! Form::text('name', null, array('class' => 'form-control', 'maxlength' => 255, 'required')) !!}
+                            {{ html()->text('name')->class('form-control')->maxlength(255)->required() }}
                         @else
-                            {!! Form::text('name', $emailList->listName, array('class' => 'form-control', 'maxlength' => 255, 'required')) !!}
+                            {{ html()->text('name', $emailList->listName)->class('form-control')->maxlength(255)->required() }}
                         @endif
                 </div>
                 <div class="col-sm-6">
-                    {!! Form::label('description') !!}
+                    {{ html()->label('description') }}
                         @if($emailList === null)
-                            {!! Form::text('description', null, array('class' => 'form-control', 'maxlength' => 255)) !!}
+                            {{ html()->text('description')->class('form-control')->maxlength(255) }}
                         @else
-                            {!! Form::text('description', $emailList->listDesc, array('class' => 'form-control', 'maxlength' => 255)) !!}
+                            {{ html()->text('description', $emailList->listDesc)->class('form-control')->maxlength(255) }}
                         @endif
                 </div>
             </div>
@@ -244,23 +244,23 @@ if(!empty($emailList->metadata)){
                 {!! trans('messages.instructions.email_list_foundation_select') !!}
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'none', $fou_none, array('class' => 'flat')) !!}
-                    {!! Form::label('none', 'None - Skip') !!}
+                {{ html()->radio('foundation', $fou_none, 'none')->class('flat') }}
+                    {{ html()->label('None - Skip', 'none') }}
                 <br/>
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'everyone', $fou_everyone, array('class' => 'flat')) !!}
-                    {!! Form::label('everyone', 'Everyone') !!}
+                {{ html()->radio('foundation', $fou_everyone, 'everyone')->class('flat') }}
+                    {{ html()->label('Everyone', 'everyone') }}
                 <br/>
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'pmiid', $fou_pmiid, array('class' => 'flat')) !!}
-                    {!! Form::label('current_past', 'Current and Past Members') !!}
+                {{ html()->radio('foundation', $fou_pmiid, 'pmiid')->class('flat') }}
+                    {{ html()->label('Current and Past Members', 'current_past') }}
                 <br/>
             </div>
             <div class="col-sm-3">
-                {!! Form::radio('foundation', 'nonexpired', $fou_nonexpired, array('class' => 'flat')) !!}
-                    {!! Form::label('current_member', 'Current Members') !!}
+                {{ html()->radio('foundation', $fou_nonexpired, 'nonexpired')->class('flat') }}
+                    {{ html()->label('Current Members', 'current_member') }}
                 <br/>
             </div>
             @include('v1.parts.end_content')
@@ -306,24 +306,24 @@ if(!empty($emailList->metadata)){
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
                                     --}}
-                                    {!! Form::checkbox('include[]', 'this-year#'.$ytd_events, $this_year_chk, array('class' => 'flat','id'=>'this-year-event-list')) !!}
-                            {!! Form::label('include', trans('messages.fields.this_year_event')) !!}
+                                    {{ html()->checkbox('include[]', $this_year_chk, 'this-year#' . $ytd_events)->class('flat')->id('this-year-event-list') }}
+                            {{ html()->label(trans('messages.fields.this_year_event'), 'include') }}
                                 </li>
                                 <li class="list-group-item" id="last-year-event">
                                     {{--
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
                                     --}}
-                                    {!! Form::checkbox('include[]', 'last-year#'.$last_year, $last_year_chk, array('class' => 'flat','id'=>'last-year-event-list')) !!}
-                            {!! Form::label('include', trans('messages.fields.last_year_event')) !!}
+                                    {{ html()->checkbox('include[]', $last_year_chk, 'last-year#' . $last_year)->class('flat')->id('last-year-event-list') }}
+                            {{ html()->label(trans('messages.fields.last_year_event'), 'include') }}
                                 </li>
                                 <li class="list-group-item" id="pd-event">
                                     {{--
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
                                     --}}
-                                    {!! Form::checkbox('include[]', 'pd#'.$pddays, $pd_chk, array('class' => 'flat','onchange'=>'allPDEvent(this)','data-type'=>'pd-events','id'=>'pd-event-list')) !!}
-                                    {!! Form::label('include', trans('messages.fields.all_pd_day_event')) !!}
+                                    {{ html()->checkbox('include[]', $pd_chk, 'pd#' . $pddays)->class('flat')->attribute('onchange', 'allPDEvent(this)')->data('type', 'pd-events')->id('pd-event-list') }}
+                                    {{ html()->label(trans('messages.fields.all_pd_day_event'), 'include') }}
                                 </li>
                                 <li class="list-group-item" id="specific-events">
                                     {{--
@@ -331,10 +331,10 @@ if(!empty($emailList->metadata)){
                                     </i>
                                     --}}
                                     <div class="form-group">
-                                        {!! Form::checkbox('include[]', 'specific', $specific_chk, array('class' => 'flat','id'=>'specific-events')) !!}
-                            {!! Form::label('include', trans('messages.fields.specific_event')) !!}
+                                        {{ html()->checkbox('include[]', $specific_chk, 'specific')->class('flat')->id('specific-events') }}
+                            {{ html()->label(trans('messages.fields.specific_event'), 'include') }}
 
-                             {!! Form::text('eventStartDate', null, $attributes = array('class'=>'form-control inline hidden', 'required', 'id' => 'eventStartDate') ) !!}
+                             {{ html()->text('eventStartDate')->attributes($attributes = array('class'=>'form-control inline hidden', 'required', 'id' => 'eventStartDate')) }}
                                     </div>
                                     <ul class="list-group list-group-mine" id="specific-events-list">
                                     </ul>
@@ -349,8 +349,8 @@ if(!empty($emailList->metadata)){
                                 <li class="list-group-item" id="event_{{$e->eventID}}">
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
-                                    {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!}
-                                {!! Form::label('include', $name, array('textWrap' => 'true','class'=>'font-weight-normal')) !!}
+                                    {{ html()->checkbox('include[]', false, $e->eventID)->class('flat') }}
+                                {{ html()->label($name, 'include')->attribute('textWrap', 'true')->class('font-weight-normal') }}
                                     <input name="include[]" type="hidden" value="{{$e->eventID}}">
                                     </input>
                                 </li>
@@ -376,10 +376,10 @@ if(!empty($emailList->metadata)){
                                     </i>
                                     --}}
                                     <div class="form-group">
-                                        {!! Form::checkbox('exclude[]', 'specific_exclude', $specific_exclude_chk, array('class' => 'flat','id'=>'specific-events-exclude')) !!}
-                                        {!! Form::label('include', trans('messages.fields.specific_event')) !!}
+                                        {{ html()->checkbox('exclude[]', $specific_exclude_chk, 'specific_exclude')->class('flat')->id('specific-events-exclude') }}
+                                        {{ html()->label(trans('messages.fields.specific_event'), 'include') }}
 
-                                        {!! Form::text('eventStartDateExclude', null, $attributes = array('class'=>'form-control inline hidden', 'required', 'id' => 'eventStartDateExclude') ) !!}
+                                        {{ html()->text('eventStartDateExclude')->attributes($attributes = array('class'=>'form-control inline hidden', 'required', 'id' => 'eventStartDateExclude')) }}
                                     </div>
                                     <ul class="list-group list-group-mine" id="specific-events-exclude-list">
                                     </ul>
@@ -396,8 +396,8 @@ if(!empty($emailList->metadata)){
                                 <li class="list-group-item" id="event_{{$e->eventID}}">
                                     <i aria-hidden="true" class="fa fa-arrows">
                                     </i>
-                                    {!! Form::checkbox('include[]', $e->eventID, false, array('class' => 'flat')) !!} --}}
-                                        {{-- {!! Form::label('include', $name, array('textWrap' => 'true','class'=>'font-weight-normal')) !!}
+                                    {{ html()->checkbox('include[]', false, $e->eventID)->class('flat') }} --}}
+                                        {{-- {{ html()->label($name, 'include')->attribute('textWrap', 'true')->class('font-weight-normal') }}
                                     <input name="include[]" type="hidden" value="{{$e->eventID}}">
                                     </input>
                                 </li>
@@ -434,14 +434,14 @@ if(!empty($emailList->metadata)){
             <!-----------dragable list end --------->
             {{-- @include('v1.parts.start_content', ['header' => "Inclusions: Include attendees of...", 'subheader' => '', 'w1' => '6', 'w2' => '6', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                {!! Form::checkbox('include[]', $ytd_events, false, array('class' => 'flat')) !!}
-                {!! Form::label('include[]', "This Year's Events") !!}
+                {{ html()->checkbox('include[]', false, $ytd_events)->class('flat') }}
+                {{ html()->label("This Year's Events", 'include[]') }}
             <br/>
-            {!! Form::checkbox('include[]', $last_year, false, array('class' => 'flat')) !!}
-                {!! Form::label('include[]', "Last Year's Events") !!}
+            {{ html()->checkbox('include[]', false, $last_year)->class('flat') }}
+                {{ html()->label("Last Year's Events", 'include[]') }}
             <br/>
-            {!! Form::checkbox('include[]', $pddays, false, array('class' => 'flat')) !!}
-                {!! Form::label('include[]', 'All PD Day Events') !!}
+            {{ html()->checkbox('include[]', false, $pddays)->class('flat') }}
+                {{ html()->label('All PD Day Events', 'include[]') }}
             <br/>
             @include('v1.parts.end_content')
 
@@ -455,22 +455,22 @@ if(!empty($emailList->metadata)){
                         }
                     @endphp
             <nobr>
-                {!! Form::checkbox('exclude[]', $e->eventID, false, array('class' => 'flat')) !!}
-                        {!! Form::label('exclude[]', $name, array('textWrap' => 'true')) !!}
+                {{ html()->checkbox('exclude[]', false, $e->eventID)->class('flat') }}
+                        {{ html()->label($name, 'exclude[]')->attribute('textWrap', 'true') }}
                 <br/>
             </nobr>
             @endforeach
 
                 @include('v1.parts.end_content') --}}
 
-                {{-- {!! Form::submit('Create List', array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm')) !!} --}}
+                {{-- {{ html()->submit('Create List')->style('float:left;')->class('btn btn-primary btn-sm') }} --}}
                 @if($emailList === null)
-                    {!! Form::button(trans('messages.buttons.create_list'), array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'createList(this)')) !!}
+                    {{ html()->button(trans('messages.buttons.create_list'), 'button')->style('float:left;')->class('btn btn-primary btn-sm')->attribute('onclick', 'createList(this)') }}
                 @else
-                    {!! Form::button(trans('messages.buttons.edit_list'), array('style' => 'float:left;', 'class' => 'btn btn-primary btn-sm','onclick'=>'updateList(this)')) !!}
+                    {{ html()->button(trans('messages.buttons.edit_list'), 'button')->style('float:left;')->class('btn btn-primary btn-sm')->attribute('onclick', 'updateList(this)') }}
                 @endif
                 
-                {!! Form::close() !!}
+                {{ html()->closeModelForm() }}
                 {{-- @include('v1.parts.end_content') --}}
             <div class="errors" id="errors">
             </div>

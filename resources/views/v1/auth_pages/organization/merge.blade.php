@@ -47,14 +47,14 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
     @include('v1.parts.start_content', ['header' => trans('messages.headers.rec_merge'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
     @if($collection && !isset($model1))
-        {!! Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) !!}
+        {{ html()->form('POST', env('APP_URL') . "/merge/" . $letter)->open() }}
         <div id="custom-template" class="form-group col-sm-12">
-            {!! Form::label('model1', trans_choice('messages.instructions.merge_survive', $letter)) !!}<br/>
-            {!! Form::text('model1', null, array('id' => 'model', 'class' => 'form-control typeahead input-sm')) !!}
-            {!! Form::submit(trans('messages.headers.rec_retrieve'), array('class' => 'btn btn-sm btn-primary')) !!}
+            {{ html()->label(trans_choice('messages.instructions.merge_survive', $letter), 'model1') }}<br/>
+            {{ html()->text('model1')->id('model')->class('form-control typeahead input-sm') }}
+            {{ html()->submit(trans('messages.headers.rec_retrieve'))->class('btn btn-sm btn-primary') }}
             <div id="search-results"></div>
         </div>
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
     @else
         @if($model2 !== null)
             <div class="col-sm-9">
@@ -62,12 +62,12 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                     <div class="col-sm-6">
                         @endif
                         @if($model2 !== null)
-                            {!! Form::open(array('url' => env('APP_URL').'/execute_merge', 'method' => 'post')) !!}
-                            {!! Form::hidden('model1', $id1, array('id' => 'model1')) !!}
-                            {!! Form::hidden('model2', $id2, array('id' => 'model2')) !!}
-                            {!! Form::hidden('letter', $letter, array('id' => 'letter')) !!}
-                            {!! Form::hidden('ignore_array', implode(",", $ignore_array), array('id' => 'ignore_array')) !!}
-                            {!! Form::hidden('columns', implode(",", $columns), array('id' => 'columns')) !!}
+                            {{ html()->form('POST', env('APP_URL') . '/execute_merge')->open() }}
+                            {{ html()->hidden('model1', $id1)->id('model1') }}
+                            {{ html()->hidden('model2', $id2)->id('model2') }}
+                            {{ html()->hidden('letter', $letter)->id('letter') }}
+                            {{ html()->hidden('ignore_array', implode(",", $ignore_array))->id('ignore_array') }}
+                            {{ html()->hidden('columns', implode(",", $columns))->id('columns') }}
                             @lang('messages.instructions.merge_overwrite')
                         @endif
                         <table class="table table-condensed table-striped table-responsive jambo_table">
@@ -138,7 +138,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                             {!! $model1->$c ?? '<i>null</i>' !!}
                                             <br/>
                                             @if(!in_array($c, $ignore_array) && isset($model2))
-                                                {!! Form::radio($c, 1, true, $attributes=array('required', 'id' => $c.'1')) !!}
+                                                {{ html()->radio($c, true, 1)->attributes($attributes=array('required', 'id' => $c.'1')) }}
                                             @endif
                                         </td>
                                         @if(isset($model2))
@@ -146,7 +146,7 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                                                 {!! $model2->$c ?? '<i>null</i>' !!}
                                                 <br/>
                                                 @if(!in_array($c, $ignore_array))
-                                                    {!! Form::radio($c, 2, false, $attributes=array('required', 'id' => $c.'2')) !!}
+                                                    {{ html()->radio($c, false, 2)->attributes($attributes=array('required', 'id' => $c.'2')) }}
                                                 @endif
                                             </td>
                                         @endif
@@ -157,8 +157,8 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                         </table>
 
                         @if($model2)
-                            {!! Form::submit(trans('messages.headers.rec_merge'), array('class' => 'btn btn-sm btn-primary')) !!}
-                            {!! Form::close() !!}
+                            {{ html()->submit(trans('messages.headers.rec_merge'))->class('btn btn-sm btn-primary') }}
+                            {{ html()->form()->close() }}
                         @endif
                     </div>
 
@@ -205,16 +205,16 @@ $suppress_array = array('creatorID', 'createDate', 'updaterID', 'updateDate', 'd
                     @else
                         <div class="col-sm-6">
                             @if($collection && !isset($model2))
-                                {!! Form::open(array('url' => env('APP_URL')."/merge/". $letter, 'method' => 'post')) !!}
+                                {{ html()->form('POST', env('APP_URL') . "/merge/" . $letter)->open() }}
                                 <div id="custom-template" class="form-group col-sm-12">
-                                    {!! Form::label('model2', trans_choice('messages.instructions.merge_dupe', $letter)) !!}
+                                    {{ html()->label(trans_choice('messages.instructions.merge_dupe', $letter), 'model2') }}
                                     <br/>
-                                    {!! Form::hidden('model1', $id1, array('id' => 'model1')) !!}
-                                    {!! Form::text('model2', null, array('id' => 'model2', 'class' => 'form-control typeahead input-sm')) !!}
-                                    {!! Form::submit(trans('messages.headers.rec_retrieve'), array('class' => 'btn btn-sm btn-primary')) !!}
+                                    {{ html()->hidden('model1', $id1)->id('model1') }}
+                                    {{ html()->text('model2')->id('model2')->class('form-control typeahead input-sm') }}
+                                    {{ html()->submit(trans('messages.headers.rec_retrieve'))->class('btn btn-sm btn-primary') }}
                                     <div id="search-results"></div>
                                 </div>
-                                {!! Form::close() !!}
+                                {{ html()->form()->close() }}
 
                             @endif
                         </div>

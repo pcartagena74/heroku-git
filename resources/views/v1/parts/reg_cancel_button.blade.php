@@ -65,12 +65,12 @@
             </a>
         @endif
 
-        {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->rfID], 'data-toggle' => 'validator']) !!}
+        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $reg->rfID]))->data('toggle', 'validator')->open() }}
         <button type="submit" class="btn {{ $button_class }} btn-sm" onclick="return confirm('{{ $confirm_msg }}');"
                 data-toggle="tooltip" data-placement="top" title="{{ $button_tooltip }}">
             {!! $button_symbol !!}
         </button>
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
     @endif
 
     @if($reg->regfinance->pmtRecd && $reg->subtotal > 0)

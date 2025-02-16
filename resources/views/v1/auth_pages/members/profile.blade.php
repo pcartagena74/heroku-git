@@ -503,44 +503,44 @@
                         @include('v1.parts.start_content', ['header' => trans('messages.profile.change') . $display . trans('messages.profile.pass'),
                             'subheader' => '', 'w1' => '8', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0])
 
-                        {!! Form::open(array('url' => env('APP_URL')."/force_password", 'method' => 'POST')) !!}
+                        {{ html()->form('POST', env('APP_URL') . "/force_password")->open() }}
                         <div class="form-group">
-                            {!! Form::label('userid', trans('messages.headers.userid'), array('class' => 'control-label')) !!}
-                            {!! Form::number('userid', $profile->personID, $attributes = array('class' => 'form-control', 'required', 'readonly')) !!}
+                            {{ html()->label(trans('messages.headers.userid'), 'userid')->class('control-label') }}
+                            {{ html()->number('userid', $profile->personID)->attributes($attributes = array('class' => 'form-control', 'required', 'readonly')) }}
                         </div>
                         <div class="form-group">
-                            {!! Form::label('newPass', trans('messages.headers.pass_new'), array('class' => 'control-label')) !!}
-                            {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
+                            {{ html()->label(trans('messages.headers.pass_new'), 'newPass')->class('control-label') }}
+                            {{ html()->password('password')->attributes($attributes = array('class' => 'form-control', 'required')) }}
                         </div>
                         <div class="form-group">
-                            {!! Form::label('password_confirmation', trans('messages.headers.pass_ver'), array('class' => 'control-label')) !!}
-                            {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
+                            {{ html()->label(trans('messages.headers.pass_ver'), 'password_confirmation')->class('control-label') }}
+                            {{ html()->password('password_confirmation')->attributes($attributes = array('class' => 'form-control', 'required')) }}
                         </div>
                         <div class="form-group">
-                            {!! Form::submit(trans('messages.nav.m_pass'), array('class' => 'btn btn-primary btn-sm')) !!}
+                            {{ html()->submit(trans('messages.nav.m_pass'))->class('btn btn-primary btn-sm') }}
                         </div>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
 
                         @include('v1.parts.end_content')
                     @else
-                        {!! Form::open(array('url' => env('APP_URL')."/password", 'method' => 'POST')) !!}
+                        {{ html()->form('POST', env('APP_URL') . "/password")->open() }}
                         <div class="form-group">
-                            {!! Form::label('curPass', trans('messages.profile.pass_cur'), array('class' => 'control-label')) !!}
-                            {!! Form::password('curPass', $attributes = array('class' => 'form-control', 'required')) !!}
+                            {{ html()->label(trans('messages.profile.pass_cur'), 'curPass')->class('control-label') }}
+                            {{ html()->password('curPass')->attributes($attributes = array('class' => 'form-control', 'required')) }}
                         </div>
                         <div class="form-group">
-                            {!! Form::label('newPass', trans('messages.headers.pass_new'), array('class' => 'control-label')) !!}
-                            {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
+                            {{ html()->label(trans('messages.headers.pass_new'), 'newPass')->class('control-label') }}
+                            {{ html()->password('password')->attributes($attributes = array('class' => 'form-control', 'required')) }}
                         </div>
                         <div class="form-group">
-                            {!! Form::label('password_confirmation', trans('messages.headers.pass_ver'), array('class' => 'control-label')) !!}
-                            {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
+                            {{ html()->label(trans('messages.headers.pass_ver'), 'password_confirmation')->class('control-label') }}
+                            {{ html()->password('password_confirmation')->attributes($attributes = array('class' => 'form-control', 'required')) }}
                         </div>
                         <div class="form-group">
-                            {!! Form::submit(trans('messages.profile.change') . trans('messages.profile.pass'), array('class' => 'btn btn-primary btn-sm')) !!}
+                            {{ html()->submit(trans('messages.profile.change') . trans('messages.profile.pass'))->class('btn btn-primary btn-sm') }}
                         </div>
                         {{-- current, new, verify --}}
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                 </div>

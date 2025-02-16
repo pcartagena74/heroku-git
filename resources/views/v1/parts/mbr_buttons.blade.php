@@ -25,10 +25,10 @@ title='{{ trans('messages.tooltips.vep') }}' class='btn btn-xs btn-primary'><i c
  title='{{ trans('messages.tooltips.mr') }}' class='btn btn-xs btn-warning'>
 <i class='far fa-fw fa-code-branch'></i></a>
 
-{!! Form::open(array('url' => '/become', 'method' => 'POST', 'target' => '_blank')); !!}
-{!! Form::hidden('new_id', $p); !!}
+{{ html()->form('POST', url('/become'))->attribute('target', '_blank')->open() }}
+{{ html()->hidden('new_id', $p) }}
 <button class="btn btn-xs btn-danger" title="{{ trans('messages.nav.ms_become') }}" data-toggle="tooltip"
 onclick="return confirm('{{ trans('messages.tooltips.sure_become') }}');">
 <i class='fas fa-fw fa-user'></i></button>
-{!! Form::close(); !!}
+{{ html()->form()->close() }}
 </nobr>

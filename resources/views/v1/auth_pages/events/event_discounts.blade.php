@@ -57,13 +57,12 @@ $currentOrg    = $currentPerson->defaultOrg;
         <tbody>
         @foreach($discount_codes as $dCode)
             <tr>
-                <td style="text-align: left;"> {!! Form::open(['url'=>env('APP_URL').'/eventdiscount/'.$dCode->discountID.'/delete','method'=>'DELETE','id'=>"formConfirm-$dCode->discountID",
-        'class'=>'form-horizontal', 'role'=>'form', 'onsubmit' => 'return confirm("' .  trans('messages.tooltips.sure') .'")']) !!}
+                <td style="text-align: left;"> {{ html()->form('DELETE', env('APP_URL') . '/eventdiscount/' . $dCode->discountID . '/delete')->id("formConfirm-{$dCode->discountID}")->class('form-horizontal')->attribute('role', 'form')->attribute('onsubmit', 'return confirm("' . trans('messages.tooltips.sure') . '")')->open() }}
                     <input type="hidden" name="pk" value="{{ $dCode->discountID }}">
                     <input type="hidden" name="function" value="delete">
                     <button class="btn btn-danger btn-sm">
                         @lang('messages.symbols.trash')
-                    </button> {!! Form::close() !!} </td>
+                    </button> {{ html()->form()->close() }} </td>
                 <td style="text-align: left;">
                     <a data-pk="{{ $dCode->discountID }}" id="discountCODE{{ $dCode->discountID }}"
                        data-value="{{ $dCode->discountCODE }}" data-url="{{ env('APP_URL') }}/eventdiscounts/{{ $dCode->discountID }}"
@@ -85,9 +84,9 @@ $currentOrg    = $currentPerson->defaultOrg;
     </table>
     <div class="col-md-4 col-sm-9 col-xs-12">
         @if(count($discount_codes) == 0)
-            {!! Form::open(array('url' => '/eventdiscountfix/'.$event->eventID)) !!}
-            {!! Form::submit(trans('messages.buttons.add_def_disc'), array('class' => 'btn btn-sm btn-warning', 'id' => 'add_defaults')) !!}
-            {!! Form::close() !!}
+            {{ html()->form('POST', url('/eventdiscountfix/' . $event->eventID))->open() }}
+            {{ html()->submit(trans('messages.buttons.add_def_disc'))->class('btn btn-sm btn-warning')->id('add_defaults') }}
+            {{ html()->form()->close() }}
         @endif
             <button type="button" id="add_discount" class="btn btn-sm btn-success" data-toggle="modal"
                     data-target="#discount_modal">@lang('messages.buttons.add_disc')
@@ -105,7 +104,7 @@ $currentOrg    = $currentPerson->defaultOrg;
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {!! Form::open(['url' => env('APP_URL').'/eventdiscount', 'method' => 'post']) !!}
+                {{ html()->form('POST', env('APP_URL') . '/eventdiscount')->open() }}
                 <div class="modal-header">
                     <h5 class="modal-title" id="discount_label">@lang('messages.headers.add_disc')</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -129,13 +128,13 @@ $currentOrg    = $currentPerson->defaultOrg;
 
                                 <tr id="disc{{ $n }}_row"<?php if($n > 1) echo(' style="display:none"'); ?>>
                                     <td>
-                                        {!! Form::text('discountCode'.$n, '', array('id' => 'discountCode'.$n, 'class' => 'form-control input-sm', 'placeholder' => 'Enter code')) !!}
+                                        {{ html()->text('discountCode' . $n, '')->id('discountCode' . $n)->class('form-control input-sm')->placeholder('Enter code') }}
                                     </td>
                                     <td>
-                                        {!! Form::number('percent'.$n, '', array('id' => 'percent'.$n, 'class' => 'form-control input-sm', 'placeholder' => '0')) !!}
+                                        {{ html()->number('percent' . $n, '')->id('percent' . $n)->class('form-control input-sm')->attribute('placeholder', '0') }}
                                     </td>
                                     <td>
-                                        {!! Form::number('flatAmt'.$n, '', array('id' => 'flatAmt'.$n, 'class' => 'form-control input-sm', 'placeholder' => '0')) !!}
+                                        {{ html()->number('flatAmt' . $n, '')->id('flatAmt' . $n)->class('form-control input-sm')->attribute('placeholder', '0') }}
                                     </td>
                                 </tr>
 
@@ -158,7 +157,7 @@ $currentOrg    = $currentPerson->defaultOrg;
                         {{ trans_choice('messages.buttons.save_disc', 1) }}
                     </button>
                 </div>
-                {!! Form::close() !!}
+                {{ html()->form()->close() }}
             </div>
         </div>
     </div>

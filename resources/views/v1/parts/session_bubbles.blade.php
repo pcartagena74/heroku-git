@@ -95,8 +95,7 @@ $valid_ticketIDs = $ticket->bundle_ticket_array();
 @endif
 
 @if(!$suppress)
-    {!! Form::open(['url' => '/update_sessions/'.$reg->regID, 'method' => 'post',
-                    'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    {{ html()->form('POST', url('/update_sessions/' . $reg->regID))->id('complete_registration')->data('toggle', 'validator')->open() }}
 @endif
 
 @if($event->hasTracks > 0)
@@ -213,20 +212,16 @@ $valid_ticketIDs = $ticket->bundle_ticket_array();
                                                         {{--  if sessions have been selected, the radio buttons should be selected  --}}
                                                         @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees || $s->maxAttendees == 0)
                                                             {{--  if sessions are full, this radio button should not be selectable  --}}
-                                                            {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
-                                                                $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) !!}
+                                                            {{ html()->radio('sess-' . $j . '-' . $x . '-' . $reg->regID, true, $s->sessionID)->attributes($attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) }}
                                                         @else
-                                                            {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, true,
-                                                                $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) !!}
+                                                            {{ html()->radio('sess-' . $j . '-' . $x . '-' . $reg->regID, true, $s->sessionID)->attributes($attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) }}
                                                         @endif
                                                     @else
                                                         {{--  sessions have NOT been selected, so radio buttons should NOT be selected  --}}
                                                         @if($s->maxAttendees > 0 && $s->regCount >= $s->maxAttendees)
-                                                            {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
-                                                                $attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) !!}
+                                                            {{ html()->radio('sess-' . $j . '-' . $x . '-' . $reg->regID, false, $s->sessionID)->attributes($attributes=array('disabled', 'required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) }}
                                                         @else
-                                                            {!! Form::radio('sess-'. $j . '-'.$x . '-' . $reg->regID, $s->sessionID, false,
-                                                                $attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) !!}
+                                                            {{ html()->radio('sess-' . $j . '-' . $x . '-' . $reg->regID, false, $s->sessionID)->attributes($attributes=array('required', 'id' => 'sess-'. $j . '-'.$x .'-'. $reg->regID . '-' . $mySess)) }}
                                                         @endif
                                                     @endif
                                                 @endif
@@ -312,11 +307,9 @@ $valid_ticketIDs = $ticket->bundle_ticket_array();
                                                     --}}
                                                     @foreach($linked as $link)
                                                         @if($regSessions->contains('sessionID', $s->sessionID))
-                                                            {!! Form::radio('sess-'.$j.'-'.$link->order.'-'.$reg->regID, $link->sessionID, true,
-                                                            $attributes=array('id' => 'sess-'.$j.'-'.$link->order.'-'.$reg->regID . '-' . $link->sessionID, 'style' => 'visibility:hidden;')) !!}
+                                                            {{ html()->radio('sess-' . $j . '-' . $link->order . '-' . $reg->regID, true, $link->sessionID)->attributes($attributes=array('id' => 'sess-'.$j.'-'.$link->order.'-'.$reg->regID . '-' . $link->sessionID, 'style' => 'visibility:hidden;')) }}
                                                         @else
-                                                            {!! Form::radio('sess-'.$j.'-'.$link->order.'-'.$reg->regID, $link->sessionID, false,
-                                                            $attributes=array('id' => 'sess-'.$j.'-'.$link->order .'-'.$reg->regID.'-'.$link->sessionID, 'style' => 'visibility:hidden;')) !!}
+                                                            {{ html()->radio('sess-' . $j . '-' . $link->order . '-' . $reg->regID, false, $link->sessionID)->attributes($attributes=array('id' => 'sess-'.$j.'-'.$link->order .'-'.$reg->regID.'-'.$link->sessionID, 'style' => 'visibility:hidden;')) }}
                                                         @endif
                                                     @endforeach
 
@@ -357,7 +350,7 @@ $valid_ticketIDs = $ticket->bundle_ticket_array();
         <button type="submit"
                 class="btn btn-primary btn-sm">@lang('messages.buttons.sess_reg')</button>
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
 @endif
 @else
     {{--

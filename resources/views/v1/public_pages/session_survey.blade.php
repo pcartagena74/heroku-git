@@ -47,13 +47,13 @@
     <p>&nbsp;</p>
     {!! trans('messages.instructions.survey_instructions') !!}
     <p>&nbsp;</p>
-    {!! Form::open((['url' => env('APP_URL').'/rs_survey', 'method' => 'post', 'id' => 'session_survey', 'data-toggle' => 'validator'])) !!}
+    {{ html()->form('POST', env('APP_URL') . '/rs_survey')->id('session_survey')->data('toggle', 'validator')->open() }}
 
-    {!! Form::hidden('eventID', $event->eventID) !!}
-    {!! Form::hidden('orgID', $org->orgID) !!}
-    {!! Form::hidden('regID', $rs->regID) !!}
-    {!! Form::hidden('personID', $rs->personID) !!}
-    {!! Form::hidden('sessionID', $rs->sessionID) !!}
+    {{ html()->hidden('eventID', $event->eventID) }}
+    {{ html()->hidden('orgID', $org->orgID) }}
+    {{ html()->hidden('regID', $rs->regID) }}
+    {{ html()->hidden('personID', $rs->personID) }}
+    {{ html()->hidden('sessionID', $rs->sessionID) }}
 
     <h2>{!! trans('messages.surveys.q1') !!}<SUP style="color:red;">*</SUP></h2><br/>
     @include('v1.parts.survey_buttons', ['button_name' => 'engageResponse'])
@@ -70,32 +70,32 @@
     <h2><b>{!! trans('messages.surveys.q5') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
         <div style="text-align:center;" class="form-group col-xs-12">
-            {!! Form::textarea('favoriteResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
+            {{ html()->textarea('favoriteResponse', '')->attributes($attributes = array('class'=>'form-control', 'rows' => '5')) }}
         </div>
     </div>
 
     <h2><b>{!! trans('messages.surveys.q6') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
         <div style="text-align:center;" class="form-group col-xs-12">
-            {!! Form::textarea('suggestResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
+            {{ html()->textarea('suggestResponse', '')->attributes($attributes = array('class'=>'form-control', 'rows' => '5')) }}
         </div>
     </div>
 
     <h2><b>{!! trans('messages.surveys.q7') !!}</b></h2><br/>
     <div class="form-group col-xs-12">
         <div style="text-align:center;" class="form-group col-xs-2">
-            {!! Form::checkbox('wantsContact', 'wantsContact', false, $attributes = array('class' => 'form-control')) !!}
+            {{ html()->checkbox('wantsContact', false, 'wantsContact')->attributes($attributes = array('class' => 'form-control')) }}
         </div>
         <div style="text-align:center;" class="form-group col-xs-10">
-            {!! Form::textarea('contactResponse', '', $attributes = array('class'=>'form-control', 'rows' => '5')) !!}
+            {{ html()->textarea('contactResponse', '')->attributes($attributes = array('class'=>'form-control', 'rows' => '5')) }}
         </div>
     </div>
 
     <div class="form-group col-xs-12">
-        {!! Form::submit(trans('messages.surveys.submit'), array('class' => 'btn btn-primary')) !!}
+        {{ html()->submit(trans('messages.surveys.submit'))->class('btn btn-primary') }}
     </div>
 
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
     @include('v1.parts.end_content')
 
 @endsection

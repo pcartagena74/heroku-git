@@ -126,11 +126,10 @@
     </div>
     &nbsp;<br/>
 
-    {!! Form::model($person->toArray() + $registration->toArray() + $op->toArray(),
-                    ['route' => ['register_step2', $event->eventID], 'method' => 'post', 'id' => 'regForm']) !!}
-    {!! Form::hidden('eventID', $event->eventID, array('id' => 'eventID')) !!}
-    {!! Form::hidden('total', 0, array('id' => 'i_total')) !!}
-    {!! Form::hidden('quantity', $quantity, array('id' => 'quantity')) !!}
+    {{ html()->modelForm($person->toArray() + $registration->toArray() + $op->toArray(), 'POST', route('register_step2', $event->eventID))->id('regForm')->open() }}
+    {{ html()->hidden('eventID', $event->eventID)->id('eventID') }}
+    {{ html()->hidden('total', 0)->id('i_total') }}
+    {{ html()->hidden('quantity', $quantity)->id('quantity') }}
 
     @php $reduction = 0; @endphp
 
@@ -169,13 +168,13 @@
                 $i++;
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
             @endphp
-            {!! Form::hidden("percent".$i_cnt, 0, array('id' => "i_percent".$i_cnt)) !!}
-            {!! Form::hidden("flatamt".$i_cnt, 0, array('id' => "i_flatamt".$i_cnt)) !!}
-            {!! Form::hidden('sub'.$i, 0, array('id' => 'sub'.$i)) !!}
+            {{ html()->hidden("percent" . $i_cnt, 0)->id("i_percent" . $i_cnt) }}
+            {{ html()->hidden("flatamt" . $i_cnt, 0)->id("i_flatamt" . $i_cnt) }}
+            {{ html()->hidden('sub' . $i, 0)->id('sub' . $i) }}
             @if($i == 1)
-                {!! Form::hidden('cost'.$i, $isMember ? $earlymbr : $earlynon, array('id' => 'cost'.$i)) !!}
+                {{ html()->hidden('cost' . $i, $isMember ? $earlymbr : $earlynon)->id('cost' . $i) }}
             @else
-                {!! Form::hidden('cost'.$i, $earlynon, array('id' => 'cost'.$i)) !!}
+                {{ html()->hidden('cost' . $i, $earlynon)->id('cost' . $i) }}
             @endif
 
             <div class="col-md-12">
@@ -192,11 +191,11 @@
                             @endif </span>
                         {{ strtoupper(__('messages.fields.ticket')) }}:
                         @if(count($tkts) > 1)
-                            {{ Form::select('ticketID-'.$i, $tix_dropdown, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
+                            {{ html()->select('ticketID-' . $i, $tix_dropdown, $ticket->ticketID)->id('ticketID-' . $i) }}
                             @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.change_ticket')])
                         @else
                             {{ $ticket->ticketLabel }}
-                            {{ Form::hidden('ticketID-'.$i, $ticket->ticketID, array('id' => 'ticketID-'.$i)) }}
+                            {{ html()->hidden('ticketID-' . $i, $ticket->ticketID)->id('ticketID-' . $i) }}
                         @endif
                         <br/>
 
@@ -228,9 +227,7 @@
                         @endif
                         <div class="col-md-5 col-sm-5 col-xs-12"></div>
                         <div class="col-md-6 col-sm-6 col-xs-10" style="text-align: right; vertical-align: middle;">
-                            {!! Form::text("discount_code$i_cnt", $discount_code ?: old($discount_code . $i_cnt),
-                                array('size' => '25', 'class' => 'form-control input-sm', 'id' => "discount_code$i_cnt",
-                                'placeholder' => trans('messages.fields.enter_disc'))) !!}
+                            {{ html()->text("discount_code{$i_cnt}", $discount_code ?: old($discount_code . $i_cnt))->size('25')->class('form-control input-sm')->id("discount_code{$i_cnt}")->placeholder(trans('messages.fields.enter_disc')) }}
                         </div>
                         <div class="col-md-1 col-sm-1 col-xs-2" style="text-align: left; vertical-align: middle;">
                             <a class="btn btn-sm btn-primary"
@@ -283,16 +280,14 @@
                                 class='red'>*</sup></label>
                     @if($i == 1 && $isMember)
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.email_tip')])
-                        {!! Form::email("login$i_cnt", old("login$i_cnt"), array('class' => 'form-control input-sm', 'id' => "login$i_cnt",
-                            Auth::check() ? 'onfocus="blur();"' : '', 'required')) !!}
+                        {{ html()->email("login{$i_cnt}", old("login{$i_cnt}"))->class('form-control input-sm')->id("login{$i_cnt}")->attribute('required', ) }}
                     @else
-                        {!! Form::email("login$i_cnt", old("login$i_cnt"),
-                                    array('class' => 'form-control input-sm', 'id' => "login$i_cnt", 'required')) !!}
+                        {{ html()->email("login{$i_cnt}", old("login{$i_cnt}"))->class('form-control input-sm')->id("login{$i_cnt}")->attribute('required', ) }}
                     @endif
                     <br/>
 
-                    {!! Form::label("prefix$i_cnt", trans('messages.fields.prefix'), array('class' => 'control-label')) !!}
-                    {!! Form::select("prefix$i_cnt", $prefix_array, old("prefix$i_cnt"), array('class' => 'form-control input-sm', 'id' => "prefix$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.prefix'), "prefix{$i_cnt}")->class('control-label') }}
+                    {{ html()->select("prefix{$i_cnt}", $prefix_array, old("prefix{$i_cnt}"))->class('form-control input-sm')->id("prefix{$i_cnt}") }}
                     <br/>
                 </div>
 
@@ -301,18 +296,18 @@
                                 class='red'>*</sup></label>
                     @if($i == 1 && $isMember)
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.pmi_tip')])
-                        {!! Form::text("firstName$i_cnt", old("firstName$i_cnt"), $attributes =
-                                  array('class' => 'form-control input-sm', 'id' => "firstName$i_cnt", 'required', 'readonly')) !!}
+                        {{ html()->text("firstName{$i_cnt}", old("firstName{$i_cnt}"))->attributes($attributes =
+                                  array('class' => 'form-control input-sm', 'id' => "firstName$i_cnt", 'required', 'readonly')) }}
                     @else
-                        {!! Form::text("firstName$i_cnt", old("firstName$i_cnt"), $attributes =
-                                  array('class' => 'form-control input-sm', 'id' => "firstName$i_cnt", 'required')) !!}
+                        {{ html()->text("firstName{$i_cnt}", old("firstName{$i_cnt}"))->attributes($attributes =
+                                  array('class' => 'form-control input-sm', 'id' => "firstName$i_cnt", 'required')) }}
                     @endif
                     <br/>
                 </div>
 
                 <div class="col-xs-6">
-                    {!! Form::label("middleName$i_cnt", trans('messages.fields.midName'), array('class' => 'control-label')) !!}
-                    {!! Form::text("middleName$i_cnt", old("middleName$i_cnt"), array('class' => 'form-control input-sm', 'id' => "middleName$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.midName'), "middleName{$i_cnt}")->class('control-label') }}
+                    {{ html()->text("middleName{$i_cnt}", old("middleName{$i_cnt}"))->class('form-control input-sm')->id("middleName{$i_cnt}") }}
                     <br/>
 
                 </div>
@@ -322,26 +317,23 @@
                                 class='red'>*</sup></label>
                     @if($i == 1 && $isMember)
                         @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.pmi_tip')])
-                        {!! Form::text("lastName$i_cnt", old("lastName$i_cnt"),
-                                array('class' => 'form-control input-sm', 'required', 'readonly', 'id' => "lastName$i_cnt")) !!}
+                        {{ html()->text("lastName{$i_cnt}", old("lastName{$i_cnt}"))->class('form-control input-sm')->required()->isReadonly()->id("lastName{$i_cnt}") }}
                     @else
-                        {!! Form::text("lastName$i_cnt", old("lastName$i_cnt"),
-                                array('class' => 'form-control input-sm', 'required', 'id' => "lastName$i_cnt")) !!}
+                        {{ html()->text("lastName{$i_cnt}", old("lastName{$i_cnt}"))->class('form-control input-sm')->required()->id("lastName{$i_cnt}") }}
                     @endif
                     <br/>
                 </div>
 
                 <div class="col-xs-6">
-                    {!! Form::label("suffix$i_cnt", trans('messages.fields.suffix'), array('class' => 'control-label', 'for' => 'suffix_'.$i)) !!}
-                    {!! Form::text("suffix$i_cnt", old("suffix$i_cnt"), array('class' => 'form-control input-sm', 'id' => "suffix$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.suffix'), "suffix{$i_cnt}")->class('control-label')->for('suffix_' . $i) }}
+                    {{ html()->text("suffix{$i_cnt}", old("suffix{$i_cnt}"))->class('form-control input-sm')->id("suffix{$i_cnt}") }}
                     <br/>
                 </div>
 
                 <div class="col-xs-12">
                     <label class="control-label" for="prefName{{ $i_cnt }}">@lang('messages.fields.prefName') <sup
                                 class='red'>*</sup></label>
-                    {!! Form::text("prefName$i_cnt", old("prefName$i_cnt"),
-                            array('class' => 'form-control input-sm', 'required', 'id' => "prefName$i_cnt")) !!}
+                    {{ html()->text("prefName{$i_cnt}", old("prefName{$i_cnt}"))->class('form-control input-sm')->required()->id("prefName{$i_cnt}") }}
                     <br/>
 
                     <label class="control-label" for="certifications{{ $i_cnt }}">@lang('messages.fields.certification')
@@ -359,26 +351,25 @@
                             $selected = reset($cert_array);
                         }
                     @endphp
-                    {!! Form::select("certifications" . $i_cnt . "[]", $cert_array, $selected,
-                        array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "certifications$i_cnt")) !!}
+                    {{ html()->multiselect("certifications" . $i_cnt . "[]", $cert_array, $selected)->class('form-control input-sm')->attribute('size', '3')->required()->id("certifications{$i_cnt}") }}
                 </div>
             </div>
 
             <div class="col-sm-3 col-xs-12">
                 <div class="col-sm-12">
-                    {!! Form::label("compName$i_cnt", trans('messages.fields.compName'), array('class' => 'control-label')) !!}
-                    {!! Form::text("compName$i_cnt", old("compName$i_cnt"), array('class' => 'form-control input-sm', 'id' => "compName$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.compName'), "compName{$i_cnt}")->class('control-label') }}
+                    {{ html()->text("compName{$i_cnt}", old("compName{$i_cnt}"))->class('form-control input-sm')->id("compName{$i_cnt}") }}
                     <br/>
 
-                    {!! Form::label("title$i_cnt", trans('messages.fields.title'), array('class' => 'control-label')) !!}
-                    {!! Form::text("title$i_cnt", old("title$i_cnt"), array('class' => 'form-control input-sm', 'id' => "title$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.title'), "title{$i_cnt}")->class('control-label') }}
+                    {{ html()->text("title{$i_cnt}", old("title{$i_cnt}"))->class('form-control input-sm')->id("title{$i_cnt}") }}
                     <br/>
                 </div>
 
                 <div class="col-xs-6">
                     <label class="control-label" for="indName{{ $i_cnt }}">@lang('messages.fields.indName')<sup
                                 class='red'>*</sup></label>
-                    {!! Form::select("indName$i_cnt", $industry_array, old("indName$i_cnt"), array('class' => 'form-control input-sm', 'id' => "indName$i_cnt", 'required')) !!}
+                    {{ html()->select("indName{$i_cnt}", $industry_array, old("indName{$i_cnt}"))->class('form-control input-sm')->id("indName{$i_cnt}")->required() }}
                     <br/>
                 </div>
 
@@ -386,24 +377,23 @@
                     <label class="control-label" for="experience{{ $i_cnt }}">@lang('messages.fields.experience')<sup
                                 class='red'>*</sup></label>
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.experience_tip')])
-                    {!! Form::select("experience$i_cnt", $experience_choices, old("experience$i_cnt"),
-                              array('class' =>'form-control input-sm', 'id' => "experience$i_cnt", 'required')) !!}
+                    {{ html()->select("experience{$i_cnt}", $experience_choices, old("experience{$i_cnt}"))->class('form-control input-sm')->id("experience{$i_cnt}")->required() }}
                     <br/>
                 </div>
 
                 <div class="col-xs-12">
-                    {!! Form::label("eventTopics$i_cnt", trans('messages.fields.eventTopics'), array('class' => 'control-label')) !!}
-                    {!! Form::text("eventTopics$i_cnt", old("eventTopics$i_cnt"), array('class' => 'form-control input-sm', 'id' => "eventTopics$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.eventTopics'), "eventTopics{$i_cnt}")->class('control-label') }}
+                    {{ html()->text("eventTopics{$i_cnt}", old("eventTopics{$i_cnt}"))->class('form-control input-sm')->id("eventTopics{$i_cnt}") }}
                     <br/>
 
-                    {!! Form::label("cityState$i_cnt", trans('messages.fields.cityState'), array('class' => 'control-label')) !!}
-                    {!! Form::text("cityState$i_cnt", old("cityState$i_cnt"), array('class' => 'form-control input-sm', 'id' => "cityState$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.cityState'), "cityState{$i_cnt}")->class('control-label') }}
+                    {{ html()->text("cityState{$i_cnt}", old("cityState{$i_cnt}"))->class('form-control input-sm')->id("cityState{$i_cnt}") }}
                     <br/>
 
-                    {!! Form::label("canNetwork$i_cnt", trans('messages.fields.canNetwork'), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.canNetwork'), "canNetwork{$i_cnt}")->class('control-label') }}
                     <div class="container row col-sm-3">
                         <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
-                        <div class="col-sm-2">{!! Form::checkbox("canNetwork$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "canNetwork$i_cnt", 'checked')) !!}</div>
+                        <div class="col-sm-2">{{ html()->checkbox("canNetwork{$i_cnt}", false, '1')->class('flat js-switch')->id("canNetwork{$i_cnt}") }}</div>
                         <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
                     </div>
                     <br/>
@@ -412,7 +402,7 @@
             </div>
 
             <div class="col-sm-3 col-xs-12">
-                {!! Form::label("OrgStat1$i_cnt", trans('messages.fields.orgStat1'), array('class' => 'control-label')) !!}
+                {{ html()->label(trans('messages.fields.orgStat1'), "OrgStat1{$i_cnt}")->class('control-label') }}
                 @if($isMember)
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.orgStat1_tip2', ['acs' => strtolower($org->adminContactStatement)])])
                 @else
@@ -420,51 +410,49 @@
                 @endif
 
                 @if($i == 1 && $isMember)
-                    {!! Form::number("OrgStat1$i_cnt", old("OrgStat1$i_cnt"),
-                            array('class' => 'form-control input-sm', 'readonly', 'id' => "OrgStat1$i_cnt")) !!}
+                    {{ html()->number("OrgStat1{$i_cnt}", old("OrgStat1{$i_cnt}"))->class('form-control input-sm')->attribute('readonly', )->id("OrgStat1{$i_cnt}") }}
                 @else
-                    {!! Form::number("OrgStat1$i_cnt", old("OrgStat1$i_cnt"),
-                            array('class' => 'form-control input-sm', 'id' => "OrgStat1$i_cnt")) !!}
+                    {{ html()->number("OrgStat1{$i_cnt}", old("OrgStat1{$i_cnt}"))->class('form-control input-sm')->id("OrgStat1{$i_cnt}") }}
                 @endif
                 <br/>
 
                 @if($event->eventTypeID == 5)
-                    {!! Form::label("chapterRole$i_cnt", trans('messages.fields.chapterRole', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
-                    {!! Form::text("chapterRole$i_cnt", old("chapterRole$i_cnt"), array('class' => 'form-control input-sm', 'id' => "chapterRole$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.chapterRole', ['org' => $org->orgName]), "chapterRole{$i_cnt}")->class('control-label') }}
+                    {{ html()->text("chapterRole{$i_cnt}", old("chapterRole{$i_cnt}"))->class('form-control input-sm')->id("chapterRole{$i_cnt}") }}
                     <br/>
                 @endif
 
                 @if($event->eventTypeID == 5)
-                    {!! Form::label("isFirstEvent$i_cnt", trans('messages.fields.isFirstRegional'), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.isFirstRegional'), "isFirstEvent{$i_cnt}")->class('control-label') }}
                     <div class="container row col-xs-3">
                         <div class="col-xs-1"><b>@lang('messages.yesno_check.no')</b></div>
-                        <div class="col-xs-2"> {!! Form::checkbox("isFirstEvent$i_cnt", '1', false, array('class' => 'flat js-switch', 'id' => "isFirstEvent$i_cnt")) !!} </div>
+                        <div class="col-xs-2"> {{ html()->checkbox("isFirstEvent{$i_cnt}", false, '1')->class('flat js-switch')->id("isFirstEvent{$i_cnt}") }} </div>
                         <div class="col-xs-1"><b>@lang('messages.yesno_check.yes')</b></div>
                     </div>
 
                     <p>&nbsp;</p>
                 @else
                     {{--
-                    {!! Form::label("isFirstEvent$i_cnt", trans('messages.fields.isFirstEvent', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.isFirstEvent', ['org' => $org->orgName]), "isFirstEvent{$i_cnt}")->class('control-label') }}
                     --}}
                 @endif
 
                 @if(in_array($event->eventTypeID, $PDU_org_types))
-                    {!! Form::label("isAuthPDU$i_cnt", trans('messages.fields.isAuthPDU', ['org' => $org->orgName]), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.isAuthPDU', ['org' => $org->orgName]), "isAuthPDU{$i_cnt}")->class('control-label') }}
                     <div class="container row col-sm-3">
                         <div class="col-sm-1"><b>@lang('messages.yesno_check.no')</b></div>
-                        <div class="col-sm-2"> {!! Form::checkbox("isAuthPDU$i_cnt", '1', true, array('class' => 'flat js-switch', 'id' => "isAuthPDU$i_cnt")) !!} </div>
+                        <div class="col-sm-2"> {{ html()->checkbox("isAuthPDU{$i_cnt}", true, '1')->class('flat js-switch')->id("isAuthPDU{$i_cnt}") }} </div>
                         <div class="col-sm-1"><b>@lang('messages.yesno_check.yes')</b></div>
                     </div>
                     <p>&nbsp;</p>
                 @endif
 
                 @if($event->event_type->etName == trans('messages.fields.nmw'))
-                    {!! Form::label("eventQuestion$i_cnt", trans('messages.fields.nmwQuestion'), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.nmwQuestion'), "eventQuestion{$i_cnt}")->class('control-label') }}
                 @else
-                    {!! Form::label("eventQuestion$i_cnt", trans('messages.fields.eventQuestion'), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.eventQuestion'), "eventQuestion{$i_cnt}")->class('control-label') }}
                 @endif
-                {!! Form::textarea("eventQuestion$i_cnt", old("eventQuestion$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventQuestion$i_cnt")) !!}
+                {{ html()->textarea("eventQuestion{$i_cnt}", old("eventQuestion{$i_cnt}"))->attributes($attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventQuestion$i_cnt")) }}
                 <br/>
                 @php
                     if(old("affiliation".$i_cnt)){
@@ -479,8 +467,7 @@
                 <label class="control-label" for="affiliation{{ $i_cnt }}">
                     @lang('messages.fields.affiliation')<sup class='red'>*</sup></label>
                 @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.affiliation_tip')])
-                {!! Form::select("affiliation" . $i_cnt . "[]", $affiliation_array, $selected,
-                    array('class' => 'form-control input-sm', 'size' => '3', 'multiple' => 'multiple', 'required', 'id' => "affiliation$i_cnt")) !!}
+                {{ html()->multiselect("affiliation" . $i_cnt . "[]", $affiliation_array, $selected)->class('form-control input-sm')->attribute('size', '3')->required()->id("affiliation{$i_cnt}") }}
             </div>
 
             <div class="col-sm-3 col-xs-12">
@@ -500,20 +487,19 @@
                             $selected = reset($allergen_array);
                         }
                     @endphp
-                    {!! Form::select("allergenInfo" . $i_cnt .'[]', $allergen_array, $selected,
-                        array('required', 'class' => 'form-control input-sm', 'multiple' => 'multiple', 'size' => '3', 'id' => "allergenInfo$i_cnt")) !!}
+                    {{ html()->multiselect("allergenInfo" . $i_cnt . '[]', $allergen_array, $selected)->required()->class('form-control input-sm')->attribute('size', '3')->id("allergenInfo{$i_cnt}") }}
                     <br/>
 
-                    {!! Form::label("eventNotes$i_cnt", trans('messages.fields.eventNotes'), array('class' => 'control-label')) !!}
-                    {!! Form::textarea("eventNotes$i_cnt", old("eventNotes$i_cnt"), $attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventNotes$i_cnt")) !!}
+                    {{ html()->label(trans('messages.fields.eventNotes'), "eventNotes{$i_cnt}")->class('control-label') }}
+                    {{ html()->textarea("eventNotes{$i_cnt}", old("eventNotes{$i_cnt}"))->attributes($attributes = array('class'=>'form-control input-sm', 'rows' => '2', 'id' => "eventNotes$i_cnt")) }}
                     <br/>
 
-                    {!! Form::label("specialNeeds$i_cnt", trans('messages.fields.specialNeeds'), array('class' => 'control-label')) !!}
+                    {{ html()->label(trans('messages.fields.specialNeeds'), "specialNeeds{$i_cnt}")->class('control-label') }}
                     <br/>
                     <small>@lang('messages.tooltips.accommodate')</small>
 
                     <div class="form-group has-feedback">
-                        {!! Form::text("specialNeeds$i_cnt", old("specialNeeds$i_cnt"), $attributes = array('class' => 'form-control has-feedback-left', 'id' => "specialNeeds$i_cnt")) !!}
+                        {{ html()->text("specialNeeds{$i_cnt}", old("specialNeeds{$i_cnt}"))->attributes($attributes = array('class' => 'form-control has-feedback-left', 'id' => "specialNeeds$i_cnt")) }}
                         <span class="fab fa-accessible-icon fa-fw input-xs form-control-feedback left"
                               aria-hidden="true"></span>
                     </div>
@@ -530,7 +516,7 @@
         @endfor
     @endforeach
 
-    {!! Form::hidden('reduction', $reduction, array('id' => 'reduction')) !!}
+    {{ html()->hidden('reduction', $reduction)->id('reduction') }}
     <table class="table table-striped">
         <tr>
             <th style="text-align: right; width: 85%; vertical-align: top;">@lang('messages.fields.total')</th>
@@ -541,11 +527,11 @@
 
     <div class="col-md-9 col-sm-9 col-xs-12"></div>
     <div class="col-md-3 col-sm-3 col-xs-12">
-        {!! Form::reset('Reset', array('class' => 'btn btn-info')) !!}
-        {!! Form::submit(trans('messages.buttons.rev&pay'), array('class' => 'btn btn-primary')) !!}
+        {{ html()->reset('Reset', array('class' => 'btn btn-info')) }}
+        {{ html()->submit(trans('messages.buttons.rev&pay'))->class('btn btn-primary') }}
     </div>
     @include('v1.parts.end_content')
-    {!! Form::close() !!}
+    {{ html()->closeModelForm() }}
 @endsection
 
 @section('scripts')

@@ -144,9 +144,7 @@ return [
 
     'providers' => ServiceProvider::defaultProviders()->merge([
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
         //Intouch\LaravelNewrelic\NewrelicServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
 
         //Kouz\LaravelAirbrake\ServiceProvider::class,
 
@@ -185,8 +183,6 @@ return [
         'Agent' => Jenssegers\Agent\Facades\Agent::class,
         'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Entrust' => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
-        'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
     ])->toArray(),
 
