@@ -3,7 +3,7 @@
         <h2>
             {{ trans('ticketit::lang.index-my-tickets') }}
             {{-- @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
-            {!! link_to_route($setting->grab('main_route').'.create', trans('ticketit::lang.btn-create-new-ticket'), null, ['class' => 'btn btn-primary pull-right']) !!}
+            {{ html()->a($setting->grab('main_route') . '.create', trans('ticketit::lang.btn-create-new-ticket'))->class('btn btn-primary pull-right') }}
             @else --}}
             <a class="btn btn-primary pull-right" data-target="#context_issue" data-toggle="modal" href="#">
                 @lang('ticketit::lang.btn-create-new-ticket')

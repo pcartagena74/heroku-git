@@ -42,7 +42,7 @@
             <br>
             <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-2">
-                    {!! link_to_route($setting->grab('main_route').'.index', trans('ticketit::lang.btn-back'), null, ['class' => 'btn btn-default']) !!}
+                    {{ html()->a($setting->grab('main_route') . '.index', trans('ticketit::lang.btn-back'))->class('btn btn-default') }}
                     {!! CollectiveForm::submit(trans('ticketit::lang.btn-submit'), ['class' => 'btn btn-primary']) !!}
                 </div>
             </div>

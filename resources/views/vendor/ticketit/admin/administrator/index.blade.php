@@ -9,17 +9,13 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2>{{ trans('ticketit::admin.administrator-index-title') }}
-                {!! link_to_route(
-                                    $setting->grab('admin_route').'.administrator.create',
-                                    trans('ticketit::admin.btn-create-new-administrator'), null,
-                                    ['class' => 'btn btn-primary pull-right'])
-                !!}
+                {{ html()->a($setting->grab('admin_route') . '.administrator.create', trans('ticketit::admin.btn-create-new-administrator'))->class('btn btn-primary pull-right') }}
             </h2>
         </div>
 
         @if ($administrators->isEmpty())
             <h3 class="text-center">{{ trans('ticketit::admin.administrator-index-no-administrators') }}
-                {!! link_to_route($setting->grab('admin_route').'.administrator.create', trans('ticketit::admin.administrator-index-create-new')) !!}
+                {{ html()->a($setting->grab('admin_route') . '.administrator.create', trans('ticketit::admin.administrator-index-create-new')) }}
             </h3>
         @else
             <div id="message"></div>

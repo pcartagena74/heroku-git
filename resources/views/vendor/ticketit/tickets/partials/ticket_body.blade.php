@@ -5,11 +5,9 @@
                 {{ $ticket->subject }}
                 <span class="pull-right">
                     @if(! $ticket->completed_at && $close_perm == 'yes')
-                            {!! link_to_route($setting->grab('main_route').'.complete', trans('ticketit::lang.btn-mark-complete'), $ticket->id,
-                                                ['class' => 'btn btn-success']) !!}
+                            {{ html()->a($setting->grab('main_route') . '.complete', trans('ticketit::lang.btn-mark-complete'), $ticket->id)->class('btn btn-success') }}
                     @elseif($ticket->completed_at && $reopen_perm == 'yes')
-                            {!! link_to_route($setting->grab('main_route').'.reopen', trans('ticketit::lang.reopen-ticket'), $ticket->id,
-                                                ['class' => 'btn btn-success']) !!}
+                            {{ html()->a($setting->grab('main_route') . '.reopen', trans('ticketit::lang.reopen-ticket'), $ticket->id)->class('btn btn-success') }}
                     @endif
                     @if($u->isAgent() || $u->isAdmin())
                     <button class="btn btn-info" data-target="#ticket-edit-modal" data-toggle="modal" type="button">
@@ -18,14 +16,7 @@
                     @endif
                     @if($u->isAdmin())
                         @if($setting->grab('delete_modal_type') == 'builtin')
-                            {!! link_to_route(
-                                            $setting->grab('main_route').'.destroy', trans('ticketit::lang.btn-delete'), $ticket->id,
-                                            [
-                                            'class' => 'btn btn-danger deleteit',
-                                            'form' => "delete-ticket-$ticket->id",
-                                            "node" => $ticket->subject
-                                            ])
-                            !!}
+                            {{ html()->a($setting->grab('main_route') . '.destroy', trans('ticketit::lang.btn-delete'), $ticket->id)->class('btn btn-danger deleteit')->attribute('form', "delete-ticket-{$ticket->id}")->attribute('node', $ticket->subject) }}
                         @elseif($setting->grab('delete_modal_type') == 'modal')
 {{-- // OR; Modal Window: 1/2 --}}
                             {!! CollectiveForm::open(array(
