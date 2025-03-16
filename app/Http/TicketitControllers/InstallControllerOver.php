@@ -96,7 +96,7 @@ class InstallControllerOver extends Controller
         $admin->ticketit_admin = true;
         $admin->save();
 
-        return redirect('/'.Setting::grab('main_route'));
+        return redirect('/' . Setting::grab('main_route'));
     }
 
     /*
@@ -108,7 +108,7 @@ class InstallControllerOver extends Controller
         if (Agent::isAdmin()) {
             $this->initialSettings();
 
-            return redirect('/'.Setting::grab('main_route'));
+            return redirect('/' . Setting::grab('main_route'));
         }
         \Log::emergency('Ticketit upgrade path access: Only admin is allowed to upgrade');
 
@@ -119,7 +119,7 @@ class InstallControllerOver extends Controller
      * Initial installer to install migrations, seed default settings, and configure the master_template
      */
 
-    public function initialSettings($master = false)
+    public function initialSettings($master = null)
     {
         $inactive_migrations = $this->inactiveMigrations();
         if ($inactive_migrations) {
@@ -134,7 +134,7 @@ class InstallControllerOver extends Controller
 
             // if this is the first install of the html editor, seed old posts text to the new html column
             if (in_array('2016_01_15_002617_add_htmlcontent_to_ticketit_and_comments', $inactive_migrations) &&
-                ! (isset($_SERVER['ARTISAN_TICKETIT_INSTALLING']) && $_SERVER['ARTISAN_TICKETIT_INSTALLING'])) {
+                !(isset($_SERVER['ARTISAN_TICKETIT_INSTALLING']) && $_SERVER['ARTISAN_TICKETIT_INSTALLING'])) {
                 Artisan::call('ticketit:htmlify');
             }
         } elseif ($this->inactiveSettings()) {
@@ -148,7 +148,7 @@ class InstallControllerOver extends Controller
     /**
      * Run the settings table seeder.
      */
-    public function settingsSeeder(string $master = false)
+    public function settingsSeeder(string $master = null)
     {
         $cli_path = 'config/ticketit.php'; // if seeder run from cli, use the cli path
         $provider_path = '../config/ticketit.php'; // if seeder run from provider, use the provider path
@@ -161,7 +161,7 @@ class InstallControllerOver extends Controller
         }
         if ($settings_file_path) {
             $config_settings = include $settings_file_path;
-            File::move($settings_file_path, $settings_file_path.'.backup');
+            File::move($settings_file_path, $settings_file_path . '.backup');
         }
         $seeder = new SettingsTableSeeder;
         if ($master) {
@@ -223,7 +223,7 @@ class InstallControllerOver extends Controller
         $tables = $this->migrations_tables;
 
         // Application active migrations
-        $migrations = DB::select('select * from '.DB::getTablePrefix().'migrations');
+        $migrations = DB::select('select * from ' . DB::getTablePrefix() . 'migrations');
 
         foreach ($migrations as $migration_parent) {
             // Count active package migrations
@@ -231,7 +231,7 @@ class InstallControllerOver extends Controller
         }
 
         foreach ($tables as $table) {
-            if (! in_array($table, $migration_arr)) {
+            if (!in_array($table, $migration_arr)) {
                 $inactiveMigrations[] = $table;
             }
         }
@@ -257,7 +257,7 @@ class InstallControllerOver extends Controller
             $installed_settings = DB::table('ticketit_settings')->lists('value', 'slug');
         }
 
-        if (! is_array($installed_settings)) {
+        if (!is_array($installed_settings)) {
             $installed_settings = $installed_settings->toArray();
         }
 

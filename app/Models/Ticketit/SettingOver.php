@@ -51,7 +51,7 @@ class SettingOver extends Model
         // seconds expected for L5.8<=, minutes before that
         $time = LaravelVersion::min('5.8') ? 60 * 60 : 60;
 
-        $setting = Cache::remember('ticketit::settings.'.$slug, $time, function () use ($slug, $time) {
+        $setting = Cache::remember('ticketit::settings.' . $slug, $time, function () use ($slug, $time) {
             $settings = Cache::remember('ticketit::settings', $time, function () {
                 return Table::all();
             });
@@ -63,9 +63,12 @@ class SettingOver extends Model
             }
 
             if (self::is_serialized($setting->value)) {
-                $setting = unserialize($setting->value);
-            } else {
-                $setting = $setting->value;
+                $value = unserialize($setting->value);
+                // Route settings should always be strings
+                if (in_array($slug, ['main_route', 'admin_route', 'admin_route_path'])) {
+                    return is_array($value) ? (string)reset($value) : (string)$value;
+                }
+                return $value;
             }
 
             return $setting;
@@ -81,7 +84,7 @@ class SettingOver extends Model
     public static function is_serialized($data, $strict = true): bool
     {
         // if it isn't a string, it isn't serialized.
-        if (! is_string($data)) {
+        if (!is_string($data)) {
             return false;
         }
         $data = trim($data);
@@ -126,16 +129,16 @@ class SettingOver extends Model
                 } elseif (strpos($data, '"') === false) {
                     return false;
                 }
-                // or else fall through
+            // or else fall through
             case 'a':
             case 'O':
-                return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
+                return (bool)preg_match("/^{$token}:[0-9]+:/s", $data);
             case 'b':
             case 'i':
             case 'd':
                 $end = $strict ? '$' : '';
 
-                return (bool) preg_match("/^{$token}:[0-9.E-]+;$end/", $data);
+                return (bool)preg_match("/^{$token}:[0-9.E-]+;$end/", $data);
         }
 
         return false;

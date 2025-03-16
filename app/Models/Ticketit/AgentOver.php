@@ -20,7 +20,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeAgents($query, bool $paginate = false): bool
+    public function scopeAgents($query, $paginate = false)
     {
         $user = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['Admin']);
@@ -38,7 +38,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeAdmins($query, bool $paginate = false, $withOrg = false): bool
+    public function scopeAdmins($query, $paginate = false, $withOrg = false)
     {
         if ($withOrg !== false) {
             return $query->where('ticketit_admin', '1')->paginate($paginate, ['*'], 'admins_page');
@@ -56,7 +56,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeUsers($query, bool $paginate = false): bool
+    public function scopeUsers($query, $paginate = false)
     {
         if ($paginate) {
             return $query->where('ticketit_agent', '0')->paginate($paginate, ['*'], 'users_page');
@@ -72,7 +72,7 @@ class AgentOver extends User
      *
      * @internal param int $cat_id
      */
-    public function scopeAgentsLists($query): bool
+    public function scopeAgentsLists($query)
     {
         if (version_compare(app()->version(), '5.2.0', '>=')) {
             return $query->where('ticketit_agent', '1')->pluck('name', 'id')->toArray();
@@ -85,7 +85,7 @@ class AgentOver extends User
     /**
      * Check if user is agent.
      */
-    public static function isAgent($id = null): bool
+    public static function isAgent($id = null)
     {
         //as we want to have agent who are admin of particular org we can use entrust. we have already
         //updated entrust to check org id for all roles.
@@ -119,7 +119,7 @@ class AgentOver extends User
     /**
      * Check if user is admin.
      */
-    public static function isAdmin(): bool
+    public static function isAdmin()
     {
         return auth()->check() && auth()->user()->ticketit_admin;
     }
@@ -127,9 +127,9 @@ class AgentOver extends User
     /**
      * Check if user is the assigned agent for a ticket.
      *
-     * @param  int  $id  ticket id
+     * @param int $id ticket id
      */
-    public static function isAssignedAgent(int $id): bool
+    public static function isAssignedAgent($id)
     {
         $is_admin = Entrust::hasRole('Admin');
 
@@ -139,14 +139,14 @@ class AgentOver extends User
     /**
      * Check if user is the owner for a ticket.
      *
-     * @param  int  $id  ticket id
+     * @param int $id ticket id
      */
-    public static function isTicketOwner(int $id): bool
+    public static function isTicketOwner($id)
     {
         $ticket = TicketOver::find($id);
 
         return $ticket && auth()->check() &&
-        auth()->user()->id == $ticket->user->id;
+            auth()->user()->id == $ticket->user->id;
     }
 
     /**
@@ -181,7 +181,7 @@ class AgentOver extends User
         }
     }
 
-    public function tickets($complete = false): HasMany
+    public function tickets($complete = false): \Kordy\Ticketit\Models\HasMany
     {
         if ($complete) {
             return $this->hasMany(Ticketit::class, 'user_id')->whereNotNull('completed_at');
@@ -267,7 +267,7 @@ class AgentOver extends User
      *
      * @return bool true/false
      */
-    protected static function checkUserIsDeveloper(int $user_id): bool
+    protected static function checkUserIsDeveloper(int $user_id)
     {
         $role = DB::table('role_user')
             ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')

@@ -66,7 +66,7 @@ class CommentsControllerOver extends CommentsController
     /**
      * Display the specified resource.
      */
-    public function show(int $id): Response
+    public function show($id): Response
     {
         //
     }
@@ -74,7 +74,7 @@ class CommentsControllerOver extends CommentsController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): Response
+    public function edit($id): Response
     {
         //
     }
@@ -82,7 +82,7 @@ class CommentsControllerOver extends CommentsController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id): Response
+    public function update(Request $request, $id): Response
     {
         //
     }
@@ -90,7 +90,7 @@ class CommentsControllerOver extends CommentsController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id): Response
+    public function destroy($id): Response
     {
         //
     }

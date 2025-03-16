@@ -10,12 +10,15 @@ use Carbon\Carbon;
 use Entrust;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Kordy\Ticketit\Controllers\TicketsController as TicketController;
 use Kordy\Ticketit\Helpers\LaravelVersion;
 use Kordy\Ticketit\Models;
 use Kordy\Ticketit\Models\Category;
 use Kordy\Ticketit\Models\Setting;
 use Validator;
+
+ini_set('max_execution_time', 0);
 
 class TicketsControllerOver extends TicketController
 {
@@ -107,12 +110,11 @@ class TicketsControllerOver extends TicketController
 
     public function renderTicketTable($collection)
     {
+
         $collection->editColumn('subject', function ($ticket) {
-            return (string) link_to_route(
-                Setting::grab('main_route').'.show',
-                $ticket->subject,
-                $ticket->id
-            );
+            $route = Setting::grab('main_route') . '.show';
+            $url = route($route, $ticket->id);
+            return '<a href="' . e($url) . '">' . e($ticket->subject) . '</a>';
         });
 
         $collection->editColumn('status', function ($ticket) {
@@ -163,17 +165,17 @@ class TicketsControllerOver extends TicketController
     /**
      * Display a listing of active tickets related to user.
      */
-    public function index(): Response
+    public function index(): \Illuminate\Http\Response|\Kordy\Ticketit\Controllers\Response
     {
-        $complete = false;
+        $complete = null;
 
-        return view('ticketit::index', compact('complete'));
+        return response()->view('ticketit::index', compact('complete'));
     }
 
     /**
      * Display a listing of completed tickets related to user.
      */
-    public function indexComplete(): Response
+    public function indexComplete(): \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Contracts\View\View|\Kordy\Ticketit\Controllers\Response|\Illuminate\Contracts\Foundation\Application
     {
         $complete = true;
 
@@ -211,7 +213,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create(): \Illuminate\Http\Response|\Kordy\Ticketit\Controllers\Response
     {
         [$priorities, $categories] = $this->PCS();
 
@@ -251,13 +253,13 @@ class TicketsControllerOver extends TicketController
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-created'));
 
         // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index');
-        return redirect()->route(Setting::grab('main_route').'.index');
+        return redirect()->route(Setting::grab('main_route') . '.index');
     }
 
     /**
      * store new ticket via ajax agent auto assigned
      */
-    public function storeAjax(Request $request): json
+    public function storeAjax(Request $request): \Illuminate\Http\JsonResponse
     {
         if (Agent::isAdmin() || Agent::isAgent()) {
             $validator = Validator::make($request->all(), [
@@ -267,7 +269,7 @@ class TicketsControllerOver extends TicketController
                 'category_id' => 'required|exists:ticketit_categories,id',
                 'url' => 'required',
             ]);
-            if (! $validator->passes()) {
+            if (!$validator->passes()) {
                 return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
         } else {
@@ -276,7 +278,7 @@ class TicketsControllerOver extends TicketController
                 'content' => 'required|min:6',
                 'url' => 'required',
             ]);
-            if (! $validator->passes()) {
+            if (!$validator->passes()) {
                 return response()->json(['success' => false, 'errors' => $validator->errors()]);
             }
         }
@@ -289,15 +291,15 @@ class TicketsControllerOver extends TicketController
         }
         $ticket->subject = $request->subject;
 
-        $ticket->setPurifiedContent($request->get('content').' <br> URL: '.$referrer);
+        $ticket->setPurifiedContent($request->get('content') . ' <br> URL: ' . $referrer);
 
         $ticket->category_id = 4;
         $ticket->priority_id = 2;
 
-        if (! empty($request->input('category_id'))) {
+        if (!empty($request->input('category_id'))) {
             $ticket->category_id = $request->input('category_id');
         }
-        if (! empty($request->input('priority_id'))) {
+        if (!empty($request->input('priority_id'))) {
             $ticket->priority_id = $request->input('priority_id');
         }
 
@@ -325,7 +327,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Display the specified resource.
      */
-    public function show(int $id): Response
+    public function show($id): \Illuminate\Http\Response|\Kordy\Ticketit\Controllers\Response
     {
         $ticket = $this->tickets->findOrFail($id);
 
@@ -355,7 +357,7 @@ class TicketsControllerOver extends TicketController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id): Response
+    public function update(Request $request, $id): \Illuminate\Http\Response|\Kordy\Ticketit\Controllers\Response
     {
         $this->validate($request, [
             'subject' => 'required|min:3',
@@ -391,13 +393,13 @@ class TicketsControllerOver extends TicketController
 
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-modified'));
 
-        return redirect()->route(Setting::grab('main_route').'.show', $id);
+        return redirect()->route(Setting::grab('main_route') . '.show', $id);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id): Response
+    public function destroy($id): Response
     {
         $ticket = $this->tickets->findOrFail($id);
         $subject = $ticket->subject;
@@ -405,13 +407,13 @@ class TicketsControllerOver extends TicketController
 
         session()->flash('status', trans('ticketit::lang.the-ticket-has-been-deleted', ['name' => $subject]));
 
-        return redirect()->route(Setting::grab('main_route').'.index');
+        return redirect()->route(Setting::grab('main_route') . '.index');
     }
 
     /**
      * Mark ticket as complete.
      */
-    public function complete(int $id): Response
+    public function complete($id): RedirectResponse
     {
         if ($this->permToClose($id) == 'yes') {
             $ticket = $this->tickets->findOrFail($id);
@@ -426,17 +428,17 @@ class TicketsControllerOver extends TicketController
 
             session()->flash('status', trans('ticketit::lang.the-ticket-has-been-completed', ['name' => $subject]));
 
-            return redirect()->route(Setting::grab('main_route').'.index');
+            return redirect()->route(Setting::grab('main_route') . '.index');
         }
 
-        return redirect()->route(Setting::grab('main_route').'.index')
+        return redirect()->route(Setting::grab('main_route') . '.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-do-this'));
     }
 
     /**
      * Reopen ticket from complete status.
      */
-    public function reopen(int $id): Response
+    public function reopen($id): RedirectResponse
     {
         if ($this->permToReopen($id) == 'yes') {
             $ticket = $this->tickets->findOrFail($id);
@@ -458,28 +460,22 @@ class TicketsControllerOver extends TicketController
 
             session()->flash('status', trans('ticketit::lang.the-ticket-has-been-reopened', ['name' => $subject]));
 
-            return redirect()->route(Setting::grab('main_route').'.index');
+            return redirect()->route(Setting::grab('main_route') . '.index');
         }
 
-        return redirect()->route(Setting::grab('main_route').'.index')
+        return redirect()->route(Setting::grab('main_route') . '.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-do-this'));
     }
 
-    public function agentSelectList($category_id, $ticket_id)
+    public function agentSelectList($category_id, $ticket_id): string
     {
-        // $cat_agents = Models\Category::find($category_id)->agents()->agentsLists();
-        // if (is_array($cat_agents)) {
-        //     $agents = ['auto' => 'Auto Select'] + $cat_agents;
-        // } else {
-        //     $agents = ['auto' => 'Auto Select'];
-        // }
         $ticket = $this->tickets->find($ticket_id);
         $agents = getAgentList($ticket);
         $selected_Agent = $ticket->agent->id;
         $select = '<select class="form-control" id="agent_id" name="agent_id">';
         foreach ($agents as $id => $name) {
             $selected = ($id == $selected_Agent) ? 'selected' : '';
-            $select .= '<option value="'.$id.'" '.$selected.'>'.$name.'</option>';
+            $select .= '<option value="' . $id . '" ' . $selected . '>' . $name . '</option>';
         }
         $select .= '</select>';
 
@@ -513,7 +509,6 @@ class TicketsControllerOver extends TicketController
         } elseif ($this->agent->isTicketOwner($id) && $reopen_ticket_perm['owner'] == 'yes') {
             return 'yes';
         }
-
         return 'no';
     }
 
@@ -522,7 +517,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function monthlyPerfomance(int $period = 2)
+    public function monthlyPerfomance($period = 2)
     {
         $categories = Category::all();
         foreach ($categories as $cat) {
@@ -551,7 +546,7 @@ class TicketsControllerOver extends TicketController
      *
      * @return int|false
      */
-    public function ticketPerformance(Ticket $ticket)
+    public function ticketPerformance($ticket): bool|int
     {
         if ($ticket->completed_at == null) {
             return false;

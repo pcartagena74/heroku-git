@@ -37,18 +37,18 @@ class TicketOver extends Ticket
      */
     public function hasComments(): bool
     {
-        return (bool) count($this->comments);
+        return (bool)count($this->comments);
     }
 
     public function isComplete()
     {
-        return (bool) $this->completed_at;
+        return (bool)$this->completed_at;
     }
 
     /**
      * List of completed tickets.
      */
-    public function scopeComplete($query): Collection
+    public function scopeComplete($query)
     {
         //static to allow phil to see all records
         if (auth()->user()->id == 1) {
@@ -71,10 +71,10 @@ class TicketOver extends Ticket
     /**
      * List of active tickets.
      */
-    public function scopeActive($query): Collection
+    public function scopeActive($query)
     {
         //static to allow phil to see all records
-        if (auth()->user()->id == 1) {
+        if (in_array(auth()->user()->id, [1, 357])) {
             return $query->whereNull('completed_at');
         } else {
             $is_developer = DB::table('role_user')->select('user_id')
@@ -167,7 +167,7 @@ class TicketOver extends Ticket
             return Date::createFromTimestamp($value);
         } elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value)) {
             return Date::createFromFormat('Y-m-d', $value)->startOfDay();
-        } elseif (! $value instanceof \DateTimeInterface) {
+        } elseif (!$value instanceof \DateTimeInterface) {
             $format = $this->getDateFormat();
 
             return Date::createFromFormat($format, $value);
