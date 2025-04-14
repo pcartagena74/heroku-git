@@ -84,6 +84,7 @@
                             @if (count($currentPerson->orgs)>1)
                                 <li><a href="{{ url('orgs/my')}}"> @lang('messages.nav.ms_org') </a></li>
                             @endif
+                            {{--
                             @if(showActiveTicketUser())
                                 <li><a href="{{ url('tickets') }}">
                                         @php
@@ -98,6 +99,7 @@
                             @endif
                             @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
                             @endif
+                            --}}
                         </ul>
                     </li>
 
@@ -230,6 +232,7 @@
                     @endif
 
                     <!-- Help Desk Menu -->
+                    {{--
                     <li style="display: none">
                         <a href="{{ route('tickets.my-tickets')}}"><i class="fas fa-fw fa-ticket-alt"></i>
                             @lang('messages.nav.my_support') <span class="far fa-pull-right"></span></a>
@@ -255,6 +258,7 @@
                             </ul>
                         </li>
                     @endif
+                    --}}
                 </ul>
             </div>
         </div>

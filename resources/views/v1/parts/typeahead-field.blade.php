@@ -21,8 +21,8 @@ if(!isset($width)){
 
 <div id="custom-template" class="col-sm-{{ $width }}">
     @if($label)
-    {!! Form::label($name, trans('messages.instructions.become_instr'). ":") !!}<br/>
+    {{ html()->label(trans('messages.instructions.become_instr') . ":", $name) }}<br/>
     @endif
-    {!! Form::text($name, null, array('id' => $name, 'class' => 'typeahead input-xs')) !!}<br />
+    {{ html()->text($name)->id($name)->class('typeahead input-xs') }}<br />
     <div id="search-results"></div>
 </div>

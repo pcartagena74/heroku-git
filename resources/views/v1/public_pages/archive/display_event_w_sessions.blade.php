@@ -91,7 +91,7 @@
         @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         @include('v1.parts.start_content', ['header' => 'Event Detail', 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-        {!! Form::open(['url' => env('APP_URL').'/regstep1/'.$event->eventID, 'method' => 'post', 'id' => 'start_registration']) !!}
+        {{ html()->form('POST', env('APP_URL') . '/regstep1/' . $event->eventID)->id('start_registration')->open() }}
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
             <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
@@ -486,7 +486,7 @@
                     </div>
                     @endif
                 </div>
-                {!! Form::close() !!}
+                {{ html()->form()->close() }}
                 @include('v1.parts.end_content')
 
                 @include('v1.parts.start_content', ['header' => 'Date &amp; Time', 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])

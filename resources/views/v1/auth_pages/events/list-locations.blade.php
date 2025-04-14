@@ -17,7 +17,7 @@ $address_type = DB::select("select addrType as 'text', addrType as 'value' from 
 $state_list = DB::select("select abbrev as 'text', abbrev as 'value' from state");
 $country_list = DB::select("select cntryID as 'value', cntryName as 'text' from countries");
 
-foreach($locations as $l){
+foreach ($locations as $l) {
     $m = "<a href='" . env('APP_URL') . "/merge/l/$l->locID' data-toggle='tooltip' data-placement='top'
              title='" . trans('messages.tooltips.mr') . "' class='btn btn-xs btn-warning'>
              <i class='far fa-fw fa-code-branch'></i></a>";
@@ -125,7 +125,9 @@ foreach($locations as $l){
 @endsection
 
 @section('modals')
+    {{--
     @include('v1.modals.context_sensitive_issue')
+    --}}
     <div class="modal fade" id="address_modal" tabindex="-1" role="dialog" aria-labelledby="address_label"
          aria-hidden="true">
         <div class="modal-dialog" role="document">

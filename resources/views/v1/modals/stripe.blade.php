@@ -16,8 +16,7 @@
             </div>
             <div class="modal-body">
 
-                {!! Form::open(['url' => env('APP_URL').'/nomatter/'.$rf->regID,
-                        'method' => 'post', 'id' => 'payment-form']) !!}
+                {{ html()->form('POST', env('APP_URL') . '/nomatter/' . $rf->regID)->id('payment-form')->open() }}
                     <div class="form-row" class="form-group">
                         <label for="card-element">
                             @lang('messages.fields.c_or_d')
@@ -30,7 +29,7 @@
                     </div>
 
                     <input type="submit" class="submit form-control btn btn-primary" value="{{ trans('messages.headers.pay') }} ${{ $amt }}">
-                {!! Form::close() !!}
+                {{ html()->form()->close() }}
 
             </div>
             <div class="modal-footer">

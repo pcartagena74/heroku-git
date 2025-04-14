@@ -66,7 +66,7 @@ $rfp = $rf->person;
 @extends('v1.layouts.no-auth')
 @section('content')
     @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_con'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    {!! Form::open(['url' => env('APP_URL').'/complete_registration/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    {{ html()->form('PATCH', env('APP_URL') . '/complete_registration/' . $rf->regID)->id('complete_registration')->data('toggle', 'validator')->open() }}
 
     <div class="whole">
 
@@ -120,10 +120,10 @@ $rfp = $rf->person;
             @if($show_pass_fields)
                 <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
                     <div class="col-sm-6 form-group">
-                        {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_set'))) !!}
+                        {{ html()->password('password')->attribute('required', )->class('form-control input-sm')->attribute('placeholder', trans('messages.instructions.pw_set')) }}
                     </div>
                     <div class="col-sm-6 form-group">
-                        {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_conf'))) !!}
+                        {{ html()->password('password_confirmation')->attribute('required', )->class('form-control input-sm')->attribute('placeholder', trans('messages.instructions.pw_conf')) }}
                     </div>
                 </div>
             @endif
@@ -427,7 +427,7 @@ $rfp = $rf->person;
             </div>
         </div>
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
     @include('v1.parts.end_content')
 @endsection
 

@@ -3,14 +3,18 @@ Options +FollowSymLinks
 #RewriteLogLevel 5
 RewriteEngine On
 
+# Added to mitigate Proxy Disclosure vulnerability
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+RewriteRule ^ - [F]
+
 #If the server is localhost and the URL was https, send the URL but on http
 RewriteCond %{HTTPS} =on
 RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
 RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
 
 # Force www.
-RewriteCond %{HTTP_HOST} ^example.com [NC]
-RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301,NC]
+#RewriteCond %{HTTP_HOST} ^mcentric.org [NC]
+#RewriteRule ^(.*)$ https://www.mcentric.org/$1 [L,R=301,NC]
 
 #Removed https-redirection; replaced by AppServiceProvider.php
 
@@ -20,3 +24,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^ index.php [L]
+Header set Content-Security-Policy "default-src 'self' https://m.stripe.network; frame-ancestors 'self'; script-src 'self';"
+Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), fullscreen=()"
+Header set X-Content-Type-Options "nosniff"

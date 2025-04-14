@@ -1,6 +1,6 @@
 @php
     /**
-     * Comment: A popup for context sensitive issue it will append page url in the end of the content
+     * Comment: A popup for context-sensitive issue it will append page url in the end of the content
      * Created on: 12/03/2020
      */
 @endphp
@@ -16,25 +16,43 @@
                     <span aria-hidden="true"> × </span>
                 </button>
             </div>
-            {!! CollectiveForm::open([
-                        'route'=>'tickets.store',
-                        'method' => 'POST',
-                        'class' => 'form-horizontal',
-                        ]) !!}
+            {!!
+                html()->form('POST', 'tickets.store')
+                      ->class(['form-horizontal'])
+            !!}
             <div class="modal-body">
                 <div class="form-group">
-                    {!! CollectiveForm::label('subject', trans('ticketit::lang.subject') . trans('ticketit::lang.colon'), ['class' => 'col-lg-2 control-label']) !!}
+                    {!!
+                        html()->label(
+                                trans('ticketit::lang.subject') . trans('ticketit::lang.colon'),
+                                'subject')
+                              ->class(['col-lg-2 control-label'])
+                    !!}
                     <div class="col-lg-10">
-                        {!! CollectiveForm::text('subject', null, ['class' => 'form-control' ,'id'=>'ticket_subject']) !!}
+                        {!!
+                            html()->text('subject', null)
+                                  ->class(['form-control'])
+                                  ->id('ticket_subject')
+                        !!}
                         <span class="help-block">
                             {!! trans('ticketit::lang.create-ticket-brief-issue') !!}
                         </span>
                     </div>
                 </div>
                 <div class="form-group">
-                    {!! CollectiveForm::label('content', trans('ticketit::lang.description') . trans('ticketit::lang.colon'), ['class' => 'col-lg-2 control-label']) !!}
+                    {!!
+                        html()->label(
+                                trans('ticketit::lang.description') . trans('ticketit::lang.colon'),
+                                'content')
+                              ->class(['col-lg-2 control-label'])
+                    !!}
                     <div class="col-lg-10">
-                        {!! CollectiveForm::textarea('content', null, ['class' => 'form-control summernote-editor', 'rows' => '5','id'=>'ticket_content']) !!}
+                        {!!
+                            html()->textarea('content', null)
+                                  ->class(['form-control', 'summernote-editor'])
+                                  ->rows(5)
+                                  ->id('ticket_content')
+                        !!}
                         <span class="help-block">
                             {!! trans('ticketit::lang.create-ticket-describe-issue') !!}
                         </span>
@@ -43,30 +61,51 @@
                 @if(App\Models\Ticketit\AgentOver::isAdmin() || App\Models\Ticketit\AgentOver::isAgent())
                     <div class="form-inline row">
                         <div class="form-group col-lg-4">
-                            {!! CollectiveForm::label('priority', trans('ticketit::lang.priority') . trans('ticketit::lang.colon'), ['class' => 'col-lg-6 control-label']) !!}
+                            {!!
+                                html()->label(
+                                        trans('ticketit::lang.priority') . trans('ticketit::lang.colon'),
+                                        'priority')
+                                      ->class(['col-lg-6 control-label'])
+                            !!}
                             <div class="col-lg-6">
-                                {!! CollectiveForm::select('priority_id', getTicketPriorities(), 2, ['class' => 'form-control', 'id'=>'ticket_priority']) !!}
+                                {!!
+                                    html()->select('priority_id', getTicketPriorities(), 2)
+                                          ->class(['form-control'])
+                                          ->id('ticket_priority')
+                                !!}
                             </div>
                         </div>
                         <div class="form-group col-lg-4">
-                            {!! CollectiveForm::label('category', trans('ticketit::lang.category') . trans('ticketit::lang.colon'), ['class' => 'col-lg-6 control-label']) !!}
+                            {!!
+                                html()->label(
+                                        trans('ticketit::lang.category') . trans('ticketit::lang.colon'),
+                                        'category')
+                                        ->class(['col-lg-6 control-label'])
+                            !!}
                             <div class="col-lg-6">
-                                {!! CollectiveForm::select('category_id', getTicketCategories(), null, ['class' => 'form-control', 'id'=>'ticket_category']) !!}
+                                {!!
+                                   html()->select('category_id', getTicketCategories(), null)
+                                       ->class(['form-control'])
+                                       ->id('ticket_category');
+                               !!}
                             </div>
                         </div>
                     </div>
                     <br/>
                     <div class="form-inline row">
                         <div class="form-group col-lg-12">
-                            {!! CollectiveForm::label('agent_id', trans('ticketit::lang.agent') . trans('ticketit::lang.colon'), [
-                            'class' => 'col-lg-2 control-label'
-                        ]) !!}
+                            {!!
+                            html()->label(
+                                    trans('ticketit::lang.agent') . trans('ticketit::lang.colon'),
+                                    'agent_id')
+                                  ->class(['col-lg-2 control-label'])
+                            !!}
                             <div class="col-lg-10">
-                                {!! CollectiveForm::select(
-                                'agent_id',
-                                getAgentList(),
-                                'auto',
-                                ['class' => 'form-control','id'=>'ticket_agent']) !!}
+                                {!!
+                                    html()->select('agent_id', getAgentList(), 'auto')
+                                          ->class(['form-control'])
+                                          ->id('ticket_agent')
+                                !!}
                             </div>
                         </div>
                     </div>
@@ -80,10 +119,12 @@
                     <button class="btn btn-default" data-dismiss="modal" type="button">
                         {{trans('ticketit::lang.btn-close')}}
                     </button>
-                    {!! CollectiveForm::button(trans('ticketit::lang.btn-submit'), ['class' => 'btn btn-primary','id'=>'submitTicket']) !!}
+                    <button class="btn btn-primary" id="submitTicket" type="button">
+                        @lang('ticketit::lang.btn-submit')
+                    </button>
                 </div>
             </div>
-            {!! CollectiveForm::close() !!}
+            {!! html()->form()->close() !!}
         </div>
     </div>
 </div>
