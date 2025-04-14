@@ -21,10 +21,6 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/pcartagena74/ticketit.git"
-    },
-    {
-      "type": "vcs",
       "url": "https://github.com/pcartagena74/laravel-find-missing-translations.git"
     },
     {
@@ -51,7 +47,6 @@
     "jdavidbakr/mail-tracker": "^7.0",
     "jenssegers/agent": "^2.6",
     "knplabs/knp-snappy": "^1.4",
-    "kordy/ticketit": "dev-master",
     "kriswallsmith/buzz": "^1.2",
     "laravel/cashier": "^14.7",
     "laravel/dusk": "^7.4",
@@ -105,23 +100,18 @@
       "Database\\Seeders\\": "database/seeders/"
     },
     "exclude-from-classmap": [
-      "vendor/kordy/ticketit/src/ViewComposers/TicketItComposer.php",
-      "vendor/kordy/ticketit/src/TicketitServiceProvider.php",
       "vendor/alexusmai/laravel-file-manager/src/FileManager.php"
     ],
     "classmap": [
       "app/Models"
     ],
     "files": [
-      "app/Helpers/helper_functions.php",
-      "app/Vendor/Ticketit/TicketItComposer.php",
-      "app/Vendor/Ticketit/TicketitServiceProvider.php"
+      "app/Helpers/helper_functions.php"
     ]
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests/",
-      "vendor\\kordy\\ticketit\\src\\ViewComposers\\": "app/Vendor/Ticketit/"
+      "Tests\\": "tests/"
     }
   },
   "minimum-stability": "stable",

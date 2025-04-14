@@ -152,7 +152,7 @@ return [
          * Package Service Providers...
          */
         //Kordy\Ticketit\TicketitServiceProvider::class,
-        App\Vendor\Ticketit\TicketitServiceProvider::class,
+        //App\Vendor\Ticketit\TicketitServiceProvider::class,
         Shanmuga\LaravelEntrust\LaravelEntrustServiceProvider::class,
 
         // Laravel\Cashier\CashierServiceProvider::class,

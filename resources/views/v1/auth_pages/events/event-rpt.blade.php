@@ -471,32 +471,32 @@
                                     @if($s !== null)
                                         <tr>
                                             @foreach($tracks as $track)
-                                                <?php
-                                                $s = EventSession::where([
-                                                    ['trackID', $track->trackID],
-                                                    ['eventID', $event->eventID],
-                                                    ['confDay', $j],
-                                                    ['order', $x]
-                                                ])->first();
-
-                                                if ($s !== null && $s->isLinked) {
-                                                    $count = EventSession::where([
+                                                @php
+                                                    $s = EventSession::where([
                                                         ['trackID', $track->trackID],
                                                         ['eventID', $event->eventID],
                                                         ['confDay', $j],
-                                                        ['isLinked', $s->isLinked]
-                                                    ])->withTrashed()->count();
-                                                } else {
-                                                    $count = 0;
-                                                }
-                                                if ($track == $tracks->first()) {
-                                                    $placement = 'right';
-                                                } elseif ($track == $tracks->last()) {
-                                                    $placement = 'left';
-                                                } else {
-                                                    $placement = 'top';
-                                                }
-                                                ?>
+                                                        ['order', $x]
+                                                    ])->first();
+
+                                                    if ($s !== null && $s->isLinked) {
+                                                        $count = EventSession::where([
+                                                            ['trackID', $track->trackID],
+                                                            ['eventID', $event->eventID],
+                                                            ['confDay', $j],
+                                                            ['isLinked', $s->isLinked]
+                                                        ])->withTrashed()->count();
+                                                    } else {
+                                                        $count = 0;
+                                                    }
+                                                    if ($track == $tracks->first()) {
+                                                        $placement = 'right';
+                                                    } elseif ($track == $tracks->last()) {
+                                                        $placement = 'left';
+                                                    } else {
+                                                        $placement = 'top';
+                                                    }
+                                                @endphp
                                                 @if($s !== null)
                                                     @if($tracks->first() == $track || !$event->isSymmetric)
                                                         <td rowspan="{{ $count>0 ? $count+1 : 1 }}"
@@ -520,21 +520,23 @@
                                                                          'button_text' => trans('messages.surveys.popup')])
                                                             @endif
                                                         @else
-                                                            <?php
-                                                            // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
-                                                            $sTotal = 0;
-                                                            $sRegs = RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
-                                                                ->where([
-                                                                    ['sessionID', $s->sessionID],
-                                                                    ['er.eventID', $event->eventID]
-                                                                ])->select(DB::raw('er.discountCode, count(*) as cnt'))
-                                                                ->groupBy('er.discountCode')->get();
-                                                            ?>
+                                                            @php
+                                                                // Find the counts of people for $s->sessionID broken out by discountCode in 'event-registration'.regID
+                                                                $sTotal = 0;
+                                                                $sRegs = RegSession::join('event-registration as er', 'er.regID', '=', 'reg-session.regID')
+                                                                    ->where([
+                                                                        ['sessionID', $s->sessionID],
+                                                                        ['er.eventID', $event->eventID]
+                                                                    ])->select(DB::raw('er.discountCode, count(*) as cnt'))
+                                                                    ->groupBy('er.discountCode')->get();
+                                                            @endphp
                                                             <ul>
                                                                 @foreach($sRegs as $sr)
                                                                     <li>{{ $sr->discountCode ?? 'N/A' }}
                                                                         : {{ $sr->cnt }}</li>
-                                                                    <?php $sTotal += $sr->cnt; ?>
+                                                                    @php
+                                                                        $sTotal += $sr->cnt;
+                                                                    @endphp
                                                                 @endforeach
                                                                 <li><b>@lang('messages.fields.total'): {{ $sTotal }}</b>
                                                                 </li>
@@ -627,14 +629,14 @@
                         @foreach($nametags as $row)
                             <div class="col-xs-12">
                                 <div class="col-xs-2" style="text-align: right;">
-                                    <?php
-                                    $checked = '';
-                                    if (null !== $row->regsessions && count($row->regsessions) > 0) {
-                                        if ($row->is_session_attended($es->sessionID)) {
-                                            $checked = 'checked';
+                                    @php
+                                        $checked = '';
+                                        if (null !== $row->regsessions && count($row->regsessions) > 0) {
+                                            if ($row->is_session_attended($es->sessionID)) {
+                                                $checked = 'checked';
+                                            }
                                         }
-                                    }
-                                    ?>
+                                    @endphp
                                     {{ html()->checkbox('p-' . $row->person->personID . '-' . $row->regID, null, 1)->class('allcheckbox') }}
                                 </div>
                                 <div class="col-xs-2">
@@ -850,5 +852,7 @@ include('v1.parts.ajax_console')
 @endsection
 
 @section('modals')
+    {{--
     @include('v1.modals.context_sensitive_issue')
+    --}}
 @endsection

@@ -11,7 +11,6 @@
                         'class' => 'form-horizontal'
                         ]) !!}
         --}}
-        This is actually getting read and displayed.
 
         {!! html()->form(
                         'POST',

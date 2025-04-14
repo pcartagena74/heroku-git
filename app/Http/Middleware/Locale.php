@@ -52,7 +52,7 @@ class Locale
 
                 if (!empty($cookieLocale)) {
                     // Clean potentially corrupted cookie value
-                    if (strpos($cookieLocale, '|') !== false) {
+                    if (str_contains($cookieLocale, '|')) {
                         $parts = explode('|', $cookieLocale);
                         $cookieLocale = end($parts);
                     }
