@@ -522,7 +522,7 @@ if (!function_exists('li_print_array')) {
         foreach ($array as $item) {
             $reg = $item['reg'];
             $name = $item['name'];
-            $form = html()->form('DELETE', url(join('/', 'cancel_registration', $reg->regID, $reg->regfinance->regID)))->open();
+            $form = html()->form('DELETE', url(join('/', ['cancel_registration', $reg->regID, $reg->regfinance->regID])))->open();
             $form .= html()->submit(trans('messages.buttons.reg_can'))->class('btn btn-primary btn-xs');
             $form .= html()->close();
             $output .= "<li>$name $form</li>";
