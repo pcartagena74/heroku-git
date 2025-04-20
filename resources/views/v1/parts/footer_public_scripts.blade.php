@@ -7,7 +7,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
-<script src="{{ env('APP_URL') }}/js/mmmm_loginscript.js"></script>
 {{--
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-confirmation/1.0.5/bootstrap-confirmation.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
@@ -51,3 +50,4 @@
 </script>
 --}}
 
+<script src="{{ env('APP_URL') }}/js/mmmm_loginscript.js"></script>
