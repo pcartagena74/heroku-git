@@ -1,23 +1,23 @@
-<?php
-/**
- * Comment: List the events to which the current user has signed up
- * Created: 7/11/2017
- *
- * $attendance: the list of events where registration completed
- * $progress: the list of events where registration was not completed
- *
- */
-use App\Models\RegSession;
-use App\Models\Registration;
-use App\Models\Person;
-use App\Models\Ticket;
-use App\Models\EventSession;
-use App\Models\Event;
+@php
+    /**
+     * Comment: List the events to which the current user has signed up
+     * Created: 7/11/2017
+     *
+     * $attendance: the list of events where registration completed
+     * $progress: the list of events where registration was not completed
+     *
+     */
+    use App\Models\RegSession;
+    use App\Models\Registration;
+    use App\Models\Person;
+    use App\Models\Ticket;
+    use App\Models\EventSession;
+    use App\Models\Event;
 
-$tcount = 0;
-$today = \Carbon\Carbon::now();
+    $tcount = 0;
+    $today = \Carbon\Carbon::now();
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')

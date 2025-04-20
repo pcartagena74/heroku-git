@@ -24,9 +24,11 @@
     try {
         if(Storage::disk('s3_receipts')->exists($receipt_filename)){
             $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+            $receipt_exists = true;
         }
     } catch(Exception $e) {
-        $receipt_url = '';
+        $receipt_url = '#';
+        $receipt_exists = false;
     }
 
     if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
@@ -74,10 +76,15 @@
     @endif
 
     @if($reg->regfinance->pmtRecd && $reg->subtotal > 0)
-        <a class="btn btn-success btn-sm" href="{!! $receipt_url !!}" target="_new"
-           data-toggle="tooltip" title="{!! trans('messages.headers.receipt') !!}">
-            <i class="far fa-file-invoice-dollar fa-fw"></i>
-        </a>
+        @if($receipt_exists)
+            <a target="_new" href="{{ $receipt_url }}"
+               class="btn btn-success btn-sm" data-toggle="tooltip" title="{!! trans('messages.buttons.rec_down') !!}">
+                <i class="far fa-file-invoice-dollar fa-fw"></i></a>
+        @else
+            <a target="_new" href="{{ env('APP_URL'). "/recreate_receipt/".$rf->regID }}"
+               class="btn btn-success btn-sm" data-toggle="tooltip" title="{!! trans('messages.buttons.rec_down') !!}">
+                <i class="far fa-file-invoice-dollar fa-fw"></i></a>
+        @endif
     @endif
 
 @else

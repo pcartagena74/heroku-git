@@ -37,16 +37,17 @@
                 if(Storage::disk('s3_receipts')->exists($receipt_filename)){
                     $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
                 }
+                $file_headers = @get_headers($receipt_url);
+                if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
+                    $receipt_exists = false;
+                } else {
+                    $receipt_exists = true;
+                }
             } catch (Exception $e) {
                     $receipt_url = '#';
+                    $receipt_exists = false;
             }
 
-            $file_headers = @get_headers($receipt_url);
-            if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
-                $receipt_exists = false;
-            } else {
-                $receipt_exists = true;
-            }
 
             $header = $rf->event->eventName . " <small>" . trans_choice('messages.headers.seats', $rf->seats) . ": " . $rf->seats . "</small>";
         @endphp
