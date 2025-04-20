@@ -524,7 +524,7 @@ if (!function_exists('li_print_array')) {
             $name = $item['name'];
             $form = html()->form('DELETE', url(join('/', ['cancel_registration', $reg->regID, $reg->regfinance->regID])))->open();
             $form .= html()->submit(trans('messages.buttons.reg_can'))->class('btn btn-primary btn-xs');
-            $form .= html()->close();
+            $form .= html()->form()->close();
             $output .= "<li>$name $form</li>";
         }
         $output .= $end;
