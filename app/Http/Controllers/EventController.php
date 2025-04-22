@@ -837,7 +837,7 @@ class EventController extends Controller
                     ['eventStartDate', '>=', $today->subDays(10)],
                 ])
                     ->select(DB::raw("eventID,
-                                      concat(date_format(eventStartDate, '%n/%d/%Y'),
+                                      concat(date_format(eventStartDate, '%m/%d/%Y'),
                                         ': ',
                                         eventName,
                                         ' (id:', eventID, ')') as eventName"))
@@ -847,7 +847,7 @@ class EventController extends Controller
                     ['orgID', '=', $this->currentPerson->defaultOrgID],
                     ['eventStartDate', '>=', $today->subDays(10)],
                 ])
-                    ->select(DB::raw("eventID, concat(date_format(eventStartDate, '%n/%d/%Y'), ': ', eventName) as eventName"))
+                    ->select(DB::raw("eventID, concat(date_format(eventStartDate, '%m/%d/%Y'), ': ', eventName) as eventName"))
                     ->get();
             }
 
