@@ -12,7 +12,9 @@ use App\Models\Location;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Person;
-use App\Models\Ticketit\TicketOver;
+use Illuminate\Support\Facades\Storage;
+
+//use App\Models\Ticketit\TicketOver;
 use App\Models\User;
 use App\Models\VolunteerRole;
 use Carbon\Carbon;
@@ -335,10 +337,16 @@ if (!function_exists('extract_images')) {
     {
         $dom = new \DOMDocument;
         $org = Org::find($orgID);
+
+        if (!$org) {
+            throw new \Exception('Organization not found');
+        }
+
         $updated = 0;
 
         try {
-            $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
+            $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
 
             $images = $dom->getElementsByTagName('img');
 
@@ -346,41 +354,61 @@ if (!function_exists('extract_images')) {
                 $src = $img->getAttribute('src');
 
                 if (preg_match('/data:image/', $src)) {
-                    $updated = 1;
                     // get the mimetype
                     preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
-                    $mimetype = $groups['mime'];
+                    $mimetype = $groups['mime'] ?? 'jpeg'; // default to jpeg if mime not found
 
-                    // Generating a random filename
+                    // Generating a filename
                     $filename = $img->getAttribute('data-filename');
-                    $filepath = "$org->orgPath/uploads/$filename";
-
-                    // @see http://image.intervention.io/api/
-                    $image = Image::make($src)
-                        // resize if required
-                        /* ->resize(300, 200) */
-                        ->encode($mimetype, 100); // encode file to the specified mimetype
-
-                    try {
-                        if (Storage::disk('s3_media')->exists($filepath)) {
-                            $new_src = Storage::disk('s3_media')->url($filepath);
-                        }
-                    } catch (Exception $e) {
-                        $new_src = '#';
+                    if (empty($filename)) {
+                        $filename = uniqid('img_', true) . '.' . $mimetype;
                     }
 
-                    $img->removeAttribute('src');
-                    $img->removeAttribute('data-filename');
-                    $img->setAttribute('src', $new_src);
+                    $filepath = trim("$org->orgPath/uploads/$filename", '/');
+
+                    try {
+                        // Create image from base64
+                        $image = Image::make($src)->encode($mimetype, 100);
+
+                        // Store the image
+                        $stored = Storage::disk('s3_media')->put(
+                            $filepath,
+                            $image->stream()->__toString(),
+                            'public'
+                        );
+
+                        if ($stored) {
+                            $new_src = Storage::disk('s3_media')->url($filepath);
+                            $updated = 1;
+
+                            $img->removeAttribute('src');
+                            $img->removeAttribute('data-filename');
+                            $img->setAttribute('src', $new_src);
+                        } else {
+                            throw new \Exception('Failed to store image');
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Image upload failed: ' . $e->getMessage(), [
+                            'org_id' => $orgID,
+                            'filename' => $filename
+                        ]);
+
+                        // Keep original image if upload fails
+                        continue;
+                    }
                 }
             }
-            if ($updated) {
-                return $dom->saveHTML();
-            } else {
-                return $html;
-            }
-        } catch (Exception $exception) {
-            request()->session()->flash('alert-danger', trans('messages.errors.html_error') . "<br /><pre>$exception</pre>");
+
+            return $updated ? $dom->saveHTML() : $html;
+
+        } catch (\Exception $exception) {
+            \Log::error('HTML processing failed: ' . $exception->getMessage(), [
+                'org_id' => $orgID
+            ]);
+
+            request()->session()->flash('alert-danger',
+                trans('messages.errors.html_error') . "<br /><pre>{$exception->getMessage()}</pre>"
+            );
 
             return $html;
         }
@@ -801,6 +829,7 @@ if (!function_exists('getActiveTicketCountAgent')) {
  *
  * @return int count
  */
+/*
 if (!function_exists('getTicketCategories')) {
     function getTicketCategories()
     {
@@ -809,20 +838,21 @@ if (!function_exists('getTicketCategories')) {
         return $categories;
     }
 }
+*/
 
 /**
  * get all active ticket of loggedin user
  *
  * @return int count
  */
-if (!function_exists('getTicketPriorities')) {
+/*if (!function_exists('getTicketPriorities')) {
     function getTicketPriorities()
     {
         [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
 
         return $priorities;
     }
-}
+}*/
 
 /**
  * get template builder block category from database
