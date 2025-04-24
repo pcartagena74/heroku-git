@@ -706,6 +706,7 @@ include('v1.parts.ajax_console')
         </script>
     @endif
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"/>
     <script nonce="{{ $cspScriptNonce }}">
         $('[data-toggle="popover"]').popover({
             container: 'body',
@@ -828,7 +829,7 @@ include('v1.parts.ajax_console')
                     for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
                         text.push('<li>');
                         text.push('<span style="color:white; background-color:'
-                            + chart.data.datasets[0].backgroundColor[i] + '">&nbsp;'
+                            + chart.data.datasets[3].backgroundColor[i] + '">&nbsp;'
                             + chart.data.datasets[0].data[i] + ' </span> &nbsp;');
                         if (chart.data.labels[i]) {
                             text.push(chart.data.labels[i]);
@@ -842,7 +843,6 @@ include('v1.parts.ajax_console')
         });
         document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
     @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.nav.ev_rpt'),'url_override'=>url('event/create')))
 @endsection
 
