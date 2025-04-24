@@ -36,13 +36,13 @@
                         title='" . trans('messages.tooltips.mr') . "' class='btn btn-xs btn-warning'>
                        <i class='far fa-fw fa-code-branch'></i></a>";
 
-            $become_form = Form::open(array('url' => '/become', 'method' => 'POST', 'target' => '_blank'));
-            $become_form .= Form::hidden('new_id', $mbr->personID);
+            $become_form = html()->form('POST','/become')->target('_blank')->open();
+            $become_form .= html()->hidden('new_id', $mbr->personID);
             $submit_button = "<i class='fas fa-fw fa-user'></i>";
             $become_form .= '<button class="btn btn-xs btn-danger" title="' . trans('messages.nav.ms_become').
                             '" data-toggle="tooltip" onclick="return confirm(\'' . trans('messages.tooltips.sure_become') .
                             '\');">'. $submit_button . '</button>';
-            $become_form .= Form::close();
+            $become_form .= html()->form()->close();
 
             //$mbr->cnt = $profile_form . $merge_form . $activity_form . $become_form;
             $mbr->cnt = view('v1.parts.mbr_buttons', ['p' => $mbr->personID, 'c' => $mbr->cnt])->render();
