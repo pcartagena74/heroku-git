@@ -42,6 +42,7 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::SCRIPT, [
                 Keyword::SELF,
                 "nonce-{$scriptNonce}",
+                Keyword::UNSAFE_INLINE,
                 '*.mcentric.org',
                 '*.jquery.com',
                 '*.github.io',
