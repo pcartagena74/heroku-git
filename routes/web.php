@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
+use Illuminate\Http\Request;
 
 //use Kordy\Ticketit\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
@@ -458,12 +459,22 @@ Route::post('/get_complete_url', [LibraryController::class, 'getCompleteURL']);
 // Random Security-Type Routes
 
 Route::fallback(function (Request $request) {
-    $referrer = parse_url($request->headers->get('referer'));
-    $referrer = $referrer['scheme'] . '://' . $referrer['host'];
+    $referer = $request->header('referer');
 
-    if ($referrer == config('app.url')) {
-        abort(404);
-    } else {
-        return 'piss off hacker';
+    if ($referer) {
+        $parsed = parse_url($referer);
+
+        if (isset($parsed['scheme']) && isset($parsed['host'])) {
+            $referrerUrl = $parsed['scheme'] . '://' . $parsed['host'];
+
+            if ($referrerUrl == config('app.url')) {
+                abort(404);
+            }
+        }
     }
+
+    return response()->json([
+        'message' => 'Not Found',
+        'status' => 404
+    ], 404);
 });

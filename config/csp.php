@@ -14,6 +14,12 @@ return [
      */
     'report_only_policy' => '',
 
+    'report_only' => false,
+
+    'add_nonce_to_all_scripts' => true,
+
+    'nonce_length' => 16,
+
     /*
      * All violations against the policy will be reported to this url.
      * A great service you could use for this is https://report-uri.com/

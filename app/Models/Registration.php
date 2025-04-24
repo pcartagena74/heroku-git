@@ -69,21 +69,20 @@ class Registration extends Model
             ['regID', '=', $this->regID],
             ['sessionID', '=', $sessionID],
             ['personID', '=', $this->personID],
-        ])->first();
+        ])->firstOrNew([
+                'regID' => $this->regID,
+                'eventID' => $this->eventID,
+                'confDay' => $es->confDay,
+                'sessionID' => $sessionID,
+                'personID' => $this->personID,
+            ]
+        );
 
         try {
             $rs->hasAttended = 1;
             $rs->save();
         } catch (\Exception $e) {
-            $rs = new RegSession;
-            $event = $this->event()->first();
-            $rs->regID = $this->regID;
-            $rs->eventID = $event->eventID;
-            $rs->confDay = $es->confDay;
-            $rs->sessionID = $sessionID;
-            $rs->personID = $this->personID;
-            $rs->hasAttended = 1;
-            $rs->save();
+            // if above doesn't create and set attendance, something big is wrong.
         }
     }
 
