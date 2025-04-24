@@ -28,7 +28,7 @@ if(count($simple) > 15){
 @section('scripts')
     @include('v1.parts.footer-datatable')
     @if($scroll)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#datatable-fixed-header').DataTable({
                     "fixedHeader": true,

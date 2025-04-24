@@ -21,11 +21,11 @@
             <div id="message"></div>
             <table class="table table-hover">
                 <thead>
-                    <tr>
-                        <td>{{ trans('ticketit::admin.table-id') }}</td>
-                        <td>{{ trans('ticketit::admin.table-name') }}</td>
-                        <td>{{ trans('ticketit::admin.table-action') }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ trans('ticketit::admin.table-id') }}</td>
+                    <td>{{ trans('ticketit::admin.table-name') }}</td>
+                    <td>{{ trans('ticketit::admin.table-action') }}</td>
+                </tr>
                 </thead>
                 <tbody>
                 @foreach($categories as $category)
@@ -39,7 +39,7 @@
                         <td>
                             {{ html()->a($setting->grab('admin_route') . '.category.edit', trans('ticketit::admin.btn-edit'), $category->id)->class('btn btn-info') }}
 
-                                {{ html()->a($setting->grab('admin_route') . '.category.destroy', trans('ticketit::admin.btn-delete'), $category->id)->class('btn btn-danger deleteit')->attribute('form', "delete-{$category->id}")->attribute('node', $category->name) }}
+                            {{ html()->a($setting->grab('admin_route') . '.category.destroy', trans('ticketit::admin.btn-delete'), $category->id)->class('btn btn-danger deleteit')->attribute('form', "delete-{$category->id}")->attribute('node', $category->name) }}
                             {!! CollectiveForm::open([
                                             'method' => 'DELETE',
                                             'route' => [
@@ -59,11 +59,10 @@
     </div>
 @stop
 @section('footer')
-    <script>
-        $( ".deleteit" ).click(function( event ) {
+    <script nonce="{{ $cspScriptNonce }}">
+        $(".deleteit").click(function (event) {
             event.preventDefault();
-            if (confirm("{!! trans('ticketit::admin.category-index-js-delete') !!}" + $(this).attr("node") + " ?"))
-            {
+            if (confirm("{!! trans('ticketit::admin.category-index-js-delete') !!}" + $(this).attr("node") + " ?")) {
                 var form = $(this).attr("form");
                 $("#" + form).submit();
             }

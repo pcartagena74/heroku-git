@@ -49,7 +49,7 @@ foreach ($locations as $l) {
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -77,16 +77,14 @@ foreach ($locations as $l) {
                 }
             });
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             $('#datatable-fixed-header').DataTable({
                 "fixedHeader": true,
                 "order": [[1, "asc"]]
             });
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             var i = 2;
             var x;

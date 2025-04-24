@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,8 +24,8 @@
 
 <div class="container">
     <h1 style="text-align: center">{{ trans('ticketit::install.initial-setup') }}</h1>
-  <form class="form-signin" action="{{url('/tickets-install') }}" method="post" style="max-width: 500px">
-          <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+    <form class="form-signin" action="{{url('/tickets-install') }}" method="post" style="max-width: 500px">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
         <h3 class="form-signin-heading">{{ trans('ticketit::install.master-template-file') }}</h3>
         <select id="master" name="master" class="form-control" required autofocus>
             @foreach($views_files_list as $name => $path)
@@ -36,7 +35,7 @@
         <br>
         <div class="form-group" id="other-path-group" style="display: none">
             <label for="other_path">{{ trans('ticketit::install.master-template-other-path') }}</label>
-            <input type="text" id="other_path" name="other_path" class="form-control" />
+            <input type="text" id="other_path" name="other_path" class="form-control"/>
             <span id="helpBlock" class="help-block">
                 {{ trans('ticketit::install.master-template-other-path-ex') }}
             </span>
@@ -79,11 +78,11 @@
 <script src="js/bootstrap.min.js"></script>
 
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
-<script>
-    $('#master').change(function() {
+<script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"/>
+<script nonce="{{ $cspScriptNonce }}">
+    $('#master').change(function () {
         opt = $(this).val();
-        if (opt=="another") {
+        if (opt == "another") {
             $('#other-path-group').show();
         } else {
             $('#other-path-group').hide();

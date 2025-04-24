@@ -273,7 +273,7 @@
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
-    <style>
+    <style nonce="{{ $cspStyleNonce }}">
         .popover {
             max-width: 50%;
         }
@@ -693,7 +693,7 @@ include('v1.parts.ajax_console')
         @include('v1.parts.footer-datatable')
     @endif
     @if(count($rows) > 15 || count($reg_rows) > 15 || count($tag_rows) > 15)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
@@ -706,12 +706,11 @@ include('v1.parts.ajax_console')
         </script>
     @endif
 
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('[data-toggle="popover"]').popover({
             container: 'body',
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -730,15 +729,12 @@ include('v1.parts.ajax_console')
             $('#waitCount-{{ $t->ticketID }}').editable({type: 'text'});
             @endforeach
         });
-    </script>
 
-    <script>
         //redirection to a specific tab
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
         });
-    </script>
-    <script>
+
         $("#select_all").change(function () {
             $(".allcheckbox").prop("checked", $(this).prop("checked"))
         });
@@ -750,9 +746,7 @@ include('v1.parts.ajax_console')
                 $("#select-all").prop("checked", true)
             }
         });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
-    <script>
+
         var ctx = document.getElementById("discPie").getContext('2d');
         var options = {
             responsive: true,
@@ -848,6 +842,7 @@ include('v1.parts.ajax_console')
         });
         document.getElementById('pieLegend').innerHTML = myChart.generateLegend();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
     @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.nav.ev_rpt'),'url_override'=>url('event/create')))
 @endsection
 

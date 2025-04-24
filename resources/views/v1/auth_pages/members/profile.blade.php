@@ -556,11 +556,10 @@
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
-    </script>
-    <script>
+
         //redirection to a specific tab
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
@@ -569,7 +568,7 @@
     @if($profile->personID !== auth()->user()->id)
         @include('v1.parts.menu-fix', array('path' => '/members', 'tag' => '#mem', 'newTxt' => trans('messages.nav.ms_edit')))
     @endif
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -827,8 +826,7 @@
             $('#phoneNumber{{ $j }}').editable({type: 'text'});
             @endfor
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             var i = 2;
             var x;
@@ -876,8 +874,7 @@
                 }
             });
         });
-    </script>
-    <script>
+
         @if(Entrust::hasRole('Admin'))
         @for($i=1;$i<=10;$i++)
         @if(null !== $profile->{'ODN'.$i})
@@ -925,8 +922,6 @@
         @endfor
         @endif
 
-    </script>
-    <script>
         $(document).ready(function () {
             var i = 2;
             var x;
@@ -964,8 +959,7 @@
                 }
             });
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             var i = 2;
             var x;

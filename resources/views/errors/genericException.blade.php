@@ -77,7 +77,7 @@
         <!-- /page content -->
     </div>
     </div>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         function show() {
             $('#error_subject').html('');
             $('#error_content').html('');
@@ -127,6 +127,5 @@
             });
         }
     </script>
-    <script async="" defer="" src="https://www.google.com/recaptcha/api.js">
-    </script>
+    <script async="" defer="" src="https://www.google.com/recaptcha/api.js"/>
 @stop

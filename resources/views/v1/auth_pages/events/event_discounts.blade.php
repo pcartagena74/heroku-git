@@ -173,7 +173,7 @@ $currentOrg = $currentPerson->defaultOrg;
 
     @section('scripts')
         @include('v1.parts.footer-datatable')
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $.ajaxSetup({
                     headers: {
@@ -198,7 +198,7 @@ $currentOrg = $currentPerson->defaultOrg;
         </script>
         @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add',
                  'newTxt' => trans('messages.fields.event') . " " . trans('messages.fields.disc'),'url_override'=>url('event/create')))
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 var i = 2;
                 var x;
@@ -232,8 +232,7 @@ $currentOrg = $currentPerson->defaultOrg;
                     }
                 });
             });
-        </script>
-        <script>
+
             $(document).ready(function () {
                 @for($i=1;$i<=5;$i++)
                 $('#percent{{ $i }}').change(function () {

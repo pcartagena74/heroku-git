@@ -535,7 +535,7 @@
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         jQuery.fn.viz = function () {
             return this.css('visibility', 'visible');
         };
@@ -543,20 +543,20 @@
         var tix = [];
     </script>
     @if(!empty(Session::get('modal_error')) && !Auth::check() && Session::get('modal_error') == 1)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal').modal('show');
             });
         </script>
     @elseif(!Auth::check())
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal2').modal('show');
             });
         </script>
     @endif
     <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -588,8 +588,7 @@
 
             }
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             var member = "{{ $member }}";
             var nonmbr = "{{ $nonmbr }}";
@@ -1096,8 +1095,7 @@
                 $('#i_total').val(subtotal.toFixed(2));
             }
         });
-    </script>
-    <script>
+
         $("[data-toggle=tooltip]").tooltip();
     </script>
 @endsection

@@ -290,7 +290,7 @@
 
 @section('scripts')
     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function ($) {
             var people = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -311,7 +311,7 @@
     @include('v1.parts.footer-datatable')
 
     @include('v1.parts.menu-fix', array('path' => '/role_mgmt'))
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
         $(document).ready(function () {

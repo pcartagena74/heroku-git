@@ -298,7 +298,7 @@
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -412,9 +412,7 @@
             $('#nonmbrBasePrice-{{ $i }}').editable({type: 'text'});
             @endfor
         });
-    </script>
 
-    <script>
         $(document).ready(function () {
             var i = 2;
             var x;
@@ -454,7 +452,7 @@
         @include('v1.parts.footer-daterangepicker', ['fieldname' => 'availabilityEndDate'. $i, 'time' => 'true', 'single' => 'true'])
     @endfor
 
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         @for ($i = 1; $i <= $bi; $i++)
         $("#eventID-{{ $bid[$i] }}-{{ $tktIDs[$i] }}").editable({
             type: 'select',
@@ -470,8 +468,7 @@
             }
         });
         @endfor
-    </script>
-    <script>
+
         $(document).ready(function () {
             var setContentHeight = function () {
                 // reset height

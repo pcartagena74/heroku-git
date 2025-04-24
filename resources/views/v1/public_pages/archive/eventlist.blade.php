@@ -39,7 +39,8 @@
                     <td>
                         @if(0)
                             <div class="col-xs-1" style="float: left;">
-                                <img src="{{ env('APP_URL') }}/images/eventlist.jpg" alt='{{ trans('messages.codes.img') }}' height='79' width='90' border='0'/>
+                                <img src="{{ env('APP_URL') }}/images/eventlist.jpg"
+                                     alt='{{ trans('messages.codes.img') }}' height='79' width='90' border='0'/>
                             </div>
                         @endif
                         <div class="col-xs-11" style="text-align: left;">
@@ -81,7 +82,7 @@
     {{-- Disabled sorting to prevent alpha-date sort fail --}}
     @if($cnt > 15)
         @include('v1.parts.footer-datatable')
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 //$.fn.dataTable.moment('MMM D, YYYY');
                 $('#eventlisting').DataTable({

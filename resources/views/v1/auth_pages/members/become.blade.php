@@ -20,7 +20,7 @@ $topBits = '';  // remove this if this was set in the controller
 
     <div id="custom-template" class="col-sm-12">
         {{ html()->label(trans('messages.instructions.become_instr') . ":", 'helper') }}<br/>
-        {{ html()->text('helper')->id('helper')->class('typeahead input-xs') }}<br />
+        {{ html()->text('helper')->id('helper')->class('typeahead input-xs') }}<br/>
         <div id="search-results"></div>
     </div>
 
@@ -44,7 +44,7 @@ $topBits = '';  // remove this if this was set in the controller
 
 @section('scripts')
     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function ($) {
             var people = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),

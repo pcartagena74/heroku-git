@@ -1,8 +1,8 @@
 @php
-/**
- * Comment: A pop-up to collect user charge card info and send to stripe
- * Resurrected on: 11/19/2017
- */
+    /**
+     * Comment: A pop-up to collect user charge card info and send to stripe
+     * Resurrected on: 11/19/2017
+     */
 @endphp
 
 <div class="modal fade" id="stripe_modal" tabindex="-1" role="dialog" aria-labelledby="stripe_label" aria-hidden="true">
@@ -17,18 +17,19 @@
             <div class="modal-body">
 
                 {{ html()->form('POST', env('APP_URL') . '/nomatter/' . $rf->regID)->id('payment-form')->open() }}
-                    <div class="form-row" class="form-group">
-                        <label for="card-element">
-                            @lang('messages.fields.c_or_d')
-                        </label>
-                        <div class="form-group" id="card-element">
-                            <!-- a Stripe Element will be inserted here. -->
-                        </div>
-                        <!-- Used to display form errors -->
-                        <div id="card-errors" class="form-group" role="alert"></div>
+                <div class="form-row" class="form-group">
+                    <label for="card-element">
+                        @lang('messages.fields.c_or_d')
+                    </label>
+                    <div class="form-group" id="card-element">
+                        <!-- a Stripe Element will be inserted here. -->
                     </div>
+                    <!-- Used to display form errors -->
+                    <div id="card-errors" class="form-group" role="alert"></div>
+                </div>
 
-                    <input type="submit" class="submit form-control btn btn-primary" value="{{ trans('messages.headers.pay') }} ${{ $amt }}">
+                <input type="submit" class="submit form-control btn btn-primary"
+                       value="{{ trans('messages.headers.pay') }} ${{ $amt }}">
                 {{ html()->form()->close() }}
 
             </div>
@@ -38,7 +39,8 @@
                         @lang('messages.messages.credit_info')
                     </div>
                     <div class="col-sm-1">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">@lang('messages.buttons.close')</button>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                data-dismiss="modal">@lang('messages.buttons.close')</button>
                     </div>
                 </div>
             </div>
@@ -46,7 +48,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ $cspScriptNonce }}">
     var stripe = Stripe('{{ env('STRIPE_KEY') }}');
     var elements = stripe.elements();
 
@@ -54,7 +56,7 @@
     var card = elements.create('card');
     card.mount('#card-element');
 
-    card.addEventListener('change', function(event) {
+    card.addEventListener('change', function (event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
             displayError.textContent = event.error.message;
@@ -65,10 +67,10 @@
 
     // Create a token or display an error when the form is submitted.
     var form = document.getElementById('payment-form');
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        stripe.createToken(card).then(function(result) {
+        stripe.createToken(card).then(function (result) {
             if (result.error) {
                 // Inform the customer that there was an error.
                 var errorElement = document.getElementById('card-errors');

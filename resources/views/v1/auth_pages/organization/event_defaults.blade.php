@@ -268,7 +268,7 @@
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -281,8 +281,7 @@
             $('#percent{{ $dCode->discountID }}').editable();
             @endforeach
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip({'placement': 'top'});
             //$.fn.editable.defaults.mode = 'inline';
@@ -413,8 +412,7 @@
             @endif
             @endforeach
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             var i = 2;
             var x;

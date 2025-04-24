@@ -5,7 +5,7 @@
  */
 ?>
 <script src="{!! env('APP_URL') !!}/js/tinymce/tinymce.min.js"></script>
-<script>
+<script nonce="{{ $cspScriptNonce }}">
     tinymce.init({
         mode: "specific_textareas",
         editor_selector: "rich",

@@ -1,9 +1,9 @@
 @php
-/**
- * Comment: Created to display events in a calendar format
- *          Leverages Laravel Full Calendar package
- * Created: 1/2/2020
- */
+    /**
+     * Comment: Created to display events in a calendar format
+     *          Leverages Laravel Full Calendar package
+     * Created: 1/2/2020
+     */
 @endphp
 
 <div class="container">
@@ -11,13 +11,13 @@
         <div class="panel-heading">
             <b>{!! $header !!} </b>
         </div>
-        <div class="panel-body" >
+        <div class="panel-body">
             {!! $calendar->calendar() !!}
         </div>
     </div>
 </div>
-<script>
-    function strip(html){
+<script nonce="{{ $cspScriptNonce }}">
+    function strip(html) {
         var doc = new DOMParser().parseFromString(html, 'text/html');
         return truncateString(doc.body.textContent, 300) || "";
     }

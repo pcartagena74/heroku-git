@@ -70,6 +70,7 @@
     "socialiteproviders/linkedin": "^4.1",
     "spatie/browsershot": "^5.0",
     "spatie/laravel-activitylog": "^4.7",
+    "spatie/laravel-csp": "^2.10",
     "spatie/laravel-html": "^3.11",
     "spatie/laravel-referer": "^1.8",
     "squizlabs/php_codesniffer": "^3.6",

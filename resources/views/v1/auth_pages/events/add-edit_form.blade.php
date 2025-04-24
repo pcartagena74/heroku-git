@@ -473,7 +473,7 @@ if($event->hasTracks){
         {{--
         @include('v1.parts.footer-tinymce')
         --}}
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#eventStartDate').val(moment(new Date($('#eventStartDate').val())).format("MM/DD/YYYY HH:mm A"));
                 $('#eventEndDate').val(moment(new Date($('#eventEndDate').val())).format("MM/DD/YYYY HH:mm A"));
@@ -483,7 +483,7 @@ if($event->hasTracks){
 
         @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventStartDate', 'time' => 'true', 'single' => 'true'])
         @include('v1.parts.footer-daterangepicker', ['fieldname' => 'eventEndDate', 'time' => 'true', 'single' => 'true'])
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $.ajaxSetup({
                     headers: {
@@ -582,8 +582,7 @@ if($event->hasTracks){
                     $("#trackInput").toggle();
                 });
             });
-        </script>
-        <script>
+
             $('form').submit(function () {
                 $('#eventStartDate').each(function () {
                     $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
@@ -592,8 +591,7 @@ if($event->hasTracks){
                     $(this).val(moment(new Date($(this).val())).format("YYYY-MM-DD HH:mm:ss"))
                 });
             });
-        </script>
-        <script>
+
             $(document).ready(function () {
                 $('#useAddr').click(function () {
                     var selection = $('#org_location_list').val();
@@ -622,8 +620,7 @@ if($event->hasTracks){
                     }
                 });
             });
-        </script>
-        <script>
+
             $(document).ready(function () {
                 $('#validateSlug').click(function () {
                     var selection = $('#slug').val();

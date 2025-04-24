@@ -45,7 +45,7 @@
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function () {
             $('#datatable-fixed-header').DataTable({
                 "fixedHeader": true,

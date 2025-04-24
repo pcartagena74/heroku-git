@@ -157,7 +157,7 @@
         </div>
     </div>
 </div>
-<script>
+<script nonce="{{ $cspScriptNonce }}">
     $('#context_issue').on('show.bs.modal', function () {
         $('#ticket_subject').val('');
         $('#ticket_content').val('');

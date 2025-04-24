@@ -89,7 +89,7 @@
 @if($event->ok_to_display() || $override)
     @section('content')
         @include('v1.parts.not-table_header')
-        <style>
+        <style nonce="{{ $cspStyleNonce }}">
             .popover {
                 max-width: 50%;
             }
@@ -598,14 +598,13 @@
                 @endsection
 
                 @section('scripts')
-                    <script>
+                    <script nonce="{{ $cspScriptNonce }}">
                         $('a[data-toggle="tab"]').click(function (e) {
                             $(this).tab('show');
                         });
                         // e.target
                         //e.relatedTarget // previous active tab
-                    </script>
-                    <script>
+
                         $('#btn-validate').on('click', function (e) {
                             e.preventDefault();
                             validateCode({{ $event->eventID }});
@@ -651,8 +650,7 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             }
                         });
-                    </script>
-                    <script>
+
                         function validateCode(eventID) {
                             var codeValue = $("#discount_code").val();
                             if (FieldIsEmpty(codeValue)) {
@@ -691,8 +689,7 @@
                                 });
                             }
                         }
-                    </script>
-                    <script>
+
                         $('[data-toggle="popover"]').popover({
                             container: 'body',
                             placement: 'top'

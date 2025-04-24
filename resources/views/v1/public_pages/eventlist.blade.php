@@ -54,7 +54,8 @@
 @section('content')
     @if($cnt > 0)
         @if(!$cal)
-            <table class="table table-bordered table-striped table-sm condensed jambo_table" width="100%" id="eventlisting">
+            <table class="table table-bordered table-striped table-sm condensed jambo_table" width="100%"
+                   id="eventlisting">
                 <thead>
                 <tr>
                     <td><b>{{ $org->orgName }}: {{ $event_tag }}</b></td>
@@ -118,7 +119,7 @@
     {{-- Disabled sorting to prevent alpha-date sort fail --}}
     @if($cnt > 15)
         @include('v1.parts.footer-datatable')
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 //$.fn.dataTable.moment('MMM D, YYYY');
                 $('#eventlisting').DataTable({

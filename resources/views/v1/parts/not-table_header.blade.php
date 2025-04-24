@@ -4,7 +4,7 @@
  * Created: 12/25/2017
  */
 ?>
-<style>
+<style nonce="{{ $cspStyleNonce }}">
     @media only screen and (max-width: 800px) {
 
         /* Force table to not be like tables anymore */
@@ -24,7 +24,9 @@
             left: -9999px;
         }
 
-        #not tr { border: 1px solid #ccc; }
+        #not tr {
+            border: 1px solid #ccc;
+        }
 
         #not td {
             /* Behave  like a "row" */
@@ -33,7 +35,7 @@
             position: relative;
             padding-left: 50%;
             white-space: normal;
-            text-align:left;
+            text-align: left;
         }
 
         #not td:before {
@@ -45,13 +47,15 @@
             width: 45%;
             padding-right: 10px;
             white-space: nowrap;
-            text-align:left;
+            text-align: left;
             font-weight: bold;
         }
 
         /*
         Label the data
         */
-        #not td:before { content: attr(data-title); }
+        #not td:before {
+            content: attr(data-title);
+        }
     }
 </style>

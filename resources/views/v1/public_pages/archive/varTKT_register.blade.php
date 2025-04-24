@@ -132,20 +132,20 @@ $i = 0;
     {{ html()->hidden('quantity', $quantity)->id('quantity') }}
 
     @foreach($tq as $x)
-        <?php
+            <?php
 
-        $ticket = Ticket::find($x['t']);
-        $q = $x['q'];
+            $ticket = Ticket::find($x['t']);
+            $q = $x['q'];
 
-        // Determine if Early Bird Pricing should be in effect
-        if ($ticket->valid_earlyBird()) {
-            $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
-            $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
-        } else {
-            $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
-            $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
-        }
-        ?>
+            // Determine if Early Bird Pricing should be in effect
+            if ($ticket->valid_earlyBird()) {
+                $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+                $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
+            } else {
+                $earlymbr = number_format($ticket->memberBasePrice, 2, '.', ',');
+                $earlynon = number_format($ticket->nonmbrBasePrice, 2, '.', ',');
+            }
+            ?>
         @if($ticket->waitlisting())
             <div class="clearfix"><p></div>
             <b class="red">
@@ -155,10 +155,10 @@ $i = 0;
         @endif
 
         @for($j=1; $j<=$q; $j++)
-            <?php
-            $i++;
-            $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-            ?>
+                <?php
+                $i++;
+                $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+                ?>
             {{ html()->hidden("percent" . $i_cnt, 0)->id("i_percent" . $i_cnt) }}
             {{ html()->hidden("flatamt" . $i_cnt, 0)->id("i_flatamt" . $i_cnt) }}
             {{ html()->hidden('sub' . $i, 0)->id('sub' . $i) }}
@@ -202,7 +202,7 @@ $i = 0;
                     <th colspan="3" style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
                         <div class="col-md-12 col-sm-12 col-xs-12" id="adc-{{ $i }}"
                              @if($ticket->waitlisting())
-                             style="visibility: hidden;">
+                                 style="visibility: hidden;">
                             @else
                                 style="visibility: visible;">
                             @endif
@@ -228,7 +228,7 @@ $i = 0;
                     <td colspan="2" style="width: 22%; text-align: right; vertical-align: middle;">
                         <div id="da-{{ $i }}"
                              @if($ticket->waitlisting())
-                             style="visibility: hidden;">
+                                 style="visibility: hidden;">
                             @else
                                 style="visibility: visible;">
                             @endif
@@ -236,9 +236,9 @@ $i = 0;
                     </td>
                     <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span id="dm-{{ $i }}"
                                                                                                         @if($ticket->waitlisting())
-                                                                                                        style="visibility: hidden;"
+                                                                                                            style="visibility: hidden;"
                                                                                                         @else
-                                                                                                        style="visibility: visible;"
+                                                                                                            style="visibility: visible;"
                                                                                                         @endif
                                                                                                         class="status_msg{{ $i_cnt }}">---</span>
                     </td>
@@ -330,12 +330,12 @@ $i = 0;
                     {{ html()->text("prefName{$i_cnt}", old("prefName{$i_cnt}"))->class('form-control input-sm')->required()->id("prefName{$i_cnt}") }}
                     <br/>
 
-                        <label class="control-label" for="certifications{{ $i_cnt }}">
-                            @lang('messages.fields.certification')
-                            <sup class='red'>*</sup>
-                        </label>
-                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.certification_tip')])
-                        {{ html()->multiselect("certifications{$i_cnt}" . "[]", $cert_array, old("certifications") ?: reset($cert_array))->class('form-control input-sm')->attribute('size', '3')->required()->id("certifications{$i_cnt}") }}
+                    <label class="control-label" for="certifications{{ $i_cnt }}">
+                        @lang('messages.fields.certification')
+                        <sup class='red'>*</sup>
+                    </label>
+                    @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.certification_tip')])
+                    {{ html()->multiselect("certifications{$i_cnt}" . "[]", $cert_array, old("certifications") ?: reset($cert_array))->class('form-control input-sm')->attribute('size', '3')->required()->id("certifications{$i_cnt}") }}
                 </div>
             </div>
 
@@ -502,7 +502,7 @@ $i = 0;
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         jQuery.fn.viz = function () {
             return this.css('visibility', 'visible');
         };
@@ -510,20 +510,20 @@ $i = 0;
         var tix = [];
     </script>
     @if(!empty(Session::get('modal_error')) && !Auth::check() && Session::get('modal_error') == 1)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal').modal('show');
             });
         </script>
     @elseif(!Auth::check())
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal2').modal('show');
             });
         </script>
     @endif
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script>
+    <script src="https://www.google.com/recaptcha/api.js"/>
+    <script nonce="{{ $cspScriptNonce }}">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -555,8 +555,7 @@ $i = 0;
 
             }
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
             var member = "{{ $member }}";
             var nonmbr = "{{ $nonmbr }}";
@@ -604,7 +603,7 @@ $i = 0;
 
             var subtotal = 0;
 
-                    @for($i=1;$i<=$quantity; $i++)
+            @for($i=1;$i<=$quantity; $i++)
             var tc{{ $i }} = $('#tcost{{ $i }}').text().replace(/,/g, '') * 1;
             var newval{{ $i }} = tc{{ $i }} * 1;
             $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
@@ -615,7 +614,7 @@ $i = 0;
             $('#total').text(subtotal.toFixed(2));
             $('#i_total').val(subtotal.toFixed(2));
 
-                    @for($i=1; $i<=$quantity; $i++)
+            @for($i=1; $i<=$quantity; $i++)
                 <?php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
                 ?>
@@ -752,10 +751,10 @@ $i = 0;
                             //console.log(data);
                             var result = eval(data);
                             if (result.status == 'success') {
-                                        {{--
-                                        // prompt user with modal (email addr indicates user x) and ask if that's correct
-                                        // and if they want to auto-populate the form, yes/no.
-                                        --}}
+                                {{--
+                                // prompt user with modal (email addr indicates user x) and ask if that's correct
+                                // and if they want to auto-populate the form, yes/no.
+                                --}}
 
                                 var p = result.p;
 
@@ -792,7 +791,7 @@ $i = 0;
                                         $('#allergenInfo' + which).val(p["allergenInfo"]);
                                         $('#specialNeeds' + which).val(p["specialNeeds"]);
                                         $('#eventNotes' + which).val(p["eventNotes"]);
-                                                @endif
+                                        @endif
                                         var pmi_id = $('#OrgStat1' + which).val();
                                         if (pmi_id > 0) {
                                             $('#firstName' + which).attr('readonly', true);
@@ -840,10 +839,10 @@ $i = 0;
                         success: function (data) {
                             var result = eval(data);
                             if (result.status == 'success') {
-                                        {{--
-                                        // prompt user with modal (email points to user x) and ask if that's correct
-                                        // and if they want to auto-populate the form, yes/no.
-                                        --}}
+                                {{--
+                                // prompt user with modal (email points to user x) and ask if that's correct
+                                // and if they want to auto-populate the form, yes/no.
+                                --}}
                                 var p = result.p;
 
                                 $('#confirm_modal-content').html(result.msg);
@@ -882,7 +881,7 @@ $i = 0;
                                         $('#allergenInfo' + which).val(p["allergenInfo"]);
                                         $('#specialNeeds' + which).val(p["specialNeeds"]);
                                         $('#eventNotes' + which).val(p["eventNotes"]);
-                                                @endif
+                                        @endif
                                         var pmi_id = $('#OrgStat1' + which).val();
                                         if (pmi_id > 0) {
                                             $('#firstName' + which).attr('readonly', true);
@@ -1031,7 +1030,7 @@ $i = 0;
             function recalc() {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
-                <?php
+                        <?php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
                     ?>
                     percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
@@ -1055,8 +1054,7 @@ $i = 0;
                 $('#i_total').val(subtotal.toFixed(2));
             }
         });
-    </script>
-    <script>
+
         $("[data-toggle=tooltip]").tooltip();
     </script>
 @endsection

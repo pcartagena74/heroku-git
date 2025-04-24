@@ -96,27 +96,9 @@
 
 @section('scripts')
     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
-    <script>
-        $(document).ready(function ($) {
-            var people = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    url: '{{ env('APP_URL') }}/autocomplete/?l=p&q=%QUERY',
-                    wildcard: '%QUERY'
-                }
-            });
-
-            $('#custom-template .typeahead').typeahead(null, {
-                name: 'people',
-                display: 'value',
-                source: people
-            });
-        });
-    </script>
     @include('v1.parts.footer-datatable')
     @if($scroll)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#member_table').DataTable({
                     "fixedHeader": true,

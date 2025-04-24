@@ -64,7 +64,7 @@
             <!-- /page content -->
         </div>
     </div>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         function show() {
             $('.mid_center').toggle();
         }

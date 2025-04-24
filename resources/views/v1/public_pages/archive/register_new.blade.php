@@ -32,14 +32,14 @@ $loc = Location::find($event->locationID);
 
 $prefixes = DB::table('prefixes')->select('prefix', 'prefix')->get();
 $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
-                $prefixes->pluck('prefix', 'prefix')->map(function($item, $key) {
-                    return trans('messages.fields.prefixes.'.$item);
-                })->toArray();
+    $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
+        return trans('messages.fields.prefixes.' . $item);
+    })->toArray();
 
 $industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
 $industry_array = ['' => trans('messages.fields.industries.select')] +
-    $industries->pluck('industryName', 'industryName')->map(function($item, $key) {
-        return trans('messages.fields.industries.'.$item);
+    $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
+        return trans('messages.fields.industries.' . $item);
     })->toArray();
 
 $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
@@ -84,7 +84,7 @@ $experience_choices = [
 @extends('v1.layouts.no-auth')
 
 @section('content')
-<h1>This One</h1>
+    <h1>This One</h1>
     @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
     @if($errors->any())
         @foreach($errors as $error)
@@ -136,9 +136,9 @@ $experience_choices = [
     @endif
 
     @for($i=1; $i<=$quantity; $i++)
-<?php
-        $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-?>
+            <?php
+            $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
+            ?>
         {{ html()->hidden("percent" . $i_cnt, 0)->id("i_percent" . $i_cnt) }}
         {{ html()->hidden("flatamt" . $i_cnt, 0)->id("i_flatamt" . $i_cnt) }}
         {{ html()->hidden('sub' . $i, 0)->id('sub' . $i) }}
@@ -203,8 +203,10 @@ $experience_choices = [
                 <td colspan="2" style="width: 22%; text-align: right; vertical-align: middle;">
                     <b>@lang('messages.fields.app_disc'):</b>
                 </td>
-                <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span class="status_msg{{ $i_cnt }}">---</span></td>
-                <td style="width: 11%; text-align: right;"><b>@lang('messages.fields.fCost'):</b> @lang('messages.symbols.cur')
+                <td colspan="2" style="width: 22%; text-align: left; vertical-align: middle;"><span
+                            class="status_msg{{ $i_cnt }}">---</span></td>
+                <td style="width: 11%; text-align: right;"><b>@lang('messages.fields.fCost')
+                        :</b> @lang('messages.symbols.cur')
                     <span id="final{{ $i }}">---</span></td>
             </tr>
         </table>
@@ -264,7 +266,8 @@ $experience_choices = [
             </div>
 
             <div class="col-sm-6">
-                <label class="control-label" for="lastName{{ $i_cnt }}">@lang('messages.fields.lastName') <sup class='red'>*</sup></label>
+                <label class="control-label" for="lastName{{ $i_cnt }}">@lang('messages.fields.lastName') <sup
+                            class='red'>*</sup></label>
                 @if($i == 1 && $isMember)
                     @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.pmi_tip')])
                     {{ html()->text("lastName{$i_cnt}", old("lastName{$i_cnt}"))->class('form-control input-sm')->required()->isReadonly()->id("lastName{$i_cnt}") }}
@@ -422,7 +425,8 @@ $experience_choices = [
     <table class="table table-striped">
         <tr>
             <th style="text-align: right; width: 85%; vertical-align: top;">@lang('messages.fields.total')</th>
-            <th style="text-align: left; vertical-align: top;"><i class="far fa-dollar-sign"></i> <span id="total">0.00</span></th>
+            <th style="text-align: left; vertical-align: top;"><i class="far fa-dollar-sign"></i> <span
+                        id="total">0.00</span></th>
         </tr>
     </table>
 
@@ -437,20 +441,20 @@ $experience_choices = [
 
 @section('scripts')
     @if(!empty(Session::get('modal_error')) && !Auth::check() && Session::get('modal_error') == 1)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal').modal('show');
             });
         </script>
     @elseif(!Auth::check())
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal2').modal('show');
             });
         </script>
     @endif
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script>
+    <script src="https://www.google.com/recaptcha/api.js"/>
+    <script nonce="{{ $cspScriptNonce }}">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -470,8 +474,7 @@ $experience_choices = [
                 //console.log(result);
             }
         });
-    </script>
-    <script>
+
         var member = "{{ $member }}";
         var nonmbr = "{{ $nonmbr }}";
         var checkbox = document.getElementById('selfcheck');
@@ -511,11 +514,11 @@ $experience_choices = [
             var subtotal = 0;
 
             @for($i=1;$i<=$quantity; $i++)
-                var tc{{ $i }} = $('#tcost{{ $i }}').text().replace(/,/g, '') * 1;
-                var newval{{ $i }} = tc{{ $i }} * 1;
-                $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
-                subtotal += newval{{ $i }} * 1;
-                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+            var tc{{ $i }} = $('#tcost{{ $i }}').text().replace(/,/g, '') * 1;
+            var newval{{ $i }} = tc{{ $i }} * 1;
+            $('#final{{ $i }}').text(tc{{ $i }}.toFixed(2));
+            subtotal += newval{{ $i }} * 1;
+            $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
             @endfor
 
             @for($i=2;$i<=$quantity;$i++)
@@ -523,13 +526,13 @@ $experience_choices = [
                 type: 'select',
                 autotext: 'auto',
                 source: [
-<?php
-                    $string = '';
-                    foreach($tkts as $row) {
-                        $string .= "{ value: '" . $row->ticketID . "' , text: '" . $row->ticketLabel . "' },\n";
-                    }
-?>
-                    {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
+                        <?php
+                        $string = '';
+                        foreach ($tkts as $row) {
+                            $string .= "{ value: '" . $row->ticketID . "' , text: '" . $row->ticketLabel . "' },\n";
+                        }
+                        ?>
+                            {!!  rtrim($string, ",") !!}  <?php $string = ''; ?>
                 ]
             });
             @endfor
@@ -538,34 +541,34 @@ $experience_choices = [
             $('#i_total').val(subtotal.toFixed(2));
 
             @for($i=1; $i<=$quantity; $i++)
-<?php
+                <?php
                 $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-?>
-                var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
-                var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
+                ?>
+            var percent{{ $i_cnt }} = $('#discount{{ $i_cnt }}').text();
+            var flatAmt{{ $i_cnt }} = $('#flatdisc{{ $i_cnt }}').text();
 
-                if (!FieldIsEmpty($("#discount_code{{ $i_cnt }}"))) {
-                    validateCode('{{ $event->eventID }}', '{{ $i_cnt }}');
+            if (!FieldIsEmpty($("#discount_code{{ $i_cnt }}"))) {
+                validateCode('{{ $event->eventID }}', '{{ $i_cnt }}');
+            }
+
+            $('#btn-apply{{ $i_cnt }}').on('click', function (e) {
+                e.preventDefault();
+                validateCode('{{ $event->eventID }}', '{{ $i_cnt }}');
+            });
+
+            $('#firstName{{ $i_cnt }}').on('change', function (e) {
+                $('#prefName{{ $i_cnt }}').val($('#firstName{{ $i_cnt }}').val());
+            });
+
+            $('#login{{ $i_cnt }}').on('change', function (e) {
+                findUser($('#login{{ $i_cnt }}').val(), '{{ $i_cnt }}');
+            });
+
+            $('#OrgStat1{{ $i_cnt }}').on('change', function (e) {
+                if (!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}"))) {
+                    findID($('#OrgStat1{{ $i_cnt }}').val(), '{{ $i_cnt }}');
                 }
-
-                $('#btn-apply{{ $i_cnt }}').on('click', function (e) {
-                    e.preventDefault();
-                    validateCode('{{ $event->eventID }}', '{{ $i_cnt }}');
-                });
-
-                $('#firstName{{ $i_cnt }}').on('change', function (e) {
-                    $('#prefName{{ $i_cnt }}').val($('#firstName{{ $i_cnt }}').val());
-                });
-
-                $('#login{{ $i_cnt }}').on('change', function (e) {
-                    findUser($('#login{{ $i_cnt }}').val(), '{{ $i_cnt }}');
-                });
-
-                $('#OrgStat1{{ $i_cnt }}').on('change', function (e) {
-                    if(!FieldIsEmpty($("#OrgStat1{{ $i_cnt }}"))){
-                        findID($('#OrgStat1{{ $i_cnt }}').val(), '{{ $i_cnt }}');
-                    }
-                });
+            });
 
             @endfor
 
@@ -598,8 +601,8 @@ $experience_choices = [
                             $('#discount' + which).text(result.percent);
                             $('#flatdisc' + which).text(result.flatAmt);
 
-                            $('#i_percent'+which).val(result.percent);
-                            $('#i_flatamt'+which).val(result.flatAmt);
+                            $('#i_percent' + which).val(result.percent);
+                            $('#i_flatamt' + which).val(result.flatAmt);
                             recalc();
                         },
                         error: function (data) {
@@ -610,6 +613,7 @@ $experience_choices = [
                     });
                 }
             }
+
             function findUser(email, which) {
                 if (!FieldIsEmpty(email)) {
                     $.ajax({
@@ -690,10 +694,10 @@ $experience_choices = [
                             var result = eval(data);
                             if (result.status == 'success') {
                                 console.log(data);
-                               {{--
-                               // prompt user with modal (email points to user x) and ask if that's correct
-                               // and if they want to auto-populate the form, yes/no.
-                               --}}
+                                {{--
+                                // prompt user with modal (email points to user x) and ask if that's correct
+                                // and if they want to auto-populate the form, yes/no.
+                                --}}
                                 var p = result.p;
 
                                 $('#confirm_modal-content').html(result.msg);
@@ -736,13 +740,13 @@ $experience_choices = [
                                             {{--
                                                Change the cost of the ticket from non-member to member
                                             --}}
-                                            $("#ticket_type"+j).html(member);
+                                            $("#ticket_type" + j).html(member);
                                             fix_pricing(j, which);
                                         }
                                     } else {
                                         var pmi_id = $('#OrgStat1' + which).val();
-                                        if(pmi_id > 0){
-                                            $("#ticket_type"+j).html(member);
+                                        if (pmi_id > 0) {
+                                            $("#ticket_type" + j).html(member);
                                             fix_pricing(j, which);
                                         }
                                     }
@@ -750,8 +754,8 @@ $experience_choices = [
                             } else {
                                 console.log('not success');
                                 var pmi_id = $('#OrgStat1' + which).val();
-                                if(pmi_id > 0){
-                                    $("#ticket_type"+j).html(member);
+                                if (pmi_id > 0) {
+                                    $("#ticket_type" + j).html(member);
                                     fix_pricing(j, which);
                                 }
                             }
@@ -760,50 +764,54 @@ $experience_choices = [
                 }
             }
 
-            function fix_pricing(j, which){
-                x = document.getElementById('ticketID-'+j);
+            function fix_pricing(j, which) {
+                x = document.getElementById('ticketID-' + j);
                 compare = x.attributes['data-value'].value;
-                tc = document.getElementById('tcost'+j);
-                fc = document.getElementById('final'+j);
+                tc = document.getElementById('tcost' + j);
+                fc = document.getElementById('final' + j);
                 var mbr_price = def_tick['memberBasePrice'];
                 tix.forEach((ticket) => {
-{{--
-                Check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
---}}
-                    if(tix.length > 1;){
+                    {{--
+                                    Check if count(tix) > 1 and if so then check each ticket on ticketID = 'ticketID-'+j and take the price
+                    --}}
+                    if (tix.length > 1;
+                )
+                    {
                         var new_price = ticket['memberBasePrice'];
-                        if(ticket['ticketID'] == compare){
+                        if (ticket['ticketID'] == compare) {
                             tc.innerHTML = new_price.toFixed(2);
                             fc.innerHTML = new_price.toFixed(2);
                         }
-                    } else {
+                    }
+                else
+                    {
                         tc.innerHTML = mbr_price.toFixed(2);
                         fc.innerHTML = mbr_price.toFixed(2);
                     }
-                recalc();
-            })
+                    recalc();
+                })
             }
 
-            function recalc(){
+            function recalc() {
                 subtotal = 0;
                 @for($i=1; $i<=$quantity; $i++)
-<?php
+                        <?php
                     $i > 1 ? $i_cnt = "_$i" : $i_cnt = "";
-?>
+                    ?>
                     percent{{ $i_cnt }} = $('#i_percent{{ $i_cnt }}').val();
-                    flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
-                    tc{{ $i }} = $('#tcost{{ $i }}').text();
+                flatAmt{{ $i_cnt }} = $('#i_flatamt{{ $i_cnt }}').val();
+                tc{{ $i }} = $('#tcost{{ $i }}').text();
 
-                    if (percent{{ $i_cnt }} > 0) {
-                        newval{{ $i }} = tc{{ $i }} - (tc{{ $i }} * percent{{ $i_cnt }} / 100);
-                        $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
-                    } else {
-                        newval{{ $i }} = ((tc{{ $i }} * 1) - (flatAmt{{ $i_cnt }} * 1));
-                        if (newval{{ $i }} < 0) newval{{ $i }} = 0;
-                        $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
-                    }
-                    subtotal += newval{{ $i }} * 1;
-                    $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
+                if (percent{{ $i_cnt }} > 0) {
+                    newval{{ $i }} = tc{{ $i }} - (tc{{ $i }} * percent{{ $i_cnt }} / 100);
+                    $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                } else {
+                    newval{{ $i }} = ((tc{{ $i }} * 1) - (flatAmt{{ $i_cnt }} * 1));
+                    if (newval{{ $i }} < 0) newval{{ $i }} = 0;
+                    $('#final{{ $i }}').text(newval{{ $i }}.toFixed(2));
+                }
+                subtotal += newval{{ $i }} * 1;
+                $("#sub{{ $i }}").val(newval{{ $i }}.toFixed(2));
 
                 @endfor
 
@@ -812,8 +820,7 @@ $experience_choices = [
             }
 
         });
-    </script>
-    <script>
+
         $("[data-toggle=tooltip]").tooltip();
     </script>
 @endsection

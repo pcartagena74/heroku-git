@@ -3,43 +3,44 @@
  * Comment: Registration form for events that do not have food... (Roundtables)
  * Created: 2/25/2017
  */
+
 use Illuminate\Support\Facades\DB;
 use App\Models\Person;
 use App\Models\Location;
 use App\Models\Registration;
 use Illuminate\Support\Facades\Auth;
 
-if(Auth::check()) {
-    $person       = Person::find(auth()->user()->id);
+if (Auth::check()) {
+    $person = Person::find(auth()->user()->id);
     $registration = new Registration;
-    if($person->orgperson->OrgStat1) {
+    if ($person->orgperson->OrgStat1) {
         $isMember = 1;
     } else {
         $isMember = 0;
     }
 } else {
-    $person       = new Person;
+    $person = new Person;
     $registration = new Registration;
-    $isMember     = 0;
+    $isMember = 0;
 }
 $loc = Location::find($event->locationID);
 
-$prefixes     = DB::table('prefixes')->select('prefix', 'prefix')->get();
+$prefixes = DB::table('prefixes')->select('prefix', 'prefix')->get();
 $prefix_array = ['' => 'Prefix'] + $prefixes->pluck('prefix', 'prefix')->toArray();
 
-$industries     = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
+$industries = DB::table('industries')->select('industryName', 'industryName')->orderBy('industryName')->get();
 $industry_array = ['' => 'Select Industry'] + $industries->pluck('industryName', 'industryName')->toArray();
 
 $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-$array    = explode(',', $chapters->nearbyChapters);
+$array = explode(',', $chapters->nearbyChapters);
 
-foreach($array as $chap) {
+foreach ($array as $chap) {
     $affiliation_array[$chap] = $chap;
 }
 
 // Determine if Early Bird Pricing should be in effect
 $today = Carbon\Carbon::now();
-if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)) {
+if ($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today)) {
     $earlymbr = number_format($ticket->memberBasePrice - ($ticket->memberBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
     $earlynon = number_format($ticket->nonmbrBasePrice - ($ticket->nonmbrBasePrice * $ticket->earlyBirdPercent / 100), 2, '.', ',');
 } else {
@@ -81,7 +82,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             @if(Session::has('alert-' . $msg))
                 <p>&nbsp;</p>
                 <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </p>
             @endif
         @endforeach
@@ -109,7 +110,11 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
         {{ html()->hidden('cost' . $i, Auth::check() ? $earlymbr : $earlynon)->id('cost' . $i) }}
         <table id="ticket_head" class="table table-striped">
             <th colspan="3" style="text-align: left; vertical-align: middle;" class="col-md-6 col-sm-6 col-xs-12">
-                <span id="ticket_type{{ $i }}">#{{ $i }} @if(Auth::check()) MEMBER @else NON-MEMBER @endif
+                <span id="ticket_type{{ $i }}">#{{ $i }} @if(Auth::check())
+                        MEMBER
+                    @else
+                        NON-MEMBER
+                    @endif
                     TICKET: </span> {{ $ticket->ticketLabel }} </th>
             <th colspan="3" style="text-align: right;" class="col-md-6 col-sm-6 col-xs-12">
                 <div class="col-md-12 col-sm-12 col-xs-12">
@@ -333,9 +338,9 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     <table class="table table-striped">
         <tr>
             <th style="text-align: right; width: 85%; vertical-align: top;">Total
-            </td>
+                </td>
             <th style="text-align: left; vertical-align: top;"><i class="fa fa-dollar"></i> <span id="total">0.00</span>
-            </td>
+                </td>
         </tr>
     </table>
 
@@ -350,34 +355,33 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
 
 @section('scripts')
     @if(!empty(Session::get('modal_error')) && !Auth::check() && Session::get('modal_error') == 1)
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal').modal('show');
             });
         </script>
     @elseif(!Auth::check())
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#login_modal2').modal('show');
             });
         </script>
     @endif
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script>
+    <script src="https://www.google.com/recaptcha/api.js"/>
+    <script nonce="{{ $cspScriptNonce }}">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-    </script>
-    <script>
+
         $(document).ready(function () {
 
             var percent = $('#discount').text();
             var flatAmt = $('#flatdisc').text();
             var subtotal = 0;
 
-                    @for($i=1;$i<=$quantity; $i++)
+            @for($i=1;$i<=$quantity; $i++)
             var tc{{ $i }} = $('#tcost{{ $i }}').text() * 1;
             var newval{{ $i }} = tc{{ $i }} * 1;
             $('#final{{ $i }}').text(tc{{ $i }});
@@ -470,7 +474,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
     </script>
 
     @if(!Auth::check())
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $.ajaxSetup({
                     headers: {
@@ -497,7 +501,7 @@ if($ticket->earlyBirdEndDate !== null && $ticket->earlyBirdEndDate->gte($today))
             });
         </script>
     @endif
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $("[data-toggle=tooltip]").tooltip();
     </script>
 @endsection
