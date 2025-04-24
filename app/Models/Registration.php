@@ -32,6 +32,8 @@ class Registration extends Model
         'updateDate' => 'datetime',
     ];
 
+    protected $guarded = [];
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
