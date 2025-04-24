@@ -54,12 +54,12 @@ class Registration extends Model
         return $this->belongsTo(RegFinance::class, 'rfID', 'regID');
     }
 
-    public function regsessions(): HasMany
+    public function regsession(): HasOne
     {
-        return $this->hasMany(RegSession::class, 'regID', 'regID');
+        return $this->hasOne(RegSession::class, 'regID', 'regID');
     }
 
-    public function checkin($sessionID = null)
+    public function checkin($sessionID = null): void
     {
         if ($sessionID === null) {
             $sessionID = $this->event->default_session()->sessionID;
@@ -84,11 +84,11 @@ class Registration extends Model
             $rs->hasAttended = 1;
             $rs->save();
         } catch (\Exception $e) {
-            // if above doesn't create and set attendance, something big is wrong.
+            // if the above doesn't create and set attendance, something big is wrong.
         }
     }
 
-    public function is_session_attended($sessionID)
+    public function is_session_attended($sessionID): RegSession
     {
         return RegSession::where([
             ['regID', $this->regID],

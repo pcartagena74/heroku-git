@@ -163,7 +163,7 @@ class RegistrationController extends Controller
 
         // Separating out the query because name tags should be printed even if paying 'At Door'
         $nametags = Registration::where('eventID', '=', $event->eventID)
-            ->with('regfinance', 'ticket', 'person', 'person.orgperson', 'regsessions', 'event')
+            ->with('regfinance', 'ticket', 'person', 'person.orgperson', 'regsession', 'event')
             ->orderBy('regID')
             ->get();
 
