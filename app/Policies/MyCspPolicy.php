@@ -49,6 +49,7 @@ class MyCspPolicy extends Basic
                 '*.datatables.net',
                 '*.newrelic.com',
                 '*.fontawesome.com',
+                '*.google.com',
                 '*.googletagmanager.com',
                 '*.cloudflare.com',
                 '*.googleapis.com',
