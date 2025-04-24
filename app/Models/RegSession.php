@@ -11,6 +11,8 @@ class RegSession extends Model
     // The table
     protected $table = 'reg-session';
 
+    protected $guarded = [];
+
     protected $primaryKey = 'id';
 
     const CREATED_AT = 'createDate';

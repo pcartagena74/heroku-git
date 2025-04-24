@@ -46,6 +46,7 @@ class MyCspPolicy extends Basic
                 '*.mcentric.org',
                 '*.jquery.com',
                 '*.github.io',
+                '*.gstatic.com',
                 '*.stripe.com',
                 '*.datatables.net',
                 '*.newrelic.com',
@@ -81,6 +82,7 @@ class MyCspPolicy extends Basic
                 Keyword::SELF,
                 'data:',
                 '*.amazonaws.com',
+                'cdn.datatables.net',
                 '*.stripe.com'
             ])
             ->addDirective(Directive::FORM_ACTION, [
