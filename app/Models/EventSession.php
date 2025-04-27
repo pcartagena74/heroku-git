@@ -46,7 +46,7 @@ class EventSession extends Model
 
     public function speakers(): BelongsToMany
     {
-        return $this->belongsToMany(Speaker::class, 'eventsession_speaker', 'eventsession_id', 'speaker_id');
+        return $this->BelongsToMany(Speaker::class, 'eventsession_speaker', 'eventsession_id', 'speaker_id');
     }
 
     public function regsessions(): HasMany

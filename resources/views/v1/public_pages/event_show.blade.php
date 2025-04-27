@@ -681,7 +681,7 @@
                 @endsection
 
                 @section('scripts')
-                    <script nonce="{{ $cspScriptNonce }}">
+                    <script language="JavaScript" nonce="{{ $cspScriptNonce }}">
                         $('a[data-toggle="tab"]').click(function (e) {
                             $(this).tab('show');
                         });
@@ -714,6 +714,7 @@
                             $tkt_sum .= "0;";
                             $sum .= "0";
                         @endphp
+
                         function checksum() {
                             {!! $tkt_vars !!}
                             {!! $tkt_sum !!}
