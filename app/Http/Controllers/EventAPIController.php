@@ -51,6 +51,8 @@ class EventAPIController extends Controller
      */
     public function show(int $orgID, int $past, $cal = 0, ?int $etID = null, $override = null)
     {
+        // GET /eventlist/{orgID}/{past}/{cal?}/{etID?}/{override?}
+
         $org = Org::find($orgID);
         if ($org === null) {
             $message = trans('messages.instructions.no_org');
@@ -91,7 +93,7 @@ class EventAPIController extends Controller
                 $etID_array = explode(',', $etID);
                 $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
                 $tag = array_map('et_translate', $tag);
-                $tag = implode(' or ', (array) $tag);
+                $tag = implode(' or ', (array)$tag);
 
                 $events = Event::where([
                     ['orgID', $orgID],
@@ -106,8 +108,8 @@ class EventAPIController extends Controller
             } elseif ($etID !== null) {
                 $tag = DB::table('org-event_types')->where('etID', $etID)->select('etName')->first();
                 $etID_array = explode(',', $etID);
-                if (Lang::has('messages.event_types'.$tag->etName)) {
-                    $tag->etName = trans_choice('messages.event_types.'.$tag->etName, 1);
+                if (Lang::has('messages.event_types' . $tag->etName)) {
+                    $tag->etName = trans_choice('messages.event_types.' . $tag->etName, 1);
                 }
             } else {
                 // a null etID means all event categories
@@ -116,7 +118,7 @@ class EventAPIController extends Controller
                 $tag = trans('messages.codes.etID99', ['which' => $which]);
             }
 
-            if (! $past) {
+            if (!$past) {
                 if ($etID_array) {
                     $events = Event::where([
                         ['orgID', $orgID],

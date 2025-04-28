@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf70f33912ecc6cf4de1d483f1fbdb8d",
+    "content-hash": "d200798296dbd8fa46da05028dbdccb0",
     "packages": [
         {
             "name": "alexusmai/laravel-file-manager",
@@ -4729,52 +4729,6 @@
             "time": "2025-02-24T11:12:50+00:00"
         },
         {
-            "name": "maddhatter/laravel-fullcalendar",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pcartagena74/laravel-fullcalendar.git",
-                "reference": "709eb946d661b7198a43c0e89606c00dac00175f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pcartagena74/laravel-fullcalendar/zipball/709eb946d661b7198a43c0e89606c00dac00175f",
-                "reference": "709eb946d661b7198a43c0e89606c00dac00175f",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "MaddHatter\\LaravelFullcalendar\\ServiceProvider"
-                    ],
-                    "aliases": {
-                        "Calendar": "MaddHatter\\LaravelFullcalendar\\Facades\\Calendar"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "MaddHatter\\LaravelFullcalendar": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Shawn Tunney",
-                    "email": "shawn.tunney@gmail.com"
-                }
-            ],
-            "description": "Laravel helper for FullCalendar.io",
-            "support": {
-                "source": "https://github.com/pcartagena74/laravel-fullcalendar/tree/master"
-            },
-            "time": "2024-10-04T02:43:50+00:00"
-        },
-        {
             "name": "maennchen/zipstream-php",
             "version": "3.1.2",
             "source": {
@@ -5086,6 +5040,55 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
             },
             "time": "2024-03-31T07:05:07+00:00"
+        },
+        {
+            "name": "mcentric/laravel-fullcalendar",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pcartagena74/laravel-fullcalendar.git",
+                "reference": "31df61727e4ad3638c96fbe034d572d45f75ba3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pcartagena74/laravel-fullcalendar/zipball/31df61727e4ad3638c96fbe034d572d45f75ba3a",
+                "reference": "31df61727e4ad3638c96fbe034d572d45f75ba3a",
+                "shasum": ""
+            },
+            "replace": {
+                "maddhatter/laravel-fullcalendar": "dev-master"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "mCentric\\LaravelFullcalendar\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Calendar": "mCentric\\LaravelFullcalendar\\Facades\\Calendar"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "mCentric\\LaravelFullcalendar": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PC",
+                    "email": "pcartagena@mcentric.org"
+                }
+            ],
+            "description": "Laravel helper for FullCalendar.io",
+            "support": {
+                "source": "https://github.com/pcartagena74/laravel-fullcalendar/tree/master"
+            },
+            "time": "2025-04-28T01:11:55+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -14667,7 +14670,7 @@
     "stability-flags": {
         "diglabby/laravel-find-missing-translations": 20,
         "h4cc/wkhtmltopdf-amd64": 20,
-        "maddhatter/laravel-fullcalendar": 20
+        "mcentric/laravel-fullcalendar": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

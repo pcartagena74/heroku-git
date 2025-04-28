@@ -153,6 +153,7 @@ return [
          */
         //Kordy\Ticketit\TicketitServiceProvider::class,
         //App\Vendor\Ticketit\TicketitServiceProvider::class,
+        mCentric\LaravelFullcalendar\ServiceProvider::class,
         Shanmuga\LaravelEntrust\LaravelEntrustServiceProvider::class,
 
         // Laravel\Cashier\CashierServiceProvider::class,
