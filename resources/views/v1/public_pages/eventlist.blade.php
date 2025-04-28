@@ -8,7 +8,7 @@
      * @var $admin_props
      */
 
-    use Asdfx\LaravelFullcalendar\Facades\Calendar;
+    use mCentric\LaravelFullcalendar\Facades\Calendar;
 
     /*
     $sep = $admin_props[0]->value;
