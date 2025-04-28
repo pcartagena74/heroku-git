@@ -5047,12 +5047,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pcartagena74/laravel-fullcalendar.git",
-                "reference": "31df61727e4ad3638c96fbe034d572d45f75ba3a"
+                "reference": "2fcf532b5ab04d1b3d29ee913d2b11506c02db03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pcartagena74/laravel-fullcalendar/zipball/31df61727e4ad3638c96fbe034d572d45f75ba3a",
-                "reference": "31df61727e4ad3638c96fbe034d572d45f75ba3a",
+                "url": "https://api.github.com/repos/pcartagena74/laravel-fullcalendar/zipball/2fcf532b5ab04d1b3d29ee913d2b11506c02db03",
+                "reference": "2fcf532b5ab04d1b3d29ee913d2b11506c02db03",
                 "shasum": ""
             },
             "replace": {
@@ -5088,7 +5088,7 @@
             "support": {
                 "source": "https://github.com/pcartagena74/laravel-fullcalendar/tree/master"
             },
-            "time": "2025-04-28T01:11:55+00:00"
+            "time": "2025-04-28T01:41:04+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
