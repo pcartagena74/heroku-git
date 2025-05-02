@@ -58,6 +58,7 @@ class MyCspPolicy extends Basic
                 '*.newrelic.com',
                 '*.stripe.com',
                 '*.unpkg.com',
+                'unpkg.com',
             ])
             ->addDirective(Directive::STYLE, [
                 Keyword::SELF,
