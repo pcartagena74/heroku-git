@@ -4,8 +4,8 @@
      * Created: 4/5/2018
      */
 @endphp
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"/>
-<script src="{!! env('APP_URL') !!}/js/summernote-cleaner.js"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
+<script src="{!! env('APP_URL') !!}/js/summernote-cleaner.js"></script>
 <script nonce="{{ $cspScriptNonce }}">
     $(".summernote").on("summernote.paste", function (e, ne) {
 
