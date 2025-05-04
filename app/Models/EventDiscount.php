@@ -22,14 +22,17 @@ class EventDiscount extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-    ];
-
     protected static $logAttributes = ['percent', 'flatAmt', 'discountCODE'];
 
     protected static $ignoreChangedAttributes = ['createDate'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+        ];
+    }
 
     public function org(): BelongsTo
     {

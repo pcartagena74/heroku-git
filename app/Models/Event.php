@@ -30,15 +30,6 @@ class Event extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'eventStartDate' => 'datetime',
-        'eventEndDate' => 'datetime',
-        'earlyBirdDate' => 'datetime',
-        'eventID' => 'integer',
-    ];
-
     protected $fillable = ['eventName', 'eventDescription', 'eventStartDate', 'eventEndDate', 'eventTimeZone', 'eventTypeID', 'slug', 'locationID'];
 
     protected static $logOnlyDirty = true;
@@ -49,6 +40,18 @@ class Event extends Model
         'eventStartDate', 'eventEndDate'];
 
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'eventStartDate' => 'datetime',
+            'eventEndDate' => 'datetime',
+            'earlyBirdDate' => 'datetime',
+            'eventID' => 'integer',
+        ];
+    }
 
     protected function serializeDate(DateTimeInterface $date)
     {

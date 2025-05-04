@@ -14,14 +14,17 @@ class PersonHistory extends Model
 
     protected $primaryKey = 'revision';
 
-    protected $casts = [
-        'changeDate' => 'datetime',
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'lastLoginDate' => 'datetime',
-    ];
-
     protected $hidden = ['remember_token'];
+
+    protected function casts(): array
+    {
+        return [
+            'changeDate' => 'datetime',
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'lastLoginDate' => 'datetime',
+        ];
+    }
 
     public function emails(): HasMany
     {

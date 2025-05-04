@@ -24,24 +24,27 @@ class OrgPerson extends Model
 
     public $incrementing = true;
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'RelDate1' => 'datetime',
-        'RelDate2' => 'datetime',
-        'RelDate3' => 'datetime',
-        'RelDate4' => 'datetime',
-        'RelDate5' => 'datetime',
-        'RelDate6' => 'datetime',
-        'RelDate7' => 'datetime',
-        'RelDate8' => 'datetime',
-        'RelDate9' => 'datetime',
-        'RelDate10' => 'datetime',
-    ];
-
     protected static $logAttributes = ['OrgStat1', 'OrgStat2', 'RelDate1', 'RelDate2', 'RelDate3', 'RelDate4'];
 
     protected static $ignoreChangedAttributes = ['createDate'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'RelDate1' => 'datetime',
+            'RelDate2' => 'datetime',
+            'RelDate3' => 'datetime',
+            'RelDate4' => 'datetime',
+            'RelDate5' => 'datetime',
+            'RelDate6' => 'datetime',
+            'RelDate7' => 'datetime',
+            'RelDate8' => 'datetime',
+            'RelDate9' => 'datetime',
+            'RelDate10' => 'datetime',
+        ];
+    }
 
     public function myperson(): BelongsTo
     {

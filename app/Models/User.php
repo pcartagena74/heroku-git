@@ -20,14 +20,6 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
 
     protected $table = 'users';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'trial_ends_at' => 'datetime',
-        'subscription_ends_at' => 'datetime',
-        'last_login' => 'datetime',
-    ];
-
     const CREATED_AT = 'createDate';
 
     const UPDATED_AT = 'updateDate';
@@ -49,6 +41,17 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'trial_ends_at' => 'datetime',
+            'subscription_ends_at' => 'datetime',
+            'last_login' => 'datetime',
+        ];
+    }
 
     /**
      * Provides the route for email/notifications to the user

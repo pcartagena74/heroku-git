@@ -30,12 +30,6 @@ class Person extends Model
 
     const UPDATED_AT = 'updateDate';
 
-    protected $casts = [
-        'createDate' => 'datetime',
-        'updateDate' => 'datetime',
-        'lastLoginDate' => 'datetime',
-    ];
-
     protected $hidden = ['remember_token'];
 
     protected static $logOnlyDirty = true;
@@ -45,6 +39,15 @@ class Person extends Model
     protected static $logAttributes = ['login', 'defaultOrgID', 'defaultOrgPersonID'];
 
     protected static $ignoreChangedAttributes = ['createDate'];
+
+    protected function casts(): array
+    {
+        return [
+            'createDate' => 'datetime',
+            'updateDate' => 'datetime',
+            'lastLoginDate' => 'datetime',
+        ];
+    }
 
     public function roles(): BelongsToMany
     {
