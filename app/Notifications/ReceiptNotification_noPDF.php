@@ -59,7 +59,7 @@ class ReceiptNotification_noPDF extends Notification
         $this->org = Org::find($this->event->orgID);
         $this->person = Person::find($this->rf->personID);
         $this->loc = Location::find($this->event->locationID);
-        $this->receipt = "https://www.mcentric.org/error/404";
+        $this->receipt = "https://www.mcentric.org/errors/404";
         $this->name = $this->person->showDisplayName();
     }
 
