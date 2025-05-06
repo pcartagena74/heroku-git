@@ -12,7 +12,9 @@ use App\Models\Location;
 use App\Models\Org;
 use App\Models\OrgPerson;
 use App\Models\Person;
-use App\Models\Ticketit\TicketOver;
+use Illuminate\Support\Facades\Storage;
+
+//use App\Models\Ticketit\TicketOver;
 use App\Models\User;
 use App\Models\VolunteerRole;
 use Carbon\Carbon;
@@ -30,11 +32,11 @@ use Spatie\Image\Manipulations;
 /**
  * Performs hierarchical query to get the list of volunteers for the org chart
  *
- * @param  string  $o  organization record
- * @param  int  $p  optional person record; shows all volunteers if null
+ * @param string $o organization record
+ * @param int $p optional person record; shows all volunteers if null
  * @return array [$json_roles, $option_string]
  */
-if (! function_exists('volunteer_data')) {
+if (!function_exists('volunteer_data')) {
     function volunteer_data($o, $p)
     {
         $option_string = '';
@@ -86,21 +88,21 @@ if (! function_exists('volunteer_data')) {
                                       WHEN volunteer_roles.title_override IS NOT NULL
                                         THEN volunteer_roles.title_override
                                       ELSE concat("messages.default_roles.", volunteer_roles.title)
-                                    END) as "'.trans('messages.fields.title').'",
+                                    END) as "' . trans('messages.fields.title') . '",
                                     pid,
                                     (CASE
                                       WHEN p.avatarURL IS NULL
                                         THEN "/images/user.png"
                                       ELSE p.avatarURL  
                                     END) as img,
-                                    volunteer_roles.jd_URL as "'.trans('messages.default_roles.jd_url').'",
+                                    volunteer_roles.jd_URL as "' . trans('messages.default_roles.jd_url') . '",
                                     (CASE
                                        WHEN prefName is null
                                          THEN concat (firstName, " ", lastName) 
                                        ELSE concat(prefName, " ", lastName) 
-                                     END) as '.trans('messages.fields.name').',
-                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "'.trans('messages.default_roles.start').'",
-                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "'.trans('messages.default_roles.end').'"'))
+                                     END) as ' . trans('messages.fields.name') . ',
+                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "' . trans('messages.default_roles.start') . '",
+                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "' . trans('messages.default_roles.end') . '"'))
                 ->distinct()
                 ->get();
         } else {
@@ -109,7 +111,7 @@ if (! function_exists('volunteer_data')) {
                 WITH RECURSIVE MyList
                     as (select vr.id, vr.pid, vr.title, 1 as 'level'
                         from `volunteer_roles` vr
-                        where vr.id = ".$p->service_role->volunteer_role->id."
+                        where vr.id = " . $p->service_role->volunteer_role->id . "
                             and vr.orgID = $o->orgID
                 
                 union all
@@ -123,7 +125,7 @@ if (! function_exists('volunteer_data')) {
 
             $node_string = null;
             foreach ($nodes as $node) {
-                $node_string .= $node->id.',';
+                $node_string .= $node->id . ',';
             }
             $node_string = rtrim($node_string, ',');
             $node_array = explode(',', $node_string);
@@ -153,21 +155,21 @@ if (! function_exists('volunteer_data')) {
                                       WHEN volunteer_roles.title_override IS NOT NULL
                                         THEN volunteer_roles.title_override
                                       ELSE concat("messages.default_roles.", volunteer_roles.title)
-                                    END) as "'.trans('messages.fields.title').'",
+                                    END) as "' . trans('messages.fields.title') . '",
                                     pid,
                                     (CASE
                                       WHEN p.avatarURL IS NULL
                                         THEN "/images/user.png"
                                       ELSE p.avatarURL  
                                     END) as img,
-                                    volunteer_roles.jd_URL as "'.trans('messages.default_roles.jd_url').'",
+                                    volunteer_roles.jd_URL as "' . trans('messages.default_roles.jd_url') . '",
                                     (CASE
                                        WHEN prefName is null
                                          THEN concat (firstName, " ", lastName) 
                                        ELSE concat(prefName, " ", lastName) 
-                                     END) as '.trans('messages.fields.name').',
-                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "'.trans('messages.default_roles.start').'",
-                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "'.trans('messages.default_roles.end').'"'))
+                                     END) as ' . trans('messages.fields.name') . ',
+                                    date_format(vs.roleStartDate, "%Y-%m-%d") as "' . trans('messages.default_roles.start') . '",
+                                    date_format(vs.roleEndDate, "%Y-%m-%d") as "' . trans('messages.default_roles.end') . '"'))
                 ->distinct()
                 ->get();
         }
@@ -179,7 +181,7 @@ if (! function_exists('volunteer_data')) {
                     $jr[trans('messages.fields.title')] = trans($jr[trans('messages.fields.title')]);
                 } else {
                     $jr[trans('messages.fields.title')] =
-                        trans($jr->prefix).trans($jr[trans('messages.fields.title')]);
+                        trans($jr->prefix) . trans($jr[trans('messages.fields.title')]);
                 }
             }
             if ($jr->pid === null) {
@@ -196,12 +198,12 @@ if (! function_exists('volunteer_data')) {
 /**
  * Takes a member report type, optional # of days, and optional pagination count
  *
- * @param  string  $which
- * @param  int  $days
- * @param  int  $page
+ * @param string $which
+ * @param int $days
+ * @param int $page
  * @return array
  */
-if (! function_exists('membership_reports')) {
+if (!function_exists('membership_reports')) {
     function membership_reports($orgID, $which = 'new', $download = 0, $days = 90, $page = 15): array
     {
         $today = Carbon::today();
@@ -305,10 +307,10 @@ if (! function_exists('membership_reports')) {
 /**
  * Takes a role id and returns the count of others with that role within the current user's org
  *
- * @param  int  $id
+ * @param int $id
  * @return int
  */
-if (! function_exists('count_roles')) {
+if (!function_exists('count_roles')) {
     function count_roles($id)
     {
         $p = Person::find(auth()->user()->id);
@@ -327,18 +329,24 @@ if (! function_exists('count_roles')) {
  * storage in AWS media area associated with Org and updates the html to reference image URLs
  *
  * @param  $html
- * @param  Org  $org
+ * @param Org $org
  * @return string
  */
-if (! function_exists('extract_images')) {
+if (!function_exists('extract_images')) {
     function extract_images($html, $orgID)
     {
         $dom = new \DOMDocument;
         $org = Org::find($orgID);
+
+        if (!$org) {
+            throw new \Exception('Organization not found');
+        }
+
         $updated = 0;
 
         try {
-            $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
+            $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE);
 
             $images = $dom->getElementsByTagName('img');
 
@@ -346,41 +354,61 @@ if (! function_exists('extract_images')) {
                 $src = $img->getAttribute('src');
 
                 if (preg_match('/data:image/', $src)) {
-                    $updated = 1;
                     // get the mimetype
                     preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
-                    $mimetype = $groups['mime'];
+                    $mimetype = $groups['mime'] ?? 'jpeg'; // default to jpeg if mime not found
 
-                    // Generating a random filename
+                    // Generating a filename
                     $filename = $img->getAttribute('data-filename');
-                    $filepath = "$org->orgPath/uploads/$filename";
-
-                    // @see http://image.intervention.io/api/
-                    $image = Image::make($src)
-                        // resize if required
-                        /* ->resize(300, 200) */
-                        ->encode($mimetype, 100); // encode file to the specified mimetype
-
-                    try {
-                        if (Storage::disk('s3_media')->exists($filepath)) {
-                            $new_src = Storage::disk('s3_media')->url($filepath);
-                        }
-                    } catch (Exception $e) {
-                        $new_src = '#';
+                    if (empty($filename)) {
+                        $filename = uniqid('img_', true) . '.' . $mimetype;
                     }
 
-                    $img->removeAttribute('src');
-                    $img->removeAttribute('data-filename');
-                    $img->setAttribute('src', $new_src);
+                    $filepath = trim("$org->orgPath/uploads/$filename", '/');
+
+                    try {
+                        // Create image from base64
+                        $image = Image::make($src)->encode($mimetype, 100);
+
+                        // Store the image
+                        $stored = Storage::disk('s3_media')->put(
+                            $filepath,
+                            $image->stream()->__toString(),
+                            'public'
+                        );
+
+                        if ($stored) {
+                            $new_src = Storage::disk('s3_media')->url($filepath);
+                            $updated = 1;
+
+                            $img->removeAttribute('src');
+                            $img->removeAttribute('data-filename');
+                            $img->setAttribute('src', $new_src);
+                        } else {
+                            throw new \Exception('Failed to store image');
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Image upload failed: ' . $e->getMessage(), [
+                            'org_id' => $orgID,
+                            'filename' => $filename
+                        ]);
+
+                        // Keep original image if upload fails
+                        continue;
+                    }
                 }
             }
-            if ($updated) {
-                return $dom->saveHTML();
-            } else {
-                return $html;
-            }
-        } catch (Exception $exception) {
-            request()->session()->flash('alert-danger', trans('messages.errors.html_error')."<br /><pre>$exception</pre>");
+
+            return $updated ? $dom->saveHTML() : $html;
+
+        } catch (\Exception $exception) {
+            \Log::error('HTML processing failed: ' . $exception->getMessage(), [
+                'org_id' => $orgID
+            ]);
+
+            request()->session()->flash('alert-danger',
+                trans('messages.errors.html_error') . "<br /><pre>{$exception->getMessage()}</pre>"
+            );
 
             return $html;
         }
@@ -391,13 +419,13 @@ if (! function_exists('extract_images')) {
  * Takes a model indicator and an array of variables, usually just 1, and performs a rudimentary existence check
  *
  * @param  $model  Values: p for Person, e for Email, op for OrgPerson
- * @param  $doFlash  1 if flash message should be set
+ * @param  $doFlash 1 if flash message should be set
  * @param  $var_array  Contents:
  *                    + p:  firstName, lastName, login
  *                    + e:  login
  *                    + op: PMI ID
  */
-if (! function_exists('check_exists')) {
+if (!function_exists('check_exists')) {
     function check_exists($model, $doFlash, $var_array)
     {
         $details = '<ul>';
@@ -432,7 +460,7 @@ if (! function_exists('check_exists')) {
                 $e = Email::where('emailADDR', '=', $email)->first();
                 if ($e !== null) {
                     $p = Person::find($e->personID);
-                    $details .= '<li>'.$email.'</li>';
+                    $details .= '<li>' . $email . '</li>';
                     $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                     $details .= "<li>$existing</li>";
                     $details .= '</ul>';
@@ -449,7 +477,7 @@ if (! function_exists('check_exists')) {
                     $op = OrgPerson::where('OrgStat1', '=', $pmiID)->first();
                     if ($op !== null) {
                         $p = Person::find($op->personID);
-                        $details .= '<li>'.$op->OrgStat1.'</li>';
+                        $details .= '<li>' . $op->OrgStat1 . '</li>';
                         $existing = trans('messages.errors.existing_account', ['f' => $p->firstName, 'l' => $p->lastName, 'e' => $p->login]);
                         $details .= "<li>$existing</li>";
                         $details .= '</ul>';
@@ -474,22 +502,22 @@ if (! function_exists('check_exists')) {
  * @param  $personID
  * @return string
  */
-if (! function_exists('pLink')) {
+if (!function_exists('pLink')) {
     function plink($regID, $personID)
     {
-        return '<a href="'.env('APP_URL').'/profile/'.$personID.'">'.$regID.'</a>';
+        return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . '</a>';
     }
 }
 
 /**
  * et_translate: array_map function to apply a trans_choice if a translation exists for the term
  */
-if (! function_exists('et_translate')) {
+if (!function_exists('et_translate')) {
     function et_translate($term)
     {
         $x = 'messages.event_types.';
-        if (Lang::has($x.$term)) {
-            return trans_choice($x.$term, 1);
+        if (Lang::has($x . $term)) {
+            return trans_choice($x . $term, 1);
         } else {
             return $term;
         }
@@ -504,7 +532,7 @@ if (! function_exists('et_translate')) {
  * @param  $type
  * @return string
  */
-if (! function_exists('li_print_array')) {
+if (!function_exists('li_print_array')) {
     function li_print_array($array, $type)
     {
         //dd($array);
@@ -522,9 +550,9 @@ if (! function_exists('li_print_array')) {
         foreach ($array as $item) {
             $reg = $item['reg'];
             $name = $item['name'];
-            $form = Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->regfinance->regID]]);
-            $form .= Form::submit(trans('messages.buttons.reg_can'), ['class' => 'btn btn-primary btn-xs']);
-            $form .= Form::close();
+            $form = html()->form('DELETE', url(join('/', ['cancel_registration', $reg->regID, $reg->regfinance->regID])))->open();
+            $form .= html()->submit(trans('messages.buttons.reg_can'))->class('btn btn-primary btn-xs');
+            $form .= html()->form()->close();
             $output .= "<li>$name $form</li>";
         }
         $output .= $end;
@@ -540,7 +568,7 @@ if (! function_exists('li_print_array')) {
  * @param  $p
  * @return bool
  */
-if (! function_exists('assoc_email')) {
+if (!function_exists('assoc_email')) {
     function assoc_email($email, $p)
     {
         $e = Email::where('emailADDR', '=', $email)->first();
@@ -553,9 +581,9 @@ if (! function_exists('assoc_email')) {
 }
 
 /**
- * @param  Request  $request
- * @param  Event  $event
- * @param  Person  $current_person
+ * @param Request $request
+ * @param Event $event
+ * @param Person $current_person
  * @return Location | null
  *
  * location_triage evaluates location data entered while creating/updating event by:
@@ -563,7 +591,7 @@ if (! function_exists('assoc_email')) {
  * 2. Checking whether data was entered into visible form fields
  * 3. Checking if there are any discrepancies (changes) to data in the form fields indicating the need to update
  */
-if (! function_exists('location_triage')) {
+if (!function_exists('location_triage')) {
     function location_triage(Request $request, Event $event, Person $current_person)
     {
         //$loc = null;
@@ -604,7 +632,7 @@ if (! function_exists('location_triage')) {
                 $loc = Location::find($event->locationID);
                 break;
 
-            case ! empty($locationID):
+            case !empty($locationID):
                 // If the selected locationID does not match one already associated with the event, change association
                 // Update location fields unless orgID=1
                 $loc = Location::find($locationID);
@@ -639,7 +667,7 @@ if (! function_exists('location_triage')) {
  * @param ticket collection $ticket
  * @return array of agent
  */
-if (! function_exists('getAgentList')) {
+if (!function_exists('getAgentList')) {
     function getAgentList($ticket = null)
     {
         $orgId = 0;
@@ -653,7 +681,7 @@ if (! function_exists('getAgentList')) {
 
         $user = User::where('id', auth()->user()->id)->get()->first();
         //get list of admins only for use with admin role
-        if ($user->hasRole(['Admin']) && ! $user->hasRole(['Developer'])) {
+        if ($user->hasRole(['Admin']) && !$user->hasRole(['Developer'])) {
             $admin_agents = Person::whereIn('personID', function ($q) use ($orgId) {
                 $q->select('user_id')
                     ->from('person_role')
@@ -693,7 +721,7 @@ if (! function_exists('getAgentList')) {
         })->get()->pluck('login', 'personID')->toArray();
 
         $dev_agents = array_map(function ($value) {
-            return $value.'(Developer)';
+            return $value . '(Developer)';
         }, $dev_agents);
 
         $agent_lists['auto_dev'] = 'Developer Queue';
@@ -705,9 +733,9 @@ if (! function_exists('getAgentList')) {
         if (is_array($admin_agents)) {
             foreach ($admin_agents as $key => $value) {
                 if (array_key_exists($key, $agent_lists)) {
-                    $agent_lists[$key] = $value.' (Admin and Developer)';
+                    $agent_lists[$key] = $value . ' (Admin and Developer)';
                 } else {
-                    $agent_lists[$key] = $value.' (Admin)';
+                    $agent_lists[$key] = $value . ' (Admin)';
                 }
             }
         }
@@ -721,7 +749,7 @@ if (! function_exists('getAgentList')) {
  *
  * @return int ticket count
  */
-if (! function_exists('getActiveTicketCountUser')) {
+if (!function_exists('getActiveTicketCountUser')) {
     function getActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -733,7 +761,7 @@ if (! function_exists('getActiveTicketCountUser')) {
     }
 }
 
-if (! function_exists('showActiveTicketUser')) {
+if (!function_exists('showActiveTicketUser')) {
     function showActiveTicketUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -750,7 +778,7 @@ if (! function_exists('showActiveTicketUser')) {
  *
  * @return bool
  */
-if (! function_exists('markReadActiveTicketCountUser')) {
+if (!function_exists('markReadActiveTicketCountUser')) {
     function markReadActiveTicketCountUser()
     {
         $person = Person::find(auth()->user()->id);
@@ -764,10 +792,10 @@ if (! function_exists('markReadActiveTicketCountUser')) {
 /**
  * make a specific user ticket as unread
  *
- * @param  int  $ticket_id  ticket id
+ * @param int $ticket_id ticket id
  * @return bool
  */
-if (! function_exists('markUnreadTicketUser')) {
+if (!function_exists('markUnreadTicketUser')) {
     function markUnreadTicketUser($ticket_id)
     {
         if (empty($ticket_id)) {
@@ -784,7 +812,7 @@ if (! function_exists('markUnreadTicketUser')) {
  *
  * @return int count
  */
-if (! function_exists('getActiveTicketCountAgent')) {
+if (!function_exists('getActiveTicketCountAgent')) {
     function getActiveTicketCountAgent()
     {
         $person = Person::find(auth()->user()->id);
@@ -801,7 +829,8 @@ if (! function_exists('getActiveTicketCountAgent')) {
  *
  * @return int count
  */
-if (! function_exists('getTicketCategories')) {
+/*
+if (!function_exists('getTicketCategories')) {
     function getTicketCategories()
     {
         [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
@@ -809,27 +838,28 @@ if (! function_exists('getTicketCategories')) {
         return $categories;
     }
 }
+*/
 
 /**
  * get all active ticket of loggedin user
  *
  * @return int count
  */
-if (! function_exists('getTicketPriorities')) {
+/*if (!function_exists('getTicketPriorities')) {
     function getTicketPriorities()
     {
         [$priorities, $categories] = app(App\Http\TicketitControllers\TicketsControllerOver::class)->PCS();
 
         return $priorities;
     }
-}
+}*/
 
 /**
  * get template builder block category from database
  *
  * @return array of email block category
  */
-if (! function_exists('get_template_builder_blocks_category')) {
+if (!function_exists('get_template_builder_blocks_category')) {
     function get_template_builder_category()
     {
         return App\Models\EmailBlockCategory::all()->toArray();
@@ -839,10 +869,10 @@ if (! function_exists('get_template_builder_blocks_category')) {
 /**
  * get template blocks by category id
  *
- * @param  int  $email_cat_id  email category id
+ * @param int $email_cat_id email category id
  * @return array of category blocks
  */
-if (! function_exists('get_template_builder_blocks_category')) {
+if (!function_exists('get_template_builder_blocks_category')) {
     function get_template_builder_block_category($email_cat_id)
     {
         return App\Models\EmailBlock::where(['cat_id' => $email_cat_id, 'is_active' => 1])->get()->toArray();
@@ -852,13 +882,13 @@ if (! function_exists('get_template_builder_blocks_category')) {
 /**
  * check if given string is date type
  *
- * @param  string  $date_str  date
+ * @param string $date_str date
  * @return bool true/false
  */
-if (! function_exists('isDate')) {
+if (!function_exists('isDate')) {
     function isDate($date_str)
     {
-        if (! $date_str) {
+        if (!$date_str) {
             return false;
         } else {
             // $date = date_parse($date_str);
@@ -875,9 +905,9 @@ if (! function_exists('isDate')) {
 /**
  * send data to request bin for queue debug
  *
- * @param  array  $data
+ * @param array $data
  */
-if (! function_exists('requestBin')) {
+if (!function_exists('requestBin')) {
     function requestBin($data)
     {
         return;
@@ -903,13 +933,13 @@ if (! function_exists('requestBin')) {
 /**
  * replace text placeholder with actual data from database
  *
- * @param  string  $email  user email whose data needed to be replaced by placeholder
- * @param  object  $campaign  the campaign object
- * @param  bool  $for_preview  true if using for preview only false while sending actual email
- * @param  string  $raw_html  html string used when for_preview is true
+ * @param string $email user email whose data needed to be replaced by placeholder
+ * @param object $campaign the campaign object
+ * @param bool $for_preview true if using for preview only false while sending actual email
+ * @param string $raw_html html string used when for_preview is true
  * @return string replaced html
  */
-if (! function_exists('replaceUserDataInEmailTemplate')) {
+if (!function_exists('replaceUserDataInEmailTemplate')) {
     function replaceUserDataInEmailTemplate($email, $campaign, $for_preview = false, $raw_html = null, $note = null)
     {
         // $start = microtime(true);
@@ -929,13 +959,13 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
                 </tbody>
             </table></div></td></tr></tbody></table>';
         if ($for_preview) {
-            if (! empty($raw_html)) {
+            if (!empty($raw_html)) {
                 $person = Person::where(['personID' => auth()->user()->id])->with('orgperson')->get()->first();
                 $organization = Org::where('orgID', $person->defaultOrgID)->select('orgName')->get()->first();
-                if (! empty($campaign)) {
-                    if (! empty($campaign->preheader)) {
+                if (!empty($campaign)) {
+                    if (!empty($campaign->preheader)) {
                         $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
-                        $raw_html = $preheader_html.$raw_html;
+                        $raw_html = $preheader_html . $raw_html;
                     }
                 }
             } else {
@@ -949,9 +979,9 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
                     $raw_html .= $value->content;
                 }
             } else {
-                if (! empty($campaign->preheader)) {
+                if (!empty($campaign->preheader)) {
                     $preheader_html = str_replace('##toreplace##', $campaign->preheader, $pre_header_str);
-                    $raw_html = $preheader_html.$campaign->content;
+                    $raw_html = $preheader_html . $campaign->content;
                 } else {
                     $raw_html = $campaign->content;
                 }
@@ -962,7 +992,7 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
         if (empty($person) || empty($organization)) {
             return $raw_html;
         }
-        if (! empty($organization)) {
+        if (!empty($organization)) {
             $org_name = $organization->orgName;
         }
         $mapping = [
@@ -1016,11 +1046,11 @@ if (! function_exists('replaceUserDataInEmailTemplate')) {
 /**
  * Generate thumbnail from email html
  *
- * @param  string  $html  email html
- * @param  object  $campaign  campaign object for name
+ * @param string $html email html
+ * @param object $campaign campaign object for name
  * @return string file path
  */
-if (! function_exists('generateEmailTemplateThumbnail')) {
+if (!function_exists('generateEmailTemplateThumbnail')) {
     function generateEmailTemplateThumbnail($html, $campaign)
     {
         if (empty($html) || empty($campaign)) {
@@ -1030,7 +1060,7 @@ if (! function_exists('generateEmailTemplateThumbnail')) {
         $html = replaceUserDataInEmailTemplate($email = null, $campaign_obj = null, $for_preview = true, $raw_html = $html);
         $org = Org::where('orgID', $campaign->orgID)->get()->first();
         $path = getAllDirectoryPathFM($org);
-        $full_path = $path['campaign'].'/thumb/'.$file_name;
+        $full_path = $path['campaign'] . '/thumb/' . $file_name;
         $img = Browsershot::html($html)
             ->fullPage()
             ->fit(Manipulations::FIT_CONTAIN, 70, 120)
@@ -1046,16 +1076,16 @@ if (! function_exists('generateEmailTemplateThumbnail')) {
 /**
  * generate email template thumbnail name
  *
- * @param  object  $campaign  campaign object
+ * @param object $campaign campaign object
  * @return string template thumbnail name
  */
-if (! function_exists('generateEmailTemplateThumbnailName')) {
+if (!function_exists('generateEmailTemplateThumbnailName')) {
     function generateEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
 
-        return $campaign->orgID.'-'.$campaign->campaignID.'-'.$date->timestamp.'.png';
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
     }
 }
 
@@ -1065,29 +1095,29 @@ if (! function_exists('generateEmailTemplateThumbnailName')) {
  * @param  [type] $campaign [description]
  * @return [type]           [description]
  */
-if (! function_exists('getEmailTemplateThumbnailName')) {
+if (!function_exists('getEmailTemplateThumbnailName')) {
     function getEmailTemplateThumbnailName($campaign)
     {
         //format orgid-campaignid-created date time stamp to avoid storing unnecessary data in db
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $campaign->createDate);
 
-        return $campaign->orgID.'-'.$campaign->campaignID.'-'.$date->timestamp.'.png';
+        return $campaign->orgID . '-' . $campaign->campaignID . '-' . $date->timestamp . '.png';
     }
 }
 
 /**
  * get url for email template thumbnail it also check if the thumbnail does not exist it will show mcentric logo instead
  *
- * @param  object  $campaign  campaign object
+ * @param object $campaign campaign object
  * @return string URL for thumbnail
  */
-if (! function_exists('getEmailTemplateThumbnailURL')) {
+if (!function_exists('getEmailTemplateThumbnailURL')) {
     function getEmailTemplateThumbnailURL($campaign)
     {
         $path = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'].'/thumb/'.$file_name)) {
-            return Storage::disk(getDefaultDiskFM())->url($path['campaign'].'/thumb/'.$file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->url($path['campaign'] . '/thumb/' . $file_name);
         } else {
             return url('images/mCentric_square.png');
         }
@@ -1097,10 +1127,10 @@ if (! function_exists('getEmailTemplateThumbnailURL')) {
 /**
  * all static directory path for filemanger this has a system wide impact
  *
- * @param  object  $org  org model if available
+ * @param object $org org model if available
  * @return array all path that are created
  */
-if (! function_exists('getAllDirectoryPathFM')) {
+if (!function_exists('getAllDirectoryPathFM')) {
     function getAllDirectoryPathFM($org = null)
     {
         if (empty($org)) {
@@ -1108,13 +1138,13 @@ if (! function_exists('getAllDirectoryPathFM')) {
             $org = $currentPerson->defaultOrg;
         }
         // $base_path        = $org->orgID . '/' . $org->orgPath . '/'; alternate approach
-        $base_path = $org->orgPath.'/filemanager/';
+        $base_path = $org->orgPath . '/filemanager/';
         // $base_path              = $org->orgPath . '/';
-        $path['event'] = Storage::disk(getDefaultDiskFM())->path($base_path.'events_files');
-        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path.'campaign_files');
-        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path.'campaign_files/thumb');
+        $path['event'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'events_files');
+        $path['campaign'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files');
+        $path['campaign_thumb'] = Storage::disk(getDefaultDiskFM())->path($base_path . 'campaign_files/thumb');
         $path['orgPath'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath);
-        $path['orgPathFM'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+        $path['orgPathFM'] = Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
 
         return $path;
     }
@@ -1123,10 +1153,10 @@ if (! function_exists('getAllDirectoryPathFM')) {
 /**
  * generate default directory set for new organizations
  *
- * @param  object  $org  organization object
+ * @param object $org organization object
  * @return null
  */
-if (! function_exists('generateDirectoriesForOrg')) {
+if (!function_exists('generateDirectoriesForOrg')) {
     function generateDirectoriesForOrg($org)
     {
         $path = getAllDirectoryPathFM($org);
@@ -1146,13 +1176,13 @@ if (! function_exists('generateDirectoriesForOrg')) {
  *
  * @return string folder path
  */
-if (! function_exists('getDefaultPathFM')) {
+if (!function_exists('getDefaultPathFM')) {
     function getDefaultPathFM()
     {
         $currentPerson = Person::find(auth()->user()->id);
         $org = $currentPerson->defaultOrg;
 
-        return Storage::disk(getDefaultDiskFM())->path($org->orgPath.'/filemanager');
+        return Storage::disk(getDefaultDiskFM())->path($org->orgPath . '/filemanager');
     }
 }
 
@@ -1161,7 +1191,7 @@ if (! function_exists('getDefaultPathFM')) {
  *
  * @return string diskname
  */
-if (! function_exists('getDefaultDiskFM')) {
+if (!function_exists('getDefaultDiskFM')) {
     function getDefaultDiskFM()
     {
         return 's3_media';
@@ -1173,7 +1203,7 @@ if (! function_exists('getDefaultDiskFM')) {
  *
  * @return array of disk names
  */
-if (! function_exists('getAllDiskFM')) {
+if (!function_exists('getAllDiskFM')) {
     function getAllDiskFM()
     {
         // return ['public', 's3_receipts', 's3_media', 'events'];
@@ -1184,11 +1214,11 @@ if (! function_exists('getAllDiskFM')) {
 /**
  * get count and email list for selected user org
  *
- * @param  object  $currentPerson  model object
- * @param  bool  $for_select  if needed for dropdown use true
+ * @param object $currentPerson model object
+ * @param bool $for_select if needed for dropdown use true
  * @return array either only name and id or complete details
  */
-if (! function_exists('getEmailList')) {
+if (!function_exists('getEmailList')) {
     function getEmailList($currentPerson, $for_select = false)
     {
         $rows = [];
@@ -1297,9 +1327,9 @@ if (! function_exists('getEmailList')) {
                         break;
                 }
             }
-            $edit_link = '<a href="'.url('list', $l->id).'"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
-            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete('.$l->id.')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
-            $links = $edit_link.' | '.$delete_link;
+            $edit_link = '<a href="' . url('list', $l->id) . '"><i aria-hidden="true" class="fa fa-edit">&nbsp;</i>Edit</a>';
+            $delete_link = '<a href="javascript:void(0)" onclick="confim_delete(' . $l->id . ')"><i aria-hidden="true" class="fa fa-trash-alt">&nbsp;</i>Delete</a>';
+            $links = $edit_link . ' | ' . $delete_link;
             array_push($rows, [$l->listName, $l->listDesc, $c, $l->created_at->format('n/j/Y'), $links]);
             array_push($select_rows, ['id' => $l->id, 'name' => $l->listName, 'count' => $c]);
         }
@@ -1314,11 +1344,11 @@ if (! function_exists('getEmailList')) {
 /**
  * get default email list (list from efcico corporation)
  *
- * @param  object  $currentPerson  default
- * @param  bool  $for_select  only for dropdown
+ * @param object $currentPerson default
+ * @param bool $for_select only for dropdown
  * @return array either only name and id or complete details
  */
-if (! function_exists('getDefaultEmailList')) {
+if (!function_exists('getDefaultEmailList')) {
     function getDefaultEmailList($currentPerson, $for_select = false)
     {
         $defaults = EmailList::where('orgID', 1)->get();
@@ -1359,11 +1389,11 @@ if (! function_exists('getDefaultEmailList')) {
 /**
  * get email list from email list management
  *
- * @param  int  $list_id  list management id
- * @param  int  $org_id  organization id
+ * @param int $list_id list management id
+ * @param int $org_id organization id
  * @return array email id list
  */
-if (! function_exists('getEmailListContact')) {
+if (!function_exists('getEmailListContact')) {
     function getEmailListContact($list_id, $org_id)
     {
         $list = EmailList::whereId($list_id)->get()->first();
@@ -1469,7 +1499,7 @@ if (! function_exists('getEmailListContact')) {
         } //else end
         $email_list = [];
         foreach ($c as $key => $value) {
-            if (! empty($value->email[0])) {
+            if (!empty($value->email[0])) {
                 $email_list[] = $value->email[0]->emailADDR;
             } else {
                 $email_list[] = $value->login;
@@ -1483,10 +1513,10 @@ if (! function_exists('getEmailListContact')) {
 /**
  * convert date to date picker format
  *
- * @param  string  $date_time  mysql date string
+ * @param string $date_time mysql date string
  * @return string in datepicker formate (m/d/Y h:i A)
  */
-if (! function_exists('convertToDatePickerFormat')) {
+if (!function_exists('convertToDatePickerFormat')) {
     function convertToDatePickerFormat($date_time)
     {
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $date_time);
@@ -1498,16 +1528,16 @@ if (! function_exists('convertToDatePickerFormat')) {
 /**
  * delete campaign thumbnail image from s3
  *
- * @param  object  $campaign  campaign model
+ * @param object $campaign campaign model
  * @return bool true/false
  */
-if (! function_exists('deleteCampaignThumb')) {
+if (!function_exists('deleteCampaignThumb')) {
     function deleteCampaignThumb($campaign)
     {
         $path = getAllDirectoryPathFM();
         $file_name = getEmailTemplateThumbnailName($campaign);
-        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'].'/thumb/'.$file_name)) {
-            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'].'/thumb/'.$file_name);
+        if (Storage::disk(getDefaultDiskFM())->exists($path['campaign'] . '/thumb/' . $file_name)) {
+            return Storage::disk(getDefaultDiskFM())->delete($path['campaign'] . '/thumb/' . $file_name);
         }
     }
 }
@@ -1515,15 +1545,15 @@ if (! function_exists('deleteCampaignThumb')) {
 /**
  * generate lat lng for existing address for testing only bunch on 20
  *
- * @param  string  $type  single / all address
- * @param  bool  $for_org  true if lat lng is needed for organization
+ * @param string $type single / all address
+ * @param bool $for_org true if lat lng is needed for organization
  * @return bool true/false
  */
-if (! function_exists('generateLatLngForAddress')) {
+if (!function_exists('generateLatLngForAddress')) {
     function generateLatLngForAddress($address, $for_org = false)
     {
-        if (! empty($address)) {
-            if (! empty($address->zip)) {
+        if (!empty($address)) {
+            if (!empty($address->zip)) {
                 $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
                     ->orWhere('zip', ltrim($address->zip, '0'))->get()->first();
                 if (empty($zip_lat_lng)) {
@@ -1538,37 +1568,37 @@ if (! function_exists('generateLatLngForAddress')) {
             }
             $add_str = '';
             if ($for_org == false) {
-                $add_str = $address->addr1.', ';
-                if (! empty($address->addr2)) {
-                    $add_str .= $address->addr2.', ';
+                $add_str = $address->addr1 . ', ';
+                if (!empty($address->addr2)) {
+                    $add_str .= $address->addr2 . ', ';
                 }
-                $add_str .= $address->city.', ';
-                if (! empty($address->zip)) {
+                $add_str .= $address->city . ', ';
+                if (!empty($address->zip)) {
                     $add_str .= $address->state;
-                    $add_str .= $address->zip.', ';
+                    $add_str .= $address->zip . ', ';
                 } else {
-                    $add_str .= $address->state.', ';
+                    $add_str .= $address->state . ', ';
                 }
                 if ($address->cntryID == 228) {
                     //as majority of request will be from this country it will help us reduce query
                     $add_str .= 'United States';
                 } else {
                     $country = DB::table('countries')->where('cntryID', $address->cntryID)->get()->first();
-                    if (! empty($country)) {
+                    if (!empty($country)) {
                         $add_str .= $country->cntryName;
                     }
                 }
             } else {
-                $add_str = $address->orgAddr1.', ';
-                if (! empty($address->orgAddr2)) {
-                    $add_str .= $address->orgAddr2.', ';
+                $add_str = $address->orgAddr1 . ', ';
+                if (!empty($address->orgAddr2)) {
+                    $add_str .= $address->orgAddr2 . ', ';
                 }
-                $add_str .= $address->orgCity.', ';
-                if (! empty($address->orgZip)) {
+                $add_str .= $address->orgCity . ', ';
+                if (!empty($address->orgZip)) {
                     $add_str .= $address->orgState;
-                    $add_str .= $address->orgZip.', ';
+                    $add_str .= $address->orgZip . ', ';
                 } else {
-                    $add_str .= $address->State.', ';
+                    $add_str .= $address->State . ', ';
                 }
                 $add_str .= 'United States'; // as currently org does not have any country field
                 // if ($address->cntryID == 228) {
@@ -1621,12 +1651,12 @@ if (! function_exists('generateLatLngForAddress')) {
  *
  * @return void
  */
-if (! function_exists('storeLatiLongiFormZip')) {
+if (!function_exists('storeLatiLongiFormZip')) {
     function storeLatiLongiFormZip()
     {
         $person_address = Address::where('lati', '0')->where('longi', '0')->limit(1000)->get();
         foreach ($person_address as $key => $address) {
-            if (! empty($address->zip)) {
+            if (!empty($address->zip)) {
                 $zip_lat_lng = DB::table('ziplatlng')->where('zip', $address->zip)
                     ->orWhere('zip', ltrim($address->zip, '0'))->get()->first();
                 if (empty($zip_lat_lng)) {
@@ -1646,11 +1676,11 @@ if (! function_exists('storeLatiLongiFormZip')) {
 /**
  * check if org property exist and return its value if found
  *
- * @param  object  $org  org object
- * @param  array  $property  template category array
+ * @param object $org org object
+ * @param array $property template category array
  * @return boolean/string   bool if not found otherwise string.
  */
-if (! function_exists('has_org_property')) {
+if (!function_exists('has_org_property')) {
     function has_org_property($org, $property)
     {
         switch ($property['name']) {
@@ -1806,10 +1836,10 @@ if (! function_exists('has_org_property')) {
 /**
  * get event ids with date and name wise list from event query object.
  *
- * @param  object  $event  event model object
+ * @param object $event event model object
  * @return array ids, datewithname, min & max dates
  */
-if (! function_exists('generateEmailListEventArray')) {
+if (!function_exists('generateEmailListEventArray')) {
     function generateEmailListEventArray($event)
     {
         $ytd_events_date = [];
@@ -1818,7 +1848,7 @@ if (! function_exists('generateEmailListEventArray')) {
         foreach ($event as $id) {
             array_push($ids, $id->eventID);
             $event_type_name = 'NA';
-            if (! empty($id->event_type->etName)) {
+            if (!empty($id->event_type->etName)) {
                 $event_type_name = $id->event_type->etName;
             }
             $date = $id->eventStartDate->format('Y-m-d');
@@ -1828,7 +1858,7 @@ if (! function_exists('generateEmailListEventArray')) {
                 $name .= '...';
             }
             $display_date = $id->eventStartDate->format(trans('messages.app_params.date_format'));
-            $list_name = $event_type_name.': '.$name.' - '.$display_date;
+            $list_name = $event_type_name . ': ' . $name . ' - ' . $display_date;
             $encoding = mb_detect_encoding($list_name, 'UTF-8, ISO-8859-1, WINDOWS-1252, WINDOWS-1251', true);
             if ($encoding != 'UTF-8') {
                 $list_name = iconv($encoding, 'UTF-8//IGNORE', $list_name);
@@ -1859,10 +1889,10 @@ if (! function_exists('generateEmailListEventArray')) {
 /**
  * return js compactible date from daterangepicker specific date
  *
- * @param  string  $date  m/d/Y style date
+ * @param string $date m/d/Y style date
  * @return string Y-m-d style date
  */
-if (! function_exists('getJavaScriptDate')) {
+if (!function_exists('getJavaScriptDate')) {
     function getJavaScriptDate($date)
     {
         $date = trim($date);
@@ -1881,10 +1911,10 @@ if (! function_exists('getJavaScriptDate')) {
 /**
  * replace address string for email builder footer with org address
  *
- * @param  array  $item  category 6 rows
+ * @param array $item category 6 rows
  * @return array row data with updated address
  */
-if (! function_exists('replaceAddressWithOrgAddress')) {
+if (!function_exists('replaceAddressWithOrgAddress')) {
     function replaceAddressWithOrgAddress($item)
     {
         $default = 'Your company, Pier 9, San Francisco, CA 12345';
@@ -1895,16 +1925,16 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
         if (strpos($item['html'], $default) !== false) {
             $currentPerson = Person::find(auth()->user()->id);
             $org = $currentPerson->defaultOrg;
-            $add_str = $org->orgAddr1.', ';
-            if (! empty($org->orgAddr2)) {
-                $add_str .= $org->orgAddr2.', ';
+            $add_str = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
             }
-            $add_str .= $org->orgCity.', ';
-            if (! empty($org->orgZip)) {
+            $add_str .= $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
                 $add_str .= $org->orgState;
-                $add_str .= $org->orgZip.', ';
+                $add_str .= $org->orgZip . ', ';
             } else {
-                $add_str .= $org->State.', ';
+                $add_str .= $org->State . ', ';
             }
             $add_str = rtrim($add_str, ', ');
             $item['html'] = str_replace($default, $add_str, $item['html']);
@@ -1914,17 +1944,17 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
             // for multiline address first finding if exist then replacing it line by line
             $currentPerson = Person::find(auth()->user()->id);
             $org = $currentPerson->defaultOrg;
-            $add_str = $org->orgAddr1.', ';
-            if (! empty($org->orgAddr2)) {
-                $add_str .= $org->orgAddr2.', ';
+            $add_str = $org->orgAddr1 . ', ';
+            if (!empty($org->orgAddr2)) {
+                $add_str .= $org->orgAddr2 . ', ';
             }
             $line1 = $add_str;
-            $add_str = $org->orgCity.', ';
-            if (! empty($org->orgZip)) {
+            $add_str = $org->orgCity . ', ';
+            if (!empty($org->orgZip)) {
                 $add_str .= $org->orgState;
-                $add_str .= $org->orgZip.', ';
+                $add_str .= $org->orgZip . ', ';
             } else {
-                $add_str .= $org->State.', ';
+                $add_str .= $org->State . ', ';
             }
             $add_str = rtrim($add_str, ', ');
             $line2 = $add_str;
@@ -1947,10 +1977,10 @@ if (! function_exists('replaceAddressWithOrgAddress')) {
 /**
  * replace social icon links with actual links, hides if link is not set.
  *
- * @param  array  $item  category 6 rows
+ * @param array $item category 6 rows
  * @return array row data with updated links and style
  */
-if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
+if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
     function replaceSocialLinksWithOrgSocialLinks($item)
     {
         $parsed = new Dom;
@@ -1981,7 +2011,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'google-plus':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->googleURL)) {
+                    if (!empty($org->googleURL)) {
                         $tag->setAttribute('href', $org->googleURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -1992,7 +2022,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'facebook':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->facebookURL)) {
+                    if (!empty($org->facebookURL)) {
                         $tag->setAttribute('href', $org->facebookURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -2003,8 +2033,8 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'twitter':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->orgHandle)) {
-                        $tag->setAttribute('href', 'https://twitter.com/'.str_replace('@', '', $org->orgHandle));
+                    if (!empty($org->orgHandle)) {
+                        $tag->setAttribute('href', 'https://twitter.com/' . str_replace('@', '', $org->orgHandle));
                     } else {
                         $style = $tag->getAttribute('style');
                         $style = $style['value'];
@@ -2014,7 +2044,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
                     break;
                 case 'linkedin':
                     //check if link exist and set it into href tag otherwise hide it.
-                    if (! empty($org->linkedinURL)) {
+                    if (!empty($org->linkedinURL)) {
                         $tag->setAttribute('href', $org->linkedinURL);
                     } else {
                         $style = $tag->getAttribute('style');
@@ -2049,7 +2079,7 @@ if (! function_exists('replaceSocialLinksWithOrgSocialLinks')) {
     }
 }
 
-if (! function_exists('sendGetToWakeUpDyno')) {
+if (!function_exists('sendGetToWakeUpDyno')) {
     function sendGetToWakeUpDyno()
     {
         // API URL
@@ -2058,7 +2088,7 @@ if (! function_exists('sendGetToWakeUpDyno')) {
             $base_url = env('QUEUE_DYNO_URL_LIVE');
         }
         if (strlen($base_url) > 1) {
-            $url = $base_url.'/trigger-dyno';
+            $url = $base_url . '/trigger-dyno';
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //return string
@@ -2071,10 +2101,10 @@ if (! function_exists('sendGetToWakeUpDyno')) {
 /**
  * replace social icon links with actual links, hides if link is not set.
  *
- * @param  array  $item  category 6 rows
+ * @param array $item category 6 rows
  * @return array row data with updated links and style
  */
-if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
+if (!function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
     function getAllLinksFromCampaignHTML($campaign)
     {
         $parsed = new Dom;
@@ -2089,9 +2119,9 @@ if (! function_exists('getAllLinksFromHTMLgetAllLinksFromCampaignHTML')) {
             // $class = $class['value'];
         } //foreach end
         $links = [];
-        if (! empty($link_list)) {
+        if (!empty($link_list)) {
             foreach ($link_list as $key => $value) {
-                if ($value['value'] == '#' || ! filter_var($value['value'], FILTER_VALIDATE_URL)) {
+                if ($value['value'] == '#' || !filter_var($value['value'], FILTER_VALIDATE_URL)) {
                     continue;
                 }
                 $links[$value['value']] = $value['value'];

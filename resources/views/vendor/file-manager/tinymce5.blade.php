@@ -24,33 +24,33 @@
 </div>
 
 <!-- File manager -->
-<script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // set fm height
-    document.getElementById('fm-main-block').setAttribute('style', 'height:' + window.innerHeight + 'px');
+<script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"/>
+<script nonce="{{ $cspScriptNonce }}">
+    document.addEventListener('DOMContentLoaded', function () {
+        // set fm height
+        document.getElementById('fm-main-block').setAttribute('style', 'height:' + window.innerHeight + 'px');
 
-    const FileBrowserDialogue = {
-      init: function() {
-        // Here goes your code for setting your custom things onLoad.
-      },
-      mySubmit: function (URL) {
-        // pass selected file path to TinyMCE
-        parent.postMessage({
-            mceAction: 'insert',
-            content: URL,
-            text: URL.split('/').pop()
-        })
-        // close popup window
-        parent.postMessage({ mceAction: 'close' });
-      }
-    };
+        const FileBrowserDialogue = {
+            init: function () {
+                // Here goes your code for setting your custom things onLoad.
+            },
+            mySubmit: function (URL) {
+                // pass selected file path to TinyMCE
+                parent.postMessage({
+                    mceAction: 'insert',
+                    content: URL,
+                    text: URL.split('/').pop()
+                })
+                // close popup window
+                parent.postMessage({mceAction: 'close'});
+            }
+        };
 
-    // Add callback to file manager
-    fm.$store.commit('fm/setFileCallBack', function(fileUrl) {
-      FileBrowserDialogue.mySubmit(fileUrl);
+        // Add callback to file manager
+        fm.$store.commit('fm/setFileCallBack', function (fileUrl) {
+            FileBrowserDialogue.mySubmit(fileUrl);
+        });
     });
-  });
 </script>
 </body>
 </html>

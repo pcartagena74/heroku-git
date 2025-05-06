@@ -1,15 +1,15 @@
 @extends($master)
 @section('page', trans('ticketit::lang.show-ticket-title') . trans('ticketit::lang.colon') . $ticket->subject)
 @section('content')
-        @include('ticketit::shared.header')
-        @include('ticketit::tickets.partials.ticket_body')
-<br>
+    @include('ticketit::shared.header')
+    @include('ticketit::tickets.partials.ticket_body')
+    <br>
     <h2>
         {{ trans('ticketit::lang.comments') }}
     </h2>
     @include('ticketit::tickets.partials.comments')
-        {!! $comments->render() !!}
-        @include('ticketit::tickets.partials.comment_form')
+    {!! $comments->render() !!}
+    @include('ticketit::tickets.partials.comment_form')
 @endsection
 
 @section('scripts')
@@ -17,18 +17,17 @@
 @endsection
 
 @section('footer')
-    <script>
-        $(document).ready(function() {
-            $( ".deleteit" ).click(function( event ) {
+    <script nonce="{{ $cspScriptNonce }}">
+        $(document).ready(function () {
+            $(".deleteit").click(function (event) {
                 event.preventDefault();
-                if (confirm("{!! trans('ticketit::lang.show-ticket-js-delete') !!}" + $(this).attr("node") + " ?"))
-                {
+                if (confirm("{!! trans('ticketit::lang.show-ticket-js-delete') !!}" + $(this).attr("node") + " ?")) {
                     var form = $(this).attr("form");
                     $("#" + form).submit();
                 }
 
             });
-            $('#category_id').change(function(){
+            $('#category_id').change(function () {
                 var loadpage = "{!! route($setting->grab('main_route').'agentselectlist') !!}/" + $(this).val() + "/{{ $ticket->id }}";
                 $('#agent_id').load(loadpage);
             });
@@ -44,11 +43,11 @@
             });
 
             <!-- Form confirm (yes/ok) handler, submits form -->
-            $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
+            $('#confirmDelete').find('.modal-footer #confirm').on('click', function () {
                 $(this).data('form').submit();
             });
         });
     </script>
     @include('ticketit::tickets.partials.summernote')
 @append
-<br />
+<br/>

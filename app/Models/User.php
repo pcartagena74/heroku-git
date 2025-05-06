@@ -53,9 +53,9 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     /**
      * Provides the route for email/notifications to the user
      *
-     * @return the email address/login for the user
+     * @return string : email address/login for the user
      */
-    public function routeNotificationForMail(): the
+    public function routeNotificationForMail()
     {
         return $this->email;
     }
@@ -79,7 +79,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgID', $person->defaultOrgID);
     }
 
-    public function tickets(): HasMany
+    public function tickets()
     {
         return $this->hasMany(\Kordy\Ticketit\Models\Ticket::class, 'user_id', 'id');
     }

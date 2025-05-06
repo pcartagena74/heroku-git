@@ -22,3 +22,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Route::middleware('auth:api')->post ('/send', [MailGunController::class, 'send']);
 
 Route::post('/send', [MailGunController::class, 'send']);
+
+Route::post('/csp-rpt', function (Request $request) {
+    Log::channel('csp')->info('CSP Violation', $request->all());
+    return response()->json(['status' => 'logged']);
+});

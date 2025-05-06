@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
@@ -257,13 +258,13 @@ class PersonController extends Controller
     {
         $string = $request->input('string');
 
-        return redirect(env('APP_URL').'/search/'.$string);
+        return redirect(env('APP_URL') . '/search/' . $string);
     }
 
     /**
      * Shows profile information for chosen person (or self)
      *
-     * @param  null  $modal
+     * @param null $modal
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function show($id, $modal = null)
@@ -275,7 +276,7 @@ class PersonController extends Controller
             $id = $this->currentPerson->personID;
             if (request()->query() != null) {
                 if ($this->currentPerson->avatarURL === null
-                    && ! $this->currentPerson->socialites->contains('providerName', 'LinkedIN')
+                    && !$this->currentPerson->socialites->contains('providerName', 'LinkedIN')
                 ) {
                     try {
                         $user = Socialite::driver('linkedin')->user();
@@ -317,14 +318,14 @@ class PersonController extends Controller
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id, 'errormsg' => $exception->getMessage()]));
 
-            return redirect(env('APP_URL').'/profile/my');
+            return redirect(env('APP_URL') . '/profile/my');
         }
 
         if ($profile === null) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id,
-                'modifier' => trans('messages.fields.member'), 'errormsg' => null, ]));
+                'modifier' => trans('messages.fields.member'), 'errormsg' => null,]));
 
-            return redirect(env('APP_URL').'/profile/my');
+            return redirect(env('APP_URL') . '/profile/my');
         }
 
         if ($profile != $this->currentPerson) {
@@ -339,14 +340,14 @@ class PersonController extends Controller
         $prefixes = DB::table('prefixes')->get();
         $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
             $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
-                return trans('messages.fields.prefixes.'.$item);
+                return trans('messages.fields.prefixes.' . $item);
             })->toArray();
         $prefixes = $prefix_array;
 
         $industries = DB::table('industries')->orderBy('industryName')->get();
         $industry_array = ['' => trans('messages.fields.industries.select')] +
             $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
-                return trans('messages.fields.industries.'.$item);
+                return trans('messages.fields.industries.' . $item);
             })->toArray();
         $industries = $industry_array;
 
@@ -445,22 +446,22 @@ class PersonController extends Controller
             } catch (\Exception $exception) {
                 DB::rollBack();
                 $org = $person->defaultOrg;
-                request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err').$org->techContactStatement);
+                request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err') . $org->techContactStatement);
 
-                return redirect(env('APP_URL')."/profile/$personID");
+                return redirect(env('APP_URL') . "/profile/$personID");
             }
         } elseif ($name == 'affiliation') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $person->affiliation = $value;
             $person->updaterID = $updater;
             $person->save();
         } elseif ($name == 'allergenInfo') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $person->allergenInfo = $value;
             $person->updaterID = $updater;
             $person->save();
         } elseif ($name == 'certifications') {
-            $value = implode(',', (array) $value);
+            $value = implode(',', (array)$value);
             $person->certifications = $value;
             $person->updaterID = $updater;
             $person->save();
@@ -592,7 +593,7 @@ class PersonController extends Controller
     /**
      * This is just like the above but it doesn't ask for the prior password
      */
-    public function force_password_change(Request $request): Response
+    public function force_password_change(Request $request): Response|RedirectResponse
     {
         // Consider for refactoring
         $password = request()->input('password');
@@ -627,7 +628,7 @@ class PersonController extends Controller
     /**
      * Redirect the user to the LinkedIn authentication page.
      */
-    public function redirectToLinkedIn(): Response
+    public function redirectToLinkedIn(): Response|RedirectResponse
     {
         return Socialite::driver('linkedin')->redirect();
     }
@@ -659,7 +660,7 @@ class PersonController extends Controller
             $p = Person::with('orgperson')->where('personID', '=', $op->personID)->first();
 
             return json_encode(['status' => 'success', 'p' => $p, 'pass' => $x,
-                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]), ]);
+                'msg' => trans('messages.modals.confirm2', ['fullname' => $p->showFullName()]),]);
         } else {
             return json_encode(['status' => 'error', 'p' => null, 'op' => $op, 'pmi_id' => $pmi_id]);
         }

@@ -1,41 +1,54 @@
 @php
-/**
- * Comment: Template for pages without authentication
- * Created: 2/2/2017
- */
-//<script src='https://www.google.com/recaptcha/api.js'></script>
+    /**
+     * Comment: Template for pages without authentication
+     * Created: 2/2/2017
+     */
+    //<script src='https://www.google.com/recaptcha/api.js'></script>
 @endphp
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
-@include('v1.parts.header_no-auth_no-nav')
-<style>
-    body {
-        overflow-y: auto;
-    }
+<head>
+    @include('v1.parts.header_no-auth_no-nav')
+    <style nonce="{{ $cspStyleNonce }}">
+        body {
+            overflow-y: auto;
+        }
 
-    footer {
-        background-color: #fff;
-        position: fixed;
-        padding: 10px;
-        top: 100vh;
-        margin-top: -50px;
-        margin-right: 50px;
-        width: 100%;
-        height: 100px;
-    }
-</style>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-K4MGRCX');</script>
-<!-- End Google Tag Manager -->
+        footer {
+            background-color: #fff;
+            position: fixed;
+            padding: 10px;
+            top: 100vh;
+            margin-top: -50px;
+            margin-right: 50px;
+            width: 100%;
+            height: 100px;
+        }
+    </style>
+
+    <!-- Google Tag Manager -->
+    <script nonce="{{ $cspScriptNonce }}">
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-K4MGRCX');</script>
+    <!-- End Google Tag Manager -->
 </head>
 <body class="nav-md footer_fixed">
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K4MGRCX"
-                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K4MGRCX"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -63,7 +76,8 @@
                     <input type="password" placeholder="Password" class="form-control input-sm" name="password"
                            id="password" required>
                 </div>
-                <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">@lang('messages.buttons.login')</button>
+                <button type="submit" class="btn btn-success" name="btn-login"
+                        id="btn-login">@lang('messages.buttons.login')</button>
                 <div class="form-group">
                     <div class="col-md-1 col-md-offset-1">
                         <div class="checkbox">
@@ -88,18 +102,18 @@
     </div>
 </nav>
 
-    <div class="top_content">
-        <div class="mainimage">
-            <img src="{{ env('APP_URL') }}/images/main.jpg" alt="" style="height: 350px; width:100%;"/>
-            <div class="overlay">
-                <div class='console-container'><span id='text'></span>
-                    @if(!Agent::isMobile())
+<div class="top_content">
+    <div class="mainimage">
+        <img src="{{ env('APP_URL') }}/images/main.jpg" alt="" style="height: 350px; width:100%;"/>
+        <div class="overlay">
+            <div class='console-container'><span id='text'></span>
+                @if(!Agent::isMobile())
                     <div class='console-underscore' id='console'>&#95;</div>
-                    @endif
-                </div>
+                @endif
             </div>
         </div>
     </div>
+</div>
 
 <div class="container body col-md-12 col-sm-12 col-xs-12">
     <div class="main_container bit">
@@ -110,11 +124,11 @@
         @yield('scripts')
         @if(Agent::isMobile())
         @else
-            <script>
+            <script nonce="{{ $cspScriptNonce }}">
                 // function([string1, string2],target id,[color1,color2])
                 consoleText(['{{ trans('messages.public_marketing.main.mktg') }}', '{{ trans('messages.public_marketing.main.mail') }}',
-                             '{{ trans('messages.public_marketing.main.meet') }}', '{{ trans('messages.public_marketing.main.imm') }}'],
-                             'text', ['black', 'black', 'black']);
+                        '{{ trans('messages.public_marketing.main.meet') }}', '{{ trans('messages.public_marketing.main.imm') }}'],
+                    'text', ['black', 'black', 'black']);
 
                 function consoleText(words, id, colors) {
                     if (colors === undefined) colors = ['black'];

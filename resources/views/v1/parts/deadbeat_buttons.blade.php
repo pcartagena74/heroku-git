@@ -9,7 +9,7 @@
  */
 @endphp
 @if (Entrust::hasRole('Admin'))
-    {!! Form::open(['method' => 'patch', 'route' => ['accept_payment', $regID, $rfID], 'data-toggle' => 'validator']) !!}
+    {{ html()->form('PATCH', route('accept_payment', [$regID, $rfID]))->data('toggle', 'validator')->open() }}
     <button type="submit" value="1" name="{!! trans('messages.buttons.cash') !!}"
             onclick="return confirm('{!! trans('messages.tooltips.pmt_msg', ['method' => strtolower(trans('messages.buttons.cash'))]) !!}')"
             class="btn btn-success btn-sm" data-toggle="tooltip" title="{!! trans('messages.tooltips.cash') !!}">
@@ -26,14 +26,14 @@
             target="_new" href="{!! env('APP_URL') . "/confirm_registration/$rfID" !!}">
         {!! trans('messages.symbols.card') !!}
     </a>
-    {!! Form::close() !!}
-    {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $regID, $rfID], 'data-toggle' => 'validator']) !!}
+    {{ html()->form()->close() }}
+    {{ html()->form('DELETE', route('cancel_registration', [$regID, $rfID]))->data('toggle', 'validator')->open() }}
     <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip"
             onclick="return confirm('{!! trans('messages.tooltips.sure_cancel') !!}');"
             title="{!! trans('messages.tooltips.reg_cancel') !!}">
     {!! trans('messages.symbols.trash') !!}
     </button>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
 @else
     <button type="submit" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="{!! trans('messages.tooltips.no_auth') !!}">
         <i class="far fa-money-bill-wave"></i>

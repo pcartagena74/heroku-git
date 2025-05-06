@@ -1,29 +1,29 @@
 @php
-/**
- * Comment: An includeable script to fix left nav display
- * Created: 11/19/2017
- * @param:
- *       path (the path in the nav)
- *       txtChange: if 1, then there should be 2 more values
- *       tag: the tag to find
- *       newTxt: what should be displayed
- *
- */
+    /**
+     * Comment: An includeable script to fix left nav display
+     * Created: 11/19/2017
+     * @param:
+     *       path (the path in the nav)
+     *       txtChange: if 1, then there should be 2 more values
+     *       tag: the tag to find
+     *       newTxt: what should be displayed
+     *
+     */
 
-if(!isset($path)) {
-    $path = "/event/create";
-}
-if(isset($tag) && isset($newTxt)) {
-    $txtChange = 1;
-} else {
-    $txtChange = 0;
-}
-$url = url($path);
-if(!empty($url_override)){
-    // $url = '{{$url_override}}';
-}
+    if(!isset($path)) {
+        $path = "/event/create";
+    }
+    if(isset($tag) && isset($newTxt)) {
+        $txtChange = 1;
+    } else {
+        $txtChange = 0;
+    }
+    $url = url($path);
+    if(!empty($url_override)){
+        // $url = '{{$url_override}}';
+    }
 @endphp
-<script>
+<script nonce="{{ $cspScriptNonce }}">
     $(document).ready(function () {
         var setContentHeight = function () {
             // reset height

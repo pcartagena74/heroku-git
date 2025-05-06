@@ -13,16 +13,16 @@ $registrants = $event->registrants($es->sessionID);
 @if(null !== $es)
 
     <h2>{{ $es->sessionName }}</h2>
-    {!! Form::open(array('url' => "/$url/$event->eventID", 'method' => 'post', 'id' => "form_".$es->sessionID)) !!}
-    {!! Form::hidden('sessionID', $es->sessionID) !!}
-    {!! Form::hidden('eventID', $event->eventID) !!}
+    {{ html()->form('POST', url("/{$url}/{$event->eventID}"))->id("form_" . $es->sessionID)->open() }}
+    {{ html()->hidden('sessionID', $es->sessionID) }}
+    {{ html()->hidden('eventID', $event->eventID) }}
     <div class="col-xs-12">
         <div class="col-xs-1" style="text-align: right;">
             <b>#</b>
         </div>
         <div id="tool" class="col-xs-1" style="text-align: right;">
             @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.select_all')])
-            {!! Form::checkbox('', 1, 0, array('id' => 'select_all', 'class' => 'select_all')) !!}
+            {{ html()->checkbox('', null, 1)->id('select_all')->class('select_all') }}
         </div>
         <div class="col-xs-4">
             <b>{{ trans_choice('messages.headers.att', 1) }}</b>
@@ -52,7 +52,7 @@ $registrants = $event->registrants($es->sessionID);
                         }
                     }
                     ?>
-                    {!! Form::checkbox('p-'.$row->personID.'-'.$row->regID, 1, 0, array('class' => 'allcheckbox', $checked => $checked)) !!}
+                    {{ html()->checkbox('p-' . $row->personID . '-' . $row->regID, null, 1)->class('allcheckbox') }}
                 </div>
                 <div class="col-xs-4" style="height: 100%; text-align: left;">
                     @if(null !== $row->hasAttended && $row->hasAttended == 0)
@@ -73,8 +73,8 @@ $registrants = $event->registrants($es->sessionID);
 
     @endforeach
     <div class="col-xs-10 col-xs-offset-2 form-group">
-        {!! Form::submit(trans('messages.buttons.chk_att'), ["class" => "btn btn-success btn-sm", 'name' => 'chk_att']) !!}
+        {{ html()->submit(trans('messages.buttons.chk_att'))->class("btn btn-success btn-sm")->name('chk_att') }}
         {{-- Form::submit(trans('messages.buttons.chk_walk'), ["class" => "btn btn-primary btn-sm", 'name' => 'chk_walk']) --}}
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
 @endif

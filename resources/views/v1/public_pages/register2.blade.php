@@ -1,72 +1,72 @@
 @php
-/**
- * Comment: Confirmation screen post and Stripe Payment Processing
- * Created: 3/12/2017
- *
- * @var Event $event
- * @var Org $org
- * @var RegFinance $rf
- * @var Registration $regs
- * @var $tcount
- * @var $reg
- * @var $prefixes
- * @var $industries
- * @var $affiliation_array
- * @var $cert_array
- * @var $allergen_array
- *
- */
+    /**
+     * Comment: Confirmation screen post and Stripe Payment Processing
+     * Created: 3/12/2017
+     *
+     * @var Event $event
+     * @var Org $org
+     * @var RegFinance $rf
+     * @var Registration $regs
+     * @var $tcount
+     * @var $reg
+     * @var $prefixes
+     * @var $industries
+     * @var $affiliation_array
+     * @var $cert_array
+     * @var $allergen_array
+     *
+     */
 
-use App\Models\EventSession;
-use App\Models\Ticket;
-use App\Models\Registration;
-use App\Models\Person;
+    use App\Models\EventSession;
+    use App\Models\Ticket;
+    use App\Models\Registration;
+    use App\Models\Person;
 
-$tcount = 0;
-$today = Carbon\Carbon::now();
-$string = '';
+    $tcount = 0;
+    $today = Carbon\Carbon::now();
+    $string = '';
 
-$allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
-$allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
+    $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
+    $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-if ($event->eventTypeID == 5) { // This is a regional event so do that instead
-    //$chapters = $org->regionChapters; DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
-    $array = explode(',', $org->regionChapters);
-} else {
-    //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
-    $array = explode(',', $org->nearbyChapters);
-}
+    if ($event->eventTypeID == 5) { // This is a regional event so do that instead
+        //$chapters = $org->regionChapters; DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
+        $array = explode(',', $org->regionChapters);
+    } else {
+        //$chapters = DB::table('organization')->where('orgID', $event->orgID)->select('nearbyChapters')->first();
+        $array = explode(',', $org->nearbyChapters);
+    }
 
-if($org->canSubmitPDU !== null){
-    $PDU_org_types = explode(',', $org->canSubmitPDU);
-} else {
-    $PDU_org_types = [];
-}
+    if($org->canSubmitPDU !== null){
+        $PDU_org_types = explode(',', $org->canSubmitPDU);
+    } else {
+        $PDU_org_types = [];
+    }
 
-$i = 0;
-foreach ($array as $chap) {
-    $i++;
-    $chap = trim($chap);
-    $affiliation_array[$i] = $chap;
-}
+    $i = 0;
+    foreach ($array as $chap) {
+        $i++;
+        $chap = trim($chap);
+        $affiliation_array[$i] = $chap;
+    }
 
-if ($event->isSymmetric && $event->hasTracks) {
-    $columns = ($event->hasTracks * 2) + 1;
-    $width = number_format(85 / $event->hasTracks, 0, '', '');
-    $mw = number_format(90 / $event->hasTracks, 0, '', '');
-} elseif ($event->hasTracks) {
-    $columns = $event->hasTracks * 3;
-    $width = number_format(80 / $event->hasTracks, 0, '', '');
-    $mw = number_format(85 / $event->hasTracks, 0, '', '');
-}
-$rfp = $rf->person;
+    if ($event->isSymmetric && $event->hasTracks) {
+        $columns = ($event->hasTracks * 2) + 1;
+        $width = number_format(85 / $event->hasTracks, 0, '', '');
+        $mw = number_format(90 / $event->hasTracks, 0, '', '');
+    } elseif ($event->hasTracks) {
+        $columns = $event->hasTracks * 3;
+        $width = number_format(80 / $event->hasTracks, 0, '', '');
+        $mw = number_format(85 / $event->hasTracks, 0, '', '');
+    }
+    $rfp = $rf->person;
 
 @endphp
 
 @extends('v1.layouts.no-auth')
 @section('content')
     @include('v1.parts.start_content', ['header' => trans('messages.headers.reg_con'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-    {!! Form::open(['url' => env('APP_URL').'/complete_registration/'.$rf->regID, 'method' => 'patch', 'id' => 'complete_registration', 'data-toggle' => 'validator']) !!}
+    {{ html()->form('PATCH', env('APP_URL') . '/complete_registration/' . $rf->regID)->id('complete_registration')->data('toggle', 'validator')->open() }}
 
     <div class="whole">
 
@@ -84,7 +84,7 @@ $rfp = $rf->person;
                     <div style="margin-left: 10px;">
                         @include('v1.parts.location_display', ['loc' => $loc, 'event' => $event, 'time' => 1])
                     </div>
-                    <br />
+                    <br/>
                 </div>
                 <div class="col-md-3 col-sm-3 col-md-offset-1 col-sm-offset-1" style="text-align: right;">
                     <p></p>
@@ -120,10 +120,10 @@ $rfp = $rf->person;
             @if($show_pass_fields)
                 <div class="col-md-10 col-sm-10 col-sm-offset-2 coll-md-offset-2">
                     <div class="col-sm-6 form-group">
-                        {!! Form::password('password', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_set'))) !!}
+                        {{ html()->password('password')->attribute('required', )->class('form-control input-sm')->attribute('placeholder', trans('messages.instructions.pw_set')) }}
                     </div>
                     <div class="col-sm-6 form-group">
-                        {!! Form::password('password_confirmation', array('required', 'class' => 'form-control input-sm', 'placeholder' => trans('messages.instructions.pw_conf'))) !!}
+                        {{ html()->password('password_confirmation')->attribute('required', )->class('form-control input-sm')->attribute('placeholder', trans('messages.instructions.pw_conf')) }}
                     </div>
                 </div>
             @endif
@@ -137,11 +137,11 @@ $rfp = $rf->person;
             @endif
 
             @foreach($regs as $reg)
-@php
-                $tcount++;
-                $person = Person::find($reg->personID);
-                $ticket = Ticket::find($reg->ticketID);
-@endphp
+                @php
+                    $tcount++;
+                    $person = Person::find($reg->personID);
+                    $ticket = Ticket::find($reg->ticketID);
+                @endphp
 
                 <div class="myrow col-md-12 col-sm-12">
                     <div class="col-md-2 col-sm-2" style="text-align:center;">
@@ -237,7 +237,7 @@ $rfp = $rf->person;
                                                data-value="{{ $person->login }}"
                                                data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> ]
                                     </nobr>
-                                    <br />
+                                    <br/>
                                     @if($event->eventTypeID==5)
                                         <a id="chapterRole-{{ $tcount }}" data-pk="{{ $person->personID }}"
                                            data-value="{{ $person->chapterRole }}"
@@ -273,11 +273,11 @@ $rfp = $rf->person;
                                                                                    data-pk="{{ $person->personID }}"
                                                                                    data-value="{{ $person->indName }}"
                                                                                    data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a> @lang('messages.headers.ind')
-                                                <br />
+                                                <br/>
                                             @endif
                                         @endif
                                         @if($person->affiliation)
-                                            <br />@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
+                                            <br/>@lang('messages.headers.aff_with'): <a id="affiliation-{{ $tcount }}"
                                                                                         data-pk="{{ $person->personID }}"
                                                                                         data-value="{{ $person->affiliation }}"
                                                                                         data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a>
@@ -290,25 +290,26 @@ $rfp = $rf->person;
                                                                                     data-pk="{{ $reg->regID }}"
                                                                                     data-value="{{ $reg->isFirstEvent }}"
                                                                                     data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
-                                        <br />
+                                        <br/>
                                     @endif
 
                                     <b>@lang('messages.headers.roster_add'):</b> <a id="canNetwork-{{ $tcount }}"
                                                                                     data-pk="{{ $reg->regID }}"
                                                                                     data-value="{{ $reg->canNetwork }}"
-                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
+                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br/>
 
-                                    <b>@lang('messages.headers.certs'):</b> <br /><a id="certifications-{{ $tcount }}"
-                                                                               data-pk="{{ $person->personID }}"
-                                                                               data-value="{{ $person->certifications }}"
-                                                                               data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a><br />
+                                    <b>@lang('messages.headers.certs'):</b> <br/><a id="certifications-{{ $tcount }}"
+                                                                                    data-pk="{{ $person->personID }}"
+                                                                                    data-value="{{ $person->certifications }}"
+                                                                                    data-url="{{ env('APP_URL') }}/profile/{{ $person->personID }}"></a><br/>
 
                                     @if(in_array($event->eventTypeID, $PDU_org_types))
-                                    @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
-                                    <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
-                                                                                data-pk="{{ $reg->regID }}"
-                                                                                data-value="{{ $reg->isAuthPDU }}"
-                                                                                data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
+                                        @include('v1.parts.tooltip', ['title' => trans('messages.fields.isAuthPDU', array('org' => $org->orgName))])
+                                        <b>@lang('messages.fields.pdu_sub'):</b> <a id="isAuthPDU-{{ $tcount }}"
+                                                                                    data-pk="{{ $reg->regID }}"
+                                                                                    data-value="{{ $reg->isAuthPDU }}"
+                                                                                    data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <br/>
                                     @endif
 
                                     @if($reg->eventQuestion)
@@ -321,7 +322,7 @@ $rfp = $rf->person;
                                     @endif
 
                                     @if($reg->eventTopics)
-                                        <p><b>@lang('messages.fields.future_topics'):</b><br /> <a
+                                        <p><b>@lang('messages.fields.future_topics'):</b><br/> <a
                                                     id="eventTopics-{{ $tcount }}"
                                                     data-pk="{{ $reg->regID }}"
                                                     data-value="{{ $reg->eventTopics }}"
@@ -330,10 +331,11 @@ $rfp = $rf->person;
                                     @endif
 
                                     @if($reg->cityState)
-                                        <br /><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
+                                        <br/><b>@lang('messages.fields.commute'):</b> <a id="cityState-{{ $tcount }}"
                                                                                          data-pk="{{ $reg->regID }}"
                                                                                          data-value="{{ $reg->cityState }}"
-                                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a><br />
+                                                                                         data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
+                                        <br/>
                                     @endif
 
                                     @if($reg->specialNeeds)
@@ -341,7 +343,7 @@ $rfp = $rf->person;
                                                                                       data-pk="{{ $reg->regID }}"
                                                                                       data-value="{{ $reg->specialNeeds }}"
                                                                                       data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
-                                        <br />
+                                        <br/>
                                     @endif
 
                                     @if($reg->allergenInfo)
@@ -349,7 +351,7 @@ $rfp = $rf->person;
                                                                                       data-pk="{{ $reg->regID }}"
                                                                                       data-value="{{ $reg->allergenInfo }}"
                                                                                       data-url="{{ env('APP_URL') }}/reg_verify/{{ $reg->regID }}"></a>
-                                        <br />
+                                        <br/>
                                         @if($reg->eventNotes)
                                             <a id="eventNotes-{{ $tcount }}" data-pk="{{ $reg->regID }}"
                                                data-value="{{ $reg->eventNotes }}"
@@ -385,7 +387,7 @@ $rfp = $rf->person;
                 <div class="col-md-7 col-sm-7" style="display: table-cell;">
                     @if($rf->cost > 0 && $rf->status != 'wait')
                         @include('v1.parts.stripe_pay_button', array('id' => 'payment'))
-                        <br />
+                        <br/>
                     @endif
                     @if($event->acceptsCash)
                         <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
@@ -398,15 +400,15 @@ $rfp = $rf->person;
                             @endif
                         </button>
                     @else
-                            @if($rf->cost == 0)
-                                <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                        @if($rf->cost == 0)
+                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.comp_reg')</b>
-                                </button>
-                            @elseif($rf->status == 'wait')
-                                <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
+                            </button>
+                        @elseif($rf->status == 'wait')
+                            <button id="nocard" type="submit" class="btn btn-success btn-sm">&nbsp;
                                 <b>@lang('messages.buttons.wait')</b>
-                                </button>
-                            @endif
+                            </button>
+                        @endif
                     @endif
 
                 </div>
@@ -427,12 +429,12 @@ $rfp = $rf->person;
             </div>
         </div>
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
     @include('v1.parts.end_content')
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('.card').on('click', function (e) {
             // Open Checkout with further options:
             e.preventDefault();
@@ -455,13 +457,13 @@ $rfp = $rf->person;
                 type: 'select',
                 autotext: 'auto',
                 source: [
-@php
-                    foreach ($prefixes as $row) {
-                        $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}
-                    @php $string = ''; @endphp
+                    @php
+                        foreach ($prefixes as $row) {
+                            $string .= "{ value: '" . $row->prefix . "' , text: '" . $row->prefix . "' },\n";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}
+                            @php $string = ''; @endphp
                 ]
             });
             $("#firstName-{{ $i }}").editable({type: 'text'});
@@ -473,13 +475,13 @@ $rfp = $rf->person;
             $('#indName-{{ $i }}').editable({
                 type: 'select',
                 source: [
-@php
-                    foreach ($industries as $row) {
-                        $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}
-                    @php $string = ''; @endphp
+                    @php
+                        foreach ($industries as $row) {
+                            $string .= "{ value: '" . $row->industryName . "' , text: '" . $row->industryName . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}
+                            @php $string = ''; @endphp
                 ]
             });
 
@@ -491,26 +493,26 @@ $rfp = $rf->person;
             $('#affiliation-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-@php
-                    for ($j = 1; $j <= count($affiliation_array); $j++) {
-                        $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}
-                    @php $string = ''; @endphp
+                    @php
+                        for ($j = 1; $j <= count($affiliation_array); $j++) {
+                            $string .= "{ value: '" . $affiliation_array[$j] . "' , text: '" . $affiliation_array[$j] . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}
+                            @php $string = ''; @endphp
                 ]
             });
 
             $('#certifications-{{ $i }}').editable({
                 type: 'checklist',
                 source: [
-@php
-                    foreach ($cert_array as $row) {
-                        $string .= "{ value: '" . $row->certification . "' , text: '" . $row->certification . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}
-                    @php $string = ''; @endphp
+                    @php
+                        foreach ($cert_array as $row) {
+                            $string .= "{ value: '" . $row->certification . "' , text: '" . $row->certification . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}
+                            @php $string = ''; @endphp
                 ]
             });
 
@@ -547,13 +549,13 @@ $rfp = $rf->person;
             $("#allergenInfo-{{ $i }}").editable({
                 type: 'checklist',
                 source: [
-@php
-                    foreach ($allergen_array as $x) {
-                        $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
-                    }
-@endphp
-                    {!!  rtrim($string, ",") !!}
-                    @php $string = ''; @endphp
+                    @php
+                        foreach ($allergen_array as $x) {
+                            $string .= "{ value: '" . $x . "' , text: '" . $x . "' },";
+                        }
+                    @endphp
+                            {!!  rtrim($string, ",") !!}
+                            @php $string = ''; @endphp
                 ]
             });
 
@@ -564,13 +566,13 @@ $rfp = $rf->person;
 
 @section('modals')
     @if($rf->cost > 0)
-    @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
+        @include('v1.modals.stripe', array('amt' => $rf->cost, 'rf' => $rf))
     @endif
 
     @if(Session::has('dupes'))
         @include('v1.modals.dynamic', ['header' => trans('messages.headers.dupe_reg'), 'url' => '',
                                        'content' => Session::get('alert-message')])
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $(document).ready(function () {
                 $('#dynamic_modal').modal('show');
             });

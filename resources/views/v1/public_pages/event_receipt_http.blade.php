@@ -56,7 +56,7 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
     </script>
     <!-- Google Tag Manager -->
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         (function (w, d, s, l, i) {
             w[l] = w[l] || [];
             w[l].push({

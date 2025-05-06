@@ -13,9 +13,15 @@
             <p>@lang('messages.public_marketing.main.read_more')</p>
             <ul class="nav nav-tabs">
                 <li><a href="{{ env('APP_URL') }}">@lang('messages.public_marketing.main.home')</a></li>
-                <li class="{{ Route::is('mktg')?'active':'' }}"><a data-toggle="tab" href="#marketing">@lang('messages.public_marketing.main.mktg')</a></li>
-                <li class="{{ Route::is('mail')?'active':'' }}"><a data-toggle="tab" href="#mailings">@lang('messages.public_marketing.main.mail')</a></li>
-                <li class="{{ Route::is('mtgs')?'active':'' }}"><a data-toggle="tab" href="#meetings">@lang('messages.public_marketing.main.meet')</a></li>
+                <li class="{{ Route::is('mktg')?'active':'' }}"><a data-toggle="tab"
+                                                                   href="#marketing">@lang('messages.public_marketing.main.mktg')</a>
+                </li>
+                <li class="{{ Route::is('mail')?'active':'' }}"><a data-toggle="tab"
+                                                                   href="#mailings">@lang('messages.public_marketing.main.mail')</a>
+                </li>
+                <li class="{{ Route::is('mtgs')?'active':'' }}"><a data-toggle="tab"
+                                                                   href="#meetings">@lang('messages.public_marketing.main.meet')</a>
+                </li>
                 <li><a data-toggle="tab" href="#membership">@lang('messages.public_marketing.main.imm')</a></li>
             </ul>
 
@@ -23,8 +29,8 @@
                 <div id="marketing" class="tab-pane fade in{{ Route::is('mktg')?' active':'' }}">
                     <h2>@lang('messages.public_marketing.marketing.title')</h2>
                     @lang('messages.public_marketing.intro_line')
-                    <br />
-                    <br />
+                    <br/>
+                    <br/>
                     <ul>
                         <li>
                             @lang('messages.public_marketing.marketing.b1_t')
@@ -32,21 +38,21 @@
                                 @lang('messages.public_marketing.marketing.b1')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                         <li>
                             @lang('messages.public_marketing.marketing.b2_t')
                             <dd>
                                 @lang('messages.public_marketing.marketing.b2')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                         <li>
                             @lang('messages.public_marketing.marketing.b3_t')
                             <dd>
                                 @lang('messages.public_marketing.marketing.b3')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                     </ul>
                     <br/>
 
@@ -54,8 +60,8 @@
                 <div id="mailings" class="tab-pane fade in{{ Route::is('mail')?' active':'' }}">
                     <h2>@lang('messages.public_marketing.mailings.title')</h2>
                     @lang('messages.public_marketing.intro_line')
-                    <br />
-                    <br />
+                    <br/>
+                    <br/>
                     <ul>
                         <li>
                             @lang('messages.public_marketing.mailings.b1_t')
@@ -63,7 +69,7 @@
                                 @lang('messages.public_marketing.mailings.b1')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                         <li>
                             @lang('messages.public_marketing.mailings.b2_t')
                             <dd>
@@ -77,7 +83,7 @@
                 <div id="meetings" class="tab-pane fade in{{ Route::is('mtgs')?' active':'' }}">
                     <h2>@lang('messages.public_marketing.meetings.title')</h2>
                     @lang('messages.public_marketing.intro_line')
-                    <br />
+                    <br/>
                     <br/>
 
                     <ul>
@@ -87,7 +93,7 @@
                                 @lang('messages.public_marketing.meetings.b1')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
 
                         <li>
                             @lang('messages.public_marketing.meetings.b2_t')
@@ -95,7 +101,7 @@
                                 @lang('messages.public_marketing.meetings.b2')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                         <li>
                             @lang('messages.public_marketing.meetings.b3_t')
                             <dd>
@@ -108,8 +114,8 @@
                 <div id="membership" class="tab-pane fade">
                     <h2>@lang('messages.public_marketing.management.title')</h2>
                     @lang('messages.public_marketing.intro_line')
-                    <br />
-                    <br />
+                    <br/>
+                    <br/>
                     <ul>
                         <li>
                             @lang('messages.public_marketing.management.b1_t')
@@ -117,21 +123,21 @@
                                 @lang('messages.public_marketing.management.b1')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                         <li>
                             @lang('messages.public_marketing.management.b2_t')
                             <dd>
                                 @lang('messages.public_marketing.management.b2')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                         <li>
                             @lang('messages.public_marketing.management.b3_t')
                             <dd>
                                 @lang('messages.public_marketing.management.b3')
                             </dd>
                         </li>
-                        <br />
+                        <br/>
                     </ul>
                     <br/>
                 </div>
@@ -141,11 +147,11 @@
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         // function([string1, string2],target id,[color1,color2])
         consoleText(['{{ trans('messages.public_marketing.main.mktg') }}', '{{ trans('messages.public_marketing.main.mail') }}',
-                     '{{ trans('messages.public_marketing.main.meet') }}', '{{ trans('messages.public_marketing.main.imm') }}'],
-                     'text', ['black', 'black', 'black']);
+                '{{ trans('messages.public_marketing.main.meet') }}', '{{ trans('messages.public_marketing.main.imm') }}'],
+            'text', ['black', 'black', 'black']);
 
         function consoleText(words, id, colors) {
             if (colors === undefined) colors = ['black'];

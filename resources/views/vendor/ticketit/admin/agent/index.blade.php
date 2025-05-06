@@ -9,17 +9,13 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2>{{ trans('ticketit::admin.agent-index-title') }}
-                {!! link_to_route(
-                                    $setting->grab('admin_route').'.agent.create',
-                                    trans('ticketit::admin.btn-create-new-agent'), null,
-                                    ['class' => 'btn btn-primary pull-right'])
-                !!}
+                {{ html()->a($setting->grab('admin_route') . '.agent.create', trans('ticketit::admin.btn-create-new-agent'))->class('btn btn-primary pull-right') }}
             </h2>
         </div>
 
         @if ($agents->isEmpty())
             <h3 class="text-center">{{ trans('ticketit::admin.agent-index-no-agents') }}
-                {!! link_to_route($setting->grab('admin_route').'.agent.create', trans('ticketit::admin.agent-index-create-new')) !!}
+                {{ html()->a($setting->grab('admin_route') . '.agent.create', trans('ticketit::admin.agent-index-create-new')) }}
             </h3>
         @else
             <div id="message"></div>

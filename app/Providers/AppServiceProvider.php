@@ -64,7 +64,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
-        $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
 
         if ($this->app->environment('local', 'dev', 'test')) {
             $this->app->register(DuskServiceProvider::class);

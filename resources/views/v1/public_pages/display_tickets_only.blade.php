@@ -210,7 +210,7 @@ try {
     @endif
 
     @section('scripts')
-        <script>
+        <script nonce="{{ $cspScriptNonce }}">
             $('#btn-validate').on('click', function (e) {
                 e.preventDefault();
                 validateCode({{ $event->eventID }});
@@ -220,8 +220,7 @@ try {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        </script>
-        <script>
+
             function validateCode(eventID) {
                 var codeValue = $("#discount_code").val();
                 if (FieldIsEmpty(codeValue)) {

@@ -23,21 +23,21 @@ $expand_msg = trans('messages.subheaders.expand_min');
         </div>
 
         @foreach($def_sesses as $es)
-            <?php
-            if (Lang::has('messages.headers.' . $es->sessionName)) {
-                $header = $es->sessionName = trans('messages.headers.' . $es->sessionName);
-            } else {
-                $header = $es->sessionName;
-            }
-            $cnt = count($es->regsessions->where('hasAttended', 1));
-            if ($cnt > 0) {
-                $xx = trans_choice('messages.headers.checkins', $cnt);
-                $header .= " ($cnt $xx)";
-            }
-            if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
-                $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
-            }
-            ?>
+                <?php
+                if (Lang::has('messages.headers.' . $es->sessionName)) {
+                    $header = $es->sessionName = trans('messages.headers.' . $es->sessionName);
+                } else {
+                    $header = $es->sessionName;
+                }
+                $cnt = count($es->regsessions->where('hasAttended', 1));
+                if ($cnt > 0) {
+                    $xx = trans_choice('messages.headers.checkins', $cnt);
+                    $header .= " ($cnt $xx)";
+                }
+                if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
+                    $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
+                }
+                ?>
             @if($es->sessionName != 'def_sess')
 
                 @include('v1.parts.start_content', ['header' => $header, 'subheader' => $expand_msg,
@@ -88,64 +88,64 @@ $expand_msg = trans('messages.subheaders.expand_min');
         @if($event->hasTracks > 0)
             @if($event->confDays != 0)
                 @for($i=1;$i<=$event->confDays;$i++)
-                    <?php
-                    try {
-                        $tmp = \App\Models\EventSession::where([
-                            ['eventID', $event->eventID],
-                            ['confDay', $i]
-                        ])->first();
-                        $t_label = \App\Ticket::find($tmp->ticketID);
-                    } catch (Exception $e) {
-                        $message = trans('messages.errors.unexpected');
-                        request()->session()->flash('alert-danger', $message);
-                        return view('v1.public_pages.error_display', compact('message'));
-                    }
-                    ?>
-                    <div class="col-xs-12" style="background-color: rgba(52, 73, 94, 0.94); color: yellow">
-                        <b>@lang('messages.headers.day') {{ $i }}: {{ $t_label->ticketLabel }} </b>
-                    </div>
-                    @for($x=1;$x<=5;$x++)
                         <?php
                         try {
                             $tmp = \App\Models\EventSession::where([
                                 ['eventID', $event->eventID],
-                                ['confDay', $i],
-                                ['order', $x]
+                                ['confDay', $i]
                             ])->first();
+                            $t_label = \App\Ticket::find($tmp->ticketID);
                         } catch (Exception $e) {
                             $message = trans('messages.errors.unexpected');
-                            request()->session()->flash('alert-danger', $message . "<br />$e");
+                            request()->session()->flash('alert-danger', $message);
                             return view('v1.public_pages.error_display', compact('message'));
                         }
                         ?>
+                    <div class="col-xs-12" style="background-color: rgba(52, 73, 94, 0.94); color: yellow">
+                        <b>@lang('messages.headers.day') {{ $i }}: {{ $t_label->ticketLabel }} </b>
+                    </div>
+                    @for($x=1;$x<=5;$x++)
+                            <?php
+                            try {
+                                $tmp = \App\Models\EventSession::where([
+                                    ['eventID', $event->eventID],
+                                    ['confDay', $i],
+                                    ['order', $x]
+                                ])->first();
+                            } catch (Exception $e) {
+                                $message = trans('messages.errors.unexpected');
+                                request()->session()->flash('alert-danger', $message . "<br />$e");
+                                return view('v1.public_pages.error_display', compact('message'));
+                            }
+                            ?>
                         @if(null !== $tmp)
                             @foreach($tracks as $track)
-                                <?php
-                                try {
-                                    $es = \App\Models\EventSession::where([
-                                        ['eventID', $event->eventID],
-                                        ['confDay', $i],
-                                        ['order', $x],
-                                        ['trackID', $track->trackID]
-                                    ])->first();
-                                } catch (Exception $e) {
-                                    $message = trans('messages.errors.unexpected');
-                                    request()->session()->flash('alert-danger', $message . "<br />$e");
-                                    return view('v1.public_pages.error_display', compact('message'));
-                                }
-                                ?>
-                                @if(null !== $es)
                                     <?php
-                                    $header = $es->sessionName;
-                                    $cnt = count($es->regsessions->where('hasAttended', 1));
-                                    if ($cnt > 0) {
-                                        $xx = trans_choice('messages.headers.checkins', $cnt);
-                                        $header .= " ($cnt $xx)";
-                                    }
-                                    if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
-                                        $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
+                                    try {
+                                        $es = \App\Models\EventSession::where([
+                                            ['eventID', $event->eventID],
+                                            ['confDay', $i],
+                                            ['order', $x],
+                                            ['trackID', $track->trackID]
+                                        ])->first();
+                                    } catch (Exception $e) {
+                                        $message = trans('messages.errors.unexpected');
+                                        request()->session()->flash('alert-danger', $message . "<br />$e");
+                                        return view('v1.public_pages.error_display', compact('message'));
                                     }
                                     ?>
+                                @if(null !== $es)
+                                        <?php
+                                        $header = $es->sessionName;
+                                        $cnt = count($es->regsessions->where('hasAttended', 1));
+                                        if ($cnt > 0) {
+                                            $xx = trans_choice('messages.headers.checkins', $cnt);
+                                            $header .= " ($cnt $xx)";
+                                        }
+                                        if (Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) {
+                                            $header .= " <span class='red'>(sessionID: $es->sessionID)</span>";
+                                        }
+                                        ?>
                                     @include('v1.parts.start_content', ['header' => $header, 'subheader' => "$track->trackName: " . $es->start->format('g:i A'),
                                                                         'w1' => '12', 'w2' => '12', 'r1' => 1, 'r2' => 0, 'r3' => 0, 'min' => null])
                                     <div>
@@ -206,11 +206,10 @@ $expand_msg = trans('messages.subheaders.expand_min');
 
 @section('scripts')
     @include('v1.parts.menu-fix', array('path' => '/event/create', 'tag' => '#add', 'newTxt' => trans('messages.nav.ev_rpt')))
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
-    </script>
-    <script>
+
         $(".select_all").change(function () {
             $(".allcheckbox").prop("checked", $(this).prop("checked"))
         });
