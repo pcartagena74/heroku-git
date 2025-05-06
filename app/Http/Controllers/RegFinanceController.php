@@ -433,16 +433,16 @@ class RegFinanceController extends Controller
 
         // if $receipt_filename matches pending or receipt_pending, don't do anything with the receipt.
         if (!preg_match('/pending/i', $receipt_filename)) {
-            // try {
-            $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
-            \Storage::disk('events')->put($receipt_filename, $pdf->output(), 'public');
-            /*
-        } catch (\Exception $exception) {
-            // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
-            // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
-            request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
-        }
-            */
+            try {
+                $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
+                \Storage::disk('events')->put($receipt_filename, $pdf->output(), 'public');
+
+            } catch (\Exception $exception) {
+                // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
+                // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
+                request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
+            }
+           
             $client = new S3Client([
                 'credentials' => [
                     'key' => env('AWS_KEY'),
