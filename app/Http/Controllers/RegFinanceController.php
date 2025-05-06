@@ -442,7 +442,7 @@ class RegFinanceController extends Controller
                 // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
                 request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
             }
-           
+
             $client = new S3Client([
                 'credentials' => [
                     'key' => env('AWS_KEY'),

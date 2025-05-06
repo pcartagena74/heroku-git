@@ -8,6 +8,7 @@
 <html lang="en">
 <head>
     @include('v1.parts.header_simple_no-auth')
+    {{--
     <!-- Google Tag Manager -->
     <script nonce="{{ $cspScriptNonce }}">
         (function (w, d, s, l, i) {
@@ -24,15 +25,17 @@
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-K4MGRCX');</script>
     <!-- End Google Tag Manager -->
-    @yield('header')
-</head>
-<body style="background-color: white;">
 <!-- Google Tag Manager (noscript) -->
 <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K4MGRCX"
             height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.1/iframeResizer.contentWindow.min.js"></script>
+    --}}
+    @yield('header')
+</head>
+<body style="background-color: white;">
 @include('v1.parts.error')
 @yield('content')
 
@@ -40,7 +43,6 @@
     @include('v1.parts.footer_script')
 --}}
 @yield('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.1/iframeResizer.contentWindow.min.js"></script>
 @yield('modals')
 </body>
 </html>
