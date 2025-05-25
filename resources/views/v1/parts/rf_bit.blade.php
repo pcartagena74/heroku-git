@@ -33,9 +33,10 @@
     @foreach($rf_array as $rf)
         @php
             $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+            $s3name = select_bucket('r', config('APP_ENV'));
             try {
-                if(Storage::disk('s3_receipts')->exists($receipt_filename)){
-                    $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+                if(Storage::disk($s3name)->exists($receipt_filename)){
+                    $receipt_url = Storage::disk($s3name)->url($receipt_filename);
                 }
                 $file_headers = @get_headers($receipt_url);
                 if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {

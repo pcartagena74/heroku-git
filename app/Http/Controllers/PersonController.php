@@ -258,7 +258,7 @@ class PersonController extends Controller
     {
         $string = $request->input('string');
 
-        return redirect(env('APP_URL') . '/search/' . $string);
+        return redirect(config('APP_URL') . '/search/' . $string);
     }
 
     /**
@@ -318,14 +318,14 @@ class PersonController extends Controller
         } catch (\Exception $exception) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id, 'errormsg' => $exception->getMessage()]));
 
-            return redirect(env('APP_URL') . '/profile/my');
+            return redirect(config('APP_URL') . '/profile/my');
         }
 
         if ($profile === null) {
             request()->session()->flash('alert-danger', trans('messages.errors.no_id', ['id' => $id,
                 'modifier' => trans('messages.fields.member'), 'errormsg' => null,]));
 
-            return redirect(env('APP_URL') . '/profile/my');
+            return redirect(config('APP_URL') . '/profile/my');
         }
 
         if ($profile != $this->currentPerson) {
@@ -443,12 +443,12 @@ class PersonController extends Controller
 
                 // 3. trigger a notification to be sent to the old email address because it can undo this transaction
                 $person->notify(new LoginChange($person, $orig_email));
-            } catch (\Exception $exception) {
+            } catch (\Exception|\Throwable $exception) {
                 DB::rollBack();
                 $org = $person->defaultOrg;
                 request()->session()->flash('alert-danger', trans('messages.instructions.pro_change_err') . $org->techContactStatement);
 
-                return redirect(env('APP_URL') . "/profile/$personID");
+                return redirect(config('APP_URL') . "/profile/$personID");
             }
         } elseif ($name == 'affiliation') {
             $value = implode(',', (array)$value);

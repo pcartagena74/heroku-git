@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (env('APP_ENV') != 'local') {
+        if (config('APP_ENV') != 'local') {
             URL::forceRootUrl(\Config::get('app.url'));
             URL::forceScheme('https');
         }
@@ -44,8 +44,8 @@ class AppServiceProvider extends ServiceProvider
     {
         /*
         $this->app->bind(TwitterStream::class, function ($app) {
-            $twitter_access_token = env('TWITTER_ACCESS_TOKEN', null);
-            $twitter_access_token_secret = env('TWITTER_ACCESS_TOKEN_SECRET', null);
+            $twitter_access_token = config('TWITTER_ACCESS_TOKEN', null);
+            $twitter_access_token_secret = config('TWITTER_ACCESS_TOKEN_SECRET', null);
 
             return new TwitterStream($twitter_access_token, $twitter_access_token_secret, Phirehose::METHOD_FILTER);
         });

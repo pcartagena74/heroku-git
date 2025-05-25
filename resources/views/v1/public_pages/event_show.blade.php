@@ -74,23 +74,11 @@
         }
     }
 
-/*
-    $client = Storage::disk('s3_media')->getClient();
-    $client = new S3Client([
-        'credentials' => [
-            'key' => env('AWS_KEY'),
-            'secret' => env('AWS_SECRET')
-        ],
-        'region' => env('AWS_REGION'),
-        'version' => 'latest',
-    ]);
-    $adapter = new AwsS3V3Adapter($client, env('AWS_BUCKET3'));
-    $s3fs = new Filesystem($adapter);
-*/
     $logoFilePath = $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo;
+    $s3name = select_bucket('m', config('APP_ENV'));
     try {
-        if(Storage::disk('s3_media')->exists($logoFilePath)){
-            $logo = Storage::disk('s3_media')->url($logoFilePath);
+        if(Storage::disk($s3name)->exists($logoFilePath)){
+            $logo = Storage::disk($s3name)->url($logoFilePath);
         }
     } catch(Exception $e) {
         $logo = '';

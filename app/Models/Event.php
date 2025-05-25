@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -244,7 +245,7 @@ class Event extends Model
         return $count;
     }
 
-    public function registrants($sessionID)
+    public function registrants($sessionID): array|RedirectResponse
     {
         // Get the possible registrants for this event's session
         // - people pre-registered (regsession) for this session's ID
@@ -258,7 +259,7 @@ class Event extends Model
 
         $ticketIDs = $es->ticket->bundle_parent_array();
 
-        $out = Registration::whereIn('event-registration.ticketID', $ticketIDs)
+        return Registration::whereIn('event-registration.ticketID', $ticketIDs)
             ->select('p.personID', 'p.firstName', 'p.prefName', 'p.lastName', 'op.OrgStat1', 'rs.hasAttended', 'event-registration.regID')
             //->with('ticket', 'event', 'person.orgperson', 'regsessions', 'person')
             ->where('event-registration.eventID', '=', $es->eventID)
@@ -274,8 +275,6 @@ class Event extends Model
             ->distinct()
             ->orderBy('p.lastName')
             ->get();
-
-        return $out;
     }
 
     public function create_or_update_event_ics(): void
@@ -284,16 +283,18 @@ class Event extends Model
         $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
-        \Storage::disk('events')->put($event_filename, $contents, 'public');
+        $s3name = select_bucket('e', config('APP_ENV'));
+        \Storage::disk($s3name)->put($event_filename, $contents, 'public');
     }
 
     public function event_ics_url()
     {
         $ics_filename = "event_$this->eventID.ics";
+        $s3name = select_bucket('e', config('APP_ENV'));
 
         try {
-            if (Storage::disk('events')->exists($ics_filename)) {
-                $ics_file = Storage::disk('events')->url($ics_filename);
+            if (Storage::disk($s3name)->exists($ics_filename)) {
+                $ics_file = Storage::disk($s3name)->url($ics_filename);
             }
         } catch (Exception $e) {
             $ics_file = '#';

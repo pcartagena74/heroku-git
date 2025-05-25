@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d14e3c472cd97001fc1cb621e271f2b8",
+    "content-hash": "8d1e5359aeea5e78e9b774493f3f4418",
     "packages": [
         {
             "name": "alexusmai/laravel-file-manager",
@@ -665,6 +665,62 @@
                 }
             ],
             "time": "2023-12-11T17:09:12+00:00"
+        },
+        {
+            "name": "carlos-meneses/laravel-mpdf",
+            "version": "2.1.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mccarlosen/laravel-mpdf.git",
+                "reference": "f2461faf0c5d328d28de13c3dcc14e70d77aef83"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mccarlosen/laravel-mpdf/zipball/f2461faf0c5d328d28de13c3dcc14e70d77aef83",
+                "reference": "f2461faf0c5d328d28de13c3dcc14e70d77aef83",
+                "shasum": ""
+            },
+            "require": {
+                "mpdf/mpdf": "^8.0|^8.1",
+                "php": "^5.6|^7.0|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "PDF": "Mccarlosen\\LaravelMpdf\\Facades\\LaravelMpdf"
+                    },
+                    "providers": [
+                        "Mccarlosen\\LaravelMpdf\\LaravelMpdfServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mccarlosen\\LaravelMpdf\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel Mpdf: Using Mpdf in Laravel to generate Pdfs.",
+            "keywords": [
+                "laravel",
+                "mpdf",
+                "pdf"
+            ],
+            "support": {
+                "issues": "https://github.com/mccarlosen/laravel-mpdf/issues",
+                "source": "https://github.com/mccarlosen/laravel-mpdf/tree/2.1.13"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/mccarlosen",
+                    "type": "custom"
+                }
+            ],
+            "time": "2023-09-01T15:09:05+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -5091,156 +5147,6 @@
             "time": "2025-04-28T18:43:18+00:00"
         },
         {
-            "name": "misterspelik/laravel-pdf",
-            "version": "2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/misterspelik/laravel-pdf.git",
-                "reference": "5f92d858f1190dd8755f4c72d36b67b8ed8b861b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/misterspelik/laravel-pdf/zipball/5f92d858f1190dd8755f4c72d36b67b8ed8b861b",
-                "reference": "5f92d858f1190dd8755f4c72d36b67b8ed8b861b",
-                "shasum": ""
-            },
-            "require": {
-                "misterspelik/mpdf": "^8.1.8",
-                "php": "^7.4 || ^8.0",
-                "psr/http-message": "^1.1 || ^2.0",
-                "psr/log": "^1.1.0 || ^2.0.0 || ^3.0.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^8.5.0",
-                "phpunit/phpunit": "^9.6.0"
-            },
-            "suggest": {
-                "ext-gd": "Needed to support images creation and conversion",
-                "ext-imagick": "Allows more advanced work with images",
-                "ext-mbstring": "Needed in order to work with multi-byte strings"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "PDF": "misterspelik\\LaravelPdf\\Facades\\Pdf"
-                    },
-                    "providers": [
-                        "misterspelik\\LaravelPdf\\Providers\\PdfServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "misterspelik\\LaravelPdf\\": "src/LaravelPdf"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Yaroslav Krutikov",
-                    "email": "misterspelik@gmail.com",
-                    "homepage": "https://github.com/misterspelik"
-                }
-            ],
-            "description": "Generate PDFs in Laravel with this mPDF wrapper.",
-            "homepage": "https://github.com/misterspelik/laravel-pdf",
-            "keywords": [
-                "laravel",
-                "mpdf",
-                "pdf"
-            ],
-            "support": {
-                "issues": "https://github.com/misterspelik/laravel-pdf/issues",
-                "source": "https://github.com/misterspelik/laravel-pdf/tree/2.2.0"
-            },
-            "time": "2025-01-08T12:30:01+00:00"
-        },
-        {
-            "name": "misterspelik/mpdf",
-            "version": "8.1.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/misterspelik/mpdf.git",
-                "reference": "79e148e1f33a0ff60b75028e646ca9b75e4c6d82"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/misterspelik/mpdf/zipball/79e148e1f33a0ff60b75028e646ca9b75e4c6d82",
-                "reference": "79e148e1f33a0ff60b75028e646ca9b75e4c6d82",
-                "shasum": ""
-            },
-            "require": {
-                "ext-gd": "*",
-                "ext-mbstring": "*",
-                "mpdf/psr-http-message-shim": "^1.0 || ^2.0",
-                "mpdf/psr-log-aware-trait": "^2.0 || ^3.0",
-                "myclabs/deep-copy": "^1.7",
-                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
-                "php": "^5.6 || ^7.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
-                "psr/http-message": "^1.0 || ^2.0",
-                "psr/log": "^1.0 || ^2.0 || ^3.0",
-                "setasign/fpdi": "^2.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.3.0",
-                "mpdf/qrcode": "^1.1.0",
-                "squizlabs/php_codesniffer": "^3.5.0",
-                "tracy/tracy": "~2.5",
-                "yoast/phpunit-polyfills": "^1.0"
-            },
-            "suggest": {
-                "ext-bcmath": "Needed for generation of some types of barcodes",
-                "ext-xml": "Needed mainly for SVG manipulation",
-                "ext-zlib": "Needed for compression of embedded resources, such as fonts"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/functions.php"
-                ],
-                "psr-4": {
-                    "Mpdf\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "Matěj Humpál",
-                    "role": "Developer, maintainer"
-                },
-                {
-                    "name": "Ian Back",
-                    "role": "Developer (retired)"
-                }
-            ],
-            "description": "PHP library generating PDF files from UTF-8 encoded HTML",
-            "homepage": "https://mpdf.github.io",
-            "keywords": [
-                "pdf",
-                "php",
-                "utf-8"
-            ],
-            "support": {
-                "docs": "https://mpdf.github.io",
-                "issues": "https://github.com/mpdf/mpdf/issues",
-                "source": "https://github.com/mpdf/mpdf"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.me/mpdf",
-                    "type": "custom"
-                }
-            ],
-            "time": "2025-01-06T12:43:46+00:00"
-        },
-        {
             "name": "mobiledetect/mobiledetectlib",
             "version": "2.8.45",
             "source": {
@@ -5494,6 +5400,87 @@
                 }
             ],
             "time": "2025-03-24T10:02:05+00:00"
+        },
+        {
+            "name": "mpdf/mpdf",
+            "version": "v8.2.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mpdf/mpdf.git",
+                "reference": "e175b05e3e00977b85feb96a8cccb174ac63621f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/e175b05e3e00977b85feb96a8cccb174ac63621f",
+                "reference": "e175b05e3e00977b85feb96a8cccb174ac63621f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "ext-mbstring": "*",
+                "mpdf/psr-http-message-shim": "^1.0 || ^2.0",
+                "mpdf/psr-log-aware-trait": "^2.0 || ^3.0",
+                "myclabs/deep-copy": "^1.7",
+                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
+                "php": "^5.6 || ^7.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+                "psr/http-message": "^1.0 || ^2.0",
+                "psr/log": "^1.0 || ^2.0 || ^3.0",
+                "setasign/fpdi": "^2.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3.0",
+                "mpdf/qrcode": "^1.1.0",
+                "squizlabs/php_codesniffer": "^3.5.0",
+                "tracy/tracy": "~2.5",
+                "yoast/phpunit-polyfills": "^1.0"
+            },
+            "suggest": {
+                "ext-bcmath": "Needed for generation of some types of barcodes",
+                "ext-xml": "Needed mainly for SVG manipulation",
+                "ext-zlib": "Needed for compression of embedded resources, such as fonts"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Mpdf\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Matěj Humpál",
+                    "role": "Developer, maintainer"
+                },
+                {
+                    "name": "Ian Back",
+                    "role": "Developer (retired)"
+                }
+            ],
+            "description": "PHP library generating PDF files from UTF-8 encoded HTML",
+            "homepage": "https://mpdf.github.io",
+            "keywords": [
+                "pdf",
+                "php",
+                "utf-8"
+            ],
+            "support": {
+                "docs": "https://mpdf.github.io",
+                "issues": "https://github.com/mpdf/mpdf/issues",
+                "source": "https://github.com/mpdf/mpdf"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/mpdf",
+                    "type": "custom"
+                }
+            ],
+            "time": "2024-11-18T15:30:42+00:00"
         },
         {
             "name": "mpdf/psr-http-message-shim",
@@ -14999,6 +14986,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1",
+        "ext-curl": "*",
         "ext-dom": "*"
     },
     "platform-dev": {},

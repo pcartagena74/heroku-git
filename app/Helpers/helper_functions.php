@@ -23,37 +23,86 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
+use Mpdf\MpdfException;
 use PHPHtmlParser\Dom;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
-use misterspelik\LaravelPdf\Facades\Pdf as PDF;
-
-// $client = new Client();
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 
 /**
- * Produces a PDF of a view with appropriate data
+ * Gets the appropriate bucket name depending on environment and purpose
  *
- * @param string $which either a v (view) or h (html)
- * @param string $view view to be converted to PDF
- * @param array $data the data to provide $view its values
- * @param string $orientation set to 'portrait' if null
- * @param string $paper_size set to 'Letter' if null
+ * @param string $purpose either an e (event) or r (receipt) or m (media) or t (temp)
+ * @param string $env the environment
  */
-if (!function_exists('generate_pdf_from_view')) {
-    function generate_pdf($which, $view_or_html, $data, $orientation = 'portrait', $paper_size = 'Letter')
+
+if (!function_exists('select_bucket')) {
+    function select_bucket($purpose, $env): string
     {
+        $bucket = null;
+        switch ($purpose) {
+            case 'e':
+                if ($env == 'production')
+                    $bucket = 's3_events';
+                else
+                    $bucket = 't_events';
+                break;
+            case 'r':
+                if ($env == 'production')
+                    $bucket = 's3_receipts';
+                else
+                    $bucket = 't_receipts';
+                break;
+            case 'm':
+                if ($env == 'production')
+                    $bucket = 's3_media';
+                else
+                    $bucket = 't_media';
+                break;
+            case 't':
+                break;
+        }
+        return $bucket;
+    }
+}
+
+if (!function_exists('generate_pdf_from_view')) {
+    /**
+     * Produces a PDF of a view with appropriate data
+     *
+     * @param string $which either a v (view) or h (html)
+     * @param string $view_or_html text (as data or view name) to be converted to PDF
+     * @param array $data the data to provide $view its values
+     * @param string $orientation set to 'portrait' if null
+     * @param string $paper_size set to 'Letter' if null
+     *
+     * @throws MpdfException
+     */
+    function generate_pdf(string $which, string $view_or_html,
+                          array  $data, string $orientation = 'P',
+                          string $paper_size = 'Letter'): string
+    {
+        $pdf = null;
         switch ($which) {
             case 'v':
-                $pdf = PDF::loadView($view_or_html, $data, [], [
-                    'format' => $paper_size,
-                    'orientation' => $orientation,
-                ]);
+                try {
+                    $pdf = PDF::loadView($view_or_html, $data, [], [
+                        'format' => $paper_size,
+                        'orientation' => $orientation,
+                    ]);
+                } catch (MpdfException $e) {
+                    dump('Unexpected error. \n' . $e->getMessage());
+                }
                 break;
             case 'h':
-                $pdf = PDF::loadHTML($view_or_html, $data, [], [
-                    'format' => $paper_size,
-                    'orientation' => $orientation,
-                ]);
+                try {
+                    $pdf = PDF::loadHTML($view_or_html, $data, [], [
+                        'format' => $paper_size,
+                        'orientation' => $orientation,
+                    ]);
+                } catch (MpdfException $e) {
+                    dump('Unexpected error. \n' . $e->getMessage());
+                }
                 break;
         }
         return $pdf->output();
@@ -398,20 +447,21 @@ if (!function_exists('extract_images')) {
                     }
 
                     $filepath = trim("$org->orgPath/uploads/$filename", '/');
+                    $s3name = select_bucket('m', config('APP_ENV'));
 
                     try {
                         // Create image from base64
                         $image = Image::make($src)->encode($mimetype, 100);
 
                         // Store the image
-                        $stored = Storage::disk('s3_media')->put(
+                        $stored = Storage::disk($s3name)->put(
                             $filepath,
                             $image->stream()->__toString(),
                             'public'
                         );
 
                         if ($stored) {
-                            $new_src = Storage::disk('s3_media')->url($filepath);
+                            $new_src = Storage::disk($s3name)->url($filepath);
                             $updated = 1;
 
                             $img->removeAttribute('src');
@@ -538,7 +588,7 @@ if (!function_exists('check_exists')) {
 if (!function_exists('pLink')) {
     function plink($regID, $personID)
     {
-        return '<a href="' . env('APP_URL') . '/profile/' . $personID . '">' . $regID . '</a>';
+        return '<a href="' . config('APP_URL') . '/profile/' . $personID . '">' . $regID . '</a>';
     }
 }
 
@@ -1645,7 +1695,7 @@ if (!function_exists('generateLatLngForAddress')) {
                 // }
             }
             $add_str_encode = urlencode($add_str);
-            $key = env('GOOGLE_GEOAPI_KEY');
+            $key = config('GOOGLE_GEOAPI_KEY');
             $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$add_str_encode}&key=$key";
             try {
                 $resp_json = file_get_contents($url);
@@ -2113,12 +2163,12 @@ if (!function_exists('replaceSocialLinksWithOrgSocialLinks')) {
 }
 
 if (!function_exists('sendGetToWakeUpDyno')) {
-    function sendGetToWakeUpDyno()
+    function sendGetToWakeUpDyno(): void
     {
         // API URL
-        $base_url = env('QUEUE_DYNO_URL_TEST');
-        if (env('APP_ENV') == 'production') {
-            $base_url = env('QUEUE_DYNO_URL_LIVE');
+        $base_url = config('QUEUE_DYNO_URL_TEST');
+        if (config('APP_ENV') == 'production') {
+            $base_url = config('QUEUE_DYNO_URL_LIVE');
         }
         if (strlen($base_url) > 1) {
             $url = $base_url . '/trigger-dyno';

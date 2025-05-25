@@ -64,11 +64,12 @@ class Org extends Model
 
     public function logo_path()
     {
-        $logo_filename = $this->orgPath.'/'.$this->orgLogo;
+        $logo_filename = $this->orgPath . '/' . $this->orgLogo;
+        $s3name = select_bucket('m', config('APP_ENV'));
 
         try {
-            if (Storage::disk('s3_media')->exists($logo_filename)) {
-                $logopath = Storage::disk('s3_media')->url($logo_filename);
+            if (Storage::disk($s3name)->exists($logo_filename)) {
+                $logopath = Storage::disk($s3name)->url($logo_filename);
             }
         } catch (Exception $e) {
             $logopath = '#';
@@ -80,8 +81,8 @@ class Org extends Model
     public function org_URL()
     {
         $u = $this->orgURL;
-        if (! preg_match('#^https?://#', $u)) {
-            $u = 'http://'.$u;
+        if (!preg_match('#^https?://#', $u)) {
+            $u = 'http://' . $u;
         }
 
         return $u;

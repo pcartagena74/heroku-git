@@ -25,7 +25,7 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::FRAME, [
                 Keyword::SELF,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 '*.google.com',
                 '*.google.it',
                 '*.stripe.com'
@@ -37,7 +37,7 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::CONNECT, [
                 Keyword::SELF,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 '*.fontawesome.com',
                 '*.stripe.com',
                 'wss:',
@@ -48,7 +48,7 @@ class MyCspPolicy extends Basic
                 "nonce-{$scriptNonce}",
                 Keyword::UNSAFE_INLINE,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 '*.bootstrapcdn.com',
                 '*.cloudflare.com',
                 '*.datatables.net',
@@ -60,7 +60,6 @@ class MyCspPolicy extends Basic
                 '*.gstatic.com',
                 '*.jquery.com',
                 '*.jsdelivr.net',
-                '*.mcentric.org',
                 '*.newrelic.com',
                 '*.stripe.com',
                 '*.unpkg.com',
@@ -71,7 +70,7 @@ class MyCspPolicy extends Basic
                 Keyword::UNSAFE_INLINE,
                 "nonce-{$styleNonce}",
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 '*.cloudflare.com',
                 '*.github.io',
                 '*.googleapis.com',
@@ -82,7 +81,7 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::FONT, [
                 Keyword::SELF,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 'data:',
                 '*.gstatic.com',
                 '*.cloudflare.com',
@@ -92,7 +91,7 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::IMG, [
                 Keyword::SELF,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 'data:',
                 '*.amazonaws.com',
                 'cdn.datatables.net',
@@ -101,14 +100,14 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::FORM_ACTION, [
                 Keyword::SELF,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 '*.stripe.com'
             ])
             ->addDirective(Directive::OBJECT, Keyword::NONE)
             ->addDirective(Directive::BASE, [
                 Keyword::SELF,
                 '*.mcentric.org',
-                'mcentric-*.herokuapp.com',
+                '*.herokuapp.com',
                 '*.stripe.com'
             ]);
     }

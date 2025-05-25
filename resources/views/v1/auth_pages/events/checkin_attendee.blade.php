@@ -16,11 +16,12 @@
 
     $logo_url = '';
     $logo_filename = $org->orgPath . "/" . $org->orgLogo;
+    $s3name = select_bucket('m', config('APP_ENV'));
 
     try {
         if ($org->orgLogo !== null) {
-            if (Storage::disk('s3_media')->exists($logo_filename)) {
-                $logo_url = Storage::disk('s3_media')->url($logo_filename);
+            if (Storage::disk($s3name)->exists($logo_filename)) {
+                $logo_url = Storage::disk($s3name)->url($logo_filename);
             }
         }
     } catch (Exception $e) {
@@ -108,7 +109,7 @@
         @endfor
 
     @else
-        {{ html()->form('POST', env('APP_URL') . '/process_checkin')->id('session_registration')->data('toggle', 'validator')->open() }}
+        {{ html()->form('POST', config('APP_URL') . '/process_checkin')->id('session_registration')->data('toggle', 'validator')->open() }}
         {{ html()->hidden('eventID', $event->eventID) }}
         {{ html()->hidden('orgID', $org->orgID) }}
         {{ html()->hidden('sessionID', $session->sessionID) }}

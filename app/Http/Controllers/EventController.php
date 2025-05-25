@@ -526,11 +526,7 @@ class EventController extends Controller
             }
         }
 
-        // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_' . $event->eventID . '.ics';
-        $ical = new ics_calendar($event);
-        $contents = $ical->get();
-        \Storage::disk('events')->put($event_filename, $contents, 'public');
+        // Update (or make) the event_{id}.ics file if it doesn't exist
         $event->create_or_update_event_ics();
 
         return redirect('/event-tickets/' . $event->eventID);
@@ -732,20 +728,16 @@ class EventController extends Controller
         } catch (\Exception $exception) {
         }
 
-        // Make and overwrite the event_{id}.ics file
-        $event_filename = 'event_' . $event->eventID . '.ics';
-        $ical = new ics_calendar($event);
-        $contents = $ical->get();
-        \Storage::disk('events')->put($event_filename, $contents, 'public');
+        // Make and/or overwrite the event_{id}.ics file
         $event->create_or_update_event_ics();
 
         // Think about whether ticket modification should be done here.
         // Maybe catch the auto-created tickets when events are copied
 
         if ($skip === null) {
-            return redirect(env('APP_URL') . '/event-tickets/' . $event->eventID);
+            return redirect(config('APP_URL') . '/event-tickets/' . $event->eventID);
         } else {
-            return redirect(env('APP_URL') . '/manage_events');
+            return redirect(config('APP_URL') . '/manage_events');
         }
     }
 

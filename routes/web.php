@@ -1,6 +1,7 @@
 <?php
 
 //use Kordy\Ticketit\Controllers\DashboardController;
+//use App\Http\TicketitControllers\DashboardController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
 use App\Models\RegFinance;
@@ -49,9 +50,8 @@ use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VolunteerRoleController;
-use App\Http\TicketitControllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use misterspelik\LaravelPdf\Facades\Pdf as PDF;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 
 /*
 |--------------------------------------------------------------------------
@@ -474,10 +474,10 @@ Route::fallback(function (Request $request) {
     ], 404);
 });
 
-Route::get('/bshot', function () {
+Route::get('/bshot/{id}', function ($id) {
     set_time_limit(0);
     ini_set('memory_limit', '-1');
-    $id = 28443;
+    if ($id === null) $id = 28443;
     $rf = RegFinance::where('regID', $id)
         ->with('registrations', 'registrations.ticket', 'event', 'event.org', 'event.location', 'person')
         ->firstorFail();

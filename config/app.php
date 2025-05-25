@@ -168,7 +168,7 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\CspServiceProvider::class,
-        misterspelik\LaravelPdf\Providers\PdfServiceProvider::class,
+        Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -187,7 +187,7 @@ return [
         'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Entrust' => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
-        'PDF' => misterspelik\LaravelPdf\Facades\Pdf::class,
+        'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdfFacade::class,
     ])->toArray(),
 
 ];

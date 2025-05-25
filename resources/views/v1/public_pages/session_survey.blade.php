@@ -15,11 +15,12 @@
 
     $logo = '';
     $logo_filename = $org->orgPath . "/" . $org->orgLogo;
+    $s3name = select_bucket('m', config('APP_ENV'));
 
     try {
         if ($org->orgLogo !== null) {
-            if (Storage::disk('s3_media')->exists($logo_filename)) {
-                $logo = Storage::disk('s3_media')->url($logo_filename);
+            if (Storage::disk($s3name)->exists($logo_filename)) {
+                $logo = Storage::disk($s3name)->url($logo_filename);
             }
         }
     } catch (Exception $e) {
@@ -47,7 +48,7 @@
     <p>&nbsp;</p>
     {!! trans('messages.instructions.survey_instructions') !!}
     <p>&nbsp;</p>
-    {{ html()->form('POST', env('APP_URL') . '/rs_survey')->id('session_survey')->data('toggle', 'validator')->open() }}
+    {{ html()->form('POST', config('APP_URL') . '/rs_survey')->id('session_survey')->data('toggle', 'validator')->open() }}
 
     {{ html()->hidden('eventID', $event->eventID) }}
     {{ html()->hidden('orgID', $org->orgID) }}

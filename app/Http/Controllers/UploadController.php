@@ -120,15 +120,18 @@ class UploadController extends Controller
         $file = $request->file('filename');
         $f_ori_name = $file->getClientOriginalName();
         $extension = $file->getClientOriginalExtension();
-        $file_name = Str::random(40).'.'.$extension;
-        $tmp_path = Storage::disk('s3_temp')->put($file_name, file_get_contents($file->getRealPath()));
-        $path = Storage::disk('s3_temp')->path($file_name);
+        $file_name = Str::random(40) . '.' . $extension;
+        $s3name = select_bucket('t', config('APP_ENV'));
+        $tmp_path = Storage::disk($s3name)->put($file_name, file_get_contents($file->getRealPath()));
+        $path = Storage::disk($s3name)->path($file_name);
         $eventID = request()->input('eventID');
 
         if ($what == 'evtdata' && ($eventID === null || $eventID == trans('messages.admin.select'))) {
-            // go back with message
+            // go back with a message
             return Redirect::back()->with('alert-warning', trans('messages.errors.event'));
         }
+
+        $s3name = select_bucket('t', config('APP_ENV'));
 
         switch ($what) {
             case 'mbrdata':
@@ -138,13 +141,13 @@ class UploadController extends Controller
                     $import_detail->file_name = $f_ori_name;
                     $import_detail->user_id = $currentPerson->personID;
                     $import_detail->save();
-                    $var = (new MembersImport($currentPerson, $import_detail))->queue($path, 's3_temp')
+                    $var = (new MembersImport($currentPerson, $import_detail))->queue($path, $s3name)
                         ->chain([
                             new ImportDetailsUpdateJob($import_detail),
                             new NotifyUserOfCompletedImport($currentPerson, $import_detail),
-                            function () use ($path) {
+                            function () use ($path, $s3name) {
                                 //unlink($path);
-                                Storage::disk('s3_temp')->delete($path);
+                                Storage::disk($s3name)->delete($path);
                             },
                         ])->onConnection('database')
                         ->onQueue('default');
@@ -272,7 +275,7 @@ class UploadController extends Controller
                                     break;
                                 case preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k):
                                     $pmiID = $row[$k];
-                                    if (! is_numeric($pmiID)) {
+                                    if (!is_numeric($pmiID)) {
                                         $pmiID = null;
                                     } else {
                                         $pmiID = number_format($pmiID, 0, '', '');
@@ -373,57 +376,57 @@ class UploadController extends Controller
                                     break;
 
                                 default:
-                                    echo "Encountered an unknown column: '".$k."'<br>";
+                                    echo "Encountered an unknown column: '" . $k . "'<br>";
                                     break;
                             }
                         }
 
-                        if (! isset($canNtwk)) {
+                        if (!isset($canNtwk)) {
                             $canNtwk = 0;
                         }
-                        if (! isset($allergy)) {
+                        if (!isset($allergy)) {
                             $allergy = 0;
                         }
-                        if (! isset($pmiID)) {
+                        if (!isset($pmiID)) {
                             $pmiID = null;
                         }
-                        if (! isset($canPDU)) {
+                        if (!isset($canPDU)) {
                             $canPDU = 0;
                         }
-                        if (! isset($firstEvent)) {
+                        if (!isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (! isset($firstEvent)) {
+                        if (!isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (! isset($pmtRecd)) {
+                        if (!isset($pmtRecd)) {
                             $pmtRecd = 0;
                         }
-                        if (! isset($specialNeeds)) {
+                        if (!isset($specialNeeds)) {
                             $specialNeeds = null;
                         }
-                        if (! isset($coName)) {
+                        if (!isset($coName)) {
                             $coName = null;
                         }
-                        if (! isset($indName)) {
+                        if (!isset($indName)) {
                             $indName = null;
                         }
-                        if (! isset($hear)) {
+                        if (!isset($hear)) {
                             $hear = null;
                         }
-                        if (! isset($questions)) {
+                        if (!isset($questions)) {
                             $questions = null;
                         }
-                        if (! isset($commute)) {
+                        if (!isset($commute)) {
                             $commute = null;
                         }
-                        if (! isset($topics)) {
+                        if (!isset($topics)) {
                             $topics = null;
                         }
-                        if (! isset($prefName)) {
+                        if (!isset($prefName)) {
                             $prefName = null;
                         }
-                        if (! isset($experience)) {
+                        if (!isset($experience)) {
                             $experience = null;
                         }
                         // foreach cycle through $row's keys() and switch on preg_match
@@ -841,7 +844,7 @@ class UploadController extends Controller
                             $title = trim(ucwords($row->title));
                             $compName = trim(ucwords($row->company));
 
-                            $op = OrgPerson::where('OrgStat1', '=', (int) $pmi_id)->first();
+                            $op = OrgPerson::where('OrgStat1', '=', (int)$pmi_id)->first();
                             $em1 = trim(strtolower($row->primary_email));
                             $em2 = trim(strtolower($row->alternate_email));
                             $emchk1 = Email::whereRaw('lower(emailADDR) = ?', [$em1])->first();
@@ -928,7 +931,7 @@ class UploadController extends Controller
                                 $newOP = new OrgPerson;
                                 $newOP->orgID = $p->defaultOrgID;
                                 $newOP->personID = $p->personID;
-                                $newOP->OrgStat1 = (int) $row->pmi_id;
+                                $newOP->OrgStat1 = (int)$row->pmi_id;
                                 $newOP->OrgStat2 = trim(ucwords($row->chapter_member_class));
                                 $newOP->RelDate1 = Carbon::createFromFormat('d/m/Y', $row->pmi_join_date)->toDateTimeString();
                                 $newOP->RelDate2 = Carbon::createFromFormat('d/m/Y', $row->chapter_join_date)->toDateTimeString();
@@ -1028,13 +1031,13 @@ class UploadController extends Controller
                                 $addr->addr1 = trim(ucwords($row->preferred_address));
                                 $addr->city = trim(ucwords($row->city));
                                 $addr->state = trim(ucwords($row->state));
-                                $z = (int) trim($row->zip);
+                                $z = (int)trim($row->zip);
                                 if (strlen($z) == 4) {
-                                    $z = '0'.$z;
+                                    $z = '0' . $z;
                                 } elseif (strlen($z) == 8) {
                                     $r2 = substr($z, -4);
                                     $l2 = substr($z, 4);
-                                    $z = '0'.$l2.'-'.$r2;
+                                    $z = '0' . $l2 . '-' . $r2;
                                 }
                                 $addr->zip = $z;
 
@@ -1056,7 +1059,7 @@ class UploadController extends Controller
                             if ($row->home_phone !== null && $fone === null) {
                                 $fone = new Phone;
                                 $fone->personID = $p->personID;
-                                $fone->phoneNumber = (int) $row->home_phone;
+                                $fone->phoneNumber = (int)$row->home_phone;
                                 $fone->phoneType = 'Home';
                                 $fone->creatorID = auth()->user()->id;
                                 $fone->updaterID = auth()->user()->id;
@@ -1070,7 +1073,7 @@ class UploadController extends Controller
                             if ($row->work_phone !== null && $row->work_phone != $row->home_phone && $fone === null) {
                                 $fone = new Phone;
                                 $fone->personID = $p->personID;
-                                $fone->phoneNumber = (int) $row->work_phone;
+                                $fone->phoneNumber = (int)$row->work_phone;
                                 $fone->phoneType = 'Work';
                                 $fone->creatorID = auth()->user()->id;
                                 $fone->updaterID = auth()->user()->id;
@@ -1085,7 +1088,7 @@ class UploadController extends Controller
                                 && $row->mobile_phone != $row->home_phone && $fone === null) {
                                 $fone = new Phone;
                                 $fone->personID = $p->personID;
-                                $fone->phoneNumber = (int) $row->mobile_phone;
+                                $fone->phoneNumber = (int)$row->mobile_phone;
                                 $fone->phoneType = 'Mobile';
                                 $fone->creatorID = auth()->user()->id;
                                 $fone->updaterID = auth()->user()->id;
@@ -1236,7 +1239,7 @@ class UploadController extends Controller
                                     break;
                                 case preg_match('/(pmi.number|pmi.membership|number|membership)/i', $k):
                                     $pmiID = $row[$k];
-                                    if (! is_numeric($pmiID)) {
+                                    if (!is_numeric($pmiID)) {
                                         $pmiID = null;
                                     } else {
                                         $pmiID = number_format($pmiID, 0, '', '');
@@ -1337,7 +1340,7 @@ class UploadController extends Controller
                                     break;
 
                                 default:
-                                    echo "Encountered an unknown column: '".$k."'<br>";
+                                    echo "Encountered an unknown column: '" . $k . "'<br>";
                                     break;
                             }
                         }
@@ -1403,52 +1406,52 @@ class UploadController extends Controller
                         }
                          */
 
-                        if (! isset($canNtwk)) {
+                        if (!isset($canNtwk)) {
                             $canNtwk = 0;
                         }
-                        if (! isset($allergy)) {
+                        if (!isset($allergy)) {
                             $allergy = 0;
                         }
-                        if (! isset($pmiID)) {
+                        if (!isset($pmiID)) {
                             $pmiID = null;
                         }
-                        if (! isset($canPDU)) {
+                        if (!isset($canPDU)) {
                             $canPDU = 0;
                         }
-                        if (! isset($firstEvent)) {
+                        if (!isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (! isset($firstEvent)) {
+                        if (!isset($firstEvent)) {
                             $firstEvent = 0;
                         }
-                        if (! isset($pmtRecd)) {
+                        if (!isset($pmtRecd)) {
                             $pmtRecd = 0;
                         }
-                        if (! isset($specialNeeds)) {
+                        if (!isset($specialNeeds)) {
                             $specialNeeds = null;
                         }
-                        if (! isset($coName)) {
+                        if (!isset($coName)) {
                             $coName = null;
                         }
-                        if (! isset($indName)) {
+                        if (!isset($indName)) {
                             $indName = null;
                         }
-                        if (! isset($hear)) {
+                        if (!isset($hear)) {
                             $hear = null;
                         }
-                        if (! isset($questions)) {
+                        if (!isset($questions)) {
                             $questions = null;
                         }
-                        if (! isset($commute)) {
+                        if (!isset($commute)) {
                             $commute = null;
                         }
-                        if (! isset($topics)) {
+                        if (!isset($topics)) {
                             $topics = null;
                         }
-                        if (! isset($prefName)) {
+                        if (!isset($prefName)) {
                             $prefName = null;
                         }
-                        if (! isset($experience)) {
+                        if (!isset($experience)) {
                             $experience = null;
                         }
                         // foreach cycle through $row's keys() and switch on preg_match
@@ -1811,7 +1814,7 @@ class UploadController extends Controller
             $what = 'Event registration records';
         }
 
-        request()->session()->flash('alert-success', "$what were successfully loaded. (".$this->counter.')');
+        request()->session()->flash('alert-success', "$what were successfully loaded. (" . $this->counter . ')');
         $events = Event::where([
             ['orgID', '=', $this->currentPerson->defaultOrgID],
         ])->get();

@@ -129,11 +129,13 @@
     $currentPerson = $current_person;
     $currentOrg    = $org;
     $logo = '';
+    $s3name = select_bucket('m', config('APP_ENV'));
+
     try {
         if ($org->orgLogo !== null) {
             $logoFilePath = $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo;
-            if(Storage::disk('s3_media')->exists($logoFilePath)){
-                $logo = Storage::disk('s3_media')->url($logoFilePath);
+            if(Storage::disk($s3name)->exists($logoFilePath)){
+                $logo = Storage::disk($s3name)->url($logoFilePath);
             }
         }
     } catch (Exception $exception) {
@@ -453,7 +455,7 @@ if($event->hasTracks){
             @else
                 {{ html()->submit(trans('messages.headers.sub&rev'))->class('btn btn-primary')->name('sub&rev') }}
             @endif
-            <a href="{{ env('APP_URL') }}/manage_events" class="btn btn-default">@lang('messages.headers.cancel')</a>
+            <a href="{{ config('APP_URL') }}/manage_events" class="btn btn-default">@lang('messages.headers.cancel')</a>
         </div>
 
         @include('v1.parts.start_content', ['header' => strtoupper(trans('messages.headers.opt')).': '. trans('messages.headers.post-reg').' '.trans('messages.headers.info'),

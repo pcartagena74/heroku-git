@@ -92,8 +92,8 @@ class RegFinanceController extends Controller
 
             if (count($regs) == 0) {
                 $rf->delete();
-                $button1 = "<a class='btn btn-primary btn-xs' href='" . env('APP_URL') . "/events/$event->eventID'>" . trans('messages.errors.no_reg1') . '</a>';
-                $button2 = "<a class='btn btn-info btn-xs' href='" . env('APP_URL') . "/dashboard'>" . trans('messages.errors.no_reg2') . '</a>';
+                $button1 = "<a class='btn btn-primary btn-xs' href='" . config('APP_URL') . "/events/$event->eventID'>" . trans('messages.errors.no_reg1') . '</a>';
+                $button2 = "<a class='btn btn-info btn-xs' href='" . config('APP_URL') . "/dashboard'>" . trans('messages.errors.no_reg2') . '</a>';
                 $message = trans('messages.errors.no_regs', ['startover' => $button1, 'close' => $button2]);
 
                 return view('v1.public_pages.error_display', compact('message'));
@@ -250,7 +250,7 @@ class RegFinanceController extends Controller
                     $stripeEmail = $user->email;
                 }
                 $stripeTokenType = $request->input('stripeTokenType');
-                Stripe::setApiKey(env('STRIPE_SECRET'));
+                Stripe::setApiKey(config('STRIPE_SECRET'));
 
                 // Get customer handle for this transaction
                 try {
@@ -438,18 +438,13 @@ class RegFinanceController extends Controller
         $x = compact('rf');
 
         $receipt_filename = $rf->eventID . '/' . $rf->confirmation . '.pdf';
+        $s3name = select_bucket('r', config('APP_ENV'));
 
         // if $receipt_filename matches pending or receipt_pending, don't do anything with the receipt.
         if (!preg_match('/pending/i', $receipt_filename)) {
             try {
                 $pdf = generate_pdf('v', 'v1.public_pages.event_receipt', $x);
-                \Storage::disk('s3_receipts')->put($receipt_filename, $pdf, 'public');
-                /*
-                PDF::view('v1.public_pages.event_receipt', $x)
-                    ->disk('s3_receipts')
-                    ->save($receipt_filename);
-                */
-
+                \Storage::disk($s3name)->put($receipt_filename, $pdf, 'public');
             } catch (\Exception $exception) {
                 // request()->session()->flash('alert-warning', trans('messages.errors.no_receipt') . ' E: ' . $exception->getMessage() .
                 // ' File : ' . $exception->getFile() . ' Line : ' . $exception->getLine());
@@ -461,17 +456,18 @@ class RegFinanceController extends Controller
 
             $client = new S3Client([
                 'credentials' => [
-                    'key' => env('AWS_KEY'),
-                    'secret' => env('AWS_SECRET'),
+                    'key' => config('AWS_KEY'),
+                    'secret' => config('AWS_SECRET'),
                 ],
-                'region' => env('AWS_REGION'),
+                'region' => config('AWS_REGION'),
                 'version' => 'latest',
             ]);
             */
+            $s3name = select_bucket('r', config('APP_ENV'));
 
             try {
-                if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
-                    $event_pdf_url = Storage::disk('s3_receipts')->url($receipt_filename);
+                if (Storage::disk($s3name)->exists($receipt_filename)) {
+                    $event_pdf_url = Storage::disk($s3name)->url($receipt_filename);
                 }
             } catch (Exception $e) {
                 $event_pdf_url = '#';
@@ -487,7 +483,7 @@ class RegFinanceController extends Controller
             }
         }
 
-        return redirect(env('APP_URL') . '/show_receipt/' . $rf->regID);
+        return redirect(config('APP_URL') . '/show_receipt/' . $rf->regID);
     }
 
     public function update_payment(Request $request, Registration $reg, RegFinance $rf): RedirectResponse
@@ -729,7 +725,7 @@ class RegFinanceController extends Controller
             if ($rf->cost > 0 && $stripeToken !== null) {
                 $stripeEmail = $request->input('stripeEmail');
                 $stripeTokenType = $request->input('stripeTokenType');
-                Stripe::setApiKey(env('STRIPE_SECRET'));
+                Stripe::setApiKey(config('STRIPE_SECRET'));
 
                 // Check if a customer id exists, and retrieve or create
                 if (!$user->stripe_id) {
@@ -830,10 +826,11 @@ class RegFinanceController extends Controller
             ->setOption('enable-smart-shrinking', true)
             ->setOption('no-stop-slow-scripts', true);
         */
+        $s3name = select_bucket('r', config('APP_ENV'));
 
         try {
-            if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
-                $event_pdf_url = Storage::disk('s3_receipts')->url($receipt_filename);
+            if (Storage::disk($s3name)->exists($receipt_filename)) {
+                $event_pdf_url = Storage::disk($s3name)->url($receipt_filename);
             }
         } catch (Exception $e) {
             $event_pdf_url = '#';
@@ -880,23 +877,19 @@ class RegFinanceController extends Controller
         $org = $rf->event->org;
 
         $x = compact('rf');
+        $s3name = select_bucket('r', config('APP_ENV'));
         try {
             // $pdf = PDF::loadView('v1.public_pages.event_receipt', $x);
             $pdf = generate_pdf('v', 'v1.public_pages.event_receipt', $x);
-            \Storage::disk('s3_receipts')->put($receipt_filename, $pdf, 'public');
-            /*
-            PDF::view('v1.public_pages.event_receipt', $x)
-                ->disk('s3_receipts')
-                ->save($receipt_filename);
-            */
+            \Storage::disk($s3name)->put($receipt_filename, $pdf, 'public');
         } catch (\Exception $exception) {
             request()->session()->flash('alert-warning', trans('messages.errors.no_receipt'));
             return redirect()->back();
         }
 
         try {
-            if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
-                $event_pdf_url = Storage::disk('s3_receipts')->url($receipt_filename);
+            if (Storage::disk($s3name)->exists($receipt_filename)) {
+                $event_pdf_url = Storage::disk($s3name)->url($receipt_filename);
             }
         } catch (Exception $e) {
             $event_pdf_url = '#';

@@ -70,8 +70,9 @@
     $event_filename = 'event_' . $event->eventID . '.ics';
 
     try {
-        if(Storage::disk('events')->exists($event_filename)){
-            $ics = Storage::disk('events')->url($event_filename);
+        $s3name = select_bucket('e', config('APP_ENV'));
+        if(Storage::disk($s3name)->exists($event_filename)){
+            $ics = Storage::disk($s3name)->url($event_filename);
         }
     } catch(Exception $e) {
         $ics = '';

@@ -52,10 +52,11 @@ class RegFinance extends Model
     public function receipt_url()
     {
         $receipt_filename = "$this->eventID/$this->confirmation.pdf";
+        $s3name = select_bucket('r', config('APP_ENV'));
 
         try {
-            if (Storage::disk('s3_receipts')->exists($receipt_filename)) {
-                $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+            if (Storage::disk($s3name)->exists($receipt_filename)) {
+                $receipt_url = Storage::disk($s3name)->url($receipt_filename);
             }
         } catch (Exception $e) {
             $receipt_url = '#';
