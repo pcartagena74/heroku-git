@@ -1,5 +1,5 @@
 @php
-use App\Http\TicketitControllers\DashboardController;
+    use App\Http\TicketitControllers\DashboardController;
 @endphp
 
 @extends($master)
@@ -66,7 +66,8 @@ use App\Http\TicketitControllers\DashboardController;
                         <i class="fa fa-bar-chart-o fa-fw"></i> {{ trans('ticketit::admin.index-performance-indicator') }}
                         <div class="pull-right">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle"
+                                        data-toggle="dropdown">
                                     {{ trans('ticketit::admin.index-periods') }}
                                     <span class="caret"></span>
                                 </button>
@@ -142,7 +143,8 @@ use App\Http\TicketitControllers\DashboardController;
                 </ul>
                 <br>
                 <div class="tab-content">
-                    <div id="information-panel-categories" class="list-group tab-pane fade {{$active_tab == "cat" ? "in active" : ""}}">
+                    <div id="information-panel-categories"
+                         class="list-group tab-pane fade {{$active_tab == "cat" ? "in active" : ""}}">
                         <a href="#" class="list-group-item disabled">
                             <span>{{ trans('ticketit::admin.index-category') }}
                                 <span class="badge">{{ trans('ticketit::admin.index-total') }}</span>
@@ -159,7 +161,7 @@ use App\Http\TicketitControllers\DashboardController;
                         <span style="color: {{ $category->color }}">
                             {{ $category->name }} <span class="badge">{{ $category->tickets()->count() }}</span>
                         </span>
-                        <span class="pull-right text-muted small">
+                                <span class="pull-right text-muted small">
                             <em>
                                 {{ $category->tickets()->whereNull('completed_at')->count() }} /
                                  {{ $category->tickets()->whereNotNull('completed_at')->count() }}
@@ -169,7 +171,8 @@ use App\Http\TicketitControllers\DashboardController;
                         @endforeach
                         {!! $categories->render() !!}
                     </div>
-                    <div id="information-panel-agents" class="list-group tab-pane fade {{$active_tab == "agents" ? "in active" : ""}}">
+                    <div id="information-panel-agents"
+                         class="list-group tab-pane fade {{$active_tab == "agents" ? "in active" : ""}}">
                         <a href="#" class="list-group-item disabled">
                             <span>{{ trans('ticketit::admin.index-agent') }}
                                 <span class="badge">{{ trans('ticketit::admin.index-total') }}</span>
@@ -200,7 +203,8 @@ use App\Http\TicketitControllers\DashboardController;
                         @endforeach
                         {!! $agents->render() !!}
                     </div>
-                    <div id="information-panel-users" class="list-group tab-pane fade {{$active_tab == "users" ? "in active" : ""}}">
+                    <div id="information-panel-users"
+                         class="list-group tab-pane fade {{$active_tab == "users" ? "in active" : ""}}">
                         <a href="#" class="list-group-item disabled">
                             <span>{{ trans('ticketit::admin.index-user') }}
                                 <span class="badge">{{ trans('ticketit::admin.index-total') }}</span>
@@ -242,12 +246,10 @@ use App\Http\TicketitControllers\DashboardController;
 @stop
 @section('footer')
     @if($tickets_count)
-    {{--@include('ticketit::shared.footer')--}}
-    <script>
-    </script>
+        {{--@include('ticketit::shared.footer')--}}
 
-    <script type="text/javascript"
-            src="https://www.google.com/jsapi?autoload={
+        <script type="text/javascript"
+                src="https://www.google.com/jsapi?autoload={
             'modules':[{
               'name':'visualization',
               'version':'1',
@@ -255,72 +257,72 @@ use App\Http\TicketitControllers\DashboardController;
             }]
           }"></script>
 
-    <script type="text/javascript">
-        google.charts.load('current', {packages: ['corechart']});
-        google.setOnLoadCallback(drawChart);
+        <script nonce="{{ $cspScriptNonce }}" type="text/javascript">
+            google.charts.load('current', {packages: ['corechart']});
+            google.setOnLoadCallback(drawChart);
 
-        // performance line chart
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ["{{ trans('ticketit::admin.index-month') }}", "{!! implode('", "', $monthly_performance['categories']) !!}"],
-                @foreach($monthly_performance['interval'] as $month => $records)
+            // performance line chart
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([
+                    ["{{ trans('ticketit::admin.index-month') }}", "{!! implode('", "', $monthly_performance['categories']) !!}"],
+                        @foreach($monthly_performance['interval'] as $month => $records)
                     ["{{ $month }}", {!! implode(',', $records) !!}],
-                @endforeach
-            ]);
+                    @endforeach
+                ]);
 
-            var options = {
-                title: '{!! addslashes(trans('ticketit::admin.index-performance-chart')) !!}',
-                curveType: 'function',
-                legend: {position: 'right'},
-                vAxis: {
-                    viewWindowMode:'explicit',
-                    format: '#',
-                    viewWindow:{
-                        min:0
+                var options = {
+                    title: '{!! addslashes(trans('ticketit::admin.index-performance-chart')) !!}',
+                    curveType: 'function',
+                    legend: {position: 'right'},
+                    vAxis: {
+                        viewWindowMode: 'explicit',
+                        format: '#',
+                        viewWindow: {
+                            min: 0
+                        }
                     }
-                }
-            };
+                };
 
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-            chart.draw(data, options);
+                chart.draw(data, options);
 
-            // Categories Pie Chart
-            var cat_data = google.visualization.arrayToDataTable([
-              ['{{ trans('ticketit::admin.index-category') }}', '{!! addslashes(trans('ticketit::admin.index-tickets')) !!}'],
-              @foreach($categories_share as $cat_name => $cat_tickets)
+                // Categories Pie Chart
+                var cat_data = google.visualization.arrayToDataTable([
+                    ['{{ trans('ticketit::admin.index-category') }}', '{!! addslashes(trans('ticketit::admin.index-tickets')) !!}'],
+                        @foreach($categories_share as $cat_name => $cat_tickets)
                     ['{!! addslashes($cat_name) !!}', {{ $cat_tickets }}],
-              @endforeach
-            ]);
+                    @endforeach
+                ]);
 
-            var cat_options = {
-              title: '{!! addslashes(trans('ticketit::admin.index-categories-chart')) !!}',
-              legend: {position: 'bottom'}
-            };
+                var cat_options = {
+                    title: '{!! addslashes(trans('ticketit::admin.index-categories-chart')) !!}',
+                    legend: {position: 'bottom'}
+                };
 
-            var cat_chart = new google.visualization.PieChart(document.getElementById('catpiechart'));
+                var cat_chart = new google.visualization.PieChart(document.getElementById('catpiechart'));
 
-            cat_chart.draw(cat_data, cat_options);
+                cat_chart.draw(cat_data, cat_options);
 
-            // Agents Pie Chart
-            var agent_data = google.visualization.arrayToDataTable([
-              ['{{ trans('ticketit::admin.index-agent') }}', '{!! addslashes(trans('ticketit::admin.index-tickets')) !!}'],
-              @foreach($agents_share as $agent_name => $agent_tickets)
+                // Agents Pie Chart
+                var agent_data = google.visualization.arrayToDataTable([
+                    ['{{ trans('ticketit::admin.index-agent') }}', '{!! addslashes(trans('ticketit::admin.index-tickets')) !!}'],
+                        @foreach($agents_share as $agent_name => $agent_tickets)
                     ['{!! addslashes($agent_name) !!}', {{ $agent_tickets }}],
-              @endforeach
-            ]);
+                    @endforeach
+                ]);
 
-            var agent_options = {
-              title: '{!! addslashes(trans('ticketit::admin.index-agents-chart')) !!}',
-              legend: {position: 'bottom'}
-            };
+                var agent_options = {
+                    title: '{!! addslashes(trans('ticketit::admin.index-agents-chart')) !!}',
+                    legend: {position: 'bottom'}
+                };
 
-            var agent_chart = new google.visualization.PieChart(document.getElementById('agentspiechart'));
+                var agent_chart = new google.visualization.PieChart(document.getElementById('agentspiechart'));
 
-            agent_chart.draw(agent_data, agent_options);
+                agent_chart.draw(agent_data, agent_options);
 
-        }
-    </script>
+            }
+        </script>
     @endif
 @append
 @section('scripts')

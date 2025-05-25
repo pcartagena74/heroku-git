@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -50,7 +51,7 @@ class Event extends Model
 
     protected static $ignoreChangedAttributes = ['createDate', 'updateDate'];
 
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
     }
@@ -68,6 +69,11 @@ class Event extends Model
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'eventID', 'eventID');
+    }
+
+    public function eventsessions(): HasMany
+    {
+        return $this->hasMany(EventSession::class, 'eventID', 'eventID');
     }
 
     public function event_type(): BelongsTo
@@ -181,7 +187,7 @@ class Event extends Model
         }
     }
 
-    public function regCount()
+    public function regCount(): int
     {
         return Registration::where('eventID', '=', $this->eventID)->count();
     }
@@ -199,10 +205,14 @@ class Event extends Model
     public function default_sessions()
     {
         return EventSession::where('eventID', '=', $this->eventID)
+            /*
+             * // Commented out b/c this is just wrong for what is intended
             ->where(function ($q) {
                 $q->orWhere('sessionName', '=', 'def_sess');
                 $q->orWhere('trackID', '=', 0);
-            })->get();
+            })
+            */
+            ->get();
     }
 
     public function registered_speakers()
@@ -235,7 +245,7 @@ class Event extends Model
         return $count;
     }
 
-    public function registrants($sessionID)
+    public function registrants($sessionID): array|RedirectResponse
     {
         // Get the possible registrants for this event's session
         // - people pre-registered (regsession) for this session's ID
@@ -249,7 +259,7 @@ class Event extends Model
 
         $ticketIDs = $es->ticket->bundle_parent_array();
 
-        $out = Registration::whereIn('event-registration.ticketID', $ticketIDs)
+        return Registration::whereIn('event-registration.ticketID', $ticketIDs)
             ->select('p.personID', 'p.firstName', 'p.prefName', 'p.lastName', 'op.OrgStat1', 'rs.hasAttended', 'event-registration.regID')
             //->with('ticket', 'event', 'person.orgperson', 'regsessions', 'person')
             ->where('event-registration.eventID', '=', $es->eventID)
@@ -265,26 +275,26 @@ class Event extends Model
             ->distinct()
             ->orderBy('p.lastName')
             ->get();
-
-        return $out;
     }
 
     public function create_or_update_event_ics(): void
     {
         // Make the event_{id}.ics file if it doesn't exist
-        $event_filename = 'event_'.$this->eventID.'.ics';
+        $event_filename = 'event_' . $this->eventID . '.ics';
         $ical = new ics_calendar($this);
         $contents = $ical->get();
-        \Storage::disk('events')->put($event_filename, $contents, 'public');
+        $s3name = select_bucket('e', config('APP_ENV'));
+        \Storage::disk($s3name)->put($event_filename, $contents, 'public');
     }
 
     public function event_ics_url()
     {
         $ics_filename = "event_$this->eventID.ics";
+        $s3name = select_bucket('e', config('APP_ENV'));
 
         try {
-            if (Storage::disk('events')->exists($ics_filename)) {
-                $ics_file = Storage::disk('events')->url($ics_filename);
+            if (Storage::disk($s3name)->exists($ics_filename)) {
+                $ics_file = Storage::disk($s3name)->url($ics_filename);
             }
         } catch (Exception $e) {
             $ics_file = '#';
@@ -296,9 +306,9 @@ class Event extends Model
     public function event_url(): string
     {
         if ($this->slug) {
-            return '/events/'.$this->slug;
+            return '/events/' . $this->slug;
         } else {
-            return '/events/'.$this->eventID;
+            return '/events/' . $this->eventID;
         }
     }
 

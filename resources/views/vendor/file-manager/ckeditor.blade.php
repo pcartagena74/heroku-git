@@ -24,28 +24,28 @@
 </div>
 
 <!-- File manager -->
-<script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // set fm height
-    document.getElementById('fm-main-block').setAttribute('style', 'height:' + window.innerHeight + 'px');
+<script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"/>
+<script nonce="{{ $cspScriptNonce }}">
+    document.addEventListener('DOMContentLoaded', function () {
+        // set fm height
+        document.getElementById('fm-main-block').setAttribute('style', 'height:' + window.innerHeight + 'px');
 
-    // Helper function to get parameters from the query string.
-    function getUrlParam(paramName) {
-      const reParam = new RegExp('(?:[\?&]|&)' + paramName + '=([^&]+)', 'i');
-      const match = window.location.search.match(reParam);
+        // Helper function to get parameters from the query string.
+        function getUrlParam(paramName) {
+            const reParam = new RegExp('(?:[\?&]|&)' + paramName + '=([^&]+)', 'i');
+            const match = window.location.search.match(reParam);
 
-      return (match && match.length > 1) ? match[1] : null;
-    }
+            return (match && match.length > 1) ? match[1] : null;
+        }
 
-    // Add callback to file manager
-    fm.$store.commit('fm/setFileCallBack', function(fileUrl) {
-      const funcNum = getUrlParam('CKEditorFuncNum');
+        // Add callback to file manager
+        fm.$store.commit('fm/setFileCallBack', function (fileUrl) {
+            const funcNum = getUrlParam('CKEditorFuncNum');
 
-      window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
-      window.close();
+            window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+            window.close();
+        });
     });
-  });
 </script>
 </body>
 </html>

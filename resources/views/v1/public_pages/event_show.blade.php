@@ -74,23 +74,11 @@
         }
     }
 
-/*
-    $client = Storage::disk('s3_media')->getClient();
-    $client = new S3Client([
-        'credentials' => [
-            'key' => env('AWS_KEY'),
-            'secret' => env('AWS_SECRET')
-        ],
-        'region' => env('AWS_REGION'),
-        'version' => 'latest',
-    ]);
-    $adapter = new AwsS3V3Adapter($client, env('AWS_BUCKET3'));
-    $s3fs = new Filesystem($adapter);
-*/
     $logoFilePath = $orgLogoPath->orgPath . "/" . $orgLogoPath->orgLogo;
+    $s3name = select_bucket('m', config('APP_ENV'));
     try {
-        if(Storage::disk('s3_media')->exists($logoFilePath)){
-            $logo = Storage::disk('s3_media')->url($logoFilePath);
+        if(Storage::disk($s3name)->exists($logoFilePath)){
+            $logo = Storage::disk($s3name)->url($logoFilePath);
         }
     } catch(Exception $e) {
         $logo = '';
@@ -103,7 +91,7 @@
 @if($event->ok_to_display() || $override)
     @section('content')
         @include('v1.parts.not-table_header')
-        <style>
+        <style nonce="{{ $cspStyleNonce }}">
             .popover {
                 max-width: 50%;
             }
@@ -124,7 +112,7 @@
 
         @include('v1.parts.start_content', ['header' => trans('messages.fields.detail'), 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-        {!! Form::open(['url' => env('APP_URL').'/regstep1/'.$event->eventID, 'method' => 'post', 'id' => 'start_registration']) !!}
+        {{ html()->form('POST', env('APP_URL') . '/regstep1/' . $event->eventID)->id('start_registration')->open() }}
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                 {!! $event->eventDescription !!}
@@ -602,7 +590,7 @@
                     </div>
                     @endif
                 </div>
-                {!! Form::close() !!}
+                {{ html()->form()->close() }}
                 @include('v1.parts.end_content')
 
                 @include('v1.parts.start_content', ['header' => trans('messages.fields.d&t'), 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -681,14 +669,13 @@
                 @endsection
 
                 @section('scripts')
-                    <script>
+                    <script language="JavaScript" nonce="{{ $cspScriptNonce }}">
                         $('a[data-toggle="tab"]').click(function (e) {
                             $(this).tab('show');
                         });
                         // e.target
                         //e.relatedTarget // previous active tab
-                    </script>
-                    <script>
+
                         $('#btn-validate').on('click', function (e) {
                             e.preventDefault();
                             validateCode({{ $event->eventID }});
@@ -715,6 +702,7 @@
                             $tkt_sum .= "0;";
                             $sum .= "0";
                         @endphp
+
                         function checksum() {
                             {!! $tkt_vars !!}
                             {!! $tkt_sum !!}
@@ -734,8 +722,7 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             }
                         });
-                    </script>
-                    <script>
+
                         function validateCode(eventID) {
                             var codeValue = $("#discount_code").val();
                             if (FieldIsEmpty(codeValue)) {
@@ -774,8 +761,7 @@
                                 });
                             }
                         }
-                    </script>
-                    <script>
+
                         $('[data-toggle="popover"]').popover({
                             container: 'body',
                             placement: 'top'

@@ -10,23 +10,23 @@
 @section('content')
 <div class="col-sm-12">
 
-    {!! Form::open(array('url' => env('APP_URL')."/force_password", 'method' => 'POST')) !!}
+    {{ html()->form('POST', env('APP_URL') . "/force_password")->open() }}
     <div class="form-group">
-        {!! Form::label('userid', 'User ID', array('class' => 'control-label')) !!}
-        {!! Form::password('userid', $attributes = array('class' => 'form-control', 'required')) !!}
+        {{ html()->label('User ID', 'userid')->class('control-label') }}
+        {{ html()->password('userid')->attributes($attributes = array('class' => 'form-control', 'required')) }}
     </div>
     <div class="form-group">
-        {!! Form::label('newPass', 'New Password', array('class' => 'control-label')) !!}
-        {!! Form::password('password', $attributes = array('class' => 'form-control', 'required')) !!}
+        {{ html()->label('New Password', 'newPass')->class('control-label') }}
+        {{ html()->password('password')->attributes($attributes = array('class' => 'form-control', 'required')) }}
     </div>
     <div class="form-group">
-        {!! Form::label('password_confirmation', 'Verify Password', array('class' => 'control-label')) !!}
-        {!! Form::password('password_confirmation', $attributes = array('class' => 'form-control', 'required')) !!}
+        {{ html()->label('Verify Password', 'password_confirmation')->class('control-label') }}
+        {{ html()->password('password_confirmation')->attributes($attributes = array('class' => 'form-control', 'required')) }}
     </div>
     <div class="form-group">
-        {!! Form::submit('Change Password', array('class' => 'btn btn-primary btn-sm')) !!}
+        {{ html()->submit('Change Password')->class('btn btn-primary btn-sm') }}
     </div>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
 
 </div>
 @stop

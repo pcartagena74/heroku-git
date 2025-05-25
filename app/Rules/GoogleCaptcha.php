@@ -20,9 +20,9 @@ class GoogleCaptcha implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  mixed  $value
+     * @param mixed $value
      */
-    public function passes(string $attribute, $value): bool
+    public function passes($attribute, $value): bool
     {
         $client = new Client;
         $response = $client->post(
@@ -34,7 +34,7 @@ class GoogleCaptcha implements Rule
             ]
         );
 
-        $body = json_decode((string) $response->getBody());
+        $body = json_decode((string)$response->getBody());
 
         return $body->success;
     }

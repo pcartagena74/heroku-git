@@ -21,12 +21,16 @@
     $rf = $reg->regfinance;
     $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
 
+    $s3name = select_bucket('r', config('APP_ENV'));
+
     try {
-        if(Storage::disk('s3_receipts')->exists($receipt_filename)){
-            $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+        if(Storage::disk($s3name)->exists($receipt_filename)){
+            $receipt_url = Storage::disk($s3name)->url($receipt_filename);
+            $receipt_exists = true;
         }
     } catch(Exception $e) {
-        $receipt_url = '';
+        $receipt_url = '#';
+        $receipt_exists = false;
     }
 
     if ($reg->subtotal > 0 && $reg->regfinance->pmtRecd) {
@@ -65,19 +69,24 @@
             </a>
         @endif
 
-        {!! Form::open(['method' => 'delete', 'route' => ['cancel_registration', $reg->regID, $reg->rfID], 'data-toggle' => 'validator']) !!}
+        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $reg->rfID]))->data('toggle', 'validator')->open() }}
         <button type="submit" class="btn {{ $button_class }} btn-sm" onclick="return confirm('{{ $confirm_msg }}');"
                 data-toggle="tooltip" data-placement="top" title="{{ $button_tooltip }}">
             {!! $button_symbol !!}
         </button>
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
     @endif
 
     @if($reg->regfinance->pmtRecd && $reg->subtotal > 0)
-        <a class="btn btn-success btn-sm" href="{!! $receipt_url !!}" target="_new"
-           data-toggle="tooltip" title="{!! trans('messages.headers.receipt') !!}">
-            <i class="far fa-file-invoice-dollar fa-fw"></i>
-        </a>
+        @if($receipt_exists)
+            <a target="_new" href="{{ $receipt_url }}"
+               class="btn btn-success btn-sm" data-toggle="tooltip" title="{!! trans('messages.buttons.rec_down') !!}">
+                <i class="far fa-file-invoice-dollar fa-fw"></i></a>
+        @else
+            <a target="_new" href="{{ env('APP_URL'). "/recreate_receipt/".$rf->regID }}"
+               class="btn btn-success btn-sm" data-toggle="tooltip" title="{!! trans('messages.buttons.rec_down') !!}">
+                <i class="far fa-file-invoice-dollar fa-fw"></i></a>
+        @endif
     @endif
 
 @else

@@ -30,7 +30,7 @@ $display = $title;
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
-    <style>
+    <style nonce="{{ $cspStyleNonce }}">
         table {
             border: 1px solid #ccc;
             border-collapse: collapse;
@@ -46,10 +46,10 @@ $display = $title;
         }
 
         table tr {
-        {{--
-        background-color: #f8f8f8;
-        --}}
-            border: 1px solid #ddd;
+            {{--
+            background-color: #f8f8f8;
+            --}}
+  border: 1px solid #ddd;
             padding: .35em;
         }
 
@@ -107,10 +107,12 @@ $display = $title;
                 */
                 content: attr(data-label);
                 float: left;
-        {{--
-                font-weight: bold;
-                text-transform: uppercase;
-        --}}
+            {{--
+                    font-weight: bold;
+                    text-transform: uppercase;
+            --}}
+
+
             }
 
             table td:last-child {
@@ -133,71 +135,71 @@ $display = $title;
 
         @if(count($members)>0)
             <div style="overflow-x:auto;">
-            <table style="border-spacing: 1em; width: 100%"
-                   class="table jambo_table table-striped table-responsive">
-                <thead>
-                <tr>
-                    <th scope="col">@lang('messages.fields.name')</th>
-                    <th scope="col">@lang('messages.fields.email')</th>
-                    <th scope="col">@lang('messages.headers.profile_vars.orgstat1')</th>
-                    <th scope="col">
-                        @lang('messages.headers.profile_vars.regs')
-                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.regs'), 'c' => 'text-warning'])
-                    </th>
-                    <th scope="col">
-                        @lang('messages.headers.profile_vars.regs_now')
-                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.regs_now'), 'c' => 'text-warning'])
-                    </th>
-                    @if($which == 'new')
-                        <th scope="col">@lang('messages.headers.profile_vars.reldate1')</th>
-                        <th scope="col">@lang('messages.headers.profile_vars.reldate2')</th>
-                    @else
-                        <th scope="col">@lang('messages.headers.profile_vars.orgstat4_short')</th>
-                        <th scope="col">@lang('messages.headers.profile_vars.reldate2')</th>
-                        <th scope="col">@lang('messages.headers.profile_vars.reldate4')</th>
-                    @endif
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($members as $member)
+                <table style="border-spacing: 1em; width: 100%"
+                       class="table jambo_table table-striped table-responsive">
+                    <thead>
                     <tr>
-                        <td scope="row" data-label="{{ trans('messages.fields.name') }}">
-                        {{ $member->firstName }} {{ $member->lastName }}
-                        </td>
-                        <td data-label="{{ trans('messages.fields.email') }}">
-                        {{ $member->login }}
-                        </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.orgstat1') }}">
-                        {{ $member->orgperson->OrgStat1 }}
-                        </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.regs') }}">
-                            {{ $member->registrations_count }}
-                        </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.regs_now') }}">
-                            {{ $member->regs_this_year }}
-                        </td>
+                        <th scope="col">@lang('messages.fields.name')</th>
+                        <th scope="col">@lang('messages.fields.email')</th>
+                        <th scope="col">@lang('messages.headers.profile_vars.orgstat1')</th>
+                        <th scope="col">
+                            @lang('messages.headers.profile_vars.regs')
+                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.regs'), 'c' => 'text-warning'])
+                        </th>
+                        <th scope="col">
+                            @lang('messages.headers.profile_vars.regs_now')
+                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.regs_now'), 'c' => 'text-warning'])
+                        </th>
                         @if($which == 'new')
-                        <td data-label="{{ trans('messages.headers.profile_vars.reldate1') }}">
-                        {{ \Carbon\Carbon::parse($member->orgperson->RelDate1)->format('F j, Y') }}
-                        </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.reldate2') }}">
-                        {{ \Carbon\Carbon::parse($member->orgperson->RelDate2)->format('F j, Y') }}
-                        </td>
+                            <th scope="col">@lang('messages.headers.profile_vars.reldate1')</th>
+                            <th scope="col">@lang('messages.headers.profile_vars.reldate2')</th>
                         @else
-                        <td data-label="{{ trans('messages.headers.profile_vars.orgstat4_short') }}">
-                            {{ $member->orgperson->OrgStat4 }}
-                        </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.reldate2') }}">
-                        {{ \Carbon\Carbon::parse($member->orgperson->RelDate2)->format('F j, Y') }}
-                        </td>
-                        <td data-label="{{ trans('messages.headers.profile_vars.reldate4') }}">
-                        {{ \Carbon\Carbon::parse($member->orgperson->RelDate4)->format('F j, Y') }}
-                        </td>
+                            <th scope="col">@lang('messages.headers.profile_vars.orgstat4_short')</th>
+                            <th scope="col">@lang('messages.headers.profile_vars.reldate2')</th>
+                            <th scope="col">@lang('messages.headers.profile_vars.reldate4')</th>
                         @endif
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach ($members as $member)
+                        <tr>
+                            <td scope="row" data-label="{{ trans('messages.fields.name') }}">
+                                {{ $member->firstName }} {{ $member->lastName }}
+                            </td>
+                            <td data-label="{{ trans('messages.fields.email') }}">
+                                {{ $member->login }}
+                            </td>
+                            <td data-label="{{ trans('messages.headers.profile_vars.orgstat1') }}">
+                                {{ $member->orgperson->OrgStat1 }}
+                            </td>
+                            <td data-label="{{ trans('messages.headers.profile_vars.regs') }}">
+                                {{ $member->registrations_count }}
+                            </td>
+                            <td data-label="{{ trans('messages.headers.profile_vars.regs_now') }}">
+                                {{ $member->regs_this_year }}
+                            </td>
+                            @if($which == 'new')
+                                <td data-label="{{ trans('messages.headers.profile_vars.reldate1') }}">
+                                    {{ \Carbon\Carbon::parse($member->orgperson->RelDate1)->format('F j, Y') }}
+                                </td>
+                                <td data-label="{{ trans('messages.headers.profile_vars.reldate2') }}">
+                                    {{ \Carbon\Carbon::parse($member->orgperson->RelDate2)->format('F j, Y') }}
+                                </td>
+                            @else
+                                <td data-label="{{ trans('messages.headers.profile_vars.orgstat4_short') }}">
+                                    {{ $member->orgperson->OrgStat4 }}
+                                </td>
+                                <td data-label="{{ trans('messages.headers.profile_vars.reldate2') }}">
+                                    {{ \Carbon\Carbon::parse($member->orgperson->RelDate2)->format('F j, Y') }}
+                                </td>
+                                <td data-label="{{ trans('messages.headers.profile_vars.reldate4') }}">
+                                    {{ \Carbon\Carbon::parse($member->orgperson->RelDate4)->format('F j, Y') }}
+                                </td>
+                            @endif
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
             </div>
         @else
             @lang('messages.datatable.table-empty')
@@ -210,7 +212,7 @@ $display = $title;
 
 @section('scripts')
     @include('v1.parts.menu-fix', array('path' => url('membership')))
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         new Vue({
             el: '#el',
             data: {

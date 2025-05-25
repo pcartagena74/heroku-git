@@ -17,35 +17,37 @@
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('header')
-<link href="/css/jquery.orgchart.css" media="all" rel="stylesheet" type="text/css" />
-<style>
-    #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        margin-top: 60px;
-    }
+    <link href="/css/jquery.orgchart.css" media="all" rel="stylesheet" type="text/css"/>
+    <style nonce="{{ $cspStyleNonce }}">
+        #app {
+            font-family: 'Avenir', Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 60px;
+        }
 
-    html, body {
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        font-family: Helvetica;
-    }
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            font-family: Helvetica;
+        }
 
-    #tree {
-        width: 100%;
-        height: 100%;
-    }
-</style>
+        #tree {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 @endsection
 
 @section('content')
-    <div id="app"> <OrgChart /> </div>
+    <div id="app">
+        <OrgChart/>
+    </div>
 @endsection
 
 @section('scripts')
@@ -72,14 +74,12 @@
                     ]
                 }
             },
-            computed: {
-            },
+            computed: {},
 
             mounted: function () {
             },
 
-            watch: {
-            },
+            watch: {},
 
             methods: {
                 onSubmit() {

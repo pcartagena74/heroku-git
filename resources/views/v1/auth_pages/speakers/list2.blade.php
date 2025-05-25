@@ -1,17 +1,17 @@
 @php
-/**
- * Comment: Vuejs view to display partially-editable Speaker data
- * Created: 7/25/2021
- *
- * @var $speakers
- */
+    /**
+     * Comment: Vuejs view to display partially-editable Speaker data
+     * Created: 7/25/2021
+     *
+     * @var $speakers
+     */
 
-$topBits = '';
-$header = ['ID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
-    trans('messages.fields.email'), trans_choice('messages.headers.events', 2), trans('messages.fields.buttons')];
-$data = [];
+    $topBits = '';
+    $header = ['ID', trans('messages.fields.firstName'), trans('messages.fields.lastName'),
+        trans('messages.fields.email'), trans_choice('messages.headers.events', 2), trans('messages.fields.buttons')];
+    $data = [];
 
-dd($speakers)
+    dd($speakers)
 @endphp
 
 @extends('v1.layouts.auth')
@@ -22,9 +22,9 @@ dd($speakers)
             <h2> @lang('messages.nav.s_list') </h2>
 
 
-                <template v-slot:header-r>
-                    Total rows: @{{ rows.length }}
-                </template>
+            <template v-slot:header-r>
+                Total rows: @{{ rows.length }}
+            </template>
             </vue-editable-grid>
         </div>
     @endif
@@ -36,10 +36,10 @@ dd($speakers)
 
 @section('scripts')
 
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         // Vue.component('vue-editable-grid', VueEditableGrid)
 
-            new Vue({
+        new Vue({
             el: '#el',
             data: {
                 speakers: @json($speakers),

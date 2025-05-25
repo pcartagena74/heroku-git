@@ -3,14 +3,18 @@ Options +FollowSymLinks
 #RewriteLogLevel 5
 RewriteEngine On
 
+# Added to mitigate Proxy Disclosure vulnerability
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+RewriteRule ^ - [F]
+
 #If the server is localhost and the URL was https, send the URL but on http
 RewriteCond %{HTTPS} =on
 RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
 RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
 
 # Force www.
-RewriteCond %{HTTP_HOST} ^example.com [NC]
-RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301,NC]
+#RewriteCond %{HTTP_HOST} ^mcentric.org [NC]
+#RewriteRule ^(.*)$ https://www.mcentric.org/$1 [L,R=301,NC]
 
 #Removed https-redirection; replaced by AppServiceProvider.php
 
@@ -20,3 +24,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^ index.php [L]
+#Header set Content-Security-Policy "default-src 'self' https://*.amazonaws.com https://*.datatables.net https://*.mcentric.org https://m.stripe.network; frame-src 'self' https://*.google.com https://*.google.it https://*.stripe.com; frame-ancestors 'self' https://*.pmimassbay.org; connect-src 'self' https://*.fontawesome.com; script-src 'self' 'unsafe-inline' https://*.mcentric.org https://*.jquery.com https://*.github.io https://*.stripe.com https://*.datatables.net https://*.newrelic.com https://*.fontawesome.com https://*.googletagmanager.com https://*.cloudflare.com https://*.googleapis.com https://*.bootstrapcdn.com https://*.jsdelivr.net; style-src 'self' https://*.mcentric.org https://*.cloudflare.com https://*.github.io https://*.googleapis.com https://cdn.datatables.net https://*.bootstrapcdn.com https://*.fontawesome.com; font-src 'self' https://*.gstatic.com https://*.cloudflare.com https://*.bootstrapcdn.com https://*.fontawesome.com; img-src 'self' https://*.datatables.net https://*.amazonaws.com"
+Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), fullscreen=()"
+Header set X-Content-Type-Options "nosniff"

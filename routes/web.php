@@ -1,8 +1,11 @@
 <?php
 
+//use Kordy\Ticketit\Controllers\DashboardController;
+//use App\Http\TicketitControllers\DashboardController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AddressController;
-//use Kordy\Ticketit\Controllers\DashboardController;
+use App\Models\RegFinance;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -47,8 +50,8 @@ use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VolunteerRoleController;
-use App\Http\TicketitControllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 
 /*
 |--------------------------------------------------------------------------
@@ -284,8 +287,8 @@ Route::patch('/complete_registration/{id}', [RegFinanceController::class, 'updat
 Route::patch('/update_payment/{reg}/{rf}', [RegFinanceController::class, 'update_payment'])->name('accept_payment');
 Route::post('/reg_verify/{reg}', [RegistrationController::class, 'update']); // Ajax
 Route::get('/show_receipt/{rf}', [RegFinanceController::class, 'show_receipt']);
-Route::get('/recreate_receipt/{rf}', [RegFinanceController::class, 'generate_receipt']);
-Route::get('/show_orig/{rf}', [RegFinanceController::class, 'show_receipt_orig']);
+Route::get('/recreate_receipt/{id}', [RegFinanceController::class, 'generate_receipt']);
+Route::get('/show_orig/{id}', [RegFinanceController::class, 'show_receipt_orig']);
 Route::delete('/cancel_registration/{reg}/{rf}', [RegistrationController::class, 'destroy'])->name('cancel_registration');
 
 // Event & Ticket Routes
@@ -398,12 +401,13 @@ Route::get('/list_campaign', [CampaignController::class, 'listCampaign']);
 // ----------------------------------------------------------------------------------
 Route::get('/testlogin', [LoginController::class, 'showLoginForm']);
 //Route::post('/testlogin', [LoginController::class, 'showLoginForm']);
+/*
 Route::get('/mytest', function () {
     $events = App\Models\Event::all();
 
     return view('v1.auth_pages.welcome', compact('events'));
 });
-
+*/
 Route::get('/twitter/{event}', [TwitterController::class, 'show']);
 
 Route::post('approve-tweets', function (Illuminate\Http\Request $request) {
@@ -412,7 +416,7 @@ Route::post('approve-tweets', function (Illuminate\Http\Request $request) {
             $tweet_id = substr_replace($input_key, '', 0, strlen('approval-status-'));
             $tweet = App\Models\Tweet::where('id', $tweet_id)->first();
             if ($tweet) {
-                $tweet->approved = (int) $input_val;
+                $tweet->approved = (int)$input_val;
                 $tweet->save();
             }
         }
@@ -429,18 +433,11 @@ Route::get('/blank', function () {
 Auth::routes();
 
 Route::get('ste2', function () {
-    Mail::raw('Sending email is easy from '.env('APP_ENV'), function ($message) {
+    Mail::raw('Sending email is easy from ' . env('APP_ENV'), function ($message) {
         $message->subject('Test Email');
         $message->from('support@mCentric.org', 'mCentric Support');
-        $message->to('pcartagena@partners.org');
+        $message->to('pcartagena@fierce.net');
     });
-});
-
-Route::get('snaptest', function () {
-    // $snap = App::make('snappy.pdf');
-    // $snap->generate(env('APP_URL')."/show_orig/159", 'blah.pdf');
-    // return $snap->inline();
-    return PDF::loadFile(env('APP_URL').'/show_orig/159')->inline('blah.pdf');
 });
 
 Route::get('library', [LibraryController::class, 'index']);
@@ -453,3 +450,44 @@ Route::post('/get_complete_url', [LibraryController::class, 'getCompleteURL']);
 // Route::any('{all}', function () {
 //     return view('errors.404');
 // })->where('all', '.*');
+
+// Random Security-Type Routes
+
+Route::fallback(function (Request $request) {
+    $referer = $request->header('referer');
+
+    if ($referer) {
+        $parsed = parse_url($referer);
+
+        if (isset($parsed['scheme']) && isset($parsed['host'])) {
+            $referrerUrl = $parsed['scheme'] . '://' . $parsed['host'];
+
+            if ($referrerUrl == config('app.url')) {
+                abort(404);
+            }
+        }
+    }
+
+    return response()->json([
+        'message' => 'Not Found',
+        'status' => 404
+    ], 404);
+});
+
+Route::get('/bshot/{id}', function ($id) {
+    set_time_limit(0);
+    ini_set('memory_limit', '-1');
+    if ($id === null) $id = 28443;
+    $rf = RegFinance::where('regID', $id)
+        ->with('registrations', 'registrations.ticket', 'event', 'event.org', 'event.location', 'person')
+        ->firstorFail();
+
+    // dd($rf);
+
+    $view = 'v1.auth_pages.events.registration.group_receipt';
+    $layout = 'simple';
+    $data = compact('rf', 'layout');
+    $pdf = generate_pdf('v', $view, $data);
+    dd($pdf);
+
+});
