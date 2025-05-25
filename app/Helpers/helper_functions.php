@@ -26,8 +26,40 @@ use Intervention\Image\ImageManagerStatic as Image;
 use PHPHtmlParser\Dom;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Image\Manipulations;
+use misterspelik\LaravelPdf\Facades\Pdf as PDF;
 
 // $client = new Client();
+
+/**
+ * Produces a PDF of a view with appropriate data
+ *
+ * @param string $which either a v (view) or h (html)
+ * @param string $view view to be converted to PDF
+ * @param array $data the data to provide $view its values
+ * @param string $orientation set to 'portrait' if null
+ * @param string $paper_size set to 'Letter' if null
+ */
+if (!function_exists('generate_pdf_from_view')) {
+    function generate_pdf($which, $view_or_html, $data, $orientation = 'portrait', $paper_size = 'Letter')
+    {
+        switch ($which) {
+            case 'v':
+                $pdf = PDF::loadView($view_or_html, $data, [], [
+                    'format' => $paper_size,
+                    'orientation' => $orientation,
+                ]);
+                break;
+            case 'h':
+                $pdf = PDF::loadHTML($view_or_html, $data, [], [
+                    'format' => $paper_size,
+                    'orientation' => $orientation,
+                ]);
+                break;
+        }
+        return $pdf->output();
+    }
+}
+
 
 /**
  * Performs hierarchical query to get the list of volunteers for the org chart
@@ -36,6 +68,7 @@ use Spatie\Image\Manipulations;
  * @param int $p optional person record; shows all volunteers if null
  * @return array [$json_roles, $option_string]
  */
+
 if (!function_exists('volunteer_data')) {
     function volunteer_data($o, $p)
     {

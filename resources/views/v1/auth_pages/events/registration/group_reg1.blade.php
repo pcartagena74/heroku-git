@@ -3,13 +3,19 @@
      * Comment: Confirmation screen post and Stripe Payment Processing for Group Registration
      * Created: 8/21/2017
      *
-     * @var $event, $quantity, $org, $loc, $rf
+     * @var $rf
      */
 
     use App\Models\EventSession;
     use App\Models\Ticket;
     use App\Models\Registration;
     use App\Models\Person;
+
+    // Adding @vars for shortcuts given refactoring for N+1
+    $quantity = $rf->seats;
+    $event = $rf->event;
+    $org = $rf->event->org;
+    $loc = $rf->event->location;
 
     $tcount = 0;
     $today = Carbon\Carbon::now();
@@ -18,7 +24,7 @@
     $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
     $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-    if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    if($event->eventTypeID == 5){ // This is a regional event, so do that instead
         $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
         $array    = explode(',', $chapters->regionChapters);
     } else {

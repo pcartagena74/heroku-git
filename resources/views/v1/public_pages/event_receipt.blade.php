@@ -1,11 +1,11 @@
 @php
     /**
-     * Comment: Event Receipt
-     * Created: 3/26/17 and updated on 10/25/2019
+     * Comment: Event Receipt for Individuals
+     * Created: 3/26/17 and updated on 10/25/2019;
+     * Updated: 5/18/25 to refactor $rf using with()
      *
      * Literal COPY of group_receipt.blade.php
      * @var $rf: regFinance object
-     * @var $event: event object
      */
 
     use App\Models\RegSession;
@@ -14,6 +14,15 @@
     use App\Models\Registration;
     use App\Models\Person;
     use App\Models\Ticket;
+
+    // Adding @vars for shortcuts given refactoring for N+1
+    $quantity = $rf->seats;
+    $event = $rf->event;
+    $org = $rf->event->org;
+    $loc = $rf->event->location;
+
+    $prefixes = DB::table('prefixes')->get();
+    $industries = DB::table('industries')->get();
 
     $tcount = 0;
     $today = Carbon\Carbon::now();
@@ -28,7 +37,7 @@
     $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
     $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-    if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    if($event->eventTypeID == 5){ // This is a regional event, so do that instead
         $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
         $array    = explode(',', $chapters->regionChapters);
     } else {
@@ -308,7 +317,7 @@
             <div class="col-sm-10">
                 @include('v1.parts.start_content', ['header' => trans('messages.fields.additional'), 'subheader' => '',
                          'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
-                {!! $event->postRegInfo ?? '' !!}
+                {{ $event->postRegInfo }}
                 @include('v1.parts.end_content')
             </div>
         @endif

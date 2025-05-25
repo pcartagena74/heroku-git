@@ -2,14 +2,13 @@
     /**
      * Comment: Event Receipt
      * Created: 3/26/2017
+     * Updated: 5/18/2025 - refactored $rf pass using with()
      *
-     * @var Event $event
      * @var RegFinance $rf
-     * @var Location $loc
-     * @var Org $org
      *
      */
 
+    use App\Models\RegFinance;
     use App\Models\RegSession;
     use App\Models\EventSession;
     use Aws\S3\S3Client;
@@ -18,6 +17,11 @@
     use App\Models\Registration;
     use App\Models\Person;
     use App\Models\Ticket;
+
+    $quantity = $rf->seats;
+    $event = $rf->event;
+    $org = $rf->event->org;
+    $loc = $rf->event->location;
 
     $tcount = 0;
     $ics = '';
@@ -33,7 +37,7 @@
     $allergens = DB::table('allergens')->select('allergen', 'allergen')->get();
     $allergen_array = $allergens->pluck('allergen', 'allergen')->toArray();
 
-    if($event->eventTypeID == 5){ // This is a regional event so do that instead
+    if($event->eventTypeID == 5){ // This is a regional event, so do that instead
         $chapters = DB::table('organization')->where('orgID', $event->orgID)->select('regionChapters')->first();
         $array    = explode(',', $chapters->regionChapters);
     } else {
@@ -344,22 +348,26 @@
                     <tr valign="middle">
                         <td style="text-align: center;">
                             <a target="_new" href="{{ $ics }}">
-                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/outlook.jpg">
+                                <img height="50" width="50" src="{{ public_path('/images/outlook.jpg') }}"
+                                     alt="Outlook Icon"/>
                             </a>
                         </td>
                         <td style="text-align: center;">
                             <a target="_new" href="{{ $google_url }}">
-                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/google.jpg">
+                                <img height="50" width="50" src="{{ public_path('/images/google.jpg') }}"
+                                     alt="Google Icon"/>
                             </a>
                         </td>
                         <td style="text-align: center;">
                             <a target="_new" href="{{ $yahoo_url }}">
-                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/yahoo.jpg">
+                                <img height="50" width="50" src="{{ public_path('/images/yahoo.jpg') }}"
+                                     alt="Yahoo Icon"/>
                             </a>
                         </td>
                         <td style="text-align: center;">
                             <a target="_new" href="{{ $ics }}">
-                                <img height="50" width="50" src="{{ env('APP_URL') }}/images/ical.jpg">
+                                <img height="50" width="50" src="{{ public_path('/images/ical.jpg') }}"
+                                     alt="iCal Icon"/>
                             </a>
                         </td>
                     </tr>
