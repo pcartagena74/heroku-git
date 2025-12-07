@@ -189,7 +189,7 @@ return [
         'Entrust' => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdfFacade::class,
-        'Debugbar' => \Barryvdh\Debugbar\Facade::class,
+        // 'Debugbar' => \Barryvdh\Debugbar\Facade::class,
     ])->toArray(),
 
 ];
