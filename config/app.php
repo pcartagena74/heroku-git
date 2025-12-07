@@ -143,7 +143,7 @@ return [
      */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-        \Barryvdh\Debugbar\ServiceProvider::class,
+        // \Barryvdh\Debugbar\ServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
         //Intouch\LaravelNewrelic\NewrelicServiceProvider::class,
 
