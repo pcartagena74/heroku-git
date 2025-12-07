@@ -38,4 +38,3 @@
 @else
     <link href="{{ env('APP_URL') }}/images/mCentric.ico" rel="icon"/>
 @endif
-<base href="{{ env('APP_URL') }}">
