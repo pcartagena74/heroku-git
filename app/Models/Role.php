@@ -8,6 +8,8 @@ namespace App\Models;
 
 use App\Models\Entrust\EntrustRoleOver as EntrustRole;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 //use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -30,8 +32,9 @@ class Role extends EntrustRole
         return $this->belongsToMany(User::class, 'person_role', 'role_id', 'user_id');
     }
 
-    public function permissions(): BelongsToMany
+    public function permissions(): HasManyThrough
     {
-        return $this->belongsToMany(Permission::class);
+        return $this->hasManyThrough(Permission::class, PermissionRole::class,
+            'role_id', 'id', 'id', 'permission_id');
     }
 }

@@ -168,10 +168,11 @@ Route::get('/storage/events/{filename}/{disk?}', function ($filename, $disk) {
 // Individual Public Page Routes
 // -----------------------------
 // Dashboard or Regular User "Home"
+
+// This creates a conflict if left in; adding a redirection to dashboard
+// Route::get('/home', [ActivityController::class, 'index']);
 Route::get('/dashboard', [ActivityController::class, 'index'])->name('dashboard');
 Route::post('/networking', [ActivityController::class, 'networking']); // Ajax
-// Route::get('/home', [ActivityController::class, 'index']);
-// as its create confict in left me adding a redirection to dashboard
 Route::get('/home', function () {
     return redirect('dashboard');
 })->middleware('auth');

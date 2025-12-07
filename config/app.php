@@ -143,6 +143,7 @@ return [
      */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
+        \Barryvdh\Debugbar\ServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
         //Intouch\LaravelNewrelic\NewrelicServiceProvider::class,
 
@@ -165,8 +166,8 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
         App\Providers\CspServiceProvider::class,
         Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
     ])->toArray(),
@@ -188,6 +189,7 @@ return [
         'Entrust' => Shanmuga\LaravelEntrust\Facades\LaravelEntrustFacade::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdfFacade::class,
+        'Debugbar' => \Barryvdh\Debugbar\Facade::class,
     ])->toArray(),
 
 ];

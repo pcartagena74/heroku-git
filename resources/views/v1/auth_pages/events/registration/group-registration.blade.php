@@ -27,7 +27,7 @@
 
         @include('v1.parts.start_content', ['header' => $title, 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         @if(count($events) != 0)
-            {{ html()->form('POST', env('APP_URL') . "/group")->open() }}
+            {{ html()->form('POST', config('APP_URL') . "/group")->open() }}
             {{ html()->label(trans('messages.instructions.select_event') . ':', 'eventID')->class('control-label') }}
             {{ html()->select('eventID', $events, old('$event->eventTypeID'))->id('eventID')->class('form-control') }}
             {{ html()->form()->close() }}
@@ -40,13 +40,17 @@
 
         @lang('messages.instructions.group_reg')
 
-        {{ html()->form('POST', env('APP_URL') . "/group-reg1")->id('grpreg')->open() }}
+        {{ html()->form('POST', config('APP_URL') . "/group-reg1")->id('grpreg')->open() }}
         {{ html()->hidden('eventID', $event->eventID) }}
 
         @for($i=1;$i<=15;$i++)
+            @php
+                if ($i % 2) { $bkgd = "bkgd"; } else { $bkgd = ""; }
+            @endphp
 
-            <div id="custom-template" class="form-group col-sm-12">
-                <div class="col-sm-2">
+            <div id="custom-template" class="form-group col-sm-12 row_container">
+                <div class="col-sm-3 {{ $bkgd }}">
+                    &nbsp; <br/>
                     <a data-toggle="tooltip" title="{{ trans('messages.instructions.group_reg_search') }}">
                         {{ html()->label(trans('messages.headers.search4p') . ':', 'helper-' . $i) }}
                     </a><br/>
@@ -57,50 +61,55 @@
                        class="btn btn-danger btn-xs invisible">@lang('messages.buttons.clr_row')</a>
                     <div id="search-results"></div>
                 </div>
-                <div class="col-sm-2">
-                    {{ html()->label(trans('messages.fields.firstName'), 'firstName-' . $i) }}<b class="red">*</b><br/>
+                <div class="col-sm-3 {{ $bkgd }}">
+                    &nbsp; <br/>
+                    {{ html()->label(trans('messages.fields.firstName'), 'firstName-' . $i) }}
+                    <b class="red">*</b><br/>
                     {{ html()->text('firstName-' . $i)->id('firstName-' . $i)->class('input-xs')->attribute('onblur', 'require(' . $i . ');') }}
                     <br/>
-                </div>
-                <div class="col-sm-2">
-                    {{ html()->label(trans('messages.fields.lastName'), 'lastName-' . $i) }}<b class="red">*</b><br/>
+                    &nbsp; <br/>
+
+                    {{ html()->label(trans('messages.fields.lastName'), 'lastName-' . $i) }}
+                    <b class="red">*</b><br/>
                     {{ html()->text('lastName-' . $i)->id('lastName-' . $i)->class('input-xs') }}<br/>
-                </div>
-                <div class="col-sm-2">
+                    &nbsp; <br/>
+
                     {{ html()->label(trans('messages.headers.email'), 'email-' . $i) }}<b class="red">*</b><br/>
                     {{ html()->text('email-' . $i)->id('email-' . $i)->class('input-xs') }}<br/>
-                </div>
-                @if(is_numeric($tickets))
-                    {{ html()->hidden('ticketID-' . $i, $tickets) }}
-                @else
-                    <div class="col-sm-1">
-                        {{ html()->label(trans('messages.fields.ticket'), 'ticketID-' . $i) }}<br/>
-                        {{ html()->select('ticketID-' . $i, $tickets, old('ticketID-' . $i))->id('ticketID-' . $i)->class('input-sm')->style('width:75px;') }}
-                    </div>
-                @endif
+                    &nbsp; <br/>
 
-                @if(0)
-                    {{ html()->hidden('override-' . $i, 0) }}
-                @else
-                    <div class="col-sm-1">
-                        {{ html()->label(trans('messages.headers.override'), 'override-' . $i) }}
-                        @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.group_reg')])
-                        <br/>
-                        {{ html()->number('override-' . $i)->id('override-' . $i)->class('input-xs')->style('width:75px;') }}
-                        <br/>
-                    </div>
-                @endif
-                <div class="col-sm-1">
                     {{ html()->label(trans('messages.fields.pmi_id'), 'pmiid-' . $i) }}<br/>
                     {{ html()->number('pmiid-' . $i)->id('pmiid-' . $i)->class('input-xs')->style('width:75px;') }}<br/>
+                    &nbsp; <br/>
                 </div>
-                <div class="col-sm-1">
-                    {{ html()->label(trans('messages.fields.disc'), 'code-' . $i) }}<br/>
-                    {{ html()->select('code-' . $i, $discounts, array('id' => 'code-' . $i, 'class' => 'input-sm', 'style' => 'width:75px')) }}
-                    <br/>
+                <div class="col-sm-3 {{ $bkgd }}">
+                    &nbsp; <br/>
+                    @if(is_numeric($tickets))
+                        {{ html()->hidden('ticketID-' . $i, $tickets) }}
+                    @else
+                        {{ html()->label(trans('messages.fields.ticket'), 'ticketID-' . $i) }}<br/>
+                        {{ html()->select('ticketID-' . $i, $tickets, old('ticketID-' . $i))->id('ticketID-' . $i)->class('input-sm')->style('width:75px;') }}
+                        <br/>
+
+                        @if(0)
+                            {{ html()->hidden('override-' . $i, 0) }}
+                        @else
+                            {{ html()->label(trans('messages.headers.override'), 'override-' . $i) }}
+                            @include('v1.parts.tooltip', ['title' => trans('messages.tooltips.group_reg')])
+                            <br/>
+                            {{ html()->number('override-' . $i)->id('override-' . $i)->class('input-xs')->style('width:75px;') }}
+                            <br/>
+                        @endif
+
+                        {{ html()->label(trans('messages.fields.disc'), 'code-' . $i) }}<br/>
+                        {{ html()->select('code-' . $i, $discounts, array('id' => 'code-' . $i, 'class' => 'input-sm', 'style' => 'width:75px')) }}
+                        <br/>
+                    @endif
                 </div>
+
                 @if($check)
-                    <div class="col-sm-1">
+                    <div class="col-sm-1 {{ $bkgd }}">
+                        &nbsp; <br/>
                         {{ html()->label(trans('messages.buttons.chk_in'), 'checkin-' . $i) }}<br/>
                         {{ html()->checkbox('checkin-' . $i, ['checked'], 1) }}
                         {{ html()->hidden('check', 1) }}

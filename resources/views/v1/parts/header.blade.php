@@ -7,7 +7,7 @@
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
 <link href="https://maxcdn.bootstrapcdn.com/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-<script src="{{ env('APP_URL') }}/js/ie-emulation-modes-warning.js"></script>
+<script src="{{ config('APP_URL') }}/js/ie-emulation-modes-warning.js"></script>
 <!--[if lt IE 9]>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -38,19 +38,19 @@
       rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css"
       rel="stylesheet">
-<link href="{{ env('APP_URL') }}/css/switchery.min.css" rel="stylesheet">
-<link href="{{ env('APP_URL') }}/css/starrr.css" rel="stylesheet">
-<link href="{{ env('APP_URL') }}/css/daterangepicker.css" rel="stylesheet">
-<link href="{{ env('APP_URL') }}/css/jqvmap.min.css" rel="stylesheet"/>
-<link href="{{ env('APP_URL') }}/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link href="{{ config('APP_URL') }}/css/switchery.min.css" rel="stylesheet">
+<link href="{{ config('APP_URL') }}/css/starrr.css" rel="stylesheet">
+<link href="{{ config('APP_URL') }}/css/daterangepicker.css" rel="stylesheet">
+<link href="{{ config('APP_URL') }}/css/jqvmap.min.css" rel="stylesheet"/>
+<link href="{{ config('APP_URL') }}/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 {{--
     <link href="/css/nprogress.css" rel="stylesheet">
     <link href="/css/smart_wizard.css" rel="stylesheet">
     <link href="/css/smart_wizard_theme_arrows.css" rel="stylesheet">
 <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
 --}}
-<link href="{{ env('APP_URL') }}/css/morris.css" rel="stylesheet">
-<link href="{{ env('APP_URL') }}/css/mmmm.css" rel="stylesheet">
+<link href="{{ config('APP_URL') }}/css/morris.css" rel="stylesheet">
+<link href="{{ config('APP_URL') }}/css/mmmm.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/css/custom.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

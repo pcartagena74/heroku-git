@@ -37,6 +37,7 @@ class MyCspPolicy extends Basic
             ->addDirective(Directive::CONNECT, [
                 Keyword::SELF,
                 '*.mcentric.org',
+                '*.google-analytics.com',
                 '*.herokuapp.com',
                 '*.fontawesome.com',
                 '*.stripe.com',
@@ -55,6 +56,7 @@ class MyCspPolicy extends Basic
                 '*.fontawesome.com',
                 '*.github.io',
                 '*.google.com',
+                '*.google-analytics.com',
                 '*.googleapis.com',
                 '*.googletagmanager.com',
                 '*.gstatic.com',

@@ -75,8 +75,10 @@ class AppServiceProvider extends ServiceProvider
         //Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
         //Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
 
+        /*
         if ($this->app->environment('local', 'test', 'queue')) {
             $this->app->register(\App\Providers\TelescopeServiceProvider::class);
         }
+        */
     }
 }

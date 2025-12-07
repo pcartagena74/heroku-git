@@ -6,7 +6,10 @@
      * May need to revisit once sessions and globals are decided post laravel authorization
      */
 
+     // * Commenting out 8/23/25 because duplicated from auth.blade
+    /*
     $currentPerson = App\Models\Person::find(auth()->user()->id);
+    */
 
     if($currentPerson->avatarURL !== null){
         try{

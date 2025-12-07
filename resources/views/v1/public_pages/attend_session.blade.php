@@ -34,7 +34,7 @@
     @include('v1.parts.start_content', ['header' => trans('messages.headers.rec_sess_att'), 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
     @if($event->showLogo && $logo)
-        <img src="{{ $logo }}" height="50">
+        <img src="{{ $logo }}" height="50" alt="logo">
     @endif
     <h2>@lang('messages.fields.event'): {{ $event->eventName }}</h2>
     <b>@lang('messages.fields.session'): {{ $session->sessionName }}</b>

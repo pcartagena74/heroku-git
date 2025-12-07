@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +19,7 @@ class Person extends Model
     use LogsActivity;
     use Notifiable;
     use SoftDeletes;
+    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
     // The table
     protected $table = 'person';
@@ -46,15 +48,26 @@ class Person extends Model
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
-    public function roles(): BelongsToMany
+    public function roles(): HasManyThrough|\Illuminate\Database\Eloquent\Builder|Person
     {
         // we need to get default person org id so running another query to fetch same
         // $person = Person::find(auth()->user()->id);
 
         // NOTE: person_role is a view, not a table.
+        /*
         return $this->belongsToMany(Role::class, 'person_role', 'user_id', 'role_id')
             ->using(PersonRoleOrgPivot::class)->withPivot('org_id');
         //->where('person_role.org_id', $this->defaultOrgID);
+        */
+
+        return $this->hasManyThrough(Role::class, PersonRoleOrgPivot::class,
+            'user_id', 'id', 'personID', 'role_id');
+
+    }
+
+    public function permissions()
+    {
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
     public function orgs(): BelongsToMany
@@ -130,9 +143,9 @@ class Person extends Model
     public function showFullName()
     {
         if ($this->prefName) {
-            return $this->prefName.' '.$this->lastName;
+            return $this->prefName . ' ' . $this->lastName;
         } else {
-            return $this->firstName.' '.$this->lastName;
+            return $this->firstName . ' ' . $this->lastName;
         }
     }
 
@@ -170,7 +183,7 @@ class Person extends Model
     {
         //$org_role     = $this->org_role_id()->id;
         $speaker_role = 2;
-        if (! $this->roles->contains('id', $speaker_role)) {
+        if (!$this->roles->contains('id', $speaker_role)) {
             $this->roles()->attach($speaker_role, ['org_id' => $this->defaultOrgID]);
         }
         /*

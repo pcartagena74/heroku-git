@@ -28,13 +28,10 @@ class PersonController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth', ['except' => ['oLookup', 'blah']]);
 
         $this->middleware(function (Request $request, $next) {
-            if (auth()) {
-                //$this->currentPerson = Person::find(auth()->user()->id);
-            }
-
             return $next($request);
         });
     }
@@ -46,9 +43,6 @@ class PersonController extends Controller
     {
         $topBits = [];
         $today = Carbon::now();
-        if (auth()) {
-            $this->currentPerson = Person::find(auth()->user()->id);
-        }
 
         $total_people = Cache::get('total_people', function () {
             return Person::join('org-person', 'org-person.personID', '=', 'person.personID')
@@ -169,13 +163,13 @@ class PersonController extends Controller
         $ret_change = $ret_change1 + ($ret_change2 * -1);
         $rcu = trans_choice('messages.headers.updates_60d', $ret_change);
 
-        array_push($topBits, [9, trans('messages.headers.tot_peeps'), $total_people, $total_change, $tcu, $total_change > 0 ? 1 : -1, 2]);
+        $topBits[] = [9, trans('messages.headers.tot_peeps'), $total_people, $total_change, $tcu, $total_change > 0 ? 1 : -1, 2];
         $inds = implode(' ', [$individual, trans_choice('messages.headers.member', 2)]);
         $rets = implode(' ', [$retiree, trans_choice('messages.headers.member', 2)]);
         $stud = implode(' ', [$student, trans_choice('messages.headers.member', 2)]);
-        array_push($topBits, [1, $inds, $individuals, $ind_change, $icu, $ind_change > 0 ? 1 : -1, 2]);
-        array_push($topBits, [1, $rets, $retirees, $stud_change, $scu, $stud_change > 0 ? 1 : -1, 2]);
-        array_push($topBits, [1, $stud, $students, $ret_change, $rcu, $ret_change > 0 ? 1 : -1, 2]);
+        $topBits[] = [1, $inds, $individuals, $ind_change, $icu, $ind_change > 0 ? 1 : -1, 2];
+        $topBits[] = [1, $rets, $retirees, $stud_change, $scu, $stud_change > 0 ? 1 : -1, 2];
+        $topBits[] = [1, $stud, $students, $ret_change, $rcu, $ret_change > 0 ? 1 : -1, 2];
 
         return $topBits;
     }
@@ -186,9 +180,9 @@ class PersonController extends Controller
         // responds to GET /members; This is for member management page
         //$this->currentPerson = Person::find(auth()->user()->id);
 
-        $topBits = $this->member_bits();
+        $this->topBits = $this->member_bits();
 
-        $mbr_list = Cache::get('mbr_list', function () {
+        $this->mbr_list = Cache::get('mbr_list', function () {
             return OrgPerson::join('person as p', 'p.personID', '=', 'org-person.personID')
                 ->where([
                     ['org-person.orgID', '=', $this->currentPerson->defaultOrgID],
@@ -202,7 +196,7 @@ class PersonController extends Controller
                 ->cursor();
         });
 
-        return view('v1.auth_pages.members.list', compact('topBits', 'mbr_list'));
+        return view('v1.auth_pages.members.list', $this->data);
     }
 
     /**
@@ -210,17 +204,12 @@ class PersonController extends Controller
      */
     public function index2($query = null): View
     {
-        //$topBits = $this->member_bits();
-        if (auth()) {
-            $this->currentPerson = Person::find(auth()->user()->id);
-        }
-        $topBits = null;
-        $mbr_srch = null;
-        $p = Person::find(auth()->user()->id);
-        $orgID = $p->defaultOrgID;
+        $this->topBits = null;
+        $this->mbr_srch = null;
+        $orgID = $this->currentOrg->orgID;
 
         if ($query !== null) {
-            $mbr_srch = Person::where('firstName', 'LIKE', "%$query%")
+            $this->mbr_srch = Person::where('firstName', 'LIKE', "%$query%")
                 ->orWhere('person.personID', 'LIKE', "%$query%")
                 ->orWhere('lastName', 'LIKE', "%$query%")
                 ->orWhere('login', 'LIKE', "%$query%")
@@ -233,8 +222,8 @@ class PersonController extends Controller
                 ->orWhereHas('emails', function ($q) use ($query) {
                     $q->where('emailADDR', 'LIKE', "%$query%");
                 })
-                ->whereHas('orgs', function ($q) {
-                    $q->where('organization.orgID', '=', $this->currentPerson->defaultOrgID);
+                ->whereHas('orgs', function ($q) use ($orgID) {
+                    $q->where('organization.orgID', '=', $orgID);
                 })
                 ->join('org-person as op', function ($join) use ($orgID) {
                     $join->on('op.personID', '=', 'person.personID')
@@ -245,10 +234,9 @@ class PersonController extends Controller
                            (SELECT count(*) AS 'cnt' FROM `event-registration` er WHERE er.personID=person.personID) AS 'cnt'"))
                 ->distinct()->get();
 
-            return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_srch'));
+            return view('v1.auth_pages.members.member_search', $this->data);
         }
-
-        return view('v1.auth_pages.members.member_search', compact('topBits', 'mbr_srch'));
+        return view('v1.auth_pages.members.member_search', $this->data);
     }
 
     /**
@@ -257,7 +245,6 @@ class PersonController extends Controller
     public function search(Request $request): RedirectResponse
     {
         $string = $request->input('string');
-
         return redirect(config('APP_URL') . '/search/' . $string);
     }
 
@@ -270,7 +257,6 @@ class PersonController extends Controller
     public function show($id, $modal = null)
     {
         // responds to GET /profile/{id}/{modal?}
-        $this->currentPerson = Person::where('personID', '=', auth()->user()->id)->with('socialites')->first();
         if ($id == 'my') {
             // set $id to the logged in Person, otherwise keep the $id given
             $id = $this->currentPerson->personID;
@@ -278,9 +264,11 @@ class PersonController extends Controller
                 if ($this->currentPerson->avatarURL === null
                     && !$this->currentPerson->socialites->contains('providerName', 'LinkedIN')
                 ) {
+                    $person = $this->currentPerson;
                     try {
                         $user = Socialite::driver('linkedin')->user();
-                        $person = Person::find($id);
+                        // Don't need to find given we have it already.
+                        // $person = Person::find($id);
                         $person->avatarURL = $user->avatar;
                         $person->updaterID = $id;
                         $person->save();
@@ -328,50 +316,47 @@ class PersonController extends Controller
             return redirect(config('APP_URL') . '/profile/my');
         }
 
-        if ($profile != $this->currentPerson) {
+        if ($profile->personID != $this->currentPerson->personID) {
             $u = User::find($profile->personID);
             if ($u->password === null) {
                 request()->session()->flash('alert-warning', trans('messages.instructions.no_user_pass'));
             }
         }
 
-        $topBits = '';
+        $this->topBits = '';
 
         $prefixes = DB::table('prefixes')->get();
         $prefix_array = ['' => trans('messages.fields.prefixes.select')] +
             $prefixes->pluck('prefix', 'prefix')->map(function ($item, $key) {
                 return trans('messages.fields.prefixes.' . $item);
             })->toArray();
-        $prefixes = $prefix_array;
+        $this->prefixes = $prefix_array;
 
         $industries = DB::table('industries')->orderBy('industryName')->get();
         $industry_array = ['' => trans('messages.fields.industries.select')] +
             $industries->pluck('industryName', 'industryName')->map(function ($item, $key) {
                 return trans('messages.fields.industries.' . $item);
             })->toArray();
-        $industries = $industry_array;
+        $this->industries = $industry_array;
 
-        $addrTypes = DB::table('address-type')->get();
-        $emailTypes = DB::table('email-type')->get();
-        $phoneTypes = DB::table('phone-type')->get();
+        $this->addrTypes = DB::table('address-type')->get();
+        $this->emailTypes = DB::table('email-type')->get();
+        $this->phoneTypes = DB::table('phone-type')->get();
 
         $certs = DB::table('certifications')->get();
-        $cert_array = $certs->toArray();
+        $this->cert_array = $certs->toArray();
 
-        $addresses =
+        $this->addresses =
             Address::where('personID', $id)->select('addrID', 'addrTYPE', 'addr1', 'addr2', 'city', 'state', 'zip', 'cntryID')->get();
-        $countries = DB::table('countries')->select('cntryID', 'cntryName')->get();
+        $this->countries = DB::table('countries')->select('cntryID', 'cntryName')->get();
 
-        $emails =
+        $this->emails =
             Email::where('personID', $id)->select('emailID', 'emailTYPE', 'emailADDR', 'isPrimary')->orderBy('isPrimary', 'DESC')->get();
 
-        $phones =
+        $this->phones =
             Phone::where('personID', $id)->select('phoneID', 'phoneType', 'phoneNumber')->get();
 
-        return view(
-            'v1.auth_pages.members.profile',
-            compact('profile', 'topBits', 'prefixes', 'industries', 'addresses', 'emails', 'addrTypes', 'emailTypes', 'countries', 'phones', 'phoneTypes', 'cert_array')
-        );
+        return view('v1.auth_pages.members.profile', $this->data);
     }
 
     public function create()
@@ -399,8 +384,14 @@ class PersonController extends Controller
             [$name, $field] = array_pad(explode('-', $name, 2), 2, null);
         }
         $value = request()->input('value');
-        $person = Person::find($personID);
-        $updater = auth()->user()->id;
+        if ($personID == $this->currentPerson->personID) {
+            $person = $this->currentPerson;
+            $user = $this->user;
+        } else {
+            $person = Person::find($personID);
+            $user = User::find($personID);
+        }
+        $updater = $this->currentPerson->personID;
 
         if ($name == 'login') {
             // ALL 3 steps should be in a DB::transaction block...
@@ -410,7 +401,6 @@ class PersonController extends Controller
                 DB::beginTransaction();
 
                 // 1. update user->login, user->email, and person->login with the new values
-                $user = User::find($id);
                 $orig_email = $user->login;
                 $user->login = $value;
                 $user->name = $value;
@@ -486,7 +476,7 @@ class PersonController extends Controller
         // Consider for refactoring
         // responds to POST /op/{id} and is an AJAX call
         $personID = request()->input('pk');
-        $updater = auth()->user()->id;
+        $updater = $this->user->id;
 
         $name = request()->input('name');
         if (strpos($name, '-')) {
@@ -494,11 +484,21 @@ class PersonController extends Controller
             [$name, $field] = array_pad(explode('-', $name, 2), 2, null);
         }
         $value = request()->input('value');
-        $person = Person::find($personID);
+        if ($personID == $this->currentPerson->personID) {
+            $person = $this->currentPerson;
+            $op = $this->currentPerson->orgperson;
+        } else {
+            $person = Person::find($personID)
+                ->with('orgperson')
+                ->where('org-person.orgID', $this->currentOrg->orgID)->first();
+            $op = $person->orgperson;
+        }
+        /*
         $op = OrgPerson::where([
             ['personID', '=', $person->personID],
             ['orgID', '=', $person->defaultOrgID],
         ])->first();
+        */
 
         $op->updaterID = $updater;
         $op->$name = $value;
@@ -509,8 +509,13 @@ class PersonController extends Controller
 
     public function undo_login(Person $person, $string): View
     {
+        if ($person == $this->currentPerson) {
+            $user = $this->user;
+        } else {
+            $user = User::find($person->personID);
+        }
+
         $email = decrypt($string);
-        $user = User::find($person->personID);
         $user->login = $email;
         $user->email = $email;
         $user->name = $email;
@@ -529,10 +534,10 @@ class PersonController extends Controller
 
         $person->notify(new UndoLoginChange($person));
 
-        $header = trans('messages.headers.success');
-        $message = trans('messages.messages.undo_login', ['email' => $email]);
+        $this->header = trans('messages.headers.success');
+        $this->message = trans('messages.messages.undo_login', ['email' => $email]);
 
-        return view('v1.public_pages.thanks', compact('header', 'message'));
+        return view('v1.public_pages.thanks', $this->data);
     }
 
     public function change_password(Request $request)
@@ -553,8 +558,8 @@ class PersonController extends Controller
                 ->withInput(['tab' => 'tab_content2']);
         }
 
-        $user = User::find(auth()->id());
-        $person = Person::find($user->id);
+        $user = $this->user;
+        $person = $this->currentPerson;
 
         // validate $curPass
         if (Hash::check($curPass, $user->password)) {
@@ -585,9 +590,9 @@ class PersonController extends Controller
     public function show_force(): View
     {
         // Consider for refactoring
-        $topBits = $this->member_bits();
+        $this->topBits = $this->member_bits();
 
-        return view('v1.auth_pages.members.force_pass_change', compact('topBits'));
+        return view('v1.auth_pages.members.force_pass_change', $this->data);
     }
 
     /**
@@ -610,8 +615,13 @@ class PersonController extends Controller
             //->withInput(['tab' => 'tab_content2']);
         }
 
-        $user = User::find($userid);
-        $person = Person::find($user->id);
+        if ($userid == $this->user->id) {
+            $user = $this->user;
+            $person = $this->currentPerson;
+        } else {
+            $user = User::find($userid);
+            $person = Person::find($user->id);
+        }
 
         // update password
         $user->password = Hash::make($password);

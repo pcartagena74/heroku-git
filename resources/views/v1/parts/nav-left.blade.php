@@ -18,6 +18,8 @@
     //$adminLevel = $_SESSION['adminLevel'];
     //$org_count = $_SESSION['org_count'];
 
+     // * Commenting out 8/23/25 because duplicated from auth.blade
+    /*
     try {
         $currentPerson = App\Models\Person::find(auth()->user()->id);
         $currentOrg    = $currentPerson->defaultOrg;
@@ -25,6 +27,7 @@
         request()->session()->flash('alert-warning', trans('messages.errors.timeout'));
         return redirect()->route('home');
     }
+    */
 
     // This is an Entrust option array that is used when invoking $user->ability(x, y, z)
     // $options is the implied z parameter in above.
@@ -74,7 +77,8 @@
                             // Only show My Volunteers if Developer AND currentPerson has a service_role and
                             // volunteer direct reports
                             --}}
-                            @if(Entrust::hasRole("Developer") &&
+                            {{--  @if(in_array("Developer") && --}}
+                            @if(in_array("Developer", $role_list) &&
                                 (null !== $currentPerson->service_role && count($currentPerson->has_volunteers()) > 0))
                                 <li><a href="{{ url("volunteers/$currentPerson->defaultOrgID")}}">
                                         @lang('messages.nav.ms_vol')
@@ -97,25 +101,26 @@
                                     </a>
                                 </li>
                             @endif
-                            @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                            @if(in_array('Developer') || in_array('Admin'))
                             @endif
                             --}}
                         </ul>
                     </li>
 
                     <!-- Admin Functions Menu -->
-                    @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                    {{-- @if(in_array('Admin') || in_array('Developer')) --}}
+                    @if(in_array('Admin', $role_list) || in_array('Developer', $role_list))
                         <li>
                             <a> <i class="fas fa-fw fa-lock-alt"></i> @lang('messages.nav.admin')
                                 <span class="far fa-pull-right fa-chevron-down"></span> </a>
                             <ul class="nav child_menu">
-                                @if(Entrust::hasRole('Admin'))
+                                @if(in_array('Admin', $role_list))
                                     <li><a href="{{ url('/')}}/become"> @lang('messages.nav.ms_become') </a></li>
                                     <li><a href="{{ url('/')}}/newuser/create"> @lang('messages.nav.ad_new') </a></li>
                                     <li><a href="{{ url('/')}}/role_mgmt"> @lang('messages.nav.o_roles') </a></li>
                                 @endif
 
-                                @if(Entrust::hasRole('Developer'))
+                                @if(in_array('Developer', $role_list))
                                     <li><a href="{{ url('create_organization')}}">@lang('messages.nav.ad_new_org')</a>
                                     </li>
                                     <li><a href="{{ url('/')}}/panel">@lang('messages.nav.ad_panel')</a></li>
@@ -126,46 +131,46 @@
                     @endif
 
                     <!-- Org Settings Menu -->
-                    @if (Entrust::hasRole('Board') || Entrust::hasRole('Admin') ||
-                        Entrust::hasRole('Developer') || Entrust::can('event-management'))
+                    @if (in_array('Board', $role_list) || in_array('Admin', $role_list) ||
+                        in_array('Developer', $role_list) || in_array('event-management', $perm_list))
                         <li>
                             <a> <i class="far fa-fw fa-university"></i> @lang('messages.nav.org_set')
                                 <span class="far fa-pull-right fa-chevron-down"></span></a>
 
                             <ul class="nav child_menu">
-                                @if(Entrust::can('settings-management'))
+                                @if(in_array('settings-management', $perm_list))
                                     <li><a href="{{ url('orgsettings',$currentOrg)}}">@lang('messages.nav.o_labels')</a>
                                     </li>
                                 @endif
 
-                                @if(Entrust::can('event-management'))
+                                @if(in_array('event-management', $perm_list))
                                     <li><a href="{{ url('eventdefaults')}}">@lang('messages.nav.o_defaults')</a></li>
                                 @endif
-                                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                                @if(in_array('Developer', $role_list) || in_array('Admin', $role_list))
                                 @endif
                             </ul>
                         </li>
                     @endif
 
                     <!-- Event Management Menu -->
-                    @if(Entrust::hasRole('Board') || Entrust::can('speaker-management') ||
-                        Entrust::can('event-management') || Entrust::can('member-management')
-                        || Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                    @if(in_array('Board', $role_list) || in_array('speaker-management', $perm_list) ||
+                        in_array('event-management', $perm_list) || in_array('member-management', $perm_list)
+                        || in_array('Admin', $role_list) || in_array('Developer', $role_list))
                         <li>
                             <a> <i class="far fa-fw fa-calendar-alt"></i> @lang('messages.nav.ev_mgmt')
                                 <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                @if(Entrust::can('event-management') || Entrust::can('member-management'))
+                                @if(in_array('event-management', $perm_list) || in_array('member-management', $perm_list))
                                     <li><a href="{{ url('manage_events')}}">@lang('messages.nav.ev_manage')</a></li>
                                 @endif
-                                @if(Entrust::can('event-management'))
+                                @if(in_array('event-management', $perm_list))
                                     <li><a href="{{ url('event/create')}}" id="add">@lang('messages.nav.ev_add')</a>
                                     </li>
                                     <li><a href="{{ url('group')}}" id="grp"> @lang('messages.nav.ev_grp') </a></li>
                                     <li><a href="{{ url('eventstats')}}">@lang('messages.nav.ev_stats')</a></li>
                                     <li><a href="{{ url('locations')}}">@lang('messages.nav.ev_loc')</a></li>
                                 @endif
-                                @if(Entrust::hasRole('Developer'))
+                                @if(in_array('Developer', $role_list))
                                     <li><a href="{{ url('manage_events/past')}}">@lang('messages.nav.ev_old')</a></li>
                                 @endif
                             </ul>
@@ -173,18 +178,18 @@
                     @endif
 
                     <!-- Member Management Menu -->
-                    @if(((Entrust::hasRole('Board')|| Entrust::can('member-management')))
-                        || Entrust::hasRole('Admin') || Entrust::hasRole('Developer') )
+                    @if(((in_array('Board', $role_list)|| in_array('member-management', $perm_list)))
+                        || in_array('Admin', $role_list) || in_array('Developer', $role_list) )
                         <li><a> <i class="far fa-fw fa-user"></i> @lang('messages.nav.mbr_mgmt')
                                 <span class="far fa-pull-right fa-chevron-down"></span> </a>
                             <ul class="nav child_menu">
                                 <li><a href="{{ url('search')}}"> @lang('messages.nav.m_sch') </a></li>
-                                @if(Entrust::hasRole("Developer"))
+                                @if(in_array("Developer", $role_list))
                                     <li><a href="{{ url('volunteers')}}"> @lang('messages.nav.m_vol') </a></li>
                                 @endif
                                 <li><a href="{{ url('membership')}}"> @lang('messages.nav.m_new_or_exp') </a></li>
 
-                                @if(Entrust::hasRole('Developer') || Entrust::hasRole('Admin'))
+                                @if(in_array('Developer', $role_list) || in_array('Admin', $role_list))
                                     <li><a href="{{ url('merge/p')}}"> @lang('messages.nav.m_merge')
                                             <span class="label label-danger pull-right">@lang('messages.nav.b_admin')</span></a>
                                     </li>
@@ -195,7 +200,7 @@
                                 <li><a href="{{ url('mbrreport')}}"> @lang('messages.nav.m_rpt')
                                         <span class="label label-success pull-right"> NEW </span> </a></li>
                                 {{--
-                                @if(Entrust::hasRole('Deleted') || Entrust::hasRole('Deleted'))
+                                @if(in_array('Deleted') || in_array('Deleted'))
                                 <li> <a href="{{ url('force')}}"> @lang('messages.nav.m_pass') </a> </li>
                                 @endif
                                 --}}
@@ -204,9 +209,9 @@
                     @endif
 
                     <!-- Speaker Management Menu -->
-                    @if(((Entrust::hasRole('Board') ||
-                            Entrust::can('event-management') || Entrust::can('speaker-management')))
-                        || Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
+                    @if(((in_array('Board', $role_list) ||
+                            in_array('event-management', $perm_list) || in_array('speaker-management', $perm_list)))
+                        || in_array('Admin', $role_list) || in_array('Developer', $role_list))
                         <li>
                             <a><i class="far fa-fw fa-microphone"></i> @lang('messages.nav.spk_mgmt')
                                 <span class="far fa-pull-right fa-chevron-down"></span></a>
@@ -219,7 +224,7 @@
                     @endif
 
                     <!-- Email Marketing Menu -->
-                    @if(Entrust::hasRole('Developer') || Entrust::hasRole('Marketing'))
+                    @if(in_array('Developer', $role_list) || in_array('Marketing', $role_list))
                         <li><a><i class="far fa-fw fa-envelope"></i> @lang('messages.nav.em_mktg')
                                 <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -242,7 +247,7 @@
                             <a><i class="far fa-fw fa-ticket-alt"></i>
                                 @lang('messages.nav.help') <span class="far fa-pull-right fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
-                                @if((Entrust::hasRole('Admin') || Entrust::hasRole('Developer')) || auth()->id() == 1)
+                                @if((in_array('Admin') || in_array('Developer')) || auth()->id() == 1)
                                     <li><a href="{{ url('tickets-admin')}}"> @lang('messages.nav.h_dash') </a></li>
                                 @endif
                                 <li>

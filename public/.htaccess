@@ -9,8 +9,8 @@ RewriteRule ^ - [F]
 
 #If the server is localhost and the URL was https, send the URL but on http
 RewriteCond %{HTTPS} =on
-RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
-RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
+#RewriteCond "%{SERVER_NAME}" "localhost$" [NC]
+#RewriteRule "^(.*)$" "http://localhost/$1" [R=301,L]
 
 # Force www.
 #RewriteCond %{HTTP_HOST} ^mcentric.org [NC]

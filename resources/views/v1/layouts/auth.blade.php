@@ -13,11 +13,23 @@
 
     // This is a reminder to NOT perform tests using orgID=1 because there are checks that are performed to keep default
     // data created in orgID=1--for use with all other orgs--in a clean state.
+    /*
     if(auth()){
         $p = Person::find(auth()->user()->id);
         if($p->defaultOrgID==1){
             request()->session()->flash('alert-danger', trans('messages.app_defaults.orgID1'));
         }
+    */
+    $p = $currentPerson;
+
+    try {
+        // $currentOrg    = $currentPerson->defaultOrg;
+        if($p->defaultOrgID==1){
+            request()->session()->flash('alert-danger', trans('messages.app_defaults.orgID1'));
+        }
+    } catch(Exception $e) {
+        request()->session()->flash('alert-warning', trans('messages.errors.timeout'));
+        return redirect()->route('home');
     }
 @endphp
         <!DOCTYPE html>

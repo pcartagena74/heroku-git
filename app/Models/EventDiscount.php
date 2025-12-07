@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class EventDiscount extends Model
 {
     use SoftDeletes;
+
     //use LogsActivity;
 
     // The table
@@ -39,5 +40,10 @@ class EventDiscount extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID');
+    }
+
+    public function copyOrgDiscount()
+    {
+
     }
 }

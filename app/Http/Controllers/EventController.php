@@ -33,6 +33,7 @@ class EventController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth', ['except' => ['show', 'listing', 'ticket_listing', 'ics_listing', 'get_tix']]);
     }
 
@@ -41,7 +42,6 @@ class EventController extends Controller
     {
         $topBits = [];
         $today = Carbon::now();
-        $this->currentPerson = Person::find(auth()->user()->id);
 
         $upcoming = trans('messages.fields.up') . ' ';
         $rtw = trans('messages.headers.regs_this_week');
@@ -137,12 +137,12 @@ class EventController extends Controller
         $which = trans_choice('messages.var_words.time_period', 0);
         $ae_label = trans('messages.codes.etID99', ['which' => $which]);
 
-        array_push($topBits, [3, $upcoming . $cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $rt_label, count($roundtables), $rt_count, $rtw, $rt_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $so_label, count($socials), $so_count, $rtw, $so_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $pd_label, count($pddays), $pd_count, $rtw, $pd_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $upcoming . $jf_label, count($jobs), $jf_count, $rtw, $jf_count > 0 ? 1 : -1, 2]);
-        array_push($topBits, [3, $ae_label, count($all), $ae_count, $rtw, $ae_count > 0 ? 1 : -1, 2]);
+        $topBits[] = [3, $upcoming . $cm_label, count($ch_mtg), $cm_count, $rtw, $cm_count > 0 ? 1 : -1, 2];
+        $topBits[] = [3, $upcoming . $rt_label, count($roundtables), $rt_count, $rtw, $rt_count > 0 ? 1 : -1, 2];
+        $topBits[] = [3, $upcoming . $so_label, count($socials), $so_count, $rtw, $so_count > 0 ? 1 : -1, 2];
+        $topBits[] = [3, $upcoming . $pd_label, count($pddays), $pd_count, $rtw, $pd_count > 0 ? 1 : -1, 2];
+        $topBits[] = [3, $upcoming . $jf_label, count($jobs), $jf_count, $rtw, $jf_count > 0 ? 1 : -1, 2];
+        $topBits[] = [3, $ae_label, count($all), $ae_count, $rtw, $ae_count > 0 ? 1 : -1, 2];
 
         return $topBits;
     }
@@ -150,15 +150,15 @@ class EventController extends Controller
     public function index($past = null): View
     {
         // responds to GET /manage_events
-        $topBits = $this->event_bits();
+        $this->topBits = $this->event_bits();
+        $this->past = $past;
 
         $today = Carbon::now();
-        $current_person = $this->currentPerson = Person::find(auth()->user()->id);
 
-        if ($past === null) {
+        if ($this->past === null) {
             // Function called was "Manage Events" so there should be future events and limited past events"
             // Get a list of current events, showing events that have not yet ended.
-            $current_events = Event::with('registrations', 'event_type', 'location')
+            $this->current_events = Event::with('registrations', 'event_type', 'location')
                 ->select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
                     'hasTracks', 'etName', 'slug', 'eventTypeID', 'locationID')
                 ->where([
@@ -173,10 +173,10 @@ class EventController extends Controller
                 ->orderBy('eventStartDate', 'ASC')
                 ->get();
 
-            $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+            $this->past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
                 'hasTracks', 'etName', 'slug', 'eventTypeID', 'locationID')
                 ->where([
-                    ['org-event.orgID', $this->currentPerson->defaultOrgID],
+                    ['org-event.orgID', $this->currentOrg->orgID],
                     ['eventEndDate', '<', $today],
                 ])
                 ->whereIn(DB::raw('year(eventEndDate)'), [$today->year, $today->year - 1])
@@ -186,11 +186,11 @@ class EventController extends Controller
                 ->orderBy('eventStartDate', 'DESC')
                 ->get();
         } else {
-            $current_events = null;
-            $past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
+            $this->current_events = null;
+            $this->past_events = Event::select('eventID', 'eventName', 'eventStartDate', 'eventEndDate', 'org-event.isActive',
                 'hasTracks', 'etName', 'slug', 'eventTypeID', 'locationID')
                 ->where([
-                    ['org-event.orgID', $this->currentPerson->defaultOrgID],
+                    ['org-event.orgID', $this->currentOrg->orgID],
                     ['eventEndDate', '<', $today],
                 ])
                 ->join('org-event_types as oet', 'oet.etID', '=', 'eventTypeID')
@@ -200,7 +200,7 @@ class EventController extends Controller
                 ->get();
         }
 
-        return view('v1.auth_pages.events.list', compact('current_events', 'past_events', 'topBits', 'current_person', 'past'));
+        return view('v1.auth_pages.events.list', $this->data);
     }
 
     public function event_copy($param)
@@ -225,8 +225,9 @@ class EventController extends Controller
         $e = $event->replicate();
         $e->slug = 'temp_' . rand();
         $e->isActive = 0;
-        $e->eventStartDate = $today;
-        $e->eventEndDate = $today;
+        // 8/24/25: Adding 2 days to give user time to update copied event
+        $e->eventStartDate = $today->addDays(2);
+        $e->eventEndDate = $today->addDays(2);
         // this is here until we decide to copy EVERYTHING associated with a PD Day event
         $e->hasTracks = 0;
         $e->save();
@@ -235,13 +236,11 @@ class EventController extends Controller
 
         $event = $e;
 
-        $this->currentPerson = Person::find(auth()->user()->id);
-        $current_person = $this->currentPerson = Person::find(auth()->user()->id);
         $exLoc = Location::find($event->locationID);
         $page_title = trans('messages.fields.edit_copy');
 
-        // CHANGE: get the ticket(s) associated with original event, replicate, and change eventStartDate & earlyBirdEndDate
-        $label = Org::find($this->currentPerson->defaultOrgID);
+        // CHANGE: get the ticket(s) associated with the original event, replicate, and change eventStartDate & earlyBirdEndDate
+        $label = $this->currentOrg;
         $tkt = new Ticket;
         $tkt->ticketLabel = $label->defaultTicketLabel;
         $tkt->availabilityEndDate = $event->eventStartDate;
@@ -250,7 +249,7 @@ class EventController extends Controller
         $tkt->earlyBirdEndDate = Carbon::now();
         $tkt->save();
 
-        // CHANGE: get the session(s) associated with original event, replicate, and change the ticketID, start, end, creator/updater
+        // CHANGE: get the session(s) associated with the original event, replicate, and change the ticketID, start, end, creator/updater
         $mainSession = new EventSession;
         $mainSession->trackID = 0;
         $mainSession->eventID = $event->eventID;
@@ -272,10 +271,10 @@ class EventController extends Controller
         }
 
         // A copied event should always get the discount codes.
-        $orgDiscounts = OrgDiscount::where([['orgID', $this->currentPerson->defaultOrgID],
+        $orgDiscounts = OrgDiscount::where([['orgID', $this->currentOrg->orgID],
             ['discountCODE', '<>', ''],])->get();
 
-        // CHANGE: decide if original event's EventDiscounts should be copied instead.
+        // CHANGE: decide if the original event's EventDiscounts should be copied instead.
         foreach ($orgDiscounts as $od) {
             $ed = new EventDiscount;
             $ed->orgID = $od->orgID;
@@ -296,6 +295,7 @@ class EventController extends Controller
         // responds to GET /events/{param}
         // $param is either an ID or slug
 
+        $this->override = $override;
         try {
             $event = Event::when(
                 filter_var($param, FILTER_VALIDATE_INT) !== false,
@@ -333,16 +333,16 @@ class EventController extends Controller
         $today = Carbon::now();
 
         if (auth()->guest()) {
-            $current_person = 0;
+            $this->current_person = 0;
         } else {
-            $this->currentPerson = Person::find(auth()->user()->id);
-            $current_person = $this->currentPerson;
+            $this->current_person = $this->currentPerson;
         }
-        $currentOrg = Org::find($event->orgID);
+        $currentOrg = $this->currentOrg;
 
-        $event_loc = Location::where('locID', $event->locationID)->first();
-        $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
-        $bundles =
+        $this->event_loc = Location::where('locID', $event->locationID)->first();
+        // $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
+        $this->orgLogoPath = $this->currentOrg->select('orgPath', 'orgLogo')->first();
+        $this->bundles =
             Ticket::where([
                 ['isaBundle', 1],
                 ['isSuppressed', 0],
@@ -350,7 +350,7 @@ class EventController extends Controller
                 ['availabilityEndDate', '>=', $today],
             ])->get()->sortByDesc('availabilityEndDate');
 
-        $tickets =
+        $this->tickets =
             Ticket::where([
                 ['isaBundle', 0],
                 ['isSuppressed', 0],
@@ -358,39 +358,34 @@ class EventController extends Controller
                 ['availabilityEndDate', '>=', $today],
             ])->get()->sortByDesc('availabilityEndDate');
 
-        $tracks = Track::where('eventID', $event->eventID)->get();
+        $this->tracks = Track::where('eventID', $event->eventID)->get();
         // $member = '';added for working_regform_show
         // $nonmbr = '';
 
         // 'v1.public_pages.display_event_w_sessions2',
-        return view('v1.public_pages.event_show',
-            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath',
-                'tracks', 'currentOrg', 'override'));
+        return view('v1.public_pages.event_show', $this->data);
     }
 
     public function create(): View
     {
         // responds to /events/create and shows add/edit form
-        $this->currentPerson = Person::find(auth()->user()->id);
         $current_person = $this->currentPerson;
-        $org = Org::find($current_person->defaultOrgID);
-        $page_title = trans('messages.headers.event_new');
+        $this->org = $this->currentOrg;
+        $this->page_title = trans('messages.headers.event_new');
 
-        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'org'));
+        return view('v1.auth_pages.events.add-edit_form', $this->data);
     }
 
     public function store(Request $request)
     {
         // responds to POST to /events and creates, adds, stores the event
         $today = Carbon::now();
-        $this->currentPerson = Person::find(auth()->user()->id);
         $event = new Event;
-        $label = Org::find($this->currentPerson->defaultOrgID);
+        $label = $this->currentOrg;
         $slug = request()->input('slug');
         $slug_not_unique = Event::where('slug', $slug)->withTrashed()->first();
         if ($slug_not_unique !== null) {
             request()->session()->flash('alert-danger', trans('messages.flashes.custom_slug'));
-
             return back()->withInput();
         }
         $loc_virtual = request()->input('virtual');
@@ -402,18 +397,18 @@ class EventController extends Controller
 
         $event->locationID = $loc->locID;
 
-        $event->orgID = $this->currentPerson->defaultOrgID;
+        $event->orgID = $this->currentOrg->orgID;
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if ($eventDescription !== null) {
-            if (preg_match('/data:image/', $eventDescription)) {
+            if (str_contains($eventDescription, 'data:image')) {
                 $eventDescription = extract_images($eventDescription, $event->orgID);
             }
         }
         $event->eventDescription = $eventDescription;
         $eventInfo = request()->input('eventInfo');
         if ($eventInfo !== null) {
-            if (preg_match('/data:image/', $eventInfo)) {
+            if (str_contains($eventInfo, 'data:image')) {
                 $eventInfo = extract_images($eventInfo, $event->orgID);
             }
         }
@@ -431,7 +426,7 @@ class EventController extends Controller
         $event->slug = request()->input('slug');
         $postRegInfo = request()->input('postRegInfo');
         if ($postRegInfo !== null) {
-            if (preg_match('/data:image/', $postRegInfo)) {
+            if (str_contains($postRegInfo, 'data:image')) {
                 $postRegInfo = extract_images($postRegInfo, $event->orgID);
             }
         }
@@ -536,11 +531,10 @@ class EventController extends Controller
     {
         // responds to GET /events/id/edit and shows the add/edit form
         //$event               = Event::find($id);
-        $this->currentPerson = Person::find(auth()->user()->id);
-        $current_person = $this->currentPerson = Person::find(auth()->user()->id);
-        $org = Org::find($current_person->defaultOrgID);
-        $exLoc = Location::find($event->locationID);
-        $page_title = trans('messages.headers.event_edit');
+        $this->current_person = $this->currentPerson;
+        $this->org = $this->currentOrg;
+        $this->exLoc = Location::find($event->locationID);
+        $this->page_title = trans('messages.headers.event_edit');
         if ($event->mainSession === null) {
             $es = new EventSession;
             $es->eventID = $event->eventID;
@@ -548,8 +542,9 @@ class EventController extends Controller
             $event->mainSession = $es->sessionID;
             $event->save();
         }
+        $this->event = $event;
 
-        return view('v1.auth_pages.events.add-edit_form', compact('current_person', 'page_title', 'event', 'exLoc', 'org'));
+        return view('v1.auth_pages.events.add-edit_form', $this->data);
     }
 
     public function checkSlugUniqueness(Request $request, $id)
@@ -587,13 +582,10 @@ class EventController extends Controller
         ])->withTrashed()->first();
         if ($slug_not_unique !== null) {
             request()->session()->flash('alert-danger', trans('messages.errors.slug_error'));
-
             return back()->withInput();
         }
 
         $original = $event->getOriginal();
-
-        $this->currentPerson = Person::find(auth()->user()->id);
 
         $loc = location_triage($request, $event, $this->currentPerson);
 
@@ -601,14 +593,14 @@ class EventController extends Controller
         $event->eventName = request()->input('eventName');
         $eventDescription = request()->input('eventDescription');
         if ($eventDescription !== null) {
-            if (preg_match('/data:image/', $eventDescription)) {
+            if (str_contains($eventDescription, 'data:image')) {
                 $eventDescription = extract_images($eventDescription, $event->orgID);
             }
         }
         $event->eventDescription = $eventDescription;
         $eventInfo = request()->input('eventInfo');
         if ($eventInfo !== null) {
-            if (preg_match('/data:image/', $eventInfo)) {
+            if (str_contains($eventInfo, 'data:image')) {
                 $eventInfo = extract_images($eventInfo, $event->orgID);
             }
         }
@@ -632,7 +624,7 @@ class EventController extends Controller
         $event->slug = request()->input('slug');
         $postRegInfo = request()->input('postRegInfo');
         if ($postRegInfo !== null) {
-            if (preg_match('/data:image/', $postRegInfo)) {
+            if (str_contains($postRegInfo, 'data:image')) {
                 $postRegInfo = extract_images($postRegInfo, $event->orgID);
             }
         }
@@ -672,7 +664,7 @@ class EventController extends Controller
         $event_discounts = EventDiscount::where('eventID', $event->eventID)->get();
         if ($event->eventStartDate > $today && !$event_discounts) {
             $orgDiscounts = OrgDiscount::where([
-                ['orgID', $this->currentPerson->defaultOrgID],
+                ['orgID', $this->currentOrg->orgID],
                 ['discountCODE', '<>', ''],])
                 ->orWhere('discountCODE', '!=', 0)
                 ->whereNotNull('discountCODE')->get();
@@ -744,9 +736,7 @@ class EventController extends Controller
     public function destroy(Event $event): RedirectResponse
     {
         // responds to DELETE /events/id
-
         $event->delete();
-
         return redirect('/manage_events');
     }
 
@@ -761,12 +751,11 @@ class EventController extends Controller
             }
             $event->isActive = 1;
         }
-        $event->updaterID = auth()->user()->id;
+        $event->updaterID = $this->user->id;
         try {
             $event->save();
         } catch (\Exception $exception) {
         }
-
         return json_encode(['status' => 'success', 'message' => 'Activation successfully toggled.']);
     }
 
@@ -778,9 +767,6 @@ class EventController extends Controller
      */
     public function ajax_update(Request $request, Event $event): RedirectResponse
     {
-        //$event               = Event::find($id);
-        $this->currentPerson = Person::find(auth()->user()->id);
-
         $name = request()->input('name');
         $value = request()->input('value');
 
@@ -812,20 +798,18 @@ class EventController extends Controller
             } catch (\Exception $exception) {
             }
         }
-
         return redirect('/event-tickets/' . $event->eventID);
     }
 
     public function showGroup($event = null, $override = null): View
     {
-        $title = trans('messages.headers.group_reg');
+        $this->title = trans('messages.headers.group_reg');
         $today = Carbon::now();
-        $this->currentPerson = Person::find(auth()->user()->id);
 
         if (!isset($event)) {
             if (Auth::user()->hasRole('Developer')) {
                 $e = Event::where([
-                    ['orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['orgID', '=', $this->currentOrg->orgID],
                     ['eventStartDate', '>=', $today->subDays(10)],
                 ])
                     ->select(DB::raw("eventID,
@@ -836,7 +820,7 @@ class EventController extends Controller
                     ->get();
             } else {
                 $e = Event::where([
-                    ['orgID', '=', $this->currentPerson->defaultOrgID],
+                    ['orgID', '=', $this->currentOrg->orgID],
                     ['eventStartDate', '>=', $today->subDays(10)],
                 ])
                     ->select(DB::raw("eventID, concat(date_format(eventStartDate, '%m/%d/%Y'), ': ', eventName) as eventName"))
@@ -846,22 +830,27 @@ class EventController extends Controller
             $a = $e->pluck('eventName', 'eventID');
             $b = [null => trans('messages.admin.upload.select')];
             $c = $a->toArray();
-            $events = $b + $c;
+            $this->events = $b + $c;
+            $this->event = $event;
 
-            return view('v1.auth_pages.events.registration.group-registration', compact('title', 'event', 'events'));
+            return view('v1.auth_pages.events.registration.group-registration',
+                $this->data);
         } else {
             // Cannot pass object as reference so need to set here
-            $event = Event::find($event);
-            $override ? $check = 1 : $check = 0;
-            $title = $title . ": $event->eventName";
-            $t = Ticket::where('eventID', '=', $event->eventID)->get();
+            $this->event = Event::find($event);
+            $override ? $this->check = 1 : $this->check = 0;
+            $this->title = $this->title . ": $event->eventName";
+            $t = Ticket::where([
+                ['eventID', $event->eventID],
+                ['isSuppressed', 0]
+            ])->get();
             if (count($t) > 1) {
                 $a = $t->pluck('ticketLabel', 'ticketID');
                 $b = [null => trans('messages.headers.sel_tkt')];
                 $c = $a->toArray();
-                $tickets = $b + $c;
+                $this->tickets = $b + $c;
             } else {
-                $tickets = $t->first()->ticketID;
+                $this->tickets = $t->first()->ticketID;
             }
 
             $a = EventDiscount::where('eventID', '=', $event->eventID)->get();
@@ -869,27 +858,28 @@ class EventController extends Controller
             $c = $a->pluck('discountCODE', 'discountCODE');
             $d = $c->toArray();
 
-            $discounts = $b + $d;
+            $this->discounts = $b + $d;
 
             return view('v1.auth_pages.events.registration.group-registration',
-                compact('title', 'event', 'tickets', 'discounts', 'check'));
+                $this->data);
         }
-
-        //return view('v1.auth_pages.events.group-registration', compact('event'));
     }
 
     public function listing($orgID, $etID, $override = null)
     {
         try {
-            $org = Org::find($orgID);
+            if ($this->currentOrg->orgID == $orgID) {
+                $this->org = $this->currentOrg;
+            } else {
+                $this->org = Org::find($orgID);
+            }
         } catch (\Exception $exception) {
             $message = trans('messages.instructions.no_org');
-
             return view('v1.public_pages.error_display', 'message');
         }
 
         // Check to see if $etID is sent as a comma-separated list of etIDs
-        if (preg_match('/,/', $etID)) {
+        if (str_contains($etID, ',')) {
             // change value of $etID to be the list of things if it's a list
             $etID_array = explode(',', $etID);
             $tag = DB::table('org-event_types')->whereIn('etID', $etID_array)->pluck('etName')->toArray();
@@ -945,22 +935,24 @@ class EventController extends Controller
             }
         }
 
-        $cnt = count($events);
+        $this->cnt = count($events);
+        $this->events = $events;
+        $this->tag = $tag;
+        $this->etID = $etID;
 
         if ($override) {
-            $view = view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'))->render();
+            $view = view('v1.public_pages.eventlist', $this->data)->render();
             $view = trim(preg_replace('/\r\n/', ' ', $view));
-
             return json_encode(['status' => 'success', 'message' => $view]);
         } else {
-            return view('v1.public_pages.eventlist', compact('events', 'cnt', 'etID', 'org', 'tag'));
+            return view('v1.public_pages.eventlist', $this->data);
         }
     }
 
     public function ticket_listing($param, $override = null)
     {
         try {
-            $event = Event::when(
+            $this->event = Event::when(
                 filter_var($param, FILTER_VALIDATE_INT) !== false,
                 function ($query) use ($param) {
                     return $query->where('eventID', $param);
@@ -971,17 +963,15 @@ class EventController extends Controller
             )->firstOrFail();
         } catch (\Exception $exception) {
             $message = "$param is not a valid event URL or identifier.";
-
             return view('v1.public_pages.error_display', compact('message'));
         }
 
         if (auth()->guest()) {
             $current_person = 0;
         } else {
-            $this->currentPerson = Person::find(auth()->user()->id);
-            $current_person = $this->currentPerson;
+            $this->current_person = $this->currentPerson;
         }
-        $currentOrg = Org::find($event->orgID);
+        $currentOrg = $this->currentOrg;
 
         //$referrer = Referer::get();
         $referrer = app(Referer::class)->get();
@@ -989,29 +979,26 @@ class EventController extends Controller
         if ($referrer) {
             $r = new ReferLink;
             $r->objectType = 'eventID';
-            $r->objectID = $event->eventID;
+            $r->objectID = $this->event->eventID;
             $r->referrerText = $referrer;
             $r->save();
         }
 
-        $event_loc = Location::where('locID', $event->locationID)->first();
-        $orgLogoPath = Org::where('orgID', $event->orgID)->select('orgPath', 'orgLogo')->first();
-        $bundles =
+        $this->event_loc = Location::where('locID', $this->event->locationID)->first();
+        $this->orgLogoPath = Org::where('orgID', $this->event->orgID)->select('orgPath', 'orgLogo')->first();
+        $this->bundles =
             Ticket::where([
                 ['isaBundle', 1],
-                ['eventID', $event->eventID],
+                ['eventID', $this->event->eventID],
             ])->get()->sortByDesc('availableEndDate');
 
-        $tickets =
+        $this->tickets =
             Ticket::where([
                 ['isaBundle', 0],
-                ['eventID', $event->eventID],
+                ['eventID', $this->event->eventID],
             ])->get()->sortByDesc('availableEndDate');
 
-        return view(
-            'v1.public_pages.display_tickets_only',
-            compact('event', 'current_person', 'bundles', 'tickets', 'event_loc', 'orgLogoPath', 'currentOrg')
-        );
+        return view('v1.public_pages.display_tickets_only', $this->data);
     }
 
     public function ics_listing($orgID, $etID = null, $override = null): Response

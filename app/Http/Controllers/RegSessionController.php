@@ -20,13 +20,14 @@ class RegSessionController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('web', ['except' => ['record_attendance']]);
     }
 
     public function show(EventSession $session): View
     {
         // Called with GET /rs/{session}
-        // Given a event's sessionID, display a form for a person to enter their $regID
+        // Given an event's sessionID, display a form for a person to enter their $regID
 
         $event = Event::find($session->eventID);
         $track = Track::find($session->trackID);
@@ -71,7 +72,7 @@ class RegSessionController extends Controller
 
     public function process_checkin(Request $request): RedirectResponse
     {
-        // Called as /process_checkin post;  Need to:
+        // Called as /process_checkin post; Need to:
         // 1. check if hasTracks > 0 and give options and buttons to re-trigger
         // 2. display the regID request
 

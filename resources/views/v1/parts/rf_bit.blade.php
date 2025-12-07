@@ -88,14 +88,14 @@
 
                     @if($rf->pmtRecd == 1)
                         {{-- Payment received so receipt buttons are appropriate --}}
-                        <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                        <a target="_new" href="{!! config('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
                            class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
                         @if($receipt_exists)
                             <a target="_new" href="{{ $receipt_url }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
                         @else
-                            <a target="_new" href="{{ env('APP_URL'). "/recreate_receipt/".$rf->regID }}"
+                            <a target="_new" href="{{ config('APP_URL'). "/recreate_receipt/".$rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
                         @endif
                         <br/>
@@ -105,7 +105,7 @@
                          only/first seat --}}
 
                         @if($rf->seats == 1 || $reg == $rf->registrations->first())
-                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                            <a href="{!! config('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
                         @endif
 
@@ -130,7 +130,7 @@
                         {{ html()->form()->close() }}
 
                         {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
-                        <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                        <a target="_new" href="{!! config('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
                            class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
                         <a target="_new" href="{{ $receipt_url }}"
@@ -140,7 +140,7 @@
                         {{-- No charge but transaction wasn't completed.  Complete Reg button should be displayed if it's the only/first seat --}}
 
                         @if($rf->seats == 1 || $reg == $rf->registrations->first())
-                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                            <a href="{!! config('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.comp_reg')</a>
                         @endif
 
