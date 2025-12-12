@@ -46,6 +46,14 @@ class EventController extends Controller
         $upcoming = trans('messages.fields.up') . ' ';
         $rtw = trans('messages.headers.regs_this_week');
 
+        $upcoming_events = Cache::get('upcoming-events', function () use ($today) {
+            return Event::where([
+                ['eventStartDate', '>=', $today],
+                ['orgID', $this->currentPerson->defaultOrgID],
+            ])->get();
+        });
+
+        /*
         $ch_mtg = Cache::get('future_cm', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
@@ -54,13 +62,18 @@ class EventController extends Controller
             ])->get();
         });
 
-        $cm_count = 0;
         foreach ($ch_mtg as $cm) {
             $cm_count += $cm->week_sales();
         }
+        */
 
+        $cm_count = 0;
+        foreach ($ch_mtg = $upcoming_events->where('eventTypeID', 1) as $ue) {
+            $cm_count += $ue->week_sales();
+        }
         $cm_label = trans_choice('messages.event_types.Chapter Meeting', 2);
 
+        /*
         $roundtables = Cache::get('future_roundtables', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
@@ -73,9 +86,16 @@ class EventController extends Controller
         foreach ($roundtables as $rt) {
             $rt_count += $rt->week_sales();
         }
+        */
+
+        $rt_count = 0;
+        foreach ($roundtables = $upcoming_events->where('eventTypeID', 2) as $ue) {
+            $rt_count += $ue->week_sales();
+        }
 
         $rt_label = trans_choice('messages.event_types.Roundtable', 2);
 
+        /*
         $socials = Cache::get('future_socials', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
@@ -88,9 +108,15 @@ class EventController extends Controller
         foreach ($socials as $so) {
             $so_count += $so->week_sales();
         }
+        */
 
+        $so_count = 0;
+        foreach ($socials = $upcoming_events->where('eventTypeID', 4) as $ue) {
+            $so_count += $ue->week_sales();
+        }
         $so_label = trans_choice('messages.event_types.Social Gathering', 2);
 
+        /*
         $pddays = Cache::get('future_pddays', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
@@ -103,9 +129,15 @@ class EventController extends Controller
         foreach ($pddays as $pd) {
             $pd_count += $pd->week_sales();
         }
+        */
 
+        $pd_count = 0;
+        foreach ($pddays = $upcoming_events->where('eventTypeID', 3) as $ue) {
+            $pd_count += $ue->week_sales();
+        }
         $pd_label = trans_choice('messages.event_types.PD Day', 2);
 
+        /*
         $jobs = Cache::get('future_job_fairs', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
@@ -118,9 +150,15 @@ class EventController extends Controller
         foreach ($jobs as $jf) {
             $jf_count += $jf->week_sales();
         }
+        */
 
+        $jf_count = 0;
+        foreach ($jobs = $upcoming_events->where('eventTypeID', 9) as $ue) {
+            $jf_count += $ue->week_sales();
+        }
         $jf_label = trans_choice('messages.event_types.Job Fair', 2);
 
+        /*
         $all = Cache::get('all_future_events', function () use ($today) {
             return Event::where([
                 ['eventStartDate', '>=', $today],
@@ -131,6 +169,11 @@ class EventController extends Controller
         $ae_count = 0;
         foreach ($all as $ae) {
             $ae_count += $ae->week_sales();
+        }
+        */
+        $ae_count = 0;
+        foreach ($all = $upcoming_events as $ue) {
+            $ae_count += $ue->week_sales();
         }
 
         // sets $which to "Upcoming"

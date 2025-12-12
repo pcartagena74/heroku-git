@@ -28,13 +28,13 @@
 <meta name="csrf-token" content="{{ csrf_token() }}"/>
 @if(Auth::user())
     @if(!auth()->user()->remember_token)
-        <meta http-equiv="refresh" content="3600;url={{ env('APP_URL') . "/logout" }}"/>
+        <meta http-equiv="refresh" content="3600;url={{ config('APP_URL') . "/logout" }}"/>
     @endif
 @endif
-@if(env('APP_ENV') == 'local')
-    <link href="{{ env('APP_URL') }}/images/mCentric_dev.ico" rel="icon"/>
-@elseif(env('APP_ENV') == 'test')
-    <link href="{{ env('APP_URL') }}/images/mCentric_test.ico" rel="icon"/>
+@if(config('APP_ENV') == 'local')
+    <link href="{{ config('APP_URL') }}/images/mCentric_dev.ico" rel="icon"/>
+@elseif(config('APP_ENV') == 'test')
+    <link href="{{ config('APP_URL') }}/images/mCentric_test.ico" rel="icon"/>
 @else
-    <link href="{{ env('APP_URL') }}/images/mCentric.ico" rel="icon"/>
+    <link href="{{ config('APP_URL') }}/images/mCentric.ico" rel="icon"/>
 @endif

@@ -89,11 +89,6 @@
     "spatie/laravel-ignition": "^2.0"
   },
   "extra": {
-    "laravel": {
-      "dont-discover": [
-        "barryvdh/laravel-debugbar"
-      ]
-    }
   },
   "autoload": {
     "psr-4": {
