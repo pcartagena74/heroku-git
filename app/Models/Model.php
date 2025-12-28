@@ -17,4 +17,9 @@ class Model extends Eloquent
     protected $guarded = [];
 
     protected static $logOnlyDirty = true;
+
+    public function getRelationshipFromMethod($name)
+    {
+        
+    }
 }

@@ -18,7 +18,7 @@
                 <tfoot>
                     <tr>
                         <td class="text-center">
-                            {!! link_to_route($setting->grab('admin_route').'.agent.index', trans('ticketit::admin.btn-back'), null, ['class' => 'btn btn-default']) !!}
+                            {{ html()->a($setting->grab('admin_route') . '.agent.index', trans('ticketit::admin.btn-back'))->class('btn btn-default') }}
                             {!! CollectiveForm::submit(trans('ticketit::admin.btn-submit'), ['class' => 'btn btn-primary']) !!}
                         </td>
                     </tr>

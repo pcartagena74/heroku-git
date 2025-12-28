@@ -69,11 +69,12 @@
 
     $logo = '';
     $logo_filename = $org->orgPath . "/" . $org->orgLogo;
+    $s3name = select_bucket('m', config('APP_ENV'));
 
     try {
         if ($org->orgLogo !== null) {
-            if (Storage::disk('s3_media')->exists($logo_filename)) {
-                $logo = Storage::disk('s3_media')->url($logo_filename);
+            if (Storage::disk($s3name)->exists($logo_filename)) {
+                $logo = Storage::disk($s3name)->url($logo_filename);
             }
         }
     } catch (Exception $e) {
@@ -89,7 +90,7 @@
 @if($event->ok_to_display() || $override)
     @section('content')
         @include('v1.parts.not-table_header')
-        <style>
+        <style nonce="{{ $cspStyleNonce }}">
             .popover {
                 max-width: 50%;
             }
@@ -97,7 +98,7 @@
         @include('v1.parts.start_content', ['header' => "$event->eventName", 'subheader' => '', 'w1' => '12', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         @include('v1.parts.start_content', ['header' => trans('messages.fields.detail'), 'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
-        {!! Form::open(['url' => env('APP_URL').'/regstep1/'.$event->eventID, 'method' => 'post', 'id' => 'start_registration']) !!}
+        {{ html()->form('POST', config('APP_URL') . '/regstep1/' . $event->eventID)->id('start_registration')->open() }}
         <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
             <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">{!! $event->eventDescription !!}</div>
             <div class="form-group has-feedback col-md-12 col-sm-12 col-xs-12">
@@ -106,7 +107,7 @@
             @if($event->valid_earlyBird())
                 <div class="col-md-12 col-sm-12 col-xs-12" style="display:flex;">
                     <div class="col-md-2 col-sm-2 col-xs-2">
-                        <img src="{{ env('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
+                        <img src="{{ config('APP_URL') }}/images/earlybird.jpg" style="float:right; width:75px;">
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-6"
                          style="margin-top: auto; word-break: break-all;">
@@ -279,9 +280,9 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-xs-12"
                                              style="text-align: left; vertical-align: top;">
-                                            <img alt="Visa Logo" src="{{ env('APP_URL') }}/images/visa.png"><img
+                                            <img alt="Visa Logo" src="{{ config('APP_URL') }}/images/visa.png"><img
                                                     alt="MasterCard Logo"
-                                                    src="{{ env('APP_URL') }}/images/mastercard.png">
+                                                    src="{{ config('APP_URL') }}/images/mastercard.png">
                                             <button type="submit" class="btn btn-success btn-sm" id="purchase"
                                                     style="height: 32px;"><b>@lang('messages.buttons.buy')</b></button>
                                         </div>
@@ -523,7 +524,7 @@
                     </div>
                     @endif
                 </div>
-                {!! Form::close() !!}
+                {{ html()->form()->close() }}
                 @include('v1.parts.end_content')
 
                 @include('v1.parts.start_content', ['header' => trans('messages.fields.d&t'), 'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
@@ -598,14 +599,13 @@
                 @endsection
 
                 @section('scripts')
-                    <script>
+                    <script nonce="{{ $cspScriptNonce }}">
                         $('a[data-toggle="tab"]').click(function (e) {
                             $(this).tab('show');
                         });
                         // e.target
                         //e.relatedTarget // previous active tab
-                    </script>
-                    <script>
+
                         $('#btn-validate').on('click', function (e) {
                             e.preventDefault();
                             validateCode({{ $event->eventID }});
@@ -651,8 +651,7 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             }
                         });
-                    </script>
-                    <script>
+
                         function validateCode(eventID) {
                             var codeValue = $("#discount_code").val();
                             if (FieldIsEmpty(codeValue)) {
@@ -664,7 +663,7 @@
                                     type: 'POST',
                                     cache: false,
                                     async: true,
-                                    url: '{{ env('APP_URL') }}/discount/' + eventID,
+                                    url: '{{ config('APP_URL') }}/discount/' + eventID,
                                     dataType: 'json',
                                     data: {
                                         event_id: eventID,
@@ -691,8 +690,7 @@
                                 });
                             }
                         }
-                    </script>
-                    <script>
+
                         $('[data-toggle="popover"]').popover({
                             container: 'body',
                             placement: 'top'

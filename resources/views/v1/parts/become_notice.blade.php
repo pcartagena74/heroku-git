@@ -20,16 +20,16 @@ Session::put('become', $become);
 Session::put('prior_id', $prior_id);
 Session::save();
 @endphp
-{!! Form::open(array('url' => env('APP_URL')."/become", 'method' => 'POST')) !!}
-{!! Form::hidden('new_id', $prior_id) !!}
-{!! Form::hidden('cancel', 1) !!}
+{{ html()->form('POST', env('APP_URL') . "/become")->open() }}
+{{ html()->hidden('new_id', $prior_id) }}
+{{ html()->hidden('cancel', 1) }}
 <div class="form-group" style="margin-top:55px;">
     <p class="alert alert-warning">
         <a aria-label="close" class="close" data-dismiss="alert" href="#">
             ×
         </a>
         {!!  trans('messages.messages.become', ['name' => $p->showFullName()]) !!}    
-        {!! Form::submit(trans('messages.buttons.unbecome'), array('class' => 'btn btn-primary btn-xs')) !!}
+        {{ html()->submit(trans('messages.buttons.unbecome'))->class('btn btn-primary btn-xs') }}
     </p>
 </div>
-{!! Form::close() !!}
+{{ html()->form()->close() }}

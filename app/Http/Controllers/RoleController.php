@@ -24,7 +24,7 @@ class RoleController extends Controller
     protected function role_bits()
     {
         $topBits = [];
-        $p = $this->currentPerson = Person::find(auth()->user()->id);
+        #$p = $this->currentPerson = Person::find(auth()->user()->id);
 
         $board = count_roles(1);
         $speaker = count_roles(2);
@@ -53,12 +53,12 @@ class RoleController extends Controller
     {
         // responds to GET /role_mgmt
         $topBits = $this->role_bits();
-        $p = $this->currentPerson = Person::find(auth()->user()->id);
-        $org = Org::find($this->currentPerson->defaultOrgID);
+        $p = $p = Person::find(auth()->user()->id);
+        $org = Org::find($p->defaultOrgID);
         $roles = Role::where('id', '<=', 10)
             // This line is to prevent the display of roles with relevant ID.  0 blocks nothing...
             ->whereNotIn('id', [0, 5])
-            ->with('permissions')
+            ->with('permissions', 'users')
             ->get();
 
         $permissions = Permission::all();
@@ -101,7 +101,7 @@ class RoleController extends Controller
     {
         $string = $request->input('string');
 
-        return redirect('/role_mgmt/'.$string);
+        return redirect('/role_mgmt/' . $string);
     }
 
     public function show($id)
@@ -153,11 +153,11 @@ class RoleController extends Controller
         //not needed now as orgname role is not needed admin will be the admin of that org
         if (isset($person->org_role_id()->id) && false) {
             // Check to see if a role for the orgName is in the DB...
-            if (! $person->roles->contains('id', $person->org_role_id()->id)) {
+            if (!$person->roles->contains('id', $person->org_role_id()->id)) {
                 $orgID_needed = 1;
             }
             // Remove the orgName role if it's the only one...
-            if (count($person->roles) == 1 && ! $orgID_needed) {
+            if (count($person->roles) == 1 && !$orgID_needed) {
                 $person->roles->forget('id', $person->org_role_id()->id);
             }
 
@@ -181,10 +181,10 @@ class RoleController extends Controller
          */
 
         $message =
-            '<div class="well bg-blue">'.trans(
+            '<div class="well bg-blue">' . trans(
                 'messages.instructions.role_toggle',
                 ['role' => $role->display_name, 'person' => $person->showFullName()]
-            ).'</div>';
+            ) . '</div>';
 
         return json_encode(['status' => 'success', 'message' => $message]);
     }

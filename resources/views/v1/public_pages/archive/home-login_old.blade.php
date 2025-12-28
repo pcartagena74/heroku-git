@@ -1,7 +1,7 @@
 <?php
 // include in all forms:   {{ csrf_field() }}
 ?>
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -29,7 +29,9 @@
 <nav class="col-md-12 col-sm-12 col-xs-12 navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header col-md-4 col-sm-4 col-xs-12" style="vertical-align: top;;">
-            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;" src="{{ env('APP_URL') }}/images/mCentric_logo.png" alt="mCentric"/></a>
+            <a class="navbar-brand" href="/"><img style="height: 25px; vertical-align: top;"
+                                                  src="{{ env('APP_URL') }}/images/mCentric_logo.png"
+                                                  alt="mCentric"/></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse col-md-6 col-sm-6 col-xs-12"
              style="display:table-cell; vertical-align:top">
@@ -37,16 +39,18 @@
                 {{ csrf_field() }}
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     @if ($errors->has('email'))
-                    <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
+                        <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
                     @endif
-                    <input type="email" placeholder="Email Address" class="form-control input-sm" name="email" id="user_email"
+                    <input type="email" placeholder="Email Address" class="form-control input-sm" name="email"
+                           id="user_email"
                            value="{{ old('email') }}" required autofocus>
                 </div>
                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                     @if ($errors->has('password'))
-                    <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
+                        <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
                     @endif
-                    <input type="password" placeholder="Password" class="form-control input-sm" name="password" id="password" required>
+                    <input type="password" placeholder="Password" class="form-control input-sm" name="password"
+                           id="password" required>
                 </div>
                 <button type="submit" class="btn btn-success" name="btn-login" id="btn-login">Login</button>
                 <div class="form-group">
@@ -54,7 +58,9 @@
                         <div class="checkbox">
                             <label style="color: white;">
                                 <nobr><input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                                &nbsp; Remember Me</nobr><br />
+                                    &nbsp; Remember Me
+                                </nobr>
+                                <br/>
                                 <a style="color: white;" href="/password/reset">Forgot Password?</a>
                             </label>
                         </div>
@@ -88,7 +94,7 @@
             <p>mCentric aggregates the data that you keep about your current and prospective members. Segmenting your
                 members based on the traits that are evident in your data allow for better targeting of your
                 campaigns.</p>
-            <p>Need to see the list of members that are expiring this month?  Next month?</p>
+            <p>Need to see the list of members that are expiring this month? Next month?</p>
             <p><a class="btn btn-default" href="/details#marketing" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4 column_text">
@@ -101,7 +107,8 @@
         <div class="col-md-4 column_text">
             <h2>Meetings</h2>
             <p>Need to advertise meetings or events regardless of entrance fees? mCentric can help you setup, advertise
-                your events, and sell tickets to your events. </p><p>If you're holding a no-fee event and still need these
+                your events, and sell tickets to your events. </p>
+            <p>If you're holding a no-fee event and still need these
                 services, mCentric will do this for you for no additional charge.</p>
             <p><a class="btn btn-default" href="/details#meetings" role="button">View details &raquo;</a></p>
         </div>
@@ -113,14 +120,13 @@
         <p>&copy; 2017 mCentric </p>
     </footer>
 </div> <!-- /container -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"><\/script>')</script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="//cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+<script src="//cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"/>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<script src="/js/ie10-viewport-bug-workaround.js"></script>
-<script src="/js/mmmm_loginscript.js"></script>
-<script>
+<script src="/js/ie10-viewport-bug-workaround.js"/>
+<script src="/js/mmmm_loginscript.js"/>
+<script nonce="{{ $cspScriptNonce }}">
     // function([string1, string2],target id,[color1,color2])
     consoleText(['Marketing', 'Mailings', 'Meetings', 'Integrated Membership Management'], 'text', ['black', 'black', 'black']);
 

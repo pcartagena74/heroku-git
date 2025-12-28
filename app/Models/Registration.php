@@ -32,6 +32,8 @@ class Registration extends Model
         'updateDate' => 'datetime',
     ];
 
+    protected $guarded = [];
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'eventID', 'eventID');
@@ -52,12 +54,12 @@ class Registration extends Model
         return $this->belongsTo(RegFinance::class, 'rfID', 'regID');
     }
 
-    public function regsessions(): HasMany
+    public function regsession(): HasOne
     {
-        return $this->hasMany(RegSession::class, 'regID', 'regID');
+        return $this->hasOne(RegSession::class, 'regID', 'regID');
     }
 
-    public function checkin($sessionID = null)
+    public function checkin($sessionID = null): void
     {
         if ($sessionID === null) {
             $sessionID = $this->event->default_session()->sessionID;
@@ -69,25 +71,24 @@ class Registration extends Model
             ['regID', '=', $this->regID],
             ['sessionID', '=', $sessionID],
             ['personID', '=', $this->personID],
-        ])->first();
+        ])->firstOrNew([
+                'regID' => $this->regID,
+                'eventID' => $this->eventID,
+                'confDay' => $es->confDay,
+                'sessionID' => $sessionID,
+                'personID' => $this->personID,
+            ]
+        );
 
         try {
             $rs->hasAttended = 1;
             $rs->save();
         } catch (\Exception $e) {
-            $rs = new RegSession;
-            $event = $this->event()->first();
-            $rs->regID = $this->regID;
-            $rs->eventID = $event->eventID;
-            $rs->confDay = $es->confDay;
-            $rs->sessionID = $sessionID;
-            $rs->personID = $this->personID;
-            $rs->hasAttended = 1;
-            $rs->save();
+            // if the above doesn't create and set attendance, something big is wrong.
         }
     }
 
-    public function is_session_attended($sessionID)
+    public function is_session_attended($sessionID): RegSession
     {
         return RegSession::where([
             ['regID', $this->regID],

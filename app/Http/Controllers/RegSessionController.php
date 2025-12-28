@@ -20,13 +20,14 @@ class RegSessionController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('web', ['except' => ['record_attendance']]);
     }
 
     public function show(EventSession $session): View
     {
         // Called with GET /rs/{session}
-        // Given a event's sessionID, display a form for a person to enter their $regID
+        // Given an event's sessionID, display a form for a person to enter their $regID
 
         $event = Event::find($session->eventID);
         $track = Track::find($session->trackID);
@@ -71,7 +72,7 @@ class RegSessionController extends Controller
 
     public function process_checkin(Request $request): RedirectResponse
     {
-        // Called as /process_checkin post;  Need to:
+        // Called as /process_checkin post; Need to:
         // 1. check if hasTracks > 0 and give options and buttons to re-trigger
         // 2. display the regID request
 
@@ -122,7 +123,7 @@ class RegSessionController extends Controller
         } catch (\Exception $exception) {
             // Check if event-session restricts casual switching
             $es = EventSession::find($sessionID);
-            if (! $es->isRegSwitchProhibited) {
+            if (!$es->isRegSwitchProhibited) {
                 $rs = new RegSession;
                 $rs->regID = $regID;
                 $rs->eventID = request()->input('eventID');
@@ -138,9 +139,9 @@ class RegSessionController extends Controller
         }
 
         if (request()->input('return')) {
-            return redirect('/checkin/'.$eventID.'/'.$sessionID);
+            return redirect('/checkin/' . $eventID . '/' . $sessionID);
         } else {
-            return redirect('/checkin/'.$eventID);
+            return redirect('/checkin/' . $eventID);
         }
     }
 
@@ -159,8 +160,10 @@ class RegSessionController extends Controller
             ['sessionID', '=', $esID],
         ])->get();
         foreach ($old_regs as $o) {
-            $o->hasAttended = 0;
-            $o->save();
+            if ($o !== null) {
+                $o->hasAttended = 0;
+                $o->save();
+            }
         }
 
         // Then, cycle through all p-#-# registrants to enter record
@@ -174,7 +177,7 @@ class RegSessionController extends Controller
         }
 
         if ($chk) {
-            return redirect(env('APP_URL')."/group/$eventID/checkin");
+            return redirect(env('APP_URL') . "/group/$eventID/checkin");
         } else {
             request()->session()->flash('alert-success', trans_choice('messages.headers.count_updated', $count, ['count' => $count]));
 
@@ -209,7 +212,7 @@ class RegSessionController extends Controller
         for ($j = 1; $j <= $event->confDays; $j++) {
             for ($x = 1; $x <= 5; $x++) {
                 $sessionID = null;
-                $sessionID = request()->input('sess-'.$j.'-'.$x.'-'.$reg->regID);
+                $sessionID = request()->input('sess-' . $j . '-' . $x . '-' . $reg->regID);
                 if ($sessionID !== null) {
                     // if this is set, the value is the session that was chosen.
 
@@ -267,7 +270,7 @@ class RegSessionController extends Controller
         $rs->hasAttended = 1;
         $rs->save();
 
-        return redirect('/rs_survey/'.$rs->id);
+        return redirect('/rs_survey/' . $rs->id);
     }
 
     public function show_session_survey(RegSession $rs): View

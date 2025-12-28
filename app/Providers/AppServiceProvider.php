@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (env('APP_ENV') != 'local') {
+        if (config('APP_ENV') != 'local') {
             URL::forceRootUrl(\Config::get('app.url'));
             URL::forceScheme('https');
         }
@@ -44,8 +44,8 @@ class AppServiceProvider extends ServiceProvider
     {
         /*
         $this->app->bind(TwitterStream::class, function ($app) {
-            $twitter_access_token = env('TWITTER_ACCESS_TOKEN', null);
-            $twitter_access_token_secret = env('TWITTER_ACCESS_TOKEN_SECRET', null);
+            $twitter_access_token = config('TWITTER_ACCESS_TOKEN', null);
+            $twitter_access_token_secret = config('TWITTER_ACCESS_TOKEN_SECRET', null);
 
             return new TwitterStream($twitter_access_token, $twitter_access_token_secret, Phirehose::METHOD_FILTER);
         });
@@ -64,7 +64,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
-        $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
 
         if ($this->app->environment('local', 'dev', 'test')) {
             $this->app->register(DuskServiceProvider::class);
@@ -76,8 +75,10 @@ class AppServiceProvider extends ServiceProvider
         //Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicTimingObserver());
         //Registration::observe(new \Intouch\LaravelNewrelic\Observers\NewrelicCountingObserver());
 
+        /*
         if ($this->app->environment('local', 'test', 'queue')) {
             $this->app->register(\App\Providers\TelescopeServiceProvider::class);
         }
+        */
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use JetBrains\PhpStorm\NoReturn;
 use Session;
 use Spatie\Activitylog\Models\Activity;
 
@@ -22,33 +23,35 @@ class ActivityController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth');
+        // 8/23/25: $currentPerson should be available due to Controller constructor
+        // $this->currentPerson = Person::find(auth()->user()->id);
     }
 
     public function future_index(): View
     {
         // responds to GET /upcoming
-        $this->currentPerson = Person::find(auth()->user()->id);
         $now = Carbon::now();
 
         // Registrations bought by someone else for $this->currentPerson
-        $bought = Registration::where('personID', $this->currentPerson->personID)
+        $this->bought = Registration::where('personID', $this->currentPerson->personID)
             ->whereHas(
                 'event', function ($q) {
-                    $q->where('eventEndDate', '>=', Carbon::now());
-                })
+                $q->where('eventEndDate', '>=', Carbon::now());
+            })
             ->whereHas(
                 'regfinance', function ($q) {
-                    $q->where('personID', '!=', $this->currentPerson->personID);
-                    $q->where('pmtRecd', '=', 1);
-                })
+                $q->where('personID', '!=', $this->currentPerson->personID);
+                $q->where('pmtRecd', '=', 1);
+            })
             ->with('event', 'ticket', 'person', 'regfinance')
             ->get()->sortBy('event.eventStartDate');
 
-        $paid = RegFinance::whereHas(
+        $this->paid = RegFinance::whereHas(
             'event', function ($q) {
-                $q->where('eventEndDate', '>=', Carbon::now());
-            })
+            $q->where('eventEndDate', '>=', Carbon::now());
+        })
             ->with('event', 'person', 'registrations')
             ->where([
                 ['personID', '=', $this->currentPerson->personID],
@@ -56,56 +59,59 @@ class ActivityController extends Controller
             ])
             ->get()->sortBy('event.eventStartDate');
 
-        $unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
+        $this->unpaid = RegFinance::where('personID', '=', $this->currentPerson->personID)
             ->whereHas(
                 'event', function ($q) {
-                    $q->where('eventEndDate', '>=', Carbon::now());
-                })
+                $q->where('eventEndDate', '>=', Carbon::now());
+            })
             ->with('event', 'person', 'registrations')
             ->whereHas(
                 'registrations', function ($q) {
-                    $q->where('pmtRecd', '=', 0);
-                })
+                $q->where('pmtRecd', '=', 0);
+            })
             ->whereIn('status', ['pending'])
             ->get()->sortBy('event.eventStartDate');
 
-        $pending = RegFinance::whereHas(
+        $this->pending = RegFinance::whereHas(
             'event', function ($q) {
-                $q->where('eventEndDate', '>=', Carbon::now())
-                    ->orderBy('eventStartDate');
-            })
+            $q->where('eventEndDate', '>=', Carbon::now())
+                ->orderBy('eventStartDate');
+        })
             ->with('event', 'person', 'registrations')
             ->where('personID', '=', $this->currentPerson->personID)
             ->whereIn('status', ['pending', 'progress'])
             ->get()->sortBy('event.eventStartDate');
 
-        $wait = RegFinance::where('personID', '=', $this->currentPerson->personID)
+        $this->wait = RegFinance::where('personID', '=', $this->currentPerson->personID)
             ->whereHas(
                 'event', function ($q) {
-                    $q->where('eventEndDate', '>=', Carbon::now());
-                })
+                $q->where('eventEndDate', '>=', Carbon::now());
+            })
             ->with('event', 'person', 'registrations')
             ->whereHas(
                 'registrations', function ($q) {
-                    $q->where('pmtRecd', '=', 0);
-                })
+                $q->where('pmtRecd', '=', 0);
+            })
             ->whereIn('status', ['wait'])
             ->get()->sortBy('event.eventStartDate');
 
-        $topBits = '';
+        $this->topBits = '';
 
-        return view('v1.auth_pages.members.future_event_list', compact('bought', 'paid', 'unpaid', 'pending', 'topBits', 'wait'));
+        return view('v1.auth_pages.members.future_event_list', $this->data);
     }
 
     public function index(): View
     {
 
-        // responds to /dashboard:  This is the dashboard
-        $this->currentPerson = Person::find(auth()->user()->id);
-        $orgID = $this->currentPerson->defaultOrgID;
+        // responds to /dashboard: This is the dashboard
+        // $this->currentPerson = Person::find(auth()->user()->id);
+        // $orgID = $this->currentPerson->defaultOrgID;
+        $currentPerson = $this->currentPerson;
+        $currentOrg = $this->currentOrg;
+        $orgID = $currentOrg->orgID;
         $today = Carbon::now();
 
-        $attendance = Event::where('er.personID', '=', $this->currentPerson->personID)
+        $attendance = Event::where('er.personID', '=', $currentPerson->personID)
             ->join('org-event_types as oet', function ($join) {
                 $join->on('oet.etID', '=', 'org-event.eventTypeID');
             })->join('event-registration as er', 'er.eventID', '=', 'org-event.eventID')
@@ -126,10 +132,11 @@ class ActivityController extends Controller
             ->distinct()
             ->withCount('registrations')
             ->orderBy('org-event.eventStartDate', 'DESC')->get(20);
+        $this->attendance = $attendance;
 
         $bar2 = Event::select('eventID', 'eventStartDate', 'eventTypeID',
             DB::raw('(select count(*) from `event-registration` er2 where er2.eventID = `org-event`.eventID and er2.personID='
-                .$this->currentPerson->personID." and er2.deleted_at is null) as 'attended'"))
+                . $this->currentPerson->personID . " and er2.deleted_at is null) as 'attended'"))
             ->where([
                 ['orgID', $orgID],
                 ['eventEndDate', '<', $today],
@@ -144,21 +151,22 @@ class ActivityController extends Controller
         $datastring = '';
         $myevents[] = null;
         foreach ($bar2 as $bar_row) {
-            $label = $bar_row->eventStartDate->format('M Y').' '.$bar_row->event_type->etName;
+            $label = $bar_row->eventStartDate->format('M Y') . ' ' . $bar_row->event_type->etName;
             $attend = $bar_row->registrations_count;
             $there = $bar_row->attended;
 
             if ($there == 1) {
                 array_push($myevents, $label);
             }
-            $datastring .= "{ ChMtg: '".$label."', ".trans_choice('messages.headers.att', 2).': '.$attend.'},';
+            $datastring .= "{ ChMtg: '" . $label . "', " . trans_choice('messages.headers.att', 2) . ': ' . $attend . '},';
         }
         rtrim($datastring, ',');
+        $this->datastring = $datastring;
 
         $output_string = '';
         foreach ($myevents as $single) {
             if ($single !== null) {
-                $output_string .= " row.label == '".$single."' ||";
+                $output_string .= " row.label == '" . $single . "' ||";
             }
         }
         if ($output_string == '') {
@@ -166,10 +174,13 @@ class ActivityController extends Controller
         } else {
             $output = substr($output_string, 0, -3);
         }
+        $this->output = $output;
 
-        $topBits = '';
+        $this->topBits = '';
 
-        return view('v1.auth_pages.dashboard', compact('attendance', 'datastring', 'output', 'topBits'));
+        // return view('v1.auth_pages.dashboard', compact('attendance', 'datastring', 'output', 'topBits',
+        //    'currentPerson', 'currentOrg'));
+        return view('v1.auth_pages.dashboard', $this->data);
     }
 
     public function show($id)
@@ -197,7 +208,7 @@ class ActivityController extends Controller
             ['canNetwork', '=', 1],
         ])
             ->join('person as p', 'event-registration.personID', '=', 'p.personID')
-        //    ->distinct()
+            //    ->distinct()
             ->select('p.firstName', 'p.lastName', 'p.login', 'p.compName', 'p.indName')
             ->distinct()
             ->orderBy('p.lastName', 'asc')
@@ -209,7 +220,7 @@ class ActivityController extends Controller
     public function create(): View
     {
         // triggered by GET /become
-        return view('v1.auth_pages.members.become');
+        return view('v1.auth_pages.members.become', $this->data);
     }
 
     public function become(Request $request): RedirectResponse
@@ -250,11 +261,11 @@ class ActivityController extends Controller
                 Session::forget(['become', 'prior_id']);
             }
 
-            return redirect(env('APP_URL').'/dashboard');
+            return redirect(config('APP_URL') . '/dashboard');
         }
     }
 
-    public function store(Request $request)
+    #[NoReturn] public function store(Request $request)
     {
         // responds to POST to /blah and creates, adds, stores the event
         dd(request()->all());

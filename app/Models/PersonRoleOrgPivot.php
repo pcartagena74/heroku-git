@@ -19,13 +19,13 @@ class PersonRoleOrgPivot extends Pivot
         return $this->belongsTo(Person::class, 'user_id', 'personID');
     }
 
-    public function role()
+    public function role(): BelongsTo
     {
-        $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class);
     }
 
-    public function org()
+    public function org(): BelongsTo
     {
-        $this->belongsTo(Org::class, 'org_id', 'orgID');
+        return $this->belongsTo(Org::class, 'org_id', 'orgID');
     }
 }

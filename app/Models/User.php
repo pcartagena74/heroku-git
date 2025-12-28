@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\EntrustUserTraitOver;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -17,6 +18,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     use EntrustUserTraitOver;
     use Notifiable;
     use ValidatesRequests;
+    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
     protected $table = 'users';
 
@@ -53,9 +55,9 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     /**
      * Provides the route for email/notifications to the user
      *
-     * @return the email address/login for the user
+     * @return string : email address/login for the user
      */
-    public function routeNotificationForMail(): the
+    public function routeNotificationForMail(): string
     {
         return $this->email;
     }
@@ -71,16 +73,22 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany relationship with Roles
      */
-    public function roles(): BelongsToMany
+    public function roles(): HasManyThrough
     {
         // we need to get default person org id so running another query to fetch same
-        $person = Person::find(auth()->user()->id);
-
-        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->where('role_user.orgID', $person->defaultOrgID);
+        return $this->hasManyThrough(Role::class, PersonRoleOrgPivot::class,
+            'user_id', 'id', 'id', 'role_id');
     }
 
-    public function tickets(): HasMany
+    public function permissions()
+    {
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
+
+    /*
+    public function tickets()
     {
         return $this->hasMany(\Kordy\Ticketit\Models\Ticket::class, 'user_id', 'id');
     }
+    */
 }

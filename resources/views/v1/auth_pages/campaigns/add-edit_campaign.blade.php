@@ -36,9 +36,9 @@ if(!empty($campaign)){
              'subheader' => '', 'w1' => '9', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 <div aria-multiselectable="true" class="accordion" id="accordion" role="tablist">
     @if($campaign == null)
-        {!! Form::open(array('url' => url('campaign'), 'method' => 'post' ,'id'=>'save_campaign','onsubmit'=>'return false;')) !!}
+        {{ html()->form('POST', url('campaign'))->id('save_campaign')->attribute('onsubmit', 'return false;')->open() }}
     @else
-        {!! Form::model($campaign, array('url' => env('APP_URL')."/campaign", 'method' => 'post','id'=>'edit_campaign','onsubmit'=>'return false;')) !!}
+        {{ html()->modelForm($campaign, 'POST', env('APP_URL') . "/campaign")->id('edit_campaign')->attribute('onsubmit', 'return false;')->open() }}
     @endif
     <div class="panel">
         <a aria-controls="collapseOne" aria-expanded="true" class="panel-heading" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" id="headingOne" role="tab">
@@ -54,43 +54,43 @@ if(!empty($campaign)){
                 <div class="panel-body">
                     @if(!empty($campaign))
                     <div class="form-group col-sm-12 col-xs-12">
-                        {!! Form::text('name', $campaign->title, array('class' => 'form-control input-sm', 'placeholder' => 'Campaign title','id'=>'campaign_title',$disable)) !!}
+                        {{ html()->text('name', $campaign->title)->class('form-control input-sm')->placeholder('Campaign title')->id('campaign_title') }}
                     </div>
                     @endif
                     <div class="form-group col-sm-6 col-xs-12">
                         @if($campaign == null)
-                            {!! Form::text('from_name', $org->orgName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name')) !!}
+                            {{ html()->text('from_name', $org->orgName)->class('form-control input-sm')->placeholder('From Name')->id('from_name') }}
                         @else
-                            {!! Form::text('from_name', $campaign->fromName, array('class' => 'form-control input-sm', 'placeholder' => 'From Name','id'=>'from_name',$disable)) !!}
+                            {{ html()->text('from_name', $campaign->fromName)->class('form-control input-sm')->placeholder('From Name')->id('from_name') }}
                         @endif
                     </div>
                     <div class="form-group col-sm-6 col-xs-12">
                         @if($campaign == null)
-                            {!! Form::text('from_email', $org->adminEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email',$disable)) !!}
+                            {{ html()->text('from_email', $org->adminEmail)->class('form-control input-sm')->placeholder('From Email')->id('from_email') }}
                         @else
-                            {!! Form::text('from_email', $campaign->fromEmail, array('class' => 'form-control input-sm', 'placeholder' => 'From Email','id'=>'from_email',$disable)) !!}
+                            {{ html()->text('from_email', $campaign->fromEmail)->class('form-control input-sm')->placeholder('From Email')->id('from_email') }}
                         @endif
                     </div>
                     <div class="form-group col-sm-12 col-xs-12">
                         @if($campaign == null)
-                            {!! Form::text('subject', '', array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject')) !!}
+                            {{ html()->text('subject', '')->class('form-control input-sm')->placeholder('Subject Line')->id('subject') }}
                         @else
-                            {!! Form::text('subject', $campaign->subject, array('class' => 'form-control input-sm', 'placeholder' => 'Subject Line','id'=>'subject',$disable)) !!}
+                            {{ html()->text('subject', $campaign->subject)->class('form-control input-sm')->placeholder('Subject Line')->id('subject') }}
                         @endif
                     </div>
                     <div class="form-group col-sm-12 col-xs-12">
                         @if($campaign == null)
-                            {!! Form::text('preheader', '', array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader')) !!}
+                            {{ html()->text('preheader', '')->class('form-control input-sm')->placeholder('Preheader Line')->id('preheader') }}
                         @else
-                            {!! Form::text('preheader', $campaign->preheader, array('class' => 'form-control input-sm', 'placeholder' => 'Preheader Line','id'=>'preheader',$disable)) !!}
+                            {{ html()->text('preheader', $campaign->preheader)->class('form-control input-sm')->placeholder('Preheader Line')->id('preheader') }}
                         @endif
                     </div>
                     <div class="form-group col-sm-12 col-xs-12 clear-fix">
                         {{ trans('messages.fields.camp_email_list') }}
                      @if($campaign == null)
-                        {!! Form::select('email_list', $list_dp, null, array('class' => 'form-control input-sm','id'=>'email_list')) !!}
+                        {{ html()->select('email_list', $list_dp)->class('form-control input-sm')->id('email_list') }}
                     @else
-                        {!! Form::select('email_list', $list_dp, $campaign->emailListID, array('class' => 'form-control input-sm','id'=>'email_list',$disable)) !!}
+                        {{ html()->select('email_list', $list_dp, $campaign->emailListID)->class('form-control input-sm')->id('email_list') }}
                     @endif
                     </div>
                     <div class="form-group col-sm-12 col-xs-12 clear-fix" id="send_campaign_response">
@@ -334,7 +334,7 @@ if(!empty($campaign)){
             </div>
         </div>
         @endif
-    {!! Form::close() !!}
+    {{ html()->closeModelForm() }}
     </div>
     @include('v1.parts.end_content')
     {{-- Test Email Div --}}
@@ -343,27 +343,23 @@ if(!empty($campaign)){
                  'subheader' => '', 'w1' => '3', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
         <div id="test-email">
             <div class="form-group">
-                {!! Form::label('email1', trans('messages.fields.camp_five_email') ) !!}
-            {!! Form::email('email1', $org->adminEmail, array('class' => 'form-control input-sm')) !!}
+                {{ html()->label(trans('messages.fields.camp_five_email'), 'email1') }}
+            {{ html()->email('email1', $org->adminEmail)->class('form-control input-sm') }}
             @if($campaign == null)
             @else
             @endif
             </div>
             <div class="form-group">
-                {!! Form::email('email2', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
-                'id' => 'email2')) !!}
+                {{ html()->email('email2', '')->class('form-control input-sm')->style('display:none;')->id('email2') }}
             </div>
             <div class="form-group">
-                {!! Form::email('email3', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
-                'id' => 'email3')) !!}
+                {{ html()->email('email3', '')->class('form-control input-sm')->style('display:none;')->id('email3') }}
             </div>
             <div class="form-group">
-                {!! Form::email('email4', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
-            'id' => 'email4')) !!}
+                {{ html()->email('email4', '')->class('form-control input-sm')->style('display:none;')->id('email4') }}
             </div>
             <div class="form-group">
-                {!! Form::email('email5', '', array('class' => 'form-control input-sm', 'style' => 'display:none;',
-            'id' => 'email5')) !!}
+                {{ html()->email('email5', '')->class('form-control input-sm')->style('display:none;')->id('email5') }}
             </div>
             <a id="add_email" onclick="add_email();">
                 {{trans('messages.fields.camp_add_another')}}
@@ -371,12 +367,11 @@ if(!empty($campaign)){
             <p>
             </p>
             <div class="form-group">
-                {!! Form::label('note', trans('messages.fields.camp_lbl_personal_note')) !!}
-            {!! Form::textarea('note', '', array('class' => 'form-control', 'rows' => '4','id'=>'text_note',
-                'placeholder' => 'Enter a note that will appear at the top of the test message.')) !!}
+                {{ html()->label(trans('messages.fields.camp_lbl_personal_note'), 'note') }}
+            {{ html()->textarea('note', '')->class('form-control')->rows('4')->id('text_note')->placeholder('Enter a note that will appear at the top of the test message.') }}
             </div>
             <div class="form-group">
-                {!! Form::button(trans('messages.fields.camp_btn_send_test_message'), array('class' => 'btn btn-primary btn-sm', 'name' => 'clicked','onclick'=>'sendTestEmail(this)',$disable)) !!}
+                {{ html()->button(trans('messages.fields.camp_btn_send_test_message'), 'button', 'clicked')->class('btn btn-primary btn-sm')->attribute('onclick', 'sendTestEmail(this)') }}
             </div>
             <div class="form-group" id="response">
             </div>
@@ -387,19 +382,19 @@ if(!empty($campaign)){
              pull-right'])
         <div class="form-group">
             <div class="col-sm-3">
-                {!! Form::label('send', trans('messages.fields.camp_lbl_send_now'), array('class' => 'control-label')) !!}
+                {{ html()->label(trans('messages.fields.camp_lbl_send_now'), 'send')->class('control-label') }}
             </div>
             @if(!empty($campaign->scheduleDate))
             <div class="col-sm-5" style="text-align: center;">
-                {!! Form::checkbox('send', '1', true, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
+                {{ html()->checkbox('send', true, '1')->class('js-switch')->id('send_later') }}
             </div>
             @else
             <div class="col-sm-5" style="text-align: center;">
-                {!! Form::checkbox('send', '1', false, array('class' => 'js-switch','id'=>'send_later',$disable)) !!}
+                {{ html()->checkbox('send', false, '1')->class('js-switch')->id('send_later') }}
             </div>
             @endif
             <div class="col-sm-3">
-                {!! Form::label('send',trans('messages.fields.camp_lbl_send_later'), array('class' => 'control-label')) !!}
+                {{ html()->label(trans('messages.fields.camp_lbl_send_later'), 'send')->class('control-label') }}
             </div>
             @if(!empty($campaign))
     @if(!empty($campaign->sendDate) && empty($campaign->scheduleDate))
@@ -428,23 +423,23 @@ if(!empty($campaign)){
         <p>
         </p>
         <div id="schedule" style="display: none;">
-            {!! Form::label('schedule', trans('messages.fields.camp_lbl_release_date')) !!}
+            {{ html()->label(trans('messages.fields.camp_lbl_release_date'), 'schedule') }}
     @if($campaign == null)
             <div class="form-group col-sm-12">
-                {!! Form::text('schedule', '', array('class' => 'form-control input-sm has-feedback-left','id'=>'schedule_date')) !!}
+                {{ html()->text('schedule', '')->class('form-control input-sm has-feedback-left')->id('schedule_date') }}
                 <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
                 </span>
             </div>
             @else
             <div class="form-group col-sm-12">
-                {!! Form::text('schedule', '', array('class' => 'form-control has-feedback-left','id'=>'schedule_date',$disable)) !!}
+                {{ html()->text('schedule', '')->class('form-control has-feedback-left')->id('schedule_date') }}
                 <span aria-hidden="true" class="fa fa-calendar form-control-feedback left">
                 </span>
             </div>
             @endif
         </div>
         <div class="form-group">
-            {!! Form::button(trans('messages.fields.camp_btn_send_now'), array('class' => 'btn btn-success btn-sm', 'name' => 'clicked', 'id'=>'send_now', 'onclick' => 'sendCampaign()',$disable)) !!}
+            {{ html()->button(trans('messages.fields.camp_btn_send_now'), 'button', 'clicked')->class('btn btn-success btn-sm')->id('send_now')->attribute('onclick', 'sendCampaign()') }}
         </div>
         @include('v1.parts.end_content')
     </div>

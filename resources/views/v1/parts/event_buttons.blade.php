@@ -181,10 +181,10 @@
 @if(!$event->isActive && $event->regCount() == 0
     && (Entrust::hasRole('Developer') || Entrust::hasRole('Admin')))
     <!-- Delete Event -->
-    {!! Form::open(['url' => env('APP_URL').'/event/' . $event->eventID, 'method' => 'DELETE']) !!}
+    {{ html()->form('DELETE', env('APP_URL') . '/event/' . $event->eventID)->open() }}
     <button class="btn btn-danger btn-{{ $size }}" data-toggle="tooltip" data-placement="top"
             onclick="return confirm('{{ trans('messages.tooltips.sure') }}');"
             title="{{ trans('messages.buttons.delete') }}"> {!! trans('messages.symbols.trash') !!}</button>
     <input id="myDelete" type="submit" value="Go" class="hidden"/>
-    {!! Form::close() !!}
+    {{ html()->form()->close() }}
 @endif

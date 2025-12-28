@@ -1,23 +1,23 @@
-<?php
-/**
- * Comment: List the events to which the current user has signed up
- * Created: 7/11/2017
- *
- * $attendance: the list of events where registration completed
- * $progress: the list of events where registration was not completed
- *
- */
-use App\Models\RegSession;
-use App\Models\Registration;
-use App\Models\Person;
-use App\Models\Ticket;
-use App\Models\EventSession;
-use App\Models\Event;
+@php
+    /**
+     * Comment: List the events to which the current user has signed up
+     * Created: 7/11/2017
+     *
+     * $attendance: the list of events where registration completed
+     * $progress: the list of events where registration was not completed
+     *
+     */
+    use App\Models\RegSession;
+    use App\Models\Registration;
+    use App\Models\Person;
+    use App\Models\Ticket;
+    use App\Models\EventSession;
+    use App\Models\Event;
 
-$tcount = 0;
-$today = \Carbon\Carbon::now();
+    $tcount = 0;
+    $today = \Carbon\Carbon::now();
 
-?>
+@endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
 
 @section('content')
@@ -25,7 +25,7 @@ $today = \Carbon\Carbon::now();
     @if(count($paid) + count($unpaid) + count($pending) + count($bought) == 0)
         <b>@lang('messages.instructions.no_fut_events')</b>
     @else
-        @if(0 && count($pending)>0)
+        @if(count($pending)>0)
             @include('v1.parts.rf_bit', ['header' => trans('messages.headers.fut_inc'), 'rf_array' => $pending])
         @endif
 
@@ -44,7 +44,7 @@ $today = \Carbon\Carbon::now();
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
     </script>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Throwable;
+use Sentry\Laravel\Integration;
 
 class Handler extends ExceptionHandler
 {
@@ -46,7 +47,7 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            Integration::captureUnhandledException($e);
         });
     }
 
@@ -68,21 +69,56 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Convert an authentication exception into an unauthenticated response.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        return redirect()->guest(route('login'));
+    }
+
+    private function validateAndGetLocale($locale)
+    {
+        if (empty($locale) || !is_string($locale)) {
+            return config('app.fallback_locale', 'en');
+        }
+
+        $locale = trim($locale);
+
+        if (strlen($locale) > 2) {
+            try {
+                $locale = decrypt($locale, false);
+            } catch (\Exception $e) {
+                return config('app.fallback_locale', 'en');
+            }
+        }
+
+        if (str_contains($locale, '|')) {
+            $locale = explode('|', $locale)[1] ?? config('app.fallback_locale', 'en');
+        }
+
+        $supportedLocales = config('app.locales', ['en']);
+        return in_array($locale, $supportedLocales) ? $locale : config('app.fallback_locale', 'en');
+    }
+
+    /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function render($request, Throwable $exception)
     {
-        if ($request->hasCookie('locale')) {
+        if ($request->hasSession() && $request->hasCookie('locale')) {
             $cookie = $request->cookie('locale');
-            $locale = strlen($cookie) > 2 ? decrypt($cookie, false) : $cookie;
-            if (in_array($locale, \Config::get('app.locales'))) {
-                app()->setLocale($locale);
-            } else {
-                app()->setLocale($locale);
-            }
+            $locale = $this->validateAndGetLocale($cookie);
+            app()->setLocale($locale);
         }
 
         if (env('APP_ENV') == 'local') {
@@ -168,18 +204,4 @@ class Handler extends ExceptionHandler
         return parent::render($request, $exception);
     }
 
-    /**
-     * Convert an authentication exception into an unauthenticated response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
-
-        return redirect()->guest(route('login'));
-    }
 }

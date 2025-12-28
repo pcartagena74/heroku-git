@@ -17,10 +17,7 @@
             <td><a href="{!! route($setting->grab('admin_route').'.configuration.edit', [$configuration->id]) !!}" title="{{ trans('ticketit::admin.table-edit').' '.$configuration->slug }}" data-toggle="tooltip">{!! $configuration->value !!}</a></td>
             <td class="text-center">{!! $configuration->lang !!}</td>
             <td class="text-center">
-              {!! link_to_route(
-                  $setting->grab('admin_route').'.configuration.edit', trans('ticketit::admin.btn-edit'), [$configuration->id],
-                  ['class' => 'btn btn-info', 'title' => trans('ticketit::admin.table-edit').' '.$configuration->slug,  'data-toggle' => 'tooltip'] )
-              !!}
+              {{ html()->a($setting->grab('admin_route') . '.configuration.edit', trans('ticketit::admin.btn-edit'), [$configuration->id])->class('btn btn-info')->attribute('title', trans('ticketit::admin.table-edit') . ' ' . $configuration->slug)->data('toggle', 'tooltip') }}
             </td>
           </tr>
 @endforeach

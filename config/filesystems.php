@@ -44,9 +44,18 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
+        ],
+
+        's3_events' => [
+            'driver' => 's3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET1'),
+            'visibility' => 'public',
         ],
 
         's3_receipts' => [
@@ -76,15 +85,7 @@ return [
             'visibility' => 'public',
         ],
 
-        'events' => [
-            'driver' => 's3',
-            'key' => env('AWS_KEY'),
-            'secret' => env('AWS_SECRET'),
-            'region' => env('AWS_REGION'),
-            'bucket' => env('AWS_BUCKET1'),
-            'visibility' => 'public',
-        ],
-
+        /*
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -95,6 +96,34 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+        ],
+        */
+
+        't_events' => [
+            'driver' => 's3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET5'),
+            'visibility' => 'public',
+        ],
+
+        't_receipts' => [
+            'driver' => 's3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET6'),
+            'visibility' => 'public',
+        ],
+
+        't_media' => [
+            'driver' => 's3',
+            'key' => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET7'),
+            'visibility' => 'public',
         ],
 
     ],

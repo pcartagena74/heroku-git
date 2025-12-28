@@ -1,11 +1,11 @@
-<?php
-/**
- * Comment:
- * Created: 2/11/2017
- */
-?>
-<script>
-    $(document).ready(function() {
+@php
+    /**
+     * Comment:
+     * Created: 2/11/2017
+     */
+@endphp
+<script nonce="{{ $cspScriptNonce }}">
+    $(document).ready(function () {
         $('#{{ $fieldname }}').daterangepicker({
             timePicker: {{ $time }},
             autoUpdateInput: true,

@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-// Symfony\Component\HttpFoundation\Cookie
 class Locale
 {
     /**
@@ -18,34 +17,62 @@ class Locale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check()) {
-            if (empty(Auth::user()->locale)) {
-                $locale = Config::get('app.locale');
-                $user = Auth::user();
-                $user->locale = $locale;
-                $user->update();
-                session(['locale' => $locale]);
-            } else {
-                $locale = Auth::user()->locale;
-                session(['locale' => $locale]);
-            }
-            // return redirect(RouteServiceProvider::HOME);
-        } else {
-            $locale = Cookie::get('locale');
-            if (! empty($locale)) {
-                if (in_array($locale, Config::get('app.locales'))) {
-                    //do nothing
+        if (!$request->hasSession()) {
+            return $next($request);
+        }
+        try {
+            $locale = Config::get('app.fallback_locale');
+
+            if (Auth::check()) {
+                if (empty(Auth::user()->locale)) {
+                    $user = Auth::user();
+                    $user->locale = $locale;
+                    $user->update();
+                    session(['locale' => $locale]);
                 } else {
-                    $locale = Config::get('app.locale');
+                    $userLocale = Auth::user()->locale;
+
+                    // Validate user's stored locale
+                    if (str_contains($userLocale, '|')) {
+                        $parts = explode('|', $userLocale);
+                        $userLocale = end($parts);
+                    }
+
+                    if (in_array($userLocale, Config::get('app.locales'))) {
+                        $locale = $userLocale;
+                    } else {
+                        $user = Auth::user();
+                        $user->locale = $locale;
+                        $user->update();
+                    }
                     session(['locale' => $locale]);
                 }
             } else {
-                $locale = Config::get('app.locale');
-            }
-            Cookie::queue('locale', $locale, 60);
-        }
-        App::setLocale($locale);
+                $cookieLocale = Cookie::get('locale');
 
+                if (!empty($cookieLocale)) {
+                    // Clean potentially corrupted cookie value
+                    if (str_contains($cookieLocale, '|')) {
+                        $parts = explode('|', $cookieLocale);
+                        $cookieLocale = end($parts);
+                    }
+
+                    if (in_array($cookieLocale, Config::get('app.locales'))) {
+                        $locale = $cookieLocale;
+                    }
+                }
+            }
+            App::setLocale($locale);
+            Cookie::queue('locale', $locale, 60);
+            session(['locale' => $locale]);
+        } catch (\Exception $e) {
+            // Failsafe: use fallback locale
+            $locale = Config::get('app.fallback_locale');
+            App::setLocale($locale);
+            Cookie::queue('locale', $locale, 60);
+            session(['locale' => $locale]);
+        }
+        // App::setLocale($locale);
         return $next($request);
     }
 }

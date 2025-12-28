@@ -19,23 +19,23 @@ $topBits = '';  // remove this if this was set in the controller
     <!-- stuff -->
 
     <div id="custom-template" class="col-sm-12">
-        {!! Form::label('helper', trans('messages.instructions.become_instr'). ":") !!}<br/>
-        {!! Form::text('helper', null, array('id' => 'helper', 'class' => 'typeahead input-xs')) !!}<br />
+        {{ html()->label(trans('messages.instructions.become_instr') . ":", 'helper') }}<br/>
+        {{ html()->text('helper')->id('helper')->class('typeahead input-xs') }}<br/>
         <div id="search-results"></div>
     </div>
 
     <p>&nbsp;</p>
 
     <div class="col-sm-12">
-        {!! Form::open(array('url' => env('APP_URL')."/become", 'method' => 'POST')) !!}
+        {{ html()->form('POST', env('APP_URL') . "/become")->open() }}
         <div class="form-group col-sm-12">
-            {!! Form::label('new_id', trans('messages.instructions.become_id')) !!}<br/>
-            {!! Form::text('new_id', '', array('class' => 'form-control', 'required')) !!}
+            {{ html()->label(trans('messages.instructions.become_id'), 'new_id') }}<br/>
+            {{ html()->text('new_id', '')->class('form-control')->required() }}
         </div>
         <div class="form-group col-sm-1">
-            {!! Form::submit(trans('messages.nav.ms_become'), array('class' => 'btn btn-primary btn-xs form-control')) !!}
+            {{ html()->submit(trans('messages.nav.ms_become'))->class('btn btn-primary btn-xs form-control') }}
         </div>
-        {!! Form::close() !!}
+        {{ html()->form()->close() }}
     </div>
 
     @include('v1.parts.end_content')
@@ -44,7 +44,7 @@ $topBits = '';  // remove this if this was set in the controller
 
 @section('scripts')
     <script src="{{ env('APP_URL') }}/js/typeahead.bundle.min.js"></script>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function ($) {
             var people = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),

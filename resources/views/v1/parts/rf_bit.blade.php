@@ -33,20 +33,22 @@
     @foreach($rf_array as $rf)
         @php
             $receipt_filename = $rf->eventID . "/" . $rf->confirmation . ".pdf";
+            $s3name = select_bucket('r', config('APP_ENV'));
             try {
-                if(Storage::disk('s3_receipts')->exists($receipt_filename)){
-                    $receipt_url = Storage::disk('s3_receipts')->url($receipt_filename);
+                if(Storage::disk($s3name)->exists($receipt_filename)){
+                    $receipt_url = Storage::disk($s3name)->url($receipt_filename);
+                }
+                $file_headers = @get_headers($receipt_url);
+                if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
+                    $receipt_exists = false;
+                } else {
+                    $receipt_exists = true;
                 }
             } catch (Exception $e) {
                     $receipt_url = '#';
+                    $receipt_exists = false;
             }
 
-            $file_headers = @get_headers($receipt_url);
-            if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
-                $receipt_exists = false;
-            } else {
-                $receipt_exists = true;
-            }
 
             $header = $rf->event->eventName . " <small>" . trans_choice('messages.headers.seats', $rf->seats) . ": " . $rf->seats . "</small>";
         @endphp
@@ -77,24 +79,23 @@
                     @if($rf->pmtRecd == 1 && $today->lte($event->eventStartDate->subDays($org->refundDays)) && !$event->isNonRefundable)
                         {{-- Payment received and able to display a refund button --}}
 
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_ref')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                     @if($rf->pmtRecd == 1)
                         {{-- Payment received so receipt buttons are appropriate --}}
-                        <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                        <a target="_new" href="{!! config('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
                            class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
                         @if($receipt_exists)
                             <a target="_new" href="{{ $receipt_url }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
                         @else
-                            <a target="_new" href="{{ env('APP_URL'). "/recreate_receipt/".$rf->regID }}"
+                            <a target="_new" href="{{ config('APP_URL'). "/recreate_receipt/".$rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.rec_down')</a>
                         @endif
                         <br/>
@@ -104,17 +105,16 @@
                          only/first seat --}}
 
                         @if($rf->seats == 1 || $reg == $rf->registrations->first())
-                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                            <a href="{!! config('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.pay_bal')</a>
                         @endif
 
                         {{-- Cancel button is always OK to show --}}
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_can')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                 @else
@@ -123,15 +123,14 @@
                     @if($rf->pmtRecd == 1)
                         {{-- No-fee payment received (here meaning completed transaction) so cancelation is OK whenever --}}
 
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                                        'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_can')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
 
                         {{-- Payment received (here meaning completed transaction) so receipt buttons are appropriate --}}
-                        <a target="_new" href="{!! env('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
+                        <a target="_new" href="{!! config('APP_URL') !!}/show_receipt/{{ $rf->regID }}"
                            class="btn btn-success btn-sm">@lang('messages.buttons.rec_disp')</a>
 
                         <a target="_new" href="{{ $receipt_url }}"
@@ -141,17 +140,16 @@
                         {{-- No charge but transaction wasn't completed.  Complete Reg button should be displayed if it's the only/first seat --}}
 
                         @if($rf->seats == 1 || $reg == $rf->registrations->first())
-                            <a href="{!! env('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
+                            <a href="{!! config('APP_URL') !!}/confirm_registration/{{ $rf->regID }}"
                                class="btn btn-primary btn-sm">@lang('messages.buttons.comp_reg')</a>
                         @endif
 
                         {{-- Cancel button is always OK to show --}}
-                        {!! Form::open(['method'  => 'delete', 'data-toggle' => 'validator',
-                            'route' => ['cancel_registration', $reg->regID, $rf->regID] ]) !!}
+                        {{ html()->form('DELETE', route('cancel_registration', [$reg->regID, $rf->regID]))->data('toggle', 'validator')->open() }}
                         <button type="submit" class="btn btn-danger btn-sm">
                             @lang('messages.buttons.reg_can')
                         </button>
-                        {!! Form::close() !!}
+                        {{ html()->form()->close() }}
                     @endif
 
                 @endif

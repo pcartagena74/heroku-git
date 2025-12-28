@@ -5,41 +5,43 @@
                 {{ $ticket->subject }}
                 <span class="pull-right">
                     @if(! $ticket->completed_at && $close_perm == 'yes')
-                            {!! link_to_route($setting->grab('main_route').'.complete', trans('ticketit::lang.btn-mark-complete'), $ticket->id,
-                                                ['class' => 'btn btn-success']) !!}
+                        {{ html()->a($setting->grab('main_route') . '.complete', trans('ticketit::lang.btn-mark-complete'), $ticket->id)->class('btn btn-success') }}
                     @elseif($ticket->completed_at && $reopen_perm == 'yes')
-                            {!! link_to_route($setting->grab('main_route').'.reopen', trans('ticketit::lang.reopen-ticket'), $ticket->id,
-                                                ['class' => 'btn btn-success']) !!}
+                        {{ html()->a($setting->grab('main_route') . '.reopen', trans('ticketit::lang.reopen-ticket'), $ticket->id)->class('btn btn-success') }}
                     @endif
                     @if($u->isAgent() || $u->isAdmin())
-                    <button class="btn btn-info" data-target="#ticket-edit-modal" data-toggle="modal" type="button">
+                        <button class="btn btn-info" data-target="#ticket-edit-modal" data-toggle="modal" type="button">
                         {{ trans('ticketit::lang.btn-edit')  }}
                     </button>
                     @endif
                     @if($u->isAdmin())
                         @if($setting->grab('delete_modal_type') == 'builtin')
-                            {!! link_to_route(
-                                            $setting->grab('main_route').'.destroy', trans('ticketit::lang.btn-delete'), $ticket->id,
-                                            [
-                                            'class' => 'btn btn-danger deleteit',
-                                            'form' => "delete-ticket-$ticket->id",
-                                            "node" => $ticket->subject
-                                            ])
-                            !!}
+                            {{ html()->a($setting->grab('main_route') . '.destroy', trans('ticketit::lang.btn-delete'), $ticket->id)->class('btn btn-danger deleteit')->attribute('form', "delete-ticket-{$ticket->id}")->attribute('node', $ticket->subject) }}
                         @elseif($setting->grab('delete_modal_type') == 'modal')
-{{-- // OR; Modal Window: 1/2 --}}
+                            {{-- // OR; Modal Window: 1/2 --}}
+                            {{--
                             {!! CollectiveForm::open(array(
                                     'route' => array($setting->grab('main_route').'.destroy', $ticket->id),
                                     'method' => 'delete',
                                     'style' => 'display:inline'
                                ))
                             !!}
-                    <button class="btn btn-danger" data-message="{!! trans('ticketit::lang.show-ticket-modal-delete-message', ['subject' => $ticket->subject]) !!}" data-target="#confirmDelete" data-title="{!! trans('ticketit::lang.show-ticket-modal-delete-title', ['id' => $ticket->id]) !!}" data-toggle="modal" type="button">
+                            --}}
+                            {!! html()->form(
+                                    'DELETE',
+                                    array($setting->grab('main_route').'.destroy', $ticket->id),
+                                    'display:inline'
+                            )->open() !!}
+                            <button class="btn btn-danger"
+                                    data-message="{!! trans('ticketit::lang.show-ticket-modal-delete-message', ['subject' => $ticket->subject]) !!}"
+                                    data-target="#confirmDelete"
+                                    data-title="{!! trans('ticketit::lang.show-ticket-modal-delete-title', ['id' => $ticket->id]) !!}"
+                                    data-toggle="modal" type="button">
                         {{ trans('ticketit::lang.btn-delete') }}
                     </button>
-                    @endif
-                            {!! CollectiveForm::close() !!}
-{{-- // END Modal Window: 1/2 --}}
+                        @endif
+                        {!! html()->form()->close() !!}
+                        {{-- // END Modal Window: 1/2 --}}
                     @endif
                 </span>
             </h2>
@@ -59,11 +61,11 @@
                                 </strong>
                                 {{ trans('ticketit::lang.colon') }}
                                 @if( $ticket->isComplete() && ! $setting->grab('default_close_status_id') )
-                                <span style="color: blue">
+                                    <span style="color: blue">
                                     Complete
                                 </span>
                                 @else
-                                <span style="color: {{ $ticket->status->color }}">
+                                    <span style="color: {{ $ticket->status->color }}">
                                     {{ $ticket->status->name }}
                                 </span>
                                 @endif
@@ -116,6 +118,7 @@
                 </p>
             </div>
         </div>
+        {{--
         {!! CollectiveForm::open([
                         'method' => 'DELETE',
                         'route' => [
@@ -126,14 +129,21 @@
                         ])
         !!}
         {!! CollectiveForm::close() !!}
+        --}}
+        {!! html()->form(
+                'DELETE',
+                $setting->grab('main_route').'.destroy', $ticket->id,
+                "delete-ticket-$ticket->id"
+        )->open() !!}
+        {!! html()->form()->close() !!}
     </div>
 </div>
 @if($u->isAgent() || $u->isAdmin())
-        @include('ticketit::tickets.edit')
-    @endif
+    @include('ticketit::tickets.edit')
+@endif
 
 {{-- // OR; Modal Window: 2/2 --}}
-    @if($u->isAdmin())
-        @include('ticketit::tickets.partials.modal-delete-confirm')
-    @endif
+@if($u->isAdmin())
+    @include('ticketit::tickets.partials.modal-delete-confirm')
+@endif
 {{-- // END Modal Window: 2/2 --}}

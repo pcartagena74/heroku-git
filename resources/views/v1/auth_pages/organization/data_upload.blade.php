@@ -1,14 +1,14 @@
 @php
-/**
- * Comment: display file upload page
- * Created: 4/29/2017
- */
-$topBits = '';
-if(isset($blah)){
-    $count = $blah;
-} else {
-    $count = 0;
-}
+    /**
+     * Comment: display file upload page
+     * Created: 4/29/2017
+     */
+    $topBits = '';
+    if(isset($blah)){
+        $count = $blah;
+    } else {
+        $count = 0;
+    }
 
 @endphp
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -42,13 +42,14 @@ if(isset($blah)){
                 @foreach($events as $event)
                     <option value="{{ $event->eventID }}">{{ $event->eventID }}
                         : {{ $event->eventStartDate->format('n/Y') }}
-                        -> {{ $event->eventName }} ({{ $event->registrations_count }})</option>
+                        -> {{ $event->eventName }} ({{ $event->registrations_count }})
+                    </option>
                 @endforeach
             </select>
         </div>
 
         <div class="col-sm-9 col-xs-9">
-            <br />
+            <br/>
             <input type='submit' name='submit' value='{!! trans('messages.nav.o_upload') !!}'><br/>
         </div>
     </form>
@@ -59,7 +60,7 @@ if(isset($blah)){
 
 @section('scripts')
     <script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.js"></script>
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(location).ready(function () {
             $('#dt').on('change', function () {
                 var dt = $('#dt').val();

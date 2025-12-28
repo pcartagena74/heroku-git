@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Closure;
 use Entrust;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
+use JetBrains\PhpStorm\NoReturn;
 
 class HomeController extends Controller
 {
@@ -28,7 +30,7 @@ class HomeController extends Controller
         return view('v1.public_pages.home-login');
     }
 
-    public function store(Request $request)
+    #[NoReturn] public function store(Request $request): void
     {
         // This is the function that processes issues reported by error page
         // Responds to POST /reportissue
@@ -40,7 +42,7 @@ class HomeController extends Controller
      *
      * Forbidden in production environment.
      */
-    public function showApplicationRoutes(): View
+    public function showApplicationRoutes(): RedirectResponse|View
     {
         /*
         if (config('app.log_level') == 'production') {
@@ -65,7 +67,6 @@ class HomeController extends Controller
             return view('v1.auth_pages.admin.routes', compact('routes'));
         } else {
             request()->session()->flash('alert-warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
-
             return back();
         }
     }

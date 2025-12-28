@@ -1,72 +1,72 @@
 @php
-/**
- * Comment:
- * Created: 2/2/2017
- *
- * $header, $subheader, $w1, $w2, $r1, $r2, $r3
- * @var $past
- * @var $current_events
- * @var $past_events
- *
- */
+    /**
+     * Comment:
+     * Created: 2/2/2017
+     *
+     * $header, $subheader, $w1, $w2, $r1, $r2, $r3
+     * @var $past
+     * @var $current_events
+     * @var $past_events
+     *
+     */
 
-$current_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
-    trans('messages.headers.status'), trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
-$current_data = [];
+    $current_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
+        trans('messages.headers.status'), trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
+    $current_data = [];
 
-$today = \Carbon\Carbon::now();
+    $today = \Carbon\Carbon::now();
 
-if (!$past) {
-    foreach ($current_events as $event) {
-        $csrf = csrf_field();
+    if (!$past) {
+        foreach ($current_events as $event) {
+            $csrf = csrf_field();
 
-        $progress_bar = '<div class="progress progress_sm">
-        <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="' . $event->registrations_count . '"></div>
-        </div><small>' . $event->registrations_count . ' attendees</small>';
+            $progress_bar = '<div class="progress progress_sm">
+            <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="' . $event->registrations_count . '"></div>
+            </div><small>' . $event->registrations_count . ' attendees</small>';
 
-        $active_button = '<button onclick="javascript:activate(' . $event->eventID . ')" class="btn ';
-        if ($event->isActive) {
-            $active_button .= "btn-success btn-sm";
-        } else {
-            $active_button .= "btn-cancel btn-xs";
+            $active_button = '<button onclick="javascript:activate(' . $event->eventID . ')" class="btn ';
+            if ($event->isActive) {
+                $active_button .= "btn-success btn-sm";
+            } else {
+                $active_button .= "btn-cancel btn-xs";
+            }
+            $active_button .= '">';
+            if ($event->isActive) {
+                $active_button .= "<b>" . trans('messages.reg_status.active') . "</b>";
+            } else {
+                $active_button .= trans('messages.reg_status.inactive');
+            }
+            $active_button .= "</button>";
+
+            $buttons = view('v1.parts.event_buttons', ['event' => $event, 'suppress' => 1, 'size' => 'xs'])->render();
+
+            array_push($current_data, ["<nobr>" . $event->eventStartDate->format('Y-m-d') . "  - </nobr><br><nobr>" .
+                $event->eventEndDate->format('Y-m-d') . "</nobr>", $event->eventName,
+                Lang::has('messages.event_types.' . $event->etName) ? trans_choice('messages.event_types.' . $event->etName, 1) : $event->etName,
+                $active_button, $progress_bar, $buttons]);
         }
-        $active_button .= '">';
-        if ($event->isActive) {
-            $active_button .= "<b>" . trans('messages.reg_status.active') . "</b>";
-        } else {
-            $active_button .= trans('messages.reg_status.inactive');
-        }
-        $active_button .= "</button>";
 
-        $buttons = view('v1.parts.event_buttons', ['event' => $event, 'suppress' => 1, 'size' => 'xs'])->render();
-
-        array_push($current_data, ["<nobr>" . $event->eventStartDate->format('Y-m-d') . "  - </nobr><br><nobr>" .
-            $event->eventEndDate->format('Y-m-d') . "</nobr>", $event->eventName,
-            Lang::has('messages.event_types.' . $event->etName) ? trans_choice('messages.event_types.' . $event->etName, 1) : $event->etName,
-            $active_button, $progress_bar, $buttons]);
+        count($current_data) >= 15 ? $current_scroll = 1 : $current_scroll = 0;
     }
 
-    count($current_data) >= 15 ? $current_scroll = 1 : $current_scroll = 0;
-}
+    $past_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
+        trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
 
-$past_headers = [trans('messages.headers.event_dates'), trans('messages.fields.event'), trans('messages.profile.type'),
-    trans('messages.fields.count'), trans('messages.nav.ev_mgmt')];
+    $past_data = [];
 
-$past_data = [];
+    foreach ($past_events as $event) {
 
-foreach ($past_events as $event) {
+        $buttons = view('v1.parts.event_buttons', ['event' => $event, 'suppress' => 1, 'size' => 'xs'])->render();
+        array_push($past_data, ["<nobr>" . $event->eventStartDate->format('Y-m-d') . "  - </nobr><br><nobr>" . $event->eventEndDate->format('Y-m-d') . "</nobr>",
+            $event->eventName, $event->etName, $event->registrations_count, $buttons]);
+    }
+    count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
 
-    $buttons = view('v1.parts.event_buttons', ['event' => $event, 'suppress' => 1, 'size' => 'xs'])->render();
-    array_push($past_data, ["<nobr>" . $event->eventStartDate->format('Y-m-d') . "  - </nobr><br><nobr>" . $event->eventEndDate->format('Y-m-d') . "</nobr>",
-        $event->eventName, $event->etName, $event->registrations_count, $buttons]);
-}
-count($past_data) > 15 ? $past_scroll = 1 : $past_scroll = 0;
-
-if ($past) {
-    $header = trans('messages.nav.ev_old');
-} else {
-    $header = '';
-}
+    if ($past) {
+        $header = trans('messages.nav.ev_old');
+    } else {
+        $header = '';
+    }
 @endphp
 
 @extends('v1.layouts.auth', ['topBits' => $topBits])
@@ -85,7 +85,8 @@ if ($past) {
                 <li class="active"><a href="#tab_content1" id="current_events-tab" data-toggle="tab"
                                       aria-expanded="true"><b>@lang('messages.fields.up_event')</b></a></li>
                 <li class=""><a href="#tab_content2" id="past_events-tab" data-toggle="tab"
-                                aria-expanded="false"><b>@lang('messages.fields.past_events') ({{ $today->year - 1 }} - {{ $today->year }})</b></a></li>
+                                aria-expanded="false"><b>@lang('messages.fields.past_events') ({{ $today->year - 1 }}
+                            - {{ $today->year }})</b></a></li>
             </ul>
             <div id="tab-content" class="tab-content">
                 <div class="tab-pane active" id="tab_content1" aria-labelledby="current_events-tab">
@@ -100,8 +101,8 @@ if ($past) {
                 <div class="tab-pane fade" id="tab_content2" aria-labelledby="past_events-tab">
                     <p>&nbsp;</p>
                     @if(count($past_data) > 0)
-                    @include('v1.parts.datatable', ['headers' => $past_headers,
-                        'data' => $past_data, 'id' => 'past_events', 'scroll' => $past_scroll])
+                        @include('v1.parts.datatable', ['headers' => $past_headers,
+                            'data' => $past_data, 'id' => 'past_events', 'scroll' => $past_scroll])
                     @else
                         @lang('messages.messages.no_events', ['which' => strtolower(trans('messages.fields.past'))])
                     @endif
@@ -115,22 +116,19 @@ if ($past) {
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-    </script>
-    <script>
+
         $('[data-toggle="popover"]').popover({
             container: 'body',
         });
-    </script>
-    <script>
+
         $('[data-toggle=confirmation]').confirmation();
-    </script>
-    <script>
+
         $(document).ready(function () {
             @if(count($current_data) >= 15)
             $('#current_events').DataTable({
@@ -150,8 +148,7 @@ if ($past) {
             });
             $('#past_events').DataTable().search('').draw();
         });
-    </script>
-    <script>
+
         function activate(eventID) {
             $.ajax({
                 type: 'POST',

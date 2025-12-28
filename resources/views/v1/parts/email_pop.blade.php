@@ -1,17 +1,17 @@
-<?php
-/**
- * Comment: Javascript to insert a passed parameter into an email / login field.
- * Created: 10/17/2019
- */
+@php
+    /**
+     * Comment: Javascript to insert a passed parameter into an email / login field.
+     * Created: 10/17/2019
+     */
 
-if (null === $field) {
-    $field = 'email';
-}
-if (null === $parameter) {
-    $parameter = 'e';
-}
-?>
-<script>
+    if (null === $field) {
+        $field = 'email';
+    }
+    if (null === $parameter) {
+        $parameter = 'e';
+    }
+@endphp
+<script nonce="{{ $cspScriptNonce }}">
     $(document).ready(function () {
         function getUrlParams() {
 
@@ -21,7 +21,7 @@ if (null === $parameter) {
             }
             var parts = location.search.substring(1).split("&");
 
-            for (var i = 0; i < parts.length; i ++) {
+            for (var i = 0; i < parts.length; i++) {
                 var component = parts[i].split("=");
                 paramMap [decodeURIComponent(component[0])] = decodeURIComponent(component[1]);
             }

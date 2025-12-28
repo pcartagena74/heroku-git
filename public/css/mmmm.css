@@ -137,6 +137,18 @@ p {
     left: 10px;
 }
 
+.row_container {
+    overflow: hidden;
+}
+
+.bkgd {
+    background-color: #EEEEEE;
+    float: left;
+    margin: 0px;
+    padding-bottom: 100%;
+    margin-bottom: -100%;
+}
+
 
 .btn-red {
     color: #f8f8f8;

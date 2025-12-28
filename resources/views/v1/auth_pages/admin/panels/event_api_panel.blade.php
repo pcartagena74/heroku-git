@@ -75,19 +75,13 @@ $sizes = [
                     <div class="col-sm-3">
                         @lang('messages.admin.nc')
                         {{--
-                        {!! Form::select($ban_bkgd->prop->name, $colors, $ban_bkgd->value,
-                            ['class' => "form-control input-sm",
-                            'v-model' => 'admin_props[8].value',
-                            '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        {{ html()->select($ban_bkgd->prop->name, $colors, $ban_bkgd->value)->class("form-control input-sm")->attribute('v-model', 'admin_props[8].value')->attribute('@blur', 'api_update($event.target.name, $event.target.value)') }}
                         --}}
                     </div>
                     <div class="col-sm-3">
                         @lang('messages.admin.nc')
                         {{--
-                        {!! Form::select($ban_btxt->prop->name, $colors, $ban_btxt->value,
-                            ['class' => "form-control input-sm",
-                            'v-model' => 'admin_props[9].value',
-                            '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        {{ html()->select($ban_btxt->prop->name, $colors, $ban_btxt->value)->class("form-control input-sm")->attribute('v-model', 'admin_props[9].value')->attribute('@blur', 'api_update($event.target.name, $event.target.value)') }}
                         --}}
                     </div>
                     <div class="col-sm-3">
@@ -96,10 +90,7 @@ $sizes = [
                                @blur="api_update($event.target.name, $event.target.value)">
                     </div>
                     <div class="col-sm-3">
-                        {!! Form::select($hdr_color->prop->name, $colors, $hdr_color->value,
-                            ['class' => "form-control input-sm",
-                            'v-model' => 'admin_props[4].value',
-                            '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        {{ html()->select($hdr_color->prop->name, $colors, $hdr_color->value)->class("form-control input-sm")->attribute('v-model', 'admin_props[4].value')->attribute('@blur', 'api_update($event.target.name, $event.target.value)') }}
                     </div>
                 </div>
             </div>
@@ -134,26 +125,16 @@ $sizes = [
                     </div>
 
                     <div class="col-sm-3">
-                        {!! Form::text($btn_txt->prop->name, $btn_txt->value,
-                            ['class' => "form-control input-sm",
-                            'id' => $btn_txt->prop->name,
-                            'v-model' => 'admin_props[2].value',
-                            '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        {{ html()->text($btn_txt->prop->name, $btn_txt->value)->class("form-control input-sm")->id($btn_txt->prop->name)->attribute('v-model', 'admin_props[2].value')->attribute('@blur', 'api_update($event.target.name, $event.target.value)') }}
                         {{--
                         '@blur' => 'api_update(admin_props[2].value)'])
                         --}}
                     </div>
                     <div class="col-sm-3">
-                        {!! Form::select($btn_color->prop->name, $colors, $btn_color->value,
-                            ['class' => "form-control input-sm",
-                            'v-model' => 'admin_props[3].value',
-                            '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        {{ html()->select($btn_color->prop->name, $colors, $btn_color->value)->class("form-control input-sm")->attribute('v-model', 'admin_props[3].value')->attribute('@blur', 'api_update($event.target.name, $event.target.value)') }}
                     </div>
                     <div class="col-sm-3">
-                        {!! Form::select($btn_size->prop->name, $sizes, $btn_size->value,
-                            ['class' => "form-control input-sm",
-                            'v-model' => 'admin_props[5].value',
-                            '@blur' => 'api_update($event.target.name, $event.target.value)']) !!}
+                        {{ html()->select($btn_size->prop->name, $sizes, $btn_size->value)->class("form-control input-sm")->attribute('v-model', 'admin_props[5].value')->attribute('@blur', 'api_update($event.target.name, $event.target.value)') }}
                     </div>
                     <div class="col-sm-3">
                         <input class="form-control input-sm" type="text" size="1" name="{{ $sep->prop->name }}"

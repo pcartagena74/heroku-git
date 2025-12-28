@@ -75,9 +75,11 @@ return [
     | passwords, and credit card numbers to our servers. Any keys which
     | contain these strings will be filtered.
     |
+    | This option has been deprecated in favour of 'redacted_keys'
+    |
     */
 
-    'filters' => empty(env('BUGSNAG_FILTERS')) ? ['password'] : explode(',', str_replace(' ', '', env('BUGSNAG_FILTERS'))),
+    'filters' => empty(env('BUGSNAG_FILTERS')) ? null : explode(',', str_replace(' ', '', env('BUGSNAG_FILTERS'))),
 
     /*
     |--------------------------------------------------------------------------
@@ -123,17 +125,47 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Project Root Regex
+    |--------------------------------------------------------------------------
+    |
+    | Bugsnag marks stacktrace lines as in-project if they come from files
+    | inside your “project root”. You can set this here.
+    |
+    | This option allows you to set it as a regular expression and will take
+    | precedence over "project_root" if both are defined.
+    |
+    */
+
+    'project_root_regex' => env('BUGSNAG_PROJECT_ROOT_REGEX'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Strip Path
     |--------------------------------------------------------------------------
     |
-    | You can set a strip path to have it also trimmed from the start of any
-    | filepath in your stacktraces.
+    | The strip path is a path to be trimmed from the start of any filepaths in
+    | your stacktraces.
     |
     | If this is not set, we will automatically try to detect it.
     |
     */
 
     'strip_path' => env('BUGSNAG_STRIP_PATH'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Strip Path Regex
+    |--------------------------------------------------------------------------
+    |
+    | The strip path is a path to be trimmed from the start of any filepaths in
+    | your stacktraces.
+    |
+    | This option allows you to set it as a regular expression and will take
+    | precedence over "strip_path" if both are defined.
+    |
+    */
+
+    'strip_path_regex' => env('BUGSNAG_STRIP_PATH_REGEX'),
 
     /*
     |--------------------------------------------------------------------------
@@ -158,6 +190,18 @@ return [
     */
 
     'bindings' => env('BUGSNAG_QUERY_BINDINGS', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Octane breadcrumbs
+    |--------------------------------------------------------------------------
+    |
+    | Enable this if you'd like us to automatically record breadcrumbs from
+    | octane events.
+    |
+    */
+
+    'octane_breadcrumbs' => env('BUGSNAG_OCTANE_BREADCRUMBS', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -275,4 +319,70 @@ return [
 
     'build_endpoint' => env('BUGSNAG_BUILD_ENDPOINT'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Discard Classes
+    |--------------------------------------------------------------------------
+    |
+    | An array of classes that should not be sent to Bugsnag.
+    |
+    | This can contain both fully qualified class names and regular expressions.
+    |
+    */
+
+    'discard_classes' => empty(env('BUGSNAG_DISCARD_CLASSES')) ? null : explode(',', env('BUGSNAG_DISCARD_CLASSES')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redacted Keys
+    |--------------------------------------------------------------------------
+    |
+    | An array of metadata keys that should be redacted.
+    |
+    */
+
+    'redacted_keys' => empty(env('BUGSNAG_REDACTED_KEYS')) ? null : explode(',', env('BUGSNAG_REDACTED_KEYS')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Feature flags
+    |--------------------------------------------------------------------------
+    |
+    | An array of feature flags to add to all reports.
+    |
+    | Each element in the array must have a "name" key and can optionally have a
+    | "variant" key, for example:
+    |
+    | [
+    |     ['name' => 'example without a variant'],
+    |     ['name' => 'example with a variant', 'variant' => 'example of a variant'],
+    | ]
+    |
+    */
+
+    'feature_flags' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Max breadcrumbs
+    |--------------------------------------------------------------------------
+    |
+    | The maximum number of breadcrumbs to send with a report.
+    |
+    | This should be an integer between 0-100 (inclusive).
+    |
+    */
+
+    'max_breadcrumbs' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attach hidden context
+    |--------------------------------------------------------------------------
+    |
+    | Whether to attach hidden Context data to events as metadata.
+    |
+    */
+
+    'attach_hidden_context' => env('BUGSNAG_ATTACH_HIDDEN_CONTEXT', false),
 ];

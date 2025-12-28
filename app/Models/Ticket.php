@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 //use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,7 +17,7 @@ class Ticket extends Model
     //use LogsActivity;
 
     protected static $logAttributes = ['earlyBirdEndDate', 'memberBasePrice', 'nonmbrBasePrice', 'maxAttendees',
-        'isaBundle', 'ticketLabel', ];
+        'isaBundle', 'ticketLabel',];
 
     protected static $ignoreChangedAttributes = ['createDate'];
 
@@ -82,7 +83,7 @@ class Ticket extends Model
     public function week_sales()
     {
         $tickets = [$this->ticketID];
-        if (! $this->isaBundle) {
+        if (!$this->isaBundle) {
             $bundles = Bundle::where('ticketID', $this->ticketID)->select('bundleID')->get();
             foreach ($bundles as $b) {
                 array_push($tickets, $b->bundleID);
@@ -154,7 +155,7 @@ class Ticket extends Model
      *
      * @param:  $waitlist is a boolean indicating whether this should adjust the waitlist count or not
      */
-    public function update_count($amt, $waitlist = 0)
+    public function update_count($amt, $waitlist = 0): void
     {
         $bundle_members = $this->bundle_members();
         if (count($bundle_members) > 0) {
@@ -182,7 +183,7 @@ class Ticket extends Model
     /**
      * has_sessions()   Determines if a ticket has been connected with EventSessions
      */
-    public function has_sessions()
+    public function has_sessions(): bool|int
     {
         $bundles = $this->bundle_members();
         foreach ($bundles as $m) {
@@ -202,7 +203,7 @@ class Ticket extends Model
         return count($es) > 1;
     }
 
-    public function ok_to_display()
+    public function ok_to_display(): bool
     {
         $today = Carbon::now();
 
@@ -213,7 +214,7 @@ class Ticket extends Model
      * bundle_ticket_array() returns an array of ticketIDs associated with the chosen ticket's bundle members
      *             or an array of just the single ticketID
      */
-    public function bundle_ticket_array()
+    public function bundle_ticket_array(): array
     {
         $bundle_members = $this->bundle_members();
         if (count($bundle_members) > 0) {
@@ -227,14 +228,19 @@ class Ticket extends Model
      * available_for_purchase() returns the number of tickets available for purchase
      * If there is no maxAttendee value, 9999 is returned
      */
-    public function available_for_purchase()
+    public function available_for_purchase(): int
     {
         if ($this->isaBundle) {
             if ($this->soldout_bundle()) {
                 return 0;
+            } elseif ($this->maxAttendees == 0 || $this->maxAttendees === null) {
+                return 9999;
+            } else {
+                return ($this->maxAttendees - $this->regCount);
             }
         } else {
-            if ($this->maxAttendees == 0) {
+            // Logic for counts of individual tickets
+            if ($this->maxAttendees == 0 || $this->maxAttendees === null) {
                 return 9999;
             }
 
@@ -249,7 +255,7 @@ class Ticket extends Model
     /**
      * soldout() returns true/false
      */
-    public function soldout()
+    public function soldout(): bool
     {
         // If the ticket is a bundle, direct to soldout_bundle()
         if ($this->isaBundle) {
@@ -271,7 +277,7 @@ class Ticket extends Model
     /**
      * soldout_bundle() returns true/false based on any bundle member's soldout state
      */
-    public function soldout_bundle()
+    public function soldout_bundle(): bool
     {
         $members = $this->bundle_members();
 
@@ -287,7 +293,7 @@ class Ticket extends Model
     /**
      * bundle_parents() returns an array of ticketIDs that could result the purchase of $this ticket
      */
-    public function bundle_parents()
+    public function bundle_parents(): array
     {
         return self::join('bundle-ticket as bt', 'bt.ticketID', 'event-tickets.ticketID')
             ->where([

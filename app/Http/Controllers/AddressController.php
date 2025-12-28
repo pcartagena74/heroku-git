@@ -11,6 +11,7 @@ class AddressController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth');
     }
 
@@ -33,16 +34,17 @@ class AddressController extends Controller
     {
         // responds to POST to /blah and creates, adds, stores the event
         //dd(request()->all());
-        $this->currentPerson = Person::find(auth()->user()->id);
+        // Unneeded as of 8/23/25
+        // $this->currentPerson = Person::find(auth()->user()->id);
 
         for ($i = 1; $i <= 5; $i++) {
-            $adType = 'addrTYPE-'.$i;
-            $addr1 = 'addr1-'.$i;
-            $addr2 = 'addr2-'.$i;
-            $city = 'city-'.$i;
-            $state = 'state-'.$i;
-            $zip = 'zip-'.$i;
-            $cntryID = 'cntryID-'.$i;
+            $adType = 'addrTYPE-' . $i;
+            $addr1 = 'addr1-' . $i;
+            $addr2 = 'addr2-' . $i;
+            $city = 'city-' . $i;
+            $state = 'state-' . $i;
+            $zip = 'zip-' . $i;
+            $cntryID = 'cntryID-' . $i;
 
             $type = request()->input($adType);
             $ad1 = request()->input($addr1);
@@ -52,7 +54,7 @@ class AddressController extends Controller
             $zi = request()->input($zip);
             $cnt = request()->input($cntryID);
 
-            if (! empty($ad1)) {
+            if (!empty($ad1)) {
                 $newAddr = new Address;
                 $newAddr->personID = request()->input('personID');
                 $newAddr->addrTYPE = $type;
@@ -71,7 +73,7 @@ class AddressController extends Controller
         if ($this->currentPerson->personID == request()->input('personID')) {
             return redirect('/profile/my');
         } else {
-            return redirect('/profile/'.request()->input('personID'));
+            return redirect('/profile/' . request()->input('personID'));
         }
     }
 
@@ -109,7 +111,7 @@ class AddressController extends Controller
         if ($personID == $this->currentPerson->personID) {
             return redirect('/profile/my');
         } else {
-            return redirect('/profile/'.$personID);
+            return redirect('/profile/' . $personID);
         }
     }
 }

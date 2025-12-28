@@ -249,7 +249,7 @@
 
 @section('scripts')
     @include('v1.parts.footer-datatable')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $('.collapsed').css('height', 'auto');
         $('.collapsed').find('.x_content').css('display', 'none');
         $(document).ready(function () {

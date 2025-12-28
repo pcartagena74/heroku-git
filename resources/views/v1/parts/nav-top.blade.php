@@ -6,7 +6,10 @@
      * May need to revisit once sessions and globals are decided post laravel authorization
      */
 
+     // * Commenting out 8/23/25 because duplicated from auth.blade
+    /*
     $currentPerson = App\Models\Person::find(auth()->user()->id);
+    */
 
     if($currentPerson->avatarURL !== null){
         try{
@@ -54,6 +57,7 @@
                                 </span>
                             </a>
                         </li>
+                        {{--
                         <li>
                             <a data-target="#context_issue" data-toggle="modal" href="#">
                                 <i class="fas fa-bug pull-right">
@@ -61,6 +65,7 @@
                                 @lang('messages.nav.context_issue')
                             </a>
                         </li>
+                        --}}
                         <li>
                             <a href="/logout">
                                 <i class="fa fa-sign-out pull-right">
@@ -70,9 +75,11 @@
                         </li>
                     </ul>
                 </li>
+                {{--
                 @if(Entrust::hasRole('Admin') || Entrust::hasRole('Developer'))
                     <li class="nav-item dropdown">
-                        <a aria-expanded="false" class="dropdown-toggle info-number" href="{{route('tickets.index')}}"
+                        <a aria-expanded="false" class="dropdown-toggle info-number"
+                           href="{{route('tickets.my-tickets')}}"
                            id="navbarDropdown1">
                             <i class="far fa-fw fa-ticket-alt" style="white-space:nowrap;">
                             </i>
@@ -82,11 +89,14 @@
                         </a>
                     </li>
                 @endif
+                --}}
                 @include('v1.parts.locale',['member'=>true])
             </ul>
         </nav>
     </div>
 </div>
 @section('modals')
+    {{--
     @include('v1.modals.context_sensitive_issue')
+    --}}
 @endsection

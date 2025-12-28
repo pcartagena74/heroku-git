@@ -64,20 +64,20 @@
 
             <div class="tab-pane" id="tab_content2">
                 <br/>
-                <h2> Something could be here...  submit a ticket with ideas/suggestions. </h2>
+                <h2> Something could be here... submit a ticket with ideas/suggestions. </h2>
             </div>
         </div>
     </div>
 @endsection
 
 @section('scripts')
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
         $(document).ready(function () {
             $('#myTab a[href="#{{ old('tab') }}"]').tab('show')
         });
     </script>
     <script type="text/javascript" src="/js/orgchart.js"></script>
-    <script type="text/javascript">
+    <script nonce="{{ $cspScriptNonce }}" type="text/javascript">
 
         var data = {!! $json_roles !!};
         var url = "{{ URL('volunteers') }}";

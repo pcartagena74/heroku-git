@@ -40,7 +40,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.19.2/vuedraggable.umd.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script>
+    <script nonce="{{ $cspScriptNonce }}">
 
         Vue.component('blah', {
             //
@@ -56,8 +56,20 @@
                 choices: [],
                 drag: false,
                 checkbox_list: [
-                    {sort: 0, checked: 0, value: "@lang('messages.fields.category')", id: "category", instr: '@lang('messages.admin.api.api_info_cat')'},
-                    {sort: 0, checked: 0, value: "{!! trans_choice('messages.headers.et', 1) !!}", id: "et", instr: '@lang('messages.admin.api.api_info_et')'},
+                    {
+                        sort: 0,
+                        checked: 0,
+                        value: "@lang('messages.fields.category')",
+                        id: "category",
+                        instr: '@lang('messages.admin.api.api_info_cat')'
+                    },
+                    {
+                        sort: 0,
+                        checked: 0,
+                        value: "{!! trans_choice('messages.headers.et', 1) !!}",
+                        id: "et",
+                        instr: '@lang('messages.admin.api.api_info_et')'
+                    },
                     {sort: 0, checked: 0, value: "@lang('messages.admin.api.api_times')", id: "times"},
                     {sort: 0, checked: 0, value: "@lang('messages.headers.pdu_detail')", id: "pdus"},
                     {sort: 0, checked: 0, value: "@lang('messages.fields.memprice')", id: "memprice"},
@@ -65,11 +77,10 @@
                 ],
                 // enabled: true,
             },
-            computed: {
-            },
+            computed: {},
 
             mounted: function () {
-                if(this.admin_props[1].value && this.admin_props[1].value.length > 0) {
+                if (this.admin_props[1].value && this.admin_props[1].value.length > 0) {
                     this.choices = this.admin_props[1].value.split(' ' + this.separator + ' ',);
                     this.varArray_update();
                 }
@@ -102,7 +113,7 @@
                         .catch(error => console.log(error.response));
                 },
 
-                varArray_update: function() {
+                varArray_update: function () {
                     var index = 0;
                     this.checkbox_list.forEach(e => {
                         e.checked = 0;
@@ -111,8 +122,8 @@
 
                     this.choices.forEach(element => {
                         index += 1;
-                        var x = this.checkbox_list.filter(function(ele) {
-                            if(ele.value == element) {
+                        var x = this.checkbox_list.filter(function (ele) {
+                            if (ele.value == element) {
                                 ele.checked = 1;
                                 ele.sort = index;
                             }
@@ -120,9 +131,13 @@
                     });
                     var out = [];
                     var array_copy = this.checkbox_list;
-                    array_copy = array_copy.filter(function(v){ return v.checked == 1; });
+                    array_copy = array_copy.filter(function (v) {
+                        return v.checked == 1;
+                    });
                     array_copy.sort((a, b) => (a.sort > b.sort) ? 1 : -1);
-                    array_copy.forEach(function(v) { out.push(v.id); });
+                    array_copy.forEach(function (v) {
+                        out.push(v.id);
+                    });
                     var id_hdr = out.join(this.separator);
                     this.api_update('var_array', id_hdr);
                 },

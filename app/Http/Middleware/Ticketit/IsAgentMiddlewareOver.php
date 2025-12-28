@@ -14,7 +14,7 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
     /**
      * Run the request filter.
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next): Response
     {
         if (Agent::isAgent() || Agent::isAdmin() || auth()->id() == 1) {
             return $next($request);
@@ -22,7 +22,7 @@ class IsAgentMiddlewareOver extends IsAgentMiddleware
 
         // return redirect()->action('\App\Http\TicketitControllers\TicketsControllerOver@index')
         //     ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
-        return redirect()->route(Setting::grab('main_route').'.index')
+        return redirect()->route(Setting::grab('main_route') . '.index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
     }
 }

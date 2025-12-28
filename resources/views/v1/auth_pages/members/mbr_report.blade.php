@@ -49,7 +49,7 @@ if($id == 1){
                 <a {!! $mbr_url !!} class="btn btn-{!! $mbr_color !!} btn-sm">
                     <b>@lang('messages.reports.show_mbr')</b>
                 </a>
-                <br />
+                <br/>
                 @include('v1.parts.start_content', ['header' => trans('messages.reports.ev_by_year'), 'subheader' => '',
                          'w1' => '6', 'w2' => '12', 'r1' => 0, 'r2' => 0, 'r3' => 0])
 
@@ -119,11 +119,9 @@ if($id == 1){
 @section('scripts')
     @include('v1.parts.menu-fix', array('path' => '/mbrreport'))
     @include('v1.parts.footer-chart')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js">
-    </script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"/>
+    <script nonce="{{ $cspScriptNonce }}">
         // $.fn.editable.defaults.ajaxOptions = {type: "POST"};
         var result;
         $.ajaxSetup({
@@ -525,6 +523,5 @@ if($id == 1){
     </script>
     <script async="" defer=""
             src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_API_KEY')}}&callback=initMap&libraries=visualization"
-            type="text/javascript">
-    </script>
+            type="text/javascript"/>
 @endsection

@@ -1,6 +1,6 @@
-<?php
+@php
 // include in all forms:   {{ csrf_field() }}
-?>
+@endphp
 @extends('v1.layouts.no-auth_no-nav')
 @section('content')
 <div class="container" style="padding-top: 20px;">
