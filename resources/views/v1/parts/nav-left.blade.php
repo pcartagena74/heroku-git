@@ -223,6 +223,7 @@
                         </li>
                     @endif
 
+                    {{--
                     <!-- Email Marketing Menu -->
                     @if(in_array('Developer', $role_list) || in_array('Marketing', $role_list))
                         <li><a><i class="far fa-fw fa-envelope"></i> @lang('messages.nav.em_mktg')
@@ -235,9 +236,10 @@
                             </ul>
                         </li>
                     @endif
+                    --}}
 
-                    <!-- Help Desk Menu -->
                     {{--
+                    <!-- Help Desk Menu -->
                     <li style="display: none">
                         <a href="{{ route('tickets.my-tickets')}}"><i class="fas fa-fw fa-ticket-alt"></i>
                             @lang('messages.nav.my_support') <span class="far fa-pull-right"></span></a>

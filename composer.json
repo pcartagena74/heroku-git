@@ -77,10 +77,10 @@
     "spatie/laravel-referer": "^1.8",
     "squizlabs/php_codesniffer": "^3.6",
     "staudenmeir/eloquent-has-many-deep": "^1.7",
-    "stripe/stripe-php": "^7.94"
+    "stripe/stripe-php": "^7.94",
+    "barryvdh/laravel-debugbar": "^3.15"
   },
   "require-dev": {
-    "barryvdh/laravel-debugbar": "^3.15",
     "diglabby/laravel-find-missing-translations": "dev-master",
     "fakerphp/faker": "^1.9.1",
     "mockery/mockery": "^1.4.4",
